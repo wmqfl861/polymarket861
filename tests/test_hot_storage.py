@@ -38,6 +38,9 @@ class HotStorageTests(unittest.TestCase):
                     dbscope.recheck_originals(batch)
             with self.assertRaises(ValueError):
                 store.archive_bytes(root, "retry", raw)
+            with self.assertRaisesRegex(ValueError, "unreadable archived original"):
+                operations.backup_state(root, base / "damaged-backup")
+            self.assertFalse((base / "damaged-backup").exists())
 
     def test_shared_terms_rehydrate_exact_receipt_and_isolate_revisions(self):
         with TemporaryDirectory() as root, closing(market_archive.database(root)) as db, db:

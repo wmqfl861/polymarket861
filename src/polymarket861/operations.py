@@ -131,15 +131,18 @@ def _snapshot(root, stage, prefix, files, compress):
         target.parent.mkdir(parents=True, exist_ok=True)
         physical = blob_path(root, sha)
         opener = gzip.open if physical.suffix == ".gz" else open
-        with opener(physical, "rb") as data:
-            if compress:
-                with target.with_suffix(".gz").open("wb") as buf, gzip.GzipFile(
-                    filename="", fileobj=buf, mode="wb", mtime=0, compresslevel=6
-                ) as gz:
-                    shutil.copyfileobj(data, gz)
-            else:
-                with target.open("wb") as out:
-                    shutil.copyfileobj(data, out)
+        try:
+            with opener(physical, "rb") as data:
+                if compress:
+                    with target.with_suffix(".gz").open("wb") as buf, gzip.GzipFile(
+                        filename="", fileobj=buf, mode="wb", mtime=0, compresslevel=6
+                    ) as gz:
+                        shutil.copyfileobj(data, gz)
+                else:
+                    with target.open("wb") as out:
+                        shutil.copyfileobj(data, out)
+        except (EOFError, gzip.BadGzipFile, zlib.error) as exc:
+            raise ValueError(f"unreadable archived original: {sha}") from exc
         files[(prefix / name).as_posix()] = sha
     for folder in PORTABLE_FOLDERS:
         for path in sorted((root / folder).rglob("*")):
