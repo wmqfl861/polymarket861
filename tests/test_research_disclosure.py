@@ -17,7 +17,7 @@ from polymarket861 import (
     store,
 )
 
-CANARY = "WITHHELD_LABEL_73x19_PRIVATE_NEWS"
+CANARY = "WITHHELD_LABEL_47x19_PRIVATE_NEWS"
 FEATURES = {"skip_host_skill_discovery", *rw._DISABLED}
 
 
@@ -77,10 +77,10 @@ class ResearchDisclosureTests(unittest.TestCase):
             "inputs": {
                 "topic": topic,
                 "free_text": CANARY,
-                "nested": {"score": [73, 19]},
+                "nested": {"score": [47, 19]},
                 **(inputs or {}),
             },
-            "dependencies": {CANARY: {"goals": [73, 19], "private": CANARY}},
+            "dependencies": {CANARY: {"goals": [47, 19], "private": CANARY}},
         }
         (work / "input.json").write_text(json.dumps(original))
         manifest = rw.prepare(work, self.state, None)
@@ -112,7 +112,7 @@ class ResearchDisclosureTests(unittest.TestCase):
                 {
                     "fixture_id": f"{CANARY}/{i}",
                     "status": "scored" if i < count else "pending",
-                    "goals": [73, 19],
+                    "goals": [47, 19],
                     "result_locator": CANARY,
                 }
                 for i in range(10)
@@ -406,7 +406,7 @@ class ResearchDisclosureTests(unittest.TestCase):
                 self.state,
                 dict(
                     fixture_id=fixture,
-                    home_goals=73,
+                    home_goals=47,
                     away_goals=19,
                     source="official",
                     locator=CANARY,
@@ -419,6 +419,7 @@ class ResearchDisclosureTests(unittest.TestCase):
         self.assertEqual((report["completed"], report["pending"]), (10, 0))
         visible, work = self.prepare("round")
         sample = next(iter(visible["released_samples"].values()))
+        self.assertNotIn("[47,19]", store.canonical(visible))
         self.assertIsNone(sample["mean_score"])
         origins = rw._verify_round_origins(self.state, work, visible["manifest"])
         self.assertEqual(
