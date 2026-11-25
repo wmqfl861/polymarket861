@@ -9,7 +9,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from . import experiment_statistics as stats
-from . import football, forward_window, store
+from . import dbscope, football, forward_window, store
 
 METHOD = "T60-final-schedule-result-lag24h-v1"
 BENCHMARK = tuple(f"{y}-{(y + 1) % 100:02}" for y in range(2021, 2026))
@@ -37,7 +37,7 @@ def source_digest(names):
 
 def _db(data_dir):
     db = store.connect(data_dir)
-    db.executescript(SCHEMA)
+    dbscope.prepare(db, "model-study", SCHEMA)
     return db
 
 

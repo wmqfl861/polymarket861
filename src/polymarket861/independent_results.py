@@ -15,7 +15,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
-from . import store
+from . import dbscope, store
 from .result_feed import AGENT
 
 SOURCE = "wikipedia-en-epl"
@@ -110,7 +110,7 @@ def _receive(root, year, teams):
         },
     )
     with closing(store.connect(root)) as db:
-        db.executescript(_SCHEMA)
+        dbscope.prepare(db, "independent-results", _SCHEMA)
         with db:
             db.execute(
                 "INSERT INTO epl_wiki_receipts VALUES(?,?,?,?,?,?)",
@@ -447,7 +447,7 @@ def sync(root, year, fixtures, at=None):
     )
     delay = timedelta(minutes=30) if hot else timedelta(hours=6 if outstanding else 24)
     with closing(store.connect(root)) as db:
-        db.executescript(_SCHEMA)
+        dbscope.prepare(db, "independent-results", _SCHEMA)
         with db:
             db.execute("BEGIN IMMEDIATE")
             check = db.execute(
