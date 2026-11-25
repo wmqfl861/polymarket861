@@ -65,12 +65,13 @@ _SYMBOLS = {
     "pipeline.py": ("_forecast_arms",),
     "news.py": (
         "snapshot",
-        "_grounded",
-        "fixture_relevant",
-        "_prior_states",
-        "_wire_previous",
-        "_wire_absence",
-        "_wire_projection",
+        # These writers choose the claimant, persist effective/first-observed
+        # times and tie the upstream state to its original receipt. The reader
+        # alone cannot identify a change to a value already written to SQLite.
+        "_extract_pending",
+        "_collect_wire",
+        "_poll_proof",
+        "_wire_unmatched",
     ),
     # The adapter parses/quarantines native rows. The claimant is invoked from
     # news._extract_pending, so it is a separate root (including WIRE_MODEL).
@@ -86,6 +87,10 @@ _SYMBOLS = {
     "evidence_sources.py": ("name_key", "source_at", "granted"),
     "result_freshness.py": ("_AS_OF",),
 }
+
+# Writers call the connection / schema installer for storage. A new index or
+# SQLite connection option changes the physical release, not the news policy.
+_STORAGE_ONLY = {"news.py": {"_db"}}
 
 
 @lru_cache(maxsize=128)
@@ -112,6 +117,7 @@ def _symbol_digest(path, physical_sha, roots):
             )
     selected = {}
     pending = set(roots)
+    storage_only = _STORAGE_ONLY.get(path.name, ())
     while pending:
         name = pending.pop()
         if name in selected:
@@ -127,7 +133,9 @@ def _symbol_digest(path, physical_sha, roots):
         pending.update(
             n.id
             for n in ast.walk(node)
-            if isinstance(n, ast.Name) and n.id in definitions
+            if isinstance(n, ast.Name)
+            and n.id in definitions
+            and n.id not in storage_only
         )
     return store.digest(selected)
 

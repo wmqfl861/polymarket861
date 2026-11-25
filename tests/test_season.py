@@ -394,10 +394,11 @@ class SeasonTests(unittest.TestCase):
             missed = db.execute(
                 "SELECT role,detail,deadline FROM season_slots WHERE state='missed'"
             ).fetchall()
-            self.assertEqual(len(missed), 7)
+            self.assertEqual(len(missed), 37)
+            self.assertEqual(sum(r["role"] == "forecast_book" for r in missed), 30)
             self.assertEqual(
                 {r["role"] for r in missed},
-                {"decision_book", "execution_book", "decision", "recover"},
+                {"forecast_book", "decision_book", "execution_book", "decision", "recover"},
             )
             self.assertEqual(
                 {json.loads(r["detail"])["horizon"] for r in missed}, {"T-24h", "T-60m"}
@@ -410,7 +411,7 @@ class SeasonTests(unittest.TestCase):
                 )
             )
             self.assertEqual(
-                db.execute("SELECT count(*) FROM season_alerts").fetchone()[0], 7
+                db.execute("SELECT count(*) FROM season_alerts").fetchone()[0], 9
             )
             self.assertEqual(
                 db.execute(
@@ -429,7 +430,7 @@ class SeasonTests(unittest.TestCase):
                         "critical_windows_last_seven_days"
                     ]
                 ),
-                7,
+                37,
             )
 
     def test_reinstated_schedules_restore_only_observable_slots(self):
@@ -524,9 +525,9 @@ class SeasonTests(unittest.TestCase):
                 )
             ]
             self.assertEqual(
-                sum(r["reason"] == "collector_window_missed" for r in reasons), 5
+                sum(r["reason"] == "collector_window_missed" for r in reasons), 20
             )
-            self.assertEqual(sum(r["reason"] == "first_seen_late" for r in reasons), 2)
+            self.assertEqual(sum(r["reason"] == "first_seen_late" for r in reasons), 17)
             self.assertTrue(
                 all(
                     r["schedule_seen_at"] == store.iso(early)
@@ -554,7 +555,7 @@ class SeasonTests(unittest.TestCase):
                     (another,),
                 )
             ]
-            self.assertEqual(len(restored_rows), 7)
+            self.assertEqual(len(restored_rows), 37)
             self.assertTrue(
                 all(
                     r["reason"] == "reschedule_seen_late"

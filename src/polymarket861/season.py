@@ -21,6 +21,14 @@ from . import (
     season_readiness,
     store,
 )
+from .pipeline import HORIZONS
+
+# One native batch per cohort. An eight-second request window leaves margin
+# inside the comparison's 30-second receive-time limit at a 20-second cadence.
+_FORECAST_BOOK_SECONDS = 20
+_FORECAST_BOOK_STEP = timedelta(seconds=_FORECAST_BOOK_SECONDS)
+_FORECAST_BOOK_BUDGET = timedelta(seconds=8)
+_URGENT_BOOKS = "role IN ('execution_book','closing_book','decision_book')"
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS season_fixtures(
@@ -124,8 +132,46 @@ def _schedule_origin(db, root, fixture, kick, at):
     return None, None, boundary is not None
 
 
+def _missed_detail(horizon, target, deadline, now, seen, planned, revised, source):
+    if not seen:
+        reason = "schedule_observation_unverified"
+    elif seen > deadline:
+        reason = "reschedule_seen_late" if revised else "first_seen_late"
+    else:
+        reason = "collector_window_missed"
+    return {
+        "reason": reason,
+        "horizon": horizon,
+        "scheduled_at": target,
+        "deadline": deadline,
+        "schedule_seen_at": seen,
+        "first_planned_at": planned,
+        "attribution_version": 3,
+        "checked_at": now,
+        "schedule_source_sha256": source,
+    }
+
+
+def _slot_alert(db, key, fixture, role, message, stamp, cause):
+    if role == "forecast_book":
+        # Every short sample retains its own detail. An outage need only page
+        # once for the same fixture, horizon and cause.
+        season_alerts.report_cause(db, fixture, role, cause, message, stamp)
+    else:
+        _alert(db, key, fixture, role, message)
+
+
 def _critical_windows(
-    db, fixture, kick, known_delays, now, schedule_seen, first_planned, revised, source
+    db,
+    fixture,
+    kick,
+    known_delays,
+    now,
+    schedule_seen,
+    first_planned,
+    revised,
+    source,
+    upgrading_forecast_books,
 ):
     """Record fixed measurement opportunities even if discovery happened after a cutoff."""
 
@@ -133,23 +179,23 @@ def _critical_windows(
         key = _add(db, fixture, store.iso(kick), target, deadline, role, stage)
         if deadline >= now:
             return
-        if schedule_seen is None:
-            reason = "schedule_observation_unverified"
-        elif schedule_seen > deadline:
-            reason = "reschedule_seen_late" if revised else "first_seen_late"
-        else:
-            reason = "collector_window_missed"
-        detail = {
-            "reason": reason,
-            "horizon": horizon,
-            "scheduled_at": store.iso(target),
-            "deadline": store.iso(deadline),
-            "schedule_seen_at": store.iso(schedule_seen) if schedule_seen else None,
-            "first_planned_at": store.iso(first_planned),
-            "attribution_version": 3,
-            "checked_at": store.iso(now),
-            "schedule_source_sha256": source,
-        }
+        detail = _missed_detail(
+            horizon,
+            store.iso(target),
+            store.iso(deadline),
+            store.iso(now),
+            store.iso(schedule_seen) if schedule_seen else None,
+            store.iso(first_planned),
+            revised,
+            source,
+        )
+        if (
+            role == "forecast_book"
+            and upgrading_forecast_books
+            and detail["reason"] == "collector_window_missed"
+        ):
+            detail["reason"] = "forecast_sampling_added_after_window"
+        reason = detail["reason"]
         changed = db.execute(
             "UPDATE season_slots SET state='missed',owner=NULL,until=NULL,detail=? "
             "WHERE key=? AND state IN ('pending','superseded')",
@@ -176,18 +222,47 @@ def _critical_windows(
                     (f"{reason} {horizon} deadline {store.iso(deadline)}", key),
                 )
         if changed:
-            _alert(
+            _slot_alert(
                 db,
                 key,
                 fixture,
                 role,
                 f"{reason} {horizon} deadline {store.iso(deadline)}",
+                store.iso(now),
+                f"{horizon}/{reason}",
             )
 
-    for hours, horizon in ((24, "T-24h"), (1, "T-60m")):
-        cutoff = kick - timedelta(hours=hours)
-        record(cutoff - timedelta(seconds=25), cutoff, "decision_book", "book", horizon)
-        if hours == 1:
+    forecast_windows = []
+    for horizon, offset in HORIZONS.items():
+        cutoff = kick - offset
+        decision_target = cutoff - timedelta(seconds=25)
+        target = cutoff - runner._WINDOW - _FORECAST_BOOK_STEP / 2
+        forecast_windows.append((target, decision_target))
+        # Older plans contain minute books in the same T-60m window. Keep
+        # receipts, active leases and terminal diagnoses across an upgrade.
+        db.execute(
+            "UPDATE season_slots SET state='superseded',detail=? WHERE fixture=? AND kickoff=? "
+            "AND role='periodic' AND stage='book' AND state='pending' "
+            "AND target>=? AND target<? AND deadline>=?",
+            (
+                store.canonical({"reason": "forecast_window_sampling"}),
+                fixture,
+                store.iso(kick),
+                store.iso(target),
+                store.iso(decision_target),
+                store.iso(now),
+            ),
+        )
+        while target < decision_target:
+            # The final independent native sample is 30s before the cutoff.
+            # Release its worker before the original nominal decision request.
+            deadline = min(
+                target + _FORECAST_BOOK_BUDGET, decision_target - timedelta(seconds=1)
+            )
+            record(target, deadline, "forecast_book", "book", horizon)
+            target += _FORECAST_BOOK_STEP
+        record(decision_target, cutoff, "decision_book", "book", horizon)
+        if horizon == "T-60m":
             for seconds in (15, 4):
                 record(
                     cutoff - timedelta(seconds=seconds),
@@ -201,7 +276,7 @@ def _critical_windows(
             record(
                 target, target + timedelta(seconds=5), "execution_book", "book", horizon
             )
-            if hours == 1:
+            if horizon == "T-60m":
                 record(
                     target + timedelta(seconds=6),
                     target + timedelta(seconds=70),
@@ -209,6 +284,7 @@ def _critical_windows(
                     "paper",
                     horizon,
                 )
+    return forecast_windows
 
 
 def _plan(root, now):
@@ -297,7 +373,8 @@ def _plan(root, now):
             ).fetchone()
             version = store.digest(
                 [
-                    "critical-windows-v3/hourly-far-books",
+                    "critical-windows-v3/hourly-far-books/forecast-window",
+                    _FORECAST_BOOK_SECONDS,
                     kickoff,
                     latest["received_at"],
                     latest["sha"],
@@ -355,6 +432,7 @@ def _plan(root, now):
                             "attribution_version": 3,
                             "version": version,
                             "far_book_minutes": 60,
+                            "forecast_book_seconds": _FORECAST_BOOK_SECONDS,
                         }
                     ),
                     store.iso(now),
@@ -364,11 +442,12 @@ def _plan(root, now):
             if (
                 row["prior"] == kickoff
                 and old.get("attribution_version") == 3
+                and old.get("forecast_book_seconds") == _FORECAST_BOOK_SECONDS
                 and old.get("schedule_seen_at") == seen_text
                 and old.get("known_delays") == known_delays
             ):
                 continue
-            _critical_windows(
+            forecast_windows = _critical_windows(
                 db,
                 tag,
                 kick,
@@ -378,18 +457,11 @@ def _plan(root, now):
                 planned,
                 revised or has_prior,
                 source,
+                bool(row["prior"] == kickoff and "forecast_book_seconds" not in old),
             )
 
             if row["prior"] != kickoff:
-                _add(
-                    db,
-                    tag,
-                    kickoff,
-                    now,
-                    now + timedelta(seconds=60),
-                    "initial",
-                    "book",
-                )
+                _startup_book(db, tag, kickoff, now, "initial")
                 _add(
                     db,
                     tag,
@@ -414,7 +486,9 @@ def _plan(root, now):
                         seconds=12 if role == "closing_book" else 45
                     )
                     before = int((kick - target).total_seconds())
-                    if (
+                    if not any(
+                        start <= target < end for start, end in forecast_windows
+                    ) and (
                         role == "closing_book"
                         or before <= 48 * 3600
                         or before % 3600 == 0
@@ -438,6 +512,17 @@ def _plan(root, now):
                         "book",
                     )
                 cursor = target
+
+
+def _startup_book(db, fixture, kickoff, now, role):
+    stamp = store.iso(now)
+    if not db.execute(
+        "SELECT 1 FROM season_slots WHERE fixture=? AND kickoff=? AND stage='book' "
+        "AND role IN ('forecast_book','decision_book','closing_book','periodic') "
+        "AND state IN ('pending','running') AND target<=? AND deadline>=? LIMIT 1",
+        (fixture, kickoff, stamp, stamp),
+    ).fetchone():
+        _add(db, fixture, kickoff, now, now + timedelta(seconds=60), role, "book")
 
 
 def _status_events(root, fixture, at):
@@ -612,6 +697,7 @@ def _slot(root, item):
             workers=2,
             discovery=discovery,
             deadline=item["deadline"],
+            native_only=item["role"] == "forecast_book",
         )
     rows = result["observations"]
     deadline = store.instant(item["deadline"])
@@ -620,6 +706,15 @@ def _slot(root, item):
         for r in rows
         if r.get("observed_at") and store.instant(r["received_at"]) <= deadline
     ]
+    if item["role"] == "forecast_book":
+        good = [
+            r
+            for r in good
+            if item["target"] <= r["received_at"]
+            and r["bids"]
+            and r["asks"]
+            and r["pregame"] is True
+        ]
     return {
         "books": len(rows),
         "fresh_by_deadline": len(good),
@@ -635,6 +730,11 @@ def _slot(root, item):
         "batch_error": result["batch_error"],
         "retry_at": result.get("retry_at"),
         "discovery_gaps": result["discovery_gaps"],
+        **(
+            {"token_errors": {r["token_id"]: r["error"] for r in rows if "error" in r}}
+            if item["role"] == "forecast_book"
+            else {}
+        ),
         **{
             k: result[k]
             for k in (
@@ -653,14 +753,41 @@ def _slot(root, item):
 
 def _expire(db, now):
     expired = db.execute(
-        "SELECT key,fixture,role,stage,target FROM season_slots WHERE state IN ('pending','running') "
+        "SELECT key,fixture,kickoff,role,target,deadline FROM season_slots WHERE state IN ('pending','running') "
         "AND deadline<? AND (state='pending' OR until<?)",
         (now, now),
     ).fetchall()
     for row in expired:
+        detail = None
+        if row["role"] == "forecast_book":
+            saved = db.execute(
+                "SELECT plan FROM season_fixtures WHERE fixture=? AND kickoff=?",
+                (row["fixture"], row["kickoff"]),
+            ).fetchone()
+            plan = json.loads(saved[0]) if saved else {}
+            horizon = _book_horizon(row)
+            detail = _missed_detail(
+                horizon,
+                row["target"],
+                row["deadline"],
+                now,
+                plan.get("schedule_seen_at"),
+                plan.get("first_planned_at"),
+                False,
+                plan.get("schedule_source_sha256"),
+            )
+            _slot_alert(
+                db,
+                row["key"],
+                row["fixture"],
+                row["role"],
+                f"{detail['reason']} {horizon} deadline {row['deadline']}",
+                now,
+                f"{horizon}/{detail['reason']}",
+            )
         db.execute(
-            "UPDATE season_slots SET state='missed',owner=NULL,until=NULL WHERE key=?",
-            (row["key"],),
+            "UPDATE season_slots SET state='missed',owner=NULL,until=NULL,detail=coalesce(?,detail) WHERE key=?",
+            (store.canonical(detail) if detail else None, row["key"]),
         )
         if row["role"] in (
             "decision_book",
@@ -676,6 +803,11 @@ def _expire(db, now):
                 row["role"],
                 "timed observation missing at " + row["target"],
             )
+
+
+def _book_horizon(row):
+    until_kickoff = store.instant(row["kickoff"]) - store.instant(row["target"])
+    return min(HORIZONS, key=lambda h: abs(until_kickoff - HORIZONS[h]))
 
 
 _SERVICES = {
@@ -847,9 +979,13 @@ class Coordinator:
                 state = season_health.paper_state(db, result, row, stamp)
             elif kind == "book" and result.get("no_frozen_intents"):
                 state = "done"
-            elif kind == "book" and not result.get("fresh_by_deadline"):
+            elif kind == "book" and not error and not result.get("fresh_by_deadline"):
                 state = "gap"
-            elif kind == "book" and result["fresh_by_deadline"] < result["books"]:
+            elif (
+                kind == "book"
+                and not error
+                and result["fresh_by_deadline"] < result["books"]
+            ):
                 state = "partial"
             elif kind == "metadata" and (error or result.get("gaps")):
                 state = "gap"
@@ -884,7 +1020,7 @@ class Coordinator:
                     db, row["fixture"], "paper", "task_exception", error, stamp
                 )
             elif state in ("error", "gap", "partial") and kind != "paper":
-                _alert(
+                _slot_alert(
                     db,
                     row["key"],
                     row["fixture"],
@@ -893,8 +1029,11 @@ class Coordinator:
                     or str(
                         result.get("batch_error")
                         or result.get("gaps")
+                        or result.get("discovery_gaps")
                         or "no verified timely observation"
                     ),
+                    stamp,
+                    f"{_book_horizon(row)}/{state}",
                 )
             detail_error = error
             if kind == "paper" and state == "error" and not detail_error:
@@ -975,15 +1114,7 @@ class Coordinator:
                             store.iso(now - timedelta(seconds=90)),
                         ),
                     ):
-                        _add(
-                            db,
-                            f["fixture"],
-                            f["kickoff"],
-                            now,
-                            now + timedelta(seconds=60),
-                            "resume",
-                            "book",
-                        )
+                        _startup_book(db, f["fixture"], f["kickoff"], now, "resume")
                     _alert(
                         db,
                         store.digest(["season_restart", previous[0]]),
@@ -1044,15 +1175,40 @@ class Coordinator:
                 free = size - sum(kind == stage for kind, _ in self.futures.values())
                 if free <= 0:
                     continue
+                # Critical requests have hard venue deadlines. Research samples
+                # share the normal book pool and yield both to due requests and
+                # to fixtures needing a worker before the sample can finish.
+                priority = (
+                    f"CASE WHEN {_URGENT_BOOKS} THEN 0 ELSE 1 END,"
+                    if stage == "book"
+                    else ""
+                )
                 rows = db.execute(
-                    "WITH pick AS (SELECT s.*,row_number() OVER(PARTITION BY fixture ORDER BY deadline,key) n FROM season_slots s "
+                    f"WITH pick AS (SELECT s.*,row_number() OVER(PARTITION BY fixture ORDER BY {priority}deadline,key) n FROM season_slots s "
                     "WHERE stage=? AND target<=? AND deadline>=? AND (state='pending' OR (state='running' AND until<?)) "
                     "AND NOT EXISTS(SELECT 1 FROM season_retries r WHERE r.slot=s.key AND r.not_before>?) "
                     "AND NOT EXISTS(SELECT 1 FROM season_slots a WHERE a.stage=s.stage AND a.fixture=s.fixture AND a.state='running' AND a.until>=?)) "
-                    "SELECT * FROM pick WHERE n=1 ORDER BY deadline,target,fixture LIMIT ?",
-                    (stage, stamp, stamp, stamp, stamp, stamp, free),
+                    f"SELECT * FROM pick WHERE n=1 ORDER BY {priority}deadline,target,fixture",
+                    (stage, stamp, stamp, stamp, stamp, stamp),
                 ).fetchall()
+                imminent = {}
+                if any(row["role"] == "forecast_book" for row in rows):
+                    imminent = dict(
+                        db.execute(
+                            f"SELECT fixture,min(target) FROM season_slots WHERE stage='book' AND {_URGENT_BOOKS} "
+                            "AND state='pending' AND target>? AND target<=? GROUP BY fixture",
+                            (stamp, store.iso(now + _FORECAST_BOOK_BUDGET)),
+                        )
+                    )
                 for row in rows:
+                    if row["role"] == "forecast_book":
+                        reserved = {
+                            fixture
+                            for fixture, start in imminent.items()
+                            if start <= row["deadline"]
+                        }
+                        if row["fixture"] in reserved or len(reserved) >= free:
+                            continue
                     db.execute(
                         "UPDATE season_slots SET state='running',owner=?,until=? WHERE key=?",
                         (
@@ -1067,6 +1223,9 @@ class Coordinator:
                     fut = self.pools[stage].submit(_slot, self.root, item)
                     self.futures[fut] = (stage, dict(row))
                     added += 1
+                    free -= 1
+                    if not free:
+                        break
             db.execute(
                 "INSERT INTO season_services(service,next_at,updated) VALUES('heartbeat','',?) ON CONFLICT(service) DO UPDATE SET updated=excluded.updated",
                 (stamp,),
@@ -1115,7 +1274,7 @@ def status(root, year=None):
             for r in db.execute(
                 "SELECT s.role,s.state,count(*) AS slots FROM season_slots s JOIN season_fixtures f "
                 "ON f.fixture=s.fixture AND f.kickoff=s.kickoff WHERE s.deadline>=? AND s.deadline<=? "
-                "AND s.role IN ('decision_book','execution_book','decision','recover') GROUP BY s.role,s.state",
+                "AND s.role IN ('forecast_book','decision_book','execution_book','decision','recover') GROUP BY s.role,s.state",
                 (store.iso(now - timedelta(days=7)), store.iso(now)),
             )
         ]

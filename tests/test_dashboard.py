@@ -124,6 +124,68 @@ class DashboardTests(unittest.TestCase):
 
 class DashboardBrowserTests(unittest.TestCase):
     @unittest.skipUnless(os.environ.get("PM861_TEST_CHROMIUM"), "optional Chromium browser smoke test")
+    def test_news_market_panel_explains_source_proof_and_quote_counts_in_chinese(self):
+        from playwright.sync_api import sync_playwright
+        from polymarket861 import news_market
+
+        free = {"status": "reviewed_route_available", "reviewed_open_f24_release_keys": ["reviewed-release-key"]}
+        unavailable = {"status": "no_reviewed_free_source", "action": "internal action details"}
+        permission = {"status": "local_permission_required", "local_permission_reason": "internal permission details"}
+        missing = {"reason": "missing_verified_actual_kickoff"}
+        verified = {"kickoff_proof": {"actual_kickoff": "2026-08-12T14:00Z"}, "missing": {}}
+        priced = verified | {"endpoints": {"home_win": {
+            "no_news": 0.40, "with_news": 0.42, "close": 0.46,
+            "direction": "toward", "market_drift_agreement": "toward", "distance_gain_pp": 2.0,
+        }}}
+        cases = [
+            ("round", "尚无来源", unavailable, [missing], "暂无通过审核的免费来源", "无法采集新的实际开球凭据"),
+            ("news-study", "等待开球", free, [missing], "可导入已审核的 F24", "等待核验相应比赛上半场"),
+            ("news-study", "凭据无效", free, [{"reason": "invalid_actual_kickoff_evidence"}], "可导入已审核的 F24", "实际开球记录未通过核验"),
+            ("news-accumulation", "缺少盘口", permission, [verified], "免费采集授权尚未", "尚未取得同一合约"),
+            ("news-accumulation", "已有配对", free, [missing, verified, priced], "可导入已审核的 F24", "已有同一合约"),
+        ]
+        reports = []
+        for kind, key, capability, observations, _, _ in cases:
+            rows = [{"sealed": True, "timely_news_coverage": True, "implementation": "v1", "market_close": obs}
+                    for obs in observations]
+            make = news_market.coverage if kind == "news-accumulation" else news_market.summary
+            payload = {"market_close": make(rows, capability, "formal")}
+            reports.append({"kind": kind, "key": key, "payload": {"news_study": payload} if kind == "round" else payload})
+        reports.append({"kind": "news-study", "key": "旧版轮报", "payload": {"market_close": {
+            "status": "no_matched_market_quotes", "eligible_seals": 2, "paired_fixtures": 0,
+        }}})
+        with tempfile.TemporaryDirectory() as tmp, sync_playwright() as playwright:
+            path = Path(tmp) / "coverage.html"
+            path.write_text(render_dashboard(reports), encoding="utf-8")
+            browser = playwright.chromium.launch(executable_path=os.environ["PM861_TEST_CHROMIUM"])
+            try:
+                page = browser.new_page()
+                page.goto(path.as_uri())
+                page.locator("[data-page=rounds]").click()
+                box = page.locator("#detail section", has=page.get_by_role("heading", name="新闻调整与临近开球的盘口"))
+                for _, key, _, observations, source, status in cases:
+                    with self.subTest(key=key):
+                        page.locator("#search").fill(key)
+                        shown = box.inner_text()
+                        self.assertIn(source, shown)
+                        self.assertIn(status, shown)
+                        for label in ("合格赛前封存场次", "已核实实际开球时间的场次", "有配对盘口的场次"):
+                            self.assertIn(label, shown)
+                        self.assertEqual(box.locator(".metric-value").all_text_contents(), [
+                            str(len(observations)), str(sum(bool(o.get("kickoff_proof")) for o in observations)),
+                            str(sum(bool(o.get("endpoints")) for o in observations)),
+                        ])
+                        self.assertNotIn("internal", shown)
+                        self.assertNotIn("reviewed-release-key", shown)
+                        self.assertNotIn("_", shown)
+                page.locator("#search").fill("旧版轮报")
+                self.assertEqual(box.locator(".metric-value").all_text_contents(), ["2", "0"])
+                self.assertNotIn("实际开球时间来源", box.inner_text())
+                self.assertNotIn("已核实实际开球", box.inner_text())
+            finally:
+                browser.close()
+
+    @unittest.skipUnless(os.environ.get("PM861_TEST_CHROMIUM"), "optional Chromium browser smoke test")
     def test_cross_season_news_report_distinguishes_measured_and_missing_price_pairs(self):
         from playwright.sync_api import sync_playwright
 

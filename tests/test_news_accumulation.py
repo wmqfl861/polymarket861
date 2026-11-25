@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import test_opportunity as market
 import test_round_comparisons as native
-from kickoff_fixture import capture_example
+from kickoff_fixture import capture_example, open_release
 from polymarket861 import (
     kickoff_proof,
     news_accumulation,
@@ -74,6 +74,160 @@ class NativeCloseTests(unittest.TestCase):
     def read(self):
         with closing(store.connect(self.root)) as db:
             return news_market.observe(db, self.root, self.game, self.entry, self.pair)
+
+    def close_status(self):
+        with closing(store.connect(self.root)) as db:
+            source = news_market.source_capability(db)
+        return news_market.summary(
+            [
+                {
+                    "sealed": True,
+                    "timely_news_coverage": True,
+                    "implementation": "test",
+                    "market_close": self.read(),
+                }
+            ],
+            source,
+            "formal",
+        )
+
+    def test_source_route_fixture_proof_and_native_books_are_distinct(self):
+        with (
+            patch.dict(kickoff_proof.OPEN_RELEASES, clear=True),
+            patch.dict(kickoff_proof.FREE_ESPN_PERMISSIONS, clear=True),
+            market.at(market.KICK + timedelta(hours=3)),
+        ):
+            kickoff_proof.OPEN_RELEASES["unreviewed"] = {}
+            unavailable = self.close_status()
+            self.assertEqual(unavailable["status"], "actual_kickoff_source_unavailable")
+            self.assertEqual(unavailable["source_capability"]["admission_commands"], [])
+            key, spec, xml, license_file = open_release(
+                self.root, self.game, 78, market.KICK
+            )
+            kickoff_proof.OPEN_RELEASES[key] = spec
+            waiting = self.close_status()
+            self.assertEqual(waiting["status"], "awaiting_verified_actual_kickoff")
+            self.assertEqual(
+                waiting["source_capability"]["reviewed_open_f24_release_keys"], [key]
+            )
+            self.assertIn(
+                "ledger-import-open-kickoff",
+                waiting["source_capability"]["admission_commands"][0],
+            )
+            proof = kickoff_proof.import_open(
+                self.root,
+                market.FID,
+                "78",
+                key,
+                xml,
+                license_file,
+                schedule_version=self.game["version"],
+            )
+            absent = self.close_status()
+            self.assertEqual(
+                (
+                    absent["status"],
+                    absent["eligible_seals"],
+                    absent["verified_actual_kickoffs"],
+                    absent["paired_fixtures"],
+                ),
+                ("no_matched_market_quotes", 1, 1, 0),
+            )
+            self.assertTrue(absent["missing_family_reasons"])
+            store.blob_path(self.root, proof["source_sha256"]).write_bytes(b"corrupt")
+            self.assertEqual(
+                self.close_status()["status"], "invalid_actual_kickoff_evidence"
+            )
+
+    def test_retained_espn_proof_reverifies_at_original_grant_time(self):
+        from polymarket861 import evidence_sources
+
+        received = market.KICK + timedelta(hours=3)
+        url = "https://publisher.example.test/event-grant"
+        timeline = {
+            "header": {
+                "id": "72",
+                "league": {"slug": "eng.1"},
+                "competitions": [
+                    {
+                        "id": "72",
+                        "date": self.game["kickoff"],
+                        "status": {"type": {"completed": True}},
+                        "competitors": [
+                            {
+                                "homeAway": side,
+                                "team": {"id": side, "displayName": self.game[side]},
+                            }
+                            for side in ("home", "away")
+                        ],
+                    }
+                ],
+            },
+            "keyEvents": [
+                {
+                    "id": "8",
+                    "type": {"text": "Kickoff"},
+                    "text": "First Half begins.",
+                    "wallclock": store.iso(market.KICK),
+                }
+            ],
+        }
+        with (
+            patch.dict(kickoff_proof.OPEN_RELEASES, clear=True),
+            patch.dict(kickoff_proof.FREE_ESPN_PERMISSIONS, clear=True),
+        ):
+            with market.at(received):
+                sha = store.archive_bytes(
+                    self.root, "test-grant", b"synthetic issuer grant"
+                )["sha256"]
+                kickoff_proof.FREE_ESPN_PERMISSIONS[sha] = url
+                self.assertEqual(
+                    self.close_status()["source_capability"]["status"],
+                    "local_permission_required",
+                )
+                grant = {
+                    "source_id": kickoff_proof.SOURCE,
+                    "upstream": "ESPN",
+                    "free": True,
+                    "status": "active",
+                    "terms_locator": url,
+                    "fields": {
+                        "schedule": {
+                            "uses": ["trial"],
+                            "methods": ["auto"],
+                            "allow_free_first_half_event_archive": True,
+                            "written_permission_locator": url,
+                            "written_permission_sha256": sha,
+                        }
+                    },
+                }
+                evidence_sources.register_source(self.root, grant)
+                self.assertEqual(
+                    self.close_status()["source_capability"]["current_espn_capture"],
+                    "capture_authorized",
+                )
+                with patch.object(
+                    kickoff_proof, "_fetch", return_value=json.dumps(timeline).encode()
+                ):
+                    kickoff_proof.capture(
+                        self.root,
+                        market.FID,
+                        "72",
+                        schedule_version=self.game["version"],
+                    )
+            with market.at(received + timedelta(hours=1)):
+                evidence_sources.register_source(
+                    self.root, grant | {"status": "disabled"}
+                )
+                final = self.close_status()
+            self.assertEqual(
+                final["source_capability"]["status"], "local_permission_required"
+            )
+            self.assertEqual(final["source_capability"]["admission_commands"], [])
+            self.assertEqual(
+                (final["verified_actual_kickoffs"], final["status"]),
+                (1, "no_matched_market_quotes"),
+            )
 
     def test_matches_frozen_clock_and_original_condition_family_at_actual_close(self):
         self.case.batch(
@@ -152,6 +306,89 @@ class NativeCloseTests(unittest.TestCase):
 
 
 class EraTests(unittest.TestCase):
+    def test_empty_stock_round_season_and_accumulation_explain_actual_close_capability(
+        self,
+    ):
+        with (
+            tempfile.TemporaryDirectory() as root,
+            patch.dict(kickoff_proof.OPEN_RELEASES, clear=True),
+            patch.dict(kickoff_proof.FREE_ESPN_PERMISSIONS, clear=True),
+        ):
+            for report in (
+                news_evaluation.evaluate_round(root, SEASON, 1),
+                news_evaluation.evaluate_season(root, SEASON),
+                news_evaluation.evaluate_accumulation(root, SEASON),
+            ):
+                close = report["market_close"]
+                self.assertEqual(close["status"], "actual_kickoff_source_unavailable")
+                self.assertFalse(close["scheduled_clock_eligible"])
+                self.assertEqual(
+                    (
+                        close["eligible_seals"],
+                        close["verified_actual_kickoffs"],
+                        close["home_win_pairs"],
+                    ),
+                    (0, 0, 0),
+                )
+                self.assertEqual(
+                    close["source_capability"]["status"], "no_reviewed_free_source"
+                )
+                self.assertIn("reviewed source release", close["action"])
+            with closing(store.connect(root)) as db:
+                stored = json.loads(
+                    db.execute(
+                        "SELECT payload FROM reports WHERE kind='news-accumulation'"
+                    ).fetchone()[0]
+                )
+            self.assertEqual(stored, report)
+
+    def test_ingestion_writers_change_era_when_treatment_or_exposure_changes(self):
+        import hashlib
+        from polymarket861 import news
+
+        code = Path(news.__file__).read_text()
+        changes = (
+            ("claims = news_sources.wire_claim(original, aliases)", "claims = []"),
+            ("effective_at=effective,", "effective_at=known,"),
+            ('first = old["first_seen_at"] if same else received', "first = received"),
+            (
+                'absence = old["absence_first_seen_at"] if old and kind and old["absence_kind"] == kind else received',
+                "absence = received",
+            ),
+            (
+                'proof["provider_state_as_of"] = store.iso(response["provider_state_as_of"])',
+                'proof["provider_state_as_of"] = received',
+            ),
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "news.py"
+
+            def fingerprint(source):
+                path.write_text(source)
+                return plan.probability_sources(
+                    root, {path.name: hashlib.sha256(source.encode()).hexdigest()}
+                )
+
+            base = fingerprint(code)
+            for old, new in changes:
+                with self.subTest(old=old):
+                    self.assertEqual(code.count(old), 1)
+                    self.assertNotEqual(base, fingerprint(code.replace(old, new)))
+            for old, new in (
+                (
+                    "POLL_INTERVAL = timedelta(minutes=20)",
+                    "POLL_INTERVAL = timedelta(minutes=25)",
+                ),
+                (
+                    "CREATE INDEX IF NOT EXISTS news_wire_poll_team",
+                    "CREATE INDEX IF NOT EXISTS news_wire_poll_team_v2",
+                ),
+            ):
+                with self.subTest(old=old):
+                    self.assertEqual(code.count(old), 1)
+                    self.assertEqual(base, fingerprint(code.replace(old, new)))
+
     def test_wire_mapping_quarantine_and_claimant_change_era_while_transport_does_not(
         self,
     ):

@@ -597,7 +597,7 @@ def _complete_calendar(records):
     )
 
 
-def _summary(records, season, rnd, horizon, mode, policy=None):
+def _summary(records, season, rnd, horizon, mode, policy=None, capability=None):
     done = [r for r in records if r["scored"]]
     expected = max(10 if rnd else 380, len(records))
     sealed = [r for r in records if r["sealed"]]
@@ -678,7 +678,7 @@ def _summary(records, season, rnd, horizon, mode, policy=None):
         **_means(done),
         "endpoints": metrics,
         "lines": lines,
-        "market_close": news_market.summary(records),
+        "market_close": news_market.summary(records, capability, mode),
         "affected": _means(changed),
         "covered_sample": _means(observed),
         "by_news_status": {key: _means(rows) for key, rows in sorted(slices.items())},
@@ -707,7 +707,15 @@ def round_summary(
     ]
     selected = _policy(policy, db)
     rows = list(_records(db, fixtures, horizon, mode, selected))
-    return _summary(rows, season, round_id, horizon, mode, selected)
+    return _summary(
+        rows,
+        season,
+        round_id,
+        horizon,
+        mode,
+        selected,
+        news_market.source_capability(db),
+    )
 
 
 def _evaluate(data_dir, season, rnd, horizon, mode, policy):
@@ -722,7 +730,15 @@ def _evaluate(data_dir, season, rnd, horizon, mode, policy):
         else:
             fixtures = store.eligible_fixture_rows(db, season=season)
             rows = list(_records(db, fixtures, horizon, mode, selected))
-            result = _summary(rows, season, None, horizon, mode, selected)
+            result = _summary(
+                rows,
+                season,
+                None,
+                horizon,
+                mode,
+                selected,
+                news_market.source_capability(db),
+            )
             groups = defaultdict(list)
             for row in rows:
                 groups[row["round_id"]].append(row)
@@ -785,7 +801,9 @@ def evaluate_accumulation(
                 db, store.eligible_fixture_rows(db, season=season), horizon, mode
             )
         ]
-        result = news_accumulation.summarize(records, seasons, horizon, mode)
+        result = news_accumulation.summarize(
+            records, seasons, horizon, mode, news_market.source_capability(db)
+        )
         key = f"{through_season}/{horizon}/{mode}/{news_study_plan.PLAN_SHA256}"
         prev = db.execute(
             "SELECT payload FROM reports WHERE kind='news-accumulation' AND key=?",

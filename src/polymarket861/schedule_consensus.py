@@ -6,7 +6,7 @@ import hashlib
 import json
 import re
 from collections import Counter, defaultdict
-from contextlib import closing, contextmanager, nullcontext
+from contextlib import ExitStack, closing, contextmanager, nullcontext
 from contextvars import ContextVar
 from dataclasses import dataclass
 from datetime import timedelta
@@ -523,7 +523,9 @@ def readiness(
     connection = (
         nullcontext(_connection) if _connection is not None else closing(_db(root))
     )
-    with connection as db, dbscope.bind(root, db) as snapshot:
+    with ExitStack() as stack:
+        db = stack.enter_context(connection)
+        snapshot = dbscope.for_connection(db) or stack.enter_context(dbscope.bind(root, db))
         if not db.in_transaction:
             db.execute("BEGIN")
         frontier = _frontier(db) if _with_frontier else None
@@ -686,6 +688,7 @@ def readiness(
                     and f["precision"] != "date"
                     and not review
                     and not seal_reason
+                    and len(markets) <= 1
                     and not any(e["kickoff"] != f["kickoff"] for e in markets)
                     and (ol is None or ol.get("kickoff") == f["kickoff"])
                     and pairs[f["season"], rnd, *pair] == 1
@@ -743,6 +746,25 @@ def eligible_news(report):
         for f in report["fixtures"]
         if f["news_eligible"]
     }
+
+
+class NewsScheduleChanged(ValueError):
+    """The claimed fixture lacks an admissible schedule for an event publication."""
+
+
+def require_news(root, db, fixture, at, claimed_status):
+    """Reopen the latest native originals in the event writer's locked snapshot."""
+    fid = fixture["fixture_id"]
+    report = readiness(root, fixture_ids={fid}, at=at, _connection=db)
+    row = next(iter(report["fixtures"]), None)
+    if not row or (row["version"], row["kickoff"]) != (fixture["version"], fixture["kickoff"]):
+        raise NewsScheduleChanged("news schedule registration changed or the fixture started")
+    if not row["news_eligible"] or (claimed_status == "confirmed" and row["status"] != "confirmed"):
+        raise NewsScheduleChanged("news schedule is no longer eligible: " + row["reason"])
+    if row["status"] == "confirmed":
+        oldest = min(row["openligadb"]["received_at"], row["gamma"][0]["received_at"])
+        return store.iso(store.instant(oldest) + MAX_AGE)
+    return None
 
 
 def _frontier(db):

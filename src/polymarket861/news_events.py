@@ -187,7 +187,8 @@ def _claim(root, limit, eligible_schedules):
                 (*key, ticket + i, owner, store.iso(store.instant(at) + LEASE)),
             )
             tasks.append(
-                f | {"owner": owner, "cursor": cursor, "roster_expiry": roster_expiry}
+                f | {"owner": owner, "cursor": cursor, "roster_expiry": roster_expiry,
+                     "schedule_status": eligible_schedules[f["fixture_id"], f["kickoff"], f["version"]]}
             )
         return tasks, len(games), len(due)
 
@@ -428,7 +429,7 @@ def _run(root, task, cache, history_root):
             row = _head(db, key[0])
             previous = _verified(row) if row else None
         doc, review = _report(root, task, previous, cache, history_root)
-        with _writer(root) as db, dbscope.bind(root, db):
+        with _writer(root) as db, dbscope.bind(root, db) as originals:
             at = _now()
             own = db.execute(
                 "SELECT owner FROM news_event_work WHERE fixture_id=? AND kickoff=?",
@@ -439,14 +440,11 @@ def _run(root, task, cache, history_root):
                     "status": "deferred",
                     "reason": "another worker owns this fixture",
                 }
-            latest = store.fixture_at(root, key[0], at=at, prospective=True)
-            if (
-                latest["kickoff"] != key[1]
-                or latest["precision"] == "date"
-                or at >= key[1]
-                or (doc and latest["version"] != doc["schedule_version"])
-            ):
-                raise ValueError("fixture changed or already started")
+            if doc and task["version"] != doc["schedule_version"]:
+                raise schedule_consensus.NewsScheduleChanged("event was computed on a different schedule revision")
+            schedule_expiry = schedule_consensus.require_news(
+                root, db, task, at, task["schedule_status"]
+            )
             store.ensure_unfinished_at(db, *key, at)
             roster = news_roster.frontier(db, task["season"], at)
             if _cursor(db, task, at, roster["token"]) != task["cursor"]:
@@ -456,6 +454,7 @@ def _run(root, task, cache, history_root):
                 previous["digest"] if previous else None
             ):
                 raise ValueError("previous event changed during calculation")
+            at = _now()
             item = basis | {"status": "unchanged"}
             if doc:
                 # Computing cannot legitimately cross a validity deadline or go
@@ -484,20 +483,28 @@ def _run(root, task, cache, history_root):
                     ),
                 )
                 store.put_report(db, "news-update", ident, doc | {"digest": ident})
-                if _now() >= min(review, key[1]):
-                    raise ValueError("news validity changed during calculation")
                 item.update(status="published", digest=ident, revision=doc["revision"])
             db.execute(
                 "UPDATE news_event_work SET owner=NULL,lease_until='',cursor=?,review_at=?,retry_at='',retry_manifest='',last_error=NULL WHERE fixture_id=? AND kickoff=?",
                 (task["cursor"], review, *key),
             )
+            try:
+                dbscope.recheck_originals(originals)
+            except dbscope.EvidenceChanged as exc:
+                raise schedule_consensus.NewsScheduleChanged(str(exc)) from exc
+            finished = _now()
+            if schedule_expiry and finished > schedule_expiry:
+                raise schedule_consensus.NewsScheduleChanged("native news schedule confirmation expired during publication")
+            if finished >= min(review, key[1]):
+                raise ValueError("news validity changed during calculation")
         return item
     except (ValueError, KeyError, OSError, sqlite3.OperationalError) as exc:
         reason = str(exc)
         with _writer(root) as db:
             at = store.instant(_now())
             # A newly arrived story should be eligible on the very next pass.
-            retry = at if reason == "news changed during calculation" else at + RETRY
+            schedule_changed = isinstance(exc, schedule_consensus.NewsScheduleChanged)
+            retry = at if schedule_changed or reason == "news changed during calculation" else at + RETRY
             db.execute(
                 "UPDATE news_event_work SET owner=NULL,lease_until='',cursor=?,retry_at=?,retry_manifest=?,last_error=? WHERE fixture_id=? AND kickoff=? AND owner=?",
                 (
@@ -509,6 +516,8 @@ def _run(root, task, cache, history_root):
                     task["owner"],
                 ),
             )
+        if schedule_changed:
+            basis["reason_code"] = "schedule_readiness"
         return basis | {"status": "deferred", "reason": reason}
 
 
@@ -527,7 +536,10 @@ def refresh(data_dir, *, limit=2, history_root=None):
             )
         }
     schedule = schedule_consensus.readiness(data_dir, fixture_ids=relevant, at=at) if relevant else None
-    eligible_schedules = schedule_consensus.eligible_news(schedule) if schedule else set()
+    eligible_schedules = {
+        (f["fixture_id"], f["kickoff"], f["version"]): f["status"]
+        for f in schedule["fixtures"] if f["news_eligible"]
+    } if schedule else {}
     tasks, eligible, due = _claim(data_dir, limit, eligible_schedules)
     cache = {}
     items = [_run(data_dir, t, cache, history_root) for t in tasks]
@@ -542,7 +554,10 @@ def refresh(data_dir, *, limit=2, history_root=None):
         "attempted": len(items),
         **counts,
         "items": items,
-        "schedule_blocked_fixtures": schedule["blocked_fixtures"] if schedule else [],
+        "schedule_blocked_fixtures": sorted(
+            set(schedule["blocked_fixtures"] if schedule else ())
+            | {i["fixture_id"] for i in items if i.get("reason_code") == "schedule_readiness"}
+        ),
     }
 
 

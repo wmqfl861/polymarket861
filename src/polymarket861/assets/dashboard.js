@@ -468,7 +468,35 @@
   function marketClosePanel(close, detail) {
     if (!close) return;
     const box = panel("新闻调整与临近开球的盘口");
-    metrics(box, [["时限内封存", close.eligible_seals], ["有配对盘口的场次", close.paired_fixtures]]);
+    const counts = [["合格赛前封存场次", close.eligible_seals]];
+    if (num(close.verified_actual_kickoffs) !== null)
+      counts.push(["已核实实际开球时间的场次", close.verified_actual_kickoffs]);
+    counts.push(["有配对盘口的场次", close.paired_fixtures]);
+    metrics(box, counts);
+    const capability = object(close.source_capability);
+    let source;
+    if (capability.status === "no_reviewed_free_source") source = "暂无通过审核的免费来源";
+    else if (capability.status === "local_permission_required") source = "ESPN 的免费采集授权尚未在本机生效";
+    else if (capability.status === "reviewed_route_available") {
+      const routes = [];
+      if (array(capability.reviewed_open_f24_release_keys).length) routes.push("可导入已审核的 F24 比赛事件记录");
+      if (capability.current_espn_capture === "capture_authorized") routes.push("已获授权采集 ESPN 比赛事件记录");
+      source = routes.join("，") || "已有通过审核的免费来源可用";
+    }
+    const status = {
+      actual_kickoff_source_unavailable: "目前无法采集新的实际开球凭据。",
+      awaiting_verified_actual_kickoff: "等待核验相应比赛上半场的实际开球时间。",
+      invalid_actual_kickoff_evidence: "收到的实际开球记录未通过核验。",
+      no_eligible_news_seals: "尚无符合条件的赛前新闻预测封存。",
+      requires_prospective_seal: "收盘比较需要在开球前封存预测。",
+      seal_outside_pregame_window: "按实际开球时间核对，预测封存超出了赛前窗口。",
+      unavailable_or_invalid_market_archive: "盘口原始记录缺失或未通过核验。",
+      no_matched_market_quotes: "尚未取得同一合约在预测和收盘两个时点的合格盘口。",
+      descriptive_only: "已有同一合约在预测和收盘两个时点的配对盘口。",
+      multiple_probability_eras: "已有配对盘口，按预测方法分别统计。",
+    };
+    const message = Object.hasOwn(status, close.status) ? status[close.status] : undefined;
+    facts(box, [["实际开球时间来源", source], ["盘口配对状态", message]]);
     const cohorts = close.status === "multiple_probability_eras"
       ? Object.entries(object(close.by_era)) : [["", close]];
     for (const [era, cohort] of cohorts) {
@@ -479,8 +507,9 @@
       if (era) box.append(create("h4", "", "预测方法 " + era.slice(0, 12)));
       table(box, ["方向", "合格配对", "调整朝向收盘", "调整背离收盘", "无调整", "原已相符", "平均缩短距离（百分点）"], rows);
     }
-    if (!close.paired_fixtures) box.append(create("p", "note", "暂无可核验的决策与收盘盘口配对。"));
-    box.append(create("p", "note", "正值表示有新闻预测更接近收盘参考价。实际纸面收益见模拟账本。"));
+    if (!message && !close.paired_fixtures) box.append(create("p", "note", "暂无可核验的决策与收盘盘口配对。"));
+    if (close.paired_fixtures > 0)
+      box.append(create("p", "note", "平均缩短距离为正，表示有新闻预测更接近收盘参考价。"));
     detail.append(box);
   }
 
@@ -493,6 +522,7 @@
         object(era.home_close).pairs, format(object(era.home_close).mean)]));
     if (!entries.length) box.append(create("p", "note", "尚无同一预测方法下可汇总的赛前封存。"));
     detail.append(box);
+    marketClosePanel(p.market_close, detail);
   }
 
   function newsStudy(p, detail) {

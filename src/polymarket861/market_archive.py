@@ -544,7 +544,16 @@ def capture_execution(
     )
 
 
-def capture(root, fixture, *, tokens=None, workers=4, discovery=None, deadline=None):
+def capture(
+    root,
+    fixture,
+    *,
+    tokens=None,
+    workers=4,
+    discovery=None,
+    deadline=None,
+    native_only=False,
+):
     saved = _DEADLINE.set(deadline)
     try:
         return _capture(
@@ -554,12 +563,13 @@ def capture(root, fixture, *, tokens=None, workers=4, discovery=None, deadline=N
             workers=workers,
             discovery=discovery,
             deadline=deadline,
+            native_only=native_only,
         )
     finally:
         _DEADLINE.reset(saved)
 
 
-def _capture(root, fixture, *, tokens, workers, discovery, deadline):
+def _capture(root, fixture, *, tokens, workers, discovery, deadline, native_only):
     from concurrent.futures import ThreadPoolExecutor
 
     if not 1 <= workers <= 10:
@@ -594,10 +604,15 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline):
     observed = []
     batch_error = None
     retry_at = None
-    if 1 < len(targets) <= 500:
+    if (native_only or len(targets) > 1) and 1 <= len(targets) <= 500:
         try:
             rows, reply, sha = _fetch(
-                root, "books", fixture, CLOB + "/books", {"token_ids": sorted(targets)}
+                root,
+                "books",
+                fixture,
+                CLOB + "/books",
+                {"token_ids": sorted(targets)},
+                attempts=1 if native_only else 3,
             )
             from .execution_books import native_rows
 
@@ -620,6 +635,13 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline):
                             db, market, token, by_id[token], reply, sha, times
                         )
                         pending.append((token, reply.received_at, sha, canonical(b)))
+                        if native_only and (
+                            not b["exchange_at"]
+                            or moment(b["exchange_at"]) > moment(reply.received_at)
+                        ):
+                            raise ValueError(
+                                "missing or future native exchange timestamp"
+                            )
                         observed.append(book_summary(b))
                     except (KeyError, TypeError, ValueError) as exc:
                         observed.append({"token_id": token, "error": str(exc)})
@@ -645,11 +667,15 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline):
         except (ValueError, OSError, URLError) as exc:
             batch_error = str(exc)
             retry_at = getattr(exc, "retry_at", None)
-            if retry_at:
+            if retry_at or native_only:
                 observed = [
                     {"token_id": token, "error": batch_error} for token in targets
                 ]
-    if not observed:
+    elif native_only:
+        batch_error = (
+            f"native batch requires 1 to 500 open tokens, found {len(targets)}"
+        )
+    if not observed and not native_only:
         with ThreadPoolExecutor(max_workers=workers) as pool:
             observed = list(pool.map(one, targets.items()))
     return {

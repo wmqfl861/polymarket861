@@ -91,6 +91,104 @@ class SchedulePrerequisites(unittest.TestCase):
         self.assertEqual(updates["attempted"], 0)
         self.assertEqual(news_events.list_updates(self.root), [])
 
+    def prepare_event(self):
+        self.case.ol(native.OLD)
+        self.case.gamma(native.OLD)
+        with news_events._writer(self.root) as db:
+            db.execute(
+                "INSERT INTO news_event_work(fixture_id,kickoff,ticket) VALUES(?,?,1)",
+                (native.FID, store.iso(native.OLD)),
+            )
+
+    def calculated_event(self, _root, task, _previous, _cache, _history):
+        return {
+            "fixture_id": task["fixture_id"],
+            "kickoff": task["kickoff"],
+            "cutoff": store.now_utc(),
+            "schedule_version": task["version"],
+            "state_sha256": store.digest(["new player report"]),
+        }, store.iso(self.case.time + timedelta(hours=2))
+
+    def test_new_native_disagreement_during_event_does_not_publish_or_consume_the_retry(
+        self,
+    ):
+        self.prepare_event()
+        self.case.time += timedelta(minutes=31)  # The next native round request is due.
+        finished_fit = False
+        open_schedule_db = schedules._db
+
+        def interleave(*args):
+            nonlocal finished_fit
+            event = self.calculated_event(*args)
+            self.case.time += timedelta(seconds=1)
+            self.case.ol(native.OLD + timedelta(hours=1))
+            finished_fit = True
+            return event
+
+        def no_second_writer(root):
+            if finished_fit:
+                self.fail("final news schedule validation opened a second database")
+            return open_schedule_db(root)
+
+        with (
+            patch.object(news_events, "_report", side_effect=interleave),
+            patch.object(schedules, "_db", side_effect=no_second_writer),
+        ):
+            blocked = news_events.refresh(self.root)
+        self.assertEqual((blocked["published"], blocked["deferred"]), (0, 1))
+        self.assertEqual(blocked["schedule_blocked_fixtures"], [native.FID])
+        self.assertIn("disagree", blocked["items"][0]["reason"])
+        self.assertEqual(self.case.counts(), 1)
+        self.assertEqual(news_events.list_updates(self.root), [])
+        with closing(store.connect(self.root)) as db:
+            retry = db.execute(
+                "SELECT retry_at FROM news_event_work WHERE fixture_id=?", (native.FID,)
+            ).fetchone()[0]
+        self.assertEqual(retry, store.now_utc())
+        self.case.time += timedelta(minutes=31)
+        self.case.ol(native.OLD)
+        with patch.object(news_events, "_report", side_effect=self.calculated_event):
+            recovered = news_events.refresh(self.root)
+        self.assertEqual((recovered["published"], recovered["deferred"]), (1, 0))
+        self.assertEqual(news_events.list_updates(self.root)[0]["schedule_version"], 1)
+
+    def test_event_requires_missing_or_expired_confirmation_even_for_an_ordinary_b1_fixture(
+        self,
+    ):
+        self.prepare_event()
+
+        def remove_source(*args):
+            event = self.calculated_event(*args)
+            with closing(schedules._db(self.root)) as db, db:
+                db.execute("DELETE FROM rf_native_requests")
+            return event
+
+        with patch.object(news_events, "_report", side_effect=remove_source):
+            blocked = news_events.refresh(self.root)
+        self.assertIn("missing native", blocked["items"][0]["reason"])
+        state = schedules.readiness(self.root, fixture_ids={native.FID})["fixtures"][0]
+        self.assertIsNone(state["fixed_b1_block_reason"])
+        self.assertFalse(state["news_eligible"])
+        self.case.time += timedelta(seconds=1)
+        self.case.ol(native.OLD)
+        recheck = news_events.dbscope.recheck_originals
+
+        def expire_before_commit(originals):
+            recheck(originals)
+            self.case.time += timedelta(hours=25)
+
+        with (
+            patch.object(news_events, "_report", side_effect=self.calculated_event),
+            patch.object(
+                news_events.dbscope,
+                "recheck_originals",
+                side_effect=expire_before_commit,
+            ),
+        ):
+            expired = news_events.refresh(self.root)
+        self.assertIn("expired during publication", expired["items"][0]["reason"])
+        self.assertEqual(news_events.list_updates(self.root), [])
+
     def test_fixed_b1_waits_for_bulk_placeholders_and_seals_only_the_corroborated_game(
         self,
     ):

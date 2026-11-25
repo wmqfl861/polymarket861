@@ -2,12 +2,65 @@
 
 from collections import Counter
 from datetime import timedelta
+from pathlib import Path
 from sqlite3 import DatabaseError
 from statistics import fmean
 
 from . import comparisons, football, kickoff_proof, news_study_plan, store
 
 _TOL = news_study_plan.PLAN["direction_absolute_tolerance"]
+
+
+def source_capability(db):
+    """Report acquisition routes under *this* release and current local grant.
+
+    Only resolve() can authenticate a particular existing receipt; it checks the
+    grant at the time of capture even if future captures are no longer possible.
+    """
+    releases = []
+    for key in sorted(kickoff_proof.OPEN_RELEASES):
+        try:
+            kickoff_proof._open_release(key)
+        except ValueError:
+            continue
+        releases.append(key)
+    espn = "no_reviewed_free_grant"
+    detail = None
+    if kickoff_proof.FREE_ESPN_PERMISSIONS:
+        root = Path(db.execute("PRAGMA database_list").fetchone()[2]).parent
+        try:
+            kickoff_proof._permission(root, db, store.now_utc())
+        except (ValueError, OSError) as exc:
+            espn, detail = "local_permission_unavailable", str(exc)
+        else:
+            espn = "capture_authorized"
+    commands = []
+    if releases:
+        commands.append(
+            "ledger-import-open-kickoff --fixture ID --schedule-version N --event ID --release KEY --timeline FILE --licence FILE"
+        )
+    if espn == "capture_authorized":
+        commands.append(
+            "ledger-capture-kickoff --fixture ID --schedule-version N --event ESPN_ID"
+        )
+    if commands:
+        state = "reviewed_route_available"
+        action = "For a completed matching fixture, admit the publisher's original first-half event against the schedule version in force at T-60."
+    elif espn == "local_permission_unavailable":
+        state = "local_permission_required"
+        action = "Archive the original release-reviewed ESPN grant and register its active free schedule/auto/trial source permission before capturing a completed event."
+    else:
+        state = "no_reviewed_free_source"
+        action = "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals."
+    return {
+        "status": state,
+        "reviewed_open_f24_release_keys": releases,
+        "reviewed_espn_grants": len(kickoff_proof.FREE_ESPN_PERMISSIONS),
+        "current_espn_capture": espn,
+        "local_permission_reason": detail,
+        "admission_commands": commands,
+        "action": action,
+    }
 
 
 def _reference(family, quotes):
@@ -74,18 +127,20 @@ def observe(db, root, fixture, entry, pair):
     except (KeyError, TypeError, OSError, ValueError, OverflowError):
         return {"reason": "invalid_actual_kickoff_evidence"}
     close = store.instant(proof["actual_kickoff"])
+    witness = {
+        "actual_kickoff": proof["actual_kickoff"],
+        "kickoff_proof": proof["proof_id"],
+    }
     if not cut <= store.instant(entry["sealed_at"]) < min(scheduled, close):
-        return {"reason": "seal_outside_pregame_window"}
+        return witness | {"reason": "seal_outside_pregame_window"}
     try:
         before = comparisons.frame(
             db, root, fixture, cut, cut, min(scheduled, close), prospective=True
         )
         after = comparisons._closing_frame(db, root, fixture, cut, close, True, True)
     except (DatabaseError, OSError, ValueError):
-        return {"reason": "unavailable_or_invalid_market_archive"}
-    result = {
-        "actual_kickoff": proof["actual_kickoff"],
-        "kickoff_proof": proof["proof_id"],
+        return witness | {"reason": "unavailable_or_invalid_market_archive"}
+    result = witness | {
         "input_cutoff": pair["input_cutoff"],
         "endpoints": {},
         "receipts": {},
@@ -139,27 +194,79 @@ def observe(db, root, fixture, entry, pair):
     return result
 
 
-def summary(rows):
-    missing = Counter()
+def coverage(rows, capability=None, mode=None):
+    """Per-fixture denominators; an archived receipt counts only after successful reverification."""
+    observed = [r.get("market_close") or {} for r in rows]
+    eligible = sum(
+        bool(
+            r.get("sealed")
+            and r.get("timely_news_coverage")
+            and obs.get("reason") != "requires_prospective_seal"
+        )
+        for r, obs in zip(rows, observed)
+    )
+    verified = sum(bool(obs.get("kickoff_proof")) for obs in observed)
+    paired = sum(bool(obs.get("endpoints")) for obs in observed)
+    missing = Counter(
+        obs.get("reason") or r.get("reason") or "no_validated_pair"
+        for r, obs in zip(rows, observed)
+        if obs.get("reason") or not obs
+    )
+    if mode == "replay":
+        state = "requires_prospective_seal"
+    elif paired:
+        state = "descriptive_only"
+    elif verified and missing["seal_outside_pregame_window"] == verified:
+        state = "seal_outside_pregame_window"
+    elif verified and missing["unavailable_or_invalid_market_archive"] == verified:
+        state = "unavailable_or_invalid_market_archive"
+    elif verified:
+        state = "no_matched_market_quotes"
+    elif missing["invalid_actual_kickoff_evidence"]:
+        state = "invalid_actual_kickoff_evidence"
+    elif capability and capability["status"] != "reviewed_route_available":
+        state = "actual_kickoff_source_unavailable"
+    elif not eligible:
+        state = "no_eligible_news_seals"
+    else:
+        state = "awaiting_verified_actual_kickoff"
+    actions = {
+        "actual_kickoff_source_unavailable": (capability or {}).get("action"),
+        "awaiting_verified_actual_kickoff": "Admit a matching first-half event original for the completed fixture through an available reviewed route.",
+        "invalid_actual_kickoff_evidence": "Check the archived issuer evidence, its permission at collection, fixture and schedule revision, and any conflicting event originals.",
+        "no_eligible_news_seals": "Collect a prospective primary news pair with timely local observations for both teams.",
+        "seal_outside_pregame_window": "Check the schedule revision and sealing time against the verified first-half event.",
+        "unavailable_or_invalid_market_archive": "Check the original native market receipts and their indexes.",
+        "no_matched_market_quotes": "Inspect the decision and actual-close book gaps by family. A qualifying pair requires both original batches for the same contracts and rules.",
+        "requires_prospective_seal": "Use a technical or formal primary pair sealed before its deadline.",
+    }
+    return {
+        "status": state,
+        "clock_basis": "independently_verified_first_half_wallclock",
+        **({"action": actions[state]} if state in actions else {}),
+        "scheduled_clock_eligible": False,
+        "eligible_seals": eligible,
+        "verified_actual_kickoffs": verified,
+        "paired_fixtures": paired,
+        "home_win_pairs": sum(
+            "home_win" in obs.get("endpoints", {}) for obs in observed
+        ),
+        "exclusions": dict(sorted(missing.items())),
+        **({"source_capability": capability} if capability is not None else {}),
+    }
+
+
+def summary(rows, capability=None, mode=None):
     family_gaps = Counter()
     compared = {k: [] for k in football.PROB_KEYS}
-    paired = eligible = 0
     for r in rows:
         obs = r.get("market_close") or {}
-        if obs.get("reason") or not obs:
-            missing[obs.get("reason") or r.get("reason") or "no_validated_pair"] += 1
-        else:
-            paired += bool(obs["endpoints"])
+        if obs and not obs.get("reason"):
             for family, reasons in obs["missing"].items():
                 for stage, error in reasons.items():
                     family_gaps[f"{family}/{stage}/{error}"] += 1
             for key, item in obs["endpoints"].items():
                 compared[key].append(item)
-        eligible += bool(
-            r.get("sealed")
-            and r.get("timely_news_coverage")
-            and obs.get("reason") != "requires_prospective_seal"
-        )
     metrics = {}
     for key, values in compared.items():
         dirs = Counter(v["direction"] for v in values)
@@ -190,13 +297,10 @@ def summary(rows):
             else None,
         }
     report = {
-        "status": "descriptive_only" if paired else "no_matched_market_quotes",
+        **coverage(rows, capability, mode),
         "unit": "matched fixture per endpoint",
         "primary_endpoint": "home_win",
-        "eligible_seals": eligible,
-        "paired_fixtures": paired,
         "endpoints": metrics,
-        "exclusions": dict(sorted(missing.items())),
         "missing_family_reasons": dict(sorted(family_gaps.items())),
     }
     eras = sorted(
@@ -211,7 +315,11 @@ def summary(rows):
             status="multiple_probability_eras",
             endpoints={},
             by_era={
-                key: summary([r for r in rows if r.get("implementation") == key])
+                key: summary(
+                    [r for r in rows if r.get("implementation") == key],
+                    capability,
+                    mode,
+                )
                 for key in eras
             },
         )

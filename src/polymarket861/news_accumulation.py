@@ -83,7 +83,7 @@ def _endpoint(values, field):
     }
 
 
-def _era(rows):
+def _era(rows, capability, mode):
     scores, prices = [], []
     for r in rows:
         unit = (r["season"], r["round_id"])
@@ -111,11 +111,11 @@ def _era(rows):
             sorted(Counter(r["reason"] for r in rows if not r["scored"]).items())
         ),
         "home_close": _endpoint(prices, "home_close_distance_pp"),
-        "market_close": news_market.summary(rows),
+        "market_close": news_market.summary(rows, capability, mode),
     }
 
 
-def summarize(records, seasons, horizon, mode):
+def summarize(records, seasons, horizon, mode, capability=None):
     groups = defaultdict(list)
     excluded = Counter()
     scheduled = Counter(r["season"] for r in records)
@@ -142,7 +142,12 @@ def summarize(records, seasons, horizon, mode):
         "expected": 380 * len(seasons),
         "scheduled_by_season": {s: scheduled[s] for s in seasons},
         "eligible_seals": sum(map(len, groups.values())),
+        "market_close": news_market.coverage(
+            [r for group in groups.values() for r in group], capability, mode
+        ),
         "exclusions": dict(sorted(excluded.items())),
         "planning": {k: _power(k, None, 0) for k in _PLAN["practical_effect"]},
-        "eras": {key: _era(rows) for key, rows in sorted(groups.items())},
+        "eras": {
+            key: _era(rows, capability, mode) for key, rows in sorted(groups.items())
+        },
     }
