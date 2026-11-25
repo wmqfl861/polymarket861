@@ -1,0 +1,444 @@
+{
+  "scope": "Separate offline regression fixtures, pinned historical probabilities and live public catalog receipts. This report contains no executable historical P&L.",
+  "reviewed_commit": "432e0afe485230bd7caa46eb0d1d68b26f01db25",
+  "claude_review": "8993f15cfcc61042aedc5e885bb82217488ecb33",
+  "original_review_scripts_exit_codes": {
+    "cluster_t_interval_check.py": 0,
+    "coordinator_tick_scaling.py": 0,
+    "paper_failure_alert_check.py": 0,
+    "paper_slot_summary_check.py": 0,
+    "placeholder_rounds_check.py": 0,
+    "schedule_shift_check.py": 0,
+    "shadow_budget_order.py": 0,
+    "shadow_moving_clock.py": 0,
+    "shadow_window_benchmark.py": 0
+  },
+  "paper_fixture": {
+    "formal": {
+      "account": "main",
+      "as_of": "2026-03-01T15:29:55.000000Z",
+      "state": "active",
+      "decisions": 42,
+      "frozen": 6,
+      "held": 0,
+      "skipped": 36,
+      "settled": 0,
+      "repeated": 0,
+      "gaps": 3,
+      "gap_reasons": {
+        "no verified listing at decision": 3
+      },
+      "skip_reasons": {
+        "market disagreement exceeds 0.08": 36
+      },
+      "operational_reasons": {}
+    },
+    "shadow": {
+      "account": "research-shadow",
+      "as_of": "2026-03-01T15:29:55.000000Z",
+      "state": "active",
+      "decisions": 42,
+      "frozen": 6,
+      "held": 0,
+      "skipped": 36,
+      "settled": 0,
+      "repeated": 0,
+      "gaps": 0,
+      "gap_reasons": {},
+      "skip_reasons": {
+        "model_market_gap": 36
+      },
+      "operational_reasons": {}
+    }
+  },
+  "paper_failure_cases": {
+    "paper_decision_failed": {
+      "stage": "paper",
+      "role": "decision",
+      "slot_state": "error",
+      "alerts_recorded": 2,
+      "alert_printed": true,
+      "detail": {
+        "error": "formal: simulated failure inside the paper decision | shadow: simulated failure inside the paper decision",
+        "formal": {
+          "account": "main",
+          "as_of": "2026-11-25T10:28:54.475724Z",
+          "error": "simulated failure inside the paper decision",
+          "error_type": "RuntimeError",
+          "state": "error"
+        },
+        "shadow": {
+          "account": "research-shadow",
+          "as_of": "2026-11-25T10:28:54.475741Z",
+          "error": "simulated failure inside the paper decision",
+          "error_type": "RuntimeError",
+          "state": "error"
+        }
+      }
+    },
+    "book_capture_failed": {
+      "stage": "book",
+      "role": "decision_book",
+      "slot_state": "gap",
+      "alerts_recorded": 1,
+      "alert_printed": true,
+      "detail": {
+        "error": "simulated failure inside the book capture"
+      }
+    }
+  },
+  "coordinator_scaling_synthetic": {
+    "baseline": [
+      {
+        "played": 0,
+        "slot_rows": 0,
+        "catalog_receipts": 0,
+        "plan_seconds": 0.0006,
+        "tick_seconds": 0.0009
+      },
+      {
+        "played": 70,
+        "slot_rows": 114100,
+        "catalog_receipts": 102340,
+        "plan_seconds": 0.1195,
+        "tick_seconds": 0.0101
+      },
+      {
+        "played": 140,
+        "slot_rows": 228200,
+        "catalog_receipts": 204680,
+        "plan_seconds": 0.2679,
+        "tick_seconds": 0.0177
+      },
+      {
+        "played": 270,
+        "slot_rows": 440100,
+        "catalog_receipts": 394740,
+        "plan_seconds": 0.4452,
+        "tick_seconds": 0.0324
+      }
+    ],
+    "repaired": [
+      {
+        "played": 0,
+        "slot_rows": 0,
+        "catalog_receipts": 0,
+        "plan_seconds": 0.0005,
+        "tick_seconds": 0.0008
+      },
+      {
+        "played": 70,
+        "slot_rows": 114100,
+        "catalog_receipts": 102340,
+        "plan_seconds": 0.0008,
+        "tick_seconds": 0.0009
+      },
+      {
+        "played": 140,
+        "slot_rows": 228200,
+        "catalog_receipts": 204680,
+        "plan_seconds": 0.0016,
+        "tick_seconds": 0.0011
+      },
+      {
+        "played": 270,
+        "slot_rows": 440100,
+        "catalog_receipts": 394740,
+        "plan_seconds": 0.0015,
+        "tick_seconds": 0.0008
+      }
+    ]
+  },
+  "shadow_latency_synthetic": {
+    "baseline": [
+      {
+        "clock": "fixed",
+        "existing_held_orders": 0,
+        "tokens": 42,
+        "states": {
+          "skipped": 39,
+          "frozen": 3
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.182,
+        "write_lock_seconds": 0.012,
+        "formal_seconds": null
+      },
+      {
+        "clock": "real",
+        "existing_held_orders": 0,
+        "tokens": 42,
+        "states": {
+          "skipped": 39,
+          "frozen": 3
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.357,
+        "write_lock_seconds": 0.19,
+        "formal_seconds": null
+      },
+      {
+        "clock": "real+formal",
+        "existing_held_orders": 0,
+        "tokens": 42,
+        "states": {
+          "skipped": 39,
+          "frozen": 3
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.395,
+        "write_lock_seconds": 0.2,
+        "formal_seconds": 0.118
+      },
+      {
+        "clock": "real",
+        "existing_held_orders": 2000,
+        "tokens": 42,
+        "states": {
+          "skipped": 39,
+          "frozen": 3
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.662,
+        "write_lock_seconds": 0.478,
+        "formal_seconds": null
+      },
+      {
+        "clock": "real+formal",
+        "existing_held_orders": 2000,
+        "tokens": 42,
+        "states": {
+          "skipped": 39,
+          "frozen": 3
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.697,
+        "write_lock_seconds": 0.506,
+        "formal_seconds": 0.105
+      },
+      {
+        "clock": "real",
+        "existing_held_orders": 8000,
+        "tokens": 42,
+        "states": {
+          "skipped": 39,
+          "frozen": 3
+        },
+        "gaps": {},
+        "shadow_run_seconds": 1.415,
+        "write_lock_seconds": 1.239,
+        "formal_seconds": null
+      },
+      {
+        "clock": "real+formal",
+        "existing_held_orders": 8000,
+        "tokens": 42,
+        "states": {
+          "skipped": 39,
+          "frozen": 3
+        },
+        "gaps": {},
+        "shadow_run_seconds": 1.442,
+        "write_lock_seconds": 1.265,
+        "formal_seconds": 0.094
+      }
+    ],
+    "repaired": [
+      {
+        "clock": "fixed",
+        "existing_held_orders": 0,
+        "tokens": 42,
+        "states": {
+          "skipped": 36,
+          "frozen": 6
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.044,
+        "write_lock_seconds": 0.038,
+        "formal_seconds": null
+      },
+      {
+        "clock": "real",
+        "existing_held_orders": 0,
+        "tokens": 42,
+        "states": {
+          "skipped": 36,
+          "frozen": 6
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.046,
+        "write_lock_seconds": 0.04,
+        "formal_seconds": null
+      },
+      {
+        "clock": "real+formal",
+        "existing_held_orders": 0,
+        "tokens": 42,
+        "states": {
+          "skipped": 36,
+          "frozen": 6
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.056,
+        "write_lock_seconds": 0.051,
+        "formal_seconds": 0.106
+      },
+      {
+        "clock": "real",
+        "existing_held_orders": 2000,
+        "tokens": 42,
+        "states": {
+          "skipped": 36,
+          "frozen": 6
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.047,
+        "write_lock_seconds": 0.041,
+        "formal_seconds": null
+      },
+      {
+        "clock": "real+formal",
+        "existing_held_orders": 2000,
+        "tokens": 42,
+        "states": {
+          "skipped": 36,
+          "frozen": 6
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.042,
+        "write_lock_seconds": 0.037,
+        "formal_seconds": 0.1
+      },
+      {
+        "clock": "real",
+        "existing_held_orders": 8000,
+        "tokens": 42,
+        "states": {
+          "skipped": 36,
+          "frozen": 6
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.043,
+        "write_lock_seconds": 0.037,
+        "formal_seconds": null
+      },
+      {
+        "clock": "real+formal",
+        "existing_held_orders": 8000,
+        "tokens": 42,
+        "states": {
+          "skipped": 36,
+          "frozen": 6
+        },
+        "gaps": {},
+        "shadow_run_seconds": 0.045,
+        "write_lock_seconds": 0.039,
+        "formal_seconds": 0.104
+      }
+    ]
+  },
+  "historical_backtest": {
+    "seasons": [
+      "2021-22",
+      "2022-23",
+      "2023-24",
+      "2024-25",
+      "2025-26"
+    ],
+    "source_commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "detail_rows_24h_both_horizons": 3800,
+    "detail_sha256_24h_both_horizons": "bdd2c031695d8edf19027979265db828b53da5e8cdfe4aa5af7eb29b8efcfac3",
+    "baseline_details_byte_identical": true,
+    "horizons": {
+      "lag": {
+        "T-1440": {
+          "n": 1900,
+          "eligible_completed": 1900,
+          "verified_cutoff_n": 0,
+          "b0_score": 73.55917205293937,
+          "model_score": 75.44982234318326,
+          "paired_delta": 1.8906502902438929
+        },
+        "T-60": {
+          "n": 1900,
+          "eligible_completed": 1900,
+          "verified_cutoff_n": 0,
+          "b0_score": 73.55917205293937,
+          "model_score": 75.4478132340877,
+          "paired_delta": 1.8886411811483355
+        }
+      },
+      "strict": {
+        "T-1440": {
+          "n": 0,
+          "eligible_completed": 1900,
+          "verified_cutoff_n": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null
+        },
+        "T-60": {
+          "n": 0,
+          "eligible_completed": 1900,
+          "verified_cutoff_n": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null
+        }
+      }
+    }
+  },
+  "actual_gamma_hot_archive": {
+    "fixture": "epl-not-che-2026-11-27",
+    "main_and_more_catalogs_polled_twice": true,
+    "measured_at": "2026-11-25T10:13:54.582565Z",
+    "stores": {
+      "runtime": {
+        "first_received_utc_day": {
+          "2026-11-25": {
+            "originals": 2,
+            "logical_bytes": 350671,
+            "stored_bytes": 43885
+          }
+        },
+        "missing_originals": 0,
+        "contract_receipts": 116,
+        "contract_bodies": 58,
+        "database_bytes": 856064,
+        "wal_bytes": 0,
+        "shm_bytes": 32768
+      }
+    }
+  },
+  "v020_to_v030_migration_real_gamma": {
+    "fixture": "epl-not-che-2026-11-27",
+    "before_v020": {
+      "rows": 116,
+      "sha256": "74c8073cc8dd96e9f51ec2007a56d1dd4a5e6ae71ae94a0a8e3eb1df6cb61b93"
+    },
+    "after_v030": {
+      "rows": 116,
+      "sha256": "74c8073cc8dd96e9f51ec2007a56d1dd4a5e6ae71ae94a0a8e3eb1df6cb61b93"
+    },
+    "measured": {
+      "measured_at": "2026-11-25T10:24:47.834629Z",
+      "stores": {
+        "runtime": {
+          "first_received_utc_day": {
+            "2026-11-25": {
+              "originals": 2,
+              "logical_bytes": 350809,
+              "stored_bytes": 350809
+            }
+          },
+          "missing_originals": 0,
+          "contract_receipts": 116,
+          "contract_bodies": 58,
+          "database_bytes": 1425408,
+          "wal_bytes": 0,
+          "shm_bytes": 32768
+        }
+      }
+    }
+  }
+}
