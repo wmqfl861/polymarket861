@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
 from datetime import UTC, datetime, timedelta
 
+from . import dbscope
 from . import market_archive as exchange
 from . import market_provider as provider
 from . import store
@@ -28,7 +29,7 @@ CREATE INDEX IF NOT EXISTS season_history_due ON season_history_jobs(year,state,
 
 def _db(root):
     db = exchange.database(root)
-    db.executescript(_SCHEMA)
+    dbscope.prepare(db, "season-backfill", _SCHEMA)
     return db
 
 

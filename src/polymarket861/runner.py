@@ -12,6 +12,7 @@ from contextlib import closing
 from datetime import timedelta
 from pathlib import Path
 
+from . import dbscope
 from . import evidence, jobs, pipeline, store
 
 _WINDOW = timedelta(minutes=5)
@@ -36,7 +37,7 @@ CREATE TABLE IF NOT EXISTS forecast_runner_seen (
 
 def _open(data_dir):
     db = store.connect(data_dir)
-    db.executescript(_SCHEMA)
+    dbscope.prepare(db, "runner", _SCHEMA)
     return db
 
 

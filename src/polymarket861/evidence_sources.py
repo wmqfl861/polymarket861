@@ -6,6 +6,7 @@ import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
 
+from . import dbscope
 from .store import connect, now_utc, save_report
 
 
@@ -92,7 +93,7 @@ def db(data_dir, *, write=False):
     conn = connect(data_dir)
     try:
         conn.row_factory = sqlite3.Row
-        conn.executescript(_DDL)
+        dbscope.prepare(conn, "evidence-sources", _DDL)
         if write:
             conn.execute("BEGIN IMMEDIATE")
         yield conn

@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
+from . import dbscope
 from .football import fixture_id, read_json_rows
 from .store import (
     archive_bytes,
@@ -45,7 +46,7 @@ CREATE TABLE IF NOT EXISTS rf_retry (
 
 def _db(root):
     db = connect(root)
-    db.executescript(_SCHEMA)
+    dbscope.prepare(db, "result-feed", _SCHEMA)
     return db
 
 

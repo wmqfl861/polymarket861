@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS epl_schedule_competitions(
 
 def _db(root):
     db = result_admission.database(root)
-    db.executescript(SCHEMA)
+    dbscope.prepare(db, "schedule-consensus", SCHEMA)
     return db
 
 

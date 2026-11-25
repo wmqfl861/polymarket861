@@ -11,6 +11,7 @@ from collections import defaultdict
 from contextlib import closing
 from pathlib import Path
 
+from . import dbscope
 from . import football
 from .store import archive_bytes, read_blob, canonical, connect, digest, iso, now_utc
 
@@ -28,7 +29,7 @@ CREATE TABLE IF NOT EXISTS football_input_history(
 
 def _db(data_dir):
     db = connect(data_dir)
-    db.executescript(_SCHEMA)
+    dbscope.prepare(db, "input-manifest", _SCHEMA)
     return db
 
 

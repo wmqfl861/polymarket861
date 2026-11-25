@@ -7,6 +7,7 @@ import json
 from contextlib import closing
 from pathlib import Path
 
+from . import dbscope
 from . import football, input_manifest, store
 
 POLICY = "shared-available-inputs-v1"
@@ -29,7 +30,7 @@ class SealedInputConflict(ValueError):
 
 def _open(data_dir):
     db = store.connect(data_dir)
-    db.executescript(_SCHEMA)
+    dbscope.prepare(db, "paired-proof", _SCHEMA)
     return db
 
 

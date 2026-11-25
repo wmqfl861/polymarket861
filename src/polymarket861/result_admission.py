@@ -9,6 +9,7 @@ from contextlib import closing
 from datetime import timedelta
 from functools import lru_cache
 
+from . import dbscope
 from . import store
 
 INTERVAL = timedelta(minutes=30)
@@ -33,7 +34,7 @@ def database(root):
     from . import result_feed
 
     db = result_feed._db(root)
-    db.executescript(SCHEMA)
+    dbscope.prepare(db, "result-admission", SCHEMA)
     return db
 
 

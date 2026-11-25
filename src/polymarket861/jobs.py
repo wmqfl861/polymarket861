@@ -13,6 +13,7 @@ from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextlib import closing
 from pathlib import Path
 
+from . import dbscope
 from . import research_workspace, store
 from .jobs_research import (
     active_candidate,
@@ -82,7 +83,7 @@ def canonical(value):
 def _open(data_dir):
     conn = store.connect(Path(data_dir))
     conn.execute("PRAGMA busy_timeout=10000")
-    conn.executescript(SCHEMA)
+    dbscope.prepare(conn, "jobs", SCHEMA)
     return conn
 
 
