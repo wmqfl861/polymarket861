@@ -67,5 +67,29 @@
     "execution_roi": null
   },
   "formal_readiness": false,
-  "coverage_note": "Service snapshots depend on this database’s prior receipts. The separately archived complete rounds 1 through 11 result-admission study is documented in result-feed-2026-11-25.json. A queued slot is a planned observation, never an observed book or fill."
+  "coverage_note": "Service snapshots depend on this database’s prior receipts. The separately archived complete rounds 1 through 11 result-admission study is documented in result-feed-2026-11-25.json. A queued slot is a planned observation, never an observed book or fill.",
+  "previous_season_bounded_resume": {
+    "season": "2025-26",
+    "command": "season backfill 2025 --max-pages 4 --workers 2, run twice with the same initially empty database",
+    "runs": [
+      {
+        "catalog_complete": false,
+        "catalog_next_offset": 100,
+        "fixtures": 85,
+        "outcome_tokens": 514,
+        "page_steps": 4,
+        "tier_A": 0,
+        "execution_roi": null
+      },
+      {
+        "catalog_complete": false,
+        "catalog_next_offset": 200,
+        "fixtures": 138,
+        "outcome_tokens": 964,
+        "page_steps": 4,
+        "tier_A": 0,
+        "execution_roi": null
+      }
+    ]
+  }
 }
