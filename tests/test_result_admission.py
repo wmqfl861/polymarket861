@@ -146,8 +146,8 @@ class VerifiedResults(unittest.TestCase):
                     "away": away,
                     "kickoff": raw["matchDateTimeUTC"],
                     "known_at": START,
-                    "source": "openfootball",
-                    "locator": "archived schedule",
+                    "source": "local matchweek fixture",
+                    "locator": f"test://round-one/{100 + i}",
                 },
             )
         self.time = store.iso("2026-08-21T17:59:00Z")

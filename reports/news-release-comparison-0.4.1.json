@@ -1,0 +1,151 @@
+{
+  "scope": "0.4.0 to 0.4.1. Named approval in an isolated validation copy only. No deployment approvals were made.",
+  "incumbent_baseline": {
+    "version": "B1",
+    "recipe": "2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
+    "study_sha256": "1d7ebd4aff4aa9e82ceb16702b4df1481202bc142dacaef7d171a684b7cf0bb3",
+    "method": "T60-final-schedule-result-lag24h-v1",
+    "matches": 1900,
+    "seasons": [
+      "2021-22",
+      "2022-23",
+      "2023-24",
+      "2024-25",
+      "2025-26"
+    ]
+  },
+  "before": {
+    "active_version": "B1",
+    "active_recipe_sha256": "2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
+    "installed_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "approval": null,
+    "state": "approval_required",
+    "ready": false,
+    "baseline_sha256": "1d7ebd4aff4aa9e82ceb16702b4df1481202bc142dacaef7d171a684b7cf0bb3",
+    "comparison_sha256": null,
+    "reason": "New built-in seals require a named release approval before the first window. Run forecast release-compare HISTORY with the installed build. Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON.",
+    "actions": [
+      "Run forecast release-compare HISTORY with the installed build.",
+      "Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON."
+    ]
+  },
+  "blocked_new_fixture": {
+    "exit_code": 2,
+    "message": "pm861: a changed builtin requires forecast release-compare and named release-approve"
+  },
+  "release_comparison": {
+    "from_version": "B1",
+    "baseline_identity": {
+      "source": "measured_on_incumbent"
+    },
+    "to_version": "B1@b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "comparison": {
+      "method": "T60-final-schedule-result-lag24h-v1",
+      "history_quality": "24h_lag_sensitivity_final_archive_schedule",
+      "historical_context": "no_archived_news_or_lineups",
+      "formal_eligibility": false,
+      "candidate_recipe": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+      "baseline_recipe": "2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
+      "candidate_sha256": "12bff7506da487525d876173c0c17448e6f75062b4b3604e112086da95c6a2a2",
+      "baseline_sha256": "7608db434a0d588c5fe0e549e6eac3f46a7e785d976e480c60804e3a2bdedba9",
+      "input_blobs": {
+        "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+        "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+        "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+        "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+        "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+        "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+        "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+        "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+      },
+      "seasons": [
+        "2021-22",
+        "2022-23",
+        "2023-24",
+        "2024-25",
+        "2025-26"
+      ],
+      "denominator": 1900,
+      "paired_count": 1900,
+      "rounds": 190,
+      "changed_predictions": 0,
+      "changed_training_views": 0,
+      "candidate_score": 75.44781323408776,
+      "baseline_score": 75.44781323408776,
+      "candidate_count": 1900,
+      "baseline_count": 1900,
+      "comparison_rejections": {},
+      "inference": {
+        "method": "round-cluster-t-v1",
+        "unit": "season_and_official_round",
+        "rounds": 190,
+        "matches": 1900,
+        "degrees_of_freedom": 189,
+        "family_comparisons": 10,
+        "family_confidence": 0.95,
+        "individual_confidence": 0.995,
+        "critical_t": 2.8403659628523235
+      },
+      "intervals": {
+        "overall": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        },
+        "result": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        },
+        "total": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        },
+        "home": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        },
+        "away": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        }
+      }
+    },
+    "report_sha256": "8fd3b53cf61bbaeb492a9b91b53915b9c4b208b1e15016546a2a08aab181eb5a"
+  },
+  "approval": {
+    "version": "B1@b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "effective_at": "2026-11-25T15:30:49.726148Z",
+    "comparison": "8fd3b53cf61bbaeb492a9b91b53915b9c4b208b1e15016546a2a08aab181eb5a",
+    "legacy_reference": null,
+    "reviewer": "Codex release verification (isolated database)",
+    "reason": "Verified the actual incumbent baseline and five-season paired output on this dedicated test copy."
+  },
+  "after": {
+    "active_version": "B1@b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "active_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "installed_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "approval": {
+      "effective_at": "2026-11-25T15:30:49.726148Z",
+      "comparison": "8fd3b53cf61bbaeb492a9b91b53915b9c4b208b1e15016546a2a08aab181eb5a",
+      "reviewer": "Codex release verification (isolated database)",
+      "reason": "Verified the actual incumbent baseline and five-season paired output on this dedicated test copy."
+    },
+    "state": "ready",
+    "ready": true
+  },
+  "new_early_seal": {
+    "fixture_id": "epl/2026-27/arsenal/manchester-city",
+    "digest": "681f7b460ad114de069ec4afe425c86f80ca0c7a89ea27063dbc0a2acd5506cf",
+    "version": "B1@b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae"
+  },
+  "incumbent_seal_verified_unchanged": "de3ec8c96e858128d5ca0f58b9356f20692b1cbfee11310efd6fb2b70c8c9002"
+}

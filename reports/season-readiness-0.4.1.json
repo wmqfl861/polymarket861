@@ -1,0 +1,1445 @@
+{
+  "schema": "epl-season-readiness-v1",
+  "as_of": "2026-11-25T15:31:12.117345Z",
+  "season": "2026-27",
+  "data_dir": "isolated-coordinator-copy",
+  "checks": {
+    "reported_round_schedule_confirmed": true,
+    "release_executable": true,
+    "training_inputs_available": true,
+    "latest_due_results_received": true,
+    "next_round_teams_fresh": true
+  },
+  "state": "ready",
+  "first_registered_window": {
+    "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+    "horizon": "T-24h",
+    "opens": "2026-11-26T19:55:00.000000Z",
+    "cutoff": "2026-11-26T20:00:00.000000Z"
+  },
+  "schedule": {
+    "as_of": "2026-11-25T15:31:12.117345Z",
+    "season": "2026-27",
+    "round": 12,
+    "registered": 10,
+    "registered_in_round": 10,
+    "expected_in_round": 10,
+    "confirmed": 10,
+    "blocked_fixtures": [],
+    "fixed_b1_blocked_fixtures": [],
+    "fixtures": [
+      {
+        "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Nottingham Forest FC",
+        "away": "Chelsea FC",
+        "kickoff": "2026-11-27T20:00:00.000000Z",
+        "version": 2,
+        "source": "openligadb+gamma-schedule",
+        "registered_at": "2026-11-25T10:31:55.320974Z",
+        "registration_locator": "schedule-proof:9228f2c9152834466eb4a41e19a28e49e0f93ecbcfe753ed672eb2c6e1826e7e",
+        "previous_kickoff": "2026-11-28T15:00:00.000000Z",
+        "bulk_placeholder": false,
+        "openligadb": {
+          "fixture": "epl/2026-27/nottingham-forest/chelsea",
+          "teams": [
+            "Nottingham Forest",
+            "Chelsea FC"
+          ],
+          "kickoff": "2026-11-27T20:00:00.000000Z",
+          "match_id": 86647,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-not-che-2026-11-27",
+            "event_id": "1427080",
+            "game_id": 90114184,
+            "teams": [
+              "Nottingham Forest FC",
+              "Chelsea FC"
+            ],
+            "kickoff": "2026-11-27T20:00:00.000000Z",
+            "received_at": "2026-11-25T10:30:57.833072Z",
+            "sha256": "930b2aaa4a26a9013e7edf2d74934277d4238770a00507e2821cc05886e98019",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Leeds United FC",
+        "away": "Coventry City FC",
+        "kickoff": "2026-11-28T15:00:00.000000Z",
+        "version": 1,
+        "source": "openfootball",
+        "registered_at": "2026-11-25T10:31:02.954410Z",
+        "registration_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/60e281f0fcc51cfca1a901353666a688cf62a8ba",
+        "previous_kickoff": null,
+        "bulk_placeholder": true,
+        "openligadb": {
+          "fixture": "epl/2026-27/leeds-united/coventry-city",
+          "teams": [
+            "Leeds United",
+            "Coventry City"
+          ],
+          "kickoff": "2026-11-28T15:00:00.000000Z",
+          "match_id": 86645,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-lee-cov-2026-11-28",
+            "event_id": "1432227",
+            "game_id": 90114185,
+            "teams": [
+              "Leeds United FC",
+              "Coventry City FC"
+            ],
+            "kickoff": "2026-11-28T15:00:00.000000Z",
+            "received_at": "2026-11-25T10:30:57.833072Z",
+            "sha256": "930b2aaa4a26a9013e7edf2d74934277d4238770a00507e2821cc05886e98019",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/manchester-united/brentford",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Manchester United FC",
+        "away": "Brentford FC",
+        "kickoff": "2026-11-28T15:00:00.000000Z",
+        "version": 1,
+        "source": "openfootball",
+        "registered_at": "2026-11-25T10:31:02.962755Z",
+        "registration_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/60e281f0fcc51cfca1a901353666a688cf62a8ba",
+        "previous_kickoff": null,
+        "bulk_placeholder": true,
+        "openligadb": {
+          "fixture": "epl/2026-27/manchester-united/brentford",
+          "teams": [
+            "Manchester United FC",
+            "Brentford FC"
+          ],
+          "kickoff": "2026-11-28T15:00:00.000000Z",
+          "match_id": 86646,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-mun-bre-2026-11-28",
+            "event_id": "1432228",
+            "game_id": 90114183,
+            "teams": [
+              "Manchester United FC",
+              "Brentford FC"
+            ],
+            "kickoff": "2026-11-28T15:00:00.000000Z",
+            "received_at": "2026-11-25T10:30:57.833072Z",
+            "sha256": "930b2aaa4a26a9013e7edf2d74934277d4238770a00507e2821cc05886e98019",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Ipswich Town FC",
+        "away": "Aston Villa FC",
+        "kickoff": "2026-11-28T17:30:00.000000Z",
+        "version": 2,
+        "source": "openligadb+gamma-schedule",
+        "registered_at": "2026-11-25T10:31:55.320874Z",
+        "registration_locator": "schedule-proof:50e5cc540cb35e4fc322dbe57a1db46f824815b548176adf3dffd7645b25efb1",
+        "previous_kickoff": "2026-11-28T15:00:00.000000Z",
+        "bulk_placeholder": false,
+        "openligadb": {
+          "fixture": "epl/2026-27/ipswich-town/aston-villa",
+          "teams": [
+            "Ipswich Town",
+            "Aston Villa"
+          ],
+          "kickoff": "2026-11-28T17:30:00.000000Z",
+          "match_id": 86644,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-ips-ast-2026-11-28",
+            "event_id": "1432797",
+            "game_id": 90114186,
+            "teams": [
+              "Ipswich Town FC",
+              "Aston Villa FC"
+            ],
+            "kickoff": "2026-11-28T17:30:00.000000Z",
+            "received_at": "2026-11-25T10:30:59.218042Z",
+            "sha256": "70719d032b08d183c90fee05fe0dc33ee46d3d42b65548f1e89be3880c8bd8be",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/everton/liverpool",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Everton FC",
+        "away": "Liverpool FC",
+        "kickoff": "2026-11-29T12:00:00.000000Z",
+        "version": 2,
+        "source": "openligadb+gamma-schedule",
+        "registered_at": "2026-11-25T10:31:55.320754Z",
+        "registration_locator": "schedule-proof:7d69ebe061a289891328bca58c008dbc440c038a66818d77d43b73471824b5d7",
+        "previous_kickoff": "2026-11-28T15:00:00.000000Z",
+        "bulk_placeholder": false,
+        "openligadb": {
+          "fixture": "epl/2026-27/everton/liverpool",
+          "teams": [
+            "Everton FC",
+            "FC Liverpool"
+          ],
+          "kickoff": "2026-11-29T12:00:00.000000Z",
+          "match_id": 86642,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-eve-liv-2026-11-29",
+            "event_id": "1436783",
+            "game_id": 90114182,
+            "teams": [
+              "Everton FC",
+              "Liverpool FC"
+            ],
+            "kickoff": "2026-11-29T12:00:00.000000Z",
+            "received_at": "2026-11-25T10:30:59.218042Z",
+            "sha256": "70719d032b08d183c90fee05fe0dc33ee46d3d42b65548f1e89be3880c8bd8be",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Brighton & Hove Albion FC",
+        "away": "Newcastle United FC",
+        "kickoff": "2026-11-29T14:05:00.000000Z",
+        "version": 2,
+        "source": "openligadb+gamma-schedule",
+        "registered_at": "2026-11-25T10:31:55.320615Z",
+        "registration_locator": "schedule-proof:dceae794e74b40209d3f316937d4e8af9ffb7c3efbb3a60cb09913f3e58775f3",
+        "previous_kickoff": "2026-11-28T15:00:00.000000Z",
+        "bulk_placeholder": false,
+        "openligadb": {
+          "fixture": "epl/2026-27/brighton-hove-albion/newcastle-united",
+          "teams": [
+            "Brighton & Hove Albion",
+            "Newcastle United FC"
+          ],
+          "kickoff": "2026-11-29T14:05:00.000000Z",
+          "match_id": 86640,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-bri-new-2026-11-29",
+            "event_id": "1437216",
+            "game_id": 90114188,
+            "teams": [
+              "Brighton & Hove Albion FC",
+              "Newcastle United FC"
+            ],
+            "kickoff": "2026-11-29T14:05:00.000000Z",
+            "received_at": "2026-11-25T10:30:59.218042Z",
+            "sha256": "70719d032b08d183c90fee05fe0dc33ee46d3d42b65548f1e89be3880c8bd8be",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Crystal Palace FC",
+        "away": "Hull City AFC",
+        "kickoff": "2026-11-29T14:05:00.000000Z",
+        "version": 2,
+        "source": "openligadb+gamma-schedule",
+        "registered_at": "2026-11-25T10:31:55.320693Z",
+        "registration_locator": "schedule-proof:32a24d47ff8686eddb9cbdb8b480eab983f47bae47c63b2795c1894c7e30c60b",
+        "previous_kickoff": "2026-11-28T15:00:00.000000Z",
+        "bulk_placeholder": false,
+        "openligadb": {
+          "fixture": "epl/2026-27/crystal-palace/hull-city",
+          "teams": [
+            "Crystal Palace FC",
+            "Hull City"
+          ],
+          "kickoff": "2026-11-29T14:05:00.000000Z",
+          "match_id": 86641,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-cry-hul-2026-11-29",
+            "event_id": "1437217",
+            "game_id": 90114187,
+            "teams": [
+              "Crystal Palace FC",
+              "Hull City AFC"
+            ],
+            "kickoff": "2026-11-29T14:05:00.000000Z",
+            "received_at": "2026-11-25T10:30:59.218042Z",
+            "sha256": "70719d032b08d183c90fee05fe0dc33ee46d3d42b65548f1e89be3880c8bd8be",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/fulham/bournemouth",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Fulham FC",
+        "away": "AFC Bournemouth",
+        "kickoff": "2026-11-29T14:05:00.000000Z",
+        "version": 2,
+        "source": "openligadb+gamma-schedule",
+        "registered_at": "2026-11-25T10:31:55.320808Z",
+        "registration_locator": "schedule-proof:fc05da9070756f30e77678548569feb5748be867122968742f8c6a315c367064",
+        "previous_kickoff": "2026-11-28T15:00:00.000000Z",
+        "bulk_placeholder": false,
+        "openligadb": {
+          "fixture": "epl/2026-27/fulham/bournemouth",
+          "teams": [
+            "Fulham FC",
+            "AFC Bournemouth"
+          ],
+          "kickoff": "2026-11-29T14:05:00.000000Z",
+          "match_id": 86643,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-ful-bou-2026-11-29",
+            "event_id": "1437215",
+            "game_id": 90114179,
+            "teams": [
+              "Fulham FC",
+              "AFC Bournemouth"
+            ],
+            "kickoff": "2026-11-29T14:05:00.000000Z",
+            "received_at": "2026-11-25T10:30:59.218042Z",
+            "sha256": "70719d032b08d183c90fee05fe0dc33ee46d3d42b65548f1e89be3880c8bd8be",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Sunderland AFC",
+        "away": "Tottenham Hotspur FC",
+        "kickoff": "2026-11-29T14:05:00.000000Z",
+        "version": 2,
+        "source": "openligadb+gamma-schedule",
+        "registered_at": "2026-11-25T10:31:55.321026Z",
+        "registration_locator": "schedule-proof:9d836eb20114834282e575a278fc32f9ed0250d6bddd287a0f736a7d6181713b",
+        "previous_kickoff": "2026-11-28T15:00:00.000000Z",
+        "bulk_placeholder": false,
+        "openligadb": {
+          "fixture": "epl/2026-27/sunderland/tottenham-hotspur",
+          "teams": [
+            "Sunderland",
+            "Tottenham Hotspur FC"
+          ],
+          "kickoff": "2026-11-29T14:05:00.000000Z",
+          "match_id": 86648,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-sun-tot-2026-11-29",
+            "event_id": "1437218",
+            "game_id": 90114180,
+            "teams": [
+              "Sunderland AFC",
+              "Tottenham Hotspur FC"
+            ],
+            "kickoff": "2026-11-29T14:05:00.000000Z",
+            "received_at": "2026-11-25T10:30:59.218042Z",
+            "sha256": "70719d032b08d183c90fee05fe0dc33ee46d3d42b65548f1e89be3880c8bd8be",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      },
+      {
+        "fixture_id": "epl/2026-27/arsenal/manchester-city",
+        "season": "2026-27",
+        "round": 12,
+        "home": "Arsenal FC",
+        "away": "Manchester City FC",
+        "kickoff": "2026-11-29T16:30:00.000000Z",
+        "version": 2,
+        "source": "openligadb+gamma-schedule",
+        "registered_at": "2026-11-25T10:31:55.320415Z",
+        "registration_locator": "schedule-proof:4394be2547267a6d54800a614559a96f60326079cf0c10d9f2269d2ccaeec063",
+        "previous_kickoff": "2026-11-28T15:00:00.000000Z",
+        "bulk_placeholder": false,
+        "openligadb": {
+          "fixture": "epl/2026-27/arsenal/manchester-city",
+          "teams": [
+            "FC Arsenal",
+            "Manchester City"
+          ],
+          "kickoff": "2026-11-29T16:30:00.000000Z",
+          "match_id": 86639,
+          "league_id": 5996,
+          "round": 12,
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+          "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+          "received_at": "2026-11-25T10:31:46.075103Z",
+          "requested_at": "2026-11-25T10:31:37.138059Z"
+        },
+        "gamma": [
+          {
+            "slug": "epl-ars-mac-2026-11-29",
+            "event_id": "1437662",
+            "game_id": 90114181,
+            "teams": [
+              "Arsenal FC",
+              "Manchester City FC"
+            ],
+            "kickoff": "2026-11-29T16:30:00.000000Z",
+            "received_at": "2026-11-25T10:30:59.218042Z",
+            "sha256": "70719d032b08d183c90fee05fe0dc33ee46d3d42b65548f1e89be3880c8bd8be",
+            "regulation_templates": [
+              "c6dd5d80e9a97ff7fc3260f6b706a79a75ac8be3f72c5a0842c86e10fa62abe6",
+              "d3f73d64753f04bde832a22ecc656801a30d870abe0b6678a97d5eafc15f1136"
+            ]
+          }
+        ],
+        "review": null,
+        "status": "confirmed",
+        "news_eligible": true,
+        "fixed_b1_block_reason": null
+      }
+    ],
+    "state": "ready",
+    "source_errors": [],
+    "action": null
+  },
+  "release": {
+    "active_version": "B1",
+    "active_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "installed_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "approval": null,
+    "state": "ready",
+    "ready": true
+  },
+  "results": {
+    "state": "stale",
+    "as_of": "2026-11-25T15:31:12.117345Z",
+    "latest_round": {
+      "round": 11,
+      "due": 10,
+      "received": 10,
+      "scheduled": 10,
+      "missing_fixture_ids": []
+    },
+    "rounds": [
+      {
+        "round": 1,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 10
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 2,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 10
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 3,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 10
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 4,
+        "scheduled": 10,
+        "due": 10,
+        "received": 9,
+        "result_sources": {
+          "verified-result-pairing": 9
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 9
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [
+          "epl/2026-27/bournemouth/brentford"
+        ],
+        "held": [
+          {
+            "fixture_id": "epl/2026-27/bournemouth/brentford",
+            "reason": "cross_source_score_conflict"
+          }
+        ]
+      },
+      {
+        "round": 5,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 10
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 6,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 10
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 7,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 10
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 8,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 7,
+          "openligadb": 3
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 7,
+          "openligadb": 3
+        },
+        "latest_receipt": "2026-11-25T15:02:28.583045Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 9,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 10
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 10,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "two_providers": 10
+        },
+        "latest_receipt": "2026-11-25T10:31:55.324482Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 11,
+        "scheduled": 10,
+        "due": 10,
+        "received": 10,
+        "result_sources": {
+          "verified-result-pairing": 10
+        },
+        "recorded_confirmation_methods": {
+          "repeated_independent_final": 10
+        },
+        "latest_receipt": "2026-11-25T15:02:28.583045Z",
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 12,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 13,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 14,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 15,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 16,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 17,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 18,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 19,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 20,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 21,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 22,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 23,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 24,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 25,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 26,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 27,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 28,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 29,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 30,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 31,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 32,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 33,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 34,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 35,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 36,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 37,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      },
+      {
+        "round": 38,
+        "scheduled": 10,
+        "due": 0,
+        "received": 0,
+        "result_sources": {},
+        "recorded_confirmation_methods": {},
+        "latest_receipt": null,
+        "missing_fixture_ids": [],
+        "held": []
+      }
+    ],
+    "oldest_missing": {
+      "fixture_id": "epl/2026-27/bournemouth/brentford",
+      "kickoff": "2026-09-12T14:00:00.000000Z",
+      "hours_since_kickoff": 1777.52,
+      "hours_since_due": 1776.02
+    },
+    "overdue_fixtures": [
+      {
+        "fixture_id": "epl/2026-27/bournemouth/brentford",
+        "round": 4,
+        "kickoff": "2026-09-12T14:00:00.000000Z",
+        "reason": "cross_source_score_conflict"
+      }
+    ],
+    "overdue_by_team": {
+      "AFC Bournemouth": {
+        "overdue_count": 1,
+        "fixture_ids": [
+          "epl/2026-27/bournemouth/brentford"
+        ]
+      },
+      "Brentford FC": {
+        "overdue_count": 1,
+        "fixture_ids": [
+          "epl/2026-27/bournemouth/brentford"
+        ]
+      }
+    },
+    "next_round": 12,
+    "next_round_teams": {
+      "Nottingham Forest FC": {
+        "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+        "decision_cutoff": "2026-11-27T19:00:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/nottingham-forest/manchester-city",
+          "epl/2026-27/bournemouth/nottingham-forest"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Chelsea FC": {
+        "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+        "decision_cutoff": "2026-11-27T19:00:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/sunderland/chelsea",
+          "epl/2026-27/chelsea/leeds-united"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Leeds United FC": {
+        "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+        "decision_cutoff": "2026-11-28T14:00:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/leeds-united/tottenham-hotspur",
+          "epl/2026-27/chelsea/leeds-united"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Coventry City FC": {
+        "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+        "decision_cutoff": "2026-11-28T14:00:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/everton/coventry-city",
+          "epl/2026-27/coventry-city/crystal-palace"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Manchester United FC": {
+        "fixture_id": "epl/2026-27/manchester-united/brentford",
+        "decision_cutoff": "2026-11-28T14:00:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/manchester-united/aston-villa",
+          "epl/2026-27/liverpool/manchester-united"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Brentford FC": {
+        "fixture_id": "epl/2026-27/manchester-united/brentford",
+        "decision_cutoff": "2026-11-28T14:00:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/brighton-hove-albion/brentford",
+          "epl/2026-27/brentford/everton"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Ipswich Town FC": {
+        "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+        "decision_cutoff": "2026-11-28T16:30:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/ipswich-town/bournemouth",
+          "epl/2026-27/tottenham-hotspur/ipswich-town"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Aston Villa FC": {
+        "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+        "decision_cutoff": "2026-11-28T16:30:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/manchester-united/aston-villa",
+          "epl/2026-27/aston-villa/sunderland"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Everton FC": {
+        "fixture_id": "epl/2026-27/everton/liverpool",
+        "decision_cutoff": "2026-11-29T11:00:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/everton/coventry-city",
+          "epl/2026-27/brentford/everton"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Liverpool FC": {
+        "fixture_id": "epl/2026-27/everton/liverpool",
+        "decision_cutoff": "2026-11-29T11:00:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/crystal-palace/liverpool",
+          "epl/2026-27/liverpool/manchester-united"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Brighton & Hove Albion FC": {
+        "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+        "decision_cutoff": "2026-11-29T13:05:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/brighton-hove-albion/brentford",
+          "epl/2026-27/hull-city/brighton-hove-albion"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Newcastle United FC": {
+        "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+        "decision_cutoff": "2026-11-29T13:05:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/fulham/newcastle-united",
+          "epl/2026-27/newcastle-united/arsenal"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Crystal Palace FC": {
+        "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+        "decision_cutoff": "2026-11-29T13:05:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/crystal-palace/liverpool",
+          "epl/2026-27/coventry-city/crystal-palace"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Hull City AFC": {
+        "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+        "decision_cutoff": "2026-11-29T13:05:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/arsenal/hull-city",
+          "epl/2026-27/hull-city/brighton-hove-albion"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Fulham FC": {
+        "fixture_id": "epl/2026-27/fulham/bournemouth",
+        "decision_cutoff": "2026-11-29T13:05:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/fulham/newcastle-united",
+          "epl/2026-27/manchester-city/fulham"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "AFC Bournemouth": {
+        "fixture_id": "epl/2026-27/fulham/bournemouth",
+        "decision_cutoff": "2026-11-29T13:05:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/ipswich-town/bournemouth",
+          "epl/2026-27/bournemouth/nottingham-forest"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Sunderland AFC": {
+        "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+        "decision_cutoff": "2026-11-29T13:05:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/sunderland/chelsea",
+          "epl/2026-27/aston-villa/sunderland"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Tottenham Hotspur FC": {
+        "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+        "decision_cutoff": "2026-11-29T13:05:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/leeds-united/tottenham-hotspur",
+          "epl/2026-27/tottenham-hotspur/ipswich-town"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Arsenal FC": {
+        "fixture_id": "epl/2026-27/arsenal/manchester-city",
+        "decision_cutoff": "2026-11-29T15:30:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/arsenal/hull-city",
+          "epl/2026-27/newcastle-united/arsenal"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      },
+      "Manchester City FC": {
+        "fixture_id": "epl/2026-27/arsenal/manchester-city",
+        "decision_cutoff": "2026-11-29T15:30:00.000000Z",
+        "recent_fixtures": [
+          "epl/2026-27/nottingham-forest/manchester-city",
+          "epl/2026-27/manchester-city/fulham"
+        ],
+        "fixture_ids": [],
+        "overdue_count": 0,
+        "critical_stale": false,
+        "players": {
+          "state": "unavailable",
+          "confirmed_lineup": false,
+          "field_counts": {},
+          "latest_received_at": null
+        }
+      }
+    },
+    "next_round_blocked_fixtures": [],
+    "latest_admitted_receipt": "2026-11-25T15:02:28.583045Z"
+  },
+  "training": {
+    "as_of": "2026-11-25T15:31:12.117345Z",
+    "season": "2026-27",
+    "manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
+    "training_matches": 1249,
+    "b0_matches": 1140,
+    "b0_scope": "prior_complete_seasons",
+    "result_grades": {
+      "archived_upper_bound": 1249
+    },
+    "latest_result_available_at": "2026-11-25T15:02:28.583045Z",
+    "input_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b",
+    "state": "available",
+    "matches_by_season": {
+      "2023-24": 380,
+      "2024-25": 380,
+      "2025-26": 380,
+      "2026-27": 109
+    },
+    "season_matches_by_round": {
+      "1": 10,
+      "2": 10,
+      "3": 10,
+      "4": 9,
+      "5": 10,
+      "6": 10,
+      "7": 10,
+      "8": 10,
+      "9": 10,
+      "10": 10,
+      "11": 10
+    }
+  },
+  "publication_note": "Only the local directory name was replaced. The same run directory produced the current recipe early previews. The readiness timestamp and original source timestamps are UTC."
+}
