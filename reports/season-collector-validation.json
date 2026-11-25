@@ -1,0 +1,86 @@
+{
+  "run_date": "2026-11-25",
+  "venue": "polymarket.com",
+  "source_endpoints": [
+    "https://gamma-api.polymarket.com/sports",
+    "https://gamma-api.polymarket.com/events",
+    "https://gamma-api.polymarket.com/events/slug/{slug}",
+    "https://clob.polymarket.com/books",
+    "https://clob.polymarket.com/book",
+    "https://data-api.polymarket.com/v2/trades",
+    "https://data-api.polymarket.com/v2/prices-history"
+  ],
+  "cold_start": {
+    "entrypoint": "pm861 --data-dir <new-state> season run --workers 6",
+    "window_days": 7,
+    "listed_fixtures": 11,
+    "fixtures_with_archived_depth": 11,
+    "tokens_requested": 528,
+    "timely_native_books": 325,
+    "timely_two_sided_books": 250,
+    "explicit_pregame_books": 0,
+    "missed_or_unavailable_tokens": 203,
+    "stage_receipts_utc": {
+      "first_receipt": "2026-11-25T07:37:21.688564Z",
+      "last_receipt": "2026-11-25T07:38:13.466443Z"
+    },
+    "fully_sampled_fixtures": 6,
+    "partially_sampled_fixtures": 5,
+    "services_completed": [
+      "catalog",
+      "forecast",
+      "results",
+      "settlements",
+      "history"
+    ],
+    "gap_reason": "Five slow CLOB batch responses reached the short timeout. Single-token fallback retained actual responses within the collection budget.",
+    "fixture_reconciliation": {
+      "independent_schedule_count": 10,
+      "exact_kickoff_and_both_clubs": 2,
+      "observed_before_independent_schedule_consensus_release": true
+    }
+  },
+  "historical_backfill": {
+    "season": "2026/27",
+    "catalogue_complete": true,
+    "next_catalogue_offset": null,
+    "nominal_past_fixtures": 110,
+    "main_and_auxiliary_trade_feeds": 220,
+    "target_outcome_tokens": 4560,
+    "price_window_jobs": 61734,
+    "unique_archived_rows": {
+      "prices": 2250,
+      "trades": 5250
+    },
+    "curve_resolution_seconds": {
+      "60": 2250
+    },
+    "completed_native_walks": 12,
+    "native_walks_with_saved_cursors": 30,
+    "one_saved_walk": {
+      "key": "019fb5d1e3f3fc8bd86dad1c72876347783625baaec1122eaa532b689b53e7f6",
+      "next_cursor_sha256": "cd4a7fe38ad2304cfac4e454a9c92cd5433b40ade8932724d63f3826d4f776a9"
+    },
+    "range_utc": {
+      "first_native_page": "2026-11-25T07:28:18.100607Z",
+      "last_native_page": "2026-11-25T07:34:21.709786Z"
+    },
+    "resume": "Use the same data directory and run pm861 season backfill 2026. Each unfinished native walk reuses its persisted opaque next_cursor.",
+    "coverage": "Bounded public API traversal. Remaining jobs are pending; sampled curves and trades only qualify as research evidence."
+  },
+  "delay_check": {
+    "source": "docs/review-evidence/code-review-2026-11-25/capture_schedule_check.py",
+    "sampling_interval_seconds": 12,
+    "kickoff_delay_seconds_with_scheduled_close_observation": [
+      0,
+      10,
+      30,
+      60,
+      120,
+      180
+    ],
+    "actual_complete_matchday_observed": false
+  },
+  "historical_A": 0,
+  "execution_roi": null
+}
