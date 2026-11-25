@@ -1,0 +1,136 @@
+{
+  "fixture_id": "epl/2026-27/bournemouth/brentford",
+  "verification_code": "a44105bdcf55560d287a833bf37b519d724c9647",
+  "verification_tree": "faeab8eb7b660544331b7b1773f21a4883b17966",
+  "tree_identity": "Git tree of the local code used for the bound-review run. The tree identifies executable contents regardless of publication authorship or commit metadata.",
+  "main_store": "Genuine native score conflict remains quarantined. These trials used separate database backups and did not modify the source store.",
+  "legacy_study": {
+    "verification_code": "356570c1ba225ce30d1e9002c82ae685cbe2a48c",
+    "verification_tree": "18180ea48a4b0b3a930d4c03a30e0e81c6d4d11f",
+    "at": "2026-11-25T10:39:07.765312Z",
+    "batch": "3da10e528fc2c616219b182bb29743cdc7489bc936e9ef45c4adcbfa7198effd",
+    "training_usable_immediately": true,
+    "after_native_reconcile": {
+      "quarantine": [
+        "cross_source_score_conflict"
+      ],
+      "settlement_confirmed": false,
+      "training_score": null
+    },
+    "evidence_report": "result-sources-2026-11-25-0.3.0.json"
+  },
+  "bound_study": {
+    "separate_copy": true,
+    "at": "2026-11-25T10:50:10.580845Z",
+    "cli": "result-feed import-matches 2026 4 manual-round4.json",
+    "manual_review_evidence": {
+      "season": "2026-27",
+      "round": 4,
+      "reviewer": "Codex research review",
+      "rights": "permission",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "English Wikipedia contributors",
+      "source": "English Wikipedia club-season revisions, CC BY-SA 4.0; match 2645225",
+      "official_match_url": "https://www.premierleague.com/en/match/2645225",
+      "articles": [
+        {
+          "title": "2026–27 AFC Bournemouth season",
+          "revision": 1387421265,
+          "published_at": "2026-11-23T21:53:22.000000Z",
+          "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265"
+        },
+        {
+          "title": "2026–27 Brentford F.C. season",
+          "revision": 1387568640,
+          "published_at": "2026-11-24T16:02:03.000000Z",
+          "url": "https://en.wikipedia.org/w/index.php?oldid=1387568640"
+        }
+      ],
+      "evidence_file": "wiki-native.json",
+      "evidence_sha256": "6178d854f53e236f6ee389221aac9c4479b84ac3aaabbb3d1f0408f042155b61",
+      "matches": [
+        {
+          "home": "AFC Bournemouth",
+          "away": "Brentford FC",
+          "kickoff": "2026-09-12T14:00:00.000000Z",
+          "status": "final",
+          "period": "regulation",
+          "home_goals": 2,
+          "away_goals": 2,
+          "locator": "MediaWiki query.pages entries titled 2026–27 AFC Bournemouth season (revision 1387421265), 2026–27 Brentford F.C. season (revision 1387568640); Premier League / football box / round 4 / official match 2645225.",
+          "decision_reason": "Codex research review of EPL 2645225: both English Wikipedia club-season revisions report the 90-minute score of 2–2, consistent with the pinned OpenFootball file and the official match report. The archived OpenLigaDB final reports 2–1. Review scope: training only.",
+          "training_dispute": {
+            "scope": "training_only",
+            "fixture_id": "epl/2026-27/bournemouth/brentford",
+            "openfootball_score": [
+              2,
+              2
+            ],
+            "reports": [
+              {
+                "provider": "openligadb",
+                "match_id": 86558,
+                "round": 4,
+                "kickoff": "2026-09-12T14:00:00.000000Z",
+                "score": [
+                  2,
+                  1
+                ],
+                "status": "final",
+                "sha256": "b8b95a74468c081c2b9c6779b8c0aeb05d5c4c4d191c456b610bb2a9441a73b1",
+                "received": "2026-11-25T10:06:23.591892Z"
+              },
+              {
+                "provider": "wikipedia-en-epl",
+                "match_id": "premierleague:2645225",
+                "round": 4,
+                "kickoff": "2026-09-12T14:00:00.000000Z",
+                "score": [
+                  2,
+                  2
+                ],
+                "status": "final",
+                "sha256": "6178d854f53e236f6ee389221aac9c4479b84ac3aaabbb3d1f0408f042155b61",
+                "received": "2026-11-25T10:39:50.239342Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "attachment_sha256_readback": "6178d854f53e236f6ee389221aac9c4479b84ac3aaabbb3d1f0408f042155b61",
+    "before_regulation_final": false,
+    "returncode": 0,
+    "batch_id": "5cc1a7f78cc96a6c8a47832e2f80d2ac1ba5b898c7154f0b9f421efd212e9681",
+    "scope": "selected_matches",
+    "training_usable_immediately": true,
+    "settlement_confirmed_immediately": false,
+    "identical_retry": true,
+    "after_native_reconcile": {
+      "quarantine": [],
+      "settlement_confirmed": false,
+      "training_score": [
+        2,
+        2
+      ]
+    },
+    "rollback": {
+      "batch_id": "5cc1a7f78cc96a6c8a47832e2f80d2ac1ba5b898c7154f0b9f421efd212e9681",
+      "prior_adjudicated_score_available_at_its_cutoff": [
+        2,
+        2
+      ],
+      "training_after_rollback": null,
+      "settlement_confirmed_after_rollback": false,
+      "output_status": "rolled_back"
+    },
+    "main_store_settlement_confirmed": false
+  },
+  "offline_rounds_replayed": 2,
+  "provider_notice": {
+    "wikipedia_articles": "English Wikipedia contributors. The archived CC BY-SA 4.0 club season article revisions are attributed individually in the manual review evidence. Scores and identity were normalized.",
+    "wikipedia_license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "openligadb": "Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0.",
+    "openligadb_license": "https://www.openligadb.de/en/license"
+  }
+}

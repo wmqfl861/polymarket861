@@ -94,6 +94,8 @@ pm861 result-feed review-pairing 2026 "$FIXTURE_ID" --proof "$PROOF_SHA256" --ac
 
 裁定只影响训练输入。正常离线重放重读当初的原件，后来携带相同比赛事实的 HTTP 响应可继续使用。任一来源改分、撤回、改期、变更身份、丢失已验证的原件，或固定参考源出现不同事实，均重新隔离；改动后再恢复原分也会保留隔离。纸面正式结算持续要求独立的标准终场证明。正常的批次回滚会恢复原裁决，并允许按历史时点查看曾经有效的训练结果。
 
+第 4 轮 Bournemouth–Brentford 在主库保持隔离。独立副本上的具名训练裁定归档了两份不同比分的真实原件。正常 `import-matches` 幂等重试和两次 `result-feed season --offline` 均保留 2–2 训练结果，正式结算无资格。随后 `rollback-batch` 恢复隔离，再查询裁定有效时间仍可复现当时的 2–2。[真实裁定、原件和回滚结果](../reports/round4-training-review-2026-11-25.json)
+
 OpenLigaDB 公共数据使用 ODbL 1.0。公共展示需署名，公开分发修改后的数据库时须遵守其同许可和开放取得要求。Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0. [数据许可](https://www.openligadb.de/en/license) · [API 条款](https://www.openligadb.de/en/terms-of-use) · [接口说明](https://api.openligadb.de/index.html)
 
 OpenFootball 将英超赛程和赛果数据作为公共领域数据发布。[数据说明](https://github.com/openfootball/football.json/blob/master/README.md)
