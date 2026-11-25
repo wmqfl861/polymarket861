@@ -325,6 +325,7 @@ def manual(root, year, rnd, file, *, whole_round=True):
             }
             native, _ = admission._raw_rows(root, db, year, at)
             independent = independent_results.verified(root, db, year, at)
+            reference = admission._reference(db, root, obj["season"], at)
             unique = result_pairings.unique_fixtures(fixtures.values())
             seen = set()
             rows = []
@@ -391,6 +392,7 @@ def manual(root, year, rnd, file, *, whole_round=True):
                     or other
                     and other[-1]["score"] is not None
                     and other[-1]["score"] != score
+                    or reference.get(fid, score) != score
                     or prior
                     and [prior["home_goals"], prior["away_goals"]] != score
                     or state

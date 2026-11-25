@@ -122,7 +122,12 @@ def review_pairing(root, year, fid, proof, action, reviewer, reason):
         if not f or not record or f["kickoff"] != record["kickoff"]:
             raise ValueError("no current pairing for this fixture")
         payload = json.loads(record["proof"])
-        if not isinstance(payload, dict) or store.digest(payload) != proof:
+        if (
+            not isinstance(payload, dict)
+            or store.digest(payload) != proof
+            or f["result_source"] != result_pairings.SOURCE
+            or f["result_locator"] != "result-pairing:" + proof
+        ):
             raise ValueError(
                 "the supplied proof differs from the latest result pairing"
             )
@@ -413,6 +418,7 @@ def reconcile(root, year):
         }
         unique = result_pairings.unique_fixtures(fixtures.values())
         paired = []
+        reviewed_references = {}
         for fid in sorted(set(sources) | set(independent) | certified_ids):
             events = sources.get(fid, [])
             f = fixtures.get(fid)
@@ -465,8 +471,6 @@ def reconcile(root, year):
                 reason = "paired_result_evidence_withdrawn"
             elif not latest and not proof:
                 reason = "missing_original_receipts"
-            elif score is not None and reference.get(fid, score) != score:
-                reason = "cross_source_score_conflict"
             elif (
                 prior
                 and prior["source"] == "manual-regulation"
@@ -476,7 +480,20 @@ def reconcile(root, year):
                 previously_reviewed = bool(
                     at_review and native_score == at_review[-1]["score"]
                 )
-                if (
+                reference_changed = False
+                if fid in reference and reference[fid] != prior_score:
+                    observed = prior["recorded_at"]
+                    if observed not in reviewed_references:
+                        try:
+                            reviewed_references[observed] = _reference(
+                                db, root, season, observed
+                            )
+                        except (OSError, ValueError, KeyError, TypeError):
+                            reviewed_references[observed] = {}
+                    reference_changed = (
+                        reviewed_references[observed].get(fid) != reference[fid]
+                    )
+                if not reference_changed and (
                     score == prior_score
                     or previously_reviewed
                     or not at_review
@@ -492,6 +509,8 @@ def reconcile(root, year):
                     counts["manual_reviewed"] += 1
                     continue
                 reason = "manual_source_disagreement"
+            elif score is not None and reference.get(fid, score) != score:
+                reason = "cross_source_score_conflict"
             elif score is not None and not proof and not _anchor(f, latest):
                 reason = "schedule_or_round_mismatch"
             elif (

@@ -223,6 +223,60 @@ class ResultIdentity(unittest.TestCase):
             [(self.fid, "ambiguous_source_fixture")],
         )
 
+    def test_manual_decision_survives_the_known_reference_but_a_new_score_reopens_it(
+        self,
+    ):
+        self.case.set_time(0)
+        first = self.case.time
+        self.case.collect(self.case.rows)
+        row = self.case.rows[0]
+        attachment = self.root / "matchsheet.txt"
+        attachment.write_text("Signed supplement. The final score was 2–1.")
+        entry = {
+            "home": row["team1"]["teamName"],
+            "away": row["team2"]["teamName"],
+            "kickoff": row["matchDateTimeUTC"],
+            "status": "final",
+            "period": "regulation",
+            "locator": "signed supplement",
+            "home_goals": 2,
+            "away_goals": 1,
+        }
+        batch = {
+            "season": "2026-27",
+            "round": 1,
+            "rights": "permission",
+            "reviewer": "Analyst",
+            "source": "signed club report",
+            "evidence_file": attachment.name,
+            "evidence_sha256": hashlib.sha256(attachment.read_bytes()).hexdigest(),
+            "matches": [entry],
+        }
+        file = self.root / "batch.json"
+        file.write_text(json.dumps(batch))
+        with patch.object(
+            admission,
+            "_reference",
+            side_effect=lambda db, root, season, at: {
+                self.fid: [2, 2] if at <= first else [3, 3]
+            },
+        ):
+            with self.assertRaisesRegex(ValueError, "decision_reason"):
+                ops.manual(self.root, 2026, 1, file, whole_round=False)
+            entry["decision_reason"] = (
+                "The signed supplement corrects the initial match sheet."
+            )
+            file.write_text(json.dumps(batch))
+            ops.manual(self.root, 2026, 1, file, whole_round=False)
+            self.assertEqual(self.case.reconcile()["coverage"]["manual_reviewed"], 1)
+            self.assertIsNone(admission.verified_regulation(self.root, self.fid))
+            self.case.set_time(5)
+            self.assertEqual(
+                self.case.reconcile()["quarantined"][0]["reason"],
+                "manual_source_disagreement",
+            )
+            self.assertIsNone(self.case.state(self.fid)["home_goals"])
+
     def test_partial_manual_uses_real_kickoff_and_reverses_one_game(self):
         self.case.set_time(0)
         actual = store.iso("2026-08-21T17:00Z")
