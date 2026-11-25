@@ -7,7 +7,7 @@ name = "polymarket861"
 version = "0.3.0"
 description = "Point-in-time Premier League forecasts and a paper Polymarket ledger"
 requires-python = ">=3.11"
-dependencies = ["numpy>=1.24", "scipy>=1.10", "tzdata; platform_system == 'Windows'"]
+dependencies = ["httpx>=0.28,<1", "numpy>=1.24", "scipy>=1.10", "tzdata; platform_system == 'Windows'"]
 readme = "README.md"
 
 [project.scripts]

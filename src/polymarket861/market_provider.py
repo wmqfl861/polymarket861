@@ -11,7 +11,7 @@ from decimal import Decimal, InvalidOperation
 from email.utils import parsedate_to_datetime
 from typing import Any
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from . import __version__, market_http
 
 from .store import canonical, iso
 
@@ -48,7 +48,8 @@ def get(url: str, params: dict | None = None, *, timeout: float = 25) -> Reply:
     """Read a fixed public endpoint. There are no authenticated or trading routes."""
     headers = {
         "Accept": "application/json",
-        "User-Agent": "polymarket861/0.1",
+        "Accept-Encoding": "gzip",
+        "User-Agent": f"polymarket861/{__version__}",
         "Cache-Control": "no-cache",
     }
     body = None
@@ -61,20 +62,11 @@ def get(url: str, params: dict | None = None, *, timeout: float = 25) -> Reply:
         headers["Content-Type"] = "application/json"
     elif params:
         url += "?" + urlencode(params)
-    requested = iso(datetime.now(UTC))
-    req = Request(url, data=body, headers=headers)
-    with urlopen(req, timeout=timeout) as response:
-        raw = response.read(32 * 1024 * 1024 + 1)
-        received = iso(datetime.now(UTC))
-        if len(raw) > 32 * 1024 * 1024:
-            raise ValueError("payload exceeds 32 MiB; reduce the page size")
-        return Reply(
-            raw,
-            requested,
-            received,
-            {k.lower(): v for k, v in response.headers.items()},
-            url,
+    return Reply(
+        *market_http.read(
+            "POST" if body is not None else "GET", url, headers, body, timeout
         )
+    )
 
 
 def sequence(raw: Any) -> list:

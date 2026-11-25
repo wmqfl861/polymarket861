@@ -2,18 +2,26 @@
 
 import hashlib
 import json
+import time
 import uuid
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
 from datetime import UTC, datetime, timedelta
 
-from . import dbscope
 from . import market_archive as exchange
 from . import market_provider as provider
-from . import store
+from . import dbscope, store
 
 GRAINS = (60, 300, 1800, 10800, 43200)
+# Data API v2 publishes minimum retention, not exact expiry. Always probe an older
+# grain before classifying it; prioritize the next still-guaranteed tier of a slice.
+_RETENTION = (7 * 86400, 60 * 86400, 90 * 86400)
+_EXPIRY = """CASE WHEN kind='prices' THEN CASE
+ WHEN grain<=0 AND end+:one>=:now THEN start+:one
+ WHEN grain<=1 AND end+:five>=:now THEN start+:five
+ WHEN grain<=2 AND end+:thirty>=:now THEN start+:thirty END END"""
+
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS season_history_catalog(year INTEGER PRIMARY KEY,cursor INTEGER,done INTEGER,updated TEXT);
 CREATE TABLE IF NOT EXISTS season_history_seed(year INTEGER,slug TEXT,source_sha TEXT,PRIMARY KEY(year,slug));
@@ -273,8 +281,9 @@ def _walk(root, job, limit):
     return ("empty" if count == 0 else "done"), job["grain"], detail
 
 
-def _page(root, job, limit, claim):
+def _page(root, job, limit, claim, deadline=None):
     now = store.instant(store.now_utc())
+    bound = exchange._DEADLINE.set(deadline)
     try:
         state, grain, detail = _walk(root, job, limit)
         retry = ""
@@ -285,6 +294,8 @@ def _page(root, job, limit, claim):
             {"error": str(exc), "http_status": getattr(exc, "code", None)},
         )
         retry = getattr(exc, "retry_at", None) or store.iso(now + timedelta(minutes=5))
+    finally:
+        exchange._DEADLINE.reset(bound)
     with closing(_db(root)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         owner = db.execute(
@@ -320,6 +331,13 @@ def status(root, year):
             "SELECT min(next_at) FROM season_history_jobs WHERE year=? AND state='retry'",
             (year,),
         ).fetchone()[0]
+        cooldowns = [
+            dict(row)
+            for row in db.execute(
+                "SELECT endpoint,not_before FROM ma_cooldown WHERE not_before>? ORDER BY not_before",
+                (store.now_utc(),),
+            )
+        ]
         sample = [
             dict(r)
             for r in db.execute(
@@ -339,6 +357,7 @@ def status(root, year):
         "outcome_tokens": tokens,
         "jobs": counts,
         "next_retry_at": earliest,
+        "active_cooldowns": cooldowns,
         "gap_examples": sample,
         "scope": "Gamma fixtures with scheduled start before observation; source trade and price coverage only",
         "tier_A": 0,
@@ -346,21 +365,80 @@ def status(root, year):
     }
 
 
-def backfill(root, year, *, max_pages=None, workers=4, page_size=250):
+def _next_jobs(db, year, stamp, count):
+    # Give all due kinds a turn, then sort price slices by earliest loss within the
+    # documented floors. Origin-wide Retry-After also blocks untouched sibling jobs.
+    cooldowns = {
+        r[0]
+        for r in db.execute(
+            "SELECT endpoint FROM ma_cooldown WHERE not_before>?", (store.iso(stamp),)
+        )
+    }
+    endpoints = {
+        "event": ("gamma-api.polymarket.com", "/events"),
+        "trades": ("data-api.polymarket.com", "/v2/trades"),
+        "prices": ("data-api.polymarket.com", "/v2/prices-history"),
+    }
+    allowed = [
+        k
+        for k, (host, path) in endpoints.items()
+        if host not in cooldowns and host + path not in cooldowns
+    ]
+    if not allowed:
+        return []
+    params = {
+        "year": year,
+        "stamp": store.iso(stamp),
+        "now": int(stamp.timestamp()),
+        "one": _RETENTION[0],
+        "five": _RETENTION[1],
+        "thirty": _RETENTION[2],
+        "n": count,
+    }
+    for i, kind in enumerate(allowed):
+        params[f"k{i}"] = kind
+    kinds = ",".join(f":k{i}" for i in range(len(allowed)))
+    return db.execute(
+        f"""WITH served AS (SELECT kind,max(last_run) recently FROM season_history_jobs
+                 WHERE year=:year GROUP BY kind),
+             due AS (SELECT j.*, {_EXPIRY} expires FROM season_history_jobs j
+                 WHERE year=:year AND kind IN ({kinds}) AND state IN ('pending','retry','running')
+                   AND next_at<=:stamp),
+             ranked AS (SELECT d.*, s.recently, row_number() OVER(PARTITION BY d.kind ORDER BY
+                 d.expires IS NULL, d.expires, (d.last_run=''), d.last_run, d.end, d.key) n
+                 FROM due d JOIN served s USING(kind))
+             SELECT * FROM ranked ORDER BY n,recently,CASE kind WHEN 'trades' THEN 0 WHEN 'prices' THEN 1 ELSE 2 END
+             LIMIT :n""",
+        params,
+    ).fetchall()
+
+
+def backfill(
+    root, year, *, max_pages=None, workers=4, page_size=1000, max_seconds=None
+):
     if (
         not 2010 <= year <= 2100
         or not 1 <= workers <= 12
         or not 1 <= page_size <= 1000
         or (max_pages is not None and max_pages < 1)
+        or (max_seconds is not None and not (0 < max_seconds <= 86400))
     ):
         raise ValueError("invalid season backfill bounds")
     now = store.instant(store.now_utc())
+    started = time.monotonic()
+    stop = started + max_seconds if max_seconds is not None else float("inf")
+    deadline = (
+        store.iso(now + timedelta(seconds=max_seconds))
+        if max_seconds is not None
+        else None
+    )
     used = 0
     errors = []
     # First seed any previously captured originals even when Gamma is unavailable today.
     _seed(root, year, now)
     catalog_budget = None if max_pages is None else max(1, (max_pages + 2) // 3)
-    while catalog_budget is None or used < catalog_budget:
+    while time.monotonic() < stop and (catalog_budget is None or used < catalog_budget):
+        bound = exchange._DEADLINE.set(deadline)
         try:
             done, pages = _catalog(root, year, store.instant(store.now_utc()))
             used += pages
@@ -374,31 +452,20 @@ def backfill(root, year, *, max_pages=None, workers=4, page_size=250):
                 }
             )
             break
+        finally:
+            exchange._DEADLINE.reset(bound)
         if done:
             break
     # The lease survives concurrent CLI invocations and releases automatically on a crash;
     # ma_walks performs compare-and-swap on the real cursor inside each page transaction.
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        while max_pages is None or used < max_pages:
+        while time.monotonic() < stop and (max_pages is None or used < max_pages):
             n = workers if max_pages is None else min(workers, max_pages - used)
             stamp = store.instant(store.now_utc())
             claim = uuid.uuid4().hex
             with closing(_db(root)) as db, db:
                 db.execute("BEGIN IMMEDIATE")
-                items = db.execute(
-                    "WITH served AS (SELECT kind,max(last_run) recently FROM season_history_jobs WHERE year=? GROUP BY kind),"
-                    " candidates AS (SELECT j.*,s.recently,row_number() OVER(PARTITION BY j.kind ORDER BY "
-                    " CASE WHEN j.start>=? THEN 0 ELSE 1 END,CASE WHEN j.grain>0 THEN 0 ELSE 1 END,j.last_run,j.fixture,j.key) n FROM season_history_jobs j "
-                    " JOIN served s USING(kind) WHERE j.year=? AND j.state IN ('pending','retry','running') AND j.next_at<=?) "
-                    " SELECT * FROM candidates ORDER BY n,recently,CASE kind WHEN 'trades' THEN 0 WHEN 'prices' THEN 1 ELSE 2 END LIMIT ?",
-                    (
-                        year,
-                        int((stamp - timedelta(days=8)).timestamp()),
-                        year,
-                        store.iso(stamp),
-                        n,
-                    ),
-                ).fetchall()
+                items = _next_jobs(db, year, stamp, n)
                 db.executemany(
                     "INSERT OR REPLACE INTO season_history_leases VALUES(?,?)",
                     [(r["key"], claim) for r in items],
@@ -412,19 +479,19 @@ def backfill(root, year, *, max_pages=None, workers=4, page_size=250):
                 )
             if not items:
                 break
-            results = list(pool.map(lambda r: _page(root, r, page_size, claim), items))
+            list(pool.map(lambda r: _page(root, r, page_size, claim, deadline), items))
             used += len(items)
             if any(item["kind"] == "event" for item in items):
                 _seed(root, year, store.instant(store.now_utc()))
-            if all(x == "retry" for x in results):
-                # A busy public endpoint gets the original Retry-After, including other jobs.
-                with closing(_db(root)) as db:
-                    if db.execute(
-                        "SELECT 1 FROM ma_cooldown WHERE endpoint LIKE 'data-api.%' AND not_before>?",
-                        (store.iso(stamp),),
-                    ).fetchone():
-                        break
-    return status(root, year) | {"page_steps": used, "catalog_errors": errors}
+
+    elapsed = time.monotonic() - started
+    return status(root, year) | {
+        "page_steps": used,
+        "catalog_errors": errors,
+        "elapsed_seconds": round(elapsed, 3),
+        "page_steps_per_minute": round(60 * used / elapsed, 2) if elapsed else None,
+        "time_budget_reached": time.monotonic() >= stop,
+    }
 
 
 def add_parser(sub):
@@ -432,7 +499,8 @@ def add_parser(sub):
     p.add_argument("year", type=int)
     p.add_argument("--max-pages", type=int)
     p.add_argument("--workers", type=int, default=4)
-    p.add_argument("--page-size", type=int, default=250)
+    p.add_argument("--max-seconds", type=float, help="本次回补总时间预算（秒）")
+    p.add_argument("--page-size", type=int, default=1000)
     p.set_defaults(
         func=lambda a: backfill(
             a.data_dir,
@@ -440,5 +508,6 @@ def add_parser(sub):
             max_pages=a.max_pages,
             workers=a.workers,
             page_size=a.page_size,
+            max_seconds=a.max_seconds,
         )
     )

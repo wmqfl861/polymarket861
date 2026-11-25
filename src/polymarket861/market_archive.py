@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import random
 import time
 from contextlib import closing
@@ -58,9 +59,23 @@ CREATE TABLE IF NOT EXISTS ma_walks (
 """
 
 
+_SCHEMA += """
+CREATE TABLE IF NOT EXISTS ma_cooldown_causes (endpoint TEXT NOT NULL,not_before TEXT NOT NULL,http_status INTEGER NOT NULL,
+ PRIMARY KEY(endpoint,not_before));
+CREATE TABLE IF NOT EXISTS ma_execution_attempts (
+ fixture TEXT NOT NULL,kickoff TEXT NOT NULL,target TEXT NOT NULL,leg TEXT NOT NULL,
+ started TEXT NOT NULL,tokens TEXT NOT NULL,status TEXT NOT NULL,received TEXT,sha TEXT,elapsed_ms REAL,
+ detail TEXT,retry_at TEXT, PRIMARY KEY(fixture,kickoff,target,leg));
+CREATE TABLE IF NOT EXISTS ma_execution_selected (
+ fixture TEXT NOT NULL,kickoff TEXT NOT NULL,target TEXT NOT NULL,token TEXT NOT NULL,
+ received TEXT NOT NULL,sha TEXT NOT NULL,PRIMARY KEY(fixture,kickoff,target,token));
+"""
+
+
 def prepare(db):
     dbscope.prepare(db, "market-archive", _SCHEMA)
     contract_storage.prepare(db)
+
 
 
 def database(root):
@@ -82,29 +97,38 @@ def _log(root, operation, selector, start, end, status, sha=None, detail=None):
         )
 
 
-def _fetch_once(root, op, selector, url, params=None):
+def _fetch_once(root, op, selector, url, params=None, *, timeout=None, metadata=None):
     started = now_utc()
     saved = {}
     try:
         stop = _DEADLINE.get()
-        if stop is None:
-            reply = provider.get(url, params)
-        else:
+        if stop is not None:
             available = (moment(stop) - moment(now_utc())).total_seconds()
             if available <= 0:
                 raise TimeoutError("capture request window has already elapsed")
-            reply = provider.get(url, params, timeout=min(3.5, available))
+            timeout = min(
+                timeout or (3.5 if op in ("book", "books") else 25), available
+            )
+        reply = (
+            provider.get(url, params)
+            if timeout is None
+            else provider.get(url, params, timeout=timeout)
+        )
         saved = archive_bytes(
             root,
             "polymarket.com",
             reply.body,
             observed_at=reply.received_at,
             metadata={
+                **(metadata or {}),
                 "url": reply.url,
+                "stored_representation": "decoded_http_entity_bytes",
+                "content_encoding": reply.headers.get("content-encoding"),
+                "content_length": reply.headers.get("content-length"),
                 "requested_at": reply.requested_at,
                 "operation": op,
                 "request_token_ids": (params or {}).get("token_ids")
-                if op == "books"
+                if op in ("books", "books_research")
                 else None,
                 "http_date": reply.headers.get("date"),
                 "age": reply.headers.get("age"),
@@ -131,62 +155,112 @@ def _fetch_once(root, op, selector, url, params=None):
 
 
 class DeferredFetch(OSError):
-    def __init__(self, message, retry_at=None):
+    def __init__(self, message, retry_at=None, code=None):
         super().__init__(message)
         self.retry_at = retry_at
-        self.code = 429 if retry_at else None
+        self.code = code
 
 
-def _fetch(root, op, selector, url, params=None):
-    """Retry transient reads briefly. Persist long Retry-After across workers and restarts."""
-    endpoint = urlsplit(url).netloc
-    if endpoint == "data-api.polymarket.com":
-        endpoint += urlsplit(url).path
-    for attempt in range(3):
+def _retry_at(raw, now):
+    # An arbitrarily large, valid delta-seconds must not turn into a short default wait.
+    if (
+        isinstance(raw, str)
+        and raw.strip().isascii()
+        and raw.strip().isdigit()
+        and len(raw.strip().lstrip("0")) > 12
+    ):
+        return "9999-12-31T23:59:59.999999Z"
+    try:
+        seconds = float(raw)
+        if not math.isfinite(seconds):
+            raise ValueError("invalid Retry-After")
+    except (ValueError, TypeError):
+        try:
+            seconds = (parsedate_to_datetime(raw) - now).total_seconds()
+        except (ValueError, TypeError, OverflowError):
+            seconds = 10
+    try:
+        return iso(now + timedelta(seconds=max(1, seconds)))
+    except OverflowError:
+        return "9999-12-31T23:59:59.999999Z"
+
+
+def _fetch(
+    root, op, selector, url, params=None, *, attempts=3, timeout=None, metadata=None
+):
+    """Honor host-wide upstream cooldowns, including advertised 503 waits and legacy endpoint rows."""
+    uri = urlsplit(url)
+    for attempt in range(attempts):
         now = moment(now_utc())
         with closing(database(root)) as db:
             cooldown = db.execute(
-                "SELECT not_before FROM ma_cooldown WHERE endpoint=?", (endpoint,)
+                "SELECT c.not_before,h.http_status FROM ma_cooldown c LEFT JOIN ma_cooldown_causes h USING(endpoint,not_before) "
+                "WHERE c.endpoint IN (?,?) ORDER BY c.not_before DESC LIMIT 1",
+                (uri.netloc, uri.netloc + uri.path),
             ).fetchone()
         if cooldown and moment(cooldown[0]) > now:
             raise DeferredFetch(
-                "upstream Retry-After until " + cooldown[0], cooldown[0]
+                "upstream Retry-After until " + cooldown[0], cooldown[0], cooldown[1]
             )
         try:
-            return _fetch_once(root, op, selector, url, params)
+            return _fetch_once(
+                root, op, selector, url, params, timeout=timeout, metadata=metadata
+            )
         except (OSError, HTTPException) as exc:
             http = getattr(exc, "code", None)
-            if http == 429:
-                raw = (
-                    exc.headers.get("Retry-After")
-                    if getattr(exc, "headers", None)
-                    else None
-                )
-                try:
-                    after = float(raw)
-                except (ValueError, TypeError):
-                    try:
-                        after = (parsedate_to_datetime(raw) - now).total_seconds()
-                    except (ValueError, TypeError, OverflowError):
-                        after = 10
-                try:
-                    until = iso(now + timedelta(seconds=max(1, after)))
-                except OverflowError:
-                    until = iso(now.replace(year=9999))
+            headers = getattr(exc, "headers", None) or {}
+            raw = headers.get("Retry-After") or headers.get("retry-after")
+            if http == 429 or (http == 503 and raw is not None):
+                received = moment(now_utc())
+                until = _retry_at(raw, received)
                 with closing(database(root)) as db, db:
+                    db.execute(
+                        "INSERT OR IGNORE INTO ma_cooldown_causes VALUES(?,?,?)",
+                        (uri.netloc, until, http),
+                    )
                     db.execute(
                         "INSERT INTO ma_cooldown VALUES (?,?) ON CONFLICT(endpoint) DO UPDATE SET "
                         "not_before=max(not_before,excluded.not_before)",
-                        (endpoint, until),
+                        (uri.netloc, until),
+                    )
+                    until = db.execute(
+                        "SELECT not_before FROM ma_cooldown WHERE endpoint=?",
+                        (uri.netloc,),
+                    ).fetchone()[0]
+                if moment(until) > received + timedelta(minutes=15):
+                    _log(
+                        root,
+                        "cooldown",
+                        uri.netloc,
+                        iso(received),
+                        iso(received),
+                        "long_cooldown",
+                        detail=canonical(
+                            {
+                                "http_status": http,
+                                "not_before": until,
+                                "review_at": iso(received + timedelta(minutes=15)),
+                            }
+                        ),
                     )
                 raise DeferredFetch(
-                    "HTTP 429; Retry-After until " + until, until
+                    f"HTTP {http}; Retry-After until {until}", until, http
                 ) from exc
             if http is not None and http not in (408, 425, 500, 502, 503, 504):
                 raise
-            if attempt == 2:
-                raise DeferredFetch(f"read failed after three attempts: {exc}") from exc
-            time.sleep(random.uniform(0.04, 0.14) * (2**attempt))
+            if attempt + 1 == attempts:
+                if attempts == 1:
+                    raise
+                raise DeferredFetch(
+                    f"read failed after {attempts} attempts: {exc}"
+                ) from exc
+            pause = random.uniform(0.04, 0.14) * (2**attempt)
+            stop = _DEADLINE.get()
+            if stop and (moment(stop) - moment(now_utc())).total_seconds() <= pause:
+                raise DeferredFetch(
+                    "capture deadline elapsed during transient read"
+                ) from exc
+            time.sleep(pause)
 
 
 def _ingest(db, event, reply, sha):
@@ -443,6 +517,33 @@ def stored_books(root, token, *, before=None, limit=2):
         return [json.loads(r["payload"]) for r in rows]
 
 
+def book_summary(book):
+    return {
+        "token_id": book["token_id"],
+        "received_at": book["received_at"],
+        "observed_at": book["observed_at"],
+        "bids": len(book["bids"]),
+        "asks": len(book["asks"]),
+        "pregame": book["pregame"],
+    }
+
+
+def capture_execution(
+    root, fixture, *, kickoff, target, deadline, discovery, research=False
+):
+    from . import execution_books
+
+    return execution_books.capture(
+        root,
+        fixture,
+        kickoff=kickoff,
+        target=target,
+        deadline=deadline,
+        discovery=discovery,
+        research=research,
+    )
+
+
 def capture(root, fixture, *, tokens=None, workers=4, discovery=None, deadline=None):
     saved = _DEADLINE.set(deadline)
     try:
@@ -471,30 +572,20 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline):
         for m in contracts(root, fixture)
         if not m["mapping_error"] and m["event_slug"] in active_events
     ]
-    requested = set(tokens or [])
+    requested = None if tokens is None else set(tokens)
     targets = {
         t["token_id"]: m
         for m in markets
         for t in m["tokens"]
-        if (not requested or t["token_id"] in requested)
+        if (requested is None or t["token_id"] in requested)
         and m["market_open"] is not False
     }
-
-    def summary(book):
-        return {
-            "token_id": book["token_id"],
-            "received_at": book["received_at"],
-            "observed_at": book["observed_at"],
-            "bids": len(book["bids"]),
-            "asks": len(book["asks"]),
-            "pregame": book["pregame"],
-        }
 
     def one(pair):
         token, market = pair
         saved = _DEADLINE.set(deadline)
         try:
-            return summary(snapshot_book(root, market, token))
+            return book_summary(snapshot_book(root, market, token))
         except (ValueError, OSError, URLError) as exc:
             return {"token_id": token, "error": str(exc)}
         finally:
@@ -508,16 +599,9 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline):
             rows, reply, sha = _fetch(
                 root, "books", fixture, CLOB + "/books", {"token_ids": sorted(targets)}
             )
-            if not isinstance(rows, list):
-                raise ValueError("book batch must be an array")
-            by_id = {}
-            for row in rows:
-                if not isinstance(row, dict):
-                    raise ValueError("unexpected book structure")
-                token = str(row.get("asset_id"))
-                if token not in targets or token in by_id:
-                    raise ValueError("unexpected or repeated token in book batch")
-                by_id[token] = row
+            from .execution_books import native_rows
+
+            by_id = native_rows(rows, targets)
             times = fixture_times(root, fixture, as_of=reply.received_at)
             pending = []
             invalid = []
@@ -536,7 +620,7 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline):
                             db, market, token, by_id[token], reply, sha, times
                         )
                         pending.append((token, reply.received_at, sha, canonical(b)))
-                        observed.append(summary(b))
+                        observed.append(book_summary(b))
                     except (KeyError, TypeError, ValueError) as exc:
                         observed.append({"token_id": token, "error": str(exc)})
                         invalid.append(
@@ -574,7 +658,9 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline):
         "batch_error": batch_error,
         "retry_at": retry_at,
         "discovery_gaps": discovered["gaps"],
-        "unmapped_or_closed_requested_tokens": sorted(requested - targets.keys()),
+        "unmapped_or_closed_requested_tokens": sorted(
+            (requested or set()) - targets.keys()
+        ),
     }
 
 

@@ -1,0 +1,659 @@
+{
+  "probe": {
+    "observed_at": "2026-11-25T10:20:59.191961Z",
+    "scope": "Pre-match public transport timing only. Tokens were sampled without any frozen orders.",
+    "gamma": [
+      "https://gamma-api.polymarket.com/events/slug/epl-not-che-2026-11-27",
+      "https://gamma-api.polymarket.com/events/slug/epl-ips-ast-2026-11-28",
+      "https://gamma-api.polymarket.com/events/slug/epl-lee-cov-2026-11-28",
+      "https://gamma-api.polymarket.com/events/slug/epl-mun-bre-2026-11-28"
+    ],
+    "clob_post": "https://clob.polymarket.com/books",
+    "forecast_or_fill_count": 0,
+    "book_rows_in_probe_archive": 0,
+    "summary": {
+      "cold_short": {
+        "attempts": 1,
+        "complete": 0,
+        "fresh_complete": 0,
+        "native_p50_ms": null,
+        "native_p90_ms": null
+      },
+      "decision_warmup": {
+        "attempts": 1,
+        "complete": 1,
+        "fresh_complete": 1,
+        "native_p50_ms": 1995.305,
+        "native_p90_ms": 1995.305
+      },
+      "single_warm_concurrent": {
+        "attempts": 4,
+        "complete": 1,
+        "fresh_complete": 1,
+        "native_p50_ms": 144.498,
+        "native_p90_ms": 144.498
+      },
+      "per_fixture_warmup": {
+        "attempts": 4,
+        "complete": 4,
+        "fresh_complete": 4,
+        "native_p50_ms": 2375.754,
+        "native_p90_ms": 2436.956
+      },
+      "per_fixture_warm_concurrent": {
+        "attempts": 16,
+        "complete": 16,
+        "fresh_complete": 16,
+        "native_p50_ms": 150.282,
+        "native_p90_ms": 260.663
+      }
+    },
+    "tokens": {
+      "epl-not-che-2026-11-27": [
+        "68615100462982960959959550956177371734619920837911149223024649424715605846978",
+        "94153563293395290101746265182401081323098689227100536223191050545611492694984",
+        "19419790643298498840205868613612074671358842622097955237077803207029520756433"
+      ],
+      "epl-ips-ast-2026-11-28": [
+        "71867822166243296369655787040956109553241480119447841679188236454463423687055",
+        "82060492900876803986136297080579039421402789813324911710511501697370375566805",
+        "15759298106107346641442847569120872702551862725185046217857225669580199400081"
+      ],
+      "epl-lee-cov-2026-11-28": [
+        "36820487220809397480356222748572294326678562747839701869670621345489360431323",
+        "51719975815274186924854515690297321391211567604472259808097766511379326654241",
+        "18938120098018123760211289357767703073145023263574939139733418752326195194519"
+      ],
+      "epl-mun-bre-2026-11-28": [
+        "71065753025362956131675332020232403673370772535124975508309449610396293023389",
+        "72773898871484663130587102961409378786754907151000728077636498332146731945469",
+        "3309401357002617814628748516343122215812201087002409953231901238197002607022"
+      ]
+    },
+    "samples": [
+      {
+        "status": "TimeoutError",
+        "error": "public HTTP total deadline elapsed",
+        "retry_at": null,
+        "fixture": "epl-not-che-2026-11-27",
+        "phase": "cold_short",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 1508.24
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "8d370836787c6979352d2a8235cc98a0c6930c2b47c56a42439b812e760916d3",
+        "requested_at": "2026-11-25T10:20:52.295480Z",
+        "received_at": "2026-11-25T10:20:54.290785Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:54 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 1995.305,
+        "fixture": "epl-not-che-2026-11-27",
+        "phase": "decision_warmup",
+        "timeout_seconds": 12,
+        "requested_tokens": 3,
+        "total_ms": 2005.234
+      },
+      {
+        "status": "TimeoutError",
+        "error": "public HTTP total deadline elapsed",
+        "retry_at": null,
+        "fixture": "epl-not-che-2026-11-27",
+        "phase": "single_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 1510.284
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "5443fe94a5743c351011af3a6418fd11e1800c46f456c727b8cb52ef19e57459",
+        "requested_at": "2026-11-25T10:20:54.302336Z",
+        "received_at": "2026-11-25T10:20:54.446834Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:54 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 144.498,
+        "fixture": "epl-ips-ast-2026-11-28",
+        "phase": "single_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 154.479
+      },
+      {
+        "status": "TimeoutError",
+        "error": "public HTTP total deadline elapsed",
+        "retry_at": null,
+        "fixture": "epl-lee-cov-2026-11-28",
+        "phase": "single_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 1511.545
+      },
+      {
+        "status": "TimeoutError",
+        "error": "public HTTP total deadline elapsed",
+        "retry_at": null,
+        "fixture": "epl-mun-bre-2026-11-28",
+        "phase": "single_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 1513.851
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "10456c525ab8851774959fd6dff25873a9923e6aba4a8d276cfb54b2d4122c5d",
+        "requested_at": "2026-11-25T10:20:55.818482Z",
+        "received_at": "2026-11-25T10:20:58.195851Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 2377.369,
+        "fixture": "epl-not-che-2026-11-27",
+        "phase": "per_fixture_warmup",
+        "timeout_seconds": 12,
+        "requested_tokens": 3,
+        "total_ms": 2397.308
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "1129bb8946800c33da25208293e66593e624908662b058ea65999551505c4a36",
+        "requested_at": "2026-11-25T10:20:55.819465Z",
+        "received_at": "2026-11-25T10:20:58.193604Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 2374.139,
+        "fixture": "epl-ips-ast-2026-11-28",
+        "phase": "per_fixture_warmup",
+        "timeout_seconds": 12,
+        "requested_tokens": 3,
+        "total_ms": 2388.819
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "2d5da3c6ba1daad78eed698a9cf08a77470ab3a0f1c01e28886920e9eea88ca2",
+        "requested_at": "2026-11-25T10:20:55.819038Z",
+        "received_at": "2026-11-25T10:20:58.255994Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 2436.956,
+        "fixture": "epl-lee-cov-2026-11-28",
+        "phase": "per_fixture_warmup",
+        "timeout_seconds": 12,
+        "requested_tokens": 3,
+        "total_ms": 2454.454
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "040d7e6a02b3f84870df66f2d97890618af923eb5b18a5d5bf3ad20845864f6b",
+        "requested_at": "2026-11-25T10:20:55.817486Z",
+        "received_at": "2026-11-25T10:20:55.960986Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:55 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 143.5,
+        "fixture": "epl-mun-bre-2026-11-28",
+        "phase": "per_fixture_warmup",
+        "timeout_seconds": 12,
+        "requested_tokens": 3,
+        "total_ms": 153.071
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "a9cea7de24f781a395a738ae66a0494c4341d9184098bba9f0080c0f803445b8",
+        "requested_at": "2026-11-25T10:20:58.275454Z",
+        "received_at": "2026-11-25T10:20:58.536117Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 260.663,
+        "fixture": "epl-not-che-2026-11-27",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 270.567
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "1129bb8946800c33da25208293e66593e624908662b058ea65999551505c4a36",
+        "requested_at": "2026-11-25T10:20:58.278185Z",
+        "received_at": "2026-11-25T10:20:58.584525Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 306.34,
+        "fixture": "epl-ips-ast-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 318.153
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "2d5da3c6ba1daad78eed698a9cf08a77470ab3a0f1c01e28886920e9eea88ca2",
+        "requested_at": "2026-11-25T10:20:58.278967Z",
+        "received_at": "2026-11-25T10:20:58.430617Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 151.65,
+        "fixture": "epl-lee-cov-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 163.648
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "2d9c6c690d2067028d106d6b7dfab34bc36658d1a0d680be46e1e1c10dc00d2c",
+        "requested_at": "2026-11-25T10:20:58.279448Z",
+        "received_at": "2026-11-25T10:20:58.421041Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 141.593,
+        "fixture": "epl-mun-bre-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 154.876
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "def6197b3de0a03c277c6d589a03a831dd739405cf0387eb69840c934db44b1e",
+        "requested_at": "2026-11-25T10:20:58.596260Z",
+        "received_at": "2026-11-25T10:20:58.740954Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 144.694,
+        "fixture": "epl-not-che-2026-11-27",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 153.883
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "5443fe94a5743c351011af3a6418fd11e1800c46f456c727b8cb52ef19e57459",
+        "requested_at": "2026-11-25T10:20:58.597782Z",
+        "received_at": "2026-11-25T10:20:58.739844Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 142.062,
+        "fixture": "epl-ips-ast-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 167.089
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "fe0721eefaa4c35c627e4081b017911a1d7af10e5017753cbac30df2a9e3673f",
+        "requested_at": "2026-11-25T10:20:58.593840Z",
+        "received_at": "2026-11-25T10:20:58.735705Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 141.865,
+        "fixture": "epl-lee-cov-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 151.283
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "086a1fb257b786358343ca3652e6cc707f515fe04126467dbf0ff8c5f6cffda8",
+        "requested_at": "2026-11-25T10:20:58.596976Z",
+        "received_at": "2026-11-25T10:20:58.756669Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 159.693,
+        "fixture": "epl-mun-bre-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 174.38
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "def6197b3de0a03c277c6d589a03a831dd739405cf0387eb69840c934db44b1e",
+        "requested_at": "2026-11-25T10:20:58.768799Z",
+        "received_at": "2026-11-25T10:20:58.919304Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 150.505,
+        "fixture": "epl-not-che-2026-11-27",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 170.615
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "5443fe94a5743c351011af3a6418fd11e1800c46f456c727b8cb52ef19e57459",
+        "requested_at": "2026-11-25T10:20:58.771047Z",
+        "received_at": "2026-11-25T10:20:58.920570Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 149.523,
+        "fixture": "epl-ips-ast-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 234.571
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "fe0721eefaa4c35c627e4081b017911a1d7af10e5017753cbac30df2a9e3673f",
+        "requested_at": "2026-11-25T10:20:58.773157Z",
+        "received_at": "2026-11-25T10:20:58.920741Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 147.584,
+        "fixture": "epl-lee-cov-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 200.095
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "0dac4fbe0db643331e6e82a8b7d178fd32b3c695e5d4499fc39a9f6d6a7e5184",
+        "requested_at": "2026-11-25T10:20:58.772639Z",
+        "received_at": "2026-11-25T10:20:58.922698Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:58 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 150.059,
+        "fixture": "epl-mun-bre-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 176.004
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "0887d9aa6750e214811858a2a163dc393ac6267e93e5a6ce320c18c7a634a825",
+        "requested_at": "2026-11-25T10:20:59.004686Z",
+        "received_at": "2026-11-25T10:20:59.173872Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:59 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 169.186,
+        "fixture": "epl-not-che-2026-11-27",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 186.243
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "3217c107d7575e2f798e77b692a1b2affeb4b03867f7f295890f6ffce06e7571",
+        "requested_at": "2026-11-25T10:20:59.006427Z",
+        "received_at": "2026-11-25T10:20:59.154806Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:59 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 148.379,
+        "fixture": "epl-ips-ast-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 167.944
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "b1952e731c9cd0be005332afa607a81811206483b9cddbaa2eb6b36da357c3b5",
+        "requested_at": "2026-11-25T10:20:59.007833Z",
+        "received_at": "2026-11-25T10:20:59.169123Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:59 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 161.29,
+        "fixture": "epl-lee-cov-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 188.025
+      },
+      {
+        "status": "ok",
+        "returned_tokens": 3,
+        "sha256": "420a5a2cd74ad62c14524e5eaa105c1a41ca967ebb6403815152d8544b3f358d",
+        "requested_at": "2026-11-25T10:20:59.007200Z",
+        "received_at": "2026-11-25T10:20:59.171449Z",
+        "http_date": "Wed, 25 Nov 2026 10:20:59 GMT",
+        "encoding": "gzip",
+        "http_fresh": true,
+        "native_latency_ms": 164.249,
+        "fixture": "epl-mun-bre-2026-11-28",
+        "phase": "per_fixture_warm_concurrent",
+        "timeout_seconds": 1.5,
+        "requested_tokens": 3,
+        "total_ms": 181.255
+      }
+    ]
+  },
+  "season_backfill": {
+    "year": 2026,
+    "commands": [
+      [
+        8,
+        2,
+        90
+      ],
+      [
+        40,
+        4,
+        90
+      ],
+      [
+        128,
+        4,
+        90
+      ]
+    ],
+    "command_argument_order": [
+      "--max-pages",
+      "--workers",
+      "--max-seconds"
+    ],
+    "first_request": "2026-11-25T10:17:48.971675Z",
+    "last_receipt": "2026-11-25T10:23:20.406487Z",
+    "source_endpoints": [
+      "https://gamma-api.polymarket.com/events",
+      "https://data-api.polymarket.com/v2/trades",
+      "https://data-api.polymarket.com/v2/prices-history"
+    ],
+    "sequential_runs": [
+      {
+        "year": 2026,
+        "catalog_complete": false,
+        "catalog_next_offset": 150,
+        "fixtures": 20,
+        "outcome_tokens": 600,
+        "jobs": {
+          "event": {
+            "done": 1,
+            "pending": 6
+          },
+          "trades": {
+            "done": 1,
+            "pending": 39
+          },
+          "prices": {
+            "pending": 8400
+          }
+        },
+        "next_retry_at": null,
+        "gap_examples": [],
+        "scope": "Gamma fixtures with scheduled start before observation; source trade and price coverage only",
+        "tier_A": 0,
+        "execution_roi": null,
+        "page_steps": 8,
+        "catalog_errors": [],
+        "elapsed_seconds": 11.51,
+        "page_steps_per_minute": 41.7,
+        "time_budget_reached": false
+      },
+      {
+        "year": 2026,
+        "catalog_complete": false,
+        "catalog_next_offset": 850,
+        "fixtures": 88,
+        "outcome_tokens": 3294,
+        "jobs": {
+          "event": {
+            "done": 10,
+            "pending": 31
+          },
+          "trades": {
+            "done": 4,
+            "pending": 167
+          },
+          "prices": {
+            "done": 3,
+            "pending": 44007
+          }
+        },
+        "next_retry_at": null,
+        "gap_examples": [],
+        "scope": "Gamma fixtures with scheduled start before observation; source trade and price coverage only",
+        "tier_A": 0,
+        "execution_roi": null,
+        "page_steps": 40,
+        "catalog_errors": [],
+        "elapsed_seconds": 24.401,
+        "page_steps_per_minute": 98.35,
+        "time_budget_reached": false
+      },
+      {
+        "year": 2026,
+        "catalog_complete": true,
+        "catalog_next_offset": null,
+        "fixtures": 110,
+        "outcome_tokens": 4560,
+        "jobs": {
+          "event": {
+            "done": 50,
+            "pending": 2
+          },
+          "trades": {
+            "done": 15,
+            "pending": 205
+          },
+          "prices": {
+            "done": 16,
+            "pending": 61718
+          }
+        },
+        "next_retry_at": null,
+        "active_cooldowns": [],
+        "gap_examples": [],
+        "scope": "Gamma fixtures with scheduled start before observation; source trade and price coverage only",
+        "tier_A": 0,
+        "execution_roi": null,
+        "page_steps": 128,
+        "catalog_errors": [],
+        "elapsed_seconds": 35.493,
+        "page_steps_per_minute": 216.38,
+        "time_budget_reached": false
+      }
+    ],
+    "indexed_rows": [
+      {
+        "kind": "prices",
+        "resolution": 0,
+        "rows": 16
+      },
+      {
+        "kind": "prices",
+        "resolution": 1800,
+        "rows": 768
+      },
+      {
+        "kind": "trades",
+        "resolution": null,
+        "rows": 42609
+      }
+    ],
+    "archived_requests": [
+      {
+        "operation": "catalog",
+        "status": "ok",
+        "count": 26
+      },
+      {
+        "operation": "event",
+        "status": "ok",
+        "count": 4
+      },
+      {
+        "operation": "prices",
+        "status": "ok",
+        "count": 50
+      },
+      {
+        "operation": "sports",
+        "status": "ok",
+        "count": 1
+      },
+      {
+        "operation": "trades",
+        "status": "ok",
+        "count": 50
+      }
+    ],
+    "walks": [
+      {
+        "done": 0,
+        "count": 2
+      },
+      {
+        "done": 1,
+        "count": 65
+      }
+    ],
+    "page_sizes_for_started_jobs": [
+      {
+        "page_size": 1000,
+        "jobs": 34
+      }
+    ]
+  },
+  "actual_matchday_window_observed": false,
+  "tier_A": 0,
+  "paper_fill_count": 0,
+  "execution_roi": null
+}
