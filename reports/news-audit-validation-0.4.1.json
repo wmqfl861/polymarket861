@@ -1,0 +1,194 @@
+{
+  "scope": "Local validation. The growth, correction, text and power probes use the original Claude scripts and controlled inputs, not live news. Original and patched snapshot outputs are shown side by side.",
+  "source_tree": "ec0aa361a0c65900de3438e461cd956027967299",
+  "tests_tree": "8fdab9bcd514ada8a8d18d64944c0b4a9f7a5b27",
+  "unit_and_browser": {
+    "3.11": {
+      "interpreter": "Python 3.11.18",
+      "tests": 416,
+      "passed": 416,
+      "skipped": 0,
+      "browser": "Debian Chromium headless 156.0.8078.108 via Playwright"
+    },
+    "3.12": {
+      "interpreter": "Python 3.12.14",
+      "tests": 416,
+      "passed": 416,
+      "skipped": 0,
+      "browser": "Debian Chromium headless 156.0.8078.108 via Playwright"
+    },
+    "3.13": {
+      "interpreter": "Python 3.13.5",
+      "tests": 416,
+      "passed": 416,
+      "skipped": 0,
+      "browser": "Debian Chromium headless 156.0.8078.108 via Playwright"
+    }
+  },
+  "static_checks": {
+    "ruff": "src tests scripts",
+    "strict_mypy": [
+      "blob_storage.py",
+      "score_bounds.py",
+      "experiment_statistics.py"
+    ],
+    "javascript_syntax": "assets/dashboard.js"
+  },
+  "wheel": {
+    "package": "polymarket861",
+    "version": "0.4.1",
+    "source_files_verified_byte_for_byte": 82,
+    "entry_points": [
+      "pm861",
+      "polymarket861"
+    ],
+    "wheel_sha256_local_build": "47c84b756d019e7ebeef3b1772c0588ecd17f7840afa6358a324f9faee7fd306"
+  },
+  "original_review_probes": {
+    "unchanged_4_players_72_polls": {
+      "before": {
+        "poll": 72,
+        "news_articles": 288,
+        "news_article_proofs": 288,
+        "news_analysis_runs": 288,
+        "news_claims": 288,
+        "news_checks": 72,
+        "news_poll_proofs": 72,
+        "files": 291,
+        "bytes": 2020534,
+        "facts_final": 4
+      },
+      "after": {
+        "poll": 72,
+        "news_articles": 4,
+        "news_article_proofs": 4,
+        "news_analysis_runs": 4,
+        "news_claims": 4,
+        "news_checks": 72,
+        "news_poll_proofs": 72,
+        "files": 7,
+        "bytes": 731364,
+        "facts_final": 4
+      }
+    },
+    "rescheduled_fixture": {
+      "before": [
+        {
+          "step": "after first collection, placeholder kickoff",
+          "facts": 3,
+          "home_covered": true,
+          "retained_source_ids": [
+            "forest-official",
+            "touchline-availability"
+          ]
+        },
+        {
+          "step": "immediately after the kickoff correction",
+          "facts": 0,
+          "home_covered": false,
+          "retained_source_ids": []
+        },
+        {
+          "step": "after the next regular poll",
+          "facts": 2,
+          "home_covered": true,
+          "retained_source_ids": [
+            "touchline-availability"
+          ]
+        },
+        {
+          "step": "three hours later",
+          "facts": 2,
+          "home_covered": true,
+          "retained_source_ids": [
+            "touchline-availability"
+          ]
+        }
+      ],
+      "after": [
+        {
+          "step": "after first collection, placeholder kickoff",
+          "facts": 3,
+          "home_covered": true,
+          "retained_source_ids": [
+            "forest-official",
+            "touchline-availability"
+          ]
+        },
+        {
+          "step": "immediately after the kickoff correction",
+          "facts": 3,
+          "home_covered": true,
+          "retained_source_ids": [
+            "forest-official",
+            "touchline-availability"
+          ]
+        },
+        {
+          "step": "after the next regular poll",
+          "facts": 3,
+          "home_covered": true,
+          "retained_source_ids": [
+            "forest-official",
+            "touchline-availability"
+          ]
+        },
+        {
+          "step": "three hours later",
+          "facts": 3,
+          "home_covered": true,
+          "retained_source_ids": [
+            "forest-official",
+            "touchline-availability"
+          ]
+        }
+      ]
+    },
+    "competition_context_after": [
+      {
+        "sentence": "Aldo Ashdown has been ruled out of the match against Chelsea.",
+        "relevant_with_placeholder_saturday_kickoff": true,
+        "relevant_with_real_friday_kickoff": true
+      },
+      {
+        "sentence": "Aldo Ashdown will miss Friday's game against Chelsea with a hamstring injury.",
+        "relevant_with_placeholder_saturday_kickoff": false,
+        "relevant_with_real_friday_kickoff": true
+      },
+      {
+        "sentence": "Aldo Ashdown will miss the match against Chelsea after injuring his ankle in the Carabao Cup tie on Tuesday.",
+        "relevant_with_placeholder_saturday_kickoff": true,
+        "relevant_with_real_friday_kickoff": true
+      },
+      {
+        "sentence": "Aldo Ashdown will miss the Premier League match against Chelsea after returning injured from international duty.",
+        "relevant_with_placeholder_saturday_kickoff": true,
+        "relevant_with_real_friday_kickoff": true
+      }
+    ],
+    "power_illustration": {
+      "expected_gain_per_match_points": 0.02127784668006537,
+      "sd_of_paired_difference_per_match_points": 0.9163621583476749,
+      "expected_t_statistic_one_season": 0.45263937145751854,
+      "matches_for_50pct_power": 14615,
+      "matches_for_80pct_power": 24692,
+      "seasons_for_80pct_power": 64.97894736842105,
+      "one_season_38_rounds": {
+        "p_higher_score_verdict": 0.01,
+        "p_lower_score_verdict": 0.0005,
+        "mean_observed_difference": 0.022568541919408713,
+        "sd_of_season_difference": 0.048451478575782754
+      },
+      "one_season_if_news_has_no_real_effect": {
+        "p_higher_score_verdict": 0.0015,
+        "p_lower_score_verdict": 0.0075,
+        "mean_observed_difference": -0.021480479358966947,
+        "sd_of_season_difference": 0.047480722137431076
+      }
+    }
+  },
+  "history_and_language": {
+    "historical_report_regenerated": "8710df3259aa87cfdd7e8152ebf51cd7e481c43979c5517552353c4cb80960f9",
+    "official_prose_report_regenerated": "9ee2f5f9b4c1e54c7f713f725f2eab64bd2fc483f9b0903e1a8fed1fdc62830d"
+  }
+}

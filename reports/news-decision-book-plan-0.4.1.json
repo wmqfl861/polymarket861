@@ -1,0 +1,196 @@
+{
+  "schema": "epl-forecast-book-upgrade-qa-v1",
+  "evidence_type": "offline normal Coordinator.tick on a private copy of an already-planned week; all future targets are planned, not receipts or guaranteed prices",
+  "local_clock_utc": "2026-11-25T10:31:56.000000Z",
+  "input": "persisted 0.4.1 coordinator prior to forecast-window samples",
+  "fixture": "epl-not-che-2026-11-27",
+  "matchweek": 12,
+  "kickoff": "2026-11-27T20:00:00.000000Z",
+  "horizons": {
+    "T-24h": {
+      "opens": "2026-11-26T19:55:00.000000Z",
+      "cutoff": "2026-11-26T20:00:00.000000Z",
+      "before": {
+        "prior_to_open": {
+          "role": "periodic",
+          "target": "2026-11-26T19:45:00.000000Z",
+          "deadline": "2026-11-26T19:45:45.000000Z"
+        },
+        "target_at_open": null,
+        "first_after_open": {
+          "role": "decision_book",
+          "target": "2026-11-26T19:59:35.000000Z",
+          "deadline": "2026-11-26T20:00:00.000000Z"
+        },
+        "target_counts_from_open_minus30s_to_cutoff": {
+          "decision_book": 1
+        },
+        "earliest_forecast_sample": null,
+        "latest_forecast_sample": null,
+        "decision_book": {
+          "role": "decision_book",
+          "target": "2026-11-26T19:59:35.000000Z",
+          "deadline": "2026-11-26T20:00:00.000000Z"
+        }
+      },
+      "after": {
+        "prior_to_open": {
+          "role": "forecast_book",
+          "target": "2026-11-26T19:54:50.000000Z",
+          "deadline": "2026-11-26T19:54:58.000000Z"
+        },
+        "target_at_open": null,
+        "first_after_open": {
+          "role": "forecast_book",
+          "target": "2026-11-26T19:55:10.000000Z",
+          "deadline": "2026-11-26T19:55:18.000000Z"
+        },
+        "target_counts_from_open_minus30s_to_cutoff": {
+          "forecast_book": 15,
+          "decision_book": 1
+        },
+        "earliest_forecast_sample": {
+          "role": "forecast_book",
+          "target": "2026-11-26T19:54:50.000000Z",
+          "deadline": "2026-11-26T19:54:58.000000Z"
+        },
+        "latest_forecast_sample": {
+          "role": "forecast_book",
+          "target": "2026-11-26T19:59:30.000000Z",
+          "deadline": "2026-11-26T19:59:34.000000Z"
+        },
+        "decision_book": {
+          "role": "decision_book",
+          "target": "2026-11-26T19:59:35.000000Z",
+          "deadline": "2026-11-26T20:00:00.000000Z"
+        }
+      }
+    },
+    "T-60m": {
+      "opens": "2026-11-27T18:55:00.000000Z",
+      "cutoff": "2026-11-27T19:00:00.000000Z",
+      "before": {
+        "prior_to_open": {
+          "role": "periodic",
+          "target": "2026-11-27T18:54:00.000000Z",
+          "deadline": "2026-11-27T18:54:45.000000Z"
+        },
+        "target_at_open": {
+          "role": "periodic",
+          "target": "2026-11-27T18:55:00.000000Z",
+          "deadline": "2026-11-27T18:55:45.000000Z"
+        },
+        "first_after_open": {
+          "role": "periodic",
+          "target": "2026-11-27T18:56:00.000000Z",
+          "deadline": "2026-11-27T18:56:45.000000Z"
+        },
+        "target_counts_from_open_minus30s_to_cutoff": {
+          "periodic": 5,
+          "decision_book": 1
+        },
+        "earliest_forecast_sample": null,
+        "latest_forecast_sample": null,
+        "decision_book": {
+          "role": "decision_book",
+          "target": "2026-11-27T18:59:35.000000Z",
+          "deadline": "2026-11-27T19:00:00.000000Z"
+        }
+      },
+      "after": {
+        "prior_to_open": {
+          "role": "forecast_book",
+          "target": "2026-11-27T18:54:50.000000Z",
+          "deadline": "2026-11-27T18:54:58.000000Z"
+        },
+        "target_at_open": null,
+        "first_after_open": {
+          "role": "forecast_book",
+          "target": "2026-11-27T18:55:10.000000Z",
+          "deadline": "2026-11-27T18:55:18.000000Z"
+        },
+        "target_counts_from_open_minus30s_to_cutoff": {
+          "forecast_book": 15,
+          "decision_book": 1
+        },
+        "earliest_forecast_sample": {
+          "role": "forecast_book",
+          "target": "2026-11-27T18:54:50.000000Z",
+          "deadline": "2026-11-27T18:54:58.000000Z"
+        },
+        "latest_forecast_sample": {
+          "role": "forecast_book",
+          "target": "2026-11-27T18:59:30.000000Z",
+          "deadline": "2026-11-27T18:59:34.000000Z"
+        },
+        "decision_book": {
+          "role": "decision_book",
+          "target": "2026-11-27T18:59:35.000000Z",
+          "deadline": "2026-11-27T19:00:00.000000Z"
+        }
+      }
+    }
+  },
+  "budget": {
+    "per_fixture_new_native_targets_in_two_windows": 30,
+    "per_fixture_overlapping_regular_targets_replaced": 5,
+    "net_planned_native_targets_per_fixture": 25,
+    "new_targets_per_horizon": 15,
+    "regular_replacements_by_horizon": {
+      "T-24h": 0,
+      "T-60m": 5
+    },
+    "step_seconds": 20,
+    "capture_budget_seconds": 8,
+    "last_target_budget_seconds": 4,
+    "primary_requests_per_new_target": 1,
+    "upstream_retry_after": "eligible only within original deadline, at most two deferred reclaims",
+    "direct_per_token_fallback": false,
+    "round_12_matches": 10,
+    "round_12_added_targets": 300,
+    "round_12_net_targets": 250,
+    "peak_simultaneous_round_12_forecast_targets": 4,
+    "first_peak_round_12_utc": "2026-11-28T13:59:50.000000Z",
+    "all_tracked_fixtures_in_copy": 11,
+    "all_tracked_added_targets": 330,
+    "all_tracked_superseded_regular_targets": 55,
+    "all_tracked_net_targets": 275,
+    "already_planned_pending_book_counts_before": {
+      "closing_book": 671,
+      "decision_book": 22,
+      "execution_book": 22,
+      "periodic": 4422
+    },
+    "already_planned_pending_book_counts_after": {
+      "closing_book": 671,
+      "decision_book": 22,
+      "execution_book": 22,
+      "forecast_book": 330,
+      "periodic": 4367
+    }
+  },
+  "preservation": {
+    "existing_terminal_slots_unchanged": 22,
+    "existing_decision_execution_closing_and_paper_slots_unchanged": 748,
+    "original_native_batch_count_before_and_after": 10,
+    "indexed_book_rows_before_and_after": 528,
+    "forecast_seals_before_and_after": 0,
+    "new_receipts_from_plan_probe": 0,
+    "idempotent_second_tick": true
+  },
+  "controlled_tests": {
+    "suite": "tests/test_season_forecast_books.py",
+    "both_horizons": [
+      "first real runner freeze at opening, using previously received batch",
+      "restart inside window, timely native receipt precedes later seal",
+      "restart after outage, batch received two seconds after the true seal excluded as stale_batch"
+    ],
+    "coverage": "for each of 301 seconds including both endpoints, at least one independent slot can have completed on time and its earliest receipt is still within 30s",
+    "failure_and_admission": [
+      "same-time native failure and partial batch kept as gap/partial, no per-token rescue",
+      "due closing and imminent execution retain book worker priority",
+      "new historical windows from old plan labeled forecast_sampling_added_after_window; live unattended slots labeled collector_window_missed"
+    ]
+  },
+  "interpretation": "These slot counts describe collection opportunities. Price and coverage evaluation still verifies the actual native batch, receipt time, depth, terms and independently proven kickoff."
+}

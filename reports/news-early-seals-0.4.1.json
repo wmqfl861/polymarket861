@@ -1,9 +1,9 @@
 {
-  "as_of": "2026-11-25T15:31:10.251308Z",
+  "as_of": "2026-11-25T15:53:28.645446Z",
   "capture_stage": "pre_release",
   "protocol": "epl-news-probability-replay-v1",
   "provenance": "Numerical values copied from the news arms attached to hash-verified primary B1 technical early seals. The unchanged arm equals the sealed primary forecast. These unscheduled observations have their own input and sealing clocks.",
-  "required_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+  "required_recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
   "round_id": 12,
   "season": "2026-27",
   "source_kind": "verified_stored_technical_early_seals",
@@ -180,8 +180,8 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "143892314c11bddfbb9bac7267fcb8a16f10973a09c6ae9c63369a67deca8bf3",
-      "cutoff": "2026-11-25T15:31:10.251308Z",
+      "comparison_frame_sha256": "01d500ae70a3b9acc91a149687d7776d873fa8fd68fde5f7ff9a7a5a7b42944b",
+      "cutoff": "2026-11-25T15:53:28.645446Z",
       "excluded_reasons": {
         "unsupported_event": 2
       },
@@ -189,7 +189,7 @@
       "fixture_id": "epl/2026-27/arsenal/manchester-city",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:09.958185Z",
+      "input_cutoff": "2026-11-25T15:53:28.308834Z",
       "kickoff": "2026-11-29T16:30:00.000000Z",
       "lines": [
         0.5,
@@ -201,9 +201,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "26ad26683832b3e49b46e7c1be8df73c58cb6c864d85f1f29b8947b096e26280",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:10.251308Z",
+      "receipt_sha256": "6344dd219a3c6b33320c220514f8c4ba37c9d3c8ece42453bac2e97ae492b7e1",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:28.645446Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -378,8 +378,8 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "35c312ab395c2146e66b2fedf5e0549e7fad9b3721f972b8c3ee70597843cece",
-      "cutoff": "2026-11-25T15:31:05.130509Z",
+      "comparison_frame_sha256": "e12db8ed0930d6573e4d3c89e4acda73250af6190bb6034162a53c0095451311",
+      "cutoff": "2026-11-25T15:53:23.279977Z",
       "excluded_reasons": {
         "unsupported_event": 2
       },
@@ -387,7 +387,7 @@
       "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:04.866557Z",
+      "input_cutoff": "2026-11-25T15:53:22.918509Z",
       "kickoff": "2026-11-29T14:05:00.000000Z",
       "lines": [
         0.5,
@@ -399,9 +399,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "23fce6a31d58aeeb6d9cb6e69180015411a8bbaf72dece4d4f0c839ad49f5d57",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:05.130509Z",
+      "receipt_sha256": "f3f10faac264fce6d020cb9d710e343df6732996455f0705ec870521c24acd68",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:23.279977Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -576,14 +576,14 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "920b133f48ca8741bee7cb156682be2dbd1bd0cfaf6547172d7fc4f70a19ab16",
-      "cutoff": "2026-11-25T15:31:06.384982Z",
+      "comparison_frame_sha256": "fb3b3522c027935c9790213749ba10cb246f909d94a361f16393062d692db5d3",
+      "cutoff": "2026-11-25T15:53:24.713652Z",
       "excluded_reasons": {},
       "facts_sha256": "707d308771201510d1af07056b11f0c9fb35bb0237f4d5d1c47198e882a3f1d8",
       "fixture_id": "epl/2026-27/crystal-palace/hull-city",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:06.035087Z",
+      "input_cutoff": "2026-11-25T15:53:24.410814Z",
       "kickoff": "2026-11-29T14:05:00.000000Z",
       "lines": [
         0.5,
@@ -595,9 +595,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "6c7c2e7d8e93deb0c5f5fc0cf6e5afad5a227edee9cd2089471ec3f29e50de28",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:06.384982Z",
+      "receipt_sha256": "768d28372cbdc5361e15fe1e84a4c1ebe1a7ff47d3238305c3254f6ad2c673ce",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:24.713652Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -772,8 +772,8 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "9d7e9651c2e048d88cf61345c866bb09662988127e526e1cac774736f74e7852",
-      "cutoff": "2026-11-25T15:31:03.975251Z",
+      "comparison_frame_sha256": "107b3a940de7f400ad0135c03e6204ae49618aeb7c950188e0e8d4981c956d55",
+      "cutoff": "2026-11-25T15:53:21.667460Z",
       "excluded_reasons": {
         "unsupported_event": 1
       },
@@ -781,7 +781,7 @@
       "fixture_id": "epl/2026-27/everton/liverpool",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:03.702228Z",
+      "input_cutoff": "2026-11-25T15:53:21.164051Z",
       "kickoff": "2026-11-29T12:00:00.000000Z",
       "lines": [
         0.5,
@@ -793,9 +793,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "39aceffa71f926ff189d60ccc45ff3212b48c8ab5eced4d34ffa412510d44087",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:03.975251Z",
+      "receipt_sha256": "b8031b95efdc18fd6b8fb9669001ce11c68f0c960a7cb9433f2a721e314f7b68",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:21.667460Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -970,8 +970,8 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "a4c909d8eee2a5ca92bf1d7ae15d293e53f05135ebd04d2d713d8603b2bcc78f",
-      "cutoff": "2026-11-25T15:31:07.685447Z",
+      "comparison_frame_sha256": "7cf791e78eee80c3497f70d00cd6a2ca7a1648c8e21e3e02b5dcf85fb411c857",
+      "cutoff": "2026-11-25T15:53:25.971472Z",
       "excluded_reasons": {
         "unsupported_event": 3
       },
@@ -979,7 +979,7 @@
       "fixture_id": "epl/2026-27/fulham/bournemouth",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:07.334988Z",
+      "input_cutoff": "2026-11-25T15:53:25.627331Z",
       "kickoff": "2026-11-29T14:05:00.000000Z",
       "lines": [
         0.5,
@@ -991,9 +991,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "4c9a208ae8eb79870f0d132f7c5aa30170e6943459bf712fcf734b948ad8ba42",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:07.685447Z",
+      "receipt_sha256": "f6bbf4d5d08663e9ac02828fb1e3a9f417a4ef3a37e4172b12b7febf31dfd969",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:25.971472Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -1168,14 +1168,14 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "566f5d96b2d95225625fff1fd3bec0f17035cf62bde210bf0c128a83afef87b7",
-      "cutoff": "2026-11-25T15:31:02.850510Z",
+      "comparison_frame_sha256": "b21e7e10b010b15c710bbe0658df0b8e0fc46b28a6c3ff1197bdeb56c3018418",
+      "cutoff": "2026-11-25T15:53:19.695207Z",
       "excluded_reasons": {},
       "facts_sha256": "5e0f7ac6a6658f55be07e2c2719c409f752cda747061e43597a100b3842b9bdd",
       "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:02.553991Z",
+      "input_cutoff": "2026-11-25T15:53:19.334572Z",
       "kickoff": "2026-11-28T17:30:00.000000Z",
       "lines": [
         0.5,
@@ -1187,9 +1187,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "eed257408d5293eea2374c00900dd09f518e0e936fe67efebab0b03c3a7104f0",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:02.850510Z",
+      "receipt_sha256": "3485ea6769d823e9d6d2b9a7fb99bbe604f9871229240edc60fd33907cb54dcd",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:19.695207Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -1364,8 +1364,8 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "1427f51391e90a200422389c685b0284c5c05cc60448b98c2b36edbe91d6ea3e",
-      "cutoff": "2026-11-25T15:31:00.382735Z",
+      "comparison_frame_sha256": "3634e90ecada9b30a0e307786587c94673d866c37c20bf859e50054ca02d783a",
+      "cutoff": "2026-11-25T15:53:16.472745Z",
       "excluded_reasons": {
         "unsupported_event": 2
       },
@@ -1373,7 +1373,7 @@
       "fixture_id": "epl/2026-27/leeds-united/coventry-city",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:00.057367Z",
+      "input_cutoff": "2026-11-25T15:53:16.102361Z",
       "kickoff": "2026-11-28T15:00:00.000000Z",
       "lines": [
         0.5,
@@ -1385,9 +1385,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "6fa814ad895c5742207268ebdfa2158db1b1efa350af908b8f0b01851a8298d6",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:00.382735Z",
+      "receipt_sha256": "2044b85b200230edadae6c7d3d34ca535bb6c0c5fcb7cb63ca77d39c26c998d7",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:16.472745Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -1562,8 +1562,8 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "1b491bc8767242de829e360ffa6a09bfac38d3528833acb4a1ab1e6bc5226a4f",
-      "cutoff": "2026-11-25T15:31:01.597328Z",
+      "comparison_frame_sha256": "376a3415ee6f891cd7c5b0a4de06e82c2240c1216d61b64973d9aa24d1959561",
+      "cutoff": "2026-11-25T15:53:18.126841Z",
       "excluded_reasons": {
         "unsupported_event": 1
       },
@@ -1571,7 +1571,7 @@
       "fixture_id": "epl/2026-27/manchester-united/brentford",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:01.322098Z",
+      "input_cutoff": "2026-11-25T15:53:17.704544Z",
       "kickoff": "2026-11-28T15:00:00.000000Z",
       "lines": [
         0.5,
@@ -1583,9 +1583,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "62ade339aa2f14f45fb60b1e40c6a7d6468a3196b6038f5c7fd7f538d5722116",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:01.597328Z",
+      "receipt_sha256": "fd52017b2328cebf664acd53f719a211c554c0c14f42f7e34ab8870f85d8654e",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:18.126841Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -1760,8 +1760,8 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "3c25873d7f454578778b7b2e80e9ae9aa68a698887c8dd1cb134e359ccd0c0c1",
-      "cutoff": "2026-11-25T15:30:59.051716Z",
+      "comparison_frame_sha256": "dcfc7afc9db7762e9966d57f09b21c284db4daee9a9784fea333ebe83727247e",
+      "cutoff": "2026-11-25T15:53:14.913578Z",
       "excluded_reasons": {
         "unsupported_event": 1
       },
@@ -1769,7 +1769,7 @@
       "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:30:58.555697Z",
+      "input_cutoff": "2026-11-25T15:53:14.289550Z",
       "kickoff": "2026-11-27T20:00:00.000000Z",
       "lines": [
         0.5,
@@ -1781,9 +1781,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "6b058951da756d8f087ae789087eed59660e08b05b2b2bfa2c56a7af5e636757",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:30:59.051716Z",
+      "receipt_sha256": "de9788a7c190a60ecd2b6c710df98f6de9a7ff3f04429b71b5424e0e840314b9",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:14.913578Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     },
     {
@@ -1958,14 +1958,14 @@
       },
       "base_model": "B1",
       "changed": true,
-      "comparison_frame_sha256": "be535316e45d1ffeac4bfa92fa61676e16c6596d50c40c647584beca348c6599",
-      "cutoff": "2026-11-25T15:31:09.019495Z",
+      "comparison_frame_sha256": "517c3d797266409bd543c24f4c9bbeb1d5f533d8abc882c51abbcdd24416deea",
+      "cutoff": "2026-11-25T15:53:27.378857Z",
       "excluded_reasons": {},
       "facts_sha256": "98b74d711d8f0f664a26057413e3a81209c4662321d31d0a425257cee67b7357",
       "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
       "history_manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
       "horizon": "early",
-      "input_cutoff": "2026-11-25T15:31:08.704332Z",
+      "input_cutoff": "2026-11-25T15:53:27.065226Z",
       "kickoff": "2026-11-29T14:05:00.000000Z",
       "lines": [
         0.5,
@@ -1977,9 +1977,9 @@
       "model_version": "B1",
       "policy_sha256": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
       "purpose": "main",
-      "receipt_sha256": "4a0d4f4ecdbbcf184246d20242996b3b5cf80bac050c945da22b8057045e6922",
-      "recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-      "sealed_at": "2026-11-25T15:31:09.019495Z",
+      "receipt_sha256": "9e5663ad1d8146002ad7481002fc7ade50947cb05406fdcfce66afbd8a342dc7",
+      "recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+      "sealed_at": "2026-11-25T15:53:27.378857Z",
       "training_sha256": "4f3d8b1bc3024d1924c5cbe3e4fdecdaeaa961552dbf5fcc3e78c07aa526602b"
     }
   ],
@@ -1996,7 +1996,7 @@
       "probability_values": 600,
       "probability_values_compared_to_stored_vectors": 600,
       "recipe_receipt_counts": {
-        "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae": 10
+        "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176": 10
       },
       "records": 10,
       "replayed_arms": 20

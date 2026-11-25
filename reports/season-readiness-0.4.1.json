@@ -1,6 +1,6 @@
 {
   "schema": "epl-season-readiness-v1",
-  "as_of": "2026-11-25T15:31:12.117345Z",
+  "as_of": "2026-11-25T15:53:30.560348Z",
   "season": "2026-27",
   "data_dir": "isolated-coordinator-copy",
   "checks": {
@@ -18,7 +18,7 @@
     "cutoff": "2026-11-26T20:00:00.000000Z"
   },
   "schedule": {
-    "as_of": "2026-11-25T15:31:12.117345Z",
+    "as_of": "2026-11-25T15:53:30.560348Z",
     "season": "2026-27",
     "round": 12,
     "registered": 10,
@@ -545,15 +545,15 @@
   },
   "release": {
     "active_version": "B1",
-    "active_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-    "installed_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "active_recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+    "installed_recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
     "approval": null,
     "state": "ready",
     "ready": true
   },
   "results": {
     "state": "stale",
-    "as_of": "2026-11-25T15:31:12.117345Z",
+    "as_of": "2026-11-25T15:53:30.560348Z",
     "latest_round": {
       "round": 11,
       "due": 10,
@@ -1037,8 +1037,8 @@
     "oldest_missing": {
       "fixture_id": "epl/2026-27/bournemouth/brentford",
       "kickoff": "2026-09-12T14:00:00.000000Z",
-      "hours_since_kickoff": 1777.52,
-      "hours_since_due": 1776.02
+      "hours_since_kickoff": 1777.89,
+      "hours_since_due": 1776.39
     },
     "overdue_fixtures": [
       {
@@ -1409,7 +1409,7 @@
     "latest_admitted_receipt": "2026-11-25T15:02:28.583045Z"
   },
   "training": {
-    "as_of": "2026-11-25T15:31:12.117345Z",
+    "as_of": "2026-11-25T15:53:30.560348Z",
     "season": "2026-27",
     "manifest_sha256": "fc66fe37ae4859570fa2f9596a9b2b0eb8a0771c7cf3f23f4c2ad12255a9a844",
     "training_matches": 1249,

@@ -1832,5 +1832,656 @@
     "English Wikipedia contributors, CC BY-SA 4.0, permanent links per roster",
     "Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0",
     "Public Polymarket Gamma catalog, public-domain OpenFootball schedule and historical results"
-  ]
+  ],
+  "second_online_poll": {
+    "scope": "A second normal online news sync on a copy with the previous sixty checks. The candidate's extractor was updated between the two syncs, so analysis runs may add claims to existing articles.",
+    "provider_periods_utc": {
+      "touchline-availability": {
+        "checked": 20,
+        "original_receipt_times": [
+          "2026-11-25T15:35:39.370853Z",
+          "2026-11-25T15:37:05.042034Z"
+        ],
+        "checks_complete": 14,
+        "new_articles": 0,
+        "new_claim_rows": 0,
+        "different_response_sha256": 20,
+        "changed_extractor_configs": 20
+      },
+      "touchline-rumours": {
+        "checked": 20,
+        "original_receipt_times": [
+          "2026-11-25T15:35:44.097374Z",
+          "2026-11-25T15:37:08.924596Z"
+        ],
+        "checks_complete": 20,
+        "new_articles": 0,
+        "new_claim_rows": 13,
+        "different_response_sha256": 20,
+        "changed_extractor_configs": 20
+      },
+      "wikipedia-season-news": {
+        "checked": 20,
+        "original_receipt_times": [
+          "2026-11-25T15:35:56.056892Z",
+          "2026-11-25T15:37:12.865289Z"
+        ],
+        "checks_complete": 20,
+        "new_articles": 0,
+        "new_claim_rows": 0,
+        "different_response_sha256": 0,
+        "changed_extractor_configs": 20
+      }
+    },
+    "remaining_gaps": {
+      "state": "partial",
+      "attempted": 60,
+      "succeeded": 54,
+      "failures": 6,
+      "articles_added": 0,
+      "claims_added": 13
+    },
+    "genuine_responses": [
+      {
+        "source": "touchline-availability",
+        "team": "Chelsea FC",
+        "checked_at": "2026-11-25T15:35:39.616907Z",
+        "response_sha256": "5757aa39adccae05a6b11877034af67c5d118f69d58c04f18c8c6c5bc71245e5",
+        "source_observed_at": "2026-11-25T15:35:39.592041Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "partial"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Nottingham Forest FC",
+        "checked_at": "2026-11-25T15:35:39.395567Z",
+        "response_sha256": "fb4d55f3f00c9c8ae97be3d6f15a5c909ca948ea25c35979f556f6a38116c1ac",
+        "source_observed_at": "2026-11-25T15:35:39.370853Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Brentford FC",
+        "checked_at": "2026-11-25T15:35:40.885958Z",
+        "response_sha256": "5c56ef959aa809ab1255cb716c8b07f665913b6c5ee661baf95024a9ff2f867b",
+        "source_observed_at": "2026-11-25T15:35:40.859740Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Coventry City FC",
+        "checked_at": "2026-11-25T15:36:00.533881Z",
+        "response_sha256": "1483b838eeb7577307c61c534ea662184bd93f0ddfc8d2016bb3153c2dd18207",
+        "source_observed_at": "2026-11-25T15:36:00.489873Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Leeds United FC",
+        "checked_at": "2026-11-25T15:36:00.525721Z",
+        "response_sha256": "7148fa4e53b66ceca1bc1cc2240091686bf677108339e1f53d698e97258d9062",
+        "source_observed_at": "2026-11-25T15:36:00.486086Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "partial"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Manchester United FC",
+        "checked_at": "2026-11-25T15:36:00.532125Z",
+        "response_sha256": "70edac9668550b142aa123efd77e63e1d52c880fdb95c59fc1fa7e5139f95a40",
+        "source_observed_at": "2026-11-25T15:36:00.490815Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Aston Villa FC",
+        "checked_at": "2026-11-25T15:36:12.442396Z",
+        "response_sha256": "1b03feedf22dd9ee7e61076a73fb7ce9e71be820cf80ebeebcff0bf466144976",
+        "source_observed_at": "2026-11-25T15:36:12.415013Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Ipswich Town FC",
+        "checked_at": "2026-11-25T15:36:12.439967Z",
+        "response_sha256": "3a1b3c3fb9505d8f1c6425acf0248746f4b57be149600957212bda8ba89bf68f",
+        "source_observed_at": "2026-11-25T15:36:12.412404Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Everton FC",
+        "checked_at": "2026-11-25T15:36:12.476987Z",
+        "response_sha256": "7cd4c35f52d6037b0be19855f9e5ce5b369e5712f9aebe47a0ba4f4df79fdc83",
+        "source_observed_at": "2026-11-25T15:36:12.458764Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Liverpool FC",
+        "checked_at": "2026-11-25T15:36:25.980280Z",
+        "response_sha256": "f02fccfd7bed77804d8e110c7b290d8235ecad8a656b9a43728df8e5ad8fe107",
+        "source_observed_at": "2026-11-25T15:36:25.964559Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "AFC Bournemouth",
+        "checked_at": "2026-11-25T15:36:25.875134Z",
+        "response_sha256": "0b3bb732550d2375f68e1a37df01adfb0fe3b2e772ca4926405af47a50c66e36",
+        "source_observed_at": "2026-11-25T15:36:25.852453Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Brighton & Hove Albion FC",
+        "checked_at": "2026-11-25T15:36:25.872869Z",
+        "response_sha256": "4364cc97196901ab304cd3ef43ce2bf22bdf21375289fdd2c4043dd80e43e9e5",
+        "source_observed_at": "2026-11-25T15:36:25.851353Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "partial"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Crystal Palace FC",
+        "checked_at": "2026-11-25T15:36:40.120059Z",
+        "response_sha256": "44ad3f38ec7bac0fe589acc20d3aeab09da5de4a0ae74c7c9e93fdfbc8bd76d1",
+        "source_observed_at": "2026-11-25T15:36:40.062204Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Fulham FC",
+        "checked_at": "2026-11-25T15:36:40.100532Z",
+        "response_sha256": "3e1b2302c01e57dd07b42efeb71ba23b0c9f0ac9dd5dcf404d11c2e080e80e46",
+        "source_observed_at": "2026-11-25T15:36:40.057547Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Hull City AFC",
+        "checked_at": "2026-11-25T15:36:40.102921Z",
+        "response_sha256": "91ea7e8f9b4e2f0d30f3c11ebc51ad2d7ae9abdbaa27b12aa013c7076990c884",
+        "source_observed_at": "2026-11-25T15:36:40.058919Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Newcastle United FC",
+        "checked_at": "2026-11-25T15:36:53.421858Z",
+        "response_sha256": "52b355087431cf9afa1f765ec5f1b1612f2953a5c80daa30045d0756d259da8e",
+        "source_observed_at": "2026-11-25T15:36:53.378389Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "partial"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Sunderland AFC",
+        "checked_at": "2026-11-25T15:36:53.428196Z",
+        "response_sha256": "4ce4d06a2391c5452efafb63cdf8bf2a32f78ab63fbf2b1003e61d36359ee413",
+        "source_observed_at": "2026-11-25T15:36:53.382068Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "partial"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Tottenham Hotspur FC",
+        "checked_at": "2026-11-25T15:36:53.412461Z",
+        "response_sha256": "b36b0d02a91b5c17968d0a0b6ff8e209255a9ca47a0c401065e12b566ce38b25",
+        "source_observed_at": "2026-11-25T15:36:53.383372Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "partial"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Arsenal FC",
+        "checked_at": "2026-11-25T15:37:05.062458Z",
+        "response_sha256": "f3b89c040342b63bd23269e58e341bc5bcc84ccfd013dadf74322f6abd2c1696",
+        "source_observed_at": "2026-11-25T15:37:05.042034Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-availability",
+        "team": "Manchester City FC",
+        "checked_at": "2026-11-25T15:37:05.049070Z",
+        "response_sha256": "6d4b46d7c8416409f457202a7bd6291dafc2d93ad80a12f888890703078a6546",
+        "source_observed_at": "2026-11-25T15:37:05.020560Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Chelsea FC",
+        "checked_at": "2026-11-25T15:35:45.440318Z",
+        "response_sha256": "b3e7e163b3e731b62ac22309be20556bba58bb05a2b34b4b0582b7fb35ed7ab1",
+        "source_observed_at": "2026-11-25T15:35:45.419014Z",
+        "articles_added": 0,
+        "claims_added": 1,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Nottingham Forest FC",
+        "checked_at": "2026-11-25T15:35:44.107679Z",
+        "response_sha256": "8ce6f1a93a8eab0b4a18da9a69db304197a50f7702ff0b061b18a9465ba51745",
+        "source_observed_at": "2026-11-25T15:35:44.097374Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Brentford FC",
+        "checked_at": "2026-11-25T15:35:44.135987Z",
+        "response_sha256": "e016f48589aa89c0930015548273c4a33230bdbbc28db8b3443fa6efe795e0e7",
+        "source_observed_at": "2026-11-25T15:35:44.114470Z",
+        "articles_added": 0,
+        "claims_added": 1,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Coventry City FC",
+        "checked_at": "2026-11-25T15:36:04.374499Z",
+        "response_sha256": "688d24908fca41e4f2b716f060c25adc0f867c395d80e30a3fb2734ab425a4cd",
+        "source_observed_at": "2026-11-25T15:36:04.350163Z",
+        "articles_added": 0,
+        "claims_added": 1,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Leeds United FC",
+        "checked_at": "2026-11-25T15:36:04.411470Z",
+        "response_sha256": "275eda26597f916e712eca7e4e8757a792523f7737382a80fd75eeb0ffd485f9",
+        "source_observed_at": "2026-11-25T15:36:04.381633Z",
+        "articles_added": 0,
+        "claims_added": 2,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Manchester United FC",
+        "checked_at": "2026-11-25T15:36:04.414748Z",
+        "response_sha256": "b8b2e6d3a588796476776d7a63964049bab60e49d9a4e06c195e896ac45dd223",
+        "source_observed_at": "2026-11-25T15:36:04.405195Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Aston Villa FC",
+        "checked_at": "2026-11-25T15:36:16.447341Z",
+        "response_sha256": "09bb81e36521cf04afaa4813166c746af3a3d9b1e8f0bb71e8eb6c2c5e642217",
+        "source_observed_at": "2026-11-25T15:36:16.438339Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Ipswich Town FC",
+        "checked_at": "2026-11-25T15:36:16.496204Z",
+        "response_sha256": "8a74830843ddae5773c51057fedcff07ef3b4de8a9b7523f178bcaac87076c4c",
+        "source_observed_at": "2026-11-25T15:36:16.481090Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Everton FC",
+        "checked_at": "2026-11-25T15:36:16.493433Z",
+        "response_sha256": "fc68ecc0e05baaa2a2b0b0f282ea90b665cf8da2c2e6cbf3de1e2725aed16fcc",
+        "source_observed_at": "2026-11-25T15:36:16.477519Z",
+        "articles_added": 0,
+        "claims_added": 1,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Liverpool FC",
+        "checked_at": "2026-11-25T15:36:30.613894Z",
+        "response_sha256": "18a7fcb5d1fc40ace3a97348239ea68523223d4b0ece0ae1eac83b4ad642db44",
+        "source_observed_at": "2026-11-25T15:36:30.598385Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "AFC Bournemouth",
+        "checked_at": "2026-11-25T15:36:30.650837Z",
+        "response_sha256": "dba52b50496373555ce64a74748b3e4459a32c1b050a66bfa893f253ee8d811f",
+        "source_observed_at": "2026-11-25T15:36:30.605467Z",
+        "articles_added": 0,
+        "claims_added": 3,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Brighton & Hove Albion FC",
+        "checked_at": "2026-11-25T15:36:30.644949Z",
+        "response_sha256": "ffba1c4f0729d37d85f20e0fae07e0c8a0de2f482854e8fb2fadeb03a920ac89",
+        "source_observed_at": "2026-11-25T15:36:30.601352Z",
+        "articles_added": 0,
+        "claims_added": 1,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Crystal Palace FC",
+        "checked_at": "2026-11-25T15:36:44.294142Z",
+        "response_sha256": "0b098f98dcdbe9d76a7ef1a0243d2992bcb42defc4b59c9604d24868c8c4a67f",
+        "source_observed_at": "2026-11-25T15:36:44.286981Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Fulham FC",
+        "checked_at": "2026-11-25T15:36:44.246541Z",
+        "response_sha256": "e0181cfafc77bd6e8433b2ca8e457bd743dc14700c61d38f7e1f31b829e22456",
+        "source_observed_at": "2026-11-25T15:36:44.238119Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Hull City AFC",
+        "checked_at": "2026-11-25T15:36:44.216363Z",
+        "response_sha256": "17fd3f7f2516e0517381e7fb3e51141e9601f0be6d580ffb87211908f444c8f1",
+        "source_observed_at": "2026-11-25T15:36:44.202014Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Newcastle United FC",
+        "checked_at": "2026-11-25T15:36:57.179661Z",
+        "response_sha256": "38ec0f2690a2e79528ee89f3ae5823d1e197c1c57a5ae32d60091d21de3936bb",
+        "source_observed_at": "2026-11-25T15:36:57.159561Z",
+        "articles_added": 0,
+        "claims_added": 1,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Sunderland AFC",
+        "checked_at": "2026-11-25T15:36:57.126202Z",
+        "response_sha256": "b09199d9313a4c4250b3c4aeb1f2b027791b9c85c4f49eb8eb814ad3d2f713ce",
+        "source_observed_at": "2026-11-25T15:36:57.113898Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Tottenham Hotspur FC",
+        "checked_at": "2026-11-25T15:36:57.177547Z",
+        "response_sha256": "bd9d1cc65c5b9ea4f2c8ef71f0ce823f5c228ce1053897c3a8c7d2e290ec791a",
+        "source_observed_at": "2026-11-25T15:36:57.163065Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Arsenal FC",
+        "checked_at": "2026-11-25T15:37:08.946542Z",
+        "response_sha256": "f3bb7aea69513252bb7b4ca20f1424c2042be685c25b3ca67f8bf8e579d1ea8b",
+        "source_observed_at": "2026-11-25T15:37:08.924596Z",
+        "articles_added": 0,
+        "claims_added": 1,
+        "state": "ok"
+      },
+      {
+        "source": "touchline-rumours",
+        "team": "Manchester City FC",
+        "checked_at": "2026-11-25T15:37:08.939262Z",
+        "response_sha256": "7fdd49ab289580e3dc031a45108f12eda101b25d493201ebac3f3ae6ef7c7492",
+        "source_observed_at": "2026-11-25T15:37:08.915040Z",
+        "articles_added": 0,
+        "claims_added": 1,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Chelsea FC",
+        "checked_at": "2026-11-25T15:35:56.079206Z",
+        "response_sha256": "b3904cdc3fa292bf5a71325adc35cce4a11f713a2f98b1c46eb4e83676f79e6c",
+        "source_observed_at": "2026-11-25T15:35:56.069264Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Nottingham Forest FC",
+        "checked_at": "2026-11-25T15:35:56.074399Z",
+        "response_sha256": "b448e556ab5cda49fc4cd2885cad45c09b1d365a975815ded34bcb71ba9a8854",
+        "source_observed_at": "2026-11-25T15:35:56.056892Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Brentford FC",
+        "checked_at": "2026-11-25T15:35:56.105714Z",
+        "response_sha256": "3674ec21024c92fa880118517fb98c8524db1a84a44004a7631136b2b4281542",
+        "source_observed_at": "2026-11-25T15:35:56.082970Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Coventry City FC",
+        "checked_at": "2026-11-25T15:36:08.282762Z",
+        "response_sha256": "efbf272910f66983acc34e002c653b40cf9d8333ad517c147c52d466eeccce34",
+        "source_observed_at": "2026-11-25T15:36:08.271451Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Leeds United FC",
+        "checked_at": "2026-11-25T15:36:08.285595Z",
+        "response_sha256": "dd75e3961a160b1a922a4412845ae2bc504f2c71bfbd6464f247eecc405b5194",
+        "source_observed_at": "2026-11-25T15:36:08.273626Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Manchester United FC",
+        "checked_at": "2026-11-25T15:36:08.304473Z",
+        "response_sha256": "3cddd12184770904e2deb8a3b94d8c0f42e3a08edf890bdc7c504b8176ac4cfa",
+        "source_observed_at": "2026-11-25T15:36:08.282367Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Aston Villa FC",
+        "checked_at": "2026-11-25T15:36:20.857040Z",
+        "response_sha256": "c0c1b0d15c052cd4e82a98536c12c12c6a335d61aa587ca9f8925ef31ea3cd47",
+        "source_observed_at": "2026-11-25T15:36:20.848370Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Ipswich Town FC",
+        "checked_at": "2026-11-25T15:36:20.738224Z",
+        "response_sha256": "b932b43c464ba919af1ddfa0e917b988c24c579eb0000ef6781ed78648afa542",
+        "source_observed_at": "2026-11-25T15:36:20.729316Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Everton FC",
+        "checked_at": "2026-11-25T15:36:20.798263Z",
+        "response_sha256": "b89b476cce9e9c600c77a55203d11493ccec64808b216f9133fdbbce8f8602ec",
+        "source_observed_at": "2026-11-25T15:36:20.787710Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Liverpool FC",
+        "checked_at": "2026-11-25T15:36:34.944492Z",
+        "response_sha256": "47fb3ebb76a0e41a752ca401fdc84e6b779db2de427143d883bedaa2319cd01e",
+        "source_observed_at": "2026-11-25T15:36:34.927164Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "AFC Bournemouth",
+        "checked_at": "2026-11-25T15:36:34.919482Z",
+        "response_sha256": "dff73f7f4b340595f50551ec5b2d2ce3b19e21ec55fd2e36fca2c9d2b924ea36",
+        "source_observed_at": "2026-11-25T15:36:34.907497Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Brighton & Hove Albion FC",
+        "checked_at": "2026-11-25T15:36:34.947062Z",
+        "response_sha256": "713aae91e7572103308f48ed76430b63b6e736fe68b76e9f7dde19e307827bf8",
+        "source_observed_at": "2026-11-25T15:36:34.930717Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Crystal Palace FC",
+        "checked_at": "2026-11-25T15:36:49.515400Z",
+        "response_sha256": "e877bceccdc509629226310ea5779fbdd9e426ef893707d1c748e5969dc1d593",
+        "source_observed_at": "2026-11-25T15:36:49.493913Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Fulham FC",
+        "checked_at": "2026-11-25T15:36:49.521282Z",
+        "response_sha256": "5ab63a2c5893b04e90cb6d2f5722be443e3529b40111df4d75ca0a30b1dcab45",
+        "source_observed_at": "2026-11-25T15:36:49.503733Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Hull City AFC",
+        "checked_at": "2026-11-25T15:36:49.506062Z",
+        "response_sha256": "6bc13acf5bddcaf727c716fc41c80d5309fef386bd6ebfe553b721a55a051dd5",
+        "source_observed_at": "2026-11-25T15:36:49.479265Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Newcastle United FC",
+        "checked_at": "2026-11-25T15:37:01.402493Z",
+        "response_sha256": "6fb0f012fe3363d84133b0853507b44137b7c4838bbea40fbe1f2c0bce97fe43",
+        "source_observed_at": "2026-11-25T15:37:01.375415Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Sunderland AFC",
+        "checked_at": "2026-11-25T15:37:01.206306Z",
+        "response_sha256": "088536e7873b294d661ca723fdfc972130acfc8e93045a752c00223c288c86f8",
+        "source_observed_at": "2026-11-25T15:37:01.169459Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Tottenham Hotspur FC",
+        "checked_at": "2026-11-25T15:37:01.183557Z",
+        "response_sha256": "294d0fa6cdc888ddac2414d4746e80c4198bb4a6f0a91bf0beeee4bd7ea6d577",
+        "source_observed_at": "2026-11-25T15:37:01.171078Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Arsenal FC",
+        "checked_at": "2026-11-25T15:37:12.874606Z",
+        "response_sha256": "c2c8ab49afdaa7a12d73dbda9987e74bf0bc76e7a123d706575fd3a378ba5f5d",
+        "source_observed_at": "2026-11-25T15:37:12.865289Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "team": "Manchester City FC",
+        "checked_at": "2026-11-25T15:37:12.851418Z",
+        "response_sha256": "3d62699a6bc4f00ddbc079297c331dcec691dbd67dd9978f84d0ed41c173ca17",
+        "source_observed_at": "2026-11-25T15:37:12.838272Z",
+        "articles_added": 0,
+        "claims_added": 0,
+        "state": "ok"
+      }
+    ]
+  }
 }

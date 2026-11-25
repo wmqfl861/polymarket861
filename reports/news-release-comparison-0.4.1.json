@@ -17,7 +17,7 @@
   "before": {
     "active_version": "B1",
     "active_recipe_sha256": "2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
-    "installed_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "installed_recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
     "approval": null,
     "state": "approval_required",
     "ready": false,
@@ -38,15 +38,15 @@
     "baseline_identity": {
       "source": "measured_on_incumbent"
     },
-    "to_version": "B1@b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "to_version": "B1@97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
     "comparison": {
       "method": "T60-final-schedule-result-lag24h-v1",
       "history_quality": "24h_lag_sensitivity_final_archive_schedule",
       "historical_context": "no_archived_news_or_lineups",
       "formal_eligibility": false,
-      "candidate_recipe": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+      "candidate_recipe": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
       "baseline_recipe": "2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
-      "candidate_sha256": "12bff7506da487525d876173c0c17448e6f75062b4b3604e112086da95c6a2a2",
+      "candidate_sha256": "fb118777197fe837ba17c45a3feee875df42b8e225e34da7dea1dbc50a23e7ee",
       "baseline_sha256": "7608db434a0d588c5fe0e549e6eac3f46a7e785d976e480c60804e3a2bdedba9",
       "input_blobs": {
         "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
@@ -119,23 +119,23 @@
         }
       }
     },
-    "report_sha256": "8fd3b53cf61bbaeb492a9b91b53915b9c4b208b1e15016546a2a08aab181eb5a"
+    "report_sha256": "42934811dd519a7da24a025c0c9ea7cc726347cd2ba6acae7a3af2ce955b23c7"
   },
   "approval": {
-    "version": "B1@b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-    "effective_at": "2026-11-25T15:30:49.726148Z",
-    "comparison": "8fd3b53cf61bbaeb492a9b91b53915b9c4b208b1e15016546a2a08aab181eb5a",
+    "version": "B1@97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+    "effective_at": "2026-11-25T15:53:03.949604Z",
+    "comparison": "42934811dd519a7da24a025c0c9ea7cc726347cd2ba6acae7a3af2ce955b23c7",
     "legacy_reference": null,
     "reviewer": "Codex release verification (isolated database)",
     "reason": "Verified the actual incumbent baseline and five-season paired output on this dedicated test copy."
   },
   "after": {
-    "active_version": "B1@b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-    "active_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
-    "installed_recipe_sha256": "b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae",
+    "active_version": "B1@97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+    "active_recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+    "installed_recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
     "approval": {
-      "effective_at": "2026-11-25T15:30:49.726148Z",
-      "comparison": "8fd3b53cf61bbaeb492a9b91b53915b9c4b208b1e15016546a2a08aab181eb5a",
+      "effective_at": "2026-11-25T15:53:03.949604Z",
+      "comparison": "42934811dd519a7da24a025c0c9ea7cc726347cd2ba6acae7a3af2ce955b23c7",
       "reviewer": "Codex release verification (isolated database)",
       "reason": "Verified the actual incumbent baseline and five-season paired output on this dedicated test copy."
     },
@@ -144,8 +144,8 @@
   },
   "new_early_seal": {
     "fixture_id": "epl/2026-27/arsenal/manchester-city",
-    "digest": "681f7b460ad114de069ec4afe425c86f80ca0c7a89ea27063dbc0a2acd5506cf",
-    "version": "B1@b00a20925b572656a714417a1015771ac8e6fe55d85f9d79ec69ea61a05638ae"
+    "digest": "a65185d6a09ae7833d9839fb437b2641e2a96500ae76bd76979f2c86fa213e42",
+    "version": "B1@97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176"
   },
   "incumbent_seal_verified_unchanged": "de3ec8c96e858128d5ca0f58b9356f20692b1cbfee11310efd6fb2b70c8c9002"
 }

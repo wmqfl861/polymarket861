@@ -22,13 +22,19 @@ python scripts/replay_news_probabilities.py verify reports/news-event-probabilit
 cmp /tmp/news-event-probabilities.json reports/news-event-probabilities-0.4.1.json
 ```
 
-同一工具可单独导出主 B1 的 `technical/early` 封存。它逐条验证原封存摘要和数据库索引，核对主预测与附带无新闻组的率、胜平负和全部逐线值，并核对两组关系中的历史训练摘要、冻结的球员事实与输入截止。使用实际的主配方摘要和最后一条封存时刻，可以在之后仍继续收件的库中重建同一批提前预览。`technical_early_seals` 有自己的分母。固定的 T−24h 和 T−60m 窗口及赛后成绩另行统计。
+### 最终源码的单配方提前封存
+
+同一批观察在最终源码上通过正常主 B1 入口生成 10 场 `technical/early` 封存。新闻输入截止在 2026 年 11 月 25 日 15:53:14.289550–15:53:28.308834 UTC，实际封存时刻在 15:53:14.913578–15:53:28.645446 UTC。10 场共用主配方 `97db0393…`、新闻策略 `b973656b…` 和历史清单 `fc66fe37…`。10 场均有概率变化，20 组的 600 个原始保存值与独立复算的最大绝对差为 `3.19e-16`。这些技术预览与前述事件各有自己的分母。固定的 T−24h 和 T−60m 窗口及赛后成绩另行统计。[10 场最终配方的逐组进球率和全部方向](../reports/news-early-seals-0.4.1.json)
+
+导出时逐条验证原封存摘要和数据库索引，核对主预测与附带无新闻组的率、胜平负和全部逐线值，并核对两组关系中的历史训练摘要、冻结的球员事实与输入截止。使用原配方摘要和最后一条封存时刻，可以在之后仍继续收件的库中重建同一批提前预览。
 
 ```sh
-PYTHONPATH=src python scripts/replay_news_probabilities.py export "$RUNTIME" \
+PYTHONPATH=src python scripts/replay_news_probabilities.py export "$FINAL_RUNTIME" \
   --early-seals --season 2026-27 --round 12 --pre-release \
-  --recipe "$RECIPE_SHA256" --as-of "$LAST_SEALED_AT" --output /tmp/news-early-seals.json
-python scripts/replay_news_probabilities.py verify /tmp/news-early-seals.json
+  --recipe 97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176 \
+  --as-of 2026-11-25T15:53:28.645446Z --output /tmp/news-early-seals.json
+python scripts/replay_news_probabilities.py verify reports/news-early-seals-0.4.1.json
+cmp /tmp/news-early-seals.json reports/news-early-seals-0.4.1.json
 ```
 
 ### 0.4.0 公开记录的边界

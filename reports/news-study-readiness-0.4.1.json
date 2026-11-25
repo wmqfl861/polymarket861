@@ -1,0 +1,355 @@
+{
+  "scope": "Normal CLI on the same isolated matchday copy as the 10 final technical early previews. No fixed matchweek-12 news window had arrived. The table reproduces the decision-horizon denominators and exact source availability then recorded.",
+  "separate_from": [
+    "early technical previews",
+    "event-triggered revisions",
+    "a deployment's own data"
+  ],
+  "by_horizon": {
+    "T-24h": {
+      "round_12": {
+        "command": "pm861 --data-dir RUNTIME news evaluate 2026-27 12 --horizon T-24h",
+        "season": "2026-27",
+        "round_id": 12,
+        "horizon": "T-24h",
+        "mode": "technical",
+        "expected": 10,
+        "scheduled": 10,
+        "scored": 0,
+        "sealed": 0,
+        "observed_both": 0,
+        "market_close": {
+          "status": "actual_kickoff_source_unavailable",
+          "clock_basis": "independently_verified_first_half_wallclock",
+          "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals.",
+          "scheduled_clock_eligible": false,
+          "eligible_seals": 0,
+          "verified_actual_kickoffs": 0,
+          "paired_fixtures": 0,
+          "home_win_pairs": 0,
+          "exclusions": {
+            "no_primary_seal": 10
+          },
+          "source_capability": {
+            "status": "no_reviewed_free_source",
+            "reviewed_open_f24_release_keys": [],
+            "reviewed_espn_grants": 0,
+            "current_espn_capture": "no_reviewed_free_grant",
+            "local_permission_reason": null,
+            "admission_commands": [],
+            "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals."
+          },
+          "unit": "matched fixture per endpoint",
+          "primary_endpoint": "home_win",
+          "endpoints": {
+            "home_win": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "draw": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "away_win": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "total_over_2_5": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "home_over_1_5": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "away_over_1_5": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            }
+          },
+          "missing_family_reasons": {}
+        }
+      },
+      "accumulation": {
+        "command": "pm861 --data-dir RUNTIME news evaluate 2026-27 --horizon T-24h --accumulate",
+        "through_season": "2026-27",
+        "horizon": "T-24h",
+        "mode": "technical",
+        "expected": 380,
+        "scheduled": 380,
+        "eligible_seals": 0,
+        "market_close": {
+          "status": "actual_kickoff_source_unavailable",
+          "clock_basis": "independently_verified_first_half_wallclock",
+          "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals.",
+          "scheduled_clock_eligible": false,
+          "eligible_seals": 0,
+          "verified_actual_kickoffs": 0,
+          "paired_fixtures": 0,
+          "home_win_pairs": 0,
+          "exclusions": {},
+          "source_capability": {
+            "status": "no_reviewed_free_source",
+            "reviewed_open_f24_release_keys": [],
+            "reviewed_espn_grants": 0,
+            "current_espn_capture": "no_reviewed_free_grant",
+            "local_permission_reason": null,
+            "admission_commands": [],
+            "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals."
+          }
+        }
+      }
+    },
+    "T-60m": {
+      "round_12": {
+        "command": "pm861 --data-dir RUNTIME news evaluate 2026-27 12 --horizon T-60m",
+        "season": "2026-27",
+        "round_id": 12,
+        "horizon": "T-60m",
+        "mode": "technical",
+        "expected": 10,
+        "scheduled": 10,
+        "scored": 0,
+        "sealed": 0,
+        "observed_both": 0,
+        "market_close": {
+          "status": "actual_kickoff_source_unavailable",
+          "clock_basis": "independently_verified_first_half_wallclock",
+          "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals.",
+          "scheduled_clock_eligible": false,
+          "eligible_seals": 0,
+          "verified_actual_kickoffs": 0,
+          "paired_fixtures": 0,
+          "home_win_pairs": 0,
+          "exclusions": {
+            "no_primary_seal": 10
+          },
+          "source_capability": {
+            "status": "no_reviewed_free_source",
+            "reviewed_open_f24_release_keys": [],
+            "reviewed_espn_grants": 0,
+            "current_espn_capture": "no_reviewed_free_grant",
+            "local_permission_reason": null,
+            "admission_commands": [],
+            "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals."
+          },
+          "unit": "matched fixture per endpoint",
+          "primary_endpoint": "home_win",
+          "endpoints": {
+            "home_win": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "draw": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "away_win": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "total_over_2_5": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "home_over_1_5": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            },
+            "away_over_1_5": {
+              "pairs": 0,
+              "toward": 0,
+              "away": 0,
+              "unchanged": 0,
+              "at_reference": 0,
+              "toward_fraction": null,
+              "market_drift_agreement": {
+                "agree": 0,
+                "oppose": 0,
+                "unchanged_news": 0,
+                "flat_market": 0
+              },
+              "mean_abs_news_move_pp": null,
+              "mean_abs_base_close_gap_pp": null,
+              "mean_distance_gain_pp": null
+            }
+          },
+          "missing_family_reasons": {}
+        }
+      },
+      "accumulation": {
+        "command": "pm861 --data-dir RUNTIME news evaluate 2026-27 --horizon T-60m --accumulate",
+        "through_season": "2026-27",
+        "horizon": "T-60m",
+        "mode": "technical",
+        "expected": 380,
+        "scheduled": 380,
+        "eligible_seals": 0,
+        "market_close": {
+          "status": "actual_kickoff_source_unavailable",
+          "clock_basis": "independently_verified_first_half_wallclock",
+          "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals.",
+          "scheduled_clock_eligible": false,
+          "eligible_seals": 0,
+          "verified_actual_kickoffs": 0,
+          "paired_fixtures": 0,
+          "home_win_pairs": 0,
+          "exclusions": {},
+          "source_capability": {
+            "status": "no_reviewed_free_source",
+            "reviewed_open_f24_release_keys": [],
+            "reviewed_espn_grants": 0,
+            "current_espn_capture": "no_reviewed_free_grant",
+            "local_permission_reason": null,
+            "admission_commands": [],
+            "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals."
+          }
+        }
+      }
+    }
+  },
+  "evaluated_at_utc": "2026-11-25T15:54:03.035695Z"
+}
