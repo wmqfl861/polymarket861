@@ -1,0 +1,1490 @@
+{
+  "verification_code": "356570c",
+  "season": "2026-27",
+  "observed_through": "2026-11-25T10:39:52.848712Z",
+  "complete_recheck_at": "2026-11-25T10:39:58.733861Z",
+  "evidence_type": "native public HTTP receipts, actual local receipt/admission times and individually reconstructed regulation proofs",
+  "scope": "Newly rebuilt local store with the pinned 2010-11 through 2026-27 OpenFootball input. Local player-event and market receipt collections were empty. No prior live seals or fabricated pregame knowledge.",
+  "sources": {
+    "openligadb": {
+      "attribution": "Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0",
+      "license": "https://www.openligadb.de/en/license",
+      "terms": "https://www.openligadb.de/en/terms-of-use",
+      "receipts": [
+        {
+          "scope": "season",
+          "started_at": "2026-11-25T10:06:17.577841Z",
+          "received_at": "2026-11-25T10:06:23.591892Z",
+          "sha256": "b8b95a74468c081c2b9c6779b8c0aeb05d5c4c4d191c456b610bb2a9441a73b1",
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026"
+        },
+        {
+          "scope": "10",
+          "started_at": "2026-11-25T10:06:23.619114Z",
+          "received_at": "2026-11-25T10:06:31.262422Z",
+          "sha256": "dd946469ae98ab8285b37acd0c4b155e2fe7627ef2932c3ce2739e4869bdcf3a",
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/10"
+        },
+        {
+          "scope": "11",
+          "started_at": "2026-11-25T10:06:31.277199Z",
+          "received_at": "2026-11-25T10:06:39.174610Z",
+          "sha256": "b4eafcf5c8c4285acdd4590b1e013a4de6100f7e74f914569d160a49294ce208",
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/11"
+        },
+        {
+          "scope": "8",
+          "started_at": "2026-11-25T10:36:25.596986Z",
+          "received_at": "2026-11-25T10:36:35.092762Z",
+          "sha256": "6480d70442340b7ba299241059b06d61a3aabb30b58cc5c435b342a8e580374d",
+          "url": "https://api.openligadb.de/getmatchdata/pl/2026/8"
+        }
+      ]
+    },
+    "wikipedia": {
+      "attribution": "English Wikipedia contributors; EPL club season articles identified by the linked revision and authorship history. Match reports extracted and normalized by polymarket861.",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "terms": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+      "receipts": [
+        {
+          "requested_at": "2026-11-25T10:09:38.554848Z",
+          "received_at": "2026-11-25T10:09:43.155483Z",
+          "sha256": "6178d854f53e236f6ee389221aac9c4479b84ac3aaabbb3d1f0408f042155b61",
+          "url": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=revisions&rvprop=ids%7Ctimestamp%7Ccontent&rvslots=main&meta=siteinfo&siprop=rightsinfo&titles=2026%E2%80%9327+AFC+Bournemouth+season%7C2026%E2%80%9327+Arsenal+F.C.+season%7C2026%E2%80%9327+Aston+Villa+F.C.+season%7C2026%E2%80%9327+Brentford+F.C.+season%7C2026%E2%80%9327+Brighton+%26+Hove+Albion+F.C.+season%7C2026%E2%80%9327+Chelsea+F.C.+season%7C2026%E2%80%9327+Coventry+City+F.C.+season%7C2026%E2%80%9327+Crystal+Palace+F.C.+season%7C2026%E2%80%9327+Everton+F.C.+season%7C2026%E2%80%9327+Fulham+F.C.+season%7C2026%E2%80%9327+Hull+City+A.F.C.+season%7C2026%E2%80%9327+Ipswich+Town+F.C.+season%7C2026%E2%80%9327+Leeds+United+F.C.+season%7C2026%E2%80%9327+Liverpool+F.C.+season%7C2026%E2%80%9327+Manchester+City+F.C.+season%7C2026%E2%80%9327+Manchester+United+F.C.+season%7C2026%E2%80%9327+Newcastle+United+F.C.+season%7C2026%E2%80%9327+Nottingham+Forest+F.C.+season%7C2026%E2%80%9327+Sunderland+A.F.C.+season%7C2026%E2%80%9327+Tottenham+Hotspur+F.C.+season&maxlag=5",
+          "permanent_revisions": [
+            {
+              "title": "2026–27 Tottenham Hotspur F.C. season",
+              "id": 1387597470,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387597470"
+            },
+            {
+              "title": "2026–27 Chelsea F.C. season",
+              "id": 1387565886,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387565886"
+            },
+            {
+              "title": "2026–27 Manchester United F.C. season",
+              "id": 1387748667,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387748667"
+            },
+            {
+              "title": "2026–27 Liverpool F.C. season",
+              "id": 1387654075,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387654075"
+            },
+            {
+              "title": "2026–27 Sunderland A.F.C. season",
+              "id": 1387581767,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387581767"
+            },
+            {
+              "title": "2026–27 Leeds United F.C. season",
+              "id": 1387566091,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387566091"
+            },
+            {
+              "title": "2026–27 Arsenal F.C. season",
+              "id": 1387635589,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387635589"
+            },
+            {
+              "title": "2026–27 Newcastle United F.C. season",
+              "id": 1387554184,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387554184"
+            },
+            {
+              "title": "2026–27 Aston Villa F.C. season",
+              "id": 1387632933,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387632933"
+            },
+            {
+              "title": "2026–27 AFC Bournemouth season",
+              "id": 1387421265,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265"
+            },
+            {
+              "title": "2026–27 Coventry City F.C. season",
+              "id": 1387565005,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387565005"
+            },
+            {
+              "title": "2026–27 Ipswich Town F.C. season",
+              "id": 1387450071,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387450071"
+            },
+            {
+              "title": "2026–27 Brentford F.C. season",
+              "id": 1387568640,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387568640"
+            },
+            {
+              "title": "2026–27 Everton F.C. season",
+              "id": 1387437018,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387437018"
+            },
+            {
+              "title": "2026–27 Nottingham Forest F.C. season",
+              "id": 1387562432,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387562432"
+            },
+            {
+              "title": "2026–27 Brighton & Hove Albion F.C. season",
+              "id": 1387204566,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387204566"
+            },
+            {
+              "title": "2026–27 Crystal Palace F.C. season",
+              "id": 1387564624,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387564624"
+            },
+            {
+              "title": "2026–27 Fulham F.C. season",
+              "id": 1387608174,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387608174"
+            },
+            {
+              "title": "2026–27 Manchester City F.C. season",
+              "id": 1387764084,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387764084"
+            },
+            {
+              "title": "2026–27 Hull City A.F.C. season",
+              "id": 1387567036,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387567036"
+            }
+          ]
+        },
+        {
+          "requested_at": "2026-11-25T10:39:45.180301Z",
+          "received_at": "2026-11-25T10:39:50.239342Z",
+          "sha256": "6178d854f53e236f6ee389221aac9c4479b84ac3aaabbb3d1f0408f042155b61",
+          "url": "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=revisions&rvprop=ids%7Ctimestamp%7Ccontent&rvslots=main&meta=siteinfo&siprop=rightsinfo&titles=2026%E2%80%9327+AFC+Bournemouth+season%7C2026%E2%80%9327+Arsenal+F.C.+season%7C2026%E2%80%9327+Aston+Villa+F.C.+season%7C2026%E2%80%9327+Brentford+F.C.+season%7C2026%E2%80%9327+Brighton+%26+Hove+Albion+F.C.+season%7C2026%E2%80%9327+Chelsea+F.C.+season%7C2026%E2%80%9327+Coventry+City+F.C.+season%7C2026%E2%80%9327+Crystal+Palace+F.C.+season%7C2026%E2%80%9327+Everton+F.C.+season%7C2026%E2%80%9327+Fulham+F.C.+season%7C2026%E2%80%9327+Hull+City+A.F.C.+season%7C2026%E2%80%9327+Ipswich+Town+F.C.+season%7C2026%E2%80%9327+Leeds+United+F.C.+season%7C2026%E2%80%9327+Liverpool+F.C.+season%7C2026%E2%80%9327+Manchester+City+F.C.+season%7C2026%E2%80%9327+Manchester+United+F.C.+season%7C2026%E2%80%9327+Newcastle+United+F.C.+season%7C2026%E2%80%9327+Nottingham+Forest+F.C.+season%7C2026%E2%80%9327+Sunderland+A.F.C.+season%7C2026%E2%80%9327+Tottenham+Hotspur+F.C.+season&maxlag=5",
+          "permanent_revisions": [
+            {
+              "title": "2026–27 Tottenham Hotspur F.C. season",
+              "id": 1387597470,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387597470"
+            },
+            {
+              "title": "2026–27 Chelsea F.C. season",
+              "id": 1387565886,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387565886"
+            },
+            {
+              "title": "2026–27 Manchester United F.C. season",
+              "id": 1387748667,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387748667"
+            },
+            {
+              "title": "2026–27 Liverpool F.C. season",
+              "id": 1387654075,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387654075"
+            },
+            {
+              "title": "2026–27 Sunderland A.F.C. season",
+              "id": 1387581767,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387581767"
+            },
+            {
+              "title": "2026–27 Leeds United F.C. season",
+              "id": 1387566091,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387566091"
+            },
+            {
+              "title": "2026–27 Arsenal F.C. season",
+              "id": 1387635589,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387635589"
+            },
+            {
+              "title": "2026–27 Newcastle United F.C. season",
+              "id": 1387554184,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387554184"
+            },
+            {
+              "title": "2026–27 Aston Villa F.C. season",
+              "id": 1387632933,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387632933"
+            },
+            {
+              "title": "2026–27 AFC Bournemouth season",
+              "id": 1387421265,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265"
+            },
+            {
+              "title": "2026–27 Coventry City F.C. season",
+              "id": 1387565005,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387565005"
+            },
+            {
+              "title": "2026–27 Ipswich Town F.C. season",
+              "id": 1387450071,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387450071"
+            },
+            {
+              "title": "2026–27 Brentford F.C. season",
+              "id": 1387568640,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387568640"
+            },
+            {
+              "title": "2026–27 Everton F.C. season",
+              "id": 1387437018,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387437018"
+            },
+            {
+              "title": "2026–27 Nottingham Forest F.C. season",
+              "id": 1387562432,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387562432"
+            },
+            {
+              "title": "2026–27 Brighton & Hove Albion F.C. season",
+              "id": 1387204566,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387204566"
+            },
+            {
+              "title": "2026–27 Crystal Palace F.C. season",
+              "id": 1387564624,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387564624"
+            },
+            {
+              "title": "2026–27 Fulham F.C. season",
+              "id": 1387608174,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387608174"
+            },
+            {
+              "title": "2026–27 Manchester City F.C. season",
+              "id": 1387764084,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387764084"
+            },
+            {
+              "title": "2026–27 Hull City A.F.C. season",
+              "id": 1387567036,
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387567036"
+            }
+          ]
+        }
+      ],
+      "receipt_elapsed_minutes": 30.034,
+      "independence": "Two club articles remain one community provider. Their link to a Premier League match identifies the event, it does not count as a third native score receipt."
+    },
+    "openfootball": {
+      "revision": "e6744429ee395bc86f247348c6184bb08d4eb361",
+      "source": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json"
+    }
+  },
+  "prior_release_reference": "reports/result-feed-2026-11-25.json",
+  "stages": {
+    "before_reconciliation": {
+      "at": "2026-11-25T10:28:49.410250Z",
+      "round_11_received": 0,
+      "round_11_due": 10,
+      "next_round": 12,
+      "next_round_teams": 20,
+      "blocked_by_result_freshness": 10,
+      "missing_over_48_hours": 61
+    },
+    "after_first_independent_receipt_reconciled": {
+      "at": "2026-11-25T10:28:49.537788Z",
+      "round_11_received": 0,
+      "round_11_due": 10,
+      "next_round": 12,
+      "next_round_teams": 20,
+      "blocked_by_result_freshness": 0,
+      "missing_over_48_hours": 14
+    },
+    "after_second_independent_receipt_reconciled": {
+      "at": "2026-11-25T10:39:52.848712Z",
+      "round_11_received": 10,
+      "round_11_due": 10,
+      "next_round": 12,
+      "next_round_teams": 20,
+      "blocked_by_result_freshness": 0,
+      "missing_over_48_hours": 1
+    }
+  },
+  "rounds": {
+    "10": {
+      "scheduled": 10,
+      "primary_with_final": 10,
+      "secondary_with_final": 10,
+      "independent_score_disagreements": 0,
+      "retrospective_kickoff_links": 8,
+      "verified_regulation": 10,
+      "methods": {
+        "two_providers": 10
+      },
+      "matches": [
+        {
+          "fixture_id": "epl/2026-27/arsenal/hull-city",
+          "home": "Arsenal FC",
+          "away": "Hull City AFC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-07T15:00:00.000000Z",
+          "openligadb_match_id": 86618,
+          "openligadb_score": [
+            1,
+            0
+          ],
+          "wikipedia_report_id": "premierleague:2645285",
+          "official_match_url": "https://www.premierleague.com/en/match/2645285",
+          "wikipedia_score": [
+            1,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Arsenal F.C. season",
+              "revision": 1387635589,
+              "published_at": "2026-11-24T22:51:25.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387635589"
+            },
+            {
+              "title": "2026–27 Hull City A.F.C. season",
+              "revision": 1387567036,
+              "published_at": "2026-11-24T15:51:25.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387567036"
+            }
+          ],
+          "admitted_score": [
+            1,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "813bd73c28874a4f97c6e4b81f867963dd46b89c77d68095e7d29d5c057e4946"
+        },
+        {
+          "fixture_id": "epl/2026-27/brighton-hove-albion/brentford",
+          "home": "Brighton & Hove Albion FC",
+          "away": "Brentford FC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-08T14:00:00.000000Z",
+          "openligadb_match_id": 86619,
+          "openligadb_score": [
+            2,
+            0
+          ],
+          "wikipedia_report_id": "premierleague:2645286",
+          "official_match_url": "https://www.premierleague.com/en/match/2645286",
+          "wikipedia_score": [
+            2,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Brentford F.C. season",
+              "revision": 1387568640,
+              "published_at": "2026-11-24T16:02:03.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387568640"
+            },
+            {
+              "title": "2026–27 Brighton & Hove Albion F.C. season",
+              "revision": 1387204566,
+              "published_at": "2026-11-23T00:58:52.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387204566"
+            }
+          ],
+          "admitted_score": [
+            2,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "3372a635332117c515106c6e92121c861100ea199844eed570755a06d9103906"
+        },
+        {
+          "fixture_id": "epl/2026-27/crystal-palace/liverpool",
+          "home": "Crystal Palace FC",
+          "away": "Liverpool FC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-08T14:00:00.000000Z",
+          "openligadb_match_id": 86620,
+          "openligadb_score": [
+            1,
+            3
+          ],
+          "wikipedia_report_id": "premierleague:2645287",
+          "official_match_url": "https://www.premierleague.com/en/match/2645287",
+          "wikipedia_score": [
+            1,
+            3
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Crystal Palace F.C. season",
+              "revision": 1387564624,
+              "published_at": "2026-11-24T15:36:17.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387564624"
+            },
+            {
+              "title": "2026–27 Liverpool F.C. season",
+              "revision": 1387654075,
+              "published_at": "2026-11-25T00:25:36.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387654075"
+            }
+          ],
+          "admitted_score": [
+            1,
+            3
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "362461f08b4bfc83b6b6e13ba722f33ef67571d356cc9f810a375024da5d4593"
+        },
+        {
+          "fixture_id": "epl/2026-27/everton/coventry-city",
+          "home": "Everton FC",
+          "away": "Coventry City FC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-06T20:00:00.000000Z",
+          "openligadb_match_id": 86621,
+          "openligadb_score": [
+            3,
+            1
+          ],
+          "wikipedia_report_id": "premierleague:2645288",
+          "official_match_url": "https://www.premierleague.com/en/match/2645288",
+          "wikipedia_score": [
+            3,
+            1
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Coventry City F.C. season",
+              "revision": 1387565005,
+              "published_at": "2026-11-24T15:38:39.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387565005"
+            },
+            {
+              "title": "2026–27 Everton F.C. season",
+              "revision": 1387437018,
+              "published_at": "2026-11-23T23:08:34.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387437018"
+            }
+          ],
+          "admitted_score": [
+            3,
+            1
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "5cb213fd61c317edbdf24cec04045e48619513ad33fdfde90951e235fea306cf"
+        },
+        {
+          "fixture_id": "epl/2026-27/fulham/newcastle-united",
+          "home": "Fulham FC",
+          "away": "Newcastle United FC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-07T15:00:00.000000Z",
+          "openligadb_match_id": 86622,
+          "openligadb_score": [
+            1,
+            1
+          ],
+          "wikipedia_report_id": "premierleague:2645289",
+          "official_match_url": "https://www.premierleague.com/en/match/2645289",
+          "wikipedia_score": [
+            1,
+            1
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Fulham F.C. season",
+              "revision": 1387608174,
+              "published_at": "2026-11-24T20:18:23.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387608174"
+            },
+            {
+              "title": "2026–27 Newcastle United F.C. season",
+              "revision": 1387554184,
+              "published_at": "2026-11-24T14:15:04.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387554184"
+            }
+          ],
+          "admitted_score": [
+            1,
+            1
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "2aa302c9d13a442578bc85e9aef4b43144bf7933977a82a56c98b02a292cd847"
+        },
+        {
+          "fixture_id": "epl/2026-27/ipswich-town/bournemouth",
+          "home": "Ipswich Town FC",
+          "away": "AFC Bournemouth",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-08T14:00:00.000000Z",
+          "openligadb_match_id": 86623,
+          "openligadb_score": [
+            1,
+            2
+          ],
+          "wikipedia_report_id": "premierleague:2645290",
+          "official_match_url": "https://www.premierleague.com/en/match/2645290",
+          "wikipedia_score": [
+            1,
+            2
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 AFC Bournemouth season",
+              "revision": 1387421265,
+              "published_at": "2026-11-23T21:53:22.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265"
+            },
+            {
+              "title": "2026–27 Ipswich Town F.C. season",
+              "revision": 1387450071,
+              "published_at": "2026-11-24T00:23:09.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387450071"
+            }
+          ],
+          "admitted_score": [
+            1,
+            2
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "374052d690986a6d91224172265fa6ec0fc165e76144faaaf72543b69320aad1"
+        },
+        {
+          "fixture_id": "epl/2026-27/leeds-united/tottenham-hotspur",
+          "home": "Leeds United FC",
+          "away": "Tottenham Hotspur FC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-07T12:30:00.000000Z",
+          "openligadb_match_id": 86624,
+          "openligadb_score": [
+            1,
+            0
+          ],
+          "wikipedia_report_id": "premierleague:2645291",
+          "official_match_url": "https://www.premierleague.com/en/match/2645291",
+          "wikipedia_score": [
+            1,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Leeds United F.C. season",
+              "revision": 1387566091,
+              "published_at": "2026-11-24T15:45:28.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387566091"
+            },
+            {
+              "title": "2026–27 Tottenham Hotspur F.C. season",
+              "revision": 1387597470,
+              "published_at": "2026-11-24T19:11:37.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387597470"
+            }
+          ],
+          "admitted_score": [
+            1,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "a4d80117441dca6b3873c4aad06003c5c7b728ae06605ef42ae6022969152232"
+        },
+        {
+          "fixture_id": "epl/2026-27/manchester-united/aston-villa",
+          "home": "Manchester United FC",
+          "away": "Aston Villa FC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-08T16:30:00.000000Z",
+          "openligadb_match_id": 86625,
+          "openligadb_score": [
+            4,
+            4
+          ],
+          "wikipedia_report_id": "premierleague:2645292",
+          "official_match_url": "https://www.premierleague.com/en/match/2645292",
+          "wikipedia_score": [
+            4,
+            4
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Aston Villa F.C. season",
+              "revision": 1387632933,
+              "published_at": "2026-11-24T22:36:38.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387632933"
+            }
+          ],
+          "admitted_score": [
+            4,
+            4
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "6742f43b1b378659391b588767d4f4b1819f31806bbde4a088ce8feddf620340"
+        },
+        {
+          "fixture_id": "epl/2026-27/nottingham-forest/manchester-city",
+          "home": "Nottingham Forest FC",
+          "away": "Manchester City FC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-07T17:30:00.000000Z",
+          "openligadb_match_id": 86626,
+          "openligadb_score": [
+            3,
+            1
+          ],
+          "wikipedia_report_id": "premierleague:2645293",
+          "official_match_url": "https://www.premierleague.com/en/match/2645293",
+          "wikipedia_score": [
+            3,
+            1
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Manchester City F.C. season",
+              "revision": 1387764084,
+              "published_at": "2026-11-25T09:41:30.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387764084"
+            },
+            {
+              "title": "2026–27 Nottingham Forest F.C. season",
+              "revision": 1387562432,
+              "published_at": "2026-11-24T15:20:52.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387562432"
+            }
+          ],
+          "admitted_score": [
+            3,
+            1
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "58f5f31ca2086d77ccf5a44d8dd2f6ceb1a51ec5937cf5bd7af1c5b882255d97"
+        },
+        {
+          "fixture_id": "epl/2026-27/sunderland/chelsea",
+          "home": "Sunderland AFC",
+          "away": "Chelsea FC",
+          "registered_kickoff": "2026-11-07T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-08T14:00:00.000000Z",
+          "openligadb_match_id": 86627,
+          "openligadb_score": [
+            1,
+            0
+          ],
+          "wikipedia_report_id": "premierleague:2645294",
+          "official_match_url": "https://www.premierleague.com/en/match/2645294",
+          "wikipedia_score": [
+            1,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Chelsea F.C. season",
+              "revision": 1387565886,
+              "published_at": "2026-11-24T15:44:09.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387565886"
+            },
+            {
+              "title": "2026–27 Sunderland A.F.C. season",
+              "revision": 1387581767,
+              "published_at": "2026-11-24T17:29:46.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387581767"
+            }
+          ],
+          "admitted_score": [
+            1,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:28:49.423597Z",
+          "method": "two_providers",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "8443041045d86685af9b9e6222513b0a6e3a24b69ab9d0dfef6c73193f24b3bc"
+        }
+      ]
+    },
+    "11": {
+      "scheduled": 10,
+      "primary_with_final": 0,
+      "secondary_with_final": 10,
+      "independent_score_disagreements": 0,
+      "retrospective_kickoff_links": 5,
+      "verified_regulation": 10,
+      "methods": {
+        "repeated_independent_final": 10
+      },
+      "matches": [
+        {
+          "fixture_id": "epl/2026-27/aston-villa/sunderland",
+          "home": "Aston Villa FC",
+          "away": "Sunderland AFC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-21T15:00:00.000000Z",
+          "openligadb_match_id": 86629,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645296",
+          "official_match_url": "https://www.premierleague.com/en/match/2645296",
+          "wikipedia_score": [
+            0,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Aston Villa F.C. season",
+              "revision": 1387632933,
+              "published_at": "2026-11-24T22:36:38.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387632933"
+            },
+            {
+              "title": "2026–27 Sunderland A.F.C. season",
+              "revision": 1387581767,
+              "published_at": "2026-11-24T17:29:46.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387581767"
+            }
+          ],
+          "admitted_score": [
+            0,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "82bd9acf3b3e4e8dcb931271d54e33ac03492a88b50d924807c0a24b77fbe730"
+        },
+        {
+          "fixture_id": "epl/2026-27/bournemouth/nottingham-forest",
+          "home": "AFC Bournemouth",
+          "away": "Nottingham Forest FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-21T15:00:00.000000Z",
+          "openligadb_match_id": 86628,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645295",
+          "official_match_url": "https://www.premierleague.com/en/match/2645295",
+          "wikipedia_score": [
+            2,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 AFC Bournemouth season",
+              "revision": 1387421265,
+              "published_at": "2026-11-23T21:53:22.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265"
+            },
+            {
+              "title": "2026–27 Nottingham Forest F.C. season",
+              "revision": 1387562432,
+              "published_at": "2026-11-24T15:20:52.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387562432"
+            }
+          ],
+          "admitted_score": [
+            2,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "8dbf5f1abf47e4b949375eae9d349ca6779926dbf3b47a3f5d76c128739faff5"
+        },
+        {
+          "fixture_id": "epl/2026-27/brentford/everton",
+          "home": "Brentford FC",
+          "away": "Everton FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-23T20:00:00.000000Z",
+          "openligadb_match_id": 86630,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645297",
+          "official_match_url": "https://www.premierleague.com/en/match/2645297",
+          "wikipedia_score": [
+            4,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Brentford F.C. season",
+              "revision": 1387568640,
+              "published_at": "2026-11-24T16:02:03.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387568640"
+            },
+            {
+              "title": "2026–27 Everton F.C. season",
+              "revision": 1387437018,
+              "published_at": "2026-11-23T23:08:34.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387437018"
+            }
+          ],
+          "admitted_score": [
+            4,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "64c0db8ddb52d5aeb7361162e821b19992933db1a128c892858e5c7e21822e4f"
+        },
+        {
+          "fixture_id": "epl/2026-27/chelsea/leeds-united",
+          "home": "Chelsea FC",
+          "away": "Leeds United FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-21T15:00:00.000000Z",
+          "openligadb_match_id": 86631,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645298",
+          "official_match_url": "https://www.premierleague.com/en/match/2645298",
+          "wikipedia_score": [
+            1,
+            4
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Chelsea F.C. season",
+              "revision": 1387565886,
+              "published_at": "2026-11-24T15:44:09.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387565886"
+            },
+            {
+              "title": "2026–27 Leeds United F.C. season",
+              "revision": 1387566091,
+              "published_at": "2026-11-24T15:45:28.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387566091"
+            }
+          ],
+          "admitted_score": [
+            1,
+            4
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "a61d19b4442f93884d632e828274cf947e9e3901487e4df2fd3bffa52e5021d7"
+        },
+        {
+          "fixture_id": "epl/2026-27/coventry-city/crystal-palace",
+          "home": "Coventry City FC",
+          "away": "Crystal Palace FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-21T15:00:00.000000Z",
+          "openligadb_match_id": 86632,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645299",
+          "official_match_url": "https://www.premierleague.com/en/match/2645299",
+          "wikipedia_score": [
+            3,
+            2
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Coventry City F.C. season",
+              "revision": 1387565005,
+              "published_at": "2026-11-24T15:38:39.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387565005"
+            },
+            {
+              "title": "2026–27 Crystal Palace F.C. season",
+              "revision": 1387564624,
+              "published_at": "2026-11-24T15:36:17.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387564624"
+            }
+          ],
+          "admitted_score": [
+            3,
+            2
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "393a800404b2baffa9b045646483d2fa2efa55aea9b3a37d6b054035bc300752"
+        },
+        {
+          "fixture_id": "epl/2026-27/hull-city/brighton-hove-albion",
+          "home": "Hull City AFC",
+          "away": "Brighton & Hove Albion FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-22T14:00:00.000000Z",
+          "openligadb_match_id": 86633,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645300",
+          "official_match_url": "https://www.premierleague.com/en/match/2645300",
+          "wikipedia_score": [
+            2,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Brighton & Hove Albion F.C. season",
+              "revision": 1387204566,
+              "published_at": "2026-11-23T00:58:52.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387204566"
+            },
+            {
+              "title": "2026–27 Hull City A.F.C. season",
+              "revision": 1387567036,
+              "published_at": "2026-11-24T15:51:25.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387567036"
+            }
+          ],
+          "admitted_score": [
+            2,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "fb83bcfa954327d3b78c3346e49550ed37a178d12e73526883c1a88c7381aaa6"
+        },
+        {
+          "fixture_id": "epl/2026-27/liverpool/manchester-united",
+          "home": "Liverpool FC",
+          "away": "Manchester United FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-22T16:30:00.000000Z",
+          "openligadb_match_id": 86634,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645301",
+          "official_match_url": "https://www.premierleague.com/en/match/2645301",
+          "wikipedia_score": [
+            4,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Liverpool F.C. season",
+              "revision": 1387654075,
+              "published_at": "2026-11-25T00:25:36.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387654075"
+            }
+          ],
+          "admitted_score": [
+            4,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "0ce4f412c9bd7d69ee24a082d87b9802d6498540e5c9f9dcd55fed50d54b12ce"
+        },
+        {
+          "fixture_id": "epl/2026-27/manchester-city/fulham",
+          "home": "Manchester City FC",
+          "away": "Fulham FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-21T12:30:00.000000Z",
+          "openligadb_match_id": 86635,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645302",
+          "official_match_url": "https://www.premierleague.com/en/match/2645302",
+          "wikipedia_score": [
+            1,
+            1
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Fulham F.C. season",
+              "revision": 1387608174,
+              "published_at": "2026-11-24T20:18:23.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387608174"
+            },
+            {
+              "title": "2026–27 Manchester City F.C. season",
+              "revision": 1387764084,
+              "published_at": "2026-11-25T09:41:30.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387764084"
+            }
+          ],
+          "admitted_score": [
+            1,
+            1
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "8fbee659411ae81d479bcbbb854dd23a0106b792ae3a81746b54074371c7129b"
+        },
+        {
+          "fixture_id": "epl/2026-27/newcastle-united/arsenal",
+          "home": "Newcastle United FC",
+          "away": "Arsenal FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-21T17:30:00.000000Z",
+          "openligadb_match_id": 86636,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645303",
+          "official_match_url": "https://www.premierleague.com/en/match/2645303",
+          "wikipedia_score": [
+            2,
+            2
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Arsenal F.C. season",
+              "revision": 1387635589,
+              "published_at": "2026-11-24T22:51:25.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387635589"
+            },
+            {
+              "title": "2026–27 Newcastle United F.C. season",
+              "revision": 1387554184,
+              "published_at": "2026-11-24T14:15:04.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387554184"
+            }
+          ],
+          "admitted_score": [
+            2,
+            2
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "54986f212dc290afb4d233757250e10fc4cb831d69d8db91cfa6daebc8cefd8f"
+        },
+        {
+          "fixture_id": "epl/2026-27/tottenham-hotspur/ipswich-town",
+          "home": "Tottenham Hotspur FC",
+          "away": "Ipswich Town FC",
+          "registered_kickoff": "2026-11-21T15:00:00.000000Z",
+          "verified_kickoff": "2026-11-21T15:00:00.000000Z",
+          "openligadb_match_id": 86637,
+          "openligadb_score": null,
+          "wikipedia_report_id": "premierleague:2645304",
+          "official_match_url": "https://www.premierleague.com/en/match/2645304",
+          "wikipedia_score": [
+            2,
+            0
+          ],
+          "article_revisions": [
+            {
+              "title": "2026–27 Ipswich Town F.C. season",
+              "revision": 1387450071,
+              "published_at": "2026-11-24T00:23:09.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387450071"
+            },
+            {
+              "title": "2026–27 Tottenham Hotspur F.C. season",
+              "revision": 1387597470,
+              "published_at": "2026-11-24T19:11:37.000000Z",
+              "url": "https://en.wikipedia.org/w/index.php?oldid=1387597470"
+            }
+          ],
+          "admitted_score": [
+            2,
+            0
+          ],
+          "admitted_at": "2026-11-25T10:39:50.280075Z",
+          "method": "repeated_independent_final",
+          "was_admitted_at_pre_reconciliation_cutoff": false,
+          "proof_sha256": "5e91b7ec67b2e5a5fce2074f58b731e7c02ea8a641351507cd8c634df860b357"
+        }
+      ]
+    }
+  },
+  "season_quality": {
+    "registered": 380,
+    "available_results": 109,
+    "quarantined": [
+      {
+        "fixture_id": "epl/2026-27/bournemouth/brentford",
+        "reason": "cross_source_score_conflict",
+        "source_score": [
+          2,
+          1
+        ],
+        "source_kickoff": "2026-09-12T14:00:00.000000Z",
+        "registry_kickoff": "2026-09-12T14:00:00.000000Z",
+        "reference_score": [
+          2,
+          2
+        ],
+        "sha256": "b8b95a74468c081c2b9c6779b8c0aeb05d5c4c4d191c456b610bb2a9441a73b1",
+        "independent": [
+          {
+            "home": "bournemouth",
+            "away": "brentford",
+            "round": 4,
+            "kickoff": "2026-09-12T14:00:00.000000Z",
+            "score": [
+              2,
+              2
+            ],
+            "status": "final",
+            "source_match_id": "premierleague:2645225",
+            "revisions": [
+              {
+                "title": "2026–27 AFC Bournemouth season",
+                "revision": 1387421265,
+                "published_at": "2026-11-23T21:53:22.000000Z",
+                "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265"
+              },
+              {
+                "title": "2026–27 Brentford F.C. season",
+                "revision": 1387568640,
+                "published_at": "2026-11-24T16:02:03.000000Z",
+                "url": "https://en.wikipedia.org/w/index.php?oldid=1387568640"
+              }
+            ],
+            "supporting_articles": [
+              "2026–27 AFC Bournemouth season",
+              "2026–27 Brentford F.C. season"
+            ],
+            "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265",
+            "source_id": "wikipedia-en-epl",
+            "articles_with_final": [
+              "2026–27 AFC Bournemouth season",
+              "2026–27 Brentford F.C. season"
+            ],
+            "received": "2026-11-25T10:39:50.239342Z",
+            "started": "2026-11-25T10:39:45.180301Z",
+            "sha256": "6178d854f53e236f6ee389221aac9c4479b84ac3aaabbb3d1f0408f042155b61"
+          }
+        ]
+      }
+    ],
+    "rounds_1_to_11_expected": 110,
+    "unverified_secondary_fixtures": [
+      "epl/2026-27/crystal-palace/newcastle-united",
+      "epl/2026-27/hull-city/brentford",
+      "epl/2026-27/sunderland/leeds-united"
+    ],
+    "unresolved_disagreement": {
+      "fixture_id": "epl/2026-27/bournemouth/brentford",
+      "primary": [
+        2,
+        1
+      ],
+      "independent": [
+        2,
+        2
+      ],
+      "fixed_openfootball": [
+        2,
+        2
+      ],
+      "article_url": "https://en.wikipedia.org/w/index.php?oldid=1387421265",
+      "official_match_url": "https://www.premierleague.com/en/match/2645225"
+    }
+  },
+  "first_stage_model_check": {
+    "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+    "model": "B1",
+    "mode": "technical",
+    "horizon": "early",
+    "input_cutoff": "2026-11-25T10:36:04.649327Z",
+    "sealed_at": "2026-11-25T10:36:05.180759Z",
+    "verified_sha256": "fbf5430bf3dace323261596260e604c50a2a04bd5993904565435c93dda31f08",
+    "training_matches": 1236,
+    "source_health": {
+      "critical_stale": false,
+      "overdue_team_results": {
+        "away": [
+          "epl/2026-27/chelsea/leeds-united"
+        ],
+        "home": [
+          "epl/2026-27/bournemouth/nottingham-forest"
+        ]
+      }
+    }
+  },
+  "publications": {
+    "input_manifest": "7833737f2d9456392a439a5579830f8818a786bf5964133d7d552110892f85a7",
+    "training": "refreshed"
+  },
+  "round12_model_check": {
+    "mode": "technical",
+    "horizon": "early",
+    "denominator": 10,
+    "blocked_by_result_freshness": 0,
+    "matching_status_checks": 10,
+    "technical_forecasts": [
+      {
+        "fixture_id": "epl/2026-27/arsenal/manchester-city",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:52.867611Z",
+        "sealed_at": "2026-11-25T10:39:53.578426Z",
+        "forecast_sha256": "4092a62981e49b931d23d3ec4a025175016d2f6188cda1f19f68328bf608847b",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:53.588688Z",
+        "sealed_at": "2026-11-25T10:39:54.174537Z",
+        "forecast_sha256": "115a363b6edf7db65465d8b479e4d94cbdf918f5321cc63db6739f619d9fa05e",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:54.185404Z",
+        "sealed_at": "2026-11-25T10:39:54.765567Z",
+        "forecast_sha256": "b72000bbc1652666fbd522d0ba5ac575d90d2bd80deb0bb6549562f833fb0ef6",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/everton/liverpool",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:54.776157Z",
+        "sealed_at": "2026-11-25T10:39:55.434921Z",
+        "forecast_sha256": "9844a0669d7a949da7562333a246feb6fdb7d6b95a6e6c0b542c5fb6e903077f",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/fulham/bournemouth",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:55.451440Z",
+        "sealed_at": "2026-11-25T10:39:55.960819Z",
+        "forecast_sha256": "267570fe897b3beed69d4ab4698810a1fe65eb57161000424d758efa9268135b",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:55.973846Z",
+        "sealed_at": "2026-11-25T10:39:56.526554Z",
+        "forecast_sha256": "bf9a6701619b41d38d46ddd1e82203179c3e72e687fffe464a92601d2b9acf71",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:56.542380Z",
+        "sealed_at": "2026-11-25T10:39:57.021121Z",
+        "forecast_sha256": "a1e142cb25ca3bb9e868d05080b174c9073ce46472349dc968b0cfe9cc54d85d",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/manchester-united/brentford",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:57.037286Z",
+        "sealed_at": "2026-11-25T10:39:57.722851Z",
+        "forecast_sha256": "88da2deb9b1cfeed3ae8e87c0def1cf994bc5a3d51433c5fa6ece4abd7c30710",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:57.740977Z",
+        "sealed_at": "2026-11-25T10:39:58.242802Z",
+        "forecast_sha256": "2b27c85519fcd391a5a674164a2c148f4552d194e49b6c4d929ac6ec531a1f59",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      },
+      {
+        "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+        "model_version": "B1",
+        "actual_forecast_cutoff": "2026-11-25T10:39:58.257981Z",
+        "sealed_at": "2026-11-25T10:39:58.725885Z",
+        "forecast_sha256": "6fb67e160f62bb5916445dc3df0e22ed98291f92d734445bf6fd4b5873f6822f",
+        "training_matches": 1249,
+        "critical_stale": false,
+        "overdue_team_results": {
+          "home": [],
+          "away": []
+        },
+        "matches_status_preview": true,
+        "lineups_confirmed": {
+          "home": false,
+          "away": false
+        },
+        "decision": {
+          "state": "no_paper_order",
+          "reason": "此时点只记录预测"
+        }
+      }
+    ]
+  },
+  "access_limit": "Locally retained original bytes are required to recreate their exact receipt digests. An upstream revision can be inspected using its permanent URL. These late receipts do not establish information available before kickoff.",
+  "isolated_round4_training_review": {
+    "separate_copy": true,
+    "at": "2026-11-25T10:39:07.765312Z",
+    "cli": "result-feed import-matches 2026 4 manual-round4.json",
+    "manual_review_evidence": {
+      "season": "2026-27",
+      "round": 4,
+      "reviewer": "Codex research review",
+      "rights": "permission",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "English Wikipedia contributors",
+      "source": "English Wikipedia club-season revisions, CC BY-SA 4.0; match 2645225",
+      "official_match_url": "https://www.premierleague.com/en/match/2645225",
+      "articles": [
+        {
+          "title": "2026–27 AFC Bournemouth season",
+          "revision": 1387421265,
+          "published_at": "2026-11-23T21:53:22.000000Z",
+          "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265"
+        },
+        {
+          "title": "2026–27 Brentford F.C. season",
+          "revision": 1387568640,
+          "published_at": "2026-11-24T16:02:03.000000Z",
+          "url": "https://en.wikipedia.org/w/index.php?oldid=1387568640"
+        }
+      ],
+      "evidence_file": "wiki-native.json",
+      "evidence_sha256": "6178d854f53e236f6ee389221aac9c4479b84ac3aaabbb3d1f0408f042155b61",
+      "matches": [
+        {
+          "home": "AFC Bournemouth",
+          "away": "Brentford FC",
+          "kickoff": "2026-09-12T14:00:00.000000Z",
+          "status": "final",
+          "period": "regulation",
+          "home_goals": 2,
+          "away_goals": 2,
+          "locator": "MediaWiki query.pages entries titled 2026–27 AFC Bournemouth season (revision 1387421265), 2026–27 Brentford F.C. season (revision 1387568640); Premier League / football box / round 4 / official match 2645225.",
+          "decision_reason": "Codex research review of EPL 2645225: both English Wikipedia club-season revisions report the 90-minute score of 2–2, consistent with the pinned OpenFootball file and the official match report. The archived OpenLigaDB final reports 2–1. Review scope: training only."
+        }
+      ]
+    },
+    "attachment_sha256_readback": "6178d854f53e236f6ee389221aac9c4479b84ac3aaabbb3d1f0408f042155b61",
+    "before_regulation_final": false,
+    "returncode": 0,
+    "batch_id": "3da10e528fc2c616219b182bb29743cdc7489bc936e9ef45c4adcbfa7198effd",
+    "scope": "selected_matches",
+    "training_usable_immediately": true,
+    "settlement_confirmed_immediately": false,
+    "identical_retry": true,
+    "after_native_reconcile": {
+      "quarantine": [
+        "cross_source_score_conflict"
+      ],
+      "settlement_confirmed": false,
+      "training_score": null
+    },
+    "main_store_settlement_confirmed": false
+  }
+}

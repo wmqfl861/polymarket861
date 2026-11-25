@@ -17,6 +17,18 @@ OpenLigaDB 在开球后 90 分钟起的 48 小时内优先检查尚无比分的�
 
 Football-Data.co.uk 的使用条件限制自动下载与 AI 数据训练，open-matchday 对其汇总及下游源有独立限制。这两类来源未接入本管线。[Football-Data.co.uk 使用说明](https://www.football-data.co.uk/contact.php) · [open-matchday 来源与许可](https://github.com/oladeeayo/open-matchday#license-and-attribution) · [FixtureDownload 条款](https://fixturedownload.com/terms)
 
+## 2026 年 11 月 25 日的真实补数
+
+在重新登记 17 季固定输入的本机库，第 10 轮的 10 场由 OpenLigaDB 与 Wikipedia 比分互证，其中 8 场开球偏离占位赛程。第 11 轮的 10 场在 OpenLigaDB 均未标终场，另有 5 场开球偏离登记时间。Wikipedia 于 10:09:43 UTC 和 10:39:50 UTC 分别返回同一批次的实际原件，第二次请求在首份收件后 30 分 2 秒发起。两轮 20 场的终场均已从保存的原件逐场重新验证。
+
+| 实测项目 | 结果 |
+|---|---|
+| 前 11 轮可用终场 | 109 / 110；第 4 轮 Bournemouth–Brentford 在 OpenLigaDB 为 2–1，两家俱乐部的 Wikipedia 文章和固定 OpenFootball 文件均为 2–2，主库保留隔离。 |
+| 第 12 轮 | 10 场、20 队。补回前重新登记库 10 场满足连续两轮缺失条件。补回后 0 场因该条件受阻，10 份赛前早期技术预测与状态页逐场一致，均使用 1,249 场训练数据。 |
+| 名单和真实可交易性 | 这次重建只收取赛果数据。10 份技术预测均缺两队已确认首发，实测只核查赛果新鲜度与训练输入。 |
+
+完整分母、逐场时刻和比分、真实 UTC 收件、永久修订链接、入库方法、哈希及 10 份早期预测摘要见[本次原件复核报告](../reports/result-sources-2026-11-25-0.3.0.json)。
+
 ## 未来七天的开球时间
 
 赛季调度会核对已登记赛程、OpenLigaDB 的原生分轮响应及 Gamma 主赛事原件。准入要求主客顺序、赛季、轮次和 UTC 开球时间吻合，Gamma 至少有一份已核实常规时间规则。报告 `epl-upcoming-schedules-2026` 逐场列出原时间、确认时间和延后审核原因。运行 `pm861 result-feed season 2026` 会采集并核验，`--offline` 可用归档的原件复核。[第 12 轮实测及原件标识](../reports/upcoming-schedule-2026-11-25.json)
