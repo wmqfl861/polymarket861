@@ -384,7 +384,7 @@ def _result(db, f, score, source, locator, at, *, actual_kickoff=None):
 
 
 def reconcile(root, year):
-    from . import result_feed as feed
+    from . import result_feed as feed, result_training_review
 
     season = scope(year)
     counts = Counter()
@@ -455,6 +455,7 @@ def reconcile(root, year):
             native_score = latest["score"] if latest else None
             score = proof["score"] if proof else native_score
             review = pairing_review(db, fid, f["kickoff"], at)
+            training_review = result_training_review.bound(db, f, prior)
             if review and review["action"] == "withdraw":
                 reason = "operator_withdrew_result_pairing"
             elif fid not in unique:
@@ -465,6 +466,24 @@ def reconcile(root, year):
                 "ambiguous_90_minute_final",
             }:
                 reason = latest["error"]
+            elif training_review and not withdrawn_manual:
+                if (
+                    pairing_reason == "cross_source_score_conflict"
+                    and not (last and last["held"])
+                    and result_training_review.still_applies(
+                        root,
+                        db,
+                        f,
+                        training_review,
+                        events,
+                        independent.get(fid, []),
+                        reference.get(fid),
+                        at,
+                    )
+                ):
+                    counts["manual_reviewed"] += 1
+                    continue
+                reason = "reviewed_source_facts_changed"
             elif pairing_reason:
                 reason = pairing_reason
             elif isinstance(old_proof, dict) and not proof:

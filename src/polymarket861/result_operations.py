@@ -296,7 +296,7 @@ def _batch(root, raw, year, rnd, file):
 
 
 def manual(root, year, rnd, file, *, whole_round=True):
-    from . import independent_results, result_pairings
+    from . import independent_results, result_pairings, result_training_review
     from .football import fixture_id
 
     raw = _raw_file(file)
@@ -321,7 +321,7 @@ def manual(root, year, rnd, file, *, whole_round=True):
                 for f in store.eligible_fixture_rows(db, season=obj["season"])
                 if f["round_id"] == rnd
             }
-            native, _ = admission._raw_rows(root, db, year, at)
+            native, errors = admission._raw_rows(root, db, year, at)
             independent = independent_results.verified(root, db, year, at)
             reference = admission._reference(db, root, obj["season"], at)
             unique = result_pairings.unique_fixtures(fixtures.values())
@@ -351,6 +351,9 @@ def manual(root, year, rnd, file, *, whole_round=True):
                     )
                 ol = native.get(fid, [])
                 other = independent.get(fid, [])
+                result_training_review.validate(
+                    r, obj, f, ol, other, reference.get(fid), errors
+                )
                 evidence = ol[-1:] + other[-1:]
                 if any(
                     (e.get("round") is not None and e["round"] != rnd)
@@ -434,6 +437,15 @@ def manual(root, year, rnd, file, *, whole_round=True):
                         "state": state,
                         "version": row["version"],
                         "reason": r.get("decision_reason"),
+                        **(
+                            {
+                                "training_dispute_sha256": store.digest(
+                                    r["training_dispute"]
+                                )
+                            }
+                            if "training_dispute" in r
+                            else {}
+                        ),
                     }
                 )
             report = {

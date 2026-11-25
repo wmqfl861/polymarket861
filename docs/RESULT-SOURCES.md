@@ -88,6 +88,12 @@ pm861 result-feed review-pairing 2026 "$FIXTURE_ID" --proof "$PROOF_SHA256" --ac
 
 `rights` 接受 `user-owned` 或 `permission`。`pm861 result-feed import-round 2026 11 round.json` 要求清单覆盖该轮全部登记场次。`pm861 result-feed import-matches 2026 11 matches.json` 只处理清单中列出的场次。两者都会在同一事务中验证并写入数据，返回 `batch_id`。修正导入错误时可运行 `pm861 result-feed rollback-batch BATCH_ID --reason "上传了错误版本"`。如果该批次之后已发生赛果或赛程更正，系统会保留后续裁决并拒绝过时的整批回滚。
 
+### 两个终场来源明确分歧时的训练裁定
+
+`pm861 result-feed dispute-evidence 2026 epl/2026-27/bournemouth/brentford` 显示两份已过正常完赛时间的原生终场记录。如果赛事身份和时刻相同且比分不同，把返回的 `training_dispute` 原样填入人工清单中对应的 `matches[]` 项，列出实际选择的原文比分、`decision_reason`，在清单顶层注明实际复核者 `reviewer`，同时保留获准使用的原始附件。`import-matches` 原子验证两个来源的赛事 ID、主客、轮次、开球、终场状态、比分、原件 SHA-256 和 UTC 收件，也绑定当时的 OpenFootball 比分。
+
+裁定只影响训练输入。正常离线重放重读当初的原件，后来携带相同比赛事实的 HTTP 响应可继续使用。任一来源改分、撤回、改期、变更身份、丢失已验证的原件，或固定参考源出现不同事实，均重新隔离；改动后再恢复原分也会保留隔离。纸面正式结算持续要求独立的标准终场证明。正常的批次回滚会恢复原裁决，并允许按历史时点查看曾经有效的训练结果。
+
 OpenLigaDB 公共数据使用 ODbL 1.0。公共展示需署名，公开分发修改后的数据库时须遵守其同许可和开放取得要求。Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0. [数据许可](https://www.openligadb.de/en/license) · [API 条款](https://www.openligadb.de/en/terms-of-use) · [接口说明](https://api.openligadb.de/index.html)
 
 OpenFootball 将英超赛程和赛果数据作为公共领域数据发布。[数据说明](https://github.com/openfootball/football.json/blob/master/README.md)

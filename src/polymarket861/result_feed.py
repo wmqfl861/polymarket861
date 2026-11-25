@@ -461,6 +461,16 @@ def register(subparsers):
     p.add_argument("year", type=int)
     p.add_argument("--at", help="只用这个带时区时间之前实际收到并登记的信息")
     p.set_defaults(func=lambda a: result_freshness.status(a.data_dir, a.year, a.at))
+    from . import result_training_review
+
+    p = cmd.add_parser(
+        "dispute-evidence", help="查看有原件支持的当前两源比分争议，供具名训练复核"
+    )
+    p.add_argument("year", type=int)
+    p.add_argument("fixture_id")
+    p.set_defaults(
+        func=lambda a: result_training_review.evidence(a.data_dir, a.year, a.fixture_id)
+    )
     p = cmd.add_parser("season", help="确认英超90分钟比分、刷新训练输入并发布逐轮评分")
     p.add_argument("year", type=int)
     p.add_argument("--offline", action="store_true")
