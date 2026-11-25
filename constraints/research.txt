@@ -1,0 +1,6 @@
+# Versions used for the published research and continuous integration.
+numpy==2.3.5
+scipy==1.17.0
+tzdata==2026.6
+playwright==1.62.0
+ruff==0.17.6

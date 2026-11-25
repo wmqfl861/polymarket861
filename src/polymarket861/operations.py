@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import os
 import shutil
 import sqlite3
 import tempfile
+import zlib
 from contextlib import closing
 from pathlib import Path, PurePosixPath
 
-from .store import blob_path, canonical, connect, now_utc
+from .store import blob_path, canonical, connect, digest, iso, now_utc
 
 PORTABLE_FOLDERS = ("datasets", "sources", "openfootball", "job-work", "manifests")
 NESTED_STORE = "season-catalog"
@@ -59,17 +61,36 @@ def _entry(root, name, sha):
     return dest
 
 
+def _archived_blob(name):
+    parts = PurePosixPath(name).parts
+    return parts[0] == "archive" or parts[:2] == (NESTED_STORE, "archive")
+
+
+def _content(root, name, sha, version):
+    path = _entry(root, name, sha)
+    if version == 3 and _archived_blob(name):
+        packed = path.with_name(path.name + ".gz")
+        if packed.is_symlink() or not packed.resolve().is_relative_to(root):
+            raise ValueError("invalid compressed backup path")
+        return gzip.open(packed, "rb")
+    return path.open("rb")
+
+
 def verify_backup(backup: Path) -> dict:
     root = backup.resolve()
     info = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
-    if info.get("format") not in (1, 2) or not isinstance(info.get("files"), dict):
+    if info.get("format") not in (1, 2, 3) or not isinstance(info.get("files"), dict):
         raise ValueError("unrecognized backup manifest")
     files = info["files"]
     if "runtime.sqlite3" not in files:
         raise ValueError("missing database in manifest")
     for name, sha in files.items():
-        p = _entry(root, name, sha)
-        if not p.is_file() or checksum(p) != sha:
+        try:
+            with _content(root, name, sha, info["format"]) as data:
+                actual = hashlib.file_digest(data, "sha256").hexdigest()
+        except (OSError, EOFError, zlib.error) as exc:
+            raise ValueError(f"unreadable backup content: {name}") from exc
+        if actual != sha:
             raise ValueError(f"backup integrity failure: {name}")
     for prefix in (Path("."), Path(NESTED_STORE)):
         rel = (prefix / "runtime.sqlite3").as_posix()
@@ -88,7 +109,7 @@ def verify_backup(backup: Path) -> dict:
     return {"ok": True, "files": len(files), "created_at": info["created_at"]}
 
 
-def _snapshot(root, stage, prefix, files):
+def _snapshot(root, stage, prefix, files, compress):
     destination = stage / prefix
     destination.mkdir(parents=True, exist_ok=True)
     with (
@@ -107,7 +128,17 @@ def _snapshot(root, stage, prefix, files):
         name = blob_path(Path("."), sha)
         target = destination / name
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(root / name, target)
+        if compress:
+            with (
+                (root / name).open("rb") as data,
+                target.with_name(target.name + ".gz").open("wb") as buf,
+            ):
+                with gzip.GzipFile(
+                    filename="", fileobj=buf, mode="wb", mtime=0, compresslevel=6
+                ) as gz:
+                    shutil.copyfileobj(data, gz)
+        else:
+            shutil.copyfile(root / name, target)
         files[(prefix / name).as_posix()] = sha
     for folder in PORTABLE_FOLDERS:
         for path in sorted((root / folder).rglob("*")):
@@ -124,7 +155,7 @@ def _snapshot(root, stage, prefix, files):
             files[(prefix / name).as_posix()] = checksum(target)
 
 
-def backup_state(data_dir, destination) -> dict:
+def backup_state(data_dir, destination, *, compress=False) -> dict:
     root, dest = Path(data_dir).resolve(), Path(destination).resolve()
     if not (root / "runtime.sqlite3").is_file():
         raise ValueError("data directory has no runtime database")
@@ -133,12 +164,12 @@ def backup_state(data_dir, destination) -> dict:
     stage = _staging(dest)
     try:
         files = {}
-        _snapshot(root, stage, Path("."), files)
+        _snapshot(root, stage, Path("."), files, compress)
         if (root / NESTED_STORE / "runtime.sqlite3").is_file() and not (
             root / NESTED_STORE
         ).is_symlink():
-            _snapshot(root / NESTED_STORE, stage, Path(NESTED_STORE), files)
-        info = {"format": 2, "created_at": now_utc(), "files": files}
+            _snapshot(root / NESTED_STORE, stage, Path(NESTED_STORE), files, compress)
+        info = {"format": 3 if compress else 2, "created_at": now_utc(), "files": files}
         (stage / "manifest.json").write_text(canonical(info), encoding="utf-8")
         check = verify_backup(stage)
         os.rename(stage, dest)
@@ -155,13 +186,18 @@ def restore_state(backup, destination) -> dict:
         raise ValueError("choose a restore destination outside the backup")
     stage = _staging(dest)
     try:
-        for name in json.loads((root / "manifest.json").read_text(encoding="utf-8"))[
-            "files"
-        ]:
-            target = stage / name
+        info = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+        for name, sha in info["files"].items():
+            target = _entry(stage, name, sha)
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(root / name, target)
-        shutil.copyfile(root / "manifest.json", stage / "manifest.json")
+            with (
+                _content(root, name, sha, info["format"]) as data,
+                target.open("xb") as restored,
+            ):
+                shutil.copyfileobj(data, restored)
+        (stage / "manifest.json").write_text(
+            canonical(dict(info, format=2)), encoding="utf-8"
+        )
         verify_backup(stage)
         (stage / "manifest.json").unlink()
         os.rename(stage, dest)
@@ -171,13 +207,54 @@ def restore_state(backup, destination) -> dict:
             shutil.rmtree(stage)
 
 
+def witness_manifest(data_dir, start, end):
+    """Commit to sealed prediction digests in a half-open UTC interval."""
+    start, end = iso(start), iso(end)
+    if start >= end:
+        raise ValueError("witness interval must have a positive duration")
+    with closing(connect(data_dir)) as db:
+        commitments = [
+            row[0]
+            for row in db.execute(
+                "SELECT digest FROM forecast_seals WHERE sealed_at >= ? AND sealed_at < ? ORDER BY digest",
+                (start, end),
+            )
+        ]
+    body = {
+        "format": "pm861-forecast-commitments-v1",
+        "since": start,
+        "until": end,
+        "digests": commitments,
+    }
+    return {
+        **body,
+        "count": len(commitments),
+        "manifest_sha256": digest(body),
+        "time_witness": "local_only",
+    }
+
+
 def register(subparsers):
+    witness = subparsers.add_parser("witness", help="导出封存摘要清单")
+    manifest = witness.add_subparsers(dest="witness_action", required=True).add_parser(
+        "manifest"
+    )
+    manifest.add_argument("--since", required=True)
+    manifest.add_argument("--until", required=True)
+    manifest.set_defaults(func=lambda a: witness_manifest(a.data_dir, a.since, a.until))
     ops = subparsers.add_parser(
         "backup", help="备份及校验运行库、赛程文件和证据"
     ).add_subparsers(required=True)
     create = ops.add_parser("create")
     create.add_argument("destination", type=Path)
-    create.set_defaults(func=lambda a: backup_state(a.data_dir, a.destination))
+    create.add_argument(
+        "--compress",
+        action="store_true",
+        help="压缩备份中的行情及来源原件，按未压缩内容的 SHA-256 验证",
+    )
+    create.set_defaults(
+        func=lambda a: backup_state(a.data_dir, a.destination, compress=a.compress)
+    )
     verify = ops.add_parser("verify")
     verify.add_argument("backup", type=Path)
     verify.set_defaults(func=lambda a: verify_backup(a.backup))
