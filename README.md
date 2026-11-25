@@ -2,9 +2,9 @@
 
 英超赛前概率预测与 Polymarket 国际站模拟账本。系统在同一份比分分布上给出胜平负、全场进球大小、主队进球大小和客队进球大小。默认在开球前 24 小时、60 分钟分别封存预测。模拟买入使用买方实际能取得的卖盘、深度和费用，持有至合约兑付。
 
-**当前版本为 0.2.0。** 仓库包含可安装程序、中文本地看板、端到端回归测试和真实历史研究报告。首次运行会建立自己的 SQLite 数据库。建设期影子、历史重放、正式前向模拟各有独立标记。代码采用 Python 3.11 及以上版本，数据接口只读，纸面账户不需要钱包。
+**当前版本为 0.3.0。** 仓库包含可安装程序、中文本地看板、端到端回归测试和真实历史研究报告。首次运行会建立自己的 SQLite 数据库。建设期影子、历史重放、正式前向模拟各有独立标记。代码采用 Python 3.11 及以上版本，数据接口只读，纸面账户不需要钱包。
 
-[系统蓝图 1.2](docs/polymarket861-EPL-v1.md) · [开发计划及验收口径](docs/polymarket861-EPL-development-plan.md) · [比赛日操作手册](docs/MATCHDAY.md) · [Claude 审核逐项处置及复测](docs/CLAUDE-REVIEW-RESPONSE.md) · [0.2.0 独立终审](docs/INDEPENDENT-REVIEW-0.2.0.md)
+[系统蓝图 1.3](docs/polymarket861-EPL-v1.md) · [开发计划及验收口径](docs/polymarket861-EPL-development-plan.md) · [比赛日操作手册](docs/MATCHDAY.md) · [Claude 复审逐项处置](docs/CLAUDE-REVIEW-RESPONSE-0.3.0.md) · [本版独立终审](docs/INDEPENDENT-REVIEW-0.3.0.md)
 
 ## 用固定数据跑通历史回放
 
@@ -41,7 +41,7 @@ pm861 --data-dir .pm861 dashboard export --output .pm861/dashboard.html
 | 检查一笔纸面交易 | `ledger-example` 给出输入格式。`ledger-demo` 验证合成账户的费用、风险限额、成交、结算和重试。`ledger-freeze`、`ledger-evaluate`、`ledger-capture-resolution`、`ledger-settle` 处理真实证据驱动的模拟账户。正式准入后，可用 `opportunity run 赛事slug --account main --repeat 1` 从封存预测、原始条款和双时点盘口装配订单，并将可验证的历史机会送入 A 档回放。 |
 | 查看轮报和版本 | `fixture result 赛果证据.json` 为该场已封存的版本更新轮报。`forecast round 赛季 轮次` 查询相应统计。`forecast round-history 赛季 轮次` 列出更正前后的轮报及赛果版本，`--edition N` 可重取一版。`dashboard serve --port 8765` 提供本机浏览入口，六个页面可分别查看比赛、数据源、轮报、错误、实验和任务。 |
 | 并行维护和回滚 | `run due` 会从新轮报、错误、来源异常及每周免费源缺口生成去重的本地研究任务。可用 `maintenance tick` 单独检查，或用 `jobs enqueue` 登记带依赖任务。`jobs run --workers 2` 并行运行。允许调用已有的本机 Codex 时加 `--allow-codex`。`experiment register` 预登记候选与窗口，`experiment evaluate` 计算证据，`experiment approve 键 --reviewer 名称 --reason 理由` 具名确认模型切换，`experiment rollback` 可恢复先前版本。 |
-| 比较选单策略 | `strategy register` 预登记固定预算、候选选择规则和自第 1 轮起的未来 38 轮。用 `strategy history` 重放可执行历史盘，`strategy freeze` 和 `strategy execute` 在纸面账户执行赛前配对。用 `strategy score` 查看按轮统计的扣费后收盘价格优势和风险。 |
+| 比较选单策略 | `strategy register` 预登记固定预算、候选选择规则和自预登记起始轮起的连续 38 个未来官方轮次，可跨赛季。用 `strategy history` 重放可执行历史盘，`strategy freeze` 和 `strategy execute` 在纸面账户执行赛前配对。用 `strategy score` 查看按轮统计的扣费后收盘价格优势和风险。 |
 | 检查正式模拟是否可以开始 | `trial readiness` 返回实测历史覆盖、连续技术轮次、历史盘口回放与账本自检。条件满足后用 `trial activate 未来UTC时刻` 登记往后生效的纸面协议。 |
 | 恢复运行状态 | `backup create 新备份目录`、`backup verify 备份目录`、`backup restore 备份目录 新运行目录`。保留数据库、归档证据、已登记输入与工作产物。 |
 

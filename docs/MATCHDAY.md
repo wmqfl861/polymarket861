@@ -52,3 +52,27 @@ flowchart TD
 - 来源报告保留冲突场次和收件证据。更正后重算受影响的轮报；对有问题的赛果批次可用 `result-feed rollback-batch 批次ID --reason 理由`，保留已有预测和审计记录。
 - 执行 `maintenance tick` 后，`jobs status` 显示轮报、异常和来源发现任务。运行 `jobs run --allow-codex --use-codex-config --project . --history .pm861/openfootball --sample-season 2025-26 --sample-round 1` 使用已配置的本地 Codex；历史目录可由 README 的 `football fetch` 准备。用 `jobs proposals` 查建议、数据指纹及待补条件。本机 Codex 需支持所用权限配置并通过文件与网络隔离实测；失败原因可在 `jobs status` 及该次日志查看。作业只取得选定代码、可披露的已完轮汇总和来源运行指标，测试建议通过候选或补丁提议返回。模型提议先作固定历史样本回放，正式切换另需整季前向证据和具名审查。
 - 用 `backup create 新目录 --compress` 备份，用 `backup verify 备份目录` 和 `backup restore 备份目录 新运行目录` 检查恢复。按需用 `witness manifest --since UTC起点 --until UTC终点` 导出仅含封存摘要的清单；远端见证另需发布和第三方时间回执。
+
+## 0.3.0 值守与升级
+
+Linux 常开机器先备份已有运行库。首次访问市场模块时，程序在一个 SQLite 事务中把旧合约收件迁移到共享正文表。升级前备份可恢复到单独目录并配合旧程序使用。大库应在首个决策窗前完成迁移。在服务、终端、备份和看门狗中使用同一个绝对目录，例如下列用户服务默认路径。
+
+```sh
+export PM861_DATA_DIR="$HOME/.local/share/polymarket861/state"
+pm861 season status
+pm861 storage status
+pm861 season watchdog
+```
+
+用户服务在退出登录后继续运行，需要该 Linux 用户启用 linger。用 `loginctl show-user "$USER" -p Linger` 核对，具有管理权限的操作者可用 `loginctl enable-linger "$USER"` 启用。将仓库 `deploy/` 中的主服务、watchdog 服务及其 timer 安装到同一个 `~/.config/systemd/user/`，核对解释器路径和 `PM861_DATA_DIR`，再操作服务。
+
+```sh
+systemctl --user daemon-reload
+systemctl --user enable --now polymarket861-season.service polymarket861-watchdog.timer
+systemctl --user status polymarket861-season.service polymarket861-watchdog.timer
+journalctl --user -u polymarket861-season.service -u polymarket861-watchdog.service
+```
+
+`season run --alert-command /绝对路径/通知程序` 和 `season watchdog --alert-command /绝对路径/通知程序` 可连接操作者已有的邮件或聊天通知程序。每条告警从标准输入读取 JSON，目的地和凭据由部署者管理。未配置时可在标准错误和本地告警记录中查看。独立 timer 可以在主采集进程退出后检查最后一次心跳。[主服务](../deploy/polymarket861-season.service) · [看门狗](../deploy/polymarket861-watchdog.service) · [计时器](../deploy/polymarket861-watchdog.timer)
+
+第 12 轮第一场森林对切尔西的已登记开球为 11 月 27 日 20:00 UTC，对应台北 11 月 28 日 04:00；T−60 是台北 03:00，以最新核验赛程为准。在开球前后保存 `season status`、`storage status` 和 `shadow report`。完赛后执行 `result-feed season 2026`、`forecast round 2026-27 12`、`settlement sync` 与 `trial readiness`。用两次 `storage status` 及同目录的 `du -sh` 比较一轮真实增长；报告分开写应采、实收、超时、因证据缺失跳过和已结算的笔数。盘口与比分均按实际收件入账。
