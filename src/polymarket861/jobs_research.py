@@ -109,6 +109,15 @@ def _status(conn):
         dict(r)
         for r in conn.execute("SELECT * FROM research_active ORDER BY kind,scope")
     ]
+    for entry in active:
+        entry["version"], _ = _restore_pointer(
+            conn,
+            entry["kind"],
+            entry["scope"],
+            entry["version"],
+            entry["candidate_key"],
+            None,
+        )
     events = [
         dict(r) | {"evidence": json.loads(r["evidence"])}
         for r in conn.execute("SELECT * FROM research_events ORDER BY id")
@@ -126,13 +135,33 @@ def experiment_status(data_dir):
         return _status(conn)
 
 
+def _is_builtin(conn, kind, scope, version, candidate):
+    return (kind, scope, candidate) == ("model", "epl", None) and (
+        version == "B1"
+        or conn.execute(
+            "SELECT 1 FROM builtin_model_releases WHERE version=?", (version,)
+        ).fetchone()
+        is not None
+    )
+
+
+def _restore_pointer(conn, kind, scope, version, candidate, at):
+    if _is_builtin(conn, kind, scope, version, candidate):
+        return store.builtin_model_at(conn, at), None
+    return version, candidate
+
+
 def _pointer(conn, kind, scope, at):
     if at is None:
         row = conn.execute(
             "SELECT version,candidate_key FROM research_active WHERE kind=? AND scope=?",
             (kind, scope),
         ).fetchone()
-        return (row[0], row[1]) if row else (None, None)
+        return (
+            _restore_pointer(conn, kind, scope, row[0], row[1], at)
+            if row
+            else (None, None)
+        )
     row = conn.execute(
         "SELECT e.action,e.evidence,c.key,c.version FROM research_events e "
         "JOIN research_candidates c ON e.key=c.key WHERE c.kind=? AND c.scope=? "
@@ -144,7 +173,14 @@ def _pointer(conn, kind, scope, at):
     if row["action"] == "promoted":
         return row["version"], row["key"]
     undo = json.loads(row["evidence"])
-    return undo["restored_version"], undo.get("restored_candidate")
+    return _restore_pointer(
+        conn, kind, scope, undo["restored_version"], undo.get("restored_candidate"), at
+    )
+
+
+def _builtin_controls(conn, at):
+    version, candidate = _pointer(conn, "model", "epl", at)
+    return not version or _is_builtin(conn, "model", "epl", version, candidate)
 
 
 def active_version(data_dir, kind="model", scope="epl", default=None, *, at=None):
@@ -169,7 +205,7 @@ def model_for_decision(data_dir, fixture_id, kickoff, horizon, modes, at):
 
         with dbscope.reading(data_dir, _open) as db:
             if (
-                _pointer(db, "model", "epl", at)[0]
+                not _builtin_controls(db, at)
                 or store.builtin_model_at(db, at) != current
             ):
                 return current
@@ -189,7 +225,7 @@ def model_for_decision(data_dir, fixture_id, kickoff, horizon, modes, at):
             )
             for row in rows:
                 if (
-                    _pointer(db, "model", "epl", row["sealed_at"])[0] is None
+                    _builtin_controls(db, row["sealed_at"])
                     and store.builtin_model_at(db, row["sealed_at"])
                     == row["model_version"]
                 ):
@@ -222,13 +258,28 @@ def _cutoff(fixture):
     return store.instant(fixture["kickoff"]) - timedelta(hours=1)
 
 
+def _executable_recipe(conn, version):
+    from .pipeline import _build_recipe
+
+    row = conn.execute(
+        "SELECT recipe FROM model_recipes WHERE version=?", (version,)
+    ).fetchone()
+    if row:
+        try:
+            bound = json.loads(row[0])
+            if _build_recipe(bound["family"], bound["lines"]) == bound:
+                return store.digest(bound)
+        except (ValueError, KeyError, TypeError, OSError):
+            return None
+    return None
+
+
 def _bound_recipe(data_dir, version):
     with closing(store.connect(data_dir)) as conn:
-        row = conn.execute(
-            "SELECT recipe FROM model_recipes WHERE version=?", (version,)
-        ).fetchone()
-    if row:
-        return store.digest(json.loads(row[0]))
+        if conn.execute(
+            "SELECT 1 FROM model_recipes WHERE version=?", (version,)
+        ).fetchone():
+            return _executable_recipe(conn, version)
     if version in {"B0", "B1", "B2"}:
         from .pipeline import register_recipe
 
@@ -379,19 +430,11 @@ def register_candidate(
             stats.require_unopened_season(season, fixtures, now)
         if fixtures and min(map(_cutoff, fixtures)) <= store.instant(now):
             raise ValueError("The first decision deadline for this window has passed")
-        active = conn.execute(
-            "SELECT version FROM research_active WHERE kind=? AND scope=?",
-            (kind, scope),
-        ).fetchone()
-        if active and active[0] != baseline:
+        incumbent, _ = _pointer(conn, kind, scope, None)
+        if incumbent is None and (kind, scope) == ("model", "epl"):
+            incumbent = store.builtin_model_at(conn, now)
+        if incumbent is not None and incumbent != baseline:
             raise ValueError("Baseline must equal the active local version")
-        if (
-            kind == "model"
-            and scope == "epl"
-            and not active
-            and baseline != store.builtin_model_at(conn, now)
-        ):
-            raise ValueError("Baseline must equal the active built-in B1 release")
         peers = conn.execute(
             "SELECT kind,scope,first,span,baseline FROM research_candidates WHERE season=?",
             (season,),
@@ -878,7 +921,9 @@ def _judge(data_dir, key, *, approval=None):
     with closing(_open(data_dir)) as conn:
         requested = _get(conn, key)
         if requested["state"] in ("promoted", "rolled_back") or (
-            (requested["assessment"] or {}).get("revealed") and approval is None
+            requested["state"] != "recommended"
+            and (requested["assessment"] or {}).get("revealed")
+            and approval is None
         ):
             return requested
         cohort = [
@@ -898,32 +943,53 @@ def _judge(data_dir, key, *, approval=None):
     decisions = {
         c["key"]: _assess(data_dir, c, schedule, len(cohort), now) for c in peers
     }
-    qualified = [c for c in peers if decisions[c["key"]].get("qualified")]
-    # The declared tie break makes the active pointer independent of CLI call order.
-    winner = (
-        sorted(qualified, key=lambda c: (-decisions[c["key"]]["rank"], c["key"]))[0]
-        if qualified
-        else None
-    )
-    reveal = bool(winner) or all(d.get("complete") for d in decisions.values())
     with closing(_open(data_dir)) as conn, conn:
         conn.execute("BEGIN IMMEDIATE")
         current = _get(conn, key)
         if current["state"] in ("promoted", "rolled_back") or (
-            (current["assessment"] or {}).get("revealed") and approval is None
+            current["state"] != "recommended"
+            and (current["assessment"] or {}).get("revealed")
+            and approval is None
         ):
             return current
         kind, scope = requested["kind"], requested["scope"]
-        active = conn.execute(
-            "SELECT * FROM research_active WHERE kind=? AND scope=?", (kind, scope)
-        ).fetchone()
-        if winner and active and active["version"] != winner["baseline"]:
-            decisions[winner["key"]].update(
-                reason="active_baseline_changed", qualified=False
-            )
-            winner = None
+        incumbent, previous = _pointer(conn, kind, scope, None)
+        if incumbent is None and (kind, scope) == ("model", "epl"):
+            incumbent = store.builtin_model_at(conn)
         for c in peers:
-            if c["state"] in ("promoted", "rolled_back"):
+            decision = decisions[c["key"]]
+            if incumbent is not None and incumbent != c["baseline"]:
+                decision.update(
+                    reason="active_baseline_changed",
+                    qualified=False,
+                    complete=True,
+                    active_version=incumbent,
+                )
+            elif kind == "model" and decision.get("qualified"):
+                for label, version in (
+                    ("recipe_digest", c["version"]),
+                    ("baseline_recipe_digest", c["baseline"]),
+                ):
+                    actual = _executable_recipe(conn, version)
+                    if not actual or actual != c["manifest"].get(label):
+                        decision.update(
+                            reason="registered_recipe_not_executable",
+                            qualified=False,
+                            complete=True,
+                            unavailable_version=version,
+                        )
+                        break
+        qualified = [c for c in peers if decisions[c["key"]].get("qualified")]
+        # The declared tie break makes the active pointer independent of CLI call order.
+        winner = (
+            sorted(qualified, key=lambda c: (-decisions[c["key"]]["rank"], c["key"]))[0]
+            if qualified
+            else None
+        )
+        reveal = bool(winner) or all(d.get("complete") for d in decisions.values())
+        for c in peers:
+            latest = _get(conn, c["key"])
+            if latest["state"] in ("promoted", "rolled_back"):
                 continue
             decision = decisions[c["key"]] | {
                 "revealed": reveal,
@@ -942,11 +1008,12 @@ def _judge(data_dir, key, *, approval=None):
             if legacy:
                 decision["activation_policy"] = "frozen_legacy_research"
             decision_id = store.digest(decision)
-            prior_decision = (c["assessment"] or {}).get("recommendation_digest")
+            prior_decision = (latest["assessment"] or {}).get("recommendation_digest")
             confirmed = (
                 selected
                 and approval is not None
                 and c["key"] == key
+                and latest["state"] == "recommended"
                 and prior_decision == decision_id
             )
             promoted = (
@@ -955,8 +1022,9 @@ def _judge(data_dir, key, *, approval=None):
                 and (switch == "auto_independent_reference" or confirmed)
             )
             if promoted:
-                decision["previous_candidate"] = (
-                    active["candidate_key"] if active else None
+                decision["previous_candidate"] = previous
+                decision["previous_version"] = (
+                    incumbent if incumbent is not None else c["baseline"]
                 )
                 if confirmed:
                     decision["approved_by"] = approval
@@ -1005,6 +1073,15 @@ def _judge(data_dir, key, *, approval=None):
 
 def rollback_candidate(data_dir, key, *, reason, reviewer=None):
     signature = stats.signoff(reviewer, reason)
+    prior = get_candidate(data_dir, key)
+    if (
+        prior["state"] == "promoted"
+        and prior["kind"] == "model"
+        and not (prior["assessment"] or {}).get("previous_candidate")
+    ):
+        from .pipeline import prepare_builtin
+
+        prepare_builtin(data_dir)
     with closing(_open(data_dir)) as conn, conn:
         conn.execute("BEGIN IMMEDIATE")
         c = _get(conn, key)
@@ -1016,10 +1093,23 @@ def rollback_candidate(data_dir, key, *, reason, reviewer=None):
             return c
         if c["state"] != "promoted" or not active or active["candidate_key"] != key:
             raise ValueError("Only the currently active candidate may be rolled back")
-        previous = c["assessment"]["previous_candidate"]
+        previous = c["assessment"].get("previous_candidate")
+        before = c["assessment"].get("previous_version", c["baseline"])
+        target, previous = _restore_pointer(
+            conn, c["kind"], c["scope"], before, previous, None
+        )
+        if c["kind"] == "model":
+            executable = _executable_recipe(conn, target)
+            if not executable or (
+                previous
+                and _get(conn, previous)["manifest"].get("recipe_digest") != executable
+            ):
+                raise ValueError(
+                    "the model selected for rollback has no matching executable recipe"
+                )
         conn.execute(
             "UPDATE research_active SET version=?,candidate_key=? WHERE kind=? AND scope=?",
-            (c["baseline"], previous, c["kind"], c["scope"]),
+            (target, previous, c["kind"], c["scope"]),
         )
         conn.execute(
             "UPDATE research_candidates SET state='rolled_back' WHERE key=?", (key,)
@@ -1029,7 +1119,8 @@ def rollback_candidate(data_dir, key, *, reason, reviewer=None):
             key,
             "rolled_back",
             {
-                "restored_version": c["baseline"],
+                "restored_version": target,
+                "previous_version_at_promotion": before,
                 "restored_candidate": previous,
                 **signature,
             },
