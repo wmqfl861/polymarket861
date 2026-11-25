@@ -45,6 +45,71 @@ def _add(db, fixture, kickoff, when, deadline, role, stage):
         (key, fixture, kickoff, target, store.iso(deadline), role, stage),
     )
 
+    return key
+
+
+def _critical_windows(
+    db, fixture, kick, known_delays, now, schedule_seen, revised, source
+):
+    """Record fixed measurement opportunities even if discovery happened after a cutoff."""
+
+    def record(target, deadline, role, stage, horizon):
+        key = _add(db, fixture, store.iso(kick), target, deadline, role, stage)
+        if deadline >= now:
+            return
+        if schedule_seen > deadline:
+            reason = "reschedule_seen_late" if revised else "first_seen_late"
+        else:
+            reason = "collector_window_missed"
+        detail = {
+            "reason": reason,
+            "horizon": horizon,
+            "scheduled_at": store.iso(target),
+            "deadline": store.iso(deadline),
+            "schedule_seen_at": store.iso(schedule_seen),
+            "checked_at": store.iso(now),
+            "schedule_source_sha256": source,
+        }
+        changed = db.execute(
+            "UPDATE season_slots SET state='missed',owner=NULL,until=NULL,detail=? "
+            "WHERE key=? AND state IN ('pending','superseded')",
+            (store.canonical(detail), key),
+        ).rowcount
+        if changed:
+            _alert(
+                db,
+                key,
+                fixture,
+                role,
+                f"{reason} {horizon} deadline {store.iso(deadline)}",
+            )
+
+    for hours, horizon in ((24, "T-24h"), (1, "T-60m")):
+        cutoff = kick - timedelta(hours=hours)
+        record(cutoff - timedelta(seconds=25), cutoff, "decision_book", "book", horizon)
+        if hours == 1:
+            for seconds in (15, 4):
+                record(
+                    cutoff - timedelta(seconds=seconds),
+                    cutoff,
+                    "decision",
+                    "paper",
+                    horizon,
+                )
+        for delay in known_delays:
+            target = cutoff + timedelta(seconds=delay)
+            record(
+                target, target + timedelta(seconds=5), "execution_book", "book", horizon
+            )
+            if hours == 1:
+                record(
+                    target + timedelta(seconds=6),
+                    target + timedelta(seconds=70),
+                    "recover",
+                    "paper",
+                    horizon,
+                )
+
 
 def _plan(root, now):
     lower = store.iso(now - timedelta(minutes=10))
@@ -52,7 +117,7 @@ def _plan(root, now):
     with closing(_db(root)) as db, db:
         current = db.execute(
             "WITH latest AS (SELECT *,row_number() OVER(PARTITION BY slug ORDER BY received_at DESC,sha DESC) n "
-            "FROM ma_events WHERE received_at<=?) SELECT e.fixture,e.kickoff,e.received_at,e.sha,s.plan,s.kickoff AS prior "
+            "FROM ma_events WHERE received_at<=?) SELECT e.fixture,e.kickoff,e.received_at,e.sha,s.plan,s.first_seen,s.kickoff AS prior "
             "FROM latest e LEFT JOIN season_fixtures s ON s.fixture=e.fixture WHERE e.n=1 AND e.slug=e.fixture "
             "AND (julianday(e.kickoff) BETWEEN julianday(?) AND julianday(?) OR s.fixture IS NOT NULL)",
             (store.iso(now), lower, upper),
@@ -68,17 +133,54 @@ def _plan(root, now):
                     "UPDATE season_slots SET state='superseded' WHERE fixture=? AND kickoff<>? AND state IN ('pending','running')",
                     (tag, kickoff),
                 )
+            old = json.loads(row["plan"]) if row["plan"] else {}
+            revised = bool(row["prior"] and row["prior"] != kickoff)
+            seen = (
+                now
+                if revised or not row["first_seen"]
+                else store.instant(old.get("schedule_seen_at") or row["first_seen"])
+            )
             if not lower <= kickoff <= upper:
+                if revised:
+                    db.execute(
+                        "UPDATE season_fixtures SET kickoff=?,plan=?,updated=? WHERE fixture=?",
+                        (
+                            kickoff,
+                            store.canonical(
+                                {
+                                    "outside_window": True,
+                                    "schedule_seen_at": store.iso(now),
+                                }
+                            ),
+                            store.iso(now),
+                            tag,
+                        ),
+                    )
                 continue
+            if revised:
+                # A schedule can return to a previously archived kickoff. Preserve receipts
+                # and terminal gaps, and reinstate only windows that can still be observed.
+                db.execute(
+                    "DELETE FROM season_retries WHERE slot IN (SELECT key FROM season_slots "
+                    "WHERE fixture=? AND kickoff=? AND state='superseded' AND deadline>=?)",
+                    (tag, kickoff, store.iso(now)),
+                )
+                db.execute(
+                    "UPDATE season_slots SET state='pending',owner=NULL,until=NULL,detail=NULL "
+                    "WHERE fixture=? AND kickoff=? AND state='superseded' AND deadline>=?",
+                    (tag, kickoff, store.iso(now)),
+                )
+
             latest = db.execute(
                 "SELECT received_at,sha FROM ma_events WHERE fixture=? AND received_at<=? "
                 "ORDER BY received_at DESC,sha DESC LIMIT 1",
                 (tag, store.iso(now)),
             ).fetchone()
-            version = store.digest([kickoff, latest["received_at"], latest["sha"]])
+            version = store.digest(
+                ["critical-windows-v2", kickoff, latest["received_at"], latest["sha"]]
+            )
             # The main receipt changes far more often than the grid. Skip recalculating an
             # unchanged schedule in the seconds leading up to a capture.
-            old = json.loads(row["plan"]) if row["plan"] else {}
             if row["prior"] == kickoff and old.get("version") == version:
                 continue
             active = db.execute(
@@ -88,22 +190,34 @@ def _plan(root, now):
                 "WHERE n=1 AND json_extract(c.payload,'$.mapping_error') IS NULL",
                 (tag, store.iso(now)),
             )
-            delays = sorted(
+            known_delays = sorted(
                 {max(5, int(r["delay"])) for r in active if type(r["delay"]) is int}
-            ) or [5]
+            )
+            delays = known_delays or [5]
             db.execute(
                 "INSERT INTO season_fixtures VALUES(?,?,?,?,?) ON CONFLICT(fixture) DO UPDATE SET kickoff=excluded.kickoff,"
                 "plan=excluded.plan,updated=excluded.updated",
                 (
                     tag,
                     kickoff,
-                    store.canonical({"delays": delays, "version": version}),
+                    store.canonical(
+                        {
+                            "delays": delays,
+                            "known_delays": known_delays,
+                            "schedule_seen_at": store.iso(seen),
+                            "version": version,
+                        }
+                    ),
                     store.iso(now),
                     store.iso(now),
                 ),
             )
-            if row["prior"] == kickoff and old.get("delays") == delays:
+            if row["prior"] == kickoff and old.get("known_delays") == known_delays:
                 continue
+            _critical_windows(
+                db, tag, kick, known_delays, now, seen, revised, row["sha"]
+            )
+
             if row["prior"] != kickoff:
                 _add(
                     db,
@@ -133,46 +247,27 @@ def _plan(root, now):
                 # All targets advance strictly. A slot cannot be backdated on restart.
                 if target <= cursor:
                     raise ValueError("non-advancing capture schedule")
-                if role == "decision_book":
-                    deadline = target + timedelta(seconds=25)
-                elif role == "execution_book":
-                    deadline = target + timedelta(seconds=5)
-                elif role == "closing_book":
-                    deadline = target + timedelta(seconds=12)
-                else:
-                    deadline = target + timedelta(seconds=45)
-                _add(db, tag, kickoff, target, deadline, role, "book")
-                if role == "closing_book" or (
-                    role == "periodic"
-                    and int((kick - target).total_seconds()) % 900 == 0
-                ):
-                    _add(db, tag, kickoff, target, deadline, "state", "metadata")
-                if (
-                    role == "decision_book"
-                    and abs((kick - target).total_seconds() - 3625) < 1
-                ):
-                    for offset in (10, 21):
-                        _add(
-                            db,
-                            tag,
-                            kickoff,
-                            target + timedelta(seconds=offset),
-                            deadline,
-                            "decision",
-                            "paper",
-                        )
-                if (
-                    role == "execution_book"
-                    and abs((kick - target).total_seconds() - 3600) < 120
-                ):
+                if role in ("periodic", "closing_book"):
+                    deadline = target + timedelta(
+                        seconds=12 if role == "closing_book" else 45
+                    )
+                    _add(db, tag, kickoff, target, deadline, role, "book")
+                    if (
+                        role == "closing_book"
+                        or int((kick - target).total_seconds()) % 900 == 0
+                    ):
+                        _add(db, tag, kickoff, target, deadline, "state", "metadata")
+                elif role == "execution_book" and not known_delays:
+                    # Sampling may continue with the monitor's default. Absent exchange delay
+                    # evidence cannot create a missing executable quote in the denominator.
                     _add(
                         db,
                         tag,
                         kickoff,
-                        target + timedelta(seconds=6),
-                        target + timedelta(seconds=70),
-                        "recover",
-                        "paper",
+                        target,
+                        target + timedelta(seconds=5),
+                        "execution_probe",
+                        "book",
                     )
                 cursor = target
 
@@ -712,6 +807,15 @@ def status(root, year=None):
                 "SELECT state,count(*) n FROM season_slots GROUP BY state"
             )
         }
+        weekly = [
+            dict(r)
+            for r in db.execute(
+                "SELECT s.role,s.state,count(*) AS slots FROM season_slots s JOIN season_fixtures f "
+                "ON f.fixture=s.fixture AND f.kickoff=s.kickoff WHERE s.deadline>=? AND s.deadline<=? "
+                "AND s.role IN ('decision_book','execution_book','decision','recover') GROUP BY s.role,s.state",
+                (store.iso(now - timedelta(days=7)), store.iso(now)),
+            )
+        ]
         heartbeat = db.execute(
             "SELECT updated FROM season_services WHERE service='heartbeat'"
         ).fetchone()
@@ -749,6 +853,7 @@ def status(root, year=None):
         "seven_day_fixtures": fixtures,
         "football_schedule": _football_coverage(root, now),
         "slots": states,
+        "critical_windows_last_seven_days": weekly,
         "next_capture_or_action": next_row,
         "services": services,
         "recent_alerts": alerts,

@@ -180,7 +180,8 @@ class SeasonTests(unittest.TestCase):
     def test_simultaneous_fixture_slots_and_restart_marks_past_windows(self):
         for slug, idx in ((self.slug, 1), ("epl-cc-dd-2026-11-25", 2)):
             ingest(self.root, native(slug, idx=idx), NOW)
-        season._plan(self.root, NOW)
+        with contextlib.redirect_stderr(io.StringIO()):
+            season._plan(self.root, NOW)
         due = KICK - timedelta(hours=1, seconds=25)
         with contextlib.closing(season._db(self.root)) as db, db:
             for name in season._SERVICES:
@@ -218,13 +219,15 @@ class SeasonTests(unittest.TestCase):
             season._expire(db, store.iso(after))
             self.assertEqual(
                 db.execute(
-                    "SELECT count(*) FROM season_slots WHERE role='execution_book' AND state='missed'"
+                    "SELECT count(*) FROM season_slots WHERE role='execution_book' AND state='missed' AND target>=?",
+                    (store.iso(NOW),),
                 ).fetchone()[0],
                 2,
             )
             self.assertEqual(
                 db.execute(
-                    "SELECT count(*) FROM season_alerts WHERE role='execution_book'"
+                    "SELECT count(*) FROM season_alerts a JOIN season_slots s ON s.key=a.key WHERE s.role='execution_book' AND s.target>=?",
+                    (store.iso(NOW),),
                 ).fetchone()[0],
                 2,
             )
@@ -376,3 +379,131 @@ class SeasonTests(unittest.TestCase):
                 )
             with self.assertRaisesRegex(ValueError, "earlier run"):
                 ma.history(self.root, "trades", "42", limit=10, pages=1)
+
+    def test_first_discovery_late_accounts_for_fixed_windows_without_requesting_old_books(
+        self,
+    ):
+        at = KICK - timedelta(minutes=50)
+        past = native("epl-aa-bb-2026-10-10", kick=KICK - timedelta(days=45), idx=3)
+        ingest(self.root, past, at)
+        ingest(self.root, native(self.slug), at)
+        with contextlib.redirect_stderr(io.StringIO()):
+            season._plan(self.root, at)
+            season._plan(self.root, at + timedelta(seconds=1))
+        with contextlib.closing(season._db(self.root)) as db:
+            missed = db.execute(
+                "SELECT role,detail,deadline FROM season_slots WHERE state='missed'"
+            ).fetchall()
+            self.assertEqual(len(missed), 7)
+            self.assertEqual(
+                {r["role"] for r in missed},
+                {"decision_book", "execution_book", "decision", "recover"},
+            )
+            self.assertEqual(
+                {json.loads(r["detail"])["horizon"] for r in missed}, {"T-24h", "T-60m"}
+            )
+            self.assertTrue(
+                all(
+                    json.loads(r["detail"])["reason"] == "first_seen_late"
+                    and store.instant(r["deadline"]) < at
+                    for r in missed
+                )
+            )
+            self.assertEqual(
+                db.execute("SELECT count(*) FROM season_alerts").fetchone()[0], 7
+            )
+            self.assertEqual(
+                db.execute(
+                    "SELECT count(*) FROM season_slots WHERE fixture=?", (past["slug"],)
+                ).fetchone()[0],
+                0,
+            )
+            self.assertEqual(
+                db.execute("SELECT count(*) FROM ma_books").fetchone()[0], 0
+            )
+        with patch.object(store, "now_utc", return_value=store.iso(at)):
+            self.assertEqual(
+                sum(
+                    r["slots"]
+                    for r in season.status(self.root)[
+                        "critical_windows_last_seven_days"
+                    ]
+                ),
+                7,
+            )
+
+    def test_reinstated_schedules_restore_only_observable_slots(self):
+        first = KICK - timedelta(days=2)
+
+        def revise(when, kick):
+            ingest(self.root, native(self.slug, kick=kick), when)
+            with contextlib.redirect_stderr(io.StringIO()):
+                season._plan(self.root, when)
+
+        revise(first, KICK)
+        with contextlib.closing(season._db(self.root)) as db, db:
+            first_slot = db.execute(
+                "SELECT key FROM season_slots WHERE kickoff=? AND role='decision_book' ORDER BY target LIMIT 1",
+                (store.iso(KICK),),
+            ).fetchone()[0]
+            db.execute(
+                "UPDATE season_slots SET state='done',detail=? WHERE key=?",
+                ('{"receipt":"existing"}', first_slot),
+            )
+            expected = db.execute(
+                "SELECT count(*) FROM season_slots WHERE kickoff=? AND role='execution_book' AND state='pending'",
+                (store.iso(KICK),),
+            ).fetchone()[0]
+        for move in (timedelta(days=16), timedelta(days=3)):
+            first += timedelta(minutes=1)
+            alt = KICK + move
+            revise(first, alt)
+            with contextlib.closing(season._db(self.root)) as db:
+                self.assertEqual(
+                    db.execute("SELECT kickoff FROM season_fixtures").fetchone()[0],
+                    store.iso(alt),
+                )
+                self.assertEqual(
+                    db.execute(
+                        "SELECT count(*) FROM season_slots WHERE kickoff=? AND role='execution_book' AND state='pending'",
+                        (store.iso(KICK),),
+                    ).fetchone()[0],
+                    0,
+                )
+            first += timedelta(minutes=1)
+            revise(first, KICK)
+            with contextlib.closing(season._db(self.root)) as db:
+                self.assertEqual(
+                    db.execute(
+                        "SELECT count(*) FROM season_slots WHERE kickoff=? AND role='execution_book' AND state='pending'",
+                        (store.iso(KICK),),
+                    ).fetchone()[0],
+                    expected,
+                )
+                self.assertEqual(
+                    tuple(
+                        db.execute(
+                            "SELECT state,detail FROM season_slots WHERE key=?",
+                            (first_slot,),
+                        ).fetchone()
+                    ),
+                    ("done", '{"receipt":"existing"}'),
+                )
+                self.assertFalse(
+                    db.execute(
+                        "SELECT 1 FROM season_alerts WHERE role='execution_book'"
+                    ).fetchone()
+                )
+        # A newly published earlier kickoff gets its own honest, missed deadlines.
+        revised_now = first + timedelta(minutes=2)
+        revised_kick = revised_now + timedelta(minutes=50)
+        revise(revised_now, revised_kick)
+        with contextlib.closing(season._db(self.root)) as db:
+            reasons = [
+                json.loads(r[0])["reason"]
+                for r in db.execute(
+                    "SELECT detail FROM season_slots WHERE kickoff=? AND state='missed'",
+                    (store.iso(revised_kick),),
+                )
+            ]
+            self.assertEqual(set(reasons), {"reschedule_seen_late"})
