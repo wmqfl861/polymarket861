@@ -277,7 +277,7 @@ class PairProofTests(unittest.TestCase):
                 "INSERT INTO trial_activations VALUES (?,?,?,?)",
                 (store.PROTOCOL, active_at, active_at, "{}"),
             )
-        with at("2023-08-12T12:56:00.001001Z"):
+        with at("2023-08-12T12:58:30.001001Z"):
             first = runner.run_due(
                 self.db,
                 m["fixture_root"],
@@ -286,7 +286,7 @@ class PairProofTests(unittest.TestCase):
                 workers=1,
             )
         self.assertIn("done", first["counts"])
-        with at("2023-08-12T12:57:45.953102Z"):
+        with at("2023-08-12T12:59:45.953102Z"):
             second = runner.run_due(
                 self.db,
                 m["fixture_root"],

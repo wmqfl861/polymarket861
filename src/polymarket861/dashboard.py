@@ -108,14 +108,23 @@ def render_dashboard(reports: Iterable[Mapping]) -> str:
 
 
 def _report_rows(data_dir: Path) -> list:
-    from .ledger import ledger_details
-    from .store import list_reports
+    from contextlib import closing
+    from . import ledger, round_history, store
 
-    rows = list_reports(data_dir)
-    for row in rows:
-        if row["kind"] == "ledger" and row["payload"].get("detail_view") == "on_demand":
-            row["payload"] = ledger_details(data_dir, row["key"])
-    return rows
+    with closing(store.connect(data_dir)) as db, db:
+        db.execute("BEGIN")
+        rows = [dict(r) | {"payload": json.loads(r["payload"])} for r in db.execute("SELECT * FROM reports ORDER BY updated_at DESC,kind,key")]
+        for row in rows:
+            if row["kind"] == "ledger" and row["payload"].get("detail_view") == "on_demand":
+                row["payload"] = ledger._summary(db, row["key"])
+        if db.execute("SELECT 1 FROM sqlite_master WHERE name='round_report_editions'").fetchone():
+            for r in db.execute(
+                "SELECT * FROM round_report_editions e WHERE e.edition < "
+                "(SELECT MAX(edition) FROM round_report_editions WHERE round_key=e.round_key)"
+            ):
+                report = round_history._read(r) | round_history._publication(r) | {"edition_round_key": r["round_key"]}
+                rows.append({"kind": "round-edition", "key": f"{r['round_key']}/{r['edition']}", "updated_at": r["published_at"], "payload": report})
+        return rows
 
 
 def export_dashboard(data_dir: Path, output: Path) -> dict:

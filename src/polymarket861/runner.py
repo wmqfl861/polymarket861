@@ -12,11 +12,11 @@ from contextlib import closing
 from datetime import timedelta
 from pathlib import Path
 
-from . import jobs, pipeline, store
-
+from . import evidence, jobs, pipeline, store
 
 _WINDOW = timedelta(minutes=5)
 _LEASE = timedelta(seconds=30)
+_LINEUP_GRACE = timedelta(seconds=90)
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS forecast_dispatch (
  key TEXT PRIMARY KEY, fixture_id TEXT NOT NULL, kickoff TEXT NOT NULL, horizon TEXT NOT NULL,
@@ -299,7 +299,7 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
             for key in old:
                 db.execute(
                     "UPDATE forecast_dispatch SET current_schedule=0,lease=NULL,valid_until=NULL,updated_at=?, "
-                    "state=CASE WHEN state='running' OR state='error' THEN 'superseded' ELSE state END WHERE key=?",
+                    "state=CASE WHEN state IN ('running','error','waiting_lineups','ready') THEN 'superseded' ELSE state END WHERE key=?",
                     (observed, key),
                 )
                 db.execute(
@@ -316,6 +316,7 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
     for row in recorded.values():
         past_slots.setdefault((row["fixture_id"], row["kickoff"]), []).append(row)
     future, due, unanchored = [], [], []
+    waiting = []
     previous = Counter()
     for f in fixtures:
         if (
@@ -364,13 +365,51 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
                     and c["first"] <= f["round_id"] < c["first"] + c["span"]
                     and store.instant(c["registered_at"]) <= cutoff
                 )
+            lineup_error = None
+            wait_for_lineups = False
+            if horizon == "T-60m" and opens <= clock < cutoff - _LINEUP_GRACE:
+                try:
+                    context = evidence.as_of_context(
+                        data_dir,
+                        f["fixture_id"],
+                        f["home"],
+                        f["away"],
+                        observed,
+                        prospective=True,
+                    )
+                    wait_for_lineups = not all(
+                        context["confirmed"][side] for side in ("home", "away")
+                    )
+                except (ValueError, OSError) as exc:
+                    lineup_error = str(exc)
+                    wait_for_lineups = True
+                if wait_for_lineups:
+                    future.append(cutoff - _LINEUP_GRACE)
             for version in dict.fromkeys(selected):
                 slot = _slot(f, horizon, mode, version)
                 old_state = recorded.get(slot["key"], {}).get("state")
                 if old_state in {"done", "missed"}:
                     previous["already_" + old_state] += 1
+                elif wait_for_lineups and old_state in (None, "waiting_lineups"):
+                    waiting.append(
+                        slot
+                        | {
+                            "state": "waiting_lineups",
+                            "error": lineup_error,
+                            "latest_dispatch_from": store.iso(cutoff - _LINEUP_GRACE),
+                        }
+                    )
                 else:
                     due.append(slot)
+    if waiting:
+        # Persist the deferral for status/restarts. Another scheduler may already
+        # own or have completed the same slot; its state takes precedence.
+        with closing(_open(data_dir)) as db, db:
+            db.executemany(
+                "INSERT OR IGNORE INTO forecast_dispatch(key,fixture_id,kickoff,horizon,version,mode,cutoff,state,updated_at,error) "
+                "VALUES(:key,:fixture_id,:kickoff,:horizon,:version,:mode,:cutoff,:state,:updated_at,:error)",
+                [s | {"updated_at": observed} for s in waiting],
+            )
     # Expired slots can be numerous after downtime; jobs that still have a real deadline run first.
     due.sort(
         key=lambda s: (
@@ -384,6 +423,7 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
         records = list(
             pool.map(lambda s: _run_one(data_dir, root, evidence_path, s), due)
         )
+    records.extend(waiting)
     summary = {
         "observed_at": observed,
         "next_window_opens": store.iso(min(future)) if future else None,

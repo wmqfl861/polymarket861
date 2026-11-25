@@ -99,10 +99,10 @@ class RunnerTests(unittest.TestCase):
             if fixture==games[0]["fixture_id"]:
                 raise OSError("fixture source temporarily unavailable")
             return normal(data,fixture,root,**kwargs)
-        with clock("2030-08-20T13:56Z"),patch.object(pipeline,"make_forecast",side_effect=once):
+        with clock("2030-08-20T13:58:30Z"),patch.object(pipeline,"make_forecast",side_effect=once):
             first=self.dispatch(workers=2)
             self.assertEqual(first["counts"],{"done":1,"error":1,"missed":2})
-        with clock("2030-08-20T13:57Z"):
+        with clock("2030-08-20T13:59Z"):
             retry=self.dispatch(workers=2)
         self.assertEqual(retry["counts"]["done"],1)
         self.assertEqual(retry["counts"]["already_done"],1)

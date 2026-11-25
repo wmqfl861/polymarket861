@@ -289,6 +289,27 @@ def make_forecast(
         context_verified=context_verified,
         frame_digest=frame["digest"] if frame else None,
     )
+    # The league-frequency comparator is scored from the very same training view,
+    # context and cutoff. It is part of this immutable seal for every model version.
+    baseline = (
+        result
+        if result["model"] == "B0"
+        else engine.forecast(
+            fixture["home"],
+            fixture["away"],
+            kickoff,
+            evidence_cutoff,
+            season=fixture["season"],
+            lines=recipe["lines"],
+            baseline=True,
+        )
+    )
+    frozen_baseline = {
+        "model": "B0",
+        "probabilities": baseline["probabilities"],
+        "input_proof_sha256": proof["sha256"],
+        "training_sha256": baseline["evidence"]["input_sha256"],
+    }
     if recipe["family"] == "B2":
         result = football.apply_context(result, context, lines=recipe["lines"])
     overdue = {side: [] for side in ("home", "away")}
@@ -360,6 +381,7 @@ def make_forecast(
             "cutoff": label_cutoff,
             "input_cutoff": iso(evidence_cutoff),
             "comparison_proof": proof,
+            "baseline_comparator": frozen_baseline,
             "sealed_at": sealed_at,
             "season": fixture["season"],
             "round_id": fixture["round_id"],

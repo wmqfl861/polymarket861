@@ -5,9 +5,7 @@ from __future__ import annotations
 import json
 from contextlib import closing
 
-from . import football
-from . import store
-
+from . import comparisons, football, store
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS round_report_editions (
@@ -204,6 +202,15 @@ def publish_round(
             db, fixtures, version, horizon, mode, one_round=True
         )
         report = _grade(fixtures, seals, season, round_id, horizon, mode, version)
+        by_fixture = {s["fixture_id"]: s for s in seals}
+        for f, row in zip(fixtures, report["fixtures"]):
+            row["comparison"] = comparisons.for_fixture(
+                db, data_dir, f, by_fixture.get(f["fixture_id"]), horizon, mode
+            )
+            row["comparison_sha256"] = store.digest(row["comparison"])
+        report["comparisons"] = comparisons.summary(
+            report["fixtures"], report["expected"]
+        )
         checksum = store.digest(report)
         if head and checksum == head["sha256"]:
             return report | _publication(head)
@@ -225,6 +232,7 @@ def _references(report):
         "result_version",
         "goals",
         "digest",
+        "comparison_sha256",
     )
     return {
         f["fixture_id"]: {k: f[k] for k in fields if k in f}
@@ -279,6 +287,10 @@ def round_history(
                 "status": report.get("status"),
                 "scored": report.get("count"),
                 "score": report.get("score"),
+                "comparison_pairs": {
+                    k: v["paired"]
+                    for k, v in report.get("comparisons", {}).get("pairs", {}).items()
+                },
                 "fixture_changes": changes,
             }
         )

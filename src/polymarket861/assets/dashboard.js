@@ -6,7 +6,7 @@
   const pages = {
     matches: ["比赛详情", ["match", "ledger"], "赛前预测或模拟账本"],
     sources: ["数据源", ["source", "market-coverage"], "数据源或盘口覆盖报告"],
-    rounds: ["轮次成绩", ["round", "backtest", "market-replay", "trial-market-study"], "轮次成绩或历史回测"],
+    rounds: ["轮次成绩", ["round", "round-edition", "backtest", "market-replay", "trial-market-study"], "轮次成绩或历史回测"],
     incidents: ["错误与修复", ["incident"], "错误与修复报告"],
     experiments: ["实验与版本", ["experiment", "strategy", "qualification"], "实验和版本报告"],
     jobs: ["并行任务", ["jobs"], "并行任务报告"],
@@ -17,6 +17,7 @@
     source: "来源档案",
     "market-coverage": "盘口覆盖",
     round: "轮报",
+    "round-edition": "往期轮报",
     backtest: "概率回测",
     "market-replay": "盘口回放",
     "trial-market-study": "盘口研究凭据",
@@ -70,6 +71,7 @@
     approved: "已验证",
     retired: "已停用",
     scored: "已评分",
+    waiting_lineups: "等待双方确认首发",
     preliminary: "待补赛",
     incomplete: "覆盖不全",
     final: "已定稿",
@@ -273,9 +275,9 @@
   function title(row) {
     const p = object(row.payload);
     if (row.kind === "match" && p.home && p.away) return p.home + " vs " + p.away;
-    if (row.kind === "round" && first(p.round_id, p.round) !== undefined) {
+    if (["round", "round-edition"].includes(row.kind) && first(p.round_id, p.round) !== undefined) {
       const round = String(first(p.round_id, p.round));
-      return (p.season ? p.season + " · " : "") + (/^\d+$/.test(round) ? "第 " + round + " 轮" : round);
+      return (p.season ? p.season + " · " : "") + (/^\d+$/.test(round) ? "第 " + round + " 轮" : round) + (row.kind === "round-edition" ? " · 第 " + p.report_version + " 版" : "");
     }
     if (row.kind === "backtest") {
       if (p.title) return p.title;
@@ -583,6 +585,37 @@
     const status = values.find((v) => typeof v === "boolean");
     return status === true ? "已收到正式名单" : status === false ? "未确认" : "未记录";
   }
+  function renderComparisons(report, games, detail) {
+    if (!report || !report.pairs) return;
+    const names = {baseline: "同输入 B0", market: "决策时刻市场", frozen_market: "输入冻结时刻市场"};
+    const items = {result: "胜平负", total: "全场大 2.5", home: "主队大 1.5", away: "客队大 1.5"};
+    const panelEl = panel("同场概率对照");
+    table(panelEl, ["对照", "四项配齐／应有", "同场模型分", "对照分", "模型减对照"],
+      Object.entries(report.pairs).map(([k, v]) => [names[k], v.paired + "／" + v.expected, format(v.model_mean), format(v.reference_mean), format(v.delta)]));
+    table(panelEl, ["市场玩法", "决策时刻配对／应有", "分差", "冻结时刻配对／应有", "分差"],
+      Object.entries(items).map(([k, label]) => {
+        const a = report.pairs.market.by_family[k], b = report.pairs.frozen_market.by_family[k];
+        return [label, a.paired + "／" + report.expected, format(a.delta), b.paired + "／" + report.expected, format(b.delta)];
+      }));
+    const clock = (x) => x && /Z$/.test(x) ? x.slice(11, 19) + " UTC" : "—";
+    table(panelEl, ["比赛", "模型", "B0", "市场", "输入冻结", "决策行情收到", "市场缺项"], games.map(g => {
+      const v = object(g.comparison), market = object(v.market);
+      return [g.fixture_id, format(object(v.model).score), format(object(v.baseline).score), format(market.score),
+        clock(v.input_cutoff), clock(market.received_at), Object.keys(object(market.missing)).map(k => items[k]).join("、") || "—"];
+    }));
+    detail.append(panelEl);
+    const closing = panel("赛前公平价与收盘中点的均方距离");
+    const value = (n) => typeof n === "number" ? n.toFixed(5) : "—";
+    const rows = [];
+    for (const [k,label] of Object.entries(items)) for (const [basis,title] of [["verified_actual","已核实际开球"],["shadow_planned","计划开球 · 影子"]]) {
+      const x = report.closing_distance[basis][k];
+      const ci = array(x.fixture_bootstrap_ci95);
+      rows.push([label, title, x.paired + "／" + x.expected, x.tokens, value(x.mse), ci.length ? ci.map(value).join(" 至 ") : "—"]);
+    }
+    table(closing, ["玩法", "收盘口径", "可配对／应有", "方向代币", "均方距离", "按场 95% 区间"], rows);
+    closing.append(create("p", "note", "收盘采用开球前 30 秒内的已验证双边簿。按相同合约计算公平价与中点的平方差，各场等权。"));
+    detail.append(closing);
+  }
   function renderRound(row, detail) {
     const p = object(row.payload),
       box = panel("本轮结果"),
@@ -648,6 +681,17 @@
         }),
       );
     detail.append(box);
+    const roundKey = p.edition_round_key || row.key;
+    const editions = reports.filter(r => (r.kind === "round" && r.key === roundKey) || (r.kind === "round-edition" && object(r.payload).edition_round_key === roundKey));
+    if (editions.length > 1) {
+      const archive = panel("历次发布");
+      table(archive, ["版本", "发布时间", "分数"], editions.map(r => {
+        const ed = object(r.payload), label = "第 " + ed.report_version + " 版" + (r.kind === "round" ? " · 最新" : "");
+        return [r.id === row.id ? label : reportLink(r, label), time(ed.report_published_at), format(ed.score)];
+      }));
+      detail.append(archive);
+    }
+    renderComparisons(p.comparisons, games, detail);
     const ids = new Set(games.map((g) => first(g.fixture_id, g.match_id)).filter(Boolean));
     const accounts = [];
     for (const report of reports.filter((r) => r.kind === "ledger")) {
@@ -1148,6 +1192,7 @@
     ledger: renderLedger,
     source: renderSource,
     round: renderRound,
+    "round-edition": renderRound,
     backtest: renderBacktest,
     incident: renderIncident,
     experiment: renderExperiment,
