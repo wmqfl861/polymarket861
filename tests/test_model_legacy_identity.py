@@ -118,6 +118,8 @@ class LegacyPhysicalIdentity(unittest.TestCase):
                 if fmt == "audit-format":
                     with closing(study._db(root)) as db, db:
                         db.execute("DROP TABLE model_release_legacy_confirmations")
+                        # The earlier release schema did not advertise this table as installed.
+                        db.execute("DELETE FROM runtime_schema_versions WHERE component='model-study'")
                     self.assertIsNone(
                         study.inspect_release(root, sha)["decision"]["legacy_reference"]
                     )
