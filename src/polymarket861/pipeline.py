@@ -17,6 +17,7 @@ from .store import (
     connect,
     digest,
     eligible_fixtures,
+    ensure_unfinished_at,
     fixture_at,
     instant,
     iso,
@@ -235,6 +236,8 @@ def make_forecast(
         )
     with closing(connect(data_dir)) as db:
         sealed = _existing(db, fixture, horizon, requested or champion, mode)
+        if not sealed and not replay:
+            ensure_unfinished_at(db, fixture_id, fixture["kickoff"], iso(arrival))
     if sealed and not replay:
         return _verified_seal(sealed)
     if not replay:
@@ -431,19 +434,20 @@ def make_forecast(
         "training_sha256": baseline["evidence"]["input_sha256"],
     }
     overdue = {side: [] for side in ("home", "away")}
+    past = sorted(
+        (football.history_kickoff(m, evidence_cutoff), m.fixture_id, m)
+        for m in history
+        if m.season == fixture["season"]
+    )
     for side in overdue:
         team = football.team_key(fixture[side])
-        past = sorted(
-            (
-                m
-                for m in history
-                if m.season == fixture["season"]
-                and m.kickoff + timedelta(hours=48) < evidence_cutoff
-                and team in (football.team_key(m.home), football.team_key(m.away))
-            ),
-            key=lambda f: f.kickoff,
-        )
-        for match in past[-2:]:
+        recent = [
+            m
+            for when, _, m in past
+            if when + timedelta(hours=48) < evidence_cutoff
+            and team in (football.team_key(m.home), football.team_key(m.away))
+        ]
+        for match in recent[-2:]:
             versions = [
                 v for v in match.result_versions if v.available <= evidence_cutoff
             ]

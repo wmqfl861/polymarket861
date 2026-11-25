@@ -89,6 +89,10 @@ CREATE TABLE IF NOT EXISTS result_dispositions (
     fixture_id TEXT NOT NULL, kickoff TEXT NOT NULL, at TEXT NOT NULL,
     held INTEGER NOT NULL, reason TEXT NOT NULL, PRIMARY KEY(fixture_id,kickoff,at)
 );
+CREATE TABLE IF NOT EXISTS result_event_times (
+    fixture_id TEXT NOT NULL,version INTEGER NOT NULL,actual_kickoff TEXT NOT NULL,proof TEXT NOT NULL,
+    PRIMARY KEY(fixture_id,version)
+);
 CREATE TABLE IF NOT EXISTS result_time_grades (
     fixture_id TEXT NOT NULL,version INTEGER NOT NULL,grade TEXT NOT NULL,PRIMARY KEY(fixture_id,version)
 );
@@ -327,7 +331,7 @@ def fixture_at(data_dir, fixture_id, at=None, *, prospective=False) -> dict:
 
 def record_result(data_dir, outcome: dict) -> dict:
     """Record the independent scorer's evidence, including corrections as new versions."""
-    if outcome.get("source") in {"openligadb", "manual-regulation"}:
+    if outcome.get("source") in {"openligadb", "manual-regulation", "verified-result-pairing"}:
         raise ValueError(
             "reserved result source requires the verified result-feed or licensed manual batch"
         )
@@ -336,7 +340,7 @@ def record_result(data_dir, outcome: dict) -> dict:
         return record_result_db(db, outcome, recorded_at=now_utc())
 
 
-def record_result_db(db, outcome, *, recorded_at):
+def record_result_db(db, outcome, *, recorded_at, actual_kickoff=None):
     """Append one version in the caller's existing write transaction."""
     item = {
         k: outcome[k]
@@ -363,10 +367,10 @@ def record_result_db(db, outcome, *, recorded_at):
         "SELECT * FROM fixture_versions WHERE fixture_id=? ORDER BY known_at DESC LIMIT 1",
         (item["fixture_id"],),
     ).fetchone()
+    event_start = iso(actual_kickoff) if actual_kickoff else fixed["kickoff"] if fixed else None
     if (
         not fixed
-        or not fixed["kickoff"]
-        < item["finalized_at"]
+        or not event_start < item["finalized_at"]
         <= item["published_at"]
         <= item["received_at"]
         <= recorded_at
@@ -404,6 +408,11 @@ def record_result_db(db, outcome, *, recorded_at):
         "INSERT INTO result_time_grades VALUES (?,?,?)",
         (item["fixture_id"], item["version"], grade),
     )
+    if actual_kickoff is not None:
+        db.execute(
+            "INSERT INTO result_event_times VALUES(?,?,?,?)",
+            (item["fixture_id"], item["version"], event_start, item["locator"]),
+        )
     return item | {"time_grade": grade}
 
 
@@ -432,9 +441,11 @@ def eligible_fixture_rows(db, *, season=None):
         CASE WHEN coalesce(d.held,0)=0 THEN r.home_goals END AS home_goals,
         CASE WHEN coalesce(d.held,0)=0 THEN r.away_goals END AS away_goals,
         d.reason AS result_disposition, r.finalized_at,r.received_at,r.version AS result_version,s.precision,s.recorded_at,
-        f.version AS schedule_version,r.source AS result_source,r.locator AS result_locator
+        f.version AS schedule_version,r.source AS result_source,r.locator AS result_locator,
+        t.actual_kickoff AS result_kickoff
         FROM f JOIN schedule_receipts s ON f.fixture_id=s.fixture_id AND f.version=s.version
         LEFT JOIN r ON f.fixture_id=r.fixture_id AND f.kickoff=r.kickoff AND r.n=1
+        LEFT JOIN result_event_times t ON t.fixture_id=f.fixture_id AND t.version=r.version
         LEFT JOIN disposition d ON f.fixture_id=d.fixture_id AND f.kickoff=d.kickoff AND d.n=1 WHERE f.n=1"""
     args = ()
     if season is not None:
@@ -475,6 +486,12 @@ def scored_fixture_rows(
             not fixture
             or fixture["home_goals"] is None
             or fixture["kickoff"] != entry["kickoff"]
+            or fixture.get("result_kickoff")
+            and (
+                entry["sealed_at"] >= fixture["result_kickoff"]
+                or horizon != "early"
+                and fixture["result_kickoff"] != entry["kickoff"]
+            )
         ):
             continue
         payload = json.loads(entry["data_json"])
@@ -497,6 +514,21 @@ def scored_fixture_rows(
     return result
 
 
+def ensure_unfinished_at(db, fixture_id, kickoff, at):
+    prior = db.execute(
+        "WITH latest AS (SELECT r.* FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
+        "WHERE r.fixture_id=? AND s.kickoff=? AND r.recorded_at<=? ORDER BY r.version DESC LIMIT 1) "
+        "SELECT 1 FROM latest JOIN result_event_times t USING(fixture_id,version) WHERE t.actual_kickoff<=? "
+        "AND coalesce((SELECT held FROM result_dispositions WHERE fixture_id=? AND kickoff=? AND at<=? "
+        "ORDER BY at DESC LIMIT 1),0)=0",
+        (fixture_id, kickoff, at, at, fixture_id, kickoff, at),
+    ).fetchone()
+    if prior:
+        raise ValueError(
+            "a completed match was already observed at the proposed decision"
+        )
+
+
 def check_formal_forecast(data_dir, forecast_digest, fixture_id, kickoff, decision_at):
     key = ("sealed_forecast", forecast_digest, fixture_id, iso(kickoff), iso(decision_at))
     return dbscope.checked(data_dir, key, lambda: _checked_forecast(
@@ -506,6 +538,7 @@ def check_formal_forecast(data_dir, forecast_digest, fixture_id, kickoff, decisi
 
 def _checked_forecast(data_dir, forecast_digest, fixture_id, kickoff, decision_at):
     with dbscope.reading(data_dir) as db:
+        ensure_unfinished_at(db, fixture_id, iso(kickoff), iso(decision_at))
         row = db.execute(
             "SELECT * FROM forecast_seals WHERE digest=? AND fixture_id=? AND kickoff=? "
             "AND cutoff=? AND protocol=? AND horizon='T-60m' AND mode='formal'",

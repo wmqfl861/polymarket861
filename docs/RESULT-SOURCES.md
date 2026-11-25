@@ -23,9 +23,31 @@ Football-Data.co.uk 的使用条件限制自动下载与 AI 数据训练，open-
 
 自动修订最多移动 36 小时，须早于两个候选开球时刻中较早者的 T−60。调度保存本地准入时间和两个来源的原件摘要。往期预测保留原赛程，新的赛程用于后续预测和评分。身份歧义、已临近决策、来源矛盾和大幅改期进入人工审核。实际第一声哨与交易所兑付继续使用各自的独立证据。
 
+当两个原件同意的修订超过单次或累计 36 小时，`epl-schedule-review-2026` 列出登记时刻、OpenLigaDB 时刻、Gamma 候选时刻和延后原因。处理人先读原件，再运行以下命令，将变量替换为报告中的标识和 UTC 时刻。
+
+```bash
+pm861 result-feed approve-schedule 2026 "$FIXTURE_ID" --kickoff "$PROPOSED_UTC" --reviewer "$REVIEWER" --reason "$REASON"
+pm861 result-feed withdraw-schedule 2026 "$FIXTURE_ID" --kickoff "$APPROVED_UTC" --reviewer "$REVIEWER" --reason "$REASON"
+```
+
+确认命令重新核验两份最近 24 小时收到的原件、联赛身份、主客顺序、常规时间市场和指定时刻。改期的新开球须在当前时刻一小时以后。原登记时刻已过的延期仍可确认，变更从本机这一刻起生效。撤回命令挂起该版赛程，保留确认人、理由、证据摘要及生效前的预测。
+
+## 赛后时间对账
+
+`pm861 result-feed season 2026 --offline` 重开已收件的归档。它按英超赛季、轮次和唯一有序主客组合逐场核对。报告的 `postmatch_pairings` 给出 `registry_kickoff`、`actual_kickoff`、常规时间比分、确认方法和 `proof_sha256`。两个开球不同时，须由两个不同提供方给出相同的精确时刻。双方比分相符时可直接确认。一方尚未出终场时，系统要求报出比分的一方有两次独立的、相隔至少 30 分钟的请求，且身份、分数和开球自上一份终场起连续一致。缓存、页面修订日期及同次请求中的多篇文章共用一次收件时间。
+
+已确认的真实比赛时间随该版赛果进入训练。从本地认证时点起，下一场预测才可用该赛果。早于登记占位时刻实际完赛的比赛也遵循同一规则。历次数据清单和封存保持可按原时点复现。轮报给固定时距预测评分时核对真实开球，对已经开球后才封存的预测保留缺口。自动结算还会重验两边的原件，检查持仓所用开球与该场真实开球一致。
+
+原件撤回、比分矛盾或身份冲突会暂停相应场次，并重算训练清单和轮报。处理人也可以按已确认的证明摘要挂起一场，调查完毕后解除。解除操作会重新读取原件并执行准入规则。
+
+```bash
+pm861 result-feed review-pairing 2026 "$FIXTURE_ID" --proof "$PROOF_SHA256" --action withdraw --reviewer "$REVIEWER" --reason "$REASON"
+pm861 result-feed review-pairing 2026 "$FIXTURE_ID" --proof "$PROOF_SHA256" --action release --reviewer "$REVIEWER" --reason "$REASON"
+```
+
 ## 批量人工导入
 
-把原始比赛记录放在清单的同一目录。下方展示清单结构；实际须列出已登记的**整轮每一场**，并填写原件实际的 SHA-256。比分顺序为主队在前。
+把原始比赛记录放在清单的同一目录。整轮使用 `import-round`，同轮一场或多场使用 `import-matches`。两条命令都要求填写原件实际的 SHA-256，比分顺序为主队在前。清单中的 `kickoff` 填原件载明的真实 UTC 开球。它与登记时刻不同时，还须有一份已归档的独立时刻匹配、顶层 `reviewer` 和逐场 `decision_reason`。
 
 ```json
 {
@@ -33,6 +55,7 @@ Football-Data.co.uk 的使用条件限制自动下载与 AI 数据训练，open-
   "round": 11,
   "rights": "permission",
   "source": "获准使用的终场赛报",
+  "reviewer": "具名复核人",
   "evidence_file": "official-match-sheets.pdf",
   "evidence_sha256": "填写附件的64位SHA-256",
   "matches": [
@@ -51,7 +74,7 @@ Football-Data.co.uk 的使用条件限制自动下载与 AI 数据训练，open-
 }
 ```
 
-`rights` 接受 `user-owned` 或 `permission`。命令 `pm861 result-feed import-round 2026 11 round.json` 在同一事务中验证并写入整批数据，返回 `batch_id`。修正导入错误时可运行 `pm861 result-feed rollback-batch BATCH_ID --reason "上传了错误版本"`。如果该批次之后已发生赛果或赛程更正，系统会保留后续裁决并拒绝过时的整批回滚。
+`rights` 接受 `user-owned` 或 `permission`。`pm861 result-feed import-round 2026 11 round.json` 要求清单覆盖该轮全部登记场次。`pm861 result-feed import-matches 2026 11 matches.json` 只处理清单中列出的场次。两者都会在同一事务中验证并写入数据，返回 `batch_id`。修正导入错误时可运行 `pm861 result-feed rollback-batch BATCH_ID --reason "上传了错误版本"`。如果该批次之后已发生赛果或赛程更正，系统会保留后续裁决并拒绝过时的整批回滚。
 
 OpenLigaDB 公共数据使用 ODbL 1.0。公共展示需署名，公开分发修改后的数据库时须遵守其同许可和开放取得要求。Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0. [数据许可](https://www.openligadb.de/en/license) · [API 条款](https://www.openligadb.de/en/terms-of-use) · [接口说明](https://api.openligadb.de/index.html)
 

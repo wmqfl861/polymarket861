@@ -261,7 +261,7 @@ def _batch(root, raw, year, rnd, file):
         or not obj["matches"]
     ):
         raise ValueError(
-            "require a full round, source identity and user-owned or permission evidence"
+            "require match records, source identity and user-owned or permission evidence"
         )
     relative = Path(obj["evidence_file"])
     if relative.is_absolute() or ".." in relative.parts:
@@ -297,7 +297,8 @@ def _batch(root, raw, year, rnd, file):
     return obj, manifest["sha256"], sha
 
 
-def manual(root, year, rnd, file):
+def manual(root, year, rnd, file, *, whole_round=True):
+    from . import independent_results, result_pairings
     from .football import fixture_id
 
     raw = _raw_file(file)
@@ -309,6 +310,10 @@ def manual(root, year, rnd, file):
         ).fetchone()
         if previous:
             report = json.loads(previous["detail"])
+            if whole_round and report.get("scope") == "selected_matches":
+                raise ValueError(
+                    "the whole registered matchweek is required in one batch"
+                )
             if previous["rollback"]:
                 report["rolled_back"] = json.loads(previous["rollback"])
         else:
@@ -319,19 +324,21 @@ def manual(root, year, rnd, file):
                 if f["round_id"] == rnd
             }
             native, _ = admission._raw_rows(root, db, year, at)
+            independent = independent_results.verified(root, db, year, at)
+            unique = result_pairings.unique_fixtures(fixtures.values())
             seen = set()
             rows = []
             for r in obj["matches"]:
                 fid = fixture_id(obj["season"], r["home"], r["away"])
                 f = fixtures.get(fid)
+                actual = store.iso(r["kickoff"])
                 if (
                     not f
                     or fid in seen
+                    or fid not in unique
                     or r.get("fixture_id", fid) != fid
                     or f["precision"] != "minute"
-                    or store.iso(r["kickoff"]) != f["kickoff"]
-                    or store.instant(at)
-                    < store.instant(f["kickoff"]) + timedelta(minutes=90)
+                    or store.instant(at) < store.instant(actual) + timedelta(minutes=90)
                     or r.get("status") != "final"
                     or r.get("period") != "regulation"
                     or not str(r.get("locator") or "").strip()
@@ -343,15 +350,47 @@ def manual(root, year, rnd, file):
                     raise ValueError(
                         "invalid, duplicate or unmatched regulation match and source locator"
                     )
+                ol = native.get(fid, [])
+                other = independent.get(fid, [])
+                evidence = ol[-1:] + other[-1:]
+                if any(
+                    (e.get("round") is not None and e["round"] != rnd)
+                    or (e.get("kickoff") and e["kickoff"] != actual)
+                    or e.get("status") in {"conflict", "withdrawn"}
+                    or e.get("error")
+                    for e in evidence
+                ):
+                    raise ValueError(
+                        "manual kickoff/fixture identity conflicts with archived sources"
+                    )
+                if actual != f["kickoff"] and (
+                    not any(
+                        e.get("kickoff") == actual and e.get("round") == rnd
+                        for e in evidence
+                    )
+                    or not str(obj.get("reviewer") or "").strip()
+                    or not str(r.get("decision_reason") or "").strip()
+                ):
+                    raise ValueError(
+                        "a different kickoff needs a matching source receipt, reviewer and decision_reason"
+                    )
                 seen.add(fid)
                 prior = admission.last_result(db, fid, f["kickoff"])
                 state = admission.last_disposition(db, fid, f["kickoff"], at)
+                reviewed = admission.pairing_review(db, fid, f["kickoff"], at)
+                if reviewed and reviewed["action"] == "withdraw":
+                    raise ValueError(
+                        "a withdrawn result pairing requires an explicit review before manual scoring"
+                    )
                 score = [r["home_goals"], r["away_goals"]]
                 cited = native.get(fid, [])
                 if (
                     cited
                     and cited[-1]["score"] is not None
                     and cited[-1]["score"] != score
+                    or other
+                    and other[-1]["score"] is not None
+                    and other[-1]["score"] != score
                     or prior
                     and [prior["home_goals"], prior["away_goals"]] != score
                     or state
@@ -369,7 +408,7 @@ def manual(root, year, rnd, file):
                         dict(state) if state else None,
                     )
                 )
-            if set(fixtures) != seen:
+            if whole_round and set(fixtures) != seen:
                 raise ValueError(
                     "the whole registered matchweek is required in one batch"
                 )
@@ -382,12 +421,14 @@ def manual(root, year, rnd, file):
                     "manual-regulation",
                     f"{obj['source']} {r['locator']} / sha256:{sha} / batch:{ident}",
                     at,
+                    actual_kickoff=store.iso(r["kickoff"]),
                 )
                 admission.disposition(db, f, False, "licensed_manual_review", at)
                 items.append(
                     {
                         "fixture": f["fixture_id"],
                         "kickoff": f["kickoff"],
+                        "actual_kickoff": store.iso(r["kickoff"]),
                         "score": score,
                         "previous": prior,
                         "state": state,
@@ -397,12 +438,14 @@ def manual(root, year, rnd, file):
                 )
             report = {
                 "batch_id": ident,
+                "scope": "whole_round" if seen == set(fixtures) else "selected_matches",
                 "season": obj["season"],
                 "round": rnd,
                 "at": at,
                 "evidence_sha256": sha,
                 "rights": obj["rights"],
                 "source": obj["source"],
+                "reviewer": obj.get("reviewer"),
                 "items": items,
                 "status": "applied",
             }
@@ -461,6 +504,7 @@ def rollback(root, ident, reason):
                         prior["source"],
                         prior["locator"],
                         at,
+                        actual_kickoff=prior.get("actual_kickoff"),
                     )
                 held = not prior or bool(old and old["held"])
                 admission.disposition(

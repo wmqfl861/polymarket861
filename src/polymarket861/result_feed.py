@@ -122,6 +122,23 @@ def _full_time(data, year, *, only_round=None):
         yield fid, mid, rnd, kickoff, score, error
 
 
+def _fixture_rows(data, year, *, only_round=None):
+    """Collect unambiguous games even if two rows in the same response claim one identity."""
+    if not isinstance(data, list) or not data:
+        raise ValueError("empty EPL feed")
+    parsed = [next(_full_time([row], year, only_round=only_round)) for row in data]
+    fixtures = Counter(row[0] for row in parsed)
+    ids = Counter(row[1] for row in parsed)
+    seen = set()
+    for fid, mid, rnd, kick, score, error in parsed:
+        if fid in seen:
+            continue
+        seen.add(fid)
+        if fixtures[fid] != 1 or ids[mid] != 1:
+            score, error = None, "ambiguous_source_fixture"
+        yield fid, mid, rnd, kick, score, error
+
+
 def reconcile(root, year):
     """Compare with the project's independent result registry. No single candidate overwrites a score."""
     season = f"{year}-{(year + 1) % 100:02d}"
@@ -277,7 +294,7 @@ def sync(
         url = f"{BASE}/getmatchdata/pl/{year}" + (f"/{round_id}" if round_id else "")
         raw = _get(url)
         seen = now_utc()
-        rows = list(_full_time(json.loads(raw), year, only_round=round_id))
+        rows = list(_fixture_rows(json.loads(raw), year, only_round=round_id))
         if any(
             kickoff >= instant(seen)
             for _, _, _, kickoff, score, _ in rows
@@ -453,6 +470,53 @@ def register(subparsers):
     p.add_argument("round_id", type=int)
     p.add_argument("file", type=Path)
     p.set_defaults(func=lambda a: import_round(a.data_dir, a.year, a.round_id, a.file))
+    from . import result_admission, result_operations, schedule_consensus
+
+    p = cmd.add_parser(
+        "import-matches", help="从获准原件按批次导入同轮一个或多个90分钟赛果"
+    )
+    p.add_argument("year", type=int)
+    p.add_argument("round_id", type=int)
+    p.add_argument("file", type=Path)
+    p.set_defaults(
+        func=lambda a: result_operations.manual(
+            a.data_dir, a.year, a.round_id, a.file, whole_round=False
+        )
+    )
+    for action, help_text in (
+        ("approve-schedule", "核验两份原件，人工确认待审赛程"),
+        ("withdraw-schedule", "撤回已核验的赛程修订并保留历史"),
+    ):
+        p = cmd.add_parser(action, help=help_text)
+        p.add_argument("year", type=int)
+        p.add_argument("fixture")
+        p.add_argument("--kickoff", required=True, help="待审核的 UTC 时刻")
+        p.add_argument("--reviewer", required=True)
+        p.add_argument("--reason", required=True)
+        p.set_defaults(
+            withdraw=action == "withdraw-schedule",
+            func=lambda a: schedule_consensus.review_schedule(
+                a.data_dir,
+                a.year,
+                a.fixture,
+                a.kickoff,
+                a.reviewer,
+                a.reason,
+                withdraw=a.withdraw,
+            ),
+        )
+    p = cmd.add_parser("review-pairing", help="按证明摘要撤回或复核已确认的赛后对账")
+    p.add_argument("year", type=int)
+    p.add_argument("fixture")
+    p.add_argument("--proof", required=True)
+    p.add_argument("--action", choices=("withdraw", "release"), required=True)
+    p.add_argument("--reviewer", required=True)
+    p.add_argument("--reason", required=True)
+    p.set_defaults(
+        func=lambda a: result_admission.review_pairing(
+            a.data_dir, a.year, a.fixture, a.proof, a.action, a.reviewer, a.reason
+        )
+    )
     p = cmd.add_parser("rollback-batch", help="撤销整批赛果并保留原件、理由和历次评分")
     p.add_argument("batch_id")
     p.add_argument("--reason", required=True)

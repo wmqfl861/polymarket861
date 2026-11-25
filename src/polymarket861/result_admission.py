@@ -9,8 +9,7 @@ from contextlib import closing
 from datetime import timedelta
 from functools import lru_cache
 
-from . import dbscope
-from . import store
+from . import dbscope, result_pairings, store
 
 INTERVAL = timedelta(minutes=30)
 SCHEMA = """
@@ -19,6 +18,9 @@ CREATE TABLE IF NOT EXISTS rf_native_requests(
  PRIMARY KEY(season,scope,received_at));
 CREATE TABLE IF NOT EXISTS rf_admitted(
  fixture TEXT,kickoff TEXT,at TEXT,score TEXT,proof TEXT, PRIMARY KEY(fixture,kickoff,at));
+CREATE TABLE IF NOT EXISTS rf_pairing_reviews(
+ fixture TEXT,kickoff TEXT,at TEXT,proof TEXT,action TEXT,reviewer TEXT,reason TEXT,
+ PRIMARY KEY(fixture,kickoff,at));
 CREATE TABLE IF NOT EXISTS rf_round_state(
  season TEXT,round_id INTEGER,revision INTEGER NOT NULL, PRIMARY KEY(season,round_id));
 CREATE TABLE IF NOT EXISTS rf_publish_queue(
@@ -55,8 +57,8 @@ def enqueue(db, season, rnd):
 
 def last_result(db, fid, kickoff):
     return db.execute(
-        "SELECT r.* FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
-        "WHERE r.fixture_id=? AND s.kickoff=? ORDER BY r.version DESC LIMIT 1",
+        "SELECT r.*,t.actual_kickoff FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
+        "LEFT JOIN result_event_times t USING(fixture_id,version) WHERE r.fixture_id=? AND s.kickoff=? ORDER BY r.version DESC LIMIT 1",
         (fid, kickoff),
     ).fetchone()
 
@@ -86,11 +88,76 @@ def disposition(db, fixture, held, reason, at):
     return True
 
 
+def pairing_review(db, fid, kickoff, at):
+    row = db.execute(
+        "SELECT * FROM rf_pairing_reviews WHERE fixture=? AND kickoff=? AND at<=? ORDER BY at DESC LIMIT 1",
+        (fid, kickoff, at),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def review_pairing(root, year, fid, proof, action, reviewer, reason):
+    """Version an operator's stop or release for an exact previously archived pairing."""
+    from . import result_feed, result_operations
+
+    if action not in {"withdraw", "release"} or not all(
+        isinstance(s, str) and s.strip() for s in (reviewer, reason)
+    ):
+        raise ValueError("pairing review requires an action, reviewer and reason")
+    with closing(database(root)) as db, db:
+        db.execute("BEGIN IMMEDIATE")
+        at = store.iso(result_feed.now_utc())
+        f = next(
+            (
+                f
+                for f in store.eligible_fixture_rows(db, season=scope(year))
+                if f["fixture_id"] == fid
+            ),
+            None,
+        )
+        record = db.execute(
+            "SELECT * FROM rf_admitted WHERE fixture=? AND at<=? ORDER BY at DESC LIMIT 1",
+            (fid, at),
+        ).fetchone()
+        if not f or not record or f["kickoff"] != record["kickoff"]:
+            raise ValueError("no current pairing for this fixture")
+        payload = json.loads(record["proof"])
+        if not isinstance(payload, dict) or store.digest(payload) != proof:
+            raise ValueError(
+                "the supplied proof differs from the latest result pairing"
+            )
+        previous = pairing_review(db, fid, f["kickoff"], at)
+        if not previous or previous["proof"] != proof or previous["action"] != action:
+            if action == "release" and (
+                not previous or previous["action"] != "withdraw"
+            ):
+                raise ValueError("there is no withdrawn pairing to release")
+            db.execute(
+                "INSERT INTO rf_pairing_reviews VALUES(?,?,?,?,?,?,?)",
+                (
+                    fid,
+                    f["kickoff"],
+                    at,
+                    proof,
+                    action,
+                    reviewer.strip(),
+                    reason.strip(),
+                ),
+            )
+            if action == "withdraw":
+                disposition(db, f, True, "operator_withdrew_result_pairing", at)
+        review = pairing_review(db, fid, f["kickoff"], at)
+    if action == "release":
+        # Re-derive all evidence from originals. A release alone cannot admit a score.
+        reconcile(root, year)
+    return review | {"maintenance": result_operations.publications(root)}
+
+
 @lru_cache(maxsize=6)
 def _decode(raw, year, rnd):
     from . import result_feed
 
-    return tuple(result_feed._full_time(json.loads(raw), year, only_round=rnd))
+    return tuple(result_feed._fixture_rows(json.loads(raw), year, only_round=rnd))
 
 
 def _raw_rows(root, db, year, at, *, target=None, round_id=None):
@@ -180,8 +247,6 @@ def _raw_rows(root, db, year, at, *, target=None, round_id=None):
                     }
                 )
         for fid, mid, r, kick, score, error in rows:
-            if target is not None and fid != target:
-                continue
             by_fixture[fid].append(
                 {
                     "season": year,
@@ -196,13 +261,27 @@ def _raw_rows(root, db, year, at, *, target=None, round_id=None):
                     "requested": native["started_at"] if native else stamp,
                 }
             )
+    owners = defaultdict(set)
+    for fid, history in by_fixture.items():
+        if history[-1]["error"] != "previous_fixture_absent":
+            owners[history[-1]["source_id"]].add(fid)
+    collided = {mid for mid, fids in owners.items() if len(fids) > 1}
+    if collided:
+        for history in by_fixture.values():
+            if history[-1]["source_id"] in collided:
+                history[-1] = history[-1] | {
+                    "score": None,
+                    "error": "ambiguous_source_match_id",
+                }
+    if target is not None:
+        return {target: by_fixture.get(target, [])}, source_errors
     return by_fixture, source_errors
 
 
 def _pair(events):
     """Find two consecutive consistent states separated by the confirmation interval."""
     last = events[-1]
-    fields = ("source_id", "round", "kickoff", "score")
+    fields = ("source_id", "round", "kickoff", "score", "error")
     if last["score"] is None or last["error"]:
         return None
     earliest = store.instant(last["kickoff"]) + timedelta(minutes=90)
@@ -226,7 +305,10 @@ def _same_run(events, proof):
     current = events[-1]
     return not any(
         r["received"] >= proof[-1]["received"]
-        and any(r[k] != current[k] for k in ("source_id", "round", "kickoff", "score"))
+        and any(
+            r[k] != current[k]
+            for k in ("source_id", "round", "kickoff", "score", "error")
+        )
         for r in events
     )
 
@@ -277,7 +359,7 @@ def _anchor(f, e):
     )
 
 
-def _result(db, f, score, source, locator, at):
+def _result(db, f, score, source, locator, at, *, actual_kickoff=None):
     return store.record_result_db(
         db,
         {
@@ -292,6 +374,7 @@ def _result(db, f, score, source, locator, at):
             "locator": locator,
         },
         recorded_at=at,
+        actual_kickoff=actual_kickoff,
     )
 
 
@@ -305,7 +388,16 @@ def reconcile(root, year):
     with closing(database(root)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         at = store.iso(feed.now_utc())
+        from . import independent_results
+
         sources, errors = _raw_rows(root, db, year, at)
+        try:
+            independent = independent_results.verified(root, db, year, at)
+        except (ValueError, OSError, KeyError, TypeError) as exc:
+            independent = {}
+            errors.append(
+                {"source": "independent-results", "scope": None, "error": str(exc)}
+            )
         try:
             reference = _reference(db, root, season, at)
         except (ValueError, KeyError, OSError, TypeError) as exc:
@@ -319,7 +411,9 @@ def reconcile(root, year):
             for r in db.execute("SELECT DISTINCT fixture FROM rf_admitted")
             if r[0] in fixtures
         }
-        for fid in sorted(set(sources) | certified_ids):
+        unique = result_pairings.unique_fixtures(fixtures.values())
+        paired = []
+        for fid in sorted(set(sources) | set(independent) | certified_ids):
             events = sources.get(fid, [])
             f = fixtures.get(fid)
             if not f:
@@ -328,14 +422,11 @@ def reconcile(root, year):
             damaged = [
                 error for error in errors if error["scope"] in (None, f["round_id"])
             ]
-            if not events:
-                reason = "missing_original_receipts"
-                issues.append({"fixture_id": fid, "reason": reason})
-                counts[reason] += 1
-                disposition(db, f, True, reason, at)
-                continue
-            latest = events[-1]
-            pair = _pair(events)
+            proof, pairing_reason = result_pairings.decision(
+                f, events, independent.get(fid, []), unique, at
+            )
+            latest = events[-1] if events else None
+            pair = _pair(events) if events else None
             prior = last_result(db, fid, f["kickoff"])
             prior_score = [prior["home_goals"], prior["away_goals"]] if prior else None
             last = last_disposition(db, fid, f["kickoff"], at)
@@ -343,6 +434,9 @@ def reconcile(root, year):
                 "SELECT * FROM rf_admitted WHERE fixture=? AND kickoff=? ORDER BY at DESC LIMIT 1",
                 (fid, f["kickoff"]),
             ).fetchone()
+            if not latest and not certified and not proof and not pairing_reason:
+                counts["unfinished"] += 1
+                continue
             reason = None
             withdrawn_manual = bool(
                 prior
@@ -351,24 +445,45 @@ def reconcile(root, year):
                 and last["held"]
                 and last["reason"] == "manual_batch_withdrawn"
             )
-            if (
+            old_proof = json.loads(certified["proof"]) if certified else None
+            native_score = latest["score"] if latest else None
+            score = proof["score"] if proof else native_score
+            review = pairing_review(db, fid, f["kickoff"], at)
+            if review and review["action"] == "withdraw":
+                reason = "operator_withdrew_result_pairing"
+            elif fid not in unique:
+                reason = "ambiguous_local_fixture"
+            elif latest and latest["error"] in {
+                "ambiguous_source_fixture",
+                "ambiguous_source_match_id",
+                "ambiguous_90_minute_final",
+            }:
+                reason = latest["error"]
+            elif pairing_reason:
+                reason = pairing_reason
+            elif isinstance(old_proof, dict) and not proof:
+                reason = "paired_result_evidence_withdrawn"
+            elif not latest and not proof:
+                reason = "missing_original_receipts"
+            elif score is not None and reference.get(fid, score) != score:
+                reason = "cross_source_score_conflict"
+            elif (
                 prior
                 and prior["source"] == "manual-regulation"
                 and not withdrawn_manual
             ):
                 at_review = [e for e in events if e["received"] <= prior["recorded_at"]]
-                agrees = latest["score"] == prior_score
                 previously_reviewed = bool(
-                    at_review and latest["score"] == at_review[-1]["score"]
+                    at_review and native_score == at_review[-1]["score"]
                 )
                 if (
-                    agrees
+                    score == prior_score
                     or previously_reviewed
                     or not at_review
-                    and latest["score"] is None
+                    and score is None
                 ):
                     if (
-                        agrees
+                        score == prior_score
                         and last
                         and last["held"]
                         and last["reason"] == "manual_source_disagreement"
@@ -377,46 +492,96 @@ def reconcile(root, year):
                     counts["manual_reviewed"] += 1
                     continue
                 reason = "manual_source_disagreement"
-            if latest["score"] is not None and not _anchor(f, latest):
+            elif score is not None and not proof and not _anchor(f, latest):
                 reason = "schedule_or_round_mismatch"
-            elif latest["score"] is not None and (
-                reference.get(fid, latest["score"]) != latest["score"]
-                or (
-                    prior
-                    and prior["source"] not in {"openligadb", "manual-regulation"}
-                    and (prior["source"] != "openfootball" or fid not in reference)
-                    and prior_score != latest["score"]
-                )
+            elif (
+                score is not None
+                and prior
+                and prior["source"]
+                not in {"openligadb", "manual-regulation", result_pairings.SOURCE}
+                and (prior["source"] != "openfootball" or fid not in reference)
+                and prior_score != score
             ):
                 reason = "cross_source_score_conflict"
             elif (
                 reason is None
                 and certified
-                and (latest["score"] != json.loads(certified["score"]) or damaged)
-                and not pair
+                and (score != json.loads(certified["score"]) or damaged)
+                and not (pair or proof)
             ):
                 reason = "previous_final_changed_or_withdrawn"
             elif reason is None and damaged and certified:
                 reason = "original_receipt_unreadable"
             if reason:
                 counts[reason] += 1
+                if reason.startswith("awaiting_") and not certified:
+                    continue
                 issues.append(
                     {
                         "fixture_id": fid,
                         "reason": reason,
-                        "source_score": latest["score"],
-                        "source_kickoff": latest["kickoff"],
+                        "source_score": native_score,
+                        "source_kickoff": latest["kickoff"] if latest else None,
                         "registry_kickoff": f["kickoff"],
                         "reference_score": reference.get(fid, prior_score),
-                        "sha256": latest["sha256"],
+                        "sha256": latest["sha256"] if latest else None,
+                        "independent": independent.get(fid, [])[-1:],
                     }
                 )
                 disposition(db, f, True, reason, at)
                 continue
+            if proof and not damaged:
+                changed = (
+                    not isinstance(old_proof, dict)
+                    or result_pairings.signature(old_proof)
+                    != result_pairings.signature(proof)
+                    or prior_score != score
+                    or withdrawn_manual
+                    or bool(last and last["held"])
+                )
+                if changed:
+                    db.execute(
+                        "INSERT INTO rf_admitted VALUES(?,?,?,?,?)",
+                        (
+                            fid,
+                            f["kickoff"],
+                            at,
+                            store.canonical(score),
+                            store.canonical(proof),
+                        ),
+                    )
+                    _result(
+                        db,
+                        f,
+                        score,
+                        result_pairings.SOURCE,
+                        "result-pairing:" + store.digest(proof),
+                        at,
+                        actual_kickoff=proof["actual_kickoff"],
+                    )
+                    admitted.append(fid)
+                    disposition(db, f, False, "verified_regulation_pairing", at)
+                    enqueue(db, season, f["round_id"])
+                else:
+                    proof = old_proof
+                counts[proof["method"]] += 1
+                paired.append(
+                    {
+                        k: proof[k]
+                        for k in (
+                            "fixture_id",
+                            "round",
+                            "registry_kickoff",
+                            "actual_kickoff",
+                            "score",
+                            "method",
+                        )
+                    }
+                    | {"proof_sha256": store.digest(proof)}
+                )
+                continue
             if not pair or damaged:
-                counts[
-                    "awaiting_second_receipt" if latest["score"] else "unfinished"
-                ] += 1
+                counts["awaiting_second_receipt" if native_score else "unfinished"] += 1
                 continue
             score = latest["score"]
             proof = [
@@ -480,6 +645,7 @@ def reconcile(root, year):
             "registered": len(eligible),
             "available_results": sum(f["home_goals"] is not None for f in eligible),
             "new_scores": admitted,
+            "postmatch_pairings": paired,
             "quarantined": issues,
             "overdue": overdue,
             "receipt_errors": errors,
@@ -534,15 +700,81 @@ def verified_regulation(root, fixture_id, *, at=None):
             if state and state["held"]:
                 return None
             year = int(f["season"][:4])
-            sources, errors = _raw_rows(
-                root, db, year, cutoff, target=fixture_id, round_id=f["round_id"]
-            )
+            sources, errors = _raw_rows(root, db, year, cutoff, target=fixture_id)
             snapshots = sources.get(fixture_id, [])
+            from . import independent_results
+
+            independent = independent_results.verified(root, db, year, cutoff)
+            local = db.execute(
+                "WITH ranked AS (SELECT f.*,row_number() OVER(PARTITION BY fixture_id ORDER BY known_at DESC) n "
+                "FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
+                "WHERE f.season=? AND f.known_at<=? AND s.recorded_at<=?) SELECT * FROM ranked WHERE n=1",
+                (f["season"], cutoff, cutoff),
+            ).fetchall()
+            unique = result_pairings.unique_fixtures(local)
+            fresh, reason = result_pairings.decision(
+                f, snapshots, independent.get(fixture_id, []), unique, cutoff
+            )
             if (
-                any(e["scope"] in (None, f["round_id"]) for e in errors)
-                or len(snapshots) < 2
-                or not _anchor(f, snapshots[-1])
+                fixture_id not in unique
+                or reason
+                or any(e["scope"] in (None, f["round_id"]) for e in errors)
             ):
+                return None
+            saved = json.loads(row["proof"])
+            if isinstance(saved, dict):
+                if not fresh or result_pairings.signature(
+                    saved
+                ) != result_pairings.signature(fresh):
+                    return None
+                # Reproduce the ORIGINAL proof at the actual admission cutoff, even if
+                # newer receipts report the same score. A mutation cannot replace it.
+                old = [e for e in snapshots if e["received"] <= row["at"]]
+                others = [
+                    e
+                    for e in independent.get(fixture_id, [])
+                    if e["received"] <= row["at"]
+                ]
+                original, error = result_pairings.decision(
+                    f, old, others, unique, row["at"]
+                )
+                score = json.loads(row["score"])
+                if error or original != saved or saved["score"] != score:
+                    return None
+                if (
+                    _reference(db, root, f["season"], cutoff).get(fixture_id, score)
+                    != score
+                ):
+                    return None
+                current = db.execute(
+                    "SELECT r.*,t.actual_kickoff FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
+                    "LEFT JOIN result_event_times t USING(fixture_id,version) "
+                    "WHERE fixture_id=? AND s.kickoff=? AND r.recorded_at<=? ORDER BY version DESC LIMIT 1",
+                    (fixture_id, f["kickoff"], cutoff),
+                ).fetchone()
+                if (
+                    not current
+                    or current["source"] != result_pairings.SOURCE
+                    or (
+                        [current["home_goals"], current["away_goals"]] != score
+                        or current["actual_kickoff"] != saved["actual_kickoff"]
+                        or current["locator"] != "result-pairing:" + store.digest(saved)
+                    )
+                ):
+                    return None
+                return {
+                    "fixture_id": fixture_id,
+                    "home_goals": score[0],
+                    "away_goals": score[1],
+                    "kickoff": saved["actual_kickoff"],
+                    "registry_kickoff": f["kickoff"],
+                    "confirmed_at": row["at"],
+                    "source": result_pairings.SOURCE,
+                    "proof": saved,
+                    "status": "final",
+                    "period": "regulation",
+                }
+            if len(snapshots) < 2 or not _anchor(f, snapshots[-1]):
                 return None
             pair = _pair(snapshots)
             score = json.loads(row["score"])

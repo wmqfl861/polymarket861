@@ -135,6 +135,7 @@ class ResultVersion:
     score: tuple | None
     grade: str
     provenance: str
+    actual_kickoff: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -217,7 +218,8 @@ def _parsed_version(row, kickoff):
         raise ValueError(
             "result evidence needs received_at or archive_at with a source"
         )
-    if finalized < kickoff or published < finalized or received < published:
+    actual = utc(row["result_kickoff"]) if row.get("result_kickoff") else None
+    if finalized < (actual or kickoff) or published < finalized or received < published:
         raise ValueError("inconsistent kickoff/finalization/publication/receipt order")
     score = (
         None
@@ -225,7 +227,7 @@ def _parsed_version(row, kickoff):
         else _score(row.get("score", [row.get("home_goals"), row.get("away_goals")]))
     )
     return ResultVersion(
-        received, score, grade, str(row.get("source", "local-observation"))
+        received, score, grade, str(row.get("source", "local-observation")), actual
     )
 
 
@@ -485,9 +487,10 @@ class FootballEngine:
             events = []
             for f in selected:
                 for version in f.result_versions:
-                    if version.available < f.kickoff:
+                    event_start = version.actual_kickoff or f.kickoff
+                    if version.available < event_start:
                         raise ValueError("result available before kickoff")
-                    source = f"{f.fixture_id}|{iso(f.kickoff)}|{iso(version.available)}|{version.score}|{version.grade}|{version.provenance}"
+                    source = f"{f.fixture_id}|{iso(event_start)}|{iso(version.available)}|{version.score}|{version.grade}|{version.provenance}"
                     events.append(
                         (
                             version.available,
@@ -509,7 +512,7 @@ class FootballEngine:
         # Normally the target cannot have a result before its own kickoff. Keep
         # the explicit exclusion for corrected fixture/schedule identities.
         f = self.by_key.get(exclude_id)
-        relevant_exclusion = exclude_id if f and f.kickoff <= cutoff else None
+        relevant_exclusion = exclude_id if f and any(v.available <= cutoff for v in f.result_versions) else None
         cache_key = (n, relevant_exclusion)
         old = self.last_fit.get(season)
         if old and old[0] == cache_key:
@@ -538,7 +541,7 @@ class FootballEngine:
             grid[v.score] += 1
         grid /= len(reference)
         records = [
-            (team_key(ff.home), team_key(ff.away), *v.score, ff.kickoff.timestamp())
+            (team_key(ff.home), team_key(ff.away), *v.score, (v.actual_kickoff or ff.kickoff).timestamp())
             for ff, v, _ in eligible
         ]
         fitted = fit_team_model(records)
@@ -638,6 +641,19 @@ def predict(fixtures, home, away, kickoff, cutoff, *, season=None, lines=DEFAULT
 
 def _average(numbers):
     return math.fsum(numbers) / len(numbers) if numbers else None
+
+
+def history_kickoff(fixture, cutoff):
+    """Latest schedule or verified event time actually known at the feature cutoff."""
+    for version in reversed(fixture.result_versions):
+        if version.available <= cutoff:
+            if version.score is not None and version.actual_kickoff:
+                return version.actual_kickoff
+            break
+    for received, kickoff in reversed(fixture.schedule_versions):
+        if received <= cutoff:
+            return kickoff
+    return fixture.kickoff
 
 
 def _result_at(fixture, as_of):

@@ -122,9 +122,10 @@ def _effective_rows(db, fixtures):
 
     proven_schedules, later_checks = result_links(db)
     reviewed = defaultdict(list)
+    bound_results = set()
     for r in db.execute(
-        "SELECT r.*,s.kickoff FROM result_versions r JOIN result_schedule_refs s "
-        "USING(fixture_id,version) WHERE r.source!='openfootball' ORDER BY recorded_at,version"
+        "SELECT r.*,s.kickoff,t.actual_kickoff FROM result_versions r JOIN result_schedule_refs s "
+        "USING(fixture_id,version) LEFT JOIN result_event_times t USING(fixture_id,version) WHERE r.source!='openfootball' ORDER BY recorded_at,version"
     ):
         fid = r["fixture_id"]
         if fid not in ids:
@@ -132,7 +133,9 @@ def _effective_rows(db, fixtures):
         at = max(r["recorded_at"], r["received_at"])
         raw_kickoff = iso(ids[fid].kickoff)
         adjusted = proven_schedules.get((fid, r["kickoff"]))
-        if r["kickoff"] != raw_kickoff:
+        if r["source"] == "verified-result-pairing" and r["actual_kickoff"]:
+            bound_results.add((fid, r["kickoff"]))
+        elif r["kickoff"] != raw_kickoff:
             if (
                 not adjusted
                 or adjusted[0] > at
@@ -141,7 +144,7 @@ def _effective_rows(db, fixtures):
                 continue
             if at <= raw_kickoff:
                 at = later_checks.get((fid, r["version"]), at)
-        if at <= raw_kickoff:
+        if at <= (r["actual_kickoff"] or raw_kickoff):
             continue
         reviewed[fid].append((at, r))
     for fid, changes in reviewed.items():
@@ -161,6 +164,10 @@ def _effective_rows(db, fixtures):
                 "archive_at": at,
                 "source": f"{r['source']}:{r['locator']}; result v{r['version']}",
             }
+            if r["actual_kickoff"]:
+                versions[at]["result_kickoff"] = r["actual_kickoff"]
+            if r["source"] == "verified-result-pairing":
+                versions[at]["result_pairing"] = r["locator"]
             adjusted = proven_schedules.get((fid, r["kickoff"]))
             if adjusted and r["kickoff"] != iso(ids[fid].kickoff):
                 versions[at]["schedule_proof"] = adjusted[1]
@@ -173,6 +180,7 @@ def _effective_rows(db, fixtures):
         if fid in ids and (
             change["kickoff"] == iso(ids[fid].kickoff)
             or (fid, change["kickoff"]) in proven_schedules
+            or (fid, change["kickoff"]) in bound_results
         ):
             states[fid].append(change)
     for fid, changes in states.items():
@@ -194,6 +202,11 @@ def _effective_rows(db, fixtures):
                     "finalized_by": at,
                     "source": change["reason"],
                 }
+                before = [stamp for stamp in original if stamp <= at]
+                if before and original[max(before)].get("result_kickoff"):
+                    versions[at]["result_kickoff"] = original[max(before)]["result_kickoff"]
+                    if original[max(before)].get("result_pairing"):
+                        versions[at]["result_pairing"] = original[max(before)]["result_pairing"]
                 adjusted = proven_schedules.get((fid, change["kickoff"]))
                 if adjusted:
                     versions[at]["schedule_proof"] = adjusted[1]
@@ -211,13 +224,13 @@ def _effective_rows(db, fixtures):
     output = []
     for key, versions in sorted(streams.items()):
         for at, row in sorted(versions.items()):
-            if key[1] == "score" and at < iso(ids[key[0]].kickoff):
+            if key[1] == "score" and at < (row.get("result_kickoff") or iso(ids[key[0]].kickoff)):
                 continue
             if key[1] == "score":
                 effective = authoritative_schedules.get(
                     key[0], iso(ids[key[0]].kickoff)
                 )
-                if effective != iso(ids[key[0]].kickoff):
+                if effective != iso(ids[key[0]].kickoff) and not row.get("result_pairing"):
                     approved = proven_schedules.get((key[0], effective))
                     if not approved or row.get("schedule_proof") != approved[1]:
                         continue

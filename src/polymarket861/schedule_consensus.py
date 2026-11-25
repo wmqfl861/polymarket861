@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from contextlib import closing
 from datetime import timedelta
 
@@ -35,6 +35,9 @@ CREATE TABLE IF NOT EXISTS epl_schedule_holds(
  fixture TEXT,version INTEGER,at TEXT,reason TEXT,PRIMARY KEY(fixture,version,at));
 CREATE TABLE IF NOT EXISTS epl_schedule_result_receipts(
  fixture TEXT,version INTEGER,at TEXT NOT NULL,PRIMARY KEY(fixture,version));
+CREATE TABLE IF NOT EXISTS epl_schedule_reviews(
+ fixture TEXT,version INTEGER,at TEXT,action TEXT,reviewer TEXT,reason TEXT,proof TEXT,
+ PRIMARY KEY(fixture,version,at));
 CREATE TABLE IF NOT EXISTS epl_schedule_competitions(
  year INTEGER PRIMARY KEY,sha TEXT NOT NULL,received TEXT NOT NULL);
 """
@@ -151,7 +154,14 @@ def _round(root, db, year, rnd, at):
         "invalid OpenLigaDB matchweek archive",
     )
     data = json.loads(blob)
-    reviewed = list(result_feed._full_time(data, year, only_round=rnd))
+    if not isinstance(data, list) or not data:
+        raise ValueError("empty native OpenLigaDB matchweek")
+    reviewed = [
+        next(result_feed._full_time([native], year, only_round=rnd)) for native in data
+    ]
+    ids = Counter(row[1] for row in reviewed)
+    fixtures = Counter(row[0] for row in reviewed)
+    ambiguous_pairs = set()
     league_id = _league_id(root, db, year, at)
     result = {}
     for native, parsed in zip(data, reviewed, strict=True):
@@ -176,8 +186,15 @@ def _round(root, db, year, rnd, at):
             re.sub(r"\bF\.C\.", "FC", t["teamName"], flags=re.IGNORECASE) for t in teams
         ]
         pair = tuple(opportunity._club(name) for name in names)
-        if not all(pair) or pair[0] == pair[1] or pair in result:
-            raise ValueError("ambiguous OpenLigaDB home/away pair")
+        if (
+            not all(pair)
+            or pair[0] == pair[1]
+            or pair in result
+            or ids[mid] != 1
+            or fixtures[fid] != 1
+        ):
+            ambiguous_pairs.add(pair)
+            continue
         result[pair] = {
             "fixture": fid,
             "teams": names,
@@ -189,6 +206,11 @@ def _round(root, db, year, rnd, at):
             "sha256": row["sha"],
             "received_at": row["received_at"],
             "requested_at": row["started_at"],
+        }
+    for pair in ambiguous_pairs:
+        result[pair] = {
+            "error": "ambiguous OpenLigaDB home/away pair or match ID",
+            "kickoff": None,
         }
     return result
 
@@ -266,8 +288,8 @@ def _events(root, db, now):
     rows = db.execute(
         "WITH latest AS (SELECT *,dense_rank() OVER(PARTITION BY slug ORDER BY received_at DESC) rk "
         "FROM ma_events WHERE slug=fixture AND received_at<=?) SELECT * FROM latest WHERE rk=1 "
-        "AND julianday(kickoff) BETWEEN julianday(?) AND julianday(?) ORDER BY slug,sha",
-        (store.iso(now), store.iso(now - MAX_SHIFT), store.iso(now + WEEK + MAX_SHIFT)),
+        "AND received_at>=? AND julianday(kickoff)>=julianday(?) ORDER BY slug,sha",
+        (store.iso(now), store.iso(now - MAX_AGE), store.iso(now - MAX_SHIFT)),
     )
     for r in rows:
         try:
@@ -278,36 +300,61 @@ def _events(root, db, now):
     return by_pair, errors
 
 
-def _upcoming(db, year, now):
+def _upcoming(db, year, now, markets=None):
     # Retain just-started fixtures in diagnostics to reject late corrections to a future replacement.
+    near = {
+        pair
+        for pair, events in (markets or {}).items()
+        if any(now < store.instant(e["kickoff"]) <= now + WEEK for e in events)
+    }
+    active = set(markets or {})
+    approved = {
+        (r[0], r[1])
+        for r in db.execute("SELECT fixture,version FROM epl_schedule_proofs")
+    }
     return [
         f
         for f in store.eligible_fixture_rows(db, season=result_admission.scope(year))
         if now - MAX_SHIFT <= store.instant(f["kickoff"]) <= now + WEEK
+        or (
+            f["result_version"] is None
+            and (
+                tuple(opportunity._club(f[k]) for k in ("home", "away")) in near
+                or (f["fixture_id"], f["schedule_version"]) in approved
+                and now < store.instant(f["kickoff"])
+                and tuple(opportunity._club(f[k]) for k in ("home", "away")) in active
+            )
+        )
     ]
 
 
-def _choose(f, ol, markets, ambiguous, now):
+def _choose(f, ol, markets, ambiguous, now, *, reviewed=False):
     if ambiguous:
         raise ValueError("non-unique local fixture identity")
+    if ol and ol.get("error"):
+        raise ValueError(ol["error"])
     if not ol or ol["fixture"] != f["fixture_id"]:
         raise ValueError("missing uniquely matched OpenLigaDB regulation fixture")
     if len(markets) != 1:
         raise ValueError("missing or ambiguous native Gamma main event")
     proposed = store.instant(ol["kickoff"])
     prior = store.instant(f["kickoff"])
+    year = int(f["season"][:4])
+    if not (f"{year}-08-01" <= ol["kickoff"][:10] < f"{year + 1}-08-01"):
+        raise ValueError("proposed kickoff is outside the registered EPL season")
     if ol["kickoff"] != markets[0]["kickoff"]:
         raise ValueError("independent sources disagree on precise UTC kickoff")
-    if min(prior, proposed) <= now:
+    if proposed <= now or not reviewed and prior <= now:
         raise ValueError("original or proposed kickoff has already passed")
     if f["precision"] not in {"minute", "second"} or f["result_version"] is not None:
         raise ValueError("ineligible registered schedule or result already present")
     if prior != proposed:
-        if min(prior, proposed) - now <= DECISION_LEAD:
+        decision = proposed if reviewed else min(prior, proposed)
+        if decision - now <= DECISION_LEAD:
             raise ValueError(
                 "automatic revision arrived after the earlier T-60 decision"
             )
-        if abs(prior - proposed) > MAX_SHIFT:
+        if not reviewed and abs(prior - proposed) > MAX_SHIFT:
             raise ValueError("kickoff shift exceeds the automatic 36-hour window")
         if f["schedule_source"] not in {"openfootball", SOURCE}:
             raise ValueError(
@@ -444,15 +491,186 @@ def _recheck_early_results(db, at):
     )
 
 
+def _review(db, f, at):
+    row = db.execute(
+        "SELECT * FROM epl_schedule_reviews WHERE fixture=? AND version=? AND at<=? ORDER BY at DESC LIMIT 1",
+        (f["fixture_id"], f["schedule_version"], at),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def _evaluate(db, f, ol, events, ambiguous, at, approval=None):
+    fid, old, version = f["fixture_id"], f["kickoff"], f["schedule_version"]
+    source = db.execute(
+        "SELECT source FROM fixture_versions WHERE fixture_id=? AND version=?",
+        (fid, version),
+    ).fetchone()[0]
+    row = {
+        "fixture_id": fid,
+        "round": f["round_id"],
+        "home": f["home"],
+        "away": f["away"],
+        "previous": old,
+        "openligadb_kickoff": ol["kickoff"] if ol else None,
+        "gamma_kickoffs": [e["kickoff"] for e in events],
+    }
+    try:
+        if approval and (not ol or approval["kickoff"] != ol["kickoff"]):
+            raise ValueError("requested kickoff differs from current native evidence")
+        reviewed = _review(db, f, at)
+        if reviewed and reviewed["action"] == "withdrawn" and not approval:
+            raise ValueError("schedule withdrawn by operator: " + reviewed["reason"])
+        event = _choose(
+            f | {"schedule_source": source},
+            ol,
+            events,
+            ambiguous,
+            store.instant(at),
+            reviewed=approval is not None,
+        )
+        proposed = ol["kickoff"]
+        if source == SOURCE and old != proposed and not approval:
+            anchor = db.execute(
+                "SELECT kickoff FROM fixture_versions WHERE fixture_id=? AND source!=? ORDER BY version DESC LIMIT 1",
+                (fid, SOURCE),
+            ).fetchone()
+            if (
+                not anchor
+                or abs(store.instant(anchor[0]) - store.instant(proposed)) > MAX_SHIFT
+            ):
+                raise ValueError(
+                    "cumulative change exceeds the independently registered 36-hour window"
+                )
+        proof = {
+            "fixture_id": fid,
+            "season": f["season"],
+            "round": f["round_id"],
+            "previous": old,
+            "kickoff": proposed,
+            "gamma": event,
+            "openligadb": ol,
+        }
+        if approval:
+            proof["approval"] = approval | {"at": at}
+        ident = store.digest(proof)
+        row.update(kickoff=proposed, gamma_slug=event["slug"])
+        if old == proposed:
+            if source == SOURCE:
+                _hold(db, fid, version, at)
+            row["status"] = "unchanged"
+        else:
+            new = store.register_fixture_db(
+                db,
+                {
+                    "fixture_id": fid,
+                    "season": f["season"],
+                    "round_id": f["round_id"],
+                    "home": f["home"],
+                    "away": f["away"],
+                    "kickoff": proposed,
+                    "known_at": at,
+                    "source": SOURCE,
+                    "precision": "minute",
+                    "locator": "schedule-proof:" + ident,
+                },
+                recorded_at=at,
+            )
+            version = new["version"]
+            db.execute(
+                "INSERT INTO epl_schedule_proofs VALUES(?,?,?,?)",
+                (fid, version, ident, store.canonical(proof)),
+            )
+            row.update(status="corrected", version=version, known_at=at, proof=ident)
+        if approval and (
+            old != proposed or reviewed and reviewed["action"] == "withdrawn"
+        ):
+            db.execute(
+                "INSERT INTO epl_schedule_reviews VALUES(?,?,?,?,?,?,?)",
+                (
+                    fid,
+                    version,
+                    at,
+                    "approved",
+                    approval["reviewer"],
+                    approval["reason"],
+                    store.canonical(proof),
+                ),
+            )
+        return row
+    except (ValueError, OSError, TypeError, KeyError) as exc:
+        if approval:
+            raise
+        row.update(status="deferred", reason=str(exc))
+        if source == SOURCE and at < old:
+            _hold(db, fid, version, at, str(exc))
+        return row
+
+
+def review_schedule(root, year, fid, kickoff, reviewer, reason, *, withdraw=False):
+    if not all(isinstance(v, str) and v.strip() for v in (reviewer, reason)):
+        raise ValueError("reviewer and reason are required")
+    proposed = store.iso(kickoff)
+    with closing(_db(root)) as db, db:
+        db.execute("BEGIN IMMEDIATE")
+        at = store.now_utc()
+        fixtures = store.eligible_fixture_rows(db, season=result_admission.scope(year))
+        f = next((x for x in fixtures if x["fixture_id"] == fid), None)
+        if not f:
+            raise ValueError("unregistered EPL fixture")
+        if withdraw:
+            if (
+                f["kickoff"] != proposed
+                or not db.execute(
+                    "SELECT 1 FROM epl_schedule_proofs WHERE fixture=? AND version=?",
+                    (fid, f["schedule_version"]),
+                ).fetchone()
+            ):
+                raise ValueError(
+                    "current schedule differs from the identified revision"
+                )
+            reviewed = _review(db, f, at)
+            if reviewed and reviewed["action"] == "withdrawn":
+                return reviewed
+            _hold(
+                db,
+                fid,
+                f["schedule_version"],
+                at,
+                "schedule withdrawn by " + reviewer + ": " + reason,
+            )
+            db.execute(
+                "INSERT INTO epl_schedule_reviews VALUES(?,?,?,?,?,?,?)",
+                (fid, f["schedule_version"], at, "withdrawn", reviewer, reason, None),
+            )
+            return _review(db, f, at)
+        from .result_pairings import unique_fixtures
+
+        pair = tuple(opportunity._club(f[k]) for k in ("home", "away"))
+        ol = _round(root, db, year, f["round_id"], at)
+        events, _ = _events(root, db, store.instant(at))
+        return _evaluate(
+            db,
+            f,
+            ol.get(pair),
+            events.get(pair, []),
+            fid not in unique_fixtures(fixtures),
+            at,
+            {
+                "kickoff": proposed,
+                "reviewer": reviewer.strip(),
+                "reason": reason.strip(),
+            },
+        )
+
+
 def sync(root, year, *, fetch=False):
     """Verify two native authorities and append safe future revisions atomically."""
     now = store.instant(store.now_utc())
     fetches = []
     with closing(_db(root)) as db:
-        future = _upcoming(db, year, now)
-        rounds = sorted(
-            {f["round_id"] for f in future if store.instant(f["kickoff"]) > now}
-        )
+        market_rows, _ = _events(root, db, now) if fetch else ({}, [])
+        future = _upcoming(db, year, now, market_rows)
+        rounds = sorted({f["round_id"] for f in future if f["result_version"] is None})
         last = {
             r[0]: store.instant(r[1])
             for r in db.execute(
@@ -478,7 +696,8 @@ def sync(root, year, *, fetch=False):
     with closing(_db(root)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         now = store.instant(store.now_utc())
-        forms = _upcoming(db, year, now)
+        markets, errors = _events(root, db, now)
+        forms = _upcoming(db, year, now, markets)
         all_local = store.eligible_fixture_rows(db, season=result_admission.scope(year))
 
         def clubs(f):
@@ -487,7 +706,6 @@ def sync(root, year, *, fetch=False):
         groups = defaultdict(list)
         for f in all_local:
             groups[(f["round_id"], clubs(f))].append(f["fixture_id"])
-        markets, errors = _events(root, db, now)
         rounds = {}
         items = []
         for rnd in sorted({f["round_id"] for f in forms}):
@@ -496,90 +714,16 @@ def sync(root, year, *, fetch=False):
             except (ValueError, OSError, KeyError, TypeError) as exc:
                 errors.append({"round": rnd, "reason": str(exc)})
         for f in forms:
-            fid = f["fixture_id"]
-            old = f["kickoff"]
             rnd = f["round_id"]
             pair = clubs(f)
-            latest = db.execute(
-                "SELECT source FROM fixture_versions WHERE fixture_id=? AND version=?",
-                (fid, f["schedule_version"]),
-            ).fetchone()
-            row = {
-                "fixture_id": fid,
-                "round": rnd,
-                "home": f["home"],
-                "away": f["away"],
-                "previous": old,
-            }
-            try:
-                stamped = store.now_utc()
-                ol = rounds.get(rnd, {}).get(pair)
-                event = _choose(
-                    f | {"schedule_source": latest[0]},
-                    ol,
-                    markets.get(pair, []),
-                    len(groups[(rnd, pair)]) != 1,
-                    store.instant(stamped),
-                )
-                if latest[0] == SOURCE and old != ol["kickoff"]:
-                    anchor = db.execute(
-                        "SELECT kickoff FROM fixture_versions WHERE fixture_id=? AND source!=? ORDER BY version DESC LIMIT 1",
-                        (fid, SOURCE),
-                    ).fetchone()
-                    if (
-                        not anchor
-                        or abs(store.instant(anchor[0]) - store.instant(ol["kickoff"]))
-                        > MAX_SHIFT
-                    ):
-                        raise ValueError(
-                            "cumulative change exceeds the independently registered 36-hour window"
-                        )
-                proof = {
-                    "fixture_id": fid,
-                    "season": f["season"],
-                    "round": rnd,
-                    "previous": old,
-                    "kickoff": ol["kickoff"],
-                    "gamma": event,
-                    "openligadb": ol,
-                }
-                ident = store.digest(proof)
-                row.update(kickoff=ol["kickoff"], gamma_slug=event["slug"])
-                if old == ol["kickoff"]:
-                    if latest[0] == SOURCE:
-                        _hold(db, fid, f["schedule_version"], stamped)
-                    row["status"] = "unchanged"
-                else:
-                    new = store.register_fixture_db(
-                        db,
-                        {
-                            "fixture_id": fid,
-                            "season": f["season"],
-                            "round_id": rnd,
-                            "home": f["home"],
-                            "away": f["away"],
-                            "kickoff": ol["kickoff"],
-                            "known_at": stamped,
-                            "source": SOURCE,
-                            "precision": "minute",
-                            "locator": "schedule-proof:" + ident,
-                        },
-                        recorded_at=stamped,
-                    )
-                    db.execute(
-                        "INSERT INTO epl_schedule_proofs VALUES(?,?,?,?)",
-                        (fid, new["version"], ident, store.canonical(proof)),
-                    )
-                    row.update(
-                        status="corrected",
-                        version=new["version"],
-                        known_at=stamped,
-                        proof=ident,
-                    )
-            except (ValueError, OSError, TypeError, KeyError) as exc:
-                row.update(status="deferred", reason=str(exc))
-                if latest[0] == SOURCE and store.instant(stamped) < store.instant(old):
-                    _hold(db, fid, f["schedule_version"], stamped, str(exc))
+            row = _evaluate(
+                db,
+                f,
+                rounds.get(rnd, {}).get(pair),
+                markets.get(pair, []),
+                len(groups[(rnd, pair)]) != 1,
+                store.now_utc(),
+            )
             items.append(row)
         _recheck_early_results(db, store.now_utc())
         past = [r for r in items if store.instant(r["previous"]) <= now]
@@ -598,4 +742,49 @@ def sync(root, year, *, fetch=False):
             "attribution": result_feed.ATTRIBUTION,
         }
         store.put_report(db, "source", "epl-upcoming-schedules-" + str(year), report)
+        previous = db.execute(
+            "SELECT payload FROM reports WHERE kind='incident' AND key=?",
+            (f"epl-schedule-review-{year}",),
+        ).fetchone()
+        unresolved = (
+            {r["fixture_id"]: r for r in json.loads(previous[0])["items"]}
+            if previous
+            else {}
+        )
+        current = {f["fixture_id"]: f for f in all_local}
+        unresolved = {
+            fid: r
+            for fid, r in unresolved.items()
+            if fid in current
+            and current[fid]["result_version"] is None
+            and current[fid]["kickoff"] == r["previous"]
+            and any(t > report["at"] for t in r["gamma_kickoffs"])
+        }
+        for item in items + past:
+            if item["status"] != "deferred":
+                unresolved.pop(item["fixture_id"], None)
+        delayed = [
+            r
+            for r in items + past
+            if r["status"] == "deferred"
+            and r["openligadb_kickoff"]
+            and r["gamma_kickoffs"]
+            and (
+                r["previous"] != r["openligadb_kickoff"]
+                or r["gamma_kickoffs"] != [r["previous"]]
+            )
+        ]
+        unresolved.update(
+            {r["fixture_id"]: r | {"observed_at": report["at"]} for r in delayed}
+        )
+        store.put_report(
+            db,
+            "incident",
+            f"epl-schedule-review-{year}",
+            {
+                "status": "open" if unresolved else "clear",
+                "at": report["at"],
+                "items": list(unresolved.values()),
+            },
+        )
     return report
