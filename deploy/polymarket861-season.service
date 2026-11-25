@@ -1,0 +1,18 @@
+[Unit]
+Description=Premier League forecast and Polymarket paper data collector
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+Environment=PM861_DATA_DIR=%h/.local/share/polymarket861/state
+ExecStart=%h/.local/share/polymarket861/venv/bin/pm861 season run --repeat
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=90
+KillSignal=SIGINT
+UMask=0077
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

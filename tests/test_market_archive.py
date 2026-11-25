@@ -1,14 +1,14 @@
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest import TestCase
 from unittest.mock import patch
-from tempfile import TemporaryDirectory
-from pathlib import Path
 
 from polymarket861 import market_archive as archive
 from polymarket861 import market_provider as provider
 
-T = datetime(2026, 11, 25, 3, 0, tzinfo=timezone.utc)
+T = datetime(2026, 11, 25, 3, 0, tzinfo=UTC)
 FIX = "epl-not-che-2026-11-27"
 CON = "0x" + "3" * 64
 
@@ -220,9 +220,8 @@ class ArchiveTests(TestCase):
             provider,
             "get",
             return_value=reply({"data": [], "pagination": {"has_more": True}}),
-        ):
-            with self.assertRaisesRegex(ValueError, "pagination"):
-                archive.history(self.root, "trades", "2")
+        ), self.assertRaisesRegex(ValueError, "pagination"):
+            archive.history(self.root, "trades", "2")
         # Resolution records and post-kickoff prices never stand in for a pregame quote.
         items = [{"timestamp": int(T.timestamp()), "price": 1, "resolution_seconds": 0}]
 
@@ -318,4 +317,9 @@ class ArchiveTests(TestCase):
             archive.next_capture(kickoff, kickoff - timedelta(seconds=25))[1],
             "closing_book",
         )
-        self.assertIsNone(archive.next_capture(kickoff, kickoff))
+        self.assertEqual(
+            archive.next_capture(kickoff, kickoff)[0], kickoff + timedelta(seconds=12)
+        )
+        self.assertIsNone(
+            archive.next_capture(kickoff, kickoff + timedelta(minutes=10))
+        )

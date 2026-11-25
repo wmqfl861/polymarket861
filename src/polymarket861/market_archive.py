@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
-from contextlib import closing
-from datetime import timedelta
 import hashlib
 import json
+import random
+import time
+from contextlib import closing
+from contextvars import ContextVar
+from datetime import timedelta
+from email.utils import parsedate_to_datetime
+from http.client import HTTPException
 from urllib.error import URLError
+from urllib.parse import urlsplit
 
 from . import dbscope
 from . import market_provider as provider
@@ -20,7 +26,14 @@ from .market_provider import (
 )
 from .store import archive_bytes, canonical, connect, digest, iso, now_utc, save_report
 
+_DEADLINE = ContextVar("market_request_deadline", default=None)
+
 _SCHEMA = """
+CREATE TABLE IF NOT EXISTS ma_cooldown (
+  endpoint TEXT PRIMARY KEY, not_before TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS ma_event_states (
+  slug TEXT NOT NULL,received_at TEXT NOT NULL,sha TEXT NOT NULL,live INTEGER,ended INTEGER,
+  PRIMARY KEY(slug,received_at,sha));
 CREATE TABLE IF NOT EXISTS ma_requests (
   id INTEGER PRIMARY KEY, operation TEXT NOT NULL, selector TEXT NOT NULL,
   requested_at TEXT NOT NULL, received_at TEXT NOT NULL, status TEXT NOT NULL, sha TEXT, detail TEXT);
@@ -43,6 +56,9 @@ CREATE TABLE IF NOT EXISTS ma_history (
   kind TEXT NOT NULL, token TEXT NOT NULL, key TEXT NOT NULL, timestamp TEXT NOT NULL,
   resolution INTEGER, sha TEXT NOT NULL, PRIMARY KEY(kind,token,key));
 CREATE INDEX IF NOT EXISTS ma_history_cutoff ON ma_history(token,timestamp,kind);
+CREATE TABLE IF NOT EXISTS ma_walk_pages (
+  key TEXT,cursor_in TEXT,sha TEXT NOT NULL,recorded_at TEXT NOT NULL,items INTEGER NOT NULL,resolutions TEXT NOT NULL,
+  PRIMARY KEY(key,cursor_in));
 CREATE TABLE IF NOT EXISTS ma_walks (
   key TEXT PRIMARY KEY, cursor TEXT, done INTEGER NOT NULL, updated_at TEXT NOT NULL);
 """
@@ -63,11 +79,18 @@ def _log(root, operation, selector, start, end, status, sha=None, detail=None):
         )
 
 
-def _fetch(root, op, selector, url, params=None):
+def _fetch_once(root, op, selector, url, params=None):
     started = now_utc()
     saved = {}
     try:
-        reply = provider.get(url, params)
+        stop = _DEADLINE.get()
+        if stop is None:
+            reply = provider.get(url, params)
+        else:
+            available = (moment(stop) - moment(now_utc())).total_seconds()
+            if available <= 0:
+                raise TimeoutError("capture request window has already elapsed")
+            reply = provider.get(url, params, timeout=min(3.5, available))
         saved = archive_bytes(
             root,
             "polymarket.com",
@@ -85,7 +108,7 @@ def _fetch(root, op, selector, url, params=None):
             },
         )
         data = json.loads(reply.body)
-    except (OSError, ValueError, URLError) as exc:
+    except (OSError, ValueError, HTTPException) as exc:
         code = getattr(exc, "code", None)
         _log(
             root,
@@ -104,6 +127,65 @@ def _fetch(root, op, selector, url, params=None):
     return data, reply, saved["sha256"]
 
 
+class DeferredFetch(OSError):
+    def __init__(self, message, retry_at=None):
+        super().__init__(message)
+        self.retry_at = retry_at
+        self.code = 429 if retry_at else None
+
+
+def _fetch(root, op, selector, url, params=None):
+    """Retry transient reads briefly. Persist long Retry-After across workers and restarts."""
+    endpoint = urlsplit(url).netloc
+    if endpoint == "data-api.polymarket.com":
+        endpoint += urlsplit(url).path
+    for attempt in range(3):
+        now = moment(now_utc())
+        with closing(database(root)) as db:
+            cooldown = db.execute(
+                "SELECT not_before FROM ma_cooldown WHERE endpoint=?", (endpoint,)
+            ).fetchone()
+        if cooldown and moment(cooldown[0]) > now:
+            raise DeferredFetch(
+                "upstream Retry-After until " + cooldown[0], cooldown[0]
+            )
+        try:
+            return _fetch_once(root, op, selector, url, params)
+        except (OSError, HTTPException) as exc:
+            http = getattr(exc, "code", None)
+            if http == 429:
+                raw = (
+                    exc.headers.get("Retry-After")
+                    if getattr(exc, "headers", None)
+                    else None
+                )
+                try:
+                    after = float(raw)
+                except (ValueError, TypeError):
+                    try:
+                        after = (parsedate_to_datetime(raw) - now).total_seconds()
+                    except (ValueError, TypeError, OverflowError):
+                        after = 10
+                try:
+                    until = iso(now + timedelta(seconds=max(1, after)))
+                except OverflowError:
+                    until = iso(now.replace(year=9999))
+                with closing(database(root)) as db, db:
+                    db.execute(
+                        "INSERT INTO ma_cooldown VALUES (?,?) ON CONFLICT(endpoint) DO UPDATE SET "
+                        "not_before=max(not_before,excluded.not_before)",
+                        (endpoint, until),
+                    )
+                raise DeferredFetch(
+                    "HTTP 429; Retry-After until " + until, until
+                ) from exc
+            if http is not None and http not in (408, 425, 500, 502, 503, 504):
+                raise
+            if attempt == 2:
+                raise DeferredFetch(f"read failed after three attempts: {exc}") from exc
+            time.sleep(random.uniform(0.04, 0.14) * (2**attempt))
+
+
 def _ingest(db, event, reply, sha):
     match = FIXTURE.fullmatch(str(event.get("slug", "")))
     if not match:
@@ -117,6 +199,16 @@ def _ingest(db, event, reply, sha):
             event.get("startTime"),
             reply.received_at,
             sha,
+        ),
+    )
+    db.execute(
+        "INSERT OR IGNORE INTO ma_event_states VALUES(?,?,?,?,?)",
+        (
+            event["slug"],
+            reply.received_at,
+            sha,
+            event.get("live") if type(event.get("live")) is bool else None,
+            event.get("ended") if type(event.get("ended")) is bool else None,
         ),
     )
     for contract in provider.normalized_markets(event):
@@ -135,6 +227,19 @@ def _ingest(db, event, reply, sha):
     return True
 
 
+def observe_event(root, event_slug):
+    if not FIXTURE.fullmatch(event_slug):
+        raise ValueError("invalid EPL exchange event slug")
+    data, reply, sha = _fetch(
+        root, "event", event_slug, GAMMA + "/events/slug/" + event_slug
+    )
+    if not isinstance(data, dict) or data.get("slug") != event_slug:
+        raise ValueError("unexpected event identity")
+    with closing(database(root)) as db, db:
+        _ingest(db, data, reply, sha)
+    return event_slug
+
+
 def discover(root, slug):
     match = FIXTURE.fullmatch(slug)
     if not match or match[5]:
@@ -144,13 +249,7 @@ def discover(root, slug):
     events, gaps = [], []
     for event_slug in (slug, slug + "-more-markets"):
         try:
-            data, reply, sha = _fetch(
-                root, "event", event_slug, GAMMA + "/events/slug/" + event_slug
-            )
-            if not isinstance(data, dict) or data.get("slug") != event_slug:
-                raise ValueError("unexpected event identity")
-            with closing(database(root)) as db, db:
-                _ingest(db, data, reply, sha)
+            observe_event(root, event_slug)
             events.append(event_slug)
         except (ValueError, OSError, URLError) as exc:
             gaps.append(
@@ -158,6 +257,7 @@ def discover(root, slug):
                     "slug": event_slug,
                     "reason": str(exc),
                     "http_status": getattr(exc, "code", None),
+                    "retry_at": getattr(exc, "retry_at", None),
                 }
             )
     return {"fixture": slug, "events": events, "gaps": gaps}
@@ -171,24 +271,60 @@ def catalog(root, season, *, pages=10, page_size=30, offset=0):
         or offset < 0
     ):
         raise ValueError("invalid season or pagination")
-    sports, _, _ = _fetch(root, "sports", "epl", GAMMA + "/sports")
+    return catalog_window(
+        root,
+        str(season),
+        f"{season}-07-01T00:00:00Z",
+        f"{season + 1}-07-01T00:00:00Z",
+        pages=pages,
+        page_size=page_size,
+        offset=offset,
+    ) | {"season": season}
+
+
+def league_tag(root):
+    from .store import blob_path
+
+    sports = None
+    with closing(database(root)) as db:
+        cached = db.execute(
+            "SELECT sha FROM ma_requests WHERE operation='sports' AND selector='epl' "
+            "AND status='ok' AND received_at>=? ORDER BY received_at DESC LIMIT 1",
+            (iso(moment(now_utc()) - timedelta(days=7)),),
+        ).fetchone()
+    if cached:
+        raw = blob_path(root, cached["sha"]).read_bytes()
+        if hashlib.sha256(raw).hexdigest() == cached["sha"]:
+            sports = json.loads(raw)
+    if sports is None:
+        sports, _, _ = _fetch(root, "sports", "epl", GAMMA + "/sports")
     league = next((x for x in sports if x.get("sport") == "epl"), {})
     if not league.get("primaryTagId"):
         raise ValueError("EPL league tag not found")
+    return league["primaryTagId"]
+
+
+def catalog_window(root, selector, start, end, *, pages=10, page_size=50, offset=0):
+    if (
+        not 1 <= page_size <= 100
+        or pages < 1
+        or offset < 0
+        or moment(end) <= moment(start)
+    ):
+        raise ValueError("invalid catalogue window or cursor")
+    tag = league_tag(root)
     all_slugs, done = set(), False
     for _ in range(pages):
         params = {
-            "tag_id": league["primaryTagId"],
+            "tag_id": tag,
             "limit": page_size,
             "offset": offset,
             "order": "id",
             "ascending": "true",
-            "end_date_min": f"{season}-07-01T00:00:00Z",
-            "end_date_max": f"{season + 1}-07-01T00:00:00Z",
+            "end_date_min": start,
+            "end_date_max": end,
         }
-        data, reply, sha = _fetch(
-            root, "catalog", str(season), GAMMA + "/events", params
-        )
+        data, reply, sha = _fetch(root, "catalog", selector, GAMMA + "/events", params)
         if not isinstance(data, list):
             raise ValueError("catalog did not return an array")
         with closing(database(root)) as db, db:
@@ -200,7 +336,7 @@ def catalog(root, season, *, pages=10, page_size=30, offset=0):
             done = True
             break
     return {
-        "season": season,
+        "window": [start, end],
         "fixtures_observed": sorted(all_slugs),
         "next_offset": None if done else offset,
         "page_walk_complete": done,
@@ -232,15 +368,47 @@ def snapshot_book(root, contract, token):
     return _record_book(root, contract, token, raw, reply, sha)
 
 
+def _book_value(db, contract, token, raw, reply, sha, times):
+    book = provider.normalize_book(raw, reply, contract, token, sha)
+    if len(times) != 1:
+        book["pregame"] = None
+        book["schedule_conflict"] = times
+    elif book["pregame"] is True and moment(reply.received_at) >= moment(times[0]):
+        # For a delayed kickoff require a fresh explicit venue state, not a stale cached document.
+        valid = False
+        for row in db.execute(
+            "SELECT metadata FROM observations WHERE source='polymarket.com' AND observed_at=? AND sha256=?",
+            (contract.get("recorded_at"), contract.get("source_sha256")),
+        ):
+            meta = json.loads(row[0])
+            headers = {
+                k: str(v)
+                for k, v in (("date", meta.get("http_date")), ("age", meta.get("age")))
+                if v is not None
+            }
+            state = provider.Reply(
+                b"",
+                meta.get("requested_at"),
+                contract["recorded_at"],
+                headers,
+                meta.get("url", ""),
+            )
+            if meta.get("operation") in (
+                "event",
+                "catalog",
+            ) and provider.fresh_observation(state):
+                valid = True
+                break
+        if not valid:
+            book["pregame"] = None
+    return book
+
+
 def _record_book(root, contract, token, raw, reply, sha):
     try:
-        book = provider.normalize_book(raw, reply, contract, token, sha)
-        # Compare the latest main and child fixture schedules, not the date string in a slug.
         times = fixture_times(root, contract["fixture"], as_of=reply.received_at)
-        if len(times) != 1:
-            book["pregame"] = None
-            book["schedule_conflict"] = times
         with closing(database(root)) as db, db:
+            book = _book_value(db, contract, token, raw, reply, sha, times)
             db.execute(
                 "INSERT OR IGNORE INTO ma_books VALUES (?,?,?,?)",
                 (token, reply.received_at, sha, canonical(book)),
@@ -283,7 +451,22 @@ def stored_books(root, token, *, before=None, limit=2):
         return [json.loads(r["payload"]) for r in rows]
 
 
-def capture(root, fixture, *, tokens=None, workers=4, discovery=None):
+def capture(root, fixture, *, tokens=None, workers=4, discovery=None, deadline=None):
+    saved = _DEADLINE.set(deadline)
+    try:
+        return _capture(
+            root,
+            fixture,
+            tokens=tokens,
+            workers=workers,
+            discovery=discovery,
+            deadline=deadline,
+        )
+    finally:
+        _DEADLINE.reset(saved)
+
+
+def _capture(root, fixture, *, tokens, workers, discovery, deadline):
     from concurrent.futures import ThreadPoolExecutor
 
     if not 1 <= workers <= 10:
@@ -317,13 +500,17 @@ def capture(root, fixture, *, tokens=None, workers=4, discovery=None):
 
     def one(pair):
         token, market = pair
+        saved = _DEADLINE.set(deadline)
         try:
             return summary(snapshot_book(root, market, token))
         except (ValueError, OSError, URLError) as exc:
             return {"token_id": token, "error": str(exc)}
+        finally:
+            _DEADLINE.reset(saved)
 
     observed = []
     batch_error = None
+    retry_at = None
     if 1 < len(targets) <= 500:
         try:
             rows, reply, sha = _fetch(
@@ -339,25 +526,53 @@ def capture(root, fixture, *, tokens=None, workers=4, discovery=None):
                 if token not in targets or token in by_id:
                     raise ValueError("unexpected or repeated token in book batch")
                 by_id[token] = row
-            for token, market in targets.items():
-                if token not in by_id:
-                    observed.append(
-                        {
-                            "token_id": token,
-                            "error": "requested token omitted from batch",
-                        }
-                    )
-                    continue
-                try:
-                    observed.append(
-                        summary(
-                            _record_book(root, market, token, by_id[token], reply, sha)
+            times = fixture_times(root, fixture, as_of=reply.received_at)
+            pending = []
+            invalid = []
+            with closing(database(root)) as db, db:
+                for token, market in targets.items():
+                    if token not in by_id:
+                        observed.append(
+                            {
+                                "token_id": token,
+                                "error": "requested token omitted from batch",
+                            }
                         )
-                    )
-                except ValueError as exc:
-                    observed.append({"token_id": token, "error": str(exc)})
+                        continue
+                    try:
+                        b = _book_value(
+                            db, market, token, by_id[token], reply, sha, times
+                        )
+                        pending.append((token, reply.received_at, sha, canonical(b)))
+                        observed.append(summary(b))
+                    except (KeyError, TypeError, ValueError) as exc:
+                        observed.append({"token_id": token, "error": str(exc)})
+                        invalid.append(
+                            (
+                                "book_validation",
+                                token,
+                                reply.requested_at,
+                                reply.received_at,
+                                "invalid",
+                                sha,
+                                str(exc),
+                            )
+                        )
+                db.executemany(
+                    "INSERT OR IGNORE INTO ma_books VALUES(?,?,?,?)", pending
+                )
+                db.executemany(
+                    "INSERT INTO ma_requests(operation,selector,requested_at,received_at,status,sha,detail) "
+                    "VALUES(?,?,?,?,?,?,?)",
+                    invalid,
+                )
         except (ValueError, OSError, URLError) as exc:
             batch_error = str(exc)
+            retry_at = getattr(exc, "retry_at", None)
+            if retry_at:
+                observed = [
+                    {"token_id": token, "error": batch_error} for token in targets
+                ]
     if not observed:
         with ThreadPoolExecutor(max_workers=workers) as pool:
             observed = list(pool.map(one, targets.items()))
@@ -365,6 +580,7 @@ def capture(root, fixture, *, tokens=None, workers=4, discovery=None):
         "fixture": fixture,
         "observations": observed,
         "batch_error": batch_error,
+        "retry_at": retry_at,
         "discovery_gaps": discovered["gaps"],
         "unmapped_or_closed_requested_tokens": sorted(requested - targets.keys()),
     }
@@ -418,7 +634,7 @@ def history(
     cursor = None if restart or not old else old["cursor"]
     expected_state = (old["cursor"], old["done"]) if old else None
     seen, new_count, raw_count, done = set(), 0, 0, False
-    for _ in range(pages):
+    for page_index in range(pages):
         if cursor in seen:
             raise ValueError("upstream repeated the pagination cursor")
         seen.add(cursor)
@@ -438,6 +654,8 @@ def history(
         ):
             raise ValueError("inconsistent pagination envelope")
         nxt = page["next_cursor"]
+        if nxt is not None and not isinstance(nxt, str):
+            raise ValueError("malformed opaque pagination cursor")
         if nxt and nxt in seen:
             raise ValueError("pagination returned a repeated cursor")
         with closing(database(root)) as db, db:
@@ -449,6 +667,17 @@ def history(
                 raise ValueError(
                     "another worker advanced this walk; resume from its saved cursor"
                 )
+            if restart and page_index == 0:
+                db.execute("DELETE FROM ma_walk_pages WHERE key=?", (key,))
+            if (
+                nxt
+                and db.execute(
+                    "SELECT 1 FROM ma_walk_pages WHERE key=? AND cursor_in=?",
+                    (key, nxt),
+                ).fetchone()
+            ):
+                raise ValueError("upstream repeated a cursor seen on an earlier run")
+            resolutions = set()
             for row in data["data"]:
                 when = iso(moment(row["timestamp"]))
                 price = provider.number(row["price"])
@@ -477,6 +706,7 @@ def history(
                 else:
                     token = str(selector)
                     resolution = int(row["resolution_seconds"])
+                    resolutions.add(resolution)
                     if resolution < 0:
                         raise ValueError("negative price resolution")
                     identity = digest([when, str(price), resolution])
@@ -486,6 +716,17 @@ def history(
                     (kind, token, identity, when, resolution, sha),
                 ).rowcount
             done = not nxt
+            db.execute(
+                "INSERT OR REPLACE INTO ma_walk_pages VALUES(?,?,?,?,?,?)",
+                (
+                    key,
+                    cursor or "",
+                    sha,
+                    reply.received_at,
+                    len(data["data"]),
+                    canonical(sorted(resolutions)),
+                ),
+            )
             db.execute(
                 "INSERT INTO ma_walks VALUES (?,?,?,?) ON CONFLICT(key) DO UPDATE SET "
                 "cursor=excluded.cursor,done=excluded.done,updated_at=excluded.updated_at",
@@ -576,7 +817,7 @@ def coverage(
         season = f"{y}/{str(y + 1)[2:]}"
         markets = contracts(root, fixture)
         # Different kickoff times across a primary and a child contract invalidate this replay.
-        times = fixture_schedule(root,fixture,markets)
+        times = fixture_schedule(root, fixture, markets)
         cut = times[0] if len(times) == 1 else None
         fixture_details.append(
             {
@@ -656,55 +897,83 @@ def coverage(
 
 
 def next_capture(kickoff, now, *, delay=5):
-    """Return next UTC request time and target. Periodic grid is anchored to the fixture."""
-    elapsed = (kickoff - now).total_seconds()
-    if elapsed <= 0:
-        return None
-    interval = 900 if elapsed > 10800 else 60
-    from math import ceil
+    """Return the next real-time request instant. Detailed close sampling spans a delayed start."""
+    from math import floor
 
-    until_next = max(0, (ceil(elapsed / interval) - 1) * interval)
-    future = [(kickoff - timedelta(seconds=until_next), "periodic")]
-    targets = []
-    for h in (24, 1):
-        decision = kickoff - timedelta(hours=h)
-        targets.extend(
+    elapsed = (now - kickoff).total_seconds()
+    if elapsed >= 600:
+        return None
+    if elapsed >= -120:
+        offset = -120 + 12 * (floor((elapsed + 120) / 12) + 1)
+        return kickoff + timedelta(seconds=offset), "closing_book"
+    step = 900 if elapsed < -10800 else 60
+    offset = (floor(elapsed / step) + 1) * step
+    interval = timedelta(seconds=max(5, delay))
+    windows = [kickoff - timedelta(hours=h) for h in (24, 1)]
+    period = kickoff + timedelta(seconds=offset)
+    future = [(kickoff - timedelta(seconds=120), "closing_book")]
+    if not any(
+        d - timedelta(seconds=25) <= period <= d + interval + timedelta(seconds=5)
+        for d in windows
+    ):
+        future.append((period, "periodic"))
+    for d in windows:
+        future.extend(
             [
-                (decision - timedelta(seconds=15), "decision_book"),
-                (decision + timedelta(seconds=max(5, delay)), "execution_book"),
+                (d - timedelta(seconds=25), "decision_book"),
+                (d + interval, "execution_book"),
             ]
         )
-    targets.append((kickoff - timedelta(seconds=20), "closing_book"))
-    # Reserve the decision window for the requested before/after pair. A
-    # periodic request at the cutoff itself could block the execution sample.
-    decision_times = [kickoff - timedelta(hours=h) for h in (24, 1)]
-    future = [
-        (t, role)
-        for t, role in future
-        if not any(
-            decision - timedelta(seconds=15)
-            <= t
-            <= decision + timedelta(seconds=max(5, delay) + 5)
-            for decision in decision_times
+    return min((t, role) for t, role in future if t > now)
+
+
+def market_state(root, fixture):
+    with closing(database(root)) as db:
+        rows = db.execute(
+            "SELECT s.live,s.ended FROM ma_event_states s JOIN "
+            "(SELECT *,row_number() OVER(PARTITION BY slug ORDER BY received_at DESC,sha DESC) n "
+            "FROM ma_events WHERE fixture=?) e ON e.slug=s.slug AND e.received_at=s.received_at AND e.sha=s.sha "
+            "WHERE e.n=1",
+            (fixture,),
         )
-    ]
-    future.extend(targets)
-    future = [x for x in future if now < x[0] < kickoff]
-    if not future and elapsed > interval:
-        return now + timedelta(seconds=interval), "periodic"
-    return min(future) if future else None
+        return any(row["live"] == 1 or row["ended"] == 1 for row in rows)
 
 
 def watch(root, fixture, *, cycles=1, tokens=None):
-    """Foreground collector. Stop at kickoff; a restart keeps actual gaps and previous receipts."""
+    """Foreground collector. Stop at the observed start or the ten-minute close limit."""
     import time
 
     if cycles < 1:
         raise ValueError("cycles must be positive")
-    discovered = discover(root, fixture)
-    times = fixture_times(root, fixture)
-    if len(times) != 1 or fixture not in discovered["events"]:
-        raise ValueError("a fresh unambiguous fixture schedule is required")
+    for attempt in range(cycles):
+        discovered = discover(root, fixture)
+        times = fixture_times(root, fixture)
+        if len(times) == 1 and fixture in discovered["events"]:
+            break
+        stamp = now_utc()
+        _log(
+            root,
+            "heartbeat",
+            fixture,
+            stamp,
+            stamp,
+            "error",
+            detail="fresh unambiguous fixture state unavailable",
+        )
+        deadlines = [g["retry_at"] for g in discovered["gaps"] if g.get("retry_at")]
+        retry_at = (
+            max(deadlines) if deadlines else iso(moment(stamp) + timedelta(seconds=15))
+        )
+        if attempt == cycles - 1:
+            return {
+                "fixture": fixture,
+                "runs": [],
+                "status": "awaiting_discovery",
+                "gaps": discovered["gaps"],
+                "observed_schedules": times,
+                "retry_at": retry_at,
+            }
+        time.sleep(min(30, max(1, (moment(retry_at) - moment(stamp)).total_seconds())))
     targets = contracts(root, fixture)
     delays = {
         max(5, int(m["seconds_delay"]))
@@ -716,7 +985,7 @@ def watch(root, fixture, *, cycles=1, tokens=None):
     role = "initial"
     for _ in range(cycles):
         now = moment(now_utc())
-        if now >= kickoff:
+        if now >= kickoff + timedelta(minutes=10) or market_state(root, fixture):
             break
         with closing(database(root)) as db:
             last = db.execute(
@@ -735,8 +1004,10 @@ def watch(root, fixture, *, cycles=1, tokens=None):
                 "gap",
                 detail="two expected sampling intervals missed",
             )
-        if role == "periodic":
+        if role in ("periodic", "closing_book"):
             discovered = discover(root, fixture)
+            if market_state(root, fixture):
+                break
         # Critical before/after sampling reuses the latest refreshed metadata
         # and requests depth immediately; actual receipts still decide eligibility.
         result = capture(root, fixture, tokens=tokens, discovery=discovered)
@@ -871,9 +1142,14 @@ def register(subparsers):
         help="export token-level research witnesses for the historical ledger",
     )
     p.add_argument("--fixture", action="append", required=True)
-    p.add_argument("--account",help="Select the predeclared formal main paper account for archival decision reconstruction")
+    p.add_argument(
+        "--account",
+        help="Select the predeclared formal main paper account for archival decision reconstruction",
+    )
     p.set_defaults(
-        func=lambda a: {"opportunities": replay_inputs(a.data_dir, a.fixture, account=a.account)}
+        func=lambda a: {
+            "opportunities": replay_inputs(a.data_dir, a.fixture, account=a.account)
+        }
     )
     p = cmd.add_parser(
         "coverage", help="measure archive coverage in an explicit fixture denominator"
@@ -885,6 +1161,7 @@ def register(subparsers):
 def replay_inputs(root, fixtures, *, account=None):
     """Export genuine pregame witnesses to the fail-closed ledger replay, with provenance."""
     from functools import lru_cache
+
     from .archive_proof import research_tier
     from .store import blob_path
 
@@ -995,11 +1272,14 @@ def replay_inputs(root, fixtures, *, account=None):
                             "prices": [],
                         }
                         if cutoff:
-                            for kind in ("trades","prices"):
-                                item[kind]=first_witness(db,kind,token,cutoff,item)
+                            for kind in ("trades", "prices"):
+                                item[kind] = first_witness(
+                                    db, kind, token, cutoff, item
+                                )
                         examples.append(item)
     from .opportunity import archived_inputs
-    return archived_inputs(root,fixtures,examples,account=account)
+
+    return archived_inputs(root, fixtures, examples, account=account)
 
 
 def reindex(root):

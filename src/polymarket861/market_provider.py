@@ -6,7 +6,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 from email.utils import parsedate_to_datetime
 from typing import Any
@@ -25,14 +25,14 @@ FIXTURE = re.compile(
 )
 
 
-def moment(value: str | int | float) -> datetime:
+def moment(value: str | float) -> datetime:
     if isinstance(value, (int, float)) or str(value).isdigit():
         n = float(value)
-        return datetime.fromtimestamp(n / 1000 if n >= 1e12 else n, timezone.utc)
+        return datetime.fromtimestamp(n / 1000 if n >= 1e12 else n, UTC)
     stamp = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
     if stamp.tzinfo is None:
         raise ValueError("market timestamps must specify their timezone")
-    return stamp.astimezone(timezone.utc)
+    return stamp.astimezone(UTC)
 
 
 @dataclass(frozen=True)
@@ -61,11 +61,11 @@ def get(url: str, params: dict | None = None, *, timeout: float = 25) -> Reply:
         headers["Content-Type"] = "application/json"
     elif params:
         url += "?" + urlencode(params)
-    requested = iso(datetime.now(timezone.utc))
+    requested = iso(datetime.now(UTC))
     req = Request(url, data=body, headers=headers)
     with urlopen(req, timeout=timeout) as response:
         raw = response.read(32 * 1024 * 1024 + 1)
-        received = iso(datetime.now(timezone.utc))
+        received = iso(datetime.now(UTC))
         if len(raw) > 32 * 1024 * 1024:
             raise ValueError("payload exceeds 32 MiB; reduce the page size")
         return Reply(
@@ -301,10 +301,19 @@ def normalize_book(
     if contract["live"] is True or contract["ended"] is True:
         pregame = False
     elif len(times) == 1:
-        if moment(times[0]) <= moment(reply.received_at):
-            pregame = False
-        elif contract["live"] is False and contract["ended"] is False:
-            pregame = True
+        receipt = moment(reply.received_at)
+        if contract["live"] is False and contract["ended"] is False:
+            if receipt < moment(times[0]):
+                pregame = True
+            elif (
+                contract.get("recorded_at")
+                and 0
+                <= (receipt - moment(contract["recorded_at"])).total_seconds()
+                <= 15
+            ):
+                # Even after the scheduled start the venue can explicitly attest a delay.
+                # The closing ledger still separately requires the independently proven actual kickoff.
+                pregame = True
     exchange_at = (
         iso(moment(raw["timestamp"])) if raw.get("timestamp") is not None else None
     )
