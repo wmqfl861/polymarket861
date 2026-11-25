@@ -62,6 +62,14 @@ class ExplicitTrainingDispute(TestCase):
     def test_existing_controversy_keeps_only_training_and_reopens_on_new_facts(self):
         report = self.import_record()
         self.assertEqual(report["scope"], "selected_matches")
+        from datetime import timedelta
+        from polymarket861 import store
+
+        earlier = self.events.secondary[self.fid][-1]
+        delayed = store.iso(store.instant(earlier["received"]) + timedelta(seconds=30))
+        self.events.secondary[self.fid].append(
+            earlier | {"received": delayed, "started": delayed, "sha256": "e" * 64}
+        )
         self.case.set_time(31)
         self.case.collect(self.case.rows)
         self.events.evidence(self.kick, [2, 2])

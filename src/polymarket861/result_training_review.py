@@ -152,13 +152,16 @@ def still_applies(root, db, f, bound_record, primary, other, reference, at):
         ):
             return False
         for original, stream in zip(binding["reports"], by_provider, strict=True):
-            then = [event for event in stream if event["received"] <= reviewed]
-            if not then or _fields(then[-1], ORIGINAL) != original:
+            if original["received"] > reviewed or not any(
+                _fields(event, ORIGINAL) == original for event in stream
+            ):
                 return False
+            # A simultaneous collector can commit later with an earlier HTTP
+            # completion timestamp. Identical facts still preserve the ruling.
             if any(
                 _fields(event, FACT) != _fields(original, FACT)
                 for event in stream
-                if event["received"] > reviewed
+                if event["received"] >= original["received"]
             ):
                 return False
         if db.execute(
