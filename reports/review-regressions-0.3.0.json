@@ -440,5 +440,38 @@
         }
       }
     }
+  },
+  "one_pass_season_run": {
+    "observed_at": "2026-11-25T10:31:55.634084Z",
+    "heartbeat": "2026-11-25T10:31:55.627014Z",
+    "heartbeat_stale": false,
+    "seven_day_fixtures": 11,
+    "football_schedule": {
+      "scheduled_football_fixtures": 11,
+      "independently_matched": 11,
+      "unmatched": [],
+      "denominator_available": true
+    },
+    "slots": {
+      "done": 22,
+      "pending": 9974
+    },
+    "critical_windows_last_seven_days": [],
+    "recent_alerts": [
+      {
+        "fixture": null,
+        "role": "results",
+        "occurred": "2026-11-25T10:31:55.623920Z",
+        "reason": "1 quarantined EPL results"
+      },
+      {
+        "fixture": null,
+        "role": "results",
+        "occurred": "2026-11-25T10:31:55.623812Z",
+        "reason": "14 overdue EPL results: epl/2026-27/bournemouth/brentford, epl/2026-27/crystal-palace/newcastle-united, epl/2026-27/hull-city/brentford, epl/2026-27/sunderland/leeds-united, epl/2026-27/aston-villa/sunderland, epl/2026-27/bournemouth/nottingham-forest, epl/2026-27/brentford/everton, epl/2026-27/chelsea/leeds-united, epl/2026-27/coventry-city/crystal-palace, epl/2026-27/hull-city/brighton-hove-albion, epl/2026-27/liverpool/manchester-united, epl/2026-27/manchester-city/fulham"
+      }
+    ],
+    "scope": "Independent new private data directory, one bounded live coordinator invocation on Nov 25. The upcoming matchday and the separate second-receipt results study were outside this invocation.",
+    "external_notifications_sent": 0
   }
 }
