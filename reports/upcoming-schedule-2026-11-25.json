@@ -1,0 +1,141 @@
+{
+  "as_of": "2026-11-25T07:45:28.580488Z",
+  "season": "2026-27",
+  "matchweek": 12,
+  "registered": 10,
+  "matched_before": 3,
+  "corrected": 7,
+  "matched_after": 10,
+  "remaining_unmatched": 0,
+  "latest_openfootball_revision": "e6744429ee395bc86f247348c6184bb08d4eb361",
+  "openfootball_round12_raw_utc": "all ten scheduled at 2026-11-28T15:00:00Z",
+  "openligadb": {
+    "round_url": "https://api.openligadb.de/getmatchdata/pl/2026/12",
+    "received_at": "2026-11-25T07:45:28.355210Z",
+    "sha256": "0c0591fce2dd888b1dfebedba09b54ea713b6f2b13efbbd90533cb67e628a61b",
+    "licence": "https://www.openligadb.de/en/license",
+    "attribution": "Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0"
+  },
+  "fixtures": [
+    {
+      "fixture": "epl/2026-27/nottingham-forest/chelsea",
+      "home": "Nottingham Forest FC",
+      "away": "Chelsea FC",
+      "prior_registered_utc": "2026-11-27T20:00:00.000000Z",
+      "agreed_utc": "2026-11-27T20:00:00.000000Z",
+      "decision": "unchanged",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-not-che-2026-11-27",
+      "gamma_received_at": "2026-11-25T07:33:20.386522Z",
+      "gamma_sha256": "0387fe707780831a18995b2205597f2d8acd23fac5512b4e543baa28616a4854",
+      "openligadb_match_id": 86647
+    },
+    {
+      "fixture": "epl/2026-27/arsenal/manchester-city",
+      "home": "Arsenal FC",
+      "away": "Manchester City FC",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-29T16:30:00.000000Z",
+      "decision": "corrected",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-ars-mac-2026-11-29",
+      "gamma_received_at": "2026-11-25T07:33:33.149056Z",
+      "gamma_sha256": "8fe490a9987ef570a3a472b8f26aa3e844a72c07ea9214807c605bfe0672b061",
+      "openligadb_match_id": 86639
+    },
+    {
+      "fixture": "epl/2026-27/brighton-hove-albion/newcastle-united",
+      "home": "Brighton & Hove Albion FC",
+      "away": "Newcastle United FC",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-29T14:05:00.000000Z",
+      "decision": "corrected",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-bri-new-2026-11-29",
+      "gamma_received_at": "2026-11-25T07:33:33.150122Z",
+      "gamma_sha256": "ea82ab4568fa0bc38d2d47d7bb180f6d8b00fe444d29080cc57c07f3aa008a43",
+      "openligadb_match_id": 86640
+    },
+    {
+      "fixture": "epl/2026-27/crystal-palace/hull-city",
+      "home": "Crystal Palace FC",
+      "away": "Hull City AFC",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-29T14:05:00.000000Z",
+      "decision": "corrected",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-cry-hul-2026-11-29",
+      "gamma_received_at": "2026-11-25T07:33:41.495956Z",
+      "gamma_sha256": "30fb538644252d2483fc778b3ecf3647da05b8a5347762337e8cfc6f1a52591c",
+      "openligadb_match_id": 86641
+    },
+    {
+      "fixture": "epl/2026-27/everton/liverpool",
+      "home": "Everton FC",
+      "away": "Liverpool FC",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-29T12:00:00.000000Z",
+      "decision": "corrected",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-eve-liv-2026-11-29",
+      "gamma_received_at": "2026-11-25T07:33:55.745010Z",
+      "gamma_sha256": "49e41f8a5da705d857b9722bfba117c443dd4452939fcea1fdd2bb34d8ab0733",
+      "openligadb_match_id": 86642
+    },
+    {
+      "fixture": "epl/2026-27/fulham/bournemouth",
+      "home": "Fulham FC",
+      "away": "AFC Bournemouth",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-29T14:05:00.000000Z",
+      "decision": "corrected",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-ful-bou-2026-11-29",
+      "gamma_received_at": "2026-11-25T07:33:55.740526Z",
+      "gamma_sha256": "390344cb17d33bf622a8299beb0a6f814acd62d3c69c260ce3adf87d99499ba2",
+      "openligadb_match_id": 86643
+    },
+    {
+      "fixture": "epl/2026-27/ipswich-town/aston-villa",
+      "home": "Ipswich Town FC",
+      "away": "Aston Villa FC",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-28T17:30:00.000000Z",
+      "decision": "corrected",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-ips-ast-2026-11-28",
+      "gamma_received_at": "2026-11-25T07:34:08.037746Z",
+      "gamma_sha256": "4d5131acef4f2a55f4e6b05a34c561610db1efc2708d86f584c1cec52d531c83",
+      "openligadb_match_id": 86644
+    },
+    {
+      "fixture": "epl/2026-27/leeds-united/coventry-city",
+      "home": "Leeds United FC",
+      "away": "Coventry City FC",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-28T15:00:00.000000Z",
+      "decision": "unchanged",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-lee-cov-2026-11-28",
+      "gamma_received_at": "2026-11-25T07:34:08.036274Z",
+      "gamma_sha256": "ad10c7d741de144145314a939c9400af7f8813839beadaa058aa66fc9cba0f41",
+      "openligadb_match_id": 86645
+    },
+    {
+      "fixture": "epl/2026-27/manchester-united/brentford",
+      "home": "Manchester United FC",
+      "away": "Brentford FC",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-28T15:00:00.000000Z",
+      "decision": "unchanged",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-mun-bre-2026-11-28",
+      "gamma_received_at": "2026-11-25T07:34:16.511231Z",
+      "gamma_sha256": "0c678a9385cababf1ec4f29e2590a38427121df3f42cf19ebc91f5efcd5ac890",
+      "openligadb_match_id": 86646
+    },
+    {
+      "fixture": "epl/2026-27/sunderland/tottenham-hotspur",
+      "home": "Sunderland AFC",
+      "away": "Tottenham Hotspur FC",
+      "prior_registered_utc": "2026-11-28T15:00:00.000000Z",
+      "agreed_utc": "2026-11-29T14:05:00.000000Z",
+      "decision": "corrected",
+      "gamma_url": "https://gamma-api.polymarket.com/events/slug/epl-sun-tot-2026-11-29",
+      "gamma_received_at": "2026-11-25T07:34:16.508945Z",
+      "gamma_sha256": "f5f84b6db7400cedc16e46f4b58c3588fa667d85dafe68977e2dc54bd61d6608",
+      "openligadb_match_id": 86648
+    }
+  ]
+}

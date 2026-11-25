@@ -210,9 +210,16 @@ def season(root, year, *, offline=False):
                 wet.append({"scope": rnd, "status": r["fetch_status"]})
             except (ValueError, OSError, KeyError, TypeError) as exc:
                 wet.append({"scope": rnd, "status": "unavailable", "error": str(exc)})
+    from . import schedule_consensus
+
+    upcoming = schedule_consensus.sync(root, year, fetch=not offline)
     report = admission.reconcile(root, year)
     score = publications(root)
     report.update(
+        upcoming_schedules={
+            k: upcoming[k]
+            for k in ("registered", "previously_matched", "corrected", "matched")
+        },
         fetches=wet,
         fallback=fallback,
         rounds=score["rounds"],

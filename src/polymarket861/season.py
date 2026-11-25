@@ -453,6 +453,8 @@ def _daily_catalog(root, now):
     )
     if not result["page_walk_complete"]:
         raise ValueError("seven-day event catalogue exceeded page budget")
+    from . import schedule_consensus
+    schedule_consensus.sync(root,year_of(now),fetch=False)
     return {"fixtures": len(result["fixtures_observed"]), "window": result["window"]}
 
 

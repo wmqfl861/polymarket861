@@ -251,6 +251,15 @@ def archive_bytes(
 
 def register_fixture(data_dir, row: dict) -> dict:
     """Keep every schedule revision. The stable identity survives a postponement."""
+    if row.get("source") == "openligadb+gamma-schedule":
+        raise ValueError("this schedule source requires native OpenLigaDB and Gamma receipts")
+    with closing(connect(data_dir)) as db, db:
+        db.execute("BEGIN IMMEDIATE")
+        return register_fixture_db(db, row, recorded_at=now_utc())
+
+
+def register_fixture_db(db, row, *, recorded_at):
+    """Append a schedule and its original receipt in an existing write transaction."""
     values = {
         k: str(row[k]).strip()
         for k in ("fixture_id", "season", "home", "away", "source", "locator")
@@ -266,38 +275,36 @@ def register_fixture(data_dir, row: dict) -> dict:
     values.update(
         round_id=rnd, kickoff=iso(row["kickoff"]), known_at=iso(row["known_at"])
     )
-    if values["known_at"] > now_utc():
+    if values["known_at"] > recorded_at:
         raise ValueError("future schedule publication")
-    with closing(connect(data_dir)) as db, db:
-        db.execute("BEGIN IMMEDIATE")
-        old = db.execute(
-            "SELECT * FROM fixture_versions WHERE fixture_id=? ORDER BY version DESC LIMIT 1",
-            (values["fixture_id"],),
+    old = db.execute(
+        "SELECT * FROM fixture_versions WHERE fixture_id=? ORDER BY version DESC LIMIT 1",
+        (values["fixture_id"],),
+    ).fetchone()
+    if old:
+        if any(old[k] != values[k] for k in ("season", "home", "away")):
+            raise ValueError("a fixture identity cannot change teams or season")
+        same = db.execute(
+            "SELECT * FROM fixture_versions WHERE fixture_id=? AND known_at=?",
+            (values["fixture_id"], values["known_at"]),
         ).fetchone()
-        if old:
-            if any(old[k] != values[k] for k in ("season", "home", "away")):
-                raise ValueError("a fixture identity cannot change teams or season")
-            same = db.execute(
-                "SELECT * FROM fixture_versions WHERE fixture_id=? AND known_at=?",
-                (values["fixture_id"], values["known_at"]),
-            ).fetchone()
-            if same:
-                if all(same[k] == v for k, v in values.items()):
-                    return dict(same)
-                raise ValueError(
-                    "conflicting schedule values for the same publication time"
-                )
-        values["version"] = old["version"] + 1 if old else 1
-        db.execute(
-            "INSERT INTO fixture_versions VALUES "
-            "(:fixture_id,:season,:round_id,:home,:away,:kickoff,:known_at,:source,:locator,:version)",
-            values,
-        )
-        recorded = now_utc()
-        db.execute(
-            "INSERT INTO schedule_receipts VALUES (?,?,?,?)",
-            (values["fixture_id"], values["version"], recorded, precision),
-        )
+        if same:
+            if all(same[k] == v for k, v in values.items()):
+                return dict(same)
+            raise ValueError(
+                "conflicting schedule values for the same publication time"
+            )
+    values["version"] = old["version"] + 1 if old else 1
+    db.execute(
+        "INSERT INTO fixture_versions VALUES "
+        "(:fixture_id,:season,:round_id,:home,:away,:kickoff,:known_at,:source,:locator,:version)",
+        values,
+    )
+    recorded = recorded_at
+    db.execute(
+        "INSERT INTO schedule_receipts VALUES (?,?,?,?)",
+        (values["fixture_id"], values["version"], recorded, precision),
+    )
     return values | {"recorded_at": recorded, "precision": precision}
 
 
@@ -313,6 +320,9 @@ def fixture_at(data_dir, fixture_id, at=None, *, prospective=False) -> dict:
             query += "AND s.recorded_at<=? "
             args += (cutoff,)
         row = db.execute(query + "ORDER BY f.known_at DESC LIMIT 1", args).fetchone()
+        if prospective and row and row["source"] == "openligadb+gamma-schedule":
+            from . import schedule_consensus
+            schedule_consensus.attest(data_dir,db,row,cutoff)
     if not row:
         raise ValueError("no known schedule for this fixture at that time")
     return dict(row)

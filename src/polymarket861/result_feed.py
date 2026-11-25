@@ -210,7 +210,7 @@ def reconcile(root, year):
     return result
 
 
-def sync(root, year, *, round_id=None, confirm=False):
+def sync(root, year, *, round_id=None, confirm=False, require_native=False):
     from . import result_admission
 
     if not 2000 <= year <= 2100 or (round_id is not None and not 1 <= round_id <= 38):
@@ -222,6 +222,13 @@ def sync(root, year, *, round_id=None, confirm=False):
             "SELECT * FROM rf_cache WHERE season=? AND scope=?", (year, scope)
         ).fetchone()
         retry = db.execute("SELECT * FROM rf_retry WHERE season=?", (year,)).fetchone()
+        needs_first_native = (
+            require_native
+            and not db.execute(
+                "SELECT 1 FROM rf_native_requests WHERE season=? AND scope=? LIMIT 1",
+                (year, scope),
+            ).fetchone()
+        )
 
     def cached(reason):
         if not old:
@@ -234,8 +241,11 @@ def sync(root, year, *, round_id=None, confirm=False):
 
     if retry and instant(checked) < instant(retry["retry_at"]):
         return cached("backoff; retry after " + retry["retry_at"])
-    if old and instant(checked) - instant(old["checked_at"]) < (
-        result_admission.INTERVAL if confirm else timedelta(hours=6)
+    if (
+        old
+        and not needs_first_native
+        and instant(checked) - instant(old["checked_at"])
+        < (result_admission.INTERVAL if confirm else timedelta(hours=6))
     ):
         return cached("local_cache")
     # Full-season bootstrap, then small changed-round requests. A full-season
@@ -249,7 +259,12 @@ def sync(root, year, *, round_id=None, confirm=False):
             if not isinstance(parsed, str) or not parsed:
                 raise ValueError("invalid OpenLigaDB change marker")
             marker = parsed
-            if old and old["marker"] == marker and not confirm:
+            if (
+                old
+                and old["marker"] == marker
+                and not confirm
+                and not needs_first_native
+            ):
                 with closing(_db(root)) as db, db:
                     db.execute(
                         "UPDATE rf_cache SET checked_at=? WHERE season=? AND scope=?",

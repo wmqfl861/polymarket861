@@ -117,6 +117,9 @@ def _effective_rows(db, fixtures):
         authoritative_schedules[fid] = row["kickoff"]
     # A correction's local admission time also bounds its use. An operator can
     # record accurately cited older publication times without backdating live evidence.
+    from .schedule_consensus import result_links
+
+    proven_schedules, later_checks = result_links(db)
     reviewed = defaultdict(list)
     for r in db.execute(
         "SELECT r.*,s.kickoff FROM result_versions r JOIN result_schedule_refs s "
@@ -126,7 +129,18 @@ def _effective_rows(db, fixtures):
         if fid not in ids:
             continue
         at = max(r["recorded_at"], r["received_at"])
-        if at <= iso(ids[fid].kickoff) or r["kickoff"] != iso(ids[fid].kickoff):
+        raw_kickoff = iso(ids[fid].kickoff)
+        adjusted = proven_schedules.get((fid, r["kickoff"]))
+        if r["kickoff"] != raw_kickoff:
+            if (
+                not adjusted
+                or adjusted[0] > at
+                or authoritative_schedules.get(fid) != r["kickoff"]
+            ):
+                continue
+            if at <= raw_kickoff:
+                at = later_checks.get((fid, r["version"]), at)
+        if at <= raw_kickoff:
             continue
         reviewed[fid].append((at, r))
     for fid, changes in reviewed.items():
@@ -146,10 +160,19 @@ def _effective_rows(db, fixtures):
                 "archive_at": at,
                 "source": f"{r['source']}:{r['locator']}; result v{r['version']}",
             }
+            adjusted = proven_schedules.get((fid, r["kickoff"]))
+            if adjusted and r["kickoff"] != iso(ids[fid].kickoff):
+                versions[at]["schedule_proof"] = adjusted[1]
+                versions[at]["original_result_receipt"] = max(
+                    r["received_at"], r["recorded_at"]
+                )
     states = defaultdict(list)
     for change in db.execute("SELECT * FROM result_dispositions ORDER BY at"):
         fid = change["fixture_id"]
-        if fid in ids and change["kickoff"] == iso(ids[fid].kickoff):
+        if fid in ids and (
+            change["kickoff"] == iso(ids[fid].kickoff)
+            or (fid, change["kickoff"]) in proven_schedules
+        ):
             states[fid].append(change)
     for fid, changes in states.items():
         versions = streams[fid, "score"]
@@ -170,6 +193,9 @@ def _effective_rows(db, fixtures):
                     "finalized_by": at,
                     "source": change["reason"],
                 }
+                adjusted = proven_schedules.get((fid, change["kickoff"]))
+                if adjusted:
+                    versions[at]["schedule_proof"] = adjusted[1]
             elif at not in versions:
                 prior = [stamp for stamp in original if stamp <= at]
                 if prior:
@@ -186,10 +212,14 @@ def _effective_rows(db, fixtures):
         for at, row in sorted(versions.items()):
             if key[1] == "score" and at < iso(ids[key[0]].kickoff):
                 continue
-            if key[1] == "score" and authoritative_schedules.get(
-                key[0], iso(ids[key[0]].kickoff)
-            ) != iso(ids[key[0]].kickoff):
-                continue
+            if key[1] == "score":
+                effective = authoritative_schedules.get(
+                    key[0], iso(ids[key[0]].kickoff)
+                )
+                if effective != iso(ids[key[0]].kickoff):
+                    approved = proven_schedules.get((key[0], effective))
+                    if not approved or row.get("schedule_proof") != approved[1]:
+                        continue
             output.append(row)
     return output
 
