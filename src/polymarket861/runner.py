@@ -261,6 +261,8 @@ def runner_status(data_dir):
 def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
     if type(workers) is not int or workers < 1:
         raise ValueError("workers must be a positive integer")
+    if not versions:
+        pipeline.prepare_builtin(data_dir)
     observed = store.now_utc()
     clock = store.instant(observed)
     fixtures = store.eligible_fixtures(data_dir)
@@ -353,7 +355,13 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
                 champions[at] = jobs.active_version(
                     data_dir, "model", "epl", default="B1", at=at
                 )
-            selected = list(versions) or [champions[at]]
+            selected = list(versions) or [
+                jobs.model_for_decision(
+                    data_dir, f["fixture_id"], f["kickoff"], horizon, (mode,), at
+                )
+                if champions[at].startswith("B1@")
+                else champions[at]
+            ]
             if not versions and horizon == "T-60m":
                 selected.extend(
                     c["version"]

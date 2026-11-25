@@ -21,6 +21,7 @@ from .jobs_research import (
     evaluate_candidate,
     experiment_status,
     get_candidate,
+    model_for_decision,
     register_candidate,
     register_cli,
     review_due_experiments,

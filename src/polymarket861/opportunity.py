@@ -401,8 +401,13 @@ def _process_fixture(data_dir, slug, account, fixture_id, report):
         report.update(fixture_id=fixture["fixture_id"], decision_at=store.iso(cutoff))
         if cutoff - timedelta(seconds=30) <= clock <= cutoff:
             store.require_formal(data_dir, at=store.iso(clock))
-            version = jobs.active_version(
-                data_dir, "model", "epl", default="B1", at=store.iso(clock)
+            version = jobs.model_for_decision(
+                data_dir,
+                fixture["fixture_id"],
+                kickoff,
+                "T-60m",
+                ("formal",),
+                store.iso(clock),
             )
             seal = _forecast(data_dir, fixture, cutoff, clock, version)
             entries = archive.contracts(data_dir, slug, as_of=store.iso(clock))

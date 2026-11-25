@@ -304,8 +304,13 @@ def _formal_authority(data_dir, account, intent, seal, cutoff):
     ):
         raise ValueError("candidate key does not match account role")
     if role == "main":
-        incumbent = jobs.active_version(
-            data_dir, "model", "epl", default="B1", at=iso(cutoff)
+        incumbent = jobs.model_for_decision(
+            data_dir,
+            seal.get("fixture_id"),
+            seal.get("kickoff"),
+            "T-60m",
+            ("formal",),
+            iso(cutoff),
         )
         if version != incumbent:
             raise ValueError(

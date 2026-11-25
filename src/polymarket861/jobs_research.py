@@ -151,9 +151,57 @@ def active_version(data_dir, kind="model", scope="epl", default=None, *, at=None
     def read():
         with dbscope.reading(data_dir, _open) as conn:
             version, _ = _pointer(conn, kind, scope, at)
+            if version is None and (kind, scope, default) == ("model", "epl", "B1"):
+                return store.builtin_model_at(conn, at)
             return version if version is not None else default
 
     return dbscope.checked(data_dir, ("active_version", kind, scope, default, at), read)
+
+
+def model_for_decision(data_dir, fixture_id, kickoff, horizon, modes, at):
+    """An installed build cannot replace an already sealed default within this decision window."""
+    current = active_version(data_dir, "model", "epl", default="B1", at=at)
+    if not fixture_id or not kickoff or not current.startswith("B1@"):
+        return current
+
+    def choose():
+        from .pipeline import _verified_seal
+
+        with dbscope.reading(data_dir, _open) as db:
+            if (
+                _pointer(db, "model", "epl", at)[0]
+                or store.builtin_model_at(db, at) != current
+            ):
+                return current
+            placeholders = ",".join("?" for _ in modes)
+            rows = db.execute(
+                "SELECT * FROM forecast_seals WHERE fixture_id=? AND kickoff=? AND horizon=? AND protocol=? "
+                f"AND mode IN ({placeholders}) AND sealed_at<=? AND (model_version='B1' OR model_version IN "
+                "(SELECT version FROM builtin_model_releases)) ORDER BY CASE mode WHEN 'formal' THEN 0 ELSE 1 END,sealed_at",
+                (
+                    fixture_id,
+                    store.iso(kickoff),
+                    horizon,
+                    store.PROTOCOL,
+                    *modes,
+                    store.iso(at),
+                ),
+            )
+            for row in rows:
+                if (
+                    _pointer(db, "model", "epl", row["sealed_at"])[0] is None
+                    and store.builtin_model_at(db, row["sealed_at"])
+                    == row["model_version"]
+                ):
+                    if _verified_seal(row).get("purpose", "main") == "main":
+                        return row["model_version"]
+        return current
+
+    return dbscope.checked(
+        data_dir,
+        ("builtin_decision", fixture_id, kickoff, horizon, tuple(modes), at),
+        choose,
+    )
 
 
 def active_candidate(data_dir, kind="model", scope="epl", *, at=None):
@@ -337,8 +385,13 @@ def register_candidate(
         ).fetchone()
         if active and active[0] != baseline:
             raise ValueError("Baseline must equal the active local version")
-        if kind == "model" and scope == "epl" and not active and baseline != "B1":
-            raise ValueError("The initial EPL champion is B1")
+        if (
+            kind == "model"
+            and scope == "epl"
+            and not active
+            and baseline != store.builtin_model_at(conn, now)
+        ):
+            raise ValueError("Baseline must equal the active built-in B1 release")
         peers = conn.execute(
             "SELECT kind,scope,first,span,baseline FROM research_candidates WHERE season=?",
             (season,),

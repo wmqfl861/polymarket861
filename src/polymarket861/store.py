@@ -94,6 +94,9 @@ CREATE TABLE IF NOT EXISTS result_time_grades (
 CREATE TABLE IF NOT EXISTS model_recipes (
     version TEXT PRIMARY KEY, recipe TEXT NOT NULL, registered_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS builtin_model_releases (
+    id INTEGER PRIMARY KEY, version TEXT NOT NULL REFERENCES model_recipes(version), effective_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS forecast_seals (
     fixture_id TEXT NOT NULL, kickoff TEXT NOT NULL, cutoff TEXT NOT NULL, horizon TEXT NOT NULL,
     model_version TEXT NOT NULL, protocol TEXT NOT NULL, mode TEXT NOT NULL, sealed_at TEXT NOT NULL,
@@ -179,6 +182,14 @@ def list_reports(data_dir, kind: str | None = None) -> list[dict]:
             (kind,) if kind is not None else (),
         )
         return [dict(row) | {"payload": json.loads(row["payload"])} for row in rows]
+
+
+def builtin_model_at(db, at=None):
+    row = db.execute(
+        "SELECT version FROM builtin_model_releases WHERE effective_at<=? ORDER BY effective_at DESC,id DESC LIMIT 1",
+        (iso(at or now_utc()),),
+    ).fetchone()
+    return row[0] if row else "B1"
 
 
 def blob_path(root, sha: str) -> Path:

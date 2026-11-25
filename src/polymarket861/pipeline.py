@@ -13,6 +13,7 @@ from . import evidence, football, paired_proof
 from .round_history import publish_round, register_history
 from .store import (
     PROTOCOL,
+    builtin_model_at,
     canonical,
     connect,
     digest,
@@ -31,8 +32,8 @@ HORIZONS = {"T-24h": timedelta(hours=24), "T-60m": timedelta(minutes=60)}
 FAMILIES = ("B0", "B1", "B2")
 
 
-def register_recipe(data_dir, version, family, *, lines=(0.5, 1.5, 2.5, 3.5)):
-    if family not in FAMILIES or not isinstance(version, str) or not version.strip():
+def _build_recipe(family, lines):
+    if family not in FAMILIES:
         raise ValueError("select a version name and a supported B0/B1/B2 family")
     if not lines or any(
         isinstance(x, bool) or float(x) < 0.5 or float(x) % 1 != 0.5 or float(x) > 20
@@ -44,11 +45,17 @@ def register_recipe(data_dir, version, family, *, lines=(0.5, 1.5, 2.5, 3.5)):
         Path(football.__file__).with_name("football_model.py"),
     ]
     code = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in parts}
-    recipe = {
+    return {
         "family": family,
         "algorithm_source": code,
         "lines": sorted(set(map(float, lines)) | {1.5, 2.5}),
     }
+
+
+def register_recipe(data_dir, version, family, *, lines=(0.5, 1.5, 2.5, 3.5)):
+    if not isinstance(version, str) or not version.strip():
+        raise ValueError("model version must have a name")
+    recipe = _build_recipe(family, lines)
     with closing(connect(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         old = db.execute(
@@ -64,6 +71,45 @@ def register_recipe(data_dir, version, family, *, lines=(0.5, 1.5, 2.5, 3.5)):
                 (version, canonical(recipe), now_utc()),
             )
     return {"version": version, "recipe": recipe, "recipe_digest": digest(recipe)}
+
+
+def prepare_builtin(data_dir):
+    """Select a new immutable build for the default family, leaving every registered experiment intact."""
+    with closing(connect(data_dir)) as db:
+        old = db.execute(
+            "SELECT recipe FROM model_recipes WHERE version='B1'"
+        ).fetchone()
+        if not old:
+            return "B1"
+        bound = json.loads(old[0])
+        recipe = _build_recipe("B1", (0.5, 1.5, 2.5, 3.5))
+        if bound.get("family") != "B1" or bound.get("lines") != recipe["lines"]:
+            return (
+                "B1"  # Operator-defined recipes never opt into bundled build updates.
+            )
+        version = "B1" if bound == recipe else "B1@" + digest(recipe)
+        if builtin_model_at(db) == version:
+            return version
+        with db:
+            db.execute("BEGIN IMMEDIATE")
+            if builtin_model_at(db) != version:
+                now = now_utc()
+                db.execute(
+                    "INSERT OR IGNORE INTO model_recipes VALUES(?,?,?)",
+                    (version, canonical(recipe), now),
+                )
+                stored = db.execute(
+                    "SELECT recipe FROM model_recipes WHERE version=?", (version,)
+                ).fetchone()
+                if json.loads(stored[0]) != recipe:
+                    raise ValueError(
+                        "builtin release is bound to a different executable recipe"
+                    )
+                db.execute(
+                    "INSERT INTO builtin_model_releases(version,effective_at) VALUES(?,?)",
+                    (version, now),
+                )
+    return version
 
 
 def _recipe(data_dir, version):
@@ -97,10 +143,33 @@ def _lineups(context):
 
 def _existing(db, fixture, horizon, version, mode):
     return db.execute(
-        "SELECT data_json,digest FROM forecast_seals WHERE fixture_id=? AND kickoff=? "
+        "SELECT * FROM forecast_seals WHERE fixture_id=? AND kickoff=? "
         "AND horizon=? AND model_version=? AND protocol=? AND mode=?",
         (fixture["fixture_id"], fixture["kickoff"], horizon, version, PROTOCOL, mode),
     ).fetchone()
+
+
+def _verified_seal(row):
+    payload = json.loads(row["data_json"])
+    if digest(payload) != row["digest"]:
+        raise ValueError("sealed forecast hash mismatch")
+    for key in (
+        "fixture_id",
+        "kickoff",
+        "cutoff",
+        "horizon",
+        "model_version",
+        "protocol",
+        "mode",
+        "sealed_at",
+    ):
+        if payload.get(key) != row[key]:
+            raise ValueError("sealed forecast identity or clock mismatch")
+    if row["mode"] != "replay" and (
+        row["sealed_at"] > row["cutoff"] or row["cutoff"] >= row["kickoff"]
+    ):
+        raise ValueError("sealed forecast has inconsistent pregame clocks")
+    return payload | {"digest": row["digest"]}
 
 
 def make_forecast(
@@ -115,7 +184,7 @@ def make_forecast(
     archive_lag_hours=None,
     _snapshot=None,
 ):
-    from .jobs import active_version
+    from .jobs import active_version, model_for_decision
 
     if mode not in ("technical", "formal", "replay") or horizon not in (
         *HORIZONS,
@@ -134,10 +203,7 @@ def make_forecast(
     champion = active_version(
         data_dir, "model", "epl", default="B1", at=iso(min(deadline, arrival))
     )
-    version = version or champion
-    purpose = "main" if champion == version else "candidate"
-    selected = _recipe(data_dir, version)
-    recipe = selected["recipe"]
+    requested = version
     if not replay:
         current_schedule = fixture_at(
             data_dir, fixture_id, at=arrival, prospective=True
@@ -148,13 +214,19 @@ def make_forecast(
             raise ValueError("schedule changed; retry")
     if mode == "formal":
         require_formal(data_dir, at=arrival)
+    if not requested and not replay:
+        champion = model_for_decision(
+            data_dir,
+            fixture_id,
+            fixture["kickoff"],
+            horizon,
+            (mode,),
+            iso(min(deadline, arrival)),
+        )
     with closing(connect(data_dir)) as db:
-        sealed = _existing(db, fixture, horizon, version, mode)
+        sealed = _existing(db, fixture, horizon, requested or champion, mode)
     if sealed and not replay:
-        payload = json.loads(sealed["data_json"])
-        if digest(payload) != sealed["digest"]:
-            raise ValueError("sealed forecast hash mismatch")
-        return payload | {"digest": sealed["digest"]}
+        return _verified_seal(sealed)
     if not replay:
         if arrival >= kickoff or (
             horizon != "early"
@@ -165,6 +237,31 @@ def make_forecast(
             )
     if replay and arrival < deadline:
         raise ValueError("cannot replay a future decision")
+    if replay and root is None and _snapshot is None:
+        raise ValueError("historical replay requires its input archive")
+
+    if requested is None and (champion == "B1" or champion.startswith("B1@")):
+        build = prepare_builtin(data_dir)
+        # An unscheduled early observation starts now. Its frame cannot predate a
+        # build installed during this invocation; the named T-24/T-60 deadlines stay fixed.
+        if horizon == "early":
+            deadline = instant(now_utc())
+        champion = active_version(
+            data_dir,
+            "model",
+            "epl",
+            default="B1",
+            at=iso(min(deadline, instant(now_utc()))),
+        )
+        version = build if replay else champion
+    else:
+        version = requested or champion
+    purpose = "main" if champion == version else "candidate"
+    selected = _recipe(data_dir, version)
+    recipe = selected["recipe"]
+    if replay:
+        with closing(connect(data_dir)) as db:
+            sealed = _existing(db, fixture, horizon, version, mode)
 
     def schedules(cutoff, prospective):
         timestamp = iso(cutoff)
@@ -355,9 +452,7 @@ def make_forecast(
         db.execute("BEGIN IMMEDIATE")
         existing = _existing(db, fixture, horizon, version, mode)
         if existing:
-            old = json.loads(existing["data_json"])
-            if digest(old) != existing["digest"]:
-                raise ValueError("sealed forecast hash mismatch")
+            old = _verified_seal(existing)
             if replay:
                 paired_proof.check_replay_cache(old, proof)
             return old | {"digest": existing["digest"]}
@@ -467,12 +562,13 @@ def replay_round(
     season,
     number,
     *,
-    version="B1",
+    version=None,
     horizon="T-60m",
     evidence_path=None,
     archive_lag_hours=None,
 ):
     """Exercise the same seal and scoreboard with a fixed historical fixture denominator."""
+    version = version or prepare_builtin(data_dir)
     snapshot = paired_proof.capture_history(
         data_dir, root, evidence_path, archive_lag_hours
     )
@@ -584,7 +680,12 @@ def register(subparsers):
     ).add_subparsers(required=True)
     cmd = forecasts.add_parser("make")
     cmd.add_argument("fixture_id")
-    cmd.add_argument("root", type=Path)
+    cmd.add_argument(
+        "root",
+        type=Path,
+        nargs="?",
+        help="已登记的输入目录，真实赛前预测默认使用最近验证的档案",
+    )
     cmd.add_argument(
         "--mode", choices=["technical", "formal", "replay"], default="technical"
     )
@@ -622,7 +723,7 @@ def register(subparsers):
     cmd.add_argument("root", type=Path)
     cmd.add_argument("season")
     cmd.add_argument("round_id", type=int)
-    cmd.add_argument("--model-version", default="B1")
+    cmd.add_argument("--model-version")
     cmd.add_argument("--horizon", choices=list(HORIZONS), default="T-60m")
     cmd.add_argument("--evidence", type=Path)
     cmd.add_argument("--archive-lag-hours", type=float)
@@ -641,7 +742,7 @@ def register(subparsers):
     cmd = forecasts.add_parser("round")
     cmd.add_argument("season")
     cmd.add_argument("round_id", type=int)
-    cmd.add_argument("--model-version", default="B1")
+    cmd.add_argument("--model-version")
     cmd.add_argument(
         "--mode", choices=["technical", "formal", "replay"], default="formal"
     )

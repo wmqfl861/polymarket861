@@ -115,7 +115,14 @@ def book(db, root, contract, target, kickoff, stage, *, seen_by):
 
 def forecast(root, fixture, cutoff, seen_by):
     when = iso(instant(seen_by))
-    version = jobs.active_version(root, "model", "epl", default="B1", at=when)
+    version = jobs.model_for_decision(
+        root,
+        fixture["fixture_id"],
+        fixture["kickoff"],
+        "T-60m",
+        ("formal", "technical"),
+        when,
+    )
     with closing(store.connect(root)) as db:
         rows = db.execute(
             "SELECT * FROM forecast_seals WHERE fixture_id=? AND kickoff=? AND cutoff=? AND horizon='T-60m' "

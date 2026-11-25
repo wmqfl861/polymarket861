@@ -179,17 +179,32 @@ def _grade(fixtures, seals, season, round_id, horizon, mode, version):
     }
 
 
+def _default_version(db, season, round_id, horizon, mode):
+    # A date-spanning rollout can give one round two separate, immutable reports.
+    # The default view opens the latest match's primary release; an explicit label always selects its own edition.
+    row = db.execute(
+        "SELECT s.model_version FROM forecast_seals s JOIN fixture_versions f ON s.fixture_id=f.fixture_id AND s.kickoff=f.kickoff "
+        "WHERE f.season=? AND f.round_id=? AND s.horizon=? AND s.mode=? AND s.protocol=? AND "
+        "(json_extract(s.data_json,'$.purpose')='main' OR (json_extract(s.data_json,'$.purpose') IS NULL AND s.model_version='B1') OR "
+        "(s.mode='replay' AND s.model_version IN (SELECT version FROM builtin_model_releases))) "
+        "ORDER BY s.kickoff DESC,s.sealed_at DESC LIMIT 1",
+        (season, round_id, horizon, mode, store.PROTOCOL),
+    ).fetchone()
+    return row[0] if row else "B1"
+
+
 def publish_round(
-    data_dir, season, round_id, *, version="B1", mode="formal", horizon="T-60m"
+    data_dir, season, round_id, *, version=None, mode="formal", horizon="T-60m"
 ):
     """Read the sports labels and immutable seals, grade, append and update the current view atomically."""
     if type(round_id) is not int or not 1 <= round_id <= 38:
         raise ValueError("unknown EPL round")
-    key = _key(season, round_id, horizon, mode, version)
     with closing(store.connect(data_dir)) as db, db:
         # Take the write reservation before reading any input. A concurrent
         # review or correction either precedes this snapshot or follows it.
         db.execute("BEGIN IMMEDIATE")
+        version = version or _default_version(db, season, round_id, horizon, mode)
+        key = _key(season, round_id, horizon, mode, version)
         head = _initialize(db, key)
         fixtures = [
             f
@@ -246,7 +261,7 @@ def round_history(
     season,
     round_id,
     *,
-    version="B1",
+    version=None,
     mode="formal",
     horizon="T-60m",
     edition=None,
@@ -255,9 +270,10 @@ def round_history(
         raise ValueError("unknown EPL round")
     if edition is not None and (type(edition) is not int or edition < 1):
         raise ValueError("edition must be a positive integer")
-    key = _key(season, round_id, horizon, mode, version)
     with closing(store.connect(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
+        version = version or _default_version(db, season, round_id, horizon, mode)
+        key = _key(season, round_id, horizon, mode, version)
         _initialize(db, key)
         if edition is not None:
             found = db.execute(
@@ -304,7 +320,7 @@ def register_history(forecasts):
     )
     p.add_argument("season")
     p.add_argument("round_id", type=int)
-    p.add_argument("--model-version", default="B1")
+    p.add_argument("--model-version")
     p.add_argument(
         "--mode", choices=["technical", "formal", "replay"], default="formal"
     )
