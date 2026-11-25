@@ -1,0 +1,111 @@
+{
+  "as_of": "2026-11-25T10:31:35.857698Z",
+  "assessment": null,
+  "baseline": "B1",
+  "candidate": "B0-comparator",
+  "currently_scheduled_window_fixtures": 270,
+  "evidence_track": "probability-research-24h",
+  "experiment_key": "league-frequency-vs-team-strength",
+  "experiment_state": "shadow",
+  "history": {
+    "baseline_count": 760,
+    "baseline_recipe": "9d143bba620fb87328557f5095a28f503d9c46a98624c66638ccc3e5160a52d3",
+    "baseline_score": 74.79192453945089,
+    "baseline_sha256": "797b0f8304d10faeaa3870f90e2d6685190a6f2db57c14f2e98b0aa30a4d6fca",
+    "candidate_count": 760,
+    "candidate_recipe": "08d8442f8e46750707a1b7ae73cbf78ea7a942e5f3214e6529e704d49db4f2fc",
+    "candidate_score": 73.47423245614017,
+    "candidate_sha256": "0af23e7e9a60f9e72aab46c77474335eb029dcfde63a6d6d7c570d2c0430cf6c",
+    "changed_predictions": 758,
+    "changed_training_views": 0,
+    "comparison_rejections": {},
+    "denominator": 760,
+    "formal_eligibility": false,
+    "historical_context": "no_archived_news_or_lineups",
+    "history_quality": "24h_lag_sensitivity_final_archive_schedule",
+    "inference": {
+      "critical_t": 2.8924499922513207,
+      "degrees_of_freedom": 75,
+      "family_comparisons": 10,
+      "family_confidence": 0.95,
+      "individual_confidence": 0.995,
+      "matches": 760,
+      "method": "round-cluster-t-v1",
+      "rounds": 76,
+      "unit": "season_and_official_round"
+    },
+    "input_blobs": {
+      "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+      "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+      "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+      "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+      "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+    },
+    "intervals": {
+      "away": {
+        "difference": -0.9588053378289854,
+        "lower": -2.179485330153523,
+        "standard_error": 0.42202285107595877,
+        "upper": 0.2618746544955519
+      },
+      "home": {
+        "difference": -1.6018012640288175,
+        "lower": -2.842802550955057,
+        "standard_error": 0.4290484849351928,
+        "upper": -0.36079997710257805
+      },
+      "overall": {
+        "difference": -1.3176920833104757,
+        "lower": -2.104266820118699,
+        "standard_error": 0.27194065201313916,
+        "upper": -0.5311173465022523
+      },
+      "result": {
+        "difference": -2.6905562686912776,
+        "lower": -3.850311310908035,
+        "standard_error": 0.40095940995476603,
+        "upper": -1.5308012264745205
+      },
+      "total": {
+        "difference": -0.019605462692818234,
+        "lower": -0.8779990933395868,
+        "standard_error": 0.29677043093099187,
+        "upper": 0.8387881679539503
+      }
+    },
+    "method": "T60-final-schedule-result-lag24h-v1",
+    "paired_count": 760,
+    "rounds": 76,
+    "seasons": [
+      "2024-25",
+      "2025-26"
+    ]
+  },
+  "named_reviews": [],
+  "prospective_expected_matches": 380,
+  "prospective_same_mode_fixture_pairs": 0,
+  "prospective_seals": 0,
+  "prospective_seals_by_version": {
+    "B0-comparator": 0,
+    "B1": 0
+  },
+  "prospective_window": [
+    [
+      "2026-27",
+      12
+    ],
+    [
+      "2027-28",
+      11
+    ]
+  ],
+  "registered_at": "2026-11-25T10:31:30.613810Z",
+  "registration_digest": "c586e1f9e2ea28178f91960a35843d957dc7a48f1e5744465036592e40d8882d",
+  "registration_receipt_sha256": "7e36bf1716cb0d7c26954bcee36b5dc6f25f0aa89a130226ef4d610949d693c3",
+  "registration_schedule_receipt_range": [
+    "2026-11-25T10:31:30.595359Z",
+    "2026-11-25T10:31:30.595359Z"
+  ],
+  "state_context": "isolated-probability-study-v1",
+  "window_fixture_labels_known_at_registration": 270
+}
