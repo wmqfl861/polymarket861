@@ -445,7 +445,10 @@ class StrategyTests(unittest.TestCase):
         self.assertEqual(switched["status"], "promoted")
         self.assertEqual(switched["approval"]["reviewer"],"trial steward")
         self.assertEqual(S.active(self.root)["max_orders"], 0)
-        S.rollback(self.root, "stand-aside", "test rollback to incumbent")
+        with self.assertRaisesRegex(ValueError,"named reviewer"):
+            S.rollback(self.root,"stand-aside","test rollback")
+        S.rollback(self.root, "stand-aside", "test rollback to incumbent",reviewer="duty steward")
+        self.assertEqual(S.status(self.root)["events"][-1]["reviewer"],"duty steward")
         self.assertEqual(S.active(self.root), S.recipe({}))
 
 

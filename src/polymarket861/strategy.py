@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS selection_orders(account TEXT NOT NULL,intent_id TEXT
  PRIMARY KEY(account,intent_id));
 CREATE TABLE IF NOT EXISTS selection_history_manifests(account TEXT PRIMARY KEY, fingerprint TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS selection_recommendations(trial TEXT PRIMARY KEY, evidence TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS selection_signatures(event_id INTEGER PRIMARY KEY, reviewer TEXT NOT NULL, reason TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS selection_events(id INTEGER PRIMARY KEY,trial TEXT NOT NULL,action TEXT NOT NULL,
  at TEXT NOT NULL,recipe TEXT NOT NULL,fingerprint TEXT NOT NULL);
 """
@@ -1363,9 +1364,13 @@ def promote(data_dir, key, *, reviewer=None, reason=None):
                 "selection baseline changed or this revealed trial was rolled back"
             )
         evidence = evidence | {"approval": signature}
-        db.execute(
+        event = db.execute(
             "INSERT INTO selection_events(trial,action,at,recipe,fingerprint) VALUES(?,?,?,?,?)",
             (key, "promoted", now, packed(spec["candidate"]), digest(evidence)),
+        )
+        db.execute(
+            "INSERT INTO selection_signatures VALUES(?,?,?)",
+            (event.lastrowid, signature["reviewer"], signature["reason"]),
         )
         db.execute(
             "UPDATE selection_trials SET status='promoted',result=? WHERE key=?",
@@ -1376,9 +1381,8 @@ def promote(data_dir, key, *, reviewer=None, reason=None):
     return result
 
 
-def rollback(data_dir, key, reason):
-    if not str(reason).strip():
-        raise ValueError("a rollback requires a reason")
+def rollback(data_dir, key, reason, *, reviewer=None):
+    signature = stats.signoff(reviewer, reason)
     with database(data_dir, True) as db:
         trial = _trial(db, key)
         now = store.now_utc()
@@ -1386,9 +1390,19 @@ def rollback(data_dir, key, reason):
             raise ValueError(
                 "only the current promoted selection trial can be rolled back"
             )
-        db.execute(
+        event = db.execute(
             "INSERT INTO selection_events(trial,action,at,recipe,fingerprint) VALUES(?,?,?,?,?)",
-            (key, "rolled_back", now, packed(trial["spec"]["baseline"]), str(reason)),
+            (
+                key,
+                "rolled_back",
+                now,
+                packed(trial["spec"]["baseline"]),
+                digest(signature),
+            ),
+        )
+        db.execute(
+            "INSERT INTO selection_signatures VALUES(?,?,?)",
+            (event.lastrowid, signature["reviewer"], signature["reason"]),
         )
         db.execute(
             "UPDATE selection_trials SET status='rolled_back' WHERE key=?", (key,)
@@ -1397,7 +1411,7 @@ def rollback(data_dir, key, reason):
             "trial": key,
             "status": "rolled_back",
             "active": trial["spec"]["baseline"],
-            "reason": reason,
+            **signature,
         }
 
 
@@ -1413,7 +1427,9 @@ def status(data_dir):
             ],
             "events": [
                 dict(r)
-                for r in db.execute("SELECT * FROM selection_events ORDER BY at,id")
+                for r in db.execute(
+                    "SELECT e.*,s.reviewer,s.reason FROM selection_events e LEFT JOIN selection_signatures s ON s.event_id=e.id ORDER BY e.at,e.id"
+                )
             ],
             "approvals": [
                 {"trial": r[0], "approval": json.loads(r[1])["approval"]}
@@ -1475,7 +1491,10 @@ def register(subparsers):
     p = subs.add_parser("rollback")
     p.add_argument("key")
     p.add_argument("--reason", required=True)
-    p.set_defaults(func=lambda a: rollback(a.data_dir, a.key, a.reason))
+    p.add_argument("--reviewer", required=True)
+    p.set_defaults(
+        func=lambda a: rollback(a.data_dir, a.key, a.reason, reviewer=a.reviewer)
+    )
     p = subs.add_parser("status")
     p.set_defaults(func=lambda a: status(a.data_dir))
 

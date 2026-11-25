@@ -8,7 +8,7 @@
 | 选单策略 | `strategy score KEY` 核实双方同一机会池、各自选择和资金流、入场与收盘原件。历史、前向两阶段分别合格。 | 运行 `strategy promote KEY --reviewer NAME --reason TEXT`，重验推荐、证据和同窗排名。 |
 | 字段来源 | `experiment evaluate KEY` 核实免费许可、可用于预测、独立上游的字段参考、及时性、正确性和覆盖。登记 `activation_policy`。 | `auto_independent_reference` 通过时自动切换该字段。`named_review` 通过后仍须具名审批。 |
 
-署名和理由记入本机审计记录。准入材料更新时须重新核验。末轮自动评估和候选研究命令生成研究记录，模型与选单的启用记录由具名审批产生。
+署名和理由记入本机审计记录。需要恢复前一基线时，运行 `experiment rollback KEY --reviewer NAME --reason TEXT` 或 `strategy rollback KEY --reviewer NAME --reason TEXT`。准入材料更新时须重新核验。末轮自动评估和候选研究命令生成研究记录，模型与选单的启用记录由具名审批产生。
 
 每场先计算候选与基线之差。设第 $g$ 个官方轮有 $n_g$ 个有效配对且差值合计为 $S_g$，共 $G$ 轮、$N$ 场。总体均差为 $d=\sum_g S_g/N$，聚类标准误为 $\sqrt{G\sum_g(S_g-n_g d)^2/(G-1)}/N$。两侧区间取 $G-1$ 自由度的 Student t 临界值。模型试验同时校正候选数、历史与前向两阶段、总分与四个子项。策略校正候选数及两个阶段。聚类解释依赖不同轮的误差近似独立。普通 B1 对 B0 五季回测沿用已公布的按轮百分位区间。
 

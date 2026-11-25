@@ -221,7 +221,7 @@ class ResearchTests(TempStore):
                 self.assertEqual(jobs.active_candidate(self.root)["key"],"candidate")
                 self.assertIsNone(jobs.active_version(self.root,at=self.registered))
             with patch.object(store,"now_utc",return_value="2031-05-26T09:00:00.000000Z"):
-                jobs.rollback_candidate(self.root,"candidate",reason="fixture mapping revised")
+                jobs.rollback_candidate(self.root,"candidate",reason="fixture mapping revised",reviewer="league analyst")
                 self.assertEqual(jobs.active_version(self.root),"B1")
                 self.assertEqual(jobs.active_version(self.root,at=self.judged),"B2-trial")
                 self.assertEqual(jobs.evaluate_candidate(self.root,"candidate")["state"],"rolled_back")

@@ -75,7 +75,10 @@ class SourceRolloutTests(unittest.TestCase):
             patch.object(evidence, "now_utc", return_value=after),
         ):
             jobs.rollback_candidate(
-                case.root, "new-lineups", reason="incomplete source semantics"
+                case.root,
+                "new-lineups",
+                reviewer="source duty officer",
+                reason="incomplete source semantics",
             )
             self.assertFalse(confirmed(after))
             self.assertTrue(confirmed(when))

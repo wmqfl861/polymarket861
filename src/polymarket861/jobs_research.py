@@ -947,9 +947,8 @@ def _judge(data_dir, key, *, approval=None):
         return _get(conn, key)
 
 
-def rollback_candidate(data_dir, key, *, reason):
-    if not isinstance(reason, str) or not reason.strip():
-        raise ValueError("Record the reason for rollback")
+def rollback_candidate(data_dir, key, *, reason, reviewer=None):
+    signature = stats.signoff(reviewer, reason)
     with closing(_open(data_dir)) as conn, conn:
         conn.execute("BEGIN IMMEDIATE")
         c = _get(conn, key)
@@ -976,7 +975,7 @@ def rollback_candidate(data_dir, key, *, reason):
             {
                 "restored_version": c["baseline"],
                 "restored_candidate": previous,
-                "reason": reason,
+                **signature,
             },
         )
         store.put_report(conn, "experiment", key, _get(conn, key))
@@ -1170,7 +1169,12 @@ def register_cli(subparsers):
     undo = actions.add_parser("rollback")
     undo.add_argument("key")
     undo.add_argument("--reason", required=True)
+    undo.add_argument("--reviewer", required=True)
     undo.set_defaults(
-        func=lambda a: rollback_candidate(a.data_dir, a.key, reason=a.reason),
-        handler=lambda a: rollback_candidate(a.data_dir, a.key, reason=a.reason),
+        func=lambda a: rollback_candidate(
+            a.data_dir, a.key, reason=a.reason, reviewer=a.reviewer
+        ),
+        handler=lambda a: rollback_candidate(
+            a.data_dir, a.key, reason=a.reason, reviewer=a.reviewer
+        ),
     )
