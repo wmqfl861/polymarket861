@@ -47,7 +47,7 @@ pm861 --data-dir .pm861 dashboard export --output .pm861/dashboard.html
 
 表格里的命令均接在 `pm861 --data-dir 运行目录` 之后。联网接口失败会记录缺口。标准评分或账本能够独立运行，本地 Codex 只用于有权限的维护和研究任务。当前运行目录、原始响应、密钥和登录状态保存在用户本机。
 
-[研究影子、兑付与轮报](docs/MATCHDAY.md) · [两个候选的五季配对试验](docs/football-candidate-experiments.md)
+[研究影子、兑付与轮报](docs/MATCHDAY.md) · [两个候选的五季配对试验](docs/football-candidate-experiments.md) · [全季采集与回补实测](reports/season-collector-validation.json)
 
 ## 已经测到了什么
 
