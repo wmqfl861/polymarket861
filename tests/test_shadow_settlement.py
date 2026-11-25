@@ -1,4 +1,5 @@
 import concurrent.futures
+import json
 import unittest
 from contextlib import closing
 from datetime import timedelta
@@ -221,7 +222,7 @@ class ShadowAndSettlement(unittest.TestCase):
                         lambda _: settlement.sync(self.root, cached_only=True), range(2)
                     )
                 )
-            self.assertTrue(all(r["states"] == {"settled": 2} for r in results))
+            self.assertTrue(all(r["examined"] == 0 for r in results))
             self.assertEqual(settlement.queue(self.root)["rows"], [])
             self.assertEqual(
                 (
@@ -246,6 +247,95 @@ class ShadowAndSettlement(unittest.TestCase):
                 ),
                 cash,
             )
+
+    def test_due_settlement_audits_yield_to_open_positions_without_starvation(self):
+        self.open()
+        at = f.KICK + timedelta(hours=4)
+        self.resolution(1, at)
+        with (
+            f.at(at),
+            patch.object(settlement, "_regulation", return_value=self.score()),
+        ):
+            self.assertEqual(
+                settlement.sync(self.root, cached_only=True)["states"], {"settled": 1}
+            )
+            with shadow.db_for(self.root) as db:
+                row = db.execute("SELECT * FROM research_shadow_orders").fetchone()
+                for i in range(3):
+                    out = json.loads(row["result"])
+                    out.update(status="held")
+                    db.execute(
+                        "INSERT INTO research_shadow_orders VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                        (
+                            row["account"],
+                            f"open-{i}",
+                            f"fixture-{i}",
+                            f"slug-{i}",
+                            row["cutoff"],
+                            str(i),
+                            f"cond-{i}",
+                            "held",
+                            row["plan_sha"],
+                            row["plan"],
+                            json.dumps(out),
+                        ),
+                    )
+            just_before = at + timedelta(days=1, microseconds=-1)
+            self.assertTrue(
+                all(
+                    p["status"] == "held"
+                    for p in settlement._positions(self.root, None, 4, just_before)
+                )
+            )
+            tomorrow = at + timedelta(days=1)
+            two = settlement._positions(self.root, None, 2, tomorrow)
+            self.assertEqual([p["status"] for p in two], ["held", "settled"])
+            # With only one available slot, a stale audit is served after open work, and
+            # a fresh check always returns the following slot to the outstanding holdings.
+            with f.at(tomorrow):
+                settlement._record(
+                    self.root,
+                    two[0],
+                    "pending",
+                    "awaiting token",
+                    {"position_was_settled": False},
+                )
+                audit = settlement._positions(self.root, None, 1, tomorrow)[0]
+                self.assertEqual(audit["status"], "settled")
+                settlement._record(
+                    self.root, audit, "settled", None, {"position_was_settled": True}
+                )
+                self.assertEqual(
+                    settlement._positions(self.root, None, 1, tomorrow)[0]["status"],
+                    "held",
+                )
+            self.assertFalse(
+                any(
+                    p["status"] == "settled"
+                    for p in settlement._positions(self.root, None, 4, tomorrow)
+                )
+            )
+
+    def test_terminal_token_is_refetched_only_when_daily_exchange_receipt_is_due(self):
+        at = f.KICK + timedelta(hours=3)
+        self.resolution(1, at)
+        with (
+            f.at(at + timedelta(hours=23)),
+            patch.object(ledger, "capture_resolution") as capture,
+        ):
+            self.assertEqual(
+                settlement.token_status(self.root, "711", recheck_terminal=True)[
+                    "status"
+                ],
+                "resolved",
+            )
+            capture.assert_not_called()
+        with (
+            f.at(at + timedelta(days=1)),
+            patch.object(ledger, "capture_resolution") as capture,
+        ):
+            settlement.token_status(self.root, "711", recheck_terminal=True)
+            capture.assert_called_once_with(self.root, "711")
 
     def test_spoofed_outcome_or_special_payout_is_queued_without_spending_again(self):
         before = self.open()["cash"]

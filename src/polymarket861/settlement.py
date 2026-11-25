@@ -8,6 +8,7 @@ from decimal import ROUND_DOWN
 
 from . import (
     archive_proof,
+    dbscope,
     ledger,
     market_archive,
     opportunity,
@@ -31,6 +32,8 @@ SCHEMA = """
 CREATE TABLE IF NOT EXISTS settlement_queue(
  mode TEXT NOT NULL,account TEXT NOT NULL,intent_id TEXT NOT NULL,fixture TEXT NOT NULL,token TEXT NOT NULL,
  state TEXT NOT NULL,reason TEXT,checked_at TEXT NOT NULL,details TEXT NOT NULL,PRIMARY KEY(mode,account,intent_id));
+CREATE INDEX IF NOT EXISTS settlement_queue_checked ON settlement_queue(checked_at);
+CREATE INDEX IF NOT EXISTS settlement_queue_account_checked ON settlement_queue(account,checked_at);
 """
 
 
@@ -88,19 +91,29 @@ def _records(root, token):
     return items[-1] if items else None
 
 
-def token_status(root, token, *, cached_only=False):
+def token_status(root, token, *, cached_only=False, recheck_terminal=False):
     token = str(token)
     if not token.isdigit():
         raise ValueError("numeric ERC-1155 token required")
     item = _records(root, token)
-    if not cached_only and (
-        not item
-        or (
-            item["status"] == "pending"
-            and instant(store.now_utc()) - instant(item["resolved_at"])
-            >= timedelta(minutes=15)
+    if cached_only:
+        return item
+    refresh = not item or (
+        item["status"] == "pending"
+        and instant(store.now_utc()) - instant(item["resolved_at"])
+        >= timedelta(minutes=15)
+    )
+    if recheck_terminal and item and item["status"] == "resolved":
+        with closing(market_archive.database(root)) as db:
+            latest = db.execute(
+                "SELECT MAX(received_at) FROM ma_requests WHERE operation='resolution' AND selector=? "
+                "AND status='ok' AND received_at<=?",
+                (token, store.now_utc()),
+            ).fetchone()[0]
+        refresh = not latest or instant(store.now_utc()) - instant(latest) >= timedelta(
+            days=1
         )
-    ):
+    if refresh:
         ledger.capture_resolution(root, token)
         item = _records(root, token)
     return item
@@ -108,27 +121,67 @@ def token_status(root, token, *, cached_only=False):
 
 def _positions(root, account, limit, now):
     with ledger.connection(root) as db:
-        db.executescript(shadow.SCHEMA + SCHEMA)
+        dbscope.prepare(db, "research-shadow", shadow.SCHEMA)
+        dbscope.prepare(db, "settlement", SCHEMA)
+        dbscope.prepare(db, "market-archive", market_archive._SCHEMA)
         sql = """
           WITH balances AS (
             SELECT 'formal' mode,i.account,i.id,i.fixture,i.token,i.condition_id,i.status,i.original plan,i.result,i.fingerprint,i.cutoff
-              FROM paper_intents i JOIN paper_accounts a ON a.account=i.account WHERE a.mode='formal' AND i.status IN ('filled','settled')
+              FROM paper_intents i JOIN paper_accounts a ON a.account=i.account
+              WHERE a.mode='formal' AND i.status=:formal_state
             UNION ALL
             SELECT 'research_shadow',account,id,fixture,token,condition_id,status,plan,result,plan_sha,cutoff
-              FROM research_shadow_orders WHERE status IN ('held','settled')
+              FROM research_shadow_orders WHERE status=:shadow_state
           )
           SELECT b.* FROM balances b LEFT JOIN settlement_queue q
             ON q.mode=b.mode AND q.account=b.account AND q.intent_id=b.id
-          WHERE (? IS NULL OR b.account=?) AND b.cutoff<=?
-          ORDER BY COALESCE(q.checked_at,''), b.cutoff,b.mode,b.account,b.id LIMIT ?
+          WHERE (:account IS NULL OR b.account=:account) AND b.cutoff<=:mature
         """
-        # Normal matches cannot settle automatically before a full 90 minutes of play.
-        return [
-            dict(x)
-            for x in db.execute(
-                sql, (account, account, iso(now - timedelta(minutes=150)), limit)
+        # A newly observed refund, conflicting token payout, or revised league score
+        # immediately reopens the audit. Otherwise posted cash is rechecked once a day.
+        audit_due = """
+          AND (q.checked_at IS NULL OR q.checked_at<=:daily OR EXISTS (
+            SELECT 1 FROM ma_requests r WHERE r.operation='resolution' AND r.selector=b.token
+              AND r.status='ok' AND r.received_at>q.checked_at AND r.received_at<=:now
+          ) OR EXISTS (
+            SELECT 1 FROM result_versions r WHERE r.fixture_id=b.fixture
+              AND r.recorded_at>q.checked_at AND r.recorded_at<=:now
+          ))
+        """
+        order = " ORDER BY COALESCE(q.checked_at,b.cutoff), b.cutoff,b.mode,b.account,b.id LIMIT :limit"
+        args = {
+            "account": account,
+            "mature": iso(now - timedelta(minutes=150)),
+            "limit": limit,
+            "daily": iso(now - timedelta(days=1)),
+            "now": iso(now),
+        }
+        opened = [
+            dict(r)
+            for r in db.execute(
+                sql + order, args | {"formal_state": "filled", "shadow_state": "held"}
             )
         ]
+        posted = [
+            dict(r)
+            for r in db.execute(
+                sql + audit_due + order,
+                args | {"formal_state": "settled", "shadow_state": "settled"},
+            )
+        ]
+        if not opened or not posted:
+            return opened or posted
+        if limit == 1:
+            # A one-position budget cannot reserve two lanes. Alternate when both are due.
+            previous = db.execute(
+                "SELECT json_extract(details,'$.position_was_settled') FROM settlement_queue "
+                "WHERE (? IS NULL OR account=?) ORDER BY checked_at DESC,rowid DESC LIMIT 1",
+                (account, account),
+            ).fetchone()
+            return posted if previous is not None and previous[0] == 0 else opened
+        # Reserve one slot for the oldest due audit. Unused capacity is shared both ways.
+        slots = min(len(opened), limit - 1)
+        return opened[:slots] + posted[: limit - slots]
 
 
 def _match(root, position, official, score):
@@ -289,6 +342,7 @@ def sync(data_dir, *, account=None, limit=50, cached_only=False):
         raise ValueError("limit must be 1..1000 positions")
     rows = _positions(data_dir, account, limit, instant(store.now_utc()))
     updates = []
+    audit_tokens = {p["token"] for p in rows if p["status"] == "settled"}
     cache = {}
     scores = {}
     for p in rows:
@@ -301,7 +355,10 @@ def sync(data_dir, *, account=None, limit=50, cached_only=False):
             if token not in cache:
                 try:
                     cache[token] = token_status(
-                        data_dir, token, cached_only=cached_only
+                        data_dir,
+                        token,
+                        cached_only=cached_only,
+                        recheck_terminal=token in audit_tokens,
                     )
                 except (OSError, ValueError, KeyError, TypeError) as exc:
                     cache[token] = exc
@@ -358,6 +415,7 @@ def sync(data_dir, *, account=None, limit=50, cached_only=False):
         except (KeyError, TypeError, ValueError) as exc:
             state = "manual_review"
             why = str(exc)
+        detail["position_was_settled"] = p["status"] == "settled"
         updates.append(_record(data_dir, p, state, why, detail))
     result = {
         "paper_only": True,
@@ -371,7 +429,7 @@ def sync(data_dir, *, account=None, limit=50, cached_only=False):
 
 def queue(data_dir, *, account=None):
     with closing(store.connect(data_dir)) as db:
-        db.executescript(SCHEMA)
+        dbscope.prepare(db, "settlement", SCHEMA)
         return {
             "rows": [
                 dict(r) | {"details": json.loads(r["details"])}
