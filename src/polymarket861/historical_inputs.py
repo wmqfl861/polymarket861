@@ -176,6 +176,37 @@ def inspect(data_dir, view):
     return evidence
 
 
+def _locally_adjudicated(db, fixture):
+    """A stored score can supersede the stale season file only in its bound observed sidecar."""
+    if not fixture.result_versions:
+        return False
+    v = fixture.result_versions[-1]
+    if not v.actual_kickoff:
+        return False
+    stamp = store.iso(v.available)
+    row = db.execute(
+        "SELECT r.*,s.kickoff,t.actual_kickoff FROM result_versions r "
+        "JOIN result_schedule_refs s USING(fixture_id,version) "
+        "LEFT JOIN result_event_times t USING(fixture_id,version) "
+        "WHERE r.fixture_id=? AND r.recorded_at<=? ORDER BY r.version DESC LIMIT 1",
+        (fixture.fixture_id, stamp),
+    ).fetchone()
+    if not row or row["actual_kickoff"] != store.iso(v.actual_kickoff):
+        return False
+    held = db.execute(
+        "SELECT held,reason FROM result_dispositions WHERE fixture_id=? AND kickoff=? AND at<=? ORDER BY at DESC LIMIT 1",
+        (fixture.fixture_id, row["kickoff"], stamp),
+    ).fetchone()
+    if held and held["held"]:
+        return v.score is None and v.provenance == held["reason"]
+    return (
+        row["source"] in {"verified-result-pairing", "manual-regulation"}
+        and v.score == (row["home_goals"], row["away_goals"])
+        and v.provenance
+        == f"{row['source']}:{row['locator']}; result v{row['version']}"
+    )
+
+
 def load_for_study(data_dir, root, evidence, lag):
     view = paired_proof.capture_history(data_dir, root, evidence, lag)
     provenance = inspect(data_dir, view)
@@ -184,16 +215,20 @@ def load_for_study(data_dir, root, evidence, lag):
     )
     if evidence is not None:
         raw = {f.fixture_id: f for f in football.load_fixtures(view["root"])}
-        # The target labels are those of the verified input season. An observation history may vary over time.
-        fixtures = [
-            replace(
-                f,
-                home_goals=raw[f.fixture_id].home_goals,
-                away_goals=raw[f.fixture_id].away_goals,
-                status=raw[f.fixture_id].status,
-            )
-            for f in fixtures
-        ]
+        # External sidecars cannot replace season labels. A locally bound adjudication
+        # names the exact result version and game time, including later withdrawals.
+        with closing(store.connect(data_dir)) as db:
+            fixtures = [
+                f
+                if provenance.get("observed_manifest") and _locally_adjudicated(db, f)
+                else replace(
+                    f,
+                    home_goals=raw[f.fixture_id].home_goals,
+                    away_goals=raw[f.fixture_id].away_goals,
+                    status=raw[f.fixture_id].status,
+                )
+                for f in fixtures
+            ]
     return fixtures, provenance
 
 

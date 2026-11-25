@@ -582,6 +582,14 @@ class FootballEngine:
             season = f"{y}-{(y + 1) % 100:02}"
         fid = fixture_id(season, home, away)
         target = self.by_key.get(fid)
+        actual = verified_event_kickoff(target) if target else None
+        if actual:
+            if cutoff >= actual:
+                raise ValueError(MATCH_STARTED)
+            if kickoff != actual:
+                raise ValueError(KICKOFF_MISMATCH)
+            if actual != target.kickoff and _known_schedule(target, cutoff) != actual:
+                raise ValueError(UNKNOWN_RECONCILED_KICKOFF)
         schedule_grade = "supplied_or_final_archive_schedule"
         if target and target.schedule_versions:
             known = [entry for entry in target.schedule_versions if entry[0] <= cutoff]
@@ -643,17 +651,48 @@ def _average(numbers):
     return math.fsum(numbers) / len(numbers) if numbers else None
 
 
+MATCH_STARTED = "cutoff is at or after the verified match kickoff"
+KICKOFF_MISMATCH = "requested kickoff differs from the verified match kickoff"
+UNKNOWN_RECONCILED_KICKOFF = (
+    "reconciled kickoff was not known at the historical decision"
+)
+FORECAST_OMISSIONS = frozenset(
+    {
+        MATCH_STARTED,
+        KICKOFF_MISMATCH,
+        UNKNOWN_RECONCILED_KICKOFF,
+        "fixture schedule not known at cutoff",
+        "no eligible historical results at cutoff",
+    }
+)
+
+
+def verified_event_kickoff(fixture, as_of=None):
+    """Use the latest in-scope result version; an intervening withdrawal invalidates its clock."""
+    for version in reversed(fixture.result_versions):
+        if as_of is None or version.available <= as_of:
+            return version.actual_kickoff if version.score is not None else None
+    return None
+
+
+def study_kickoff(fixture):
+    return verified_event_kickoff(fixture) or fixture.kickoff
+
+
+def _known_schedule(fixture, cutoff):
+    return next(
+        (
+            k
+            for received, k in reversed(fixture.schedule_versions)
+            if received <= cutoff
+        ),
+        None,
+    )
+
+
 def history_kickoff(fixture, cutoff):
     """Latest schedule or verified event time actually known at the feature cutoff."""
-    for version in reversed(fixture.result_versions):
-        if version.available <= cutoff:
-            if version.score is not None and version.actual_kickoff:
-                return version.actual_kickoff
-            break
-    for received, kickoff in reversed(fixture.schedule_versions):
-        if received <= cutoff:
-            return kickoff
-    return fixture.kickoff
+    return verified_event_kickoff(fixture, cutoff) or _known_schedule(fixture, cutoff) or fixture.kickoff
 
 
 def _result_at(fixture, as_of):
@@ -735,6 +774,10 @@ def score_round(
             active_kickoff = published[-1][1] if published else None
         else:
             active_kickoff = f.kickoff
+        actual = verified_event_kickoff(f, as_of)
+        moved = actual is not None and actual != f.kickoff
+        if actual:
+            active_kickoff = actual
         cutoff = (
             active_kickoff - timedelta(minutes=cutoff_minutes)
             if active_kickoff is not None
@@ -759,6 +802,11 @@ def score_round(
             continue
         completed += 1
         row["score"] = list(truth)
+        if moved:
+            row["registered_kickoff"] = iso(f.kickoff)
+        if actual and (moved or f.schedule_versions) and _known_schedule(f, cutoff) != actual:
+            row.update(status="missing", reason=UNKNOWN_RECONCILED_KICKOFF)
+            continue
         matching = []
         for pred in by_id[f.fixture_id]:
             if cutoff is None or (pred.get("cutoff") and utc(pred["cutoff"]) != cutoff):
@@ -774,13 +822,15 @@ def score_round(
                 continue
             # A bare vector is supported for a caller which already bound this
             # round. A reschedule needs an explicitly bound new decision.
-            if len(f.schedule_versions) > 1 and not (
+            if (moved or len(f.schedule_versions) > 1) and not (
                 pred.get("kickoff") and pred.get("cutoff")
             ):
                 continue
             matching.append(pred)
         if not matching:
             row["status"] = "missing"
+            if moved:
+                row["reason"] = "no prediction bound to the verified pre-match decision"
             continue
         if len(matching) > 1 and any(p != matching[0] for p in matching[1:]):
             raise ValueError(
@@ -996,7 +1046,7 @@ def backtest(
     pinned = all(v and SOURCE_BLOBS.get(k) == v for k, v in blobs.items())
     events = sorted(
         (
-            (f.kickoff - timedelta(minutes=h), f.fixture_id, h, f)
+            (study_kickoff(f) - timedelta(minutes=h), f.fixture_id, h, f)
             for f in finished
             for h in horizons
         ),
@@ -1009,24 +1059,22 @@ def backtest(
         if f.kickoff_precision != "minute":
             omissions[horizon]["kickoff_time_unknown"] += 1
             continue
+        kickoff = study_kickoff(f)
         try:
             p = engine.forecast(
-                f.home, f.away, f.kickoff, cutoff, season=f.season, lines=()
+                f.home, f.away, kickoff, cutoff, season=f.season, lines=()
             )
             b = engine.forecast(
                 f.home,
                 f.away,
-                f.kickoff,
+                kickoff,
                 cutoff,
                 season=f.season,
                 lines=(),
                 baseline=True,
             )
         except ValueError as exc:
-            if str(exc) not in {
-                "fixture schedule not known at cutoff",
-                "no eligible historical results at cutoff",
-            }:
+            if str(exc) not in FORECAST_OMISSIONS:
                 raise
             omissions[horizon][str(exc)] += 1
             continue
@@ -1038,7 +1086,7 @@ def backtest(
             "fixture_id": fid,
             "season": f.season,
             "round": f.round,
-            "kickoff": iso(f.kickoff),
+            "kickoff": iso(kickoff),
             "cutoff": iso(cutoff),
             "cutoff_minutes": horizon,
             "home": f.home,
@@ -1123,8 +1171,8 @@ def backtest(
             "completed": len(finished),
             "unfinished": len(selected) - len(finished),
             "quarantined": sum(f.status == "quarantined" for f in selected),
-            "start": iso(min(f.kickoff for f in selected)),
-            "end": iso(max(f.kickoff for f in selected)),
+            "start": iso(min(study_kickoff(f) for f in selected)),
+            "end": iso(max(study_kickoff(f) for f in selected)),
         },
         "seasons": seasons,
         "horizons": stats,

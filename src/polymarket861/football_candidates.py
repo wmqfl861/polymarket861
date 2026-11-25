@@ -227,11 +227,12 @@ def study(data_dir, root, *, first, last, evidence=None, archive_lag_hours=None)
     folds = []
     joined = Counter()
     expected = Counter()
+    omissions = Counter()
     trace = hashlib.sha256()
     for year in range(lo - 3, hi + 1):
         fold_trace = hashlib.sha256()
         fold_start = datetime(year, 8, 1, tzinfo=timezone.utc)
-        games = sorted(by_year[year], key=lambda f: (f.kickoff, f.fixture_id))
+        games = sorted(by_year[year], key=lambda f: (football.study_kickoff(f), f.fixture_id))
         is_test = year >= lo
         pairs = []
         training_times = []
@@ -269,20 +270,25 @@ def study(data_dir, root, *, first, last, evidence=None, archive_lag_hours=None)
             if is_test and settled_label:
                 expected[f.season] += 1
             if not acceptable or f.kickoff_precision != "minute":
+                if is_test and settled_label:
+                    reason = provenance.get("reason") or (
+                        "unverified_historical_timing" if not acceptable else "kickoff_time_unknown"
+                    )
+                    omissions[reason] += 1
                 continue
-            cut = f.kickoff - timedelta(minutes=60)
+            kickoff = football.study_kickoff(f)
+            cut = kickoff - timedelta(minutes=60)
             if cut < fold_start:
                 continue
             try:
                 pred = engine.forecast(
-                    f.home, f.away, f.kickoff, cut, season=f.season, lines=()
+                    f.home, f.away, kickoff, cut, season=f.season, lines=()
                 )
             except ValueError as exc:
-                if str(exc) not in {
-                    "fixture schedule not known at cutoff",
-                    "no eligible historical results at cutoff",
-                }:
+                if str(exc) not in football.FORECAST_OMISSIONS:
                     raise
+                if is_test and settled_label:
+                    omissions[str(exc)] += 1
                 continue
             ev = pred["evidence"]
             if strict and (
@@ -378,6 +384,7 @@ def study(data_dir, root, *, first, last, evidence=None, archive_lag_hours=None)
         "test_seasons": [first, last],
         "paired_n": sum(joined.values()),
         "denominator": sum(expected.values()),
+        "forecast_omissions": dict(omissions),
         "coverage_by_season": {s: [joined[s], expected[s]] for s in expected},
         "folds": folds,
         "results": results,

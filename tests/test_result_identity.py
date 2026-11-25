@@ -2,8 +2,9 @@ import hashlib
 import io
 import json
 import unittest
-from contextlib import closing, redirect_stdout
+from contextlib import closing, redirect_stderr, redirect_stdout
 from copy import deepcopy
+from dataclasses import replace
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -12,6 +13,8 @@ import test_schedule_consensus as schedule_case
 from polymarket861 import (
     cli,
     football,
+    football_candidates,
+    historical_inputs,
     independent_results,
     input_manifest,
     pipeline,
@@ -221,6 +224,162 @@ class ResultIdentity(unittest.TestCase):
                 fake,
             )
         self.assertEqual(store.evaluation_rows(self.root, "generic", mode="replay"), [])
+
+    def test_football_commands_and_candidate_history_respect_verified_kickoff(self):
+        true_start = store.instant("2026-08-20T12:00Z")
+        self.case.set_time(0)
+        self.case.collect(
+            [self.case.rows[0] | {"matchDateTimeUTC": store.iso(true_start)}]
+        )
+        self.evidence(true_start, [2, 1])
+        self.case.reconcile()
+        view = input_manifest.verify_observed_inputs(self.root)
+        history = football.load_fixtures(
+            view["root"], evidence_path=view["evidence_path"]
+        )
+        game = next(f for f in history if f.fixture_id == self.fid)
+        nominal_cutoff = game.kickoff - timedelta(hours=1)
+        real_cutoff = true_start - timedelta(hours=1)
+        predictions = self.root / "late.json"
+        predictions.write_text(
+            json.dumps(
+                [
+                    {
+                        "fixture_id": self.fid,
+                        "kickoff": store.iso(game.kickoff),
+                        "cutoff": store.iso(nominal_cutoff),
+                        "sealed_at": store.iso(nominal_cutoff),
+                        "probabilities": {k: 0.5 for k in football.PROB_KEYS},
+                    }
+                ]
+            )
+        )
+
+        def run(command, extra):
+            out, error = io.StringIO(), io.StringIO()
+            args = [
+                "--data-dir",
+                str(self.root),
+                "football",
+                command,
+                view["root"],
+                "--evidence",
+                view["evidence_path"],
+                *extra,
+            ]
+            with redirect_stdout(out), redirect_stderr(error):
+                status = cli.main(args)
+            return status, json.loads(
+                out.getvalue()
+            ) if out.getvalue() else error.getvalue()
+
+        code, error = run(
+            "predict",
+            [
+                "--home",
+                game.home,
+                "--away",
+                game.away,
+                "--season",
+                game.season,
+                "--kickoff",
+                store.iso(game.kickoff),
+                "--cutoff",
+                store.iso(nominal_cutoff),
+            ],
+        )
+        self.assertEqual(code, 2)
+        self.assertIn(football.MATCH_STARTED, error)
+        code, rnd = run(
+            "round",
+            [
+                "--season",
+                game.season,
+                "--round",
+                "1",
+                "--predictions",
+                str(predictions),
+            ],
+        )
+        self.assertEqual(
+            (code, rnd["completed"], rnd["missing"], rnd["scored"]), (0, 1, 1, 0)
+        )
+        omission = next(f for f in rnd["fixtures"] if f["fixture_id"] == self.fid)
+        self.assertEqual(omission["reason"], football.UNKNOWN_RECONCILED_KICKOFF)
+        self.assertEqual(omission["kickoff"], football.iso(true_start))
+        code, study = run(
+            "backtest",
+            [
+                "--from-season",
+                game.season,
+                "--to-season",
+                game.season,
+                "--horizons",
+                "60",
+                "--bootstrap",
+                "0",
+            ],
+        )
+        self.assertEqual(
+            (
+                code,
+                study["fixtures"]["completed"],
+                study["horizons"]["T-60"]["omissions"][
+                    football.UNKNOWN_RECONCILED_KICKOFF
+                ],
+            ),
+            (0, 1, 1),
+        )
+        with patch.object(
+            historical_inputs,
+            "load_for_study",
+            return_value=(history, {"timing_authenticated": True, "reason": None}),
+        ):
+            candidate = football_candidates.study(
+                self.root, view["root"], first=game.season, last=game.season
+            )
+        self.assertEqual(
+            (
+                candidate["denominator"],
+                candidate["paired_n"],
+                candidate["forecast_omissions"][football.UNKNOWN_RECONCILED_KICKOFF],
+            ),
+            (1, 0, 1),
+        )
+        # A genuine schedule correction received in time permits the correct historical horizon.
+        changed = replace(
+            game,
+            schedule_versions=game.schedule_versions
+            + ((real_cutoff - timedelta(days=1), true_start),),
+            schedule_grades=game.schedule_grades + ("archived_schedule_upper_bound",),
+        )
+        good_history = [
+            changed if f.fixture_id == game.fixture_id else f for f in history
+        ]
+        pred = football.FootballEngine(good_history).forecast(
+            game.home, game.away, true_start, real_cutoff, season=game.season
+        )
+        self.assertEqual(pred["evidence"]["training_matches"], 2)
+        graded = football.score_round(
+            good_history,
+            [pred | {"sealed_at": football.iso(real_cutoff)}],
+            season=game.season,
+            round_number=1,
+        )
+        self.assertEqual(graded["scored"], 1)
+        details = []
+        football.backtest(
+            good_history,
+            game.season,
+            game.season,
+            horizons=(60,),
+            bootstrap=0,
+            details_sink=details.append,
+        )
+        self.assertEqual(
+            [(r["fixture_id"], r["kickoff"]) for r in details],
+            [(self.fid, football.iso(true_start))],
+        )
 
     def test_operator_withdrawal_persists_until_named_release_and_reverification(self):
         self.case.set_time(0)
