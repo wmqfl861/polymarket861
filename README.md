@@ -33,7 +33,7 @@ pm861 --data-dir .pm861 dashboard export --output .pm861/dashboard.html
 | 目标 | 正常入口和输出 |
 |---|---|
 | 刷新公共领域数据 | `data refresh --first 2022-23 --last 2026-27` 锁定上游提交，校验逐季文件，归档原始内容、时间和本机可用的输入清单。已有固定版本可用 `data observe 数据根目录 --register-season 2026-27`。从本机实际观察时刻开始使用历史终场记录。 |
-| 更新当季赛果 | `result-feed season 2026` 拉取 OpenLigaDB 和英格兰俱乐部的 Wikimedia 赛季修订。核对身份、轮次、实际开球，并以两个提供方的终场或单源独立复收确认。用 `result-feed freshness 2026` 查看逐队缺口和下一轮影响。冲突、未完赛及来源回滚在独立记录中可查。 |
+| 更新当季赛果 | `result-feed season 2026` 拉取 OpenLigaDB 和英超各队的 Wikimedia 赛季条目修订。核对身份、轮次、实际开球，并以两个提供方的终场或单源独立复收确认。用 `result-feed freshness 2026` 查看逐队缺口和下一轮影响。冲突、未完赛及来源回滚在独立记录中可查。 |
 | 记录新闻、伤停和天气 | `source` 登记免费用途、字段和使用范围。`evidence` 导入球员名单、状态、牌、场外消息及气象事实，区分预计与已确认版本。`feeds` 提供 GDELT 发现与有起报时间的天气试采。每种来源按实际使用条件启用。 |
 | 封存赛前预测 | `fixture list --season 2026-27` 查比赛标识。`forecast make 比赛标识 数据根目录 --horizon early` 生成带本机收件凭据的提前技术观察。标准时点用 `run due 数据根目录 --workers 2`，可由本机计划任务每分钟调用，也可加 `--repeat 60` 前台持续运行。 |
 | 调度全赛季 | `season run --repeat` 协调未来赛程、盘口、预测与结算；`season backfill 2025 --max-pages 10` 按游标补采，`season status` 查看迟到与漏窗。 |
