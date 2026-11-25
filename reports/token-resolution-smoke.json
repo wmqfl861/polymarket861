@@ -1,0 +1,41 @@
+{
+  "kind": "public_settlement_endpoint_observation",
+  "mode": "read-only",
+  "fixture": "epl-ars-che-2026-03-01",
+  "market": "full-time total 2.5",
+  "collection": "GET https://data-api.polymarket.com/v2/tokens?token_id=TOKEN; raw SHA-256 compared to the matching native request and received-at timestamp",
+  "tokens": [
+    {
+      "side": "over",
+      "condition_id": "0x43327908678bcbaa6fa2870b14de7c26d81837a08b2109a11bde8ea4aff4a513",
+      "token_id": "17197472708914484265555424168539211011262031620748358919724582676699245381371",
+      "outcome": "Over",
+      "module": "v1_ctf",
+      "market_slug": "epl-ars-che-2026-03-01-total-2pt5",
+      "event_slug": "epl-ars-che-2026-03-01-more-markets",
+      "closed": true,
+      "resolved": true,
+      "payout_per_share": "1.0",
+      "received_at": "2026-11-25T07:15:36.922146Z",
+      "source_sha256": "1bfc1afb539013451dba2aaea740b809aa5b078523013a6acb02719c6ccea61d",
+      "url": "https://data-api.polymarket.com/v2/tokens?token_id=17197472708914484265555424168539211011262031620748358919724582676699245381371"
+    },
+    {
+      "side": "under",
+      "condition_id": "0x43327908678bcbaa6fa2870b14de7c26d81837a08b2109a11bde8ea4aff4a513",
+      "token_id": "80192077056728259203797741046390649159442849088900680114808363681204599834651",
+      "outcome": "Under",
+      "module": "v1_ctf",
+      "market_slug": "epl-ars-che-2026-03-01-total-2pt5",
+      "event_slug": "epl-ars-che-2026-03-01-more-markets",
+      "closed": true,
+      "resolved": true,
+      "payout_per_share": "0.0",
+      "received_at": "2026-11-25T07:15:36.944780Z",
+      "source_sha256": "8e51c43633a80fa1e0829b19122cb6b085eada4d94568cdd34cdaaac3529e373",
+      "url": "https://data-api.polymarket.com/v2/tokens?token_id=80192077056728259203797741046390649159442849088900680114808363681204599834651"
+    }
+  ],
+  "observed_account_trades": 0,
+  "scheduled_shadow_clv": null
+}

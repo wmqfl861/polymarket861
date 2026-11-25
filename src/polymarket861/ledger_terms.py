@@ -268,6 +268,13 @@ def _fee(market, data_dir=None, at=None):
 
 def from_original(data_dir, market, token_id, at, match_id=None):
     """Construct terms from original_market(), after origin and as-of validation."""
+    return _terms_with_fee(
+        data_dir, market, token_id, at, match_id, _fee(market, data_dir, at)
+    )
+
+
+def _terms_with_fee(data_dir, market, token_id, at, match_id, fee):
+    """Apply the same sports contract and match binding after the caller has established a fee policy."""
     if market.get("mapping_error") or not isinstance(token_id, str):
         raise ValueError("unverified contract token")
     sides = [
@@ -308,7 +315,7 @@ def from_original(data_dir, market, token_id, at, match_id=None):
         "rule_source_sha256": market["source_sha256"],
         "rule_profile": rule_profile,
         "special": special,
-        "fee_schedule": _fee(market, data_dir, at),
+        "fee_schedule": fee,
     }
     if market["family"] == "moneyline":
         terms.update(family="result", selection=market["side"])

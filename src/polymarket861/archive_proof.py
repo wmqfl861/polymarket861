@@ -46,10 +46,11 @@ def original_receipt(db, root, sha, received_at, operations):
             "books": ("clob.polymarket.com", "/books"),
             "trades": ("data-api.polymarket.com", "/v2/trades"),
             "prices": ("data-api.polymarket.com", "/v2/prices-history"),
+            "resolution": ("data-api.polymarket.com", "/v2/tokens"),
         }
         if uri.scheme != "https" or (uri.netloc, uri.path) != allowed[operation]:
             continue
-        if operation == "book" and parse_qs(uri.query).get("token_id") != [
+        if operation in ("book","resolution") and parse_qs(uri.query).get("token_id") != [
             row["selector"]
         ]:
             continue
@@ -161,7 +162,7 @@ def original_market(db, root, condition, as_of, *, receipt_at=None, sha=None):
     raise ValueError("no original Gamma contract at the requested time")
 
 
-def _original_book(db, root, contract, row):
+def _original_book(db, root, contract, row, *, fee_check=None):
     from .ledger_terms import verify_book_terms
 
     book = json.loads(row["payload"])
@@ -223,7 +224,8 @@ def _original_book(db, root, contract, row):
         raise ValueError(
             "native contract rule or outcome token disagrees with held contract"
         )
-    verify_book_terms(contract, market, data_dir=root, at=reply.received_at)
+    check_fee = fee_check or verify_book_terms
+    check_fee(contract, market, data_dir=root, at=reply.received_at)
     rebuilt = provider.normalize_book(exact[0], reply, market, token, row["sha"])
     if rebuilt != book:
         raise ValueError(
