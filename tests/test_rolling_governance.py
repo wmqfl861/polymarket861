@@ -79,7 +79,7 @@ class RollingGovernance(unittest.TestCase):
                     window="2031-32/1",
                     hypothesis="overlapping",
                 )
-        self.round("2031-32", 1, "2031-08-12T15:00Z", at="2031-06-01T12:00Z")
+        self.round("2031/2032", 1, "2031-08-12T15:00Z", at="2031-06-01T12:00Z")
         games = store.eligible_fixtures(self.root)
         self.assertIsNone(window.audit(self.root, plan, games))
         self.assertEqual(len(games), 20)

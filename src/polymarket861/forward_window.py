@@ -97,11 +97,11 @@ def audit(data_dir, plan, games):
         if latest.get(fid) != pair:
             return "previously_registered_fixture_removed_or_reassigned"
     with closing(store.connect(data_dir)) as db:
-        seasons = sorted({s for s, _ in labels})
+        seasons = sorted({s[:4] for s, _ in labels})
         table = db.execute(
             "SELECT f.fixture_id,f.season,f.round_id,f.kickoff,s.precision,max(f.known_at,s.recorded_at) AS received "
             "FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
-            f"WHERE f.season IN ({','.join('?' for _ in seasons)}) ORDER BY received,f.version",
+            f"WHERE substr(f.season,1,4) IN ({','.join('?' for _ in seasons)}) ORDER BY received,f.version",
             seasons,
         )
         timely = set()
