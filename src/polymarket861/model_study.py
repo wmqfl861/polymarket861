@@ -13,6 +13,7 @@ from . import dbscope, football, forward_window, store
 
 METHOD = "T60-final-schedule-result-lag24h-v1"
 BENCHMARK = tuple(f"{y}-{(y + 1) % 100:02}" for y in range(2021, 2026))
+LEGACY_COMMIT = "8993f15cfcc61042aedc5e885bb82217488ecb33"
 LEGACY_RECIPE = "7594c08a37d847a7c40f256974e2817ffe9c9d7eb8cf720b47a5b7f61dcbb29f"
 LEGACY_BENCHMARK = "72f5f905fe8fe014bcef0016e9a810f2a1d925a3b86c3c00eeb9ae22a0ddb795"
 SCHEMA = """
@@ -309,8 +310,24 @@ def release_report(data_dir, root, *, benchmark_only=False):
     measure(data_dir, after, root, BENCHMARK)
     with closing(_db(data_dir)) as db, db:
         arms = [_read(data_dir, db, sha, BENCHMARK) for sha in (new_sha, old_sha)]
+        local = db.execute(
+            "SELECT 1 FROM probability_studies WHERE recipe=? AND sample=?",
+            (old_sha, store.digest(BENCHMARK)),
+        ).fetchone()
+        predecessor = (
+            {"source": "measured_on_incumbent"}
+            if local
+            else {
+                "source": "reproduced_tagged_predecessor",
+                "reference_commit": LEGACY_COMMIT,
+                "reference_pipeline_sha256": "46d04d6080969e467a6752121fc946c2f61dac668698c3454b906416dbee0449",
+                "legacy_recipe_files": ["football.py", "football_model.py"],
+                "local_previous_pipeline_independently_known": False,
+            }
+        )
         report = {
             "from_version": before,
+            "baseline_identity": predecessor,
             "to_version": after,
             "comparison": compare(*arms, 1, allow_training_change=True),
         }
@@ -323,7 +340,7 @@ def release_report(data_dir, root, *, benchmark_only=False):
     return report | {"report_sha256": ident}
 
 
-def approve_release(data_dir, report_sha, reviewer, reason):
+def approve_release(data_dir, report_sha, reviewer, reason, *, legacy_reference=None):
     signature = stats.signoff(reviewer, reason)
     from . import pipeline
 
@@ -355,6 +372,14 @@ def approve_release(data_dir, report_sha, reviewer, reason):
         ).fetchone()
         if decision and store.builtin_model_at(db) == new:
             return dict(decision)
+        if (
+            report["baseline_identity"]["source"] == "reproduced_tagged_predecessor"
+            and legacy_reference != LEGACY_COMMIT
+        ):
+            raise ValueError(
+                "the old two-file recipe did not identify its pipeline; confirm the actual previous installation with --legacy-reference "
+                + LEGACY_COMMIT
+            )
         if store.builtin_model_at(db) != old:
             raise ValueError("active builtin changed since release comparison")
         actual = compare(
@@ -419,10 +444,18 @@ def register(forecasts):
         "release-approve", help="activate the reviewed built-in prospectively"
     )
     decide.add_argument("report_sha256")
+    decide.add_argument(
+        "--legacy-reference",
+        help="confirm the previous installed commit when a legacy two-file recipe uses the packaged reference",
+    )
     decide.add_argument("--reviewer", required=True)
     decide.add_argument("--reason", required=True)
     decide.set_defaults(
         func=lambda a: approve_release(
-            a.data_dir, a.report_sha256, a.reviewer, a.reason
+            a.data_dir,
+            a.report_sha256,
+            a.reviewer,
+            a.reason,
+            legacy_reference=a.legacy_reference,
         )
     )

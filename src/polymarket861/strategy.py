@@ -94,12 +94,16 @@ def implementation_digest():
     )
 
 
-def _trial(db, key):
+def _trial(db, key, *, executable=True):
     row = db.execute("SELECT * FROM selection_trials WHERE key=?", (key,)).fetchone()
     if not row or digest(json.loads(row["spec"])) != row["digest"]:
         raise ValueError("unknown or altered selection registration")
     spec = json.loads(row["spec"])
-    if spec.get("implementation") and spec["implementation"] != implementation_digest():
+    if (
+        executable
+        and spec.get("implementation")
+        and spec["implementation"] != implementation_digest()
+    ):
         raise ValueError("selection implementation changed; register a new experiment")
     return dict(row) | {"spec": spec}
 
@@ -1402,7 +1406,7 @@ def promote(data_dir, key, *, reviewer=None, reason=None):
 def rollback(data_dir, key, reason, *, reviewer=None):
     signature = stats.signoff(reviewer, reason)
     with database(data_dir, True) as db:
-        trial = _trial(db, key)
+        trial = _trial(db, key, executable=False)
         now = store.now_utc()
         if _deployed_trial(db, now) != key or trial["status"] != "promoted":
             raise ValueError(

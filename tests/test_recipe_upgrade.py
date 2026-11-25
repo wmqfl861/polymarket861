@@ -48,6 +48,7 @@ class RecipeUpgrade(unittest.TestCase):
             custom = pipeline.register_recipe(data, "pinned-study", "B1")
         with scheduled.clock("2030-08-16T08:00Z"):
             self.assertEqual(early(first), stored)
+            self.assertEqual(pipeline.read_forecast(data, stored["digest"]), stored)
             with self.assertRaisesRegex(ValueError, "release-compare"):
                 early(second)
             self.assertEqual(pipeline.prepare_builtin(data), "B1")

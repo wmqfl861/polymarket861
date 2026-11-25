@@ -34,8 +34,8 @@ pm861 --data-dir "$STATE" experiment evaluate league-frequency-2026
 
 生产预测绑定家族、大小球线、算法、训练和预测装配、证据筛选、赛果准入、赛程与时点输入等代码摘要，以及 NumPy 和 SciPy 版本。新增、删除或修改结果收集、赛程、上下文和足球计算模块都会改变实施指纹。预测还封存当时实际使用的输入清单、证据帧和训练摘要。各自的模型版本绑定不可覆盖。选单登记单独绑定规则、选单、账本和证据实现代码。不同依赖版本可能产生不同的实施指纹。
 
-1. 更换版本前运行 `pm861 --data-dir "$STATE" forecast release-baseline "$HISTORY"`，冻结正在使用的内置实现的五季逐场输出。0.2.0 旧库可直接使用随包提供的同版基准。
-2. 安装新包后运行 `pm861 --data-dir "$STATE" forecast release-compare "$HISTORY"`。五季为 2021/22 至 2025/26，含 1,900 场、190 个官方轮。报告给出两个实现摘要、同一批原始文件与截止规则、综合与分项分差、训练视图及全盘口输出变化数。资料不足时，旧预测可以查询，新默认预测等待有效版本。
+1. 更换版本前运行 `pm861 --data-dir "$STATE" forecast release-baseline "$HISTORY"`，冻结正在使用的内置实现的五季逐场输出。0.2.0 旧库可使用随包提供的标准版本基准。旧配方只记录两个算法文件，无法单凭旧库识别本地实际的训练装配代码。若采用随包基准，负责人须核实上一个安装包的提交，并在第 3 步加上 `--legacy-reference 8993f15cfcc61042aedc5e885bb82217488ecb33`。自定义旧实现须先提供其真实冻结基准。
+2. 安装新包后运行 `pm861 --data-dir "$STATE" forecast release-compare "$HISTORY"`。五季为 2021/22 至 2025/26，含 1,900 场、190 个官方轮。报告给出两个实现摘要、同一批原始文件与截止规则、综合与分项分差、训练视图及全盘口输出变化数。资料不足时，旧预测可用 `forecast get PREDICTION_SHA256` 独立取回，新默认预测等待有效版本。
 3. 核对后运行 `pm861 --data-dir "$STATE" forecast release-approve "$REPORT_SHA256" --reviewer "$REVIEWER" --reason "$REVIEW_REASON"`。签署事务再次检查两边实施指纹、报告、现用版本和已冻结的比较资料。新版本只在实际签署后生效。本轮报告的 `main_model_rollout` 列出每个实际封存的主版本、采用该版本的比赛以及切换对应的截止点。
 4. 独立复核者可在空目录运行 `pm861 --data-dir "$VERIFY_STATE" forecast release-compare "$HISTORY" --reference-0.2.0`，对照随包的旧版基准。旧版基准使用 `8993f15` 的真实实现，从固定八季原始档案生成。用该提交的 `src` 作为 `PYTHONPATH`，运行当前仓库的 `scripts/reproduce_probability_baseline.py "$HISTORY" regenerated.json.gz`，即可独立还原逐场输出。
 

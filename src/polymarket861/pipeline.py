@@ -183,6 +183,17 @@ def _verified_seal(row):
     return payload | {"digest": row["digest"]}
 
 
+def read_forecast(data_dir, seal_digest):
+    """Return the original immutable prediction even after its schedule, model, or gate changes."""
+    with closing(connect(data_dir)) as db:
+        row = db.execute(
+            "SELECT * FROM forecast_seals WHERE digest=?", (seal_digest,)
+        ).fetchone()
+    if row is None:
+        raise ValueError("unknown sealed forecast digest")
+    return _verified_seal(row)
+
+
 def make_forecast(
     data_dir,
     fixture_id,
@@ -709,6 +720,11 @@ def register(subparsers):
     from . import model_study
 
     model_study.register(forecasts)
+    read = forecasts.add_parser(
+        "get", help="retrieve and verify the original sealed prediction by SHA-256"
+    )
+    read.add_argument("digest")
+    read.set_defaults(func=lambda a: read_forecast(a.data_dir, a.digest))
     cmd = forecasts.add_parser("make")
     cmd.add_argument("fixture_id")
     cmd.add_argument(
