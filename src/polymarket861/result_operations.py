@@ -24,13 +24,20 @@ def publications(root):
         manifests = db.execute(
             "SELECT 1 FROM sqlite_master WHERE name='football_input_manifests'"
         ).fetchone()
-        has_manifest = bool(
-            manifests
-            and db.execute("SELECT 1 FROM football_input_manifests LIMIT 1").fetchone()
+        latest = (
+            db.execute(
+                "SELECT digest FROM football_input_manifests ORDER BY observed_at DESC,rowid DESC LIMIT 1"
+            ).fetchone()
+            if manifests
+            else None
         )
     if not queue:
-        return {"rounds": [], "manifest": None, "training": "no_change"}
-    manifest = input_manifest.verify_observed_inputs(root) if has_manifest else None
+        return {
+            "rounds": [],
+            "manifest": latest[0] if latest else None,
+            "training": "no_change",
+        }
+    manifest = input_manifest.verify_observed_inputs(root) if latest else None
     reports = []
     for event in queue:
         season, rnd, version = tuple(event)
@@ -294,6 +301,7 @@ def manual(root, year, rnd, file):
                 for f in store.eligible_fixture_rows(db, season=obj["season"])
                 if f["round_id"] == rnd
             }
+            native, _ = admission._raw_rows(root, db, year, at)
             seen = set()
             rows = []
             for r in obj["matches"]:
@@ -322,8 +330,12 @@ def manual(root, year, rnd, file):
                 prior = admission.last_result(db, fid, f["kickoff"])
                 state = admission.last_disposition(db, fid, f["kickoff"], at)
                 score = [r["home_goals"], r["away_goals"]]
+                cited = native.get(fid, [])
                 if (
-                    prior
+                    cited
+                    and cited[-1]["score"] is not None
+                    and cited[-1]["score"] != score
+                    or prior
                     and [prior["home_goals"], prior["away_goals"]] != score
                     or state
                     and state["held"]

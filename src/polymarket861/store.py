@@ -309,6 +309,10 @@ def fixture_at(data_dir, fixture_id, at=None, *, prospective=False) -> dict:
 
 def record_result(data_dir, outcome: dict) -> dict:
     """Record the independent scorer's evidence, including corrections as new versions."""
+    if outcome.get("source") in {"openligadb", "manual-regulation"}:
+        raise ValueError(
+            "reserved result source requires the verified result-feed or licensed manual batch"
+        )
     with closing(connect(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         return record_result_db(db, outcome, recorded_at=now_utc())

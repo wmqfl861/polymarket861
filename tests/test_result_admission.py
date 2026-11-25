@@ -258,6 +258,41 @@ class VerifiedResults(unittest.TestCase):
                 db.execute("SELECT count(*) FROM result_versions").fetchone()[0], 2
             )
         self.assertEqual(len(self.reconcile()["overdue"]), 2)
+        self.set_time(20)
+        self.collect(self.rows, season=True)
+        self.set_time(54)
+        self.collect(self.rows)
+        self.assertEqual(self.reconcile()["available_results"], 2)
+        self.assertEqual(
+            admission.verified_regulation(self.root, self.fids[0])["home_goals"], 2
+        )
+        # A manual decision may resolve a known contradiction. New contradictory
+        # primary data subsequently reopens it, and the entire later batch is retained.
+        self.set_time(60)
+        revised = deepcopy(base)
+        revised["matches"][0]["home_goals"] = 3
+        path.write_text(json.dumps(revised))
+        with self.assertRaisesRegex(ValueError, "decision_reason"):
+            feed.import_round(self.root, YEAR, 1, path)
+        revised["matches"][0]["decision_reason"] = (
+            "provider accepted the signed correction"
+        )
+        path.write_text(json.dumps(revised))
+        feed.import_round(self.root, YEAR, 1, path)
+        self.assertEqual(self.reconcile()["available_results"], 2)
+        self.set_time(91)
+        changed = deepcopy(self.rows)
+        changed[0]["matchResults"][-1]["pointsTeam1"] = 4
+        self.collect(changed)
+        self.assertEqual(
+            self.reconcile()["quarantined"][0]["reason"], "manual_source_disagreement"
+        )
+        self.assertIsNone(self.state(self.fids[0])["home_goals"])
+        self.set_time(122)
+        self.collect(changed)
+        self.assertEqual(
+            self.reconcile()["quarantined"][0]["reason"], "manual_source_disagreement"
+        )
 
     def test_fallback_revision_triggers_quarantine_and_regrade_without_a_season_tick(
         self,

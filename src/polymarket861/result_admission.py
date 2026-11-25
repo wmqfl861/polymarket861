@@ -342,20 +342,40 @@ def reconcile(root, year):
                 "SELECT * FROM rf_admitted WHERE fixture=? AND kickoff=? ORDER BY at DESC LIMIT 1",
                 (fid, f["kickoff"]),
             ).fetchone()
+            reason = None
+            withdrawn_manual = bool(
+                prior
+                and prior["source"] == "manual-regulation"
+                and last
+                and last["held"]
+                and last["reason"] == "manual_batch_withdrawn"
+            )
             if (
                 prior
                 and prior["source"] == "manual-regulation"
-                and not (last and last["held"])
+                and not withdrawn_manual
             ):
                 at_review = [e for e in events if e["received"] <= prior["recorded_at"]]
+                agrees = latest["score"] == prior_score
+                previously_reviewed = bool(
+                    at_review and latest["score"] == at_review[-1]["score"]
+                )
                 if (
-                    not at_review
-                    or latest["score"] == at_review[-1]["score"]
-                    or latest["score"] == prior_score
+                    agrees
+                    or previously_reviewed
+                    or not at_review
+                    and latest["score"] is None
                 ):
+                    if (
+                        agrees
+                        and last
+                        and last["held"]
+                        and last["reason"] == "manual_source_disagreement"
+                    ):
+                        disposition(db, f, False, "manual_source_reconciled", at)
                     counts["manual_reviewed"] += 1
                     continue
-            reason = None
+                reason = "manual_source_disagreement"
             if latest["score"] is not None and not _anchor(f, latest):
                 reason = "schedule_or_round_mismatch"
             elif latest["score"] is not None and (
@@ -369,12 +389,13 @@ def reconcile(root, year):
             ):
                 reason = "cross_source_score_conflict"
             elif (
-                certified
+                reason is None
+                and certified
                 and (latest["score"] != json.loads(certified["score"]) or damaged)
                 and not pair
             ):
                 reason = "previous_final_changed_or_withdrawn"
-            elif damaged and certified:
+            elif reason is None and damaged and certified:
                 reason = "original_receipt_unreadable"
             if reason:
                 counts[reason] += 1
@@ -417,7 +438,7 @@ def reconcile(root, year):
                         store.canonical(proof),
                     ),
                 )
-                if prior_score != score:
+                if prior_score != score or withdrawn_manual:
                     _result(
                         db,
                         f,
@@ -444,7 +465,15 @@ def reconcile(root, year):
         ]
         report = {
             "season": season,
-            "status": "degraded" if errors or overdue or issues else "ok",
+            "status": (
+                "awaiting_schedule"
+                if not eligible
+                else "degraded"
+                if errors or overdue or issues
+                else "awaiting_confirmation"
+                if counts["awaiting_second_receipt"]
+                else "ok"
+            ),
             "at": at,
             "coverage": dict(counts),
             "registered": len(eligible),
