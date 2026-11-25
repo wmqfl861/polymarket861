@@ -1,0 +1,4886 @@
+{
+  "kind": "historical_football_backtest",
+  "input_provenance": {
+    "policy": "upstream-bytes-local-receipt-v1",
+    "snapshot": "25ed4a67fd37ed9ce4a298ca543d6cc5ef99c8451fb47ef61ab59e6b96d812c2",
+    "season_files": [
+      {
+        "season": "2010-11",
+        "sha256": "a94631cc82fd4034d4da5f5594d32cb191942f0b594e3a9cd9dcf29fe7dfa707",
+        "git_blob": "9fe7c43945ed5bb7249ae2488397262d0d72ca88"
+      },
+      {
+        "season": "2011-12",
+        "sha256": "94e29260ec3500ba69e1ffe829576b0c6297cb570ecc223ab13a2fdcae81fb98",
+        "git_blob": "72c0c8ca26ce53bdafb71a3d12ea4e51fe8790a3"
+      },
+      {
+        "season": "2012-13",
+        "sha256": "d41f9131f9dda654bff9067ffd370468b895b5ed4e9691a4b5cad2b2550fbc8b",
+        "git_blob": "b9fba456fccee350f06ced85600229dfe8d895d4"
+      },
+      {
+        "season": "2013-14",
+        "sha256": "821ea8a8a078753993ed1cc9f86fb739ec18824ef07aee1df4e83f6915e29782",
+        "git_blob": "f8f06a0494c657638a6ad055effdf65c33c164c3"
+      },
+      {
+        "season": "2014-15",
+        "sha256": "2f24151bffd3d377810f3d2e85ead0f1b3dfef00153c6ea31f5e9ced63281a4d",
+        "git_blob": "4ac8e36323109731fb60fc3db678a0b358074e12"
+      },
+      {
+        "season": "2015-16",
+        "sha256": "4d8ab70f5d2c29231320be7404310bc1b0fbc6e6be0284e5ee667f581406fead",
+        "git_blob": "d7384b9c162eea51ea0da500b8f6c73a170ee0bd"
+      },
+      {
+        "season": "2016-17",
+        "sha256": "9c8cdb27355678ab81aacbbabc34a08d00b399aacc28ef4b733da4954a344f17",
+        "git_blob": "b09de9d55b17571e6c9c64fefe83522dfc02ce6f"
+      },
+      {
+        "season": "2017-18",
+        "sha256": "b635f2442a94aa91d85f282fc5e8f7f5dc4f0d04e3e30c4472102f5708d7548c",
+        "git_blob": "c0ccb9c85503d1e24482be7c5117f6277c5a0e2f"
+      },
+      {
+        "season": "2018-19",
+        "sha256": "e2224d86f0605a5a1b5b019c845cdecb13aca1d88035686d4159b875250d4730",
+        "git_blob": "334909dfb533959f15a6d2bf08a096adcfa7d21f"
+      },
+      {
+        "season": "2019-20",
+        "sha256": "9e1695f85ce5553f762e809dea357ec0a95838939be89569060a83c4e98a302d",
+        "git_blob": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc"
+      },
+      {
+        "season": "2020-21",
+        "sha256": "21ddf26b48469da530c51ccc4857bf1a534bda3aed08766b55185efb142e9a20",
+        "git_blob": "081509058af75c0c012d64e980dc4fa53720d933"
+      },
+      {
+        "season": "2021-22",
+        "sha256": "fbdfd426fa18fa2f8630b77de87c082734da495ac4668d6d72f29f76b73b9564",
+        "git_blob": "5eadd9d91c71d45634f3969192ad908653681b23"
+      },
+      {
+        "season": "2022-23",
+        "sha256": "8d09f0f9846981626cdfec48903e1f21e7c79aabe6f92535c9e092e8e79b808b",
+        "git_blob": "0b6230e60d8cd7402810a5f515f6762d8b385b74"
+      },
+      {
+        "season": "2023-24",
+        "sha256": "03e13eafbf78dfe00d7e89dd3bf6643986eb6e8fd86c7664aeb8c5bc0bed88d0",
+        "git_blob": "f62b11dfaf06cffd1236c2777caebb880a0cfea1"
+      },
+      {
+        "season": "2024-25",
+        "sha256": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75",
+        "git_blob": "504f2e732fbc3c9caeb98e4382b13b094453b840"
+      },
+      {
+        "season": "2025-26",
+        "sha256": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1",
+        "git_blob": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+      },
+      {
+        "season": "2026-27",
+        "sha256": "bb91f0ab3e8359df163bb9ec98549bfed85e200dd4c32f3bd606b5890d932dd2",
+        "git_blob": "60e281f0fcc51cfca1a901353666a688cf62a8ba"
+      }
+    ],
+    "sidecar_sha256": null,
+    "observed_manifest": null,
+    "source_authenticated": true,
+    "source_revision": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "timing_authenticated": false,
+    "study_type": "sensitivity",
+    "archive_lag_hours": 24.0,
+    "status": "source_without_receipt_history",
+    "reason": null
+  },
+  "model_version": "football-dc-1",
+  "source": {
+    "repository": "openfootball/football.json",
+    "commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "blobs": {
+      "2010-11": "9fe7c43945ed5bb7249ae2488397262d0d72ca88",
+      "2011-12": "72c0c8ca26ce53bdafb71a3d12ea4e51fe8790a3",
+      "2012-13": "b9fba456fccee350f06ced85600229dfe8d895d4",
+      "2013-14": "f8f06a0494c657638a6ad055effdf65c33c164c3",
+      "2014-15": "4ac8e36323109731fb60fc3db678a0b358074e12",
+      "2015-16": "d7384b9c162eea51ea0da500b8f6c73a170ee0bd",
+      "2016-17": "b09de9d55b17571e6c9c64fefe83522dfc02ce6f",
+      "2017-18": "c0ccb9c85503d1e24482be7c5117f6277c5a0e2f",
+      "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+      "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+      "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+      "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+      "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+      "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+      "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+      "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "2026-27": "60e281f0fcc51cfca1a901353666a688cf62a8ba"
+    },
+    "all_files_verified": true,
+    "timing_evidence_status": "source_without_receipt_history",
+    "result_version_grades": {
+      "lag_assumption": 6130
+    },
+    "repairs": [
+      {
+        "season": "2019-20",
+        "count": 66,
+        "attribution": "FiveThirtyEight, Club soccer predictions match file (spi_matches.csv), via Item Response Warehouse, irw_competitions v7.1, DOI 10.57761/3r1w-t660",
+        "independent_source": "https://itemresponsewarehouse.org/tables/fivethirtyeight_soccer_2016_2023/",
+        "csv": "https://redivis.com/api/v1/tables/datapages.irw_competitions:v7_1.fivethirtyeight_soccer_2016_2023/rows?format=csv",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "upstream_license_declaration": "https://github.com/fivethirtyeight/data",
+        "retrieved_csv_sha256": "ae408d93dae0322ea98bac8d2f392e3637b6563824c46822e44dae91f6ccd8da",
+        "matched_rows_sha256": "3b9ab89545cdcec1af35560154e2beda9bbe769db84ac0c102d27109de831ef7",
+        "fields": [
+          "home",
+          "away",
+          "corrected_local_date",
+          "ft_home",
+          "ft_away"
+        ],
+        "change": "Year 2019 to 2020 in the 66 July fixtures of the pinned source blob"
+      }
+    ]
+  },
+  "protocol": {
+    "time_zone": "Europe/London",
+    "horizons_minutes": [
+      1440,
+      60
+    ],
+    "score": "100*(1-mean(normalized 1X2 Brier, O2.5 Brier, home O1.5 Brier, away O1.5 Brier))",
+    "training": "current season to cutoff plus three preceding seasons; retain latest eligible version per fixture",
+    "b0": "joint empirical scores of prior complete observed seasons in window; eligible data during warmup",
+    "b1": "regularized time-decayed Dixon–Coles; hyperparameters fixed, shared across seasons",
+    "decay_per_day": 0.002,
+    "ridge": 8.0,
+    "minimum_training_matches": 40,
+    "archive_lag_hours": 24.0,
+    "bootstrap_resamples": 2000,
+    "bootstrap_unit": "season and official round; match-weighted paired score percentile interval",
+    "bootstrap_seed": 861,
+    "calibration": "fixed 0.2-wide bins; clamped final bin includes 1",
+    "environment": {
+      "python": "3.12.14",
+      "numpy": "2.3.5",
+      "scipy": "1.17.0"
+    }
+  },
+  "fixtures": {
+    "unique": 1900,
+    "completed": 1900,
+    "unfinished": 0,
+    "quarantined": 0,
+    "start": "2021-08-13T19:00:00Z",
+    "end": "2026-05-24T15:00:00Z"
+  },
+  "seasons": [
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ],
+  "horizons": {
+    "T-1440": {
+      "summary": {
+        "n": 1900,
+        "coverage": 1.0,
+        "eligible_completed": 1900,
+        "verified_cutoff_n": 0,
+        "rounds": 190,
+        "b0_score": 73.55917205293937,
+        "model_score": 75.44982234318326,
+        "paired_delta": 1.8906502902438929,
+        "paired_round_ci95": [
+          1.5408743999029422,
+          2.265387195237691
+        ],
+        "model_counts": {
+          "B0": 5,
+          "B1": 1895
+        },
+        "fallback_reasons": {
+          "unseen_team": 5
+        },
+        "result_timing": {
+          "assumed_lag": 1900
+        },
+        "schedule_timing": {
+          "supplied_or_final_archive_schedule": 1900
+        },
+        "model_losses": {
+          "result": 0.29112631725913385,
+          "total": 0.24344047374790434,
+          "home": 0.22620115759852505,
+          "away": 0.22123915766710636
+        },
+        "baseline_losses": {
+          "result": 0.323741458910434,
+          "total": 0.24726008002462296,
+          "home": 0.2511064943059403,
+          "away": 0.23552508464142813
+        },
+        "model_log_losses": {
+          "result": 0.9786284759894814,
+          "total": 0.6799484061412281,
+          "home": 0.6433622014750385,
+          "away": 0.6331678921150564
+        },
+        "baseline_log_losses": {
+          "result": 1.0697729477296878,
+          "total": 0.6876662569800199,
+          "home": 0.6954202207239547,
+          "away": 0.6639458309946467
+        },
+        "calibration": {
+          "bins": [
+            0,
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1
+          ],
+          "model": {
+            "home_win": [
+              {
+                "n": 162,
+                "mean_p": 0.150648,
+                "observed": 0.123457
+              },
+              {
+                "n": 695,
+                "mean_p": 0.312436,
+                "observed": 0.322302
+              },
+              {
+                "n": 701,
+                "mean_p": 0.488164,
+                "observed": 0.49786
+              },
+              {
+                "n": 311,
+                "mean_p": 0.677125,
+                "observed": 0.70418
+              },
+              {
+                "n": 31,
+                "mean_p": 0.839409,
+                "observed": 0.870968
+              }
+            ],
+            "draw": [
+              {
+                "n": 313,
+                "mean_p": 0.166547,
+                "observed": 0.14377
+              },
+              {
+                "n": 1587,
+                "mean_p": 0.247063,
+                "observed": 0.257719
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_win": [
+              {
+                "n": 399,
+                "mean_p": 0.136837,
+                "observed": 0.110276
+              },
+              {
+                "n": 913,
+                "mean_p": 0.299335,
+                "observed": 0.28368
+              },
+              {
+                "n": 468,
+                "mean_p": 0.483947,
+                "observed": 0.459402
+              },
+              {
+                "n": 116,
+                "mean_p": 0.670395,
+                "observed": 0.741379
+              },
+              {
+                "n": 4,
+                "mean_p": 0.81993,
+                "observed": 0.75
+              }
+            ],
+            "total_over_2_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 107,
+                "mean_p": 0.363845,
+                "observed": 0.485981
+              },
+              {
+                "n": 1279,
+                "mean_p": 0.51828,
+                "observed": 0.551994
+              },
+              {
+                "n": 512,
+                "mean_p": 0.64565,
+                "observed": 0.617188
+              },
+              {
+                "n": 2,
+                "mean_p": 0.816205,
+                "observed": 0.5
+              }
+            ],
+            "home_over_1_5": [
+              {
+                "n": 53,
+                "mean_p": 0.170931,
+                "observed": 0.207547
+              },
+              {
+                "n": 695,
+                "mean_p": 0.318553,
+                "observed": 0.332374
+              },
+              {
+                "n": 840,
+                "mean_p": 0.487637,
+                "observed": 0.514286
+              },
+              {
+                "n": 293,
+                "mean_p": 0.672779,
+                "observed": 0.699659
+              },
+              {
+                "n": 19,
+                "mean_p": 0.832306,
+                "observed": 0.894737
+              }
+            ],
+            "away_over_1_5": [
+              {
+                "n": 166,
+                "mean_p": 0.167255,
+                "observed": 0.210843
+              },
+              {
+                "n": 1015,
+                "mean_p": 0.306798,
+                "observed": 0.317241
+              },
+              {
+                "n": 606,
+                "mean_p": 0.484614,
+                "observed": 0.476898
+              },
+              {
+                "n": 113,
+                "mean_p": 0.661141,
+                "observed": 0.637168
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ]
+          },
+          "baseline": {
+            "home_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.439123,
+                "observed": 0.441579
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "draw": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.225614,
+                "observed": 0.238947
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.335263,
+                "observed": 0.319474
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "total_over_2_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.542456,
+                "observed": 0.565789
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "home_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.44386,
+                "observed": 0.471579
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.371228,
+                "observed": 0.377895
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ]
+          }
+        }
+      },
+      "omissions": {},
+      "by_season": {
+        "2021-22": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.75,
+          "model_score": 76.21771489155199,
+          "paired_delta": 2.4677148915519815,
+          "paired_round_ci95": [
+            1.7797812432655287,
+            3.205566377814979
+          ],
+          "model_counts": {
+            "B0": 1,
+            "B1": 379
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.28206281461306637,
+            "total": 0.24407769296623927,
+            "home": 0.2139199087628899,
+            "away": 0.2112309879957251
+          },
+          "baseline_losses": {
+            "result": 0.3237542320714066,
+            "total": 0.24884887657740842,
+            "home": 0.2461218836565097,
+            "away": 0.2312750076946753
+          },
+          "model_log_losses": {
+            "result": 0.9531632909220171,
+            "total": 0.6814177484958864,
+            "home": 0.6148258215294777,
+            "away": 0.6122581925213039
+          },
+          "baseline_log_losses": {
+            "result": 1.0693174107978938,
+            "total": 0.6908439746329519,
+            "home": 0.6853740551271661,
+            "away": 0.6552151850945037
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 45,
+                  "mean_p": 0.14122,
+                  "observed": 0.066667
+                },
+                {
+                  "n": 147,
+                  "mean_p": 0.310285,
+                  "observed": 0.340136
+                },
+                {
+                  "n": 123,
+                  "mean_p": 0.493102,
+                  "observed": 0.471545
+                },
+                {
+                  "n": 58,
+                  "mean_p": 0.682448,
+                  "observed": 0.793103
+                },
+                {
+                  "n": 7,
+                  "mean_p": 0.842055,
+                  "observed": 0.857143
+                }
+              ],
+              "draw": [
+                {
+                  "n": 58,
+                  "mean_p": 0.162634,
+                  "observed": 0.086207
+                },
+                {
+                  "n": 322,
+                  "mean_p": 0.252204,
+                  "observed": 0.257764
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 83,
+                  "mean_p": 0.133029,
+                  "observed": 0.108434
+                },
+                {
+                  "n": 167,
+                  "mean_p": 0.302408,
+                  "observed": 0.299401
+                },
+                {
+                  "n": 96,
+                  "mean_p": 0.48368,
+                  "observed": 0.427083
+                },
+                {
+                  "n": 33,
+                  "mean_p": 0.679689,
+                  "observed": 0.848485
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.856399,
+                  "observed": 1.0
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 48,
+                  "mean_p": 0.363645,
+                  "observed": 0.375
+                },
+                {
+                  "n": 262,
+                  "mean_p": 0.51549,
+                  "observed": 0.557252
+                },
+                {
+                  "n": 70,
+                  "mean_p": 0.638994,
+                  "observed": 0.585714
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 27,
+                  "mean_p": 0.17065,
+                  "observed": 0.074074
+                },
+                {
+                  "n": 164,
+                  "mean_p": 0.315525,
+                  "observed": 0.341463
+                },
+                {
+                  "n": 140,
+                  "mean_p": 0.497362,
+                  "observed": 0.514286
+                },
+                {
+                  "n": 46,
+                  "mean_p": 0.679291,
+                  "observed": 0.717391
+                },
+                {
+                  "n": 3,
+                  "mean_p": 0.821711,
+                  "observed": 1.0
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 49,
+                  "mean_p": 0.158551,
+                  "observed": 0.22449
+                },
+                {
+                  "n": 191,
+                  "mean_p": 0.30461,
+                  "observed": 0.277487
+                },
+                {
+                  "n": 114,
+                  "mean_p": 0.483503,
+                  "observed": 0.517544
+                },
+                {
+                  "n": 26,
+                  "mean_p": 0.667963,
+                  "observed": 0.576923
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.435965,
+                  "observed": 0.428947
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.215789,
+                  "observed": 0.231579
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.348246,
+                  "observed": 0.339474
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.519298,
+                  "observed": 0.539474
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.426316,
+                  "observed": 0.436842
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.362281,
+                  "observed": 0.363158
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2022-23": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.89860341643582,
+          "model_score": 75.4220548538993,
+          "paired_delta": 1.5234514374634767,
+          "paired_round_ci95": [
+            0.7520897357428481,
+            2.282487452317676
+          ],
+          "model_counts": {
+            "B1": 379,
+            "B0": 1
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.29654754436835273,
+            "total": 0.24219732765451207,
+            "home": 0.22423299588103152,
+            "away": 0.22013993794013167
+          },
+          "baseline_losses": {
+            "result": 0.31941366574330565,
+            "total": 0.24934518313327178,
+            "home": 0.2498553401046476,
+            "away": 0.22544167436134196
+          },
+          "model_log_losses": {
+            "result": 0.9946165495690898,
+            "total": 0.6768528421842289,
+            "home": 0.6403032726981844,
+            "away": 0.6302828348650791
+          },
+          "baseline_log_losses": {
+            "result": 1.0574846484962315,
+            "total": 0.6918370565582735,
+            "home": 0.6929182007874557,
+            "away": 0.6432353901658834
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 31,
+                  "mean_p": 0.14719,
+                  "observed": 0.290323
+                },
+                {
+                  "n": 136,
+                  "mean_p": 0.308016,
+                  "observed": 0.360294
+                },
+                {
+                  "n": 145,
+                  "mean_p": 0.486408,
+                  "observed": 0.531034
+                },
+                {
+                  "n": 62,
+                  "mean_p": 0.684739,
+                  "observed": 0.725806
+                },
+                {
+                  "n": 6,
+                  "mean_p": 0.83856,
+                  "observed": 0.666667
+                }
+              ],
+              "draw": [
+                {
+                  "n": 63,
+                  "mean_p": 0.165324,
+                  "observed": 0.15873
+                },
+                {
+                  "n": 317,
+                  "mean_p": 0.25259,
+                  "observed": 0.242902
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 77,
+                  "mean_p": 0.129732,
+                  "observed": 0.116883
+                },
+                {
+                  "n": 187,
+                  "mean_p": 0.292839,
+                  "observed": 0.256684
+                },
+                {
+                  "n": 93,
+                  "mean_p": 0.479141,
+                  "observed": 0.44086
+                },
+                {
+                  "n": 23,
+                  "mean_p": 0.68417,
+                  "observed": 0.478261
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 28,
+                  "mean_p": 0.359387,
+                  "observed": 0.5
+                },
+                {
+                  "n": 268,
+                  "mean_p": 0.505387,
+                  "observed": 0.496269
+                },
+                {
+                  "n": 83,
+                  "mean_p": 0.646929,
+                  "observed": 0.626506
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.819636,
+                  "observed": 1.0
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 11,
+                  "mean_p": 0.173712,
+                  "observed": 0.272727
+                },
+                {
+                  "n": 155,
+                  "mean_p": 0.31841,
+                  "observed": 0.322581
+                },
+                {
+                  "n": 159,
+                  "mean_p": 0.485415,
+                  "observed": 0.503145
+                },
+                {
+                  "n": 50,
+                  "mean_p": 0.680307,
+                  "observed": 0.74
+                },
+                {
+                  "n": 5,
+                  "mean_p": 0.83453,
+                  "observed": 0.8
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 46,
+                  "mean_p": 0.174698,
+                  "observed": 0.217391
+                },
+                {
+                  "n": 203,
+                  "mean_p": 0.300849,
+                  "observed": 0.305419
+                },
+                {
+                  "n": 108,
+                  "mean_p": 0.474368,
+                  "observed": 0.425926
+                },
+                {
+                  "n": 23,
+                  "mean_p": 0.666068,
+                  "observed": 0.521739
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.420175,
+                  "observed": 0.484211
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.230702,
+                  "observed": 0.228947
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.349123,
+                  "observed": 0.286842
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.520175,
+                  "observed": 0.526316
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.417544,
+                  "observed": 0.457895
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.361404,
+                  "observed": 0.342105
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2023-24": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.1987919359803,
+          "model_score": 76.02354680316287,
+          "paired_delta": 2.8247548671825644,
+          "paired_round_ci95": [
+            1.8342741373681224,
+            3.7498984791014136
+          ],
+          "model_counts": {
+            "B1": 379,
+            "B0": 1
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.2742772717959981,
+            "total": 0.23728052753217962,
+            "home": 0.22721646690383543,
+            "away": 0.22028386164147218
+          },
+          "baseline_losses": {
+            "result": 0.31897583871960605,
+            "total": 0.2440173899661434,
+            "home": 0.26183364112034474,
+            "away": 0.24722145275469376
+          },
+          "model_log_losses": {
+            "result": 0.9316536595220354,
+            "total": 0.6673129918248375,
+            "home": 0.6449767928482548,
+            "away": 0.6307631435603038
+          },
+          "baseline_log_losses": {
+            "result": 1.0549113355837683,
+            "total": 0.6811745881014368,
+            "home": 0.7170739336828457,
+            "away": 0.6879534363065951
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 33,
+                  "mean_p": 0.152402,
+                  "observed": 0.121212
+                },
+                {
+                  "n": 132,
+                  "mean_p": 0.314829,
+                  "observed": 0.280303
+                },
+                {
+                  "n": 125,
+                  "mean_p": 0.490457,
+                  "observed": 0.544
+                },
+                {
+                  "n": 80,
+                  "mean_p": 0.676295,
+                  "observed": 0.7125
+                },
+                {
+                  "n": 10,
+                  "mean_p": 0.846488,
+                  "observed": 0.9
+                }
+              ],
+              "draw": [
+                {
+                  "n": 97,
+                  "mean_p": 0.165387,
+                  "observed": 0.14433
+                },
+                {
+                  "n": 283,
+                  "mean_p": 0.236679,
+                  "observed": 0.240283
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 93,
+                  "mean_p": 0.13571,
+                  "observed": 0.107527
+                },
+                {
+                  "n": 168,
+                  "mean_p": 0.301479,
+                  "observed": 0.261905
+                },
+                {
+                  "n": 86,
+                  "mean_p": 0.481494,
+                  "observed": 0.5
+                },
+                {
+                  "n": 31,
+                  "mean_p": 0.652298,
+                  "observed": 0.774194
+                },
+                {
+                  "n": 2,
+                  "mean_p": 0.80787,
+                  "observed": 1.0
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 12,
+                  "mean_p": 0.368026,
+                  "observed": 0.583333
+                },
+                {
+                  "n": 258,
+                  "mean_p": 0.51695,
+                  "observed": 0.643411
+                },
+                {
+                  "n": 109,
+                  "mean_p": 0.655244,
+                  "observed": 0.669725
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.812773,
+                  "observed": 0.0
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 6,
+                  "mean_p": 0.165795,
+                  "observed": 0.333333
+                },
+                {
+                  "n": 140,
+                  "mean_p": 0.315198,
+                  "observed": 0.378571
+                },
+                {
+                  "n": 154,
+                  "mean_p": 0.486178,
+                  "observed": 0.545455
+                },
+                {
+                  "n": 72,
+                  "mean_p": 0.672437,
+                  "observed": 0.777778
+                },
+                {
+                  "n": 8,
+                  "mean_p": 0.835482,
+                  "observed": 1.0
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 32,
+                  "mean_p": 0.166549,
+                  "observed": 0.21875
+                },
+                {
+                  "n": 206,
+                  "mean_p": 0.297667,
+                  "observed": 0.349515
+                },
+                {
+                  "n": 117,
+                  "mean_p": 0.488573,
+                  "observed": 0.521368
+                },
+                {
+                  "n": 25,
+                  "mean_p": 0.659639,
+                  "observed": 0.8
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.430702,
+                  "observed": 0.460526
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.226316,
+                  "observed": 0.215789
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.342982,
+                  "observed": 0.323684
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.52193,
+                  "observed": 0.647368
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.420175,
+                  "observed": 0.534211
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.362281,
+                  "observed": 0.421053
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2024-25": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.30178516466606,
+          "model_score": 75.0593335193245,
+          "paired_delta": 1.7575483546584496,
+          "paired_round_ci95": [
+            1.005277738535543,
+            2.4942684031928675
+          ],
+          "model_counts": {
+            "B1": 379,
+            "B0": 1
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.2954067868843617,
+            "total": 0.24330106304200086,
+            "home": 0.22419963975929622,
+            "away": 0.23471916954136113
+          },
+          "baseline_losses": {
+            "result": 0.3284379809172053,
+            "total": 0.2456994459833795,
+            "home": 0.24794321329639887,
+            "away": 0.24584795321637423
+          },
+          "model_log_losses": {
+            "result": 0.9888357331093959,
+            "total": 0.6797213878989811,
+            "home": 0.639974204556751,
+            "away": 0.6618437047598181
+          },
+          "baseline_log_losses": {
+            "result": 1.0826402716069496,
+            "total": 0.6845220049722351,
+            "home": 0.6890309466657145,
+            "away": 0.6850023524313775
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 33,
+                  "mean_p": 0.154031,
+                  "observed": 0.090909
+                },
+                {
+                  "n": 125,
+                  "mean_p": 0.307374,
+                  "observed": 0.264
+                },
+                {
+                  "n": 151,
+                  "mean_p": 0.485784,
+                  "observed": 0.503311
+                },
+                {
+                  "n": 64,
+                  "mean_p": 0.674921,
+                  "observed": 0.5625
+                },
+                {
+                  "n": 7,
+                  "mean_p": 0.831002,
+                  "observed": 1.0
+                }
+              ],
+              "draw": [
+                {
+                  "n": 63,
+                  "mean_p": 0.167547,
+                  "observed": 0.15873
+                },
+                {
+                  "n": 317,
+                  "mean_p": 0.240351,
+                  "observed": 0.26183
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 84,
+                  "mean_p": 0.138967,
+                  "observed": 0.107143
+                },
+                {
+                  "n": 177,
+                  "mean_p": 0.300695,
+                  "observed": 0.333333
+                },
+                {
+                  "n": 99,
+                  "mean_p": 0.492882,
+                  "observed": 0.474747
+                },
+                {
+                  "n": 19,
+                  "mean_p": 0.678107,
+                  "observed": 0.894737
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.807579,
+                  "observed": 0.0
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 5,
+                  "mean_p": 0.377538,
+                  "observed": 0.8
+                },
+                {
+                  "n": 225,
+                  "mean_p": 0.533115,
+                  "observed": 0.528889
+                },
+                {
+                  "n": 150,
+                  "mean_p": 0.647435,
+                  "observed": 0.613333
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 6,
+                  "mean_p": 0.169566,
+                  "observed": 0.333333
+                },
+                {
+                  "n": 112,
+                  "mean_p": 0.321611,
+                  "observed": 0.258929
+                },
+                {
+                  "n": 189,
+                  "mean_p": 0.491028,
+                  "observed": 0.486772
+                },
+                {
+                  "n": 70,
+                  "mean_p": 0.677112,
+                  "observed": 0.628571
+                },
+                {
+                  "n": 3,
+                  "mean_p": 0.830726,
+                  "observed": 0.666667
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 23,
+                  "mean_p": 0.168466,
+                  "observed": 0.173913
+                },
+                {
+                  "n": 195,
+                  "mean_p": 0.314459,
+                  "observed": 0.348718
+                },
+                {
+                  "n": 133,
+                  "mean_p": 0.49098,
+                  "observed": 0.511278
+                },
+                {
+                  "n": 29,
+                  "mean_p": 0.65503,
+                  "observed": 0.689655
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.457895,
+                  "observed": 0.407895
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.225439,
+                  "observed": 0.244737
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.316667,
+                  "observed": 0.347368
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.571053,
+                  "observed": 0.565789
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.476316,
+                  "observed": 0.444737
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.375439,
+                  "observed": 0.421053
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2025-26": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.64667974761466,
+          "model_score": 74.52646164797764,
+          "paired_delta": 0.879781900362992,
+          "paired_round_ci95": [
+            0.11178796187517263,
+            1.6194324389738834
+          ],
+          "model_counts": {
+            "B1": 379,
+            "B0": 1
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.3073371686338903,
+            "total": 0.2503457575445898,
+            "home": 0.24143677668557223,
+            "away": 0.2198218312168418
+          },
+          "baseline_losses": {
+            "result": 0.3281255771006463,
+            "total": 0.24838950446291166,
+            "home": 0.24977839335180058,
+            "away": 0.22783933518005536
+          },
+          "model_log_losses": {
+            "result": 1.0248731468248689,
+            "total": 0.6944370603022061,
+            "home": 0.6767309157425249,
+            "away": 0.6306915848687774
+          },
+          "baseline_log_losses": {
+            "result": 1.0845110721635958,
+            "total": 0.6899536606352019,
+            "home": 0.6927039673565912,
+            "away": 0.6483227909748734
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 20,
+                  "mean_p": 0.168745,
+                  "observed": 0.05
+                },
+                {
+                  "n": 155,
+                  "mean_p": 0.320401,
+                  "observed": 0.354839
+                },
+                {
+                  "n": 157,
+                  "mean_p": 0.486382,
+                  "observed": 0.44586
+                },
+                {
+                  "n": 47,
+                  "mean_p": 0.664929,
+                  "observed": 0.744681
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.81403,
+                  "observed": 1.0
+                }
+              ],
+              "draw": [
+                {
+                  "n": 32,
+                  "mean_p": 0.177593,
+                  "observed": 0.1875
+                },
+                {
+                  "n": 348,
+                  "mean_p": 0.251829,
+                  "observed": 0.281609
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 62,
+                  "mean_p": 0.149562,
+                  "observed": 0.112903
+                },
+                {
+                  "n": 214,
+                  "mean_p": 0.299805,
+                  "observed": 0.271028
+                },
+                {
+                  "n": 94,
+                  "mean_p": 0.481807,
+                  "observed": 0.457447
+                },
+                {
+                  "n": 10,
+                  "mean_p": 0.649492,
+                  "observed": 0.6
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 14,
+                  "mean_p": 0.364971,
+                  "observed": 0.642857
+                },
+                {
+                  "n": 266,
+                  "mean_p": 0.522757,
+                  "observed": 0.533835
+                },
+                {
+                  "n": 100,
+                  "mean_p": 0.636113,
+                  "observed": 0.58
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 3,
+                  "mean_p": 0.176267,
+                  "observed": 0.666667
+                },
+                {
+                  "n": 124,
+                  "mean_p": 0.323765,
+                  "observed": 0.346774
+                },
+                {
+                  "n": 198,
+                  "mean_p": 0.480444,
+                  "observed": 0.525253
+                },
+                {
+                  "n": 55,
+                  "mean_p": 0.655422,
+                  "observed": 0.636364
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 16,
+                  "mean_p": 0.172185,
+                  "observed": 0.1875
+                },
+                {
+                  "n": 220,
+                  "mean_p": 0.315947,
+                  "observed": 0.304545
+                },
+                {
+                  "n": 134,
+                  "mean_p": 0.48404,
+                  "observed": 0.410448
+                },
+                {
+                  "n": 10,
+                  "mean_p": 0.653541,
+                  "observed": 0.5
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.450877,
+                  "observed": 0.426316
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.229825,
+                  "observed": 0.273684
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.319298,
+                  "observed": 0.3
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.579825,
+                  "observed": 0.55
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.478947,
+                  "observed": 0.484211
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.394737,
+                  "observed": 0.342105
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "T-60": {
+      "summary": {
+        "n": 1900,
+        "coverage": 1.0,
+        "eligible_completed": 1900,
+        "verified_cutoff_n": 0,
+        "rounds": 190,
+        "b0_score": 73.55917205293937,
+        "model_score": 75.4478132340877,
+        "paired_delta": 1.8886411811483355,
+        "paired_round_ci95": [
+          1.5392564037279903,
+          2.26229986003084
+        ],
+        "model_counts": {
+          "B0": 5,
+          "B1": 1895
+        },
+        "fallback_reasons": {
+          "unseen_team": 5
+        },
+        "result_timing": {
+          "assumed_lag": 1900
+        },
+        "schedule_timing": {
+          "supplied_or_final_archive_schedule": 1900
+        },
+        "model_losses": {
+          "result": 0.2911347970510552,
+          "total": 0.24346691545111648,
+          "home": 0.22625018684571993,
+          "away": 0.22123557128860025
+        },
+        "baseline_losses": {
+          "result": 0.323741458910434,
+          "total": 0.24726008002462296,
+          "home": 0.2511064943059403,
+          "away": 0.23552508464142813
+        },
+        "model_log_losses": {
+          "result": 0.9786607898865997,
+          "total": 0.6800031113163573,
+          "home": 0.6434712190053941,
+          "away": 0.6331647099229412
+        },
+        "baseline_log_losses": {
+          "result": 1.0697729477296878,
+          "total": 0.6876662569800199,
+          "home": 0.6954202207239547,
+          "away": 0.6639458309946467
+        },
+        "calibration": {
+          "bins": [
+            0,
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1
+          ],
+          "model": {
+            "home_win": [
+              {
+                "n": 161,
+                "mean_p": 0.150372,
+                "observed": 0.124224
+              },
+              {
+                "n": 694,
+                "mean_p": 0.312104,
+                "observed": 0.321326
+              },
+              {
+                "n": 703,
+                "mean_p": 0.487969,
+                "observed": 0.497866
+              },
+              {
+                "n": 311,
+                "mean_p": 0.677016,
+                "observed": 0.70418
+              },
+              {
+                "n": 31,
+                "mean_p": 0.839441,
+                "observed": 0.870968
+              }
+            ],
+            "draw": [
+              {
+                "n": 314,
+                "mean_p": 0.16672,
+                "observed": 0.140127
+              },
+              {
+                "n": 1586,
+                "mean_p": 0.24708,
+                "observed": 0.258512
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_win": [
+              {
+                "n": 399,
+                "mean_p": 0.136876,
+                "observed": 0.110276
+              },
+              {
+                "n": 913,
+                "mean_p": 0.299327,
+                "observed": 0.28368
+              },
+              {
+                "n": 468,
+                "mean_p": 0.483809,
+                "observed": 0.459402
+              },
+              {
+                "n": 116,
+                "mean_p": 0.670271,
+                "observed": 0.741379
+              },
+              {
+                "n": 4,
+                "mean_p": 0.820085,
+                "observed": 0.75
+              }
+            ],
+            "total_over_2_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 107,
+                "mean_p": 0.363863,
+                "observed": 0.485981
+              },
+              {
+                "n": 1281,
+                "mean_p": 0.518404,
+                "observed": 0.552693
+              },
+              {
+                "n": 509,
+                "mean_p": 0.645517,
+                "observed": 0.614931
+              },
+              {
+                "n": 3,
+                "mean_p": 0.810909,
+                "observed": 0.666667
+              }
+            ],
+            "home_over_1_5": [
+              {
+                "n": 53,
+                "mean_p": 0.171023,
+                "observed": 0.207547
+              },
+              {
+                "n": 695,
+                "mean_p": 0.318645,
+                "observed": 0.332374
+              },
+              {
+                "n": 841,
+                "mean_p": 0.487777,
+                "observed": 0.514863
+              },
+              {
+                "n": 292,
+                "mean_p": 0.672964,
+                "observed": 0.69863
+              },
+              {
+                "n": 19,
+                "mean_p": 0.832343,
+                "observed": 0.894737
+              }
+            ],
+            "away_over_1_5": [
+              {
+                "n": 165,
+                "mean_p": 0.167115,
+                "observed": 0.212121
+              },
+              {
+                "n": 1016,
+                "mean_p": 0.306685,
+                "observed": 0.316929
+              },
+              {
+                "n": 604,
+                "mean_p": 0.484162,
+                "observed": 0.476821
+              },
+              {
+                "n": 115,
+                "mean_p": 0.659995,
+                "observed": 0.634783
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ]
+          },
+          "baseline": {
+            "home_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.439123,
+                "observed": 0.441579
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "draw": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.225614,
+                "observed": 0.238947
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.335263,
+                "observed": 0.319474
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "total_over_2_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.542456,
+                "observed": 0.565789
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "home_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.44386,
+                "observed": 0.471579
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 1900,
+                "mean_p": 0.371228,
+                "observed": 0.377895
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ]
+          }
+        }
+      },
+      "omissions": {},
+      "by_season": {
+        "2021-22": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.75,
+          "model_score": 76.21982669793574,
+          "paired_delta": 2.4698266979357473,
+          "paired_round_ci95": [
+            1.7819439784287332,
+            3.2084892557125015
+          ],
+          "model_counts": {
+            "B0": 1,
+            "B1": 379
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.2820374994263733,
+            "total": 0.2440557134093991,
+            "home": 0.21392204878086296,
+            "away": 0.2111916704659347
+          },
+          "baseline_losses": {
+            "result": 0.3237542320714066,
+            "total": 0.24884887657740842,
+            "home": 0.2461218836565097,
+            "away": 0.2312750076946753
+          },
+          "model_log_losses": {
+            "result": 0.9531057748370201,
+            "total": 0.6813690228235638,
+            "home": 0.6148297266660567,
+            "away": 0.6121780044844515
+          },
+          "baseline_log_losses": {
+            "result": 1.0693174107978938,
+            "total": 0.6908439746329519,
+            "home": 0.6853740551271661,
+            "away": 0.6552151850945037
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 45,
+                  "mean_p": 0.141255,
+                  "observed": 0.066667
+                },
+                {
+                  "n": 147,
+                  "mean_p": 0.310448,
+                  "observed": 0.340136
+                },
+                {
+                  "n": 123,
+                  "mean_p": 0.493177,
+                  "observed": 0.471545
+                },
+                {
+                  "n": 58,
+                  "mean_p": 0.682372,
+                  "observed": 0.793103
+                },
+                {
+                  "n": 7,
+                  "mean_p": 0.842107,
+                  "observed": 0.857143
+                }
+              ],
+              "draw": [
+                {
+                  "n": 59,
+                  "mean_p": 0.163294,
+                  "observed": 0.084746
+                },
+                {
+                  "n": 321,
+                  "mean_p": 0.252302,
+                  "observed": 0.258567
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 83,
+                  "mean_p": 0.133067,
+                  "observed": 0.108434
+                },
+                {
+                  "n": 167,
+                  "mean_p": 0.302454,
+                  "observed": 0.299401
+                },
+                {
+                  "n": 96,
+                  "mean_p": 0.483443,
+                  "observed": 0.427083
+                },
+                {
+                  "n": 33,
+                  "mean_p": 0.679693,
+                  "observed": 0.848485
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.856729,
+                  "observed": 1.0
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 48,
+                  "mean_p": 0.363604,
+                  "observed": 0.375
+                },
+                {
+                  "n": 262,
+                  "mean_p": 0.515499,
+                  "observed": 0.557252
+                },
+                {
+                  "n": 70,
+                  "mean_p": 0.638991,
+                  "observed": 0.585714
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 27,
+                  "mean_p": 0.170748,
+                  "observed": 0.074074
+                },
+                {
+                  "n": 163,
+                  "mean_p": 0.3151,
+                  "observed": 0.343558
+                },
+                {
+                  "n": 141,
+                  "mean_p": 0.496679,
+                  "observed": 0.510638
+                },
+                {
+                  "n": 46,
+                  "mean_p": 0.67924,
+                  "observed": 0.717391
+                },
+                {
+                  "n": 3,
+                  "mean_p": 0.821963,
+                  "observed": 1.0
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 49,
+                  "mean_p": 0.158595,
+                  "observed": 0.22449
+                },
+                {
+                  "n": 191,
+                  "mean_p": 0.304629,
+                  "observed": 0.277487
+                },
+                {
+                  "n": 114,
+                  "mean_p": 0.483351,
+                  "observed": 0.517544
+                },
+                {
+                  "n": 26,
+                  "mean_p": 0.667874,
+                  "observed": 0.576923
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.435965,
+                  "observed": 0.428947
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.215789,
+                  "observed": 0.231579
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.348246,
+                  "observed": 0.339474
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.519298,
+                  "observed": 0.539474
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.426316,
+                  "observed": 0.436842
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.362281,
+                  "observed": 0.363158
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2022-23": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.89860341643582,
+          "model_score": 75.41649438009257,
+          "paired_delta": 1.5178909636567557,
+          "paired_round_ci95": [
+            0.7478310901833577,
+            2.2737451286849013
+          ],
+          "model_counts": {
+            "B1": 379,
+            "B0": 1
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.29656557792752974,
+            "total": 0.24224091352571428,
+            "home": 0.2243430488077833,
+            "away": 0.22019068453526955
+          },
+          "baseline_losses": {
+            "result": 0.31941366574330565,
+            "total": 0.24934518313327178,
+            "home": 0.2498553401046476,
+            "away": 0.22544167436134196
+          },
+          "model_log_losses": {
+            "result": 0.9946394669013178,
+            "total": 0.6769420298963427,
+            "home": 0.6405405068491002,
+            "away": 0.6303979200201661
+          },
+          "baseline_log_losses": {
+            "result": 1.0574846484962315,
+            "total": 0.6918370565582735,
+            "home": 0.6929182007874557,
+            "away": 0.6432353901658834
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 31,
+                  "mean_p": 0.147366,
+                  "observed": 0.290323
+                },
+                {
+                  "n": 135,
+                  "mean_p": 0.307592,
+                  "observed": 0.355556
+                },
+                {
+                  "n": 146,
+                  "mean_p": 0.486094,
+                  "observed": 0.534247
+                },
+                {
+                  "n": 62,
+                  "mean_p": 0.684357,
+                  "observed": 0.725806
+                },
+                {
+                  "n": 6,
+                  "mean_p": 0.838634,
+                  "observed": 0.666667
+                }
+              ],
+              "draw": [
+                {
+                  "n": 63,
+                  "mean_p": 0.165512,
+                  "observed": 0.15873
+                },
+                {
+                  "n": 317,
+                  "mean_p": 0.252471,
+                  "observed": 0.242902
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 77,
+                  "mean_p": 0.129934,
+                  "observed": 0.116883
+                },
+                {
+                  "n": 187,
+                  "mean_p": 0.292785,
+                  "observed": 0.256684
+                },
+                {
+                  "n": 93,
+                  "mean_p": 0.478837,
+                  "observed": 0.44086
+                },
+                {
+                  "n": 23,
+                  "mean_p": 0.683774,
+                  "observed": 0.478261
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 28,
+                  "mean_p": 0.359431,
+                  "observed": 0.5
+                },
+                {
+                  "n": 268,
+                  "mean_p": 0.505362,
+                  "observed": 0.496269
+                },
+                {
+                  "n": 83,
+                  "mean_p": 0.646756,
+                  "observed": 0.626506
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.820289,
+                  "observed": 1.0
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 11,
+                  "mean_p": 0.173848,
+                  "observed": 0.272727
+                },
+                {
+                  "n": 155,
+                  "mean_p": 0.318648,
+                  "observed": 0.322581
+                },
+                {
+                  "n": 159,
+                  "mean_p": 0.485464,
+                  "observed": 0.503145
+                },
+                {
+                  "n": 50,
+                  "mean_p": 0.679883,
+                  "observed": 0.74
+                },
+                {
+                  "n": 5,
+                  "mean_p": 0.834623,
+                  "observed": 0.8
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 45,
+                  "mean_p": 0.174259,
+                  "observed": 0.222222
+                },
+                {
+                  "n": 204,
+                  "mean_p": 0.300263,
+                  "observed": 0.303922
+                },
+                {
+                  "n": 108,
+                  "mean_p": 0.474193,
+                  "observed": 0.425926
+                },
+                {
+                  "n": 23,
+                  "mean_p": 0.665614,
+                  "observed": 0.521739
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.420175,
+                  "observed": 0.484211
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.230702,
+                  "observed": 0.228947
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.349123,
+                  "observed": 0.286842
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.520175,
+                  "observed": 0.526316
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.417544,
+                  "observed": 0.457895
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.361404,
+                  "observed": 0.342105
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2023-24": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.1987919359803,
+          "model_score": 76.01889601350852,
+          "paired_delta": 2.8201040775282236,
+          "paired_round_ci95": [
+            1.8294149103220538,
+            3.7468208070801756
+          ],
+          "model_counts": {
+            "B1": 379,
+            "B0": 1
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.2743184752573472,
+            "total": 0.2373411091280343,
+            "home": 0.22730025527233041,
+            "away": 0.2202843198019471
+          },
+          "baseline_losses": {
+            "result": 0.31897583871960605,
+            "total": 0.2440173899661434,
+            "home": 0.26183364112034474,
+            "away": 0.24722145275469376
+          },
+          "model_log_losses": {
+            "result": 0.9318065732762674,
+            "total": 0.6674327317723701,
+            "home": 0.6451655652509822,
+            "away": 0.6307783651001936
+          },
+          "baseline_log_losses": {
+            "result": 1.0549113355837683,
+            "total": 0.6811745881014368,
+            "home": 0.7170739336828457,
+            "away": 0.6879534363065951
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 33,
+                  "mean_p": 0.152422,
+                  "observed": 0.121212
+                },
+                {
+                  "n": 131,
+                  "mean_p": 0.31412,
+                  "observed": 0.282443
+                },
+                {
+                  "n": 126,
+                  "mean_p": 0.489603,
+                  "observed": 0.539683
+                },
+                {
+                  "n": 80,
+                  "mean_p": 0.676249,
+                  "observed": 0.7125
+                },
+                {
+                  "n": 10,
+                  "mean_p": 0.846396,
+                  "observed": 0.9
+                }
+              ],
+              "draw": [
+                {
+                  "n": 98,
+                  "mean_p": 0.165781,
+                  "observed": 0.142857
+                },
+                {
+                  "n": 282,
+                  "mean_p": 0.236872,
+                  "observed": 0.241135
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 93,
+                  "mean_p": 0.135703,
+                  "observed": 0.107527
+                },
+                {
+                  "n": 168,
+                  "mean_p": 0.301562,
+                  "observed": 0.261905
+                },
+                {
+                  "n": 86,
+                  "mean_p": 0.481441,
+                  "observed": 0.5
+                },
+                {
+                  "n": 31,
+                  "mean_p": 0.652233,
+                  "observed": 0.774194
+                },
+                {
+                  "n": 2,
+                  "mean_p": 0.808016,
+                  "observed": 1.0
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 12,
+                  "mean_p": 0.36793,
+                  "observed": 0.583333
+                },
+                {
+                  "n": 258,
+                  "mean_p": 0.516843,
+                  "observed": 0.643411
+                },
+                {
+                  "n": 108,
+                  "mean_p": 0.653783,
+                  "observed": 0.666667
+                },
+                {
+                  "n": 2,
+                  "mean_p": 0.806219,
+                  "observed": 0.5
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 6,
+                  "mean_p": 0.165676,
+                  "observed": 0.333333
+                },
+                {
+                  "n": 140,
+                  "mean_p": 0.315085,
+                  "observed": 0.378571
+                },
+                {
+                  "n": 155,
+                  "mean_p": 0.486757,
+                  "observed": 0.548387
+                },
+                {
+                  "n": 71,
+                  "mean_p": 0.673434,
+                  "observed": 0.774648
+                },
+                {
+                  "n": 8,
+                  "mean_p": 0.835416,
+                  "observed": 1.0
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 32,
+                  "mean_p": 0.166568,
+                  "observed": 0.21875
+                },
+                {
+                  "n": 206,
+                  "mean_p": 0.297668,
+                  "observed": 0.349515
+                },
+                {
+                  "n": 116,
+                  "mean_p": 0.487501,
+                  "observed": 0.517241
+                },
+                {
+                  "n": 26,
+                  "mean_p": 0.657194,
+                  "observed": 0.807692
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.430702,
+                  "observed": 0.460526
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.226316,
+                  "observed": 0.215789
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.342982,
+                  "observed": 0.323684
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.52193,
+                  "observed": 0.647368
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.420175,
+                  "observed": 0.534211
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.362281,
+                  "observed": 0.421053
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2024-25": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.30178516466606,
+          "model_score": 75.0579774259809,
+          "paired_delta": 1.7561922613148426,
+          "paired_round_ci95": [
+            1.002416988479293,
+            2.4927405105393645
+          ],
+          "model_counts": {
+            "B1": 379,
+            "B0": 1
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.2953799987270729,
+            "total": 0.24336672470039608,
+            "home": 0.22425892132297956,
+            "away": 0.23467525821031568
+          },
+          "baseline_losses": {
+            "result": 0.3284379809172053,
+            "total": 0.2456994459833795,
+            "home": 0.24794321329639887,
+            "away": 0.24584795321637423
+          },
+          "model_log_losses": {
+            "result": 0.9887913807959691,
+            "total": 0.6798663706975423,
+            "home": 0.6401105305019853,
+            "away": 0.661739581710216
+          },
+          "baseline_log_losses": {
+            "result": 1.0826402716069496,
+            "total": 0.6845220049722351,
+            "home": 0.6890309466657145,
+            "away": 0.6850023524313775
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 33,
+                  "mean_p": 0.154004,
+                  "observed": 0.090909
+                },
+                {
+                  "n": 125,
+                  "mean_p": 0.307407,
+                  "observed": 0.264
+                },
+                {
+                  "n": 151,
+                  "mean_p": 0.485767,
+                  "observed": 0.503311
+                },
+                {
+                  "n": 64,
+                  "mean_p": 0.6749,
+                  "observed": 0.5625
+                },
+                {
+                  "n": 7,
+                  "mean_p": 0.831263,
+                  "observed": 1.0
+                }
+              ],
+              "draw": [
+                {
+                  "n": 62,
+                  "mean_p": 0.167011,
+                  "observed": 0.145161
+                },
+                {
+                  "n": 318,
+                  "mean_p": 0.24015,
+                  "observed": 0.264151
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 84,
+                  "mean_p": 0.139026,
+                  "observed": 0.107143
+                },
+                {
+                  "n": 177,
+                  "mean_p": 0.300751,
+                  "observed": 0.333333
+                },
+                {
+                  "n": 99,
+                  "mean_p": 0.492976,
+                  "observed": 0.474747
+                },
+                {
+                  "n": 19,
+                  "mean_p": 0.678043,
+                  "observed": 0.894737
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.807579,
+                  "observed": 0.0
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 5,
+                  "mean_p": 0.378043,
+                  "observed": 0.8
+                },
+                {
+                  "n": 226,
+                  "mean_p": 0.533491,
+                  "observed": 0.530973
+                },
+                {
+                  "n": 149,
+                  "mean_p": 0.647888,
+                  "observed": 0.610738
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 6,
+                  "mean_p": 0.169805,
+                  "observed": 0.333333
+                },
+                {
+                  "n": 113,
+                  "mean_p": 0.322412,
+                  "observed": 0.256637
+                },
+                {
+                  "n": 188,
+                  "mean_p": 0.491553,
+                  "observed": 0.489362
+                },
+                {
+                  "n": 70,
+                  "mean_p": 0.677113,
+                  "observed": 0.628571
+                },
+                {
+                  "n": 3,
+                  "mean_p": 0.830726,
+                  "observed": 0.666667
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 23,
+                  "mean_p": 0.168599,
+                  "observed": 0.173913
+                },
+                {
+                  "n": 195,
+                  "mean_p": 0.314517,
+                  "observed": 0.348718
+                },
+                {
+                  "n": 133,
+                  "mean_p": 0.491094,
+                  "observed": 0.511278
+                },
+                {
+                  "n": 29,
+                  "mean_p": 0.655284,
+                  "observed": 0.689655
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.457895,
+                  "observed": 0.407895
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.225439,
+                  "observed": 0.244737
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.316667,
+                  "observed": 0.347368
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.571053,
+                  "observed": 0.565789
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.476316,
+                  "observed": 0.444737
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.375439,
+                  "observed": 0.421053
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2025-26": {
+          "n": 380,
+          "coverage": 1.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 38,
+          "b0_score": 73.64667974761466,
+          "model_score": 74.52587165292077,
+          "paired_delta": 0.8791919053061085,
+          "paired_round_ci95": [
+            0.11002438975116598,
+            1.6214777130343887
+          ],
+          "model_counts": {
+            "B1": 379,
+            "B0": 1
+          },
+          "fallback_reasons": {
+            "unseen_team": 1
+          },
+          "result_timing": {
+            "assumed_lag": 380
+          },
+          "schedule_timing": {
+            "supplied_or_final_archive_schedule": 380
+          },
+          "model_losses": {
+            "result": 0.30737243391695307,
+            "total": 0.25033011649203873,
+            "home": 0.24142666004464355,
+            "away": 0.21983592342953412
+          },
+          "baseline_losses": {
+            "result": 0.3281255771006463,
+            "total": 0.24838950446291166,
+            "home": 0.24977839335180058,
+            "away": 0.22783933518005536
+          },
+          "model_log_losses": {
+            "result": 1.024960753622424,
+            "total": 0.6944054013919672,
+            "home": 0.6767097657588457,
+            "away": 0.6307296782996786
+          },
+          "baseline_log_losses": {
+            "result": 1.0845110721635958,
+            "total": 0.6899536606352019,
+            "home": 0.6927039673565912,
+            "away": 0.6483227909748734
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 19,
+                  "mean_p": 0.166997,
+                  "observed": 0.052632
+                },
+                {
+                  "n": 156,
+                  "mean_p": 0.319641,
+                  "observed": 0.352564
+                },
+                {
+                  "n": 157,
+                  "mean_p": 0.48644,
+                  "observed": 0.44586
+                },
+                {
+                  "n": 47,
+                  "mean_p": 0.664909,
+                  "observed": 0.744681
+                },
+                {
+                  "n": 1,
+                  "mean_p": 0.81333,
+                  "observed": 1.0
+                }
+              ],
+              "draw": [
+                {
+                  "n": 32,
+                  "mean_p": 0.177722,
+                  "observed": 0.1875
+                },
+                {
+                  "n": 348,
+                  "mean_p": 0.251957,
+                  "observed": 0.281609
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 62,
+                  "mean_p": 0.149443,
+                  "observed": 0.112903
+                },
+                {
+                  "n": 214,
+                  "mean_p": 0.299672,
+                  "observed": 0.271028
+                },
+                {
+                  "n": 94,
+                  "mean_p": 0.481615,
+                  "observed": 0.457447
+                },
+                {
+                  "n": 10,
+                  "mean_p": 0.649277,
+                  "observed": 0.6
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 14,
+                  "mean_p": 0.365059,
+                  "observed": 0.642857
+                },
+                {
+                  "n": 267,
+                  "mean_p": 0.523085,
+                  "observed": 0.535581
+                },
+                {
+                  "n": 99,
+                  "mean_p": 0.636506,
+                  "observed": 0.575758
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 3,
+                  "mean_p": 0.176267,
+                  "observed": 0.666667
+                },
+                {
+                  "n": 124,
+                  "mean_p": 0.323889,
+                  "observed": 0.346774
+                },
+                {
+                  "n": 198,
+                  "mean_p": 0.480507,
+                  "observed": 0.525253
+                },
+                {
+                  "n": 55,
+                  "mean_p": 0.655538,
+                  "observed": 0.636364
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 16,
+                  "mean_p": 0.172076,
+                  "observed": 0.1875
+                },
+                {
+                  "n": 220,
+                  "mean_p": 0.315926,
+                  "observed": 0.304545
+                },
+                {
+                  "n": 133,
+                  "mean_p": 0.483107,
+                  "observed": 0.413534
+                },
+                {
+                  "n": 11,
+                  "mean_p": 0.648668,
+                  "observed": 0.454545
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.450877,
+                  "observed": 0.426316
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.229825,
+                  "observed": 0.273684
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.319298,
+                  "observed": 0.3
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.579825,
+                  "observed": 0.55
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.478947,
+                  "observed": 0.484211
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 380,
+                  "mean_p": 0.394737,
+                  "observed": 0.342105
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "limitations": [
+    "The final OpenFootball schedule does not reconstruct earlier schedule announcements or postponements without sidecar observations.",
+    "Publication and local receipt are unknown for results marked lag_assumption. Their delay from kickoff is a sensitivity assumption.",
+    "Historical football-score study only; 2025-26 was previously reviewed. No prospective blind result, personnel/news performance, executable prices, fees or ROI is measured."
+  ],
+  "reproduce": {
+    "input": "For a pinned data run, use football fetch INPUT --from-season FIRST --to-season LAST, using the input blob range above.",
+    "command": "pm861 --data-dir RUNTIME football backtest INPUT --from-season 2021-22 --to-season 2025-26 --horizons 1440 60 --bootstrap 2000 --seed 861 --archive-lag-hours 24 --summary-output SUMMARY.json --details MATCHES.jsonl",
+    "source_code_sha256": {
+      "football.py": "a7283a3c9b4ebb2752590eb6388a973f328ea672c50e7c3b5531154154e2908b",
+      "football_model.py": "093e90294315132d2c60826734bb7a12fc329264ca8d4863bb3ad69bd5b2b829",
+      "historical_inputs.py": "1360fae0e490604a19759d20a41cded41e632d8f5e88547fc569c95feabfd76e"
+    }
+  }
+}

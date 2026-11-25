@@ -1,0 +1,168 @@
+{
+  "scope": "Development observations on 2026-11-25 UTC; live providers change. Probability backtests and market coverage have separate reports.",
+  "early_forecast": {
+    "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+    "season": "2026-27",
+    "home": "Nottingham Forest FC",
+    "away": "Chelsea FC",
+    "kickoff": "2026-11-27T20:00:00.000000Z",
+    "cutoff": "2026-11-25T04:20:22.590802Z",
+    "mode": "technical",
+    "horizon": "early",
+    "model": "B1",
+    "model_version": "EPL-0.1-RC",
+    "evidence": {
+      "training_matches": 1190,
+      "b0_matches": 1140,
+      "b0_scope": "prior_complete_seasons",
+      "result_grades": {
+        "archived_upper_bound": 1190
+      },
+      "latest_result_available_at": "2026-11-25T03:54:35.526102Z",
+      "input_sha256": "e76a83368f3041878f3fa90a643c32716767f7dd8d58c13c3d01589668505daa",
+      "schedule_grade": "recorded_schedule"
+    },
+    "source_health": {
+      "overdue_team_results": {
+        "home": [
+          "epl/2026-27/nottingham-forest/manchester-city",
+          "epl/2026-27/bournemouth/nottingham-forest"
+        ],
+        "away": [
+          "epl/2026-27/sunderland/chelsea",
+          "epl/2026-27/chelsea/leeds-united"
+        ]
+      },
+      "critical_stale": true
+    },
+    "lineups": {
+      "home": {
+        "confirmed": false,
+        "received_at": null,
+        "evidence_id": null
+      },
+      "away": {
+        "confirmed": false,
+        "received_at": null,
+        "evidence_id": null
+      }
+    },
+    "decision": {
+      "state": "no_paper_order",
+      "reason": "此时点只记录预测"
+    },
+    "input_manifest_sha256": "5f45dfc1d46eea259542ab253aae6cb7f5c52aac8187028e257b4fb43eebd3e3",
+    "digest": "e3baca5f25086b72893768b4efe4799f7856d663fdfd653a04eab2f42e249d28"
+  },
+  "supplemental_results": {
+    "source": "OpenLigaDB",
+    "season": "2026-27",
+    "role": "candidate",
+    "fixtures_received": 380,
+    "finished_90m": 100,
+    "latest_finished_kickoff": "2026-11-08T16:30:00+00:00",
+    "coverage": {
+      "candidate_only": 50,
+      "conflicting": 1,
+      "corroborated": 49,
+      "past_scheduled_without_90m": 10,
+      "without_confirmed_90m": 280
+    },
+    "quarantined": [
+      {
+        "candidate_score": [
+          2,
+          1
+        ],
+        "existing_score": [
+          2,
+          2
+        ],
+        "fixture_id": "epl/2026-27/bournemouth/brentford",
+        "reference": "https://api.openligadb.de/getmatchdata/86558",
+        "sha256": "b8b95a74468c081c2b9c6779b8c0aeb05d5c4c4d191c456b610bb2a9441a73b1",
+        "source_match_id": 86558
+      }
+    ],
+    "terms": "https://www.openligadb.de/en/terms-of-use",
+    "license": "https://www.openligadb.de/en/license",
+    "attribution": "Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0"
+  },
+  "context_source_checks": {
+    "purpose": "one independent noncommercial integration check; shadow only",
+    "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+    "weather": {
+      "status": "ok",
+      "request_url": "https://single-runs-api.open-meteo.com/v1/forecast?latitude=52.94&longitude=-1.13278&models=gfs_global&run=2026-11-24T18%3A00&hourly=temperature_2m%2Cprecipitation%2Cwind_speed_10m%2Cwind_gusts_10m&wind_speed_unit=ms&temperature_unit=celsius&precipitation_unit=mm&timezone=GMT",
+      "requested_at": "2026-11-25T04:02:10.159536Z",
+      "received_at": "2026-11-25T04:02:18.702118+00:00",
+      "model_run": "2026-11-24T18:00:00.000000Z",
+      "kickoff": "2026-11-27T20:00:00.000000Z",
+      "venue": "City Ground",
+      "venue_locator": "https://en.wikipedia.org/wiki/City_Ground",
+      "forecast_hours": [
+        {
+          "precipitation": 0.3,
+          "temperature_2m": 4.0,
+          "valid_at": "2026-11-27T20:00:00.000000Z",
+          "wind_gusts_10m": 9.8,
+          "wind_speed_10m": 4.46
+        }
+      ],
+      "units": {
+        "precipitation": "mm",
+        "temperature_2m": "°C",
+        "wind_gusts_10m": "m/s",
+        "wind_speed_10m": "m/s"
+      },
+      "raw_projection_sha256": "0eaf28bcff13e495bee27b8a38ccbf18625a3c39b8cb3e56786b7b410c2fe506",
+      "evidence_id": "ev-513b876557fef3362a623afdc346ddfd98a7fc58e125958d17ecd48d6db128bd",
+      "terms": "https://open-meteo.com/en/terms",
+      "attribution": "Weather data by Open-Meteo (open-meteo.com), CC BY 4.0. Model: NOAA GFS."
+    },
+    "news": {
+      "status": "error",
+      "http_status": 503,
+      "request_url": "https://api.gdeltproject.org/api/v2/doc/doc?query=%22Chelsea%22&mode=ArtList&format=json&sort=DateDesc&timespan=2d&maxrecords=3",
+      "record_count": 0,
+      "fallback": {
+        "status": "ok",
+        "source": "gdelt-gkg",
+        "attribution": "The GDELT Project, https://www.gdeltproject.org/",
+        "received_at": "2026-11-25T04:07:15.924442+00:00",
+        "match": "Aston Villa FC",
+        "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+        "release_url": "https://data.gdeltproject.org/gdeltv2/20261124210000.gkg.csv.zip",
+        "records_scanned": 1525,
+        "links": [
+          [
+            "avfc.co.uk",
+            "https://www.avfc.co.uk/news/2026/november/24/report-galatasaray-1-0-aston-villa/"
+          ],
+          [
+            "avfc.co.uk",
+            "https://www.avfc.co.uk/news/2026/november/24/report-uefa-youth-league-galatasaray-aston-villa/"
+          ]
+        ],
+        "scope": "index metadata only; neither an independent verification of article publication time nor a confirmed team sheet",
+        "raw_projection_sha256": "d06c0d1b4d541cd285dfff6747590750c4e4e0d288a2de0b5b09ddd9b607c12c"
+      }
+    }
+  },
+  "forward_readiness": {
+    "checks": {
+      "archive_linked_market_replay": true,
+      "multi_season_probability_report": true,
+      "paper_ledger_idempotency": true,
+      "strict_historical_coverage_measured": true,
+      "two_consecutive_observed_technical_rounds": false
+    },
+    "ready": false,
+    "pending": [
+      "two_consecutive_observed_technical_rounds"
+    ],
+    "verified_historical_T60": 0,
+    "completed_technical_rounds": [],
+    "historical_executable_roi": null
+  }
+}

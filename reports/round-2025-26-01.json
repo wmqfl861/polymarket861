@@ -1,0 +1,588 @@
+{
+  "season": "2025-26",
+  "round_id": 1,
+  "horizon": "T-60m",
+  "mode": "replay",
+  "model_version": "B1",
+  "protocol": "epl-v1.1",
+  "expected": 10,
+  "scheduled": 10,
+  "completed": 10,
+  "count": 10,
+  "missing": 0,
+  "pending": 0,
+  "schedule_missing": 0,
+  "score": 78.37327571419068,
+  "full_round_range": [
+    78.37327571419068,
+    78.37327571419068
+  ],
+  "per_item": {
+    "result": 73.60255577694875,
+    "total": 77.86176416893969,
+    "home": 82.22227421277265,
+    "away": 79.80650869810168
+  },
+  "mean_brier": {
+    "result": 0.2639744422305125,
+    "total": 0.22138235831060316,
+    "home": 0.17777725787227358,
+    "away": 0.20193491301898328
+  },
+  "mean_log_loss": {
+    "result": 0.9146476939735614,
+    "total": 0.6343398955461745,
+    "home": 0.5405378515216643,
+    "away": 0.59761911336219
+  },
+  "fixtures": [
+    {
+      "fixture_id": "epl/2025-26/liverpool/bournemouth",
+      "kickoff": "2025-08-15T19:00:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        4,
+        2
+      ],
+      "status": "scored",
+      "digest": "953f8c3c921e90d4591ca1fa85b98253d6ff2bedb4e5601558e4ccf9daa6f740",
+      "score": 77.96443206600372,
+      "losses": {
+        "result": 0.10334719988209284,
+        "total": 0.13834544750789518,
+        "home": 0.1290661196418469,
+        "away": 0.510663950328016
+      },
+      "item_scores": {
+        "result": 89.66528001179071,
+        "total": 86.16545524921048,
+        "home": 87.09338803581531,
+        "away": 48.9336049671984
+      },
+      "log_losses": {
+        "result": 0.4635360979016482,
+        "total": 0.4651325976457267,
+        "home": 0.44512798448200813,
+        "away": 1.253890027925496
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/aston-villa/newcastle-united",
+      "kickoff": "2025-08-16T11:30:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        0,
+        0
+      ],
+      "status": "scored",
+      "digest": "81a82bce8a990180d7c0e49e76cad97003b99f5621e0028894aa72eb65b532c2",
+      "score": 68.62830030659065,
+      "losses": {
+        "result": 0.4384652916085158,
+        "total": 0.3754813831567161,
+        "home": 0.20601003236446624,
+        "away": 0.2349112806066765
+      },
+      "item_scores": {
+        "result": 56.153470839148426,
+        "total": 62.45186168432839,
+        "home": 79.39899676355337,
+        "away": 76.50887193933235
+      },
+      "log_losses": {
+        "result": 1.444959436761896,
+        "total": 0.9487244579036073,
+        "home": 0.6049225542000396,
+        "away": 0.6629603620398204
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/brighton-hove-albion/fulham",
+      "kickoff": "2025-08-16T14:00:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        1,
+        1
+      ],
+      "status": "scored",
+      "digest": "3e898352869f3a4318fc84767bbe52f8ed06c38ed384cc529f504b5c75984146",
+      "score": 68.9996949720183,
+      "losses": {
+        "result": 0.44497346014482614,
+        "total": 0.3643614425171864,
+        "home": 0.26626880376228473,
+        "away": 0.16440849469497046
+      },
+      "item_scores": {
+        "result": 55.50265398551739,
+        "total": 63.56385574828136,
+        "home": 73.37311962377153,
+        "away": 83.55915053050296
+      },
+      "log_losses": {
+        "result": 1.4510527741343566,
+        "total": 0.9253909974870324,
+        "home": 0.725696006059439,
+        "away": 0.5199894399484286
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/sunderland/west-ham-united",
+      "kickoff": "2025-08-16T14:00:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        3,
+        0
+      ],
+      "status": "scored",
+      "digest": "86eda8abd99f1b472297ed8ead2935b72ca88986e8b9061e36a29a964c26cc5f",
+      "score": 79.19965758694984,
+      "losses": {
+        "result": 0.22815327793167128,
+        "total": 0.17654739919975374,
+        "home": 0.2714958448753462,
+        "away": 0.1558171745152355
+      },
+      "item_scores": {
+        "result": 77.18467220683287,
+        "total": 82.34526008002463,
+        "home": 72.85041551246539,
+        "away": 84.41828254847645
+      },
+      "log_losses": {
+        "result": 0.7965602759333761,
+        "total": 0.5450297015368548,
+        "home": 0.736164565643636,
+        "away": 0.5020919437972363
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/tottenham-hotspur/burnley",
+      "kickoff": "2025-08-16T14:00:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        3,
+        0
+      ],
+      "status": "scored",
+      "digest": "6d81376b7d014861392598b4ccfe249bb2e8ab7fc34ffbaafda33ce8c6fcd915",
+      "score": 88.12043322006801,
+      "losses": {
+        "result": 0.1247583648660195,
+        "total": 0.0980543585386881,
+        "home": 0.1165226354894355,
+        "away": 0.13584731230313649
+      },
+      "item_scores": {
+        "result": 87.52416351339805,
+        "total": 90.19456414613119,
+        "home": 88.34773645105645,
+        "away": 86.41526876968635
+      },
+      "log_losses": {
+        "result": 0.5239012033225608,
+        "total": 0.37561944284835125,
+        "home": 0.4175692490974231,
+        "away": 0.45977564003973903
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/wolverhampton-wanderers/manchester-city",
+      "kickoff": "2025-08-16T16:30:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        0,
+        4
+      ],
+      "status": "scored",
+      "digest": "68e562757c47d2ae35bcbf5595443c6405201b8799fdd07dcedca9fb71d9ab57",
+      "score": 88.57639325102105,
+      "losses": {
+        "result": 0.1010696787796982,
+        "total": 0.14898290792697078,
+        "home": 0.07307817891245072,
+        "away": 0.13381350434003852
+      },
+      "item_scores": {
+        "result": 89.89303212203018,
+        "total": 85.10170920730292,
+        "home": 92.69218210875493,
+        "away": 86.61864956599614
+      },
+      "log_losses": {
+        "result": 0.4567751613763852,
+        "total": 0.4877327306686014,
+        "home": 0.31516257234503425,
+        "away": 0.4553992455175613
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/chelsea/crystal-palace",
+      "kickoff": "2025-08-17T13:00:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        0,
+        0
+      ],
+      "status": "scored",
+      "digest": "084f63d91a708afb84945012f5559c38e5fe38781b311c71cd36a7b073d668d5",
+      "score": 73.99813683807727,
+      "losses": {
+        "result": 0.43357091351762866,
+        "total": 0.27343881028551836,
+        "home": 0.2308116991700335,
+        "away": 0.10225310350372806
+      },
+      "item_scores": {
+        "result": 56.64290864823713,
+        "total": 72.65611897144817,
+        "home": 76.91883008299665,
+        "away": 89.77468964962719
+      },
+      "log_losses": {
+        "result": 1.388617498296122,
+        "total": 0.7400580276078199,
+        "home": 0.654751157167507,
+        "away": 0.3853248787614517
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/nottingham-forest/brentford",
+      "kickoff": "2025-08-17T13:00:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        3,
+        1
+      ],
+      "status": "scored",
+      "digest": "f246fee54e0cbfe73bd98b1b542777f1537d578360ed73e225f058c92ea20f86",
+      "score": 75.6666909308841,
+      "losses": {
+        "result": 0.2880096352396295,
+        "total": 0.18889702373739736,
+        "home": 0.31373440461272606,
+        "away": 0.18269129917488333
+      },
+      "item_scores": {
+        "result": 71.19903647603705,
+        "total": 81.11029762626026,
+        "home": 68.62655953872739,
+        "away": 81.73087008251166
+      },
+      "log_losses": {
+        "result": 0.9566242675770403,
+        "total": 0.5702622524655604,
+        "home": 0.8212532966777017,
+        "away": 0.55760984907766
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/manchester-united/arsenal",
+      "kickoff": "2025-08-17T15:30:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        0,
+        1
+      ],
+      "status": "scored",
+      "digest": "2eec1fd4a903dd28041b430d1dbc882cf9b778551ee23870aed2f3d3845e88fd",
+      "score": 82.14523413996201,
+      "losses": {
+        "result": 0.14794824405498763,
+        "total": 0.24539920973735468,
+        "home": 0.057949492303568155,
+        "away": 0.2628936883056092
+      },
+      "item_scores": {
+        "result": 85.20517559450124,
+        "total": 75.46007902626452,
+        "home": 94.20505076964318,
+        "away": 73.71063116943908
+      },
+      "log_losses": {
+        "result": 0.5861918392328684,
+        "total": 0.6839453385159064,
+        "home": 0.27539389278833115,
+        "away": 0.718940167679286
+      }
+    },
+    {
+      "fixture_id": "epl/2025-26/leeds-united/everton",
+      "kickoff": "2025-08-18T19:00:00.000000Z",
+      "schedule_version": 1,
+      "result_version": 1,
+      "result_source": "openfootball",
+      "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "goals": [
+        1,
+        0
+      ],
+      "status": "scored",
+      "digest": "fbf2a4f16b60ad31b59d64b8522265126fc3f8e3ea5b1d35571719ae17fad428",
+      "score": 80.43378383033193,
+      "losses": {
+        "result": 0.3294483562800554,
+        "total": 0.204315600498551,
+        "home": 0.11283536759057781,
+        "away": 0.13604932241753856
+      },
+      "item_scores": {
+        "result": 67.05516437199447,
+        "total": 79.56843995014489,
+        "home": 88.71646324094222,
+        "away": 86.39506775824614
+      },
+      "log_losses": {
+        "result": 1.0782583851993592,
+        "total": 0.6015034087822856,
+        "home": 0.4093372367555239,
+        "away": 0.4602095788352194
+      }
+    }
+  ],
+  "status": "final",
+  "coverage": 1.0,
+  "hits": {
+    "result": {
+      "correct": 6,
+      "eligible": 10,
+      "ties": 0,
+      "rate": 0.6
+    },
+    "total": {
+      "correct": 7,
+      "eligible": 10,
+      "ties": 0,
+      "rate": 0.7
+    },
+    "home": {
+      "correct": 7,
+      "eligible": 10,
+      "ties": 0,
+      "rate": 0.7
+    },
+    "away": {
+      "correct": 8,
+      "eligible": 10,
+      "ties": 0,
+      "rate": 0.8
+    }
+  },
+  "calibration": {
+    "n": 10,
+    "bins": [
+      0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1
+    ],
+    "outcomes": {
+      "home_win": [
+        {
+          "n": 1,
+          "mean_p": 0.168156,
+          "observed": 0.0
+        },
+        {
+          "n": 4,
+          "mean_p": 0.322046,
+          "observed": 0.5
+        },
+        {
+          "n": 4,
+          "mean_p": 0.494737,
+          "observed": 0.5
+        },
+        {
+          "n": 1,
+          "mean_p": 0.629055,
+          "observed": 1.0
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        }
+      ],
+      "draw": [
+        {
+          "n": 3,
+          "mean_p": 0.198002,
+          "observed": 0.0
+        },
+        {
+          "n": 7,
+          "mean_p": 0.244941,
+          "observed": 0.428571
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        }
+      ],
+      "away_win": [
+        {
+          "n": 1,
+          "mean_p": 0.173339,
+          "observed": 0.0
+        },
+        {
+          "n": 6,
+          "mean_p": 0.310252,
+          "observed": 0.0
+        },
+        {
+          "n": 2,
+          "mean_p": 0.479446,
+          "observed": 0.5
+        },
+        {
+          "n": 1,
+          "mean_p": 0.633323,
+          "observed": 1.0
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        }
+      ],
+      "total_over_2_5": [
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        },
+        {
+          "n": 5,
+          "mean_p": 0.523101,
+          "observed": 0.4
+        },
+        {
+          "n": 5,
+          "mean_p": 0.629064,
+          "observed": 0.6
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        }
+      ],
+      "home_over_1_5": [
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        },
+        {
+          "n": 3,
+          "mean_p": 0.282322,
+          "observed": 0.0
+        },
+        {
+          "n": 5,
+          "mean_p": 0.47383,
+          "observed": 0.4
+        },
+        {
+          "n": 2,
+          "mean_p": 0.649694,
+          "observed": 1.0
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        }
+      ],
+      "away_over_1_5": [
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        },
+        {
+          "n": 5,
+          "mean_p": 0.347465,
+          "observed": 0.2
+        },
+        {
+          "n": 4,
+          "mean_p": 0.457576,
+          "observed": 0.0
+        },
+        {
+          "n": 1,
+          "mean_p": 0.634195,
+          "observed": 1.0
+        },
+        {
+          "n": 0,
+          "mean_p": null,
+          "observed": null
+        }
+      ]
+    }
+  },
+  "hit_rule": "Unique highest 1X2 probability or binary probability above 0.5; exact ties reported separately.",
+  "report_version": 1,
+  "report_sha256": "0d3ff27b1621f872da652bfecfb77fddaf477d8481b60711ee0bd5869561aecc",
+  "report_published_at": "2026-11-25T05:11:37.920026Z",
+  "report_origin": "published"
+}

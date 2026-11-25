@@ -1,0 +1,363 @@
+{
+  "schema_version": 1,
+  "venue": "polymarket.com",
+  "as_of": "2026-11-25T03:56:02.113867Z",
+  "sample_scope": "Purposive historical audit sample: three completed 2025/26 and two completed 2026/27 fixtures. No inference of league-wide trading performance.",
+  "fixtures": 5,
+  "groups": [
+    {
+      "season": "2025/26",
+      "family": "moneyline",
+      "expected_fixtures": 3,
+      "listed_fixtures": 3,
+      "contracts": 9,
+      "tokens": 18,
+      "two_sided_book_tokens": 0,
+      "pregame_book_tokens": 0,
+      "trade_tokens": 6,
+      "price_tokens": 4,
+      "evidence": {
+        "A": 0,
+        "B": 6,
+        "C": 2,
+        "missing": 10
+      },
+      "unlisted_or_unverified_fixtures": 0
+    },
+    {
+      "season": "2025/26",
+      "family": "total",
+      "expected_fixtures": 3,
+      "listed_fixtures": 2,
+      "contracts": 10,
+      "tokens": 20,
+      "two_sided_book_tokens": 0,
+      "pregame_book_tokens": 0,
+      "trade_tokens": 0,
+      "price_tokens": 2,
+      "evidence": {
+        "A": 0,
+        "B": 0,
+        "C": 2,
+        "missing": 18
+      },
+      "unlisted_or_unverified_fixtures": 1
+    },
+    {
+      "season": "2025/26",
+      "family": "home_total",
+      "expected_fixtures": 3,
+      "listed_fixtures": 0,
+      "contracts": 0,
+      "tokens": 0,
+      "two_sided_book_tokens": 0,
+      "pregame_book_tokens": 0,
+      "trade_tokens": 0,
+      "price_tokens": 0,
+      "evidence": {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "missing": 0
+      },
+      "unlisted_or_unverified_fixtures": 3
+    },
+    {
+      "season": "2025/26",
+      "family": "away_total",
+      "expected_fixtures": 3,
+      "listed_fixtures": 0,
+      "contracts": 0,
+      "tokens": 0,
+      "two_sided_book_tokens": 0,
+      "pregame_book_tokens": 0,
+      "trade_tokens": 0,
+      "price_tokens": 0,
+      "evidence": {
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "missing": 0
+      },
+      "unlisted_or_unverified_fixtures": 3
+    },
+    {
+      "season": "2026/27",
+      "family": "moneyline",
+      "expected_fixtures": 2,
+      "listed_fixtures": 2,
+      "contracts": 6,
+      "tokens": 12,
+      "two_sided_book_tokens": 0,
+      "pregame_book_tokens": 0,
+      "trade_tokens": 6,
+      "price_tokens": 4,
+      "evidence": {
+        "A": 0,
+        "B": 6,
+        "C": 2,
+        "missing": 4
+      },
+      "unlisted_or_unverified_fixtures": 0
+    },
+    {
+      "season": "2026/27",
+      "family": "total",
+      "expected_fixtures": 2,
+      "listed_fixtures": 2,
+      "contracts": 15,
+      "tokens": 30,
+      "two_sided_book_tokens": 0,
+      "pregame_book_tokens": 0,
+      "trade_tokens": 0,
+      "price_tokens": 4,
+      "evidence": {
+        "A": 0,
+        "B": 0,
+        "C": 4,
+        "missing": 26
+      },
+      "unlisted_or_unverified_fixtures": 0
+    },
+    {
+      "season": "2026/27",
+      "family": "home_total",
+      "expected_fixtures": 2,
+      "listed_fixtures": 2,
+      "contracts": 9,
+      "tokens": 18,
+      "two_sided_book_tokens": 0,
+      "pregame_book_tokens": 0,
+      "trade_tokens": 0,
+      "price_tokens": 4,
+      "evidence": {
+        "A": 0,
+        "B": 0,
+        "C": 4,
+        "missing": 14
+      },
+      "unlisted_or_unverified_fixtures": 0
+    },
+    {
+      "season": "2026/27",
+      "family": "away_total",
+      "expected_fixtures": 2,
+      "listed_fixtures": 2,
+      "contracts": 9,
+      "tokens": 18,
+      "two_sided_book_tokens": 0,
+      "pregame_book_tokens": 0,
+      "trade_tokens": 0,
+      "price_tokens": 4,
+      "evidence": {
+        "A": 0,
+        "B": 0,
+        "C": 4,
+        "missing": 14
+      },
+      "unlisted_or_unverified_fixtures": 0
+    }
+  ],
+  "fixture_details": [
+    {
+      "fixture": "epl-ars-che-2026-03-01",
+      "season": "2025/26",
+      "kickoff_candidates": [
+        "2026-03-01T16:30:00.000000Z"
+      ],
+      "schedule_conflict": false,
+      "mapped_families": [
+        "moneyline",
+        "total"
+      ],
+      "unmapped_supported_candidates": 0
+    },
+    {
+      "fixture": "epl-ars-cov-2026-08-21",
+      "season": "2026/27",
+      "kickoff_candidates": [
+        "2026-08-21T19:00:00.000000Z"
+      ],
+      "schedule_conflict": false,
+      "mapped_families": [
+        "away_total",
+        "home_total",
+        "moneyline",
+        "total"
+      ],
+      "unmapped_supported_candidates": 0
+    },
+    {
+      "fixture": "epl-ast-liv-2026-05-17",
+      "season": "2025/26",
+      "kickoff_candidates": [
+        "2026-05-15T19:00:00.000000Z",
+        "2026-05-17T11:30:00.000000Z"
+      ],
+      "schedule_conflict": true,
+      "mapped_families": [
+        "moneyline",
+        "total"
+      ],
+      "unmapped_supported_candidates": 0
+    },
+    {
+      "fixture": "epl-liv-ars-2026-11-01",
+      "season": "2026/27",
+      "kickoff_candidates": [
+        "2026-11-01T16:30:00.000000Z"
+      ],
+      "schedule_conflict": false,
+      "mapped_families": [
+        "away_total",
+        "home_total",
+        "moneyline",
+        "total"
+      ],
+      "unmapped_supported_candidates": 0
+    },
+    {
+      "fixture": "epl-liv-bou-2025-08-15",
+      "season": "2025/26",
+      "kickoff_candidates": [
+        "2025-08-15T19:00:00.000000Z"
+      ],
+      "schedule_conflict": false,
+      "mapped_families": [
+        "moneyline"
+      ],
+      "unmapped_supported_candidates": 0
+    }
+  ],
+  "history_walks_complete": 21,
+  "history_walks_incomplete": 24,
+  "local_request_status_counts": {
+    "not_found": 1,
+    "ok": 161
+  },
+  "executable_roi": null,
+  "limits": [
+    "A is not certified by the archive; run the ledger's verified two-time executable replay.",
+    "B and C are disjoint token counts. trade_tokens/price_tokens can overlap.",
+    "B requires at least one pre-kickoff trade. C requires a positive-resolution pre-kickoff price.",
+    "Scheduled kickoff is a research cutoff. Conflicting schedules exclude all affected tokens from B/C.",
+    "One book alone, missing market or failed request provides no simulated fill or return.",
+    "An unverified or unlisted fixture in this archive does not establish historical market absence."
+  ],
+  "forward_capture": {
+    "fixture": "epl-not-che-2026-11-27",
+    "distinct_tokens": 8,
+    "two_sided_depth": 8,
+    "independently_fresh_receipts": 8,
+    "explicit_pregame_states": 0,
+    "eligible_A": 0,
+    "observed_from": "2026-11-25T03:46:55.518826Z",
+    "observed_to": "2026-11-25T03:47:13.667464Z",
+    "note": "One archived book per token outside the decision window; Gamma did not explicitly declare both live=false and ended=false in this snapshot."
+  },
+  "catalogs": [
+    {
+      "season": "2025/26",
+      "as_of": "2026-11-25T03:56:01.983209Z",
+      "verified_fixture_slugs": 380,
+      "main_and_auxiliary_events": 677,
+      "nominal_main_kickoff_before_as_of": 380,
+      "mapped_listings": {
+        "moneyline": {
+          "fixtures": 380,
+          "contracts": 1140
+        },
+        "total": {
+          "fixtures": 297,
+          "contracts": 1055
+        },
+        "home_total": {
+          "fixtures": 0,
+          "contracts": 0
+        },
+        "away_total": {
+          "fixtures": 0,
+          "contracts": 0
+        }
+      },
+      "denominator": "Archived EPL main/auxiliary fixture slugs. Event listings do not prove pregame buying depth.",
+      "page_size": 30,
+      "walk_reached_short_or_empty_page": true,
+      "page_errors": 0,
+      "pages_requested_including_empty_probes": 36
+    },
+    {
+      "season": "2026/27",
+      "as_of": "2026-11-25T03:56:01.983209Z",
+      "verified_fixture_slugs": 129,
+      "main_and_auxiliary_events": 258,
+      "nominal_main_kickoff_before_as_of": 110,
+      "mapped_listings": {
+        "away_total": {
+          "fixtures": 129,
+          "contracts": 654
+        },
+        "home_total": {
+          "fixtures": 129,
+          "contracts": 654
+        },
+        "moneyline": {
+          "fixtures": 129,
+          "contracts": 387
+        },
+        "total": {
+          "fixtures": 129,
+          "contracts": 1041
+        }
+      },
+      "denominator": "Archived EPL main/auxiliary fixture slugs. Event listings do not prove pregame buying depth.",
+      "page_size": 30,
+      "walk_reached_short_or_empty_page": true,
+      "page_errors": 0,
+      "pages_requested_including_empty_probes": 44
+    }
+  ],
+  "completed_season_independent_check": {
+    "source": "OpenFootball football.json @ e6744429ee395bc86f247348c6184bb08d4eb361, 2025-26/en.1.json",
+    "openfootball_home_away_pairs": 380,
+    "gamma_home_away_pairs": 380,
+    "exact_name_and_direction_matches": 380,
+    "note": "Matched ordered teams. This check does not establish original kickoff times, contract availability before kickoff or historical depth."
+  },
+  "adapter_replay": {
+    "changes_recorded": 105,
+    "cause": "Historical moneyline group titles such as Manchester City omit FC and use old club display labels. Re-index used the immutable raw page, roster side, abbreviation and same-side fixture title. Previous derived values were retained."
+  },
+  "historical_token_evidence": {
+    "A": 0,
+    "B": 12,
+    "C": 18,
+    "missing": 86
+  },
+  "historical_replay_rows_including_unlisted_families": 123,
+  "raw_response_manifest_sha256": {
+    "sample": "fa88526cfa032135ef2586d1021ee255e3c2f835b05b1c8b37161f60033a6d1d",
+    "catalog": "af039cdc293c8a8460e6b97e08cbeec20fb866b7df432931a0432e547a9e9c89"
+  },
+  "scope_and_reproduction": {
+    "official_sources": [
+      "https://gamma-api.polymarket.com/sports",
+      "https://docs.polymarket.com/api-reference/events/list-events",
+      "https://clob.polymarket.com/book",
+      "https://data-api.polymarket.com/v2/openapi.json"
+    ],
+    "catalog_command": "pm861 --data-dir PATH market catalog YEAR --page-size 30 --pages 80",
+    "catalog_filters": "EPL primaryTagId 306 from /sports, July-to-July end_date_min/max, id ascending, limit/offset. Full-time home/away tokens classified from protocol, event, contract type, line and identity. Directory enumeration is not a global atomic snapshot.",
+    "historical_fixtures": [
+      "epl-liv-bou-2025-08-15",
+      "epl-ars-che-2026-03-01",
+      "epl-ast-liv-2026-05-17",
+      "epl-ars-cov-2026-08-21",
+      "epl-liv-ars-2026-11-01"
+    ],
+    "partial_tape": "market history trades EVENT_ID --limit 250 --pages 2, continue up to 8 further pages for completed sample events. Cursors and coverage gaps recorded; recently active events can have many post-kickoff trades.",
+    "curves": "Per sample fixture, home-win, match over/under 2.5, home-team over/under 1.5 and away-team over/under 1.5 when listed, both tokens. market history prices TOKEN --start EPOCH --end EPOCH --limit 250 --pages 2. End = min(known cutoff, collection time). Begin = end minus 48h. Exclude resolution_seconds=0 and points at/after kickoff.",
+    "readback": "market discover FIXTURE, market books TOKEN, market replay-inputs --fixture FIXTURE (repeat --fixture), market coverage --fixture FIXTURE. Original bytes are kept in the private runtime.",
+    "catalog_summary_command": "pm861 --data-dir PATH market catalog-summary YEAR"
+  }
+}

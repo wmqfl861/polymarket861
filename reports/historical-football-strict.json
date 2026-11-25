@@ -1,0 +1,4744 @@
+{
+  "kind": "historical_football_backtest",
+  "input_provenance": {
+    "policy": "upstream-bytes-local-receipt-v1",
+    "snapshot": "b264c350c1f0fa55b8719b6240dfec5a89fb9a33ef6262346f378565cccffe2e",
+    "season_files": [
+      {
+        "season": "2010-11",
+        "sha256": "a94631cc82fd4034d4da5f5594d32cb191942f0b594e3a9cd9dcf29fe7dfa707",
+        "git_blob": "9fe7c43945ed5bb7249ae2488397262d0d72ca88"
+      },
+      {
+        "season": "2011-12",
+        "sha256": "94e29260ec3500ba69e1ffe829576b0c6297cb570ecc223ab13a2fdcae81fb98",
+        "git_blob": "72c0c8ca26ce53bdafb71a3d12ea4e51fe8790a3"
+      },
+      {
+        "season": "2012-13",
+        "sha256": "d41f9131f9dda654bff9067ffd370468b895b5ed4e9691a4b5cad2b2550fbc8b",
+        "git_blob": "b9fba456fccee350f06ced85600229dfe8d895d4"
+      },
+      {
+        "season": "2013-14",
+        "sha256": "821ea8a8a078753993ed1cc9f86fb739ec18824ef07aee1df4e83f6915e29782",
+        "git_blob": "f8f06a0494c657638a6ad055effdf65c33c164c3"
+      },
+      {
+        "season": "2014-15",
+        "sha256": "2f24151bffd3d377810f3d2e85ead0f1b3dfef00153c6ea31f5e9ced63281a4d",
+        "git_blob": "4ac8e36323109731fb60fc3db678a0b358074e12"
+      },
+      {
+        "season": "2015-16",
+        "sha256": "4d8ab70f5d2c29231320be7404310bc1b0fbc6e6be0284e5ee667f581406fead",
+        "git_blob": "d7384b9c162eea51ea0da500b8f6c73a170ee0bd"
+      },
+      {
+        "season": "2016-17",
+        "sha256": "9c8cdb27355678ab81aacbbabc34a08d00b399aacc28ef4b733da4954a344f17",
+        "git_blob": "b09de9d55b17571e6c9c64fefe83522dfc02ce6f"
+      },
+      {
+        "season": "2017-18",
+        "sha256": "b635f2442a94aa91d85f282fc5e8f7f5dc4f0d04e3e30c4472102f5708d7548c",
+        "git_blob": "c0ccb9c85503d1e24482be7c5117f6277c5a0e2f"
+      },
+      {
+        "season": "2018-19",
+        "sha256": "e2224d86f0605a5a1b5b019c845cdecb13aca1d88035686d4159b875250d4730",
+        "git_blob": "334909dfb533959f15a6d2bf08a096adcfa7d21f"
+      },
+      {
+        "season": "2019-20",
+        "sha256": "9e1695f85ce5553f762e809dea357ec0a95838939be89569060a83c4e98a302d",
+        "git_blob": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc"
+      },
+      {
+        "season": "2020-21",
+        "sha256": "21ddf26b48469da530c51ccc4857bf1a534bda3aed08766b55185efb142e9a20",
+        "git_blob": "081509058af75c0c012d64e980dc4fa53720d933"
+      },
+      {
+        "season": "2021-22",
+        "sha256": "fbdfd426fa18fa2f8630b77de87c082734da495ac4668d6d72f29f76b73b9564",
+        "git_blob": "5eadd9d91c71d45634f3969192ad908653681b23"
+      },
+      {
+        "season": "2022-23",
+        "sha256": "8d09f0f9846981626cdfec48903e1f21e7c79aabe6f92535c9e092e8e79b808b",
+        "git_blob": "0b6230e60d8cd7402810a5f515f6762d8b385b74"
+      },
+      {
+        "season": "2023-24",
+        "sha256": "03e13eafbf78dfe00d7e89dd3bf6643986eb6e8fd86c7664aeb8c5bc0bed88d0",
+        "git_blob": "f62b11dfaf06cffd1236c2777caebb880a0cfea1"
+      },
+      {
+        "season": "2024-25",
+        "sha256": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75",
+        "git_blob": "504f2e732fbc3c9caeb98e4382b13b094453b840"
+      },
+      {
+        "season": "2025-26",
+        "sha256": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1",
+        "git_blob": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+      },
+      {
+        "season": "2026-27",
+        "sha256": "bb91f0ab3e8359df163bb9ec98549bfed85e200dd4c32f3bd606b5890d932dd2",
+        "git_blob": "60e281f0fcc51cfca1a901353666a688cf62a8ba"
+      }
+    ],
+    "sidecar_sha256": null,
+    "observed_manifest": null,
+    "source_authenticated": true,
+    "source_revision": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "timing_authenticated": false,
+    "study_type": "strict_coverage",
+    "archive_lag_hours": null,
+    "status": "source_without_receipt_history",
+    "reason": null
+  },
+  "model_version": "football-dc-1",
+  "source": {
+    "repository": "openfootball/football.json",
+    "commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "blobs": {
+      "2010-11": "9fe7c43945ed5bb7249ae2488397262d0d72ca88",
+      "2011-12": "72c0c8ca26ce53bdafb71a3d12ea4e51fe8790a3",
+      "2012-13": "b9fba456fccee350f06ced85600229dfe8d895d4",
+      "2013-14": "f8f06a0494c657638a6ad055effdf65c33c164c3",
+      "2014-15": "4ac8e36323109731fb60fc3db678a0b358074e12",
+      "2015-16": "d7384b9c162eea51ea0da500b8f6c73a170ee0bd",
+      "2016-17": "b09de9d55b17571e6c9c64fefe83522dfc02ce6f",
+      "2017-18": "c0ccb9c85503d1e24482be7c5117f6277c5a0e2f",
+      "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+      "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+      "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+      "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+      "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+      "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+      "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+      "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "2026-27": "60e281f0fcc51cfca1a901353666a688cf62a8ba"
+    },
+    "all_files_verified": true,
+    "timing_evidence_status": "source_without_receipt_history",
+    "result_version_grades": {},
+    "repairs": [
+      {
+        "season": "2019-20",
+        "count": 66,
+        "attribution": "FiveThirtyEight, Club soccer predictions match file (spi_matches.csv), via Item Response Warehouse, irw_competitions v7.1, DOI 10.57761/3r1w-t660",
+        "independent_source": "https://itemresponsewarehouse.org/tables/fivethirtyeight_soccer_2016_2023/",
+        "csv": "https://redivis.com/api/v1/tables/datapages.irw_competitions:v7_1.fivethirtyeight_soccer_2016_2023/rows?format=csv",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "upstream_license_declaration": "https://github.com/fivethirtyeight/data",
+        "retrieved_csv_sha256": "ae408d93dae0322ea98bac8d2f392e3637b6563824c46822e44dae91f6ccd8da",
+        "matched_rows_sha256": "3b9ab89545cdcec1af35560154e2beda9bbe769db84ac0c102d27109de831ef7",
+        "fields": [
+          "home",
+          "away",
+          "corrected_local_date",
+          "ft_home",
+          "ft_away"
+        ],
+        "change": "Year 2019 to 2020 in the 66 July fixtures of the pinned source blob"
+      }
+    ]
+  },
+  "protocol": {
+    "time_zone": "Europe/London",
+    "horizons_minutes": [
+      1440,
+      60
+    ],
+    "score": "100*(1-mean(normalized 1X2 Brier, O2.5 Brier, home O1.5 Brier, away O1.5 Brier))",
+    "training": "current season to cutoff plus three preceding seasons; retain latest eligible version per fixture",
+    "b0": "joint empirical scores of prior complete observed seasons in window; eligible data during warmup",
+    "b1": "regularized time-decayed Dixon–Coles; hyperparameters fixed, shared across seasons",
+    "decay_per_day": 0.002,
+    "ridge": 8.0,
+    "minimum_training_matches": 40,
+    "archive_lag_hours": null,
+    "bootstrap_resamples": 2000,
+    "bootstrap_unit": "season and official round; match-weighted paired score percentile interval",
+    "bootstrap_seed": 861,
+    "calibration": "fixed 0.2-wide bins; clamped final bin includes 1",
+    "environment": {
+      "python": "3.12.14",
+      "numpy": "2.3.5",
+      "scipy": "1.17.0"
+    }
+  },
+  "fixtures": {
+    "unique": 1900,
+    "completed": 1900,
+    "unfinished": 0,
+    "quarantined": 0,
+    "start": "2021-08-13T19:00:00Z",
+    "end": "2026-05-24T15:00:00Z"
+  },
+  "seasons": [
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ],
+  "horizons": {
+    "T-1440": {
+      "summary": {
+        "n": 0,
+        "coverage": 0.0,
+        "eligible_completed": 1900,
+        "verified_cutoff_n": 0,
+        "rounds": 0,
+        "b0_score": null,
+        "model_score": null,
+        "paired_delta": null,
+        "paired_round_ci95": null,
+        "model_counts": {},
+        "fallback_reasons": {},
+        "result_timing": {},
+        "schedule_timing": {},
+        "model_losses": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "baseline_losses": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "model_log_losses": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "baseline_log_losses": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "calibration": {
+          "bins": [
+            0,
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1
+          ],
+          "model": {
+            "home_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "draw": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "total_over_2_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "home_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ]
+          },
+          "baseline": {
+            "home_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "draw": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "total_over_2_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "home_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ]
+          }
+        }
+      },
+      "omissions": {
+        "no eligible historical results at cutoff": 1900
+      },
+      "by_season": {
+        "2021-22": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2022-23": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2023-24": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2024-25": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2025-26": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "T-60": {
+      "summary": {
+        "n": 0,
+        "coverage": 0.0,
+        "eligible_completed": 1900,
+        "verified_cutoff_n": 0,
+        "rounds": 0,
+        "b0_score": null,
+        "model_score": null,
+        "paired_delta": null,
+        "paired_round_ci95": null,
+        "model_counts": {},
+        "fallback_reasons": {},
+        "result_timing": {},
+        "schedule_timing": {},
+        "model_losses": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "baseline_losses": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "model_log_losses": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "baseline_log_losses": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "calibration": {
+          "bins": [
+            0,
+            0.2,
+            0.4,
+            0.6,
+            0.8,
+            1
+          ],
+          "model": {
+            "home_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "draw": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "total_over_2_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "home_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ]
+          },
+          "baseline": {
+            "home_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "draw": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_win": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "total_over_2_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "home_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ],
+            "away_over_1_5": [
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              },
+              {
+                "n": 0,
+                "mean_p": null,
+                "observed": null
+              }
+            ]
+          }
+        }
+      },
+      "omissions": {
+        "no eligible historical results at cutoff": 1900
+      },
+      "by_season": {
+        "2021-22": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2022-23": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2023-24": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2024-25": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        },
+        "2025-26": {
+          "n": 0,
+          "coverage": 0.0,
+          "eligible_completed": 380,
+          "verified_cutoff_n": 0,
+          "rounds": 0,
+          "b0_score": null,
+          "model_score": null,
+          "paired_delta": null,
+          "paired_round_ci95": null,
+          "model_counts": {},
+          "fallback_reasons": {},
+          "result_timing": {},
+          "schedule_timing": {},
+          "model_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "model_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "baseline_log_losses": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "calibration": {
+            "bins": [
+              0,
+              0.2,
+              0.4,
+              0.6,
+              0.8,
+              1
+            ],
+            "model": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            },
+            "baseline": {
+              "home_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "draw": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_win": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "total_over_2_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "home_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ],
+              "away_over_1_5": [
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                },
+                {
+                  "n": 0,
+                  "mean_p": null,
+                  "observed": null
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "limitations": [
+    "The final OpenFootball schedule does not reconstruct earlier schedule announcements or postponements without sidecar observations.",
+    "Publication and local receipt are unknown for results marked lag_assumption. Their delay from kickoff is a sensitivity assumption.",
+    "Historical football-score study only; 2025-26 was previously reviewed. No prospective blind result, personnel/news performance, executable prices, fees or ROI is measured."
+  ],
+  "reproduce": {
+    "input": "For a pinned data run, use football fetch INPUT --from-season FIRST --to-season LAST, using the input blob range above.",
+    "command": "pm861 --data-dir RUNTIME football backtest INPUT --from-season 2021-22 --to-season 2025-26 --horizons 1440 60 --bootstrap 2000 --seed 861 --summary-output SUMMARY.json --details MATCHES.jsonl",
+    "source_code_sha256": {
+      "football.py": "a7283a3c9b4ebb2752590eb6388a973f328ea672c50e7c3b5531154154e2908b",
+      "football_model.py": "093e90294315132d2c60826734bb7a12fc329264ca8d4863bb3ad69bd5b2b829",
+      "historical_inputs.py": "1360fae0e490604a19759d20a41cded41e632d8f5e88547fc569c95feabfd76e"
+    }
+  }
+}

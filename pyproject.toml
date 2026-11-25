@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polymarket861"
+version = "0.1.0"
+description = "Point-in-time Premier League forecasts and a paper Polymarket ledger"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.24", "scipy>=1.10", "tzdata; platform_system == 'Windows'"]
+readme = "README.md"
+
+[project.scripts]
+pm861 = "polymarket861.cli:main"
+polymarket861 = "polymarket861.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+polymarket861 = ["assets/*.css", "assets/*.js"]

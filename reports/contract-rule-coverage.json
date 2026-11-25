@@ -1,0 +1,28 @@
+{
+  "scope": "Latest raw Gamma event snapshots in this catalogue. Counts are distinct mapped conditions. This check measures published wording and the fee switch. It does not establish pregame book depth or executable fills.",
+  "latest_catalogue_receipt": "2026-11-25T03:52:15.102265Z",
+  "seasons": {
+    "2025-26": {
+      "fixtures": 380,
+      "mapped_conditions": 2195,
+      "interpreted_rules": 1668,
+      "interpreted_fee_enabled": 537,
+      "verified_fee_disabled": 1131,
+      "unrecognized_rules": {
+        "rule text disagrees with archived period, side, participant or line": 126,
+        "unreviewed exception, resolution source or settlement wording": 30,
+        "unreviewed participant, period or rule header": 371
+      }
+    },
+    "2026-27": {
+      "fixtures": 129,
+      "mapped_conditions": 2736,
+      "interpreted_rules": 2451,
+      "interpreted_fee_enabled": 2451,
+      "verified_fee_disabled": 0,
+      "unrecognized_rules": {
+        "unreviewed exception, resolution source or settlement wording": 285
+      }
+    }
+  }
+}
