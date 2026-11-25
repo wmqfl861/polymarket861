@@ -16,6 +16,7 @@ from contextlib import closing
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from . import forward_window
 from . import store
 
 TOPICS = {"round", "source", "incident", "discovery"}
@@ -1106,6 +1107,7 @@ def _model(data_dir, proposal, key, history, season, rnd, window):
         baseline=baseline,
         window=window,
         hypothesis=proposal["hypothesis"],
+        manifest={"evidence_track": forward_window.RESEARCH},
     )
     return {
         "state": "registered_for_trial",
@@ -1182,8 +1184,14 @@ def verify(data_dir, key, *, history=None, season=None, rnd=1):
     trial = "research-" + store.digest([key, proposal])[:30]
     # The registration date is fixed to publication, including when verification is retried.
     when = store.instant(result["proposal_at"])
-    first_year = when.year + (when.month >= 7)
-    window = f"{first_year}-{(first_year + 1) % 100:02d}/1"
+    if proposal["kind"] == "model":
+        start_season, start_round = forward_window.next_start(
+            store.eligible_fixtures(data_dir), max(when, store.instant(store.now_utc()))
+        )
+        window = f"{start_season}/{start_round}"
+    else:
+        first_year = when.year + (when.month >= 7)
+        window = f"{first_year}-{(first_year + 1) % 100:02d}/1"
     terminal = {"registered_for_trial", "note", "awaiting_code_review", "same_recipe"}
     with closing(store.connect(data_dir)) as db:
         old = db.execute(

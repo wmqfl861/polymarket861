@@ -10,7 +10,7 @@ from pathlib import Path
 
 import numpy as np
 
-from . import dbscope
+from . import dbscope, forward_window
 from . import experiment_statistics as stats
 from . import ledger as L
 from . import store, strategy_scope
@@ -79,11 +79,29 @@ def recipe(values):
     }
 
 
+def implementation_digest():
+    from .model_study import source_digest
+
+    return source_digest(
+        (
+            "strategy.py",
+            "strategy_scope.py",
+            "ledger.py",
+            "ledger_rules.py",
+            "ledger_terms.py",
+            "archive_proof.py",
+        )
+    )
+
+
 def _trial(db, key):
     row = db.execute("SELECT * FROM selection_trials WHERE key=?", (key,)).fetchone()
     if not row or digest(json.loads(row["spec"])) != row["digest"]:
         raise ValueError("unknown or altered selection registration")
-    return dict(row) | {"spec": json.loads(row["spec"])}
+    spec = json.loads(row["spec"])
+    if spec.get("implementation") and spec["implementation"] != implementation_digest():
+        raise ValueError("selection implementation changed; register a new experiment")
+    return dict(row) | {"spec": spec}
 
 
 def _active(db, at):
@@ -152,10 +170,10 @@ def register_trial(
         amount <= 0
         or amount % UNIT
         or type(first_round) is not int
-        or not 1 <= first_round <= 39 - span
+        or not 1 <= first_round <= 38
     ):
         raise ValueError(
-            "require a positive fixed match budget and a full 38-round EPL window starting in round one"
+            "require a positive fixed match budget and a valid starting EPL round"
         )
     inputs = list(history_inputs)
     fp = L.replay_fingerprint("historical", inputs)
@@ -225,6 +243,13 @@ def register_trial(
             },
             "input_blob": training["sha256"],
         }
+        if not previous or "forward_window" in previous:
+            spec["forward_window"] = previous.get(
+                "forward_window"
+            ) or forward_window.register(season, first_round, span, schedule, stamp)
+            spec["implementation"] = (
+                previous.get("implementation") or implementation_digest()
+            )
         if old and "history_scope" not in json.loads(old[0]):
             # Retain the original immutable registration; the live account reconciliation still applies.
             spec.pop("history_scope")
@@ -233,7 +258,6 @@ def register_trial(
             if digest(json.loads(old[0])) != identity:
                 raise ValueError("registered selection protocol is immutable")
             return _trial(db, key)
-        stats.require_unopened_season(season, schedule, stamp)
         if baseline == candidate:
             raise ValueError("candidate must change an allowed selection decision")
         if any(
@@ -246,15 +270,14 @@ def register_trial(
         cohort = []
         for r in db.execute("SELECT spec FROM selection_trials"):
             p = json.loads(r[0])
-            if (
-                p["season"] != season
-                or first_round >= p["first_round"] + p["rounds"]
-                or p["first_round"] >= first_round + span
+            if not set(forward_window.rounds(season, first_round, span)).intersection(
+                forward_window.rounds(p["season"], p["first_round"], p["rounds"])
             ):
                 continue
             if any(
                 p[k] != spec[k]
                 for k in (
+                    "season",
                     "first_round",
                     "rounds",
                     "baseline",
@@ -290,11 +313,7 @@ def register_trial(
 
 
 def _window(root, season, first, span):
-    return [
-        f
-        for f in store.eligible_fixtures(root)
-        if _season(f["season"]) == season and first <= f["round_id"] < first + span
-    ]
+    return forward_window.fixtures(store.eligible_fixtures(root), season, first, span)
 
 
 def _rows(db, account, fixture, cutoff):
@@ -531,10 +550,10 @@ def freeze_fixture(data_dir, key, fixture_id):
     fixture = store.fixture_at(data_dir, fixture_id, at=now, prospective=True)
     cutoff = instant(fixture["kickoff"]) - timedelta(hours=1)
     if (
-        _season(fixture["season"]) != spec["season"]
-        or not spec["first_round"]
-        <= fixture["round_id"]
-        < spec["first_round"] + spec["rounds"]
+        forward_window.label(fixture)
+        not in forward_window.rounds(
+            spec["season"], spec["first_round"], spec["rounds"]
+        )
         or not cutoff - timedelta(seconds=30) <= instant(now) <= cutoff
         or instant(trial["registered"]) >= cutoff
     ):
@@ -552,7 +571,7 @@ def freeze_fixture(data_dir, key, fixture_id):
             spec,
             "forward",
             fixture_id,
-            spec["season"],
+            fixture["season"],
             fixture["round_id"],
             iso(cutoff),
             values,
@@ -1204,11 +1223,12 @@ def _interval(grouped, cohort):
 
 def _window_closed(root, spec, stamp):
     fixtures = _window(root, spec["season"], spec["first_round"], spec["rounds"])
-    rounds = Counter(f["round_id"] for f in fixtures)
-    closed = all(
-        rounds[i] == 10
-        for i in range(spec["first_round"], spec["first_round"] + spec["rounds"])
+    closed = forward_window.complete(
+        fixtures,
+        forward_window.rounds(spec["season"], spec["first_round"], spec["rounds"]),
     )
+    if closed and forward_window.audit(root, spec.get("forward_window"), fixtures):
+        closed = False
     closed &= all(
         f.get("received_at")
         and f.get("home_goals") is not None
@@ -1246,7 +1266,8 @@ def score(data_dir, key):
     f = {
         "qualified": False,
         "reason": "forward_window_unfinished",
-        "expected_fixtures": len(fixtures),
+        "expected_fixtures": spec["rounds"] * 10,
+        "scheduled_fixtures": len(fixtures),
     }
     if closed:
         for arm in ("baseline", "candidate"):

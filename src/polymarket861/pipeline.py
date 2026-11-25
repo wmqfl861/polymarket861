@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 from contextlib import closing
 from dataclasses import replace
@@ -40,14 +39,43 @@ def _build_recipe(family, lines):
         for x in lines
     ):
         raise ValueError("select half-goal lines between 0.5 and 19.5")
-    parts = [
-        Path(football.__file__),
-        Path(football.__file__).with_name("football_model.py"),
-    ]
-    code = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in parts}
+    from . import model_study
+    import numpy
+    import scipy
+
+    # Bind training, prediction assembly, evidence selection, and scheduling of as-of inputs.
+    core = {
+        "pipeline.py",
+        "input_manifest.py",
+        "store.py",
+        "evidence.py",
+        "evidence_sources.py",
+        "paired_proof.py",
+        "archive_proof.py",
+        "kickoff_proof.py",
+        "historical_inputs.py",
+        "jobs_research.py",
+        "forward_window.py",
+        "model_study.py",
+        "market_provider.py",
+    }
+    base = Path(__file__).parent
+    ingestion = {
+        p.name
+        for pattern in (
+            "football*.py",
+            "context_*.py",
+            "result_*.py",
+            "independent_results*.py",
+            "schedule_*.py",
+        )
+        for p in base.glob(pattern)
+    }
+    code = model_study.source_hashes(sorted(core | ingestion))
     return {
         "family": family,
         "algorithm_source": code,
+        "numeric_runtime": {"numpy": numpy.__version__, "scipy": scipy.__version__},
         "lines": sorted(set(map(float, lines)) | {1.5, 2.5}),
     }
 
@@ -74,42 +102,24 @@ def register_recipe(data_dir, version, family, *, lines=(0.5, 1.5, 2.5, 3.5)):
 
 
 def prepare_builtin(data_dir):
-    """Select a new immutable build for the default family, leaving every registered experiment intact."""
+    """Read the last effective built-in. New builds must pass the explicit release gate."""
     with closing(connect(data_dir)) as db:
-        old = db.execute(
-            "SELECT recipe FROM model_recipes WHERE version='B1'"
-        ).fetchone()
-        if not old:
-            return "B1"
-        bound = json.loads(old[0])
-        recipe = _build_recipe("B1", (0.5, 1.5, 2.5, 3.5))
-        if bound.get("family") != "B1" or bound.get("lines") != recipe["lines"]:
-            return (
-                "B1"  # Operator-defined recipes never opt into bundled build updates.
-            )
-        version = "B1" if bound == recipe else "B1@" + digest(recipe)
-        if builtin_model_at(db) == version:
-            return version
-        with db:
-            db.execute("BEGIN IMMEDIATE")
-            if builtin_model_at(db) != version:
-                now = now_utc()
-                db.execute(
-                    "INSERT OR IGNORE INTO model_recipes VALUES(?,?,?)",
-                    (version, canonical(recipe), now),
-                )
-                stored = db.execute(
-                    "SELECT recipe FROM model_recipes WHERE version=?", (version,)
-                ).fetchone()
-                if json.loads(stored[0]) != recipe:
-                    raise ValueError(
-                        "builtin release is bound to a different executable recipe"
-                    )
-                db.execute(
-                    "INSERT INTO builtin_model_releases(version,effective_at) VALUES(?,?)",
-                    (version, now),
-                )
-    return version
+        return builtin_model_at(db)
+
+
+def probability(engine, home, away, kickoff, cutoff, season, recipe, context):
+    result = engine.forecast(
+        home,
+        away,
+        kickoff,
+        cutoff,
+        season=season,
+        lines=recipe["lines"],
+        baseline=recipe["family"] == "B0",
+    )
+    if recipe["family"] == "B2":
+        return football.apply_context(result, context, lines=recipe["lines"])
+    return result
 
 
 def _recipe(data_dir, version):
@@ -257,8 +267,18 @@ def make_forecast(
     else:
         version = requested or champion
     purpose = "main" if champion == version else "candidate"
-    selected = _recipe(data_dir, version)
-    recipe = selected["recipe"]
+    try:
+        selected = _recipe(data_dir, version)
+    except ValueError as exc:
+        if sealed and replay:
+            selected = None
+        elif requested is None and (version == "B1" or version.startswith("B1@")):
+            raise ValueError(
+                "a changed builtin requires forecast release-compare and named release-approve"
+            ) from exc
+        else:
+            raise
+    recipe = selected["recipe"] if selected else None
     if replay:
         with closing(connect(data_dir)) as db:
             sealed = _existing(db, fixture, horizon, version, mode)
@@ -309,6 +329,8 @@ def make_forecast(
                 raise paired_proof.SealedInputConflict(
                     "A replay was already sealed with different source or timing bytes; use a new model version."
                 )
+            if selected is None:
+                return _verified_seal(sealed)
         evidence_cutoff = deadline
         revisions = schedules(evidence_cutoff, False)
         context = context_at(evidence_cutoff, False)
@@ -367,14 +389,15 @@ def make_forecast(
             updated.append(match)
         history = updated
     engine = football.FootballEngine(history)
-    result = engine.forecast(
+    result = probability(
+        engine,
         fixture["home"],
         fixture["away"],
         kickoff,
         evidence_cutoff,
-        season=fixture["season"],
-        lines=recipe["lines"],
-        baseline=recipe["family"] == "B0",
+        fixture["season"],
+        recipe,
+        context,
     )
     proof = paired_proof.make_proof(
         fixture,
@@ -407,8 +430,6 @@ def make_forecast(
         "input_proof_sha256": proof["sha256"],
         "training_sha256": baseline["evidence"]["input_sha256"],
     }
-    if recipe["family"] == "B2":
-        result = football.apply_context(result, context, lines=recipe["lines"])
     overdue = {side: [] for side in ("home", "away")}
     for side in overdue:
         team = football.team_key(fixture[side])
@@ -549,7 +570,10 @@ def import_result_and_score(data_dir, outcome):
     reviews = []
     from .jobs import review_due_experiments
 
-    if any(r["mode"] == "formal" and r["completed"] == r["expected"] for r in reports):
+    if any(
+        r["mode"] in ("formal", "technical") and r["completed"] == r["expected"]
+        for r in reports
+    ):
         reviews = review_due_experiments(
             data_dir, fixture["season"], fixture["round_id"]
         )
@@ -678,6 +702,9 @@ def register(subparsers):
     forecasts = subparsers.add_parser(
         "forecast", help="运行模型并封存赛前预测"
     ).add_subparsers(required=True)
+    from . import model_study
+
+    model_study.register(forecasts)
     cmd = forecasts.add_parser("make")
     cmd.add_argument("fixture_id")
     cmd.add_argument(

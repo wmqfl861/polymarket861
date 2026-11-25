@@ -445,8 +445,8 @@ class PairValidator:
         else:
             with closing(_open(self.root)) as db:
                 row = db.execute(
-                    "SELECT digest,document FROM comparison_frames WHERE fixture=? AND kickoff=? AND horizon='T-60m' AND mode='formal' AND protocol=?",
-                    (fixture["fixture_id"], p["kickoff"], store.PROTOCOL),
+                    "SELECT digest,document FROM comparison_frames WHERE fixture=? AND kickoff=? AND horizon='T-60m' AND mode=? AND protocol=?",
+                    (fixture["fixture_id"], p["kickoff"], mode, store.PROTOCOL),
                 ).fetchone()
             if not row or row["digest"] != p["frame"]:
                 return "unverified_live_frame"

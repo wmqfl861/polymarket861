@@ -163,7 +163,7 @@ def _binding(db, account):
 
 
 def _registered_candidate(data_dir, account, key, version=None):
-    from . import jobs
+    from . import jobs, forward_window
 
     if not isinstance(key, str) or not key.strip():
         raise ValueError(
@@ -173,6 +173,7 @@ def _registered_candidate(data_dir, account, key, version=None):
     if (
         c["kind"] != "model"
         or c["scope"] != "epl"
+        or c["manifest"].get("evidence_track") == forward_window.RESEARCH
         or c["manifest"].get("paper_account", c["version"]) != account
         or (version is not None and c["version"] != version)
     ):
@@ -328,11 +329,10 @@ def _formal_authority(data_dir, account, intent, seal, cutoff):
         ):
             raise ValueError("candidate registration postdates its forecast")
         fixture = store.fixture_at(data_dir, intent["match_id"], at=iso(cutoff))
-        season = fixture["season"].replace("/", "-")
-        start, end = season.split("-", 1)
-        if (
-            f"{start}-{end[-2:]}" != c["season"]
-            or not c["first"] <= fixture["round_id"] < c["first"] + c["span"]
+        from . import forward_window
+
+        if forward_window.label(fixture) not in forward_window.rounds(
+            c["season"], c["first"], c["span"]
         ):
             raise ValueError("fixture outside the preregistered candidate window")
         expected_recipe = c["manifest"].get("recipe_digest")

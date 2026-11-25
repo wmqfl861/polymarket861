@@ -193,6 +193,64 @@ def _default_version(db, season, round_id, horizon, mode):
     return row[0] if row else "B1"
 
 
+def _rollout(db, fixtures, horizon, mode):
+    """Trace the main model actually sealed per fixture and the first affected decision."""
+    ids = {f["fixture_id"]: f["kickoff"] for f in fixtures}
+    predicate = (
+        "horizon=? AND mode=? AND protocol=? AND (json_extract(data_json,'$.purpose')='main' OR "
+        "(json_extract(data_json,'$.purpose') IS NULL AND model_version='B1'))"
+    )
+    args = (horizon, mode, store.PROTOCOL)
+    rows = db.execute(
+        "SELECT fixture_id,kickoff,model_version,cutoff,sealed_at FROM forecast_seals WHERE "
+        + predicate
+        + " AND kickoff BETWEEN ? AND ? ORDER BY cutoff,fixture_id,sealed_at",
+        (*args, min(ids.values()), max(ids.values())),
+    )
+    current = [r for r in rows if ids.get(r["fixture_id"]) == r["kickoff"]]
+    if not current:
+        return {"versions": [], "switches": []}
+    previous = db.execute(
+        "SELECT model_version FROM forecast_seals WHERE "
+        + predicate
+        + " AND kickoff<? ORDER BY kickoff DESC,sealed_at LIMIT 1",
+        (*args, min(ids.values())),
+    ).fetchone()
+    last = previous[0] if previous else None
+    switches = []
+    versions = {}
+    has_signatures = db.execute(
+        "SELECT 1 FROM sqlite_master WHERE name='model_release_decisions'"
+    ).fetchone()
+    for r in current:
+        v = r["model_version"]
+        versions.setdefault(v, []).append(r["fixture_id"])
+        if last is not None and last != v:
+            event = {
+                "from_version": last,
+                "to_version": v,
+                "first_fixture": r["fixture_id"],
+                "cutoff": r["cutoff"],
+            }
+            if has_signatures:
+                approval = db.execute(
+                    "SELECT r.effective_at,d.comparison,d.reviewer,d.reason FROM builtin_model_releases r "
+                    "JOIN model_release_decisions d ON d.release_id=r.id WHERE r.version=? AND r.effective_at<=? "
+                    "ORDER BY r.effective_at DESC,r.id DESC LIMIT 1",
+                    (v, r["sealed_at"]),
+                ).fetchone()
+                if approval:
+                    event["release_decision"] = dict(approval)
+            switches.append(event)
+        last = v
+    return {
+        "versions": [
+            {"version": v, "fixtures": matches} for v, matches in versions.items()
+        ],
+        "switches": switches,
+    }
+
+
 def publish_round(
     data_dir, season, round_id, *, version=None, mode="formal", horizon="T-60m"
 ):
@@ -217,6 +275,7 @@ def publish_round(
             db, fixtures, version, horizon, mode, one_round=True
         )
         report = _grade(fixtures, seals, season, round_id, horizon, mode, version)
+        report["main_model_rollout"] = _rollout(db, fixtures, horizon, mode)
         by_fixture = {s["fixture_id"]: s for s in seals}
         for f, row in zip(fixtures, report["fixtures"]):
             row["comparison"] = comparisons.for_fixture(

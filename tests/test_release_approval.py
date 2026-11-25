@@ -10,6 +10,7 @@ from unittest.mock import patch
 import test_jobs
 from polymarket861 import jobs, jobs_research, pipeline, store
 from test_recipe_upgrade import old_build
+from release_fixture import approved
 
 
 class ReleaseApproval(unittest.TestCase):
@@ -64,7 +65,7 @@ class ReleaseApproval(unittest.TestCase):
             pending = pool.submit(self.approve)
             try:
                 self.assertTrue(entered.wait(5))
-                observed = pipeline.prepare_builtin(self.root)
+                observed = approved(self.root)
             finally:
                 release.set()
             blocked = pending.result(timeout=5)
@@ -134,6 +135,12 @@ class ReleaseApproval(unittest.TestCase):
                 (store.canonical(old), "candidate"),
             )
         with patch.object(store, "now_utc", return_value=self.later):
+            # Rollback cannot implicitly accept a different bundled implementation.
+            with self.assertRaisesRegex(ValueError, "no matching executable"):
+                jobs.rollback_candidate(
+                    self.root, "candidate", reviewer="reviewer", reason="restore"
+                )
+            approved(self.root)
             start = threading.Barrier(3)
 
             def rollback():

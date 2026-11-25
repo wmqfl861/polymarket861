@@ -18,7 +18,7 @@ polymarket861 = "polymarket861.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-polymarket861 = ["assets/*.css", "assets/*.js"]
+polymarket861 = ["assets/*.css", "assets/*.js", "assets/*.json.gz"]
 
 [tool.ruff.lint]
 select = ["E9", "F", "B006", "PLE", "W605"]

@@ -178,6 +178,7 @@ class ResearchTests(TempStore):
 
     # These tests isolate the statistical gate using synthetic scorer rows.
     # Source authentication is exercised through real seals in test_paired_proof.
+    @patch("polymarket861.forward_window.audit",new=lambda *_:None)
     @patch.object(paired_proof.PairValidator,"check",new=lambda *_:None)
     def test_real_window_gate_coverage_simultaneous_reveal_and_rollback(self):
         history=season_games(2028,38)+season_games(2029,38)
@@ -230,6 +231,7 @@ class ResearchTests(TempStore):
 
     # These tests isolate the statistical gate using synthetic scorer rows.
     # Source authentication is exercised through real seals in test_paired_proof.
+    @patch("polymarket861.forward_window.audit",new=lambda *_:None)
     @patch.object(paired_proof.PairValidator,"check",new=lambda *_:None)
     def test_both_versions_missing_after_round_end_is_measured_against_schedule(self):
         history=season_games(2028,38)+season_games(2029,38)

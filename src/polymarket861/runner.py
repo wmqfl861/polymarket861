@@ -12,8 +12,7 @@ from contextlib import closing
 from datetime import timedelta
 from pathlib import Path
 
-from . import dbscope
-from . import evidence, jobs, pipeline, store
+from . import dbscope, evidence, forward_window, jobs, pipeline, store
 
 _WINDOW = timedelta(minutes=5)
 _LEASE = timedelta(seconds=30)
@@ -370,8 +369,8 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
                     if c["kind"] == "model"
                     and c["state"] == "shadow"
                     and c["manifest"].get("recipe_digest")
-                    and c["season"][:4] == str(f["season"])[:4]
-                    and c["first"] <= f["round_id"] < c["first"] + c["span"]
+                    and forward_window.label(f)
+                    in forward_window.rounds(c["season"], c["first"], c["span"])
                     and store.instant(c["registered_at"]) <= cutoff
                 )
             lineup_error = None

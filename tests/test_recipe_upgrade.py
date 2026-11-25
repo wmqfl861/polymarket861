@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 import test_opportunity as matchday
 import test_runner as scheduled
+from release_fixture import approved
 from polymarket861 import jobs, opportunity, pipeline, round_history, runner, store
 
 
@@ -47,6 +48,10 @@ class RecipeUpgrade(unittest.TestCase):
             custom = pipeline.register_recipe(data, "pinned-study", "B1")
         with scheduled.clock("2030-08-16T08:00Z"):
             self.assertEqual(early(first), stored)
+            with self.assertRaisesRegex(ValueError, "release-compare"):
+                early(second)
+            self.assertEqual(pipeline.prepare_builtin(data), "B1")
+            approved(data)
             ticks = count()
             start = store.instant("2030-08-16T08:00Z")
 
@@ -111,7 +116,7 @@ class RecipeUpgrade(unittest.TestCase):
         with old_build():
             original = case.seal()
         with matchday.at(matchday.CUT - timedelta(seconds=45)):
-            successor = pipeline.prepare_builtin(case.root)
+            successor = approved(case.root)
             self.assertNotEqual(successor, original["model_version"])
             resumed = runner.run_due(case.root)
             slot = next(
@@ -153,6 +158,7 @@ class RecipeUpgrade(unittest.TestCase):
         with patch.object(pipeline, "make_forecast", return_value=None):
             case.seal()
         with matchday.at(matchday.CUT - timedelta(minutes=1)):
+            approved(root)
             dispatched = runner.run_due(root)
             slot = next(
                 r
