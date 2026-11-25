@@ -141,6 +141,47 @@ class WikiEvidence(TestCase):
             "conflict",
         )
 
+    def test_inconsistent_unfinished_schedule_and_server_backoff(self):
+        from urllib.error import HTTPError
+
+        content = {
+            self.page1: self.box(result="", score=""),
+            self.page2: self.box(result="", score="", time="16:00 GMT"),
+        }
+        self.assertEqual(
+            wiki._decode(self.raw(content), self.titles, 2026)[self.fixture]["status"],
+            "unverified",
+        )
+        self.assertEqual(
+            wiki._title(2015, "Aston Villa"), "2015–16 Aston Villa F.C. season"
+        )
+        self.assertEqual(
+            wiki._title(2026, "Sunderland AFC"), "2026–27 Sunderland A.F.C. season"
+        )
+        fixtures = [
+            dict(
+                fixture_id=str(i),
+                home=self.teams[i],
+                away=self.teams[i + 1],
+                home_goals=None,
+                kickoff="2026-11-21T15:00:00Z",
+            )
+            for i in range(0, 20, 2)
+        ]
+        denied = HTTPError(
+            wiki.API, 429, "Too Many Requests", {"Retry-After": "14400"}, None
+        )
+        with patch.object(wiki, "_receive", side_effect=denied) as client:
+            first = wiki.sync(self.root, 2026, fixtures, self.seen)
+            later = wiki.sync(
+                self.root, 2026, fixtures, store.instant(self.seen) + timedelta(hours=2)
+            )
+        self.assertEqual(
+            first["retry_at"], store.iso(store.instant(self.seen) + timedelta(hours=4))
+        )
+        self.assertEqual(later["status"], "unavailable")
+        self.assertEqual(client.call_count, 1)
+
     def test_recent_unfinished_rechecks_marker_after_30_minutes(self):
         import test_result_feed
 

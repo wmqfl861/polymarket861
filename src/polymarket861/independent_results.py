@@ -32,7 +32,14 @@ CREATE TABLE IF NOT EXISTS epl_wiki_checks(
 
 
 def _title(year, team):
-    name = re.sub(r" FC$", " F.C.", re.sub(r" AFC$", " A.F.C.", team))
+    name = re.sub(r" FC$", " F.C.", re.sub(r" AFC$", " A.F.C.", team.strip()))
+    if name == "Bournemouth":
+        name = "AFC Bournemouth"
+    elif name in {"Hull City", "Sunderland", "Swansea City"}:
+        name += " A.F.C."
+    elif not name.startswith("AFC ") and not name.endswith("F.C."):
+        # Older pinned OpenFootball files commonly omit a club's FC suffix.
+        name += " F.C."
     return f"{year}–{(year + 1) % 100:02d} {name} season"
 
 
@@ -311,7 +318,11 @@ def _decode(raw, titles, year):
             rows[fid].append(outcome)
     claims = {}
     by_match = defaultdict(set)
+    all_match_links = defaultdict(set)
     for fid, sources in rows.items():
+        for entry in sources:
+            if entry["source_match_id"]:
+                all_match_links[entry["source_match_id"]].add(fid)
         # A link copied into a future, unplayed placeholder is not a claim of
         # completed match identity. Duplicate *final* match IDs hold both results.
         ids = {
@@ -339,11 +350,12 @@ def _decode(raw, titles, year):
             )
         }
         contradictory = len({s["club"] for s in sources}) != len(sources)
+        comparison = asserted or sources
         for field in ("round", "kickoff", "reported_score", "source_match_id"):
-            facts = [s[field] for s in asserted if s[field] is not None]
+            facts = [s[field] for s in comparison if s[field] is not None]
             contradictory |= any(value != facts[0] for value in facts[1:])
         if contradictory or any(s["status"] == "conflict" for s in asserted):
-            claim.update(status="conflict", score=None)
+            claim.update(status="conflict" if asserted else "unverified", score=None)
         elif any(s["status"] == "withdrawn" for s in asserted):
             claim.update(status="withdrawn", score=None)
         refs = sorted((s["revision"] for s in sources), key=lambda r: r["title"])
@@ -357,6 +369,14 @@ def _decode(raw, titles, year):
         if len(fixtures) > 1:
             for fid in fixtures:
                 claims[fid].update(status="conflict", score=None)
+    # An unfinished report may corroborate native scheduling only with an
+    # unambiguous event link. Copied links never confer that authority.
+    for item in claims.values():
+        if (
+            item["status"] == "unfinished"
+            and len(all_match_links[item["source_match_id"]]) > 1
+        ):
+            item.update(status="unverified", source_match_id=None)
     return claims
 
 
