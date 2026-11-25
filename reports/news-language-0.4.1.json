@@ -1,0 +1,1695 @@
+{
+  "english_language": {
+    "articles": 36,
+    "cases": [
+      {
+        "case": 1,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 2,
+        "correct": 0,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 3,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 4,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 5,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 1
+      },
+      {
+        "case": 6,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 7,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 8,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 9,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 10,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 11,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 12,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 13,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 14,
+        "correct": 2,
+        "emitted": 2,
+        "expected": 2
+      },
+      {
+        "case": 15,
+        "correct": 2,
+        "emitted": 2,
+        "expected": 2
+      },
+      {
+        "case": 16,
+        "correct": 0,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 17,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 1
+      },
+      {
+        "case": 18,
+        "correct": 0,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 19,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 20,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 21,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 1
+      },
+      {
+        "case": 22,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 23,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 1
+      },
+      {
+        "case": 24,
+        "correct": 2,
+        "emitted": 2,
+        "expected": 2
+      },
+      {
+        "case": 25,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 26,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 27,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 28,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 29,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 30,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 31,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 32,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 33,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 34,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 35,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 36,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      }
+    ],
+    "confusion": {
+      "availability": {
+        "available": {
+          "available": 2
+        },
+        "doubtful": {
+          "abstained": 2,
+          "doubtful": 3,
+          "unknown": 1
+        },
+        "out": {
+          "out": 11
+        },
+        "unknown": {
+          "abstained": 2,
+          "unknown": 6
+        }
+      },
+      "event": {
+        "availability": {
+          "abstained": 2,
+          "availability": 8
+        },
+        "injury": {
+          "abstained": 1,
+          "injury": 8
+        },
+        "return": {
+          "return": 3
+        },
+        "suspension": {
+          "abstained": 1,
+          "suspension": 3
+        },
+        "transfer": {
+          "transfer": 1
+        }
+      },
+      "status": {
+        "confirmed": {
+          "abstained": 3,
+          "confirmed": 7,
+          "reported": 1
+        },
+        "denied": {
+          "abstained": 1
+        },
+        "reported": {
+          "reported": 12
+        },
+        "rumour": {
+          "reported": 1,
+          "rumour": 2
+        }
+      }
+    },
+    "development_regression": {
+      "articles": 48,
+      "cases": [
+        {
+          "case": 1,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 2,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 3,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 4,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 5,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 6,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 7,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 8,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 9,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 10,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 11,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 12,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 13,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 14,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 15,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 16,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 17,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 18,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 19,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 20,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 21,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 22,
+          "correct": 2,
+          "emitted": 2,
+          "expected": 2
+        },
+        {
+          "case": 23,
+          "correct": 2,
+          "emitted": 2,
+          "expected": 2
+        },
+        {
+          "case": 24,
+          "correct": 2,
+          "emitted": 2,
+          "expected": 2
+        },
+        {
+          "case": 25,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 26,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 27,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 28,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 29,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 30,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 31,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 32,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 33,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 34,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 35,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 36,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 37,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 38,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 39,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 40,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 41,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 42,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 43,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 44,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 45,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 46,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 47,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 48,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        }
+      ],
+      "confusion": {
+        "availability": {
+          "available": {
+            "abstained": 1,
+            "available": 3
+          },
+          "doubtful": {
+            "abstained": 1,
+            "doubtful": 4
+          },
+          "out": {
+            "abstained": 1,
+            "out": 13
+          },
+          "unknown": {
+            "abstained": 2,
+            "unknown": 8
+          }
+        },
+        "event": {
+          "availability": {
+            "availability": 8
+          },
+          "injury": {
+            "abstained": 3,
+            "injury": 10
+          },
+          "return": {
+            "abstained": 1,
+            "return": 4
+          },
+          "suspension": {
+            "abstained": 1,
+            "suspension": 5
+          },
+          "transfer": {
+            "transfer": 1
+          }
+        },
+        "status": {
+          "confirmed": {
+            "abstained": 3,
+            "confirmed": 12
+          },
+          "denied": {
+            "denied": 4
+          },
+          "reported": {
+            "abstained": 2,
+            "reported": 9
+          },
+          "rumour": {
+            "rumour": 3
+          }
+        }
+      },
+      "errors": [
+        {
+          "case": 12,
+          "expected": [
+            [
+              "byrne",
+              "suspension",
+              "reported",
+              "out"
+            ]
+          ],
+          "extracted": []
+        },
+        {
+          "case": 14,
+          "expected": [
+            [
+              "reed",
+              "injury",
+              "confirmed",
+              "doubtful"
+            ]
+          ],
+          "extracted": []
+        },
+        {
+          "case": 26,
+          "expected": [
+            [
+              "martin",
+              "injury",
+              "confirmed",
+              "unknown"
+            ]
+          ],
+          "extracted": []
+        },
+        {
+          "case": 27,
+          "expected": [
+            [
+              "dahl",
+              "return",
+              "confirmed",
+              "available"
+            ]
+          ],
+          "extracted": []
+        },
+        {
+          "case": 29,
+          "expected": [
+            [
+              "byrne",
+              "injury",
+              "reported",
+              "unknown"
+            ]
+          ],
+          "extracted": []
+        }
+      ],
+      "exact_articles": 43,
+      "exact_claim_precision": 1.0,
+      "exact_claim_recall": 0.8485,
+      "exact_evidence_spans": 28,
+      "extracted_claims": 28,
+      "fully_correct_claims": 28,
+      "gold_claims": 33,
+      "holdout_sha256": "a46ae1eabbb4f4ab3182b906493257b9a06efa4495988a423f82469e8a25bedb",
+      "holdout_source": "original, manually labelled English examples",
+      "linked_subject_precision": 1.0,
+      "linked_subject_recall": 0.8485,
+      "live_publisher_articles": 0,
+      "match_results_used": 0,
+      "model_version": "squad-news-en-nb-1-12937f7738972779",
+      "negative_articles": 18,
+      "negative_articles_with_no_claim": 18,
+      "scope": "Previously inspected challenge set; several polarity errors informed guard repairs.",
+      "task": "grounded English football availability and transfer-claim extraction",
+      "training_statements": 143
+    },
+    "errors": [
+      {
+        "case": 2,
+        "expected": [
+          [
+            "byrne",
+            "injury",
+            "confirmed",
+            "out"
+          ]
+        ],
+        "extracted": [
+          [
+            "byrne",
+            "injury",
+            "reported",
+            "out"
+          ]
+        ]
+      },
+      {
+        "case": 5,
+        "expected": [
+          [
+            "other-reed",
+            "suspension",
+            "denied",
+            "unknown"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 16,
+        "expected": [
+          [
+            "byrne",
+            "injury",
+            "reported",
+            "doubtful"
+          ]
+        ],
+        "extracted": [
+          [
+            "byrne",
+            "injury",
+            "reported",
+            "unknown"
+          ]
+        ]
+      },
+      {
+        "case": 17,
+        "expected": [
+          [
+            "other-reed",
+            "availability",
+            "confirmed",
+            "doubtful"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 18,
+        "expected": [
+          [
+            "reed",
+            "injury",
+            "rumour",
+            "unknown"
+          ]
+        ],
+        "extracted": [
+          [
+            "reed",
+            "injury",
+            "reported",
+            "unknown"
+          ]
+        ]
+      },
+      {
+        "case": 21,
+        "expected": [
+          [
+            "byrne",
+            "injury",
+            "confirmed",
+            "unknown"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 23,
+        "expected": [
+          [
+            "martin",
+            "availability",
+            "confirmed",
+            "doubtful"
+          ]
+        ],
+        "extracted": []
+      }
+    ],
+    "exact_articles": 29,
+    "exact_claim_precision": 0.8696,
+    "exact_claim_recall": 0.7407,
+    "exact_evidence_spans": 23,
+    "extracted_claims": 23,
+    "fully_correct_claims": 20,
+    "gold_claims": 27,
+    "holdout_sha256": "5697ca28ff69da73f3a542baf8867d1c166cd7ebde4ef5ac54873abee27aafda",
+    "holdout_source": "original, manually labelled English examples",
+    "linked_subject_precision": 1.0,
+    "linked_subject_recall": 0.8519,
+    "live_publisher_articles": 0,
+    "match_results_used": 0,
+    "model_version": "squad-news-en-nb-1-12937f7738972779",
+    "negative_articles": 12,
+    "negative_articles_with_no_claim": 12,
+    "scope": "Accuracy on developer-authored passages with a fictional roster. The held-out set was excluded from weight fitting and the initial rule-development cycle.",
+    "task": "grounded English football availability and transfer-claim extraction",
+    "training_statements": 143
+  },
+  "model_version": "squad-news-en-nb-1-12937f7738972779",
+  "official_club_prose": {
+    "annotation": "Codex editorial annotation from the excerpt, created before the evaluation run. Single annotator, no independent human adjudication. Text is limited to the included passage. Direct statements from the club or its coach are confirmed, explicit hope/may language is reported and doubtful. Injury includes illness; present physical problems with no stated selection decision have unknown availability. Returns to training have unknown eligibility, confirmed returns to the side are available. No claim for match action, pure recaps, an unnamed subject, or a completed transfer.",
+    "articles": 32,
+    "cases": [
+      {
+        "case": 1,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "b34ea14f0a03218fe9341f1c70ee6ae346eee70d9a3fe48e83ecce94748d5394",
+        "expected": 0,
+        "passage_id": "club-01",
+        "publisher": "Liverpool FC"
+      },
+      {
+        "case": 2,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "out",
+            "end": 48,
+            "event": "availability",
+            "player_id": "Alisson Becker",
+            "quote_sha256": "94e5c48982f4ffc6668ff9e539344d61e3826e9ecfbbec92cf870157f6cb519b",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "812414e795d530ad9bde1920f3d950fb7a1f454283628df0bad68b7e78e9680e",
+        "expected": 2,
+        "passage_id": "club-02",
+        "publisher": "Liverpool FC"
+      },
+      {
+        "case": 3,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "ade8f15d760844630e64006921f3138a2760ae68aa88e65c1d46f73e9c5c077b",
+        "expected": 2,
+        "passage_id": "club-03",
+        "publisher": "Manchester United"
+      },
+      {
+        "case": 4,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "e1116c763ead8bf568d10301fd07d6506ade0e57be709a920c63a22d35793327",
+        "expected": 1,
+        "passage_id": "club-04",
+        "publisher": "Chelsea FC"
+      },
+      {
+        "case": 5,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "0435b398c765a405ededf01c7f7ed9947456b21746bf3f464d4c568dce83e1dd",
+        "expected": 1,
+        "passage_id": "club-05",
+        "publisher": "Chelsea FC"
+      },
+      {
+        "case": 6,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "unknown",
+            "end": 91,
+            "event": "injury",
+            "player_id": "Rodri",
+            "quote_sha256": "19964168d6e71644e0708377d094273cd06d680bdb8b617237f93b2651f90fd8",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "19964168d6e71644e0708377d094273cd06d680bdb8b617237f93b2651f90fd8",
+        "expected": 1,
+        "passage_id": "club-06",
+        "publisher": "Manchester City"
+      },
+      {
+        "case": 7,
+        "correct": 0,
+        "emitted": 2,
+        "emitted_claims": [
+          {
+            "availability": "doubtful",
+            "end": 129,
+            "event": "availability",
+            "player_id": "Heung-Min Son",
+            "quote_sha256": "8a0dfe06efe4b8e2458f2d63b9a7938df1038e2493354f4dce53559368675e2e",
+            "start": 0,
+            "status": "reported"
+          },
+          {
+            "availability": "doubtful",
+            "end": 129,
+            "event": "availability",
+            "player_id": "Richarlison",
+            "quote_sha256": "8a0dfe06efe4b8e2458f2d63b9a7938df1038e2493354f4dce53559368675e2e",
+            "start": 0,
+            "status": "reported"
+          }
+        ],
+        "excerpt_sha256": "8a0dfe06efe4b8e2458f2d63b9a7938df1038e2493354f4dce53559368675e2e",
+        "expected": 2,
+        "passage_id": "club-07",
+        "publisher": "Tottenham Hotspur"
+      },
+      {
+        "case": 8,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "available",
+            "end": 123,
+            "event": "return",
+            "player_id": "Richarlison",
+            "quote_sha256": "cc222382879baff6e2df03100eae0060c7493bdda1f71036064f99a42015c6a0",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "cc222382879baff6e2df03100eae0060c7493bdda1f71036064f99a42015c6a0",
+        "expected": 1,
+        "passage_id": "club-08",
+        "publisher": "Tottenham Hotspur"
+      },
+      {
+        "case": 9,
+        "correct": 0,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "doubtful",
+            "end": 112,
+            "event": "injury",
+            "player_id": "Richarlison",
+            "quote_sha256": "27eedb299384f09576af02fa1b69252021f994899699f34c1b6cf6af5e77e48e",
+            "start": 0,
+            "status": "reported"
+          }
+        ],
+        "excerpt_sha256": "27eedb299384f09576af02fa1b69252021f994899699f34c1b6cf6af5e77e48e",
+        "expected": 1,
+        "passage_id": "club-09",
+        "publisher": "Tottenham Hotspur"
+      },
+      {
+        "case": 10,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "1e13a2b3b8cdbc8cd3cf5fffacde6cccf8491c021038a8d02198c1145c68d8db",
+        "expected": 0,
+        "passage_id": "club-10",
+        "publisher": "Brentford FC"
+      },
+      {
+        "case": 11,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "97cd39db68e196c83198abadb4f076c1e9cff9eb5231d7f5c61c64f7d1d7b5c0",
+        "expected": 0,
+        "passage_id": "club-11",
+        "publisher": "Crystal Palace"
+      },
+      {
+        "case": 12,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "b6a66f0f79797010ba1a917ce86787b636ad0771b36b19c27bd33f9dad3df0c1",
+        "expected": 0,
+        "passage_id": "club-12",
+        "publisher": "Crystal Palace"
+      },
+      {
+        "case": 13,
+        "correct": 0,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "doubtful",
+            "end": 51,
+            "event": "availability",
+            "player_id": "Lewis Dunk",
+            "quote_sha256": "5323266a8198c169ace2fbad01556e232dcf050cb768e723f40252c09e3a3d23",
+            "start": 0,
+            "status": "reported"
+          }
+        ],
+        "excerpt_sha256": "5323266a8198c169ace2fbad01556e232dcf050cb768e723f40252c09e3a3d23",
+        "expected": 1,
+        "passage_id": "club-13",
+        "publisher": "Brighton & Hove Albion"
+      },
+      {
+        "case": 14,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "out",
+            "end": 26,
+            "event": "suspension",
+            "player_id": "Tariq Lamptey",
+            "quote_sha256": "bcbb8c1821878838286288ada05836bc959877f221bdc18ed93d0cc08224cc8a",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "a9ae687da9977b0e1fbdfe8c4153fa85ee05cc8606069efae336cfeb81c147ca",
+        "expected": 1,
+        "passage_id": "club-14",
+        "publisher": "Brighton & Hove Albion"
+      },
+      {
+        "case": 15,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "out",
+            "end": 125,
+            "event": "availability",
+            "player_id": "Anthony Gordon",
+            "quote_sha256": "c28726ea0368dabd0fd057046b918d5283e2fbc9e98bcd070bc3b12fa1fec336",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "c28726ea0368dabd0fd057046b918d5283e2fbc9e98bcd070bc3b12fa1fec336",
+        "expected": 1,
+        "passage_id": "club-15",
+        "publisher": "Newcastle United"
+      },
+      {
+        "case": 16,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "fe62302cb798acd28f97c8abb386fbd2bb03b150bf24dba5cd4f540fb30dfd95",
+        "expected": 0,
+        "passage_id": "club-16",
+        "publisher": "Newcastle United"
+      },
+      {
+        "case": 17,
+        "correct": 2,
+        "emitted": 2,
+        "emitted_claims": [
+          {
+            "availability": "out",
+            "end": 75,
+            "event": "suspension",
+            "player_id": "Mohammed Kudus",
+            "quote_sha256": "504ba11bd28e3913f4ddc06a123bb5af5f0db07fb6dc450b8db8a5b0e3aeeb83",
+            "start": 0,
+            "status": "confirmed"
+          },
+          {
+            "availability": "out",
+            "end": 75,
+            "event": "suspension",
+            "player_id": "Edson Álvarez",
+            "quote_sha256": "504ba11bd28e3913f4ddc06a123bb5af5f0db07fb6dc450b8db8a5b0e3aeeb83",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "504ba11bd28e3913f4ddc06a123bb5af5f0db07fb6dc450b8db8a5b0e3aeeb83",
+        "expected": 2,
+        "passage_id": "club-17",
+        "publisher": "West Ham United"
+      },
+      {
+        "case": 18,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "58b7ba5c6e4bb7045d981b4de7621abfef5ecc6e1d4a1fc8885bdf0df5be3526",
+        "expected": 1,
+        "passage_id": "club-18",
+        "publisher": "West Ham United"
+      },
+      {
+        "case": 19,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "b8300906056dae30c6e01c2368b1790f5967b77f94b89159cf1113463b6873c8",
+        "expected": 2,
+        "passage_id": "club-19",
+        "publisher": "Aston Villa"
+      },
+      {
+        "case": 20,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "4f349ef63e20c8c6bf65d6e7a0c7d81bd71c50aea466d9b6c112cd82ebd970e5",
+        "expected": 1,
+        "passage_id": "club-20",
+        "publisher": "Aston Villa"
+      },
+      {
+        "case": 21,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "d4253d750fa34b15c791067cb550a9a4be3d85b65f6dc34bbc0276999f559aff",
+        "expected": 2,
+        "passage_id": "club-21",
+        "publisher": "Wolverhampton Wanderers"
+      },
+      {
+        "case": 22,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "0a8e6ac8e7ddf09ded3642fd959201af97b920e9bca8379fcd48096fa11d4a2e",
+        "expected": 0,
+        "passage_id": "club-22",
+        "publisher": "Wolverhampton Wanderers"
+      },
+      {
+        "case": 23,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "3e93ee44349129d4989d0bed8e9f92e3a7ca2ec038f167ad1e9fabee40435d80",
+        "expected": 1,
+        "passage_id": "club-23",
+        "publisher": "AFC Bournemouth"
+      },
+      {
+        "case": 24,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "doubtful",
+            "end": 140,
+            "event": "availability",
+            "player_id": "Marcos Senesi",
+            "quote_sha256": "06d45a0eb099e069ec767ec440c6c897859f16147c8d0054acf4018ab2fb986f",
+            "start": 0,
+            "status": "reported"
+          }
+        ],
+        "excerpt_sha256": "06d45a0eb099e069ec767ec440c6c897859f16147c8d0054acf4018ab2fb986f",
+        "expected": 1,
+        "passage_id": "club-24",
+        "publisher": "AFC Bournemouth"
+      },
+      {
+        "case": 25,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "57f3c1cfc9f628f639342a5ed7a8ba45358da30abf51e91f8525771a613c03a2",
+        "expected": 0,
+        "passage_id": "club-25",
+        "publisher": "AFC Bournemouth"
+      },
+      {
+        "case": 26,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "81fdf6d753bc70ec31b0e0cb3cfbf816caac26a8be663aa3394468818dda0b6d",
+        "expected": 2,
+        "passage_id": "club-26",
+        "publisher": "Fulham FC"
+      },
+      {
+        "case": 27,
+        "correct": 0,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "unknown",
+            "end": 53,
+            "event": "injury",
+            "player_id": "Ryan Sessegnon",
+            "quote_sha256": "4e0367494f3317f1ff00e36a13004be247478d788a9c4bfc5a83da858cdbac34",
+            "start": 0,
+            "status": "denied"
+          }
+        ],
+        "excerpt_sha256": "03dd9ede054fa5fe31d68eaef894b220bb4775bf4eea5421ae540a97105b156f",
+        "expected": 2,
+        "passage_id": "club-27",
+        "publisher": "Fulham FC"
+      },
+      {
+        "case": 28,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "d6444ce9efff76ae201f17d8d015b06b5fc640b3f1e37ab0483055972d1302f8",
+        "expected": 0,
+        "passage_id": "club-28",
+        "publisher": "Fulham FC"
+      },
+      {
+        "case": 29,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "available",
+            "end": 102,
+            "event": "return",
+            "player_id": "Jake O'Brien",
+            "quote_sha256": "3bc6b0a40571a6d90beba58bb58f6339ed01c37bba3f8bc6de9cf03d77793640",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "3bc6b0a40571a6d90beba58bb58f6339ed01c37bba3f8bc6de9cf03d77793640",
+        "expected": 1,
+        "passage_id": "club-29",
+        "publisher": "Everton FC"
+      },
+      {
+        "case": 30,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "unknown",
+            "end": 122,
+            "event": "injury",
+            "player_id": "James Maddison",
+            "quote_sha256": "889fda3399c901b6f88d42f5f30f4bd141238af22c4bcc0426888b48b51fc06a",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "889fda3399c901b6f88d42f5f30f4bd141238af22c4bcc0426888b48b51fc06a",
+        "expected": 1,
+        "passage_id": "club-30",
+        "publisher": "Tottenham Hotspur"
+      },
+      {
+        "case": 31,
+        "correct": 1,
+        "emitted": 1,
+        "emitted_claims": [
+          {
+            "availability": "out",
+            "end": 136,
+            "event": "injury",
+            "player_id": "Abdul Fatawu",
+            "quote_sha256": "df12699b6113210aec8bf48c7d53db9d7ff7469529d4d558409822f3ea34a884",
+            "start": 0,
+            "status": "confirmed"
+          }
+        ],
+        "excerpt_sha256": "df12699b6113210aec8bf48c7d53db9d7ff7469529d4d558409822f3ea34a884",
+        "expected": 1,
+        "passage_id": "club-31",
+        "publisher": "Leicester City"
+      },
+      {
+        "case": 32,
+        "correct": 0,
+        "emitted": 0,
+        "emitted_claims": [],
+        "excerpt_sha256": "dbcf26255fd04e832f215e342208a4a629b007d375c0edc72b343d329d8024ea",
+        "expected": 0,
+        "passage_id": "club-32",
+        "publisher": "Crystal Palace"
+      }
+    ],
+    "confusion": {
+      "availability": {
+        "available": {
+          "abstained": 6,
+          "available": 2
+        },
+        "doubtful": {
+          "doubtful": 4,
+          "unknown": 1
+        },
+        "out": {
+          "abstained": 6,
+          "doubtful": 1,
+          "out": 6
+        },
+        "unknown": {
+          "abstained": 3,
+          "unknown": 2
+        }
+      },
+      "event": {
+        "availability": {
+          "abstained": 7,
+          "availability": 4
+        },
+        "injury": {
+          "abstained": 3,
+          "injury": 5
+        },
+        "return": {
+          "abstained": 5,
+          "availability": 2,
+          "return": 2
+        },
+        "suspension": {
+          "suspension": 3
+        }
+      },
+      "status": {
+        "confirmed": {
+          "abstained": 15,
+          "confirmed": 10,
+          "reported": 2
+        },
+        "reported": {
+          "denied": 1,
+          "reported": 3
+        }
+      }
+    },
+    "corpus_protocol": "epl-official-club-prose-excerpts-v1",
+    "corpus_sha256": "346a3dc610f2172b44d8c191d09bc3a56a2cd34c69a852ff0b65cf9410369143",
+    "errors": [
+      {
+        "case": 2,
+        "expected": [
+          [
+            "Alisson Becker",
+            "availability",
+            "confirmed",
+            "out"
+          ],
+          [
+            "Harvey Elliott",
+            "availability",
+            "confirmed",
+            "out"
+          ]
+        ],
+        "extracted": [
+          [
+            "Alisson Becker",
+            "availability",
+            "confirmed",
+            "out"
+          ]
+        ]
+      },
+      {
+        "case": 3,
+        "expected": [
+          [
+            "Rasmus Højlund",
+            "availability",
+            "confirmed",
+            "out"
+          ],
+          [
+            "Luke Shaw",
+            "availability",
+            "confirmed",
+            "out"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 4,
+        "expected": [
+          [
+            "Conor Gallagher",
+            "injury",
+            "confirmed",
+            "out"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 5,
+        "expected": [
+          [
+            "Trevoh Chalobah",
+            "return",
+            "confirmed",
+            "unknown"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 7,
+        "expected": [
+          [
+            "Heung-Min Son",
+            "return",
+            "reported",
+            "doubtful"
+          ],
+          [
+            "Richarlison",
+            "return",
+            "reported",
+            "doubtful"
+          ]
+        ],
+        "extracted": [
+          [
+            "Heung-Min Son",
+            "availability",
+            "reported",
+            "doubtful"
+          ],
+          [
+            "Richarlison",
+            "availability",
+            "reported",
+            "doubtful"
+          ]
+        ]
+      },
+      {
+        "case": 9,
+        "expected": [
+          [
+            "Richarlison",
+            "injury",
+            "confirmed",
+            "out"
+          ]
+        ],
+        "extracted": [
+          [
+            "Richarlison",
+            "injury",
+            "reported",
+            "doubtful"
+          ]
+        ]
+      },
+      {
+        "case": 13,
+        "expected": [
+          [
+            "Lewis Dunk",
+            "availability",
+            "confirmed",
+            "doubtful"
+          ]
+        ],
+        "extracted": [
+          [
+            "Lewis Dunk",
+            "availability",
+            "reported",
+            "doubtful"
+          ]
+        ]
+      },
+      {
+        "case": 18,
+        "expected": [
+          [
+            "Edson Álvarez",
+            "return",
+            "confirmed",
+            "available"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 19,
+        "expected": [
+          [
+            "Diego Carlos",
+            "injury",
+            "confirmed",
+            "unknown"
+          ],
+          [
+            "Boubacar Kamara",
+            "injury",
+            "confirmed",
+            "unknown"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 20,
+        "expected": [
+          [
+            "Ezri Konsa",
+            "return",
+            "confirmed",
+            "available"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 21,
+        "expected": [
+          [
+            "Pedro Neto",
+            "availability",
+            "confirmed",
+            "available"
+          ],
+          [
+            "Mario Lemina",
+            "availability",
+            "confirmed",
+            "available"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 23,
+        "expected": [
+          [
+            "Marcos Senesi",
+            "return",
+            "confirmed",
+            "available"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 26,
+        "expected": [
+          [
+            "Raúl Jiménez",
+            "availability",
+            "confirmed",
+            "out"
+          ],
+          [
+            "Willian",
+            "return",
+            "confirmed",
+            "available"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 27,
+        "expected": [
+          [
+            "Ryan Sessegnon",
+            "injury",
+            "reported",
+            "doubtful"
+          ],
+          [
+            "Harrison Reed",
+            "availability",
+            "confirmed",
+            "out"
+          ]
+        ],
+        "extracted": [
+          [
+            "Ryan Sessegnon",
+            "injury",
+            "denied",
+            "unknown"
+          ]
+        ]
+      }
+    ],
+    "exact_articles": 18,
+    "exact_claim_precision": 0.6875,
+    "exact_claim_recall": 0.3548,
+    "exact_evidence_spans": 16,
+    "extracted_claims": 16,
+    "fully_correct_claims": 11,
+    "gold_claims": 31,
+    "identity_basis": "Stable evaluation IDs use club-local canonical display names. Fixed short candidate lists include other named players in these articles and span publication dates; these are supplied reference identities for extraction, not historical squad snapshots.",
+    "linked_subject_precision": 1.0,
+    "linked_subject_recall": 0.5161,
+    "match_results_used": 0,
+    "model_version": "squad-news-en-nb-1-12937f7738972779",
+    "negative_articles": 9,
+    "negative_articles_with_no_claim": 9,
+    "publishers": 16,
+    "scope": "Exact claims in the cited, isolated English excerpts of official club articles, given a short reference roster. Labels were fixed before running the extractor.",
+    "selection": "One short, contiguous English excerpt from each of 32 public official men's club articles. Purposive coverage of pre-match briefings, medical updates, line-ups and reports, including multi-player claims and abstentions. Articles selected by publisher and topic; no extractor output or match outcome was used to choose or label passages.",
+    "source_checked_date": "2026-11-25",
+    "task": "grounded English football availability and transfer-claim extraction",
+    "training_statements": 143
+  },
+  "protocol": "news-language-validation-2",
+  "published_wire_linkage": {
+    "as_of": "2026-11-25T12:07:19Z",
+    "attribution": "Tactical Data by Touchline Wire (https://touchlinewire.com).",
+    "counts": {
+      "abstentions": 13,
+      "emitted": 122,
+      "exact_agreement": 122,
+      "records": 135,
+      "unique_exact_names": 122
+    },
+    "counts_by_provider_class": {
+      "doubtful": {
+        "abstentions": 0,
+        "emitted": 17,
+        "exact_agreement": 17,
+        "records": 17,
+        "unique_exact_names": 17
+      },
+      "injured": {
+        "abstentions": 4,
+        "emitted": 55,
+        "exact_agreement": 55,
+        "records": 59,
+        "unique_exact_names": 55
+      },
+      "suspended": {
+        "abstentions": 0,
+        "emitted": 6,
+        "exact_agreement": 6,
+        "records": 6,
+        "unique_exact_names": 6
+      },
+      "transfer": {
+        "abstentions": 9,
+        "emitted": 44,
+        "exact_agreement": 44,
+        "records": 53,
+        "unique_exact_names": 44
+      }
+    },
+    "label_agreement_given_unique_name": 1.0,
+    "license": "Free for personal, academic, and open-source use with attribution",
+    "projection_sha256": "72fc638ec935e63e98d85c9b3b5d848fbf579e82de2acdcecb2965265d0ee755",
+    "scope": "Historical 0.4.0 roster-name linkage and structured-field agreement, recounted from published row decisions. The adapter generated the source sentences from those fields. This panel supplies no publisher-prose labels or match outcomes.",
+    "source_model_version": "squad-news-en-nb-1-4930edd5a0a1d93f",
+    "source_report_sha256": "a6a48678ccadec520042c7a223af3a752c19f7e5c4797276149e93fa1ecbeeb4",
+    "unique_exact_name_rate": 0.9037
+  },
+  "training_sha256": "beb32535a62e6194b009dca43fd99e3e3b71c47c965cdfa1172dfef457b7193b"
+}

@@ -8,9 +8,10 @@ from datetime import timedelta
 import math
 import re
 
-from . import football, football_model, store
+from . import football, football_model, news_importance, store
+from .news import COVERAGE_AGE
 
-PROTOCOL = "epl-player-news-paired-v1"
+PROTOCOL = "epl-player-news-paired-v2"
 LOCAL = "local_receipt"
 HISTORICAL = "publication_time_reconstruction"
 
@@ -31,7 +32,14 @@ POLICY = {
     },
     "max_abs_log_adjustment_per_team": 0.12,
     "max_publication_age_days": 14,
-    "effect_basis": "fixed untrained positional prior; same role receives the same weight",
+    "wire_source": "touchline-availability",
+    "wire_absence_probability": "reported.out * (1 - chance_of_playing / 100)",
+    "wire_max_age_hours": COVERAGE_AGE / timedelta(hours=1),
+    # Elapsed local absence duration, followed by its remaining marginal effect.
+    # Discrete transitions allow identical polls to retain a single event forecast.
+    "duration_steps_days": [[0, 1.0], [7, 0.75], [14, 0.5], [28, 0.25], [42, 0.0]],
+    "importance": news_importance.POLICY,
+    "effect_basis": "fixed untrained positional effect times absence probability, duration and observed minutes/starts",
     "returns": "restore typical lineup, no additional positive effect",
     "evaluation": "paired four-component proper score, round-clustered, two horizons",
 }
@@ -61,6 +69,79 @@ def _revision_proof(row):
             and re.fullmatch(r"[0-9a-f]{64}", str(proof.get("sha256", ""))) is not None
         )
     )
+
+
+def _wire(row):
+    return row.get("source") == POLICY["wire_source"] and row.get("time_basis") == "provider_snapshot"
+
+
+def _timing(row, cutoff, basis, pub, received):
+    # Text bulletins have no continuing provider presence. Their original clocks
+    # and publication window apply. Offline revision reconstructions retain public time.
+    onset = received if basis == LOCAL else pub
+    details = {}
+    if _wire(row):
+        if basis != LOCAL:
+            return details, "missing_local_wire_observation"
+        first = store.instant(row.get("first_seen_at") or received)
+        onset = store.instant(row.get("absence_first_seen_at") or first)
+        last = store.instant(row.get("last_seen_at") or received)
+        publisher = store.instant(row.get("last_seen_state_as_of") or row.get("observed_state_as_of") or pub)
+        if not onset <= first <= last <= cutoff or not pub <= publisher <= last or received > last:
+            return details, "invalid_wire_observation_clocks"
+        details.update(
+            first_seen_at=store.iso(first), absence_first_seen_at=store.iso(onset),
+            last_seen_at=store.iso(last), last_seen_state_as_of=store.iso(publisher),
+            last_seen_receipt=row.get("last_seen_receipt") or row.get("source_receipt"),
+        )
+        if cutoff - min(last, publisher) > timedelta(hours=POLICY["wire_max_age_hours"]):
+            return details, "stale_wire_observation"
+        chance = row.get("chance_of_playing")
+        if chance is not None and (type(chance) is not int or not 0 <= chance <= 100):
+            return details, "invalid_playing_probability"
+        details["chance_of_playing"] = chance
+    elif cutoff - pub > timedelta(days=POLICY["max_publication_age_days"]):
+        return details, "publication_outside_window"
+    age_days = (cutoff - onset).days
+    details["duration_from"] = store.iso(onset)
+    details["duration_multiplier"] = next(
+        weight for days, weight in reversed(POLICY["duration_steps_days"]) if days <= age_days
+    )
+    return details, None
+
+
+def next_weight_review(row, cutoff):
+    """First future duration or source-freshness boundary for the event scheduler."""
+    cut = store.instant(cutoff)
+    try:
+        received = store.instant(row["received_at"])
+        onset = received
+        deadlines = []
+        if _wire(row):
+            onset = store.instant(row.get("absence_first_seen_at") or row.get("first_seen_at") or received)
+            last = store.instant(row.get("last_seen_at") or received)
+            published = store.instant(row.get("last_seen_state_as_of") or row.get("observed_state_as_of") or row["published_at"])
+            deadlines.append(min(last, published) + timedelta(hours=POLICY["wire_max_age_hours"], microseconds=1))
+        history = row.get("player_importance") or {}
+        if history.get("basis") == "epl_season_minutes_and_starts":
+            deadlines.append(store.instant(history["provider_as_of"]) +
+                             timedelta(days=news_importance.POLICY["directory_max_age_days"], microseconds=1))
+        deadlines.extend(onset + timedelta(days=days) for days, _ in POLICY["duration_steps_days"][1:])
+        return min((d for d in deadlines if d > cut), default=None)
+    except (TypeError, ValueError, KeyError, AttributeError, OverflowError):
+        return None
+
+
+def usable_wire_observation(row, cutoff):
+    """Keep a stale/inconsistent standing assertion out of other publishers' conflict decisions."""
+    try:
+        if not _wire(row):
+            return False
+        pub, received = store.instant(row["published_at"]), store.instant(row["received_at"])
+        _, issue = _timing(row, cutoff, LOCAL, pub, received)
+        return issue is None
+    except (TypeError, ValueError, KeyError, AttributeError, OverflowError):
+        return False
 
 
 def _inspect(row, cutoff, clubs, basis, baseline):
@@ -129,8 +210,18 @@ def _inspect(row, cutoff, clubs, basis, baseline):
             item["historical_revision"] = row["historical_revision"]
         if (known if basis == LOCAL else public_at) > cutoff:
             return item, "unavailable_at_cutoff"
-        if cutoff - pub > timedelta(days=POLICY["max_publication_age_days"]):
-            return item, "publication_outside_window"
+        timing, issue = _timing(row, cutoff, basis, pub, received)
+        item.update(timing)
+        if issue:
+            return item, issue
+        if row.get("source") == POLICY["wire_source"]:
+            if not _wire(row):
+                return item, "invalid_wire_observation_clocks"
+            # Pre-v2 wire archives can label a player with a nonzero supplied
+            # probability as unknown. Recover the factual field at this cutoff.
+            chance = item.get("chance_of_playing")
+            if chance is not None and item["event"] in {"injury", "suspension"}:
+                item["availability"] = "available" if chance == 100 else "out" if chance == 0 else "doubtful"
         deadline = row.get("expires_at") or row.get("valid_until")
         if deadline is not None and store.instant(deadline) <= cutoff:
             return item, "expired_claim"
@@ -151,7 +242,7 @@ def _inspect(row, cutoff, clubs, basis, baseline):
         return item, "unconfirmed_rumour"
     if item["status"] not in {"confirmed", "reported", "denied"}:
         return item, "unsupported_claim_status"
-    if item["status"] == "confirmed" and item["authority"] != "official":
+    if item["status"] == "confirmed" and (item["authority"] != "official" or _wire(row)):
         return item, "unverified_confirmation"
     if item["status"] != "denied" and item["availability"] not in {
         "out",
@@ -159,6 +250,9 @@ def _inspect(row, cutoff, clubs, basis, baseline):
         "available",
     }:
         return item, "availability_unknown"
+    item["importance_multiplier"], item["player_importance"] = news_importance.assess(
+        row, cutoff, local=basis == LOCAL
+    )
     return item, None
 
 
@@ -191,9 +285,20 @@ def _supported_absence(absences):
         return None
     strongest = [i for i in current if i["status"] == "confirmed"] or current
     last = max(i["effective_at"] for i in strongest)
-    return min(
+    item = min(
         (i for i in strongest if i["effective_at"] == last), key=lambda i: i["id"]
     )
+    # A freshly published club confirmation can corroborate a longstanding
+    # continuously observed injury. Keep its official confidence and the
+    # corroborating episode's original duration, including a fully absorbed injury.
+    episode = min(
+        (i for i in support if i["event"] == item["event"] and i["availability"] == item["availability"]),
+        key=lambda i: (i["duration_from"], i["id"]),
+    )
+    if episode["duration_from"] < item["duration_from"]:
+        item.update(duration_multiplier=episode["duration_multiplier"], duration_from=episode["duration_from"],
+                    duration_evidence_id=episode["id"])
+    return item
 
 
 def _active_claims(facts, cutoff, clubs, basis, baseline):
@@ -257,7 +362,10 @@ def _active_claims(facts, cutoff, clubs, basis, baseline):
                 i | {"reason": "conflicting_current_availability"} for i in items
             )
             continue
-        chosen.append(item)
+        if item["duration_multiplier"] == 0:
+            excluded.append(item | {"reason": "absence_duration_limit"})
+        else:
+            chosen.append(item)
         for other in items:
             if other is not item:
                 excluded.append(other | {"reason": "duplicate_or_superseded_player"})
@@ -306,7 +414,11 @@ def paired_prediction(
     elif chosen:
         for item in chosen:
             role = _role(item["position"])
-            weight = POLICY["absence_weight"][item["status"]][item["availability"]]
+            chance = item.get("chance_of_playing")
+            confidence = POLICY["absence_weight"][item["status"]][item["availability"]]
+            if chance is not None:
+                confidence = POLICY["absence_weight"][item["status"]]["out"] * (1 - chance / 100)
+            weight = confidence * item["duration_multiplier"] * item["importance_multiplier"]
             own, opponent = (v * weight for v in POLICY["role_log_rate_effects"][role])
             shifts[item["side"]] += own
             shifts["away" if item["side"] == "home" else "home"] += opponent
@@ -315,6 +427,7 @@ def paired_prediction(
                 | {
                     "role": role,
                     "prior_weight": weight,
+                    "absence_weight": confidence,
                     "own_log_shift": own,
                     "opponent_log_shift": opponent,
                 }

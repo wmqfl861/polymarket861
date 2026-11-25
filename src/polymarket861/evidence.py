@@ -229,7 +229,7 @@ def get_evidence(data_dir, evidence_id):
 
 
 def _collect(conn, fixture, cutoff, purpose, *, source_id=None, field=None, teams=None,
-             subject=None, prospective=False):
+             subject=None, prospective=False, expires_after=None):
     if purpose not in USES:
         raise ValueError("purpose must be trial, prediction or training")
     query = """SELECT f.*, EXISTS(SELECT 1 FROM ev_quarantine q WHERE q.evidence_id=f.evidence_id
@@ -285,7 +285,7 @@ def _collect(conn, fixture, cutoff, purpose, *, source_id=None, field=None, team
         # A retraction of the originating assertion invalidates its syndicated copies as well.
         if any(r["state"] == "withdrawn" or r["quarantined"] for r in latest):
             continue
-        rows = [r for r in latest if not r["valid_until"] or cutoff < r["valid_until"]]
+        rows = [r for r in latest if not r["valid_until"] or (expires_after or cutoff) < r["valid_until"]]
         if not rows:
             continue
         same_index_link = key[1] == "news" and all(

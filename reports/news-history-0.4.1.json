@@ -1,0 +1,2489 @@
+{
+  "protocol": "epl-publication-time-news-retrospective-v1",
+  "plan": {
+    "season": "2025-26",
+    "official_rounds": [
+      1,
+      2,
+      3
+    ],
+    "horizon": "T-60m",
+    "expected_fixtures": 30,
+    "result_availability_assumption_hours": 24,
+    "club_source": "English Wikipedia club season review/news prose",
+    "club_window": "new since prior EPL kickoff or seven days, whichever is later",
+    "biography_source": "separate sensitivity: historic squad shirts 1,4,9,10, club-career prose",
+    "biography_window": "new since prior EPL kickoff or fourteen days, whichever is later",
+    "biography_date": "explicit dated prose or a publication date cited in that same season-specific paragraph",
+    "authority": "secondary",
+    "membership": "all fixtures, including zero news, by season and official round alone",
+    "eligibility": "contemporaneously dated prose with a parent-verified newly introduced sentence"
+  },
+  "scope": "retrospective_descriptive",
+  "availability_basis": "publication_time_reconstruction",
+  "study_inputs_sha256": "85326e6eeefe3960895a46071cad1305401f98dba777f3310e8326e2441a23bc",
+  "news_extractor": "squad-news-en-nb-1-12937f7738972779",
+  "news_prior": "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
+  "openfootball_commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+  "score_source_objects": {
+    "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+    "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+    "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+    "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+  },
+  "source_receipts_range": [
+    "2026-11-25T11:56:36.774934Z",
+    "2026-11-25T12:11:05.764240Z"
+  ],
+  "strict_contemporaneous_news_receipt_matches": 0,
+  "strict_changed_matches": 0,
+  "prospectively_sealed_matches": 0,
+  "expected_team_observations": 60,
+  "source_coverage": {
+    "club_dated_stories": 0,
+    "biography_dated_stories": 3,
+    "club_pages_acquired": 60,
+    "rosters_parsed": 60,
+    "selected_biographies": 212,
+    "biographies_acquired": 212,
+    "source_gaps": 0,
+    "examined_dated_sentences": 3
+  },
+  "panels": {
+    "club": {
+      "matches_scored": 30,
+      "matches_with_extracted_claims": 0,
+      "extracted_claims": 0,
+      "accepted_player_impacts": 0,
+      "changed_matches": 0,
+      "scores": {
+        "overall": {
+          "no_news": 73.64072413824842,
+          "with_news": 73.64072413824842,
+          "difference": 0.0
+        },
+        "result": {
+          "no_news": 69.05781004338755,
+          "with_news": 69.05781004338755,
+          "difference": 0.0
+        },
+        "total": {
+          "no_news": 74.25774500621016,
+          "with_news": 74.25774500621016,
+          "difference": 0.0
+        },
+        "home": {
+          "no_news": 75.63539507947736,
+          "with_news": 75.63539507947736,
+          "difference": 0.0
+        },
+        "away": {
+          "no_news": 75.61194642391855,
+          "with_news": 75.61194642391855,
+          "difference": 0.0
+        }
+      },
+      "mean_delta_when_changed": null,
+      "paired_round_clustered_interval": null,
+      "verdict": "insufficient_historical_evidence"
+    },
+    "club_and_selected_biographies": {
+      "matches_scored": 30,
+      "matches_with_extracted_claims": 1,
+      "extracted_claims": 1,
+      "accepted_player_impacts": 1,
+      "changed_matches": 1,
+      "scores": {
+        "overall": {
+          "no_news": 73.64072413824842,
+          "with_news": 73.63646354814361,
+          "difference": -0.004260590104806283
+        },
+        "result": {
+          "no_news": 69.05781004338755,
+          "with_news": 69.05174830609758,
+          "difference": -0.006061737289968505
+        },
+        "total": {
+          "no_news": 74.25774500621016,
+          "with_news": 74.25626661532812,
+          "difference": -0.0014783908820419356
+        },
+        "home": {
+          "no_news": 75.63539507947736,
+          "with_news": 75.63046197728146,
+          "difference": -0.004933102195906258
+        },
+        "away": {
+          "no_news": 75.61194642391855,
+          "with_news": 75.60737729386729,
+          "difference": -0.004569130051265802
+        }
+      },
+      "mean_delta_when_changed": -0.12781770314383323,
+      "paired_round_clustered_interval": {
+        "method": "round-cluster-t-v1",
+        "unit": "season_and_official_round",
+        "rounds": 3,
+        "matches": 30,
+        "degrees_of_freedom": 2,
+        "family_comparisons": 2,
+        "family_confidence": 0.95,
+        "individual_confidence": 0.975,
+        "critical_t": 6.205346816570706,
+        "intervals": [
+          {
+            "difference": -0.004260590104794441,
+            "standard_error": 0.004260590104794441,
+            "lower": -0.03069902934829328,
+            "upper": 0.022177849138704395
+          }
+        ]
+      },
+      "verdict": "insufficient_historical_evidence"
+    }
+  },
+  "claims": [
+    {
+      "player_id": "enwiki-title:James Maddison",
+      "player_name": "James Maddison",
+      "event": "injury",
+      "status": "reported",
+      "availability": "out",
+      "quote": "It was later revealed that he had suffered an ACL injury, which would sideline him for most of the upcoming season.",
+      "start": 0,
+      "end": 115,
+      "model_version": "squad-news-en-nb-1-12937f7738972779",
+      "confidence": 0.932477,
+      "antecedent": {
+        "quote": "Maddison returned for 2025–26 pre-season, but sustained another knee injury during a friendly against Newcastle United.",
+        "start": 0,
+        "end": 119,
+        "sentence_sha256": "e052574029fb35dedd6c554c0f4fb3dda6831fbaa7cb16754832a959c9a18597",
+        "basis": "roster_linked_biography_and_parent_revision",
+        "revisions": [
+          {
+            "id": 1304070654,
+            "url": "https://en.wikipedia.org/w/index.php?oldid=1304070654",
+            "sha256": "e38184e2bb90029ef4eef7a23457f5ad59c7172d66683384ad3545f94de63757",
+            "published_at": "2025-08-03T20:00:03.000000Z",
+            "received_at": "2026-11-25T12:09:06.807525Z",
+            "sentence_sha256": "e052574029fb35dedd6c554c0f4fb3dda6831fbaa7cb16754832a959c9a18597"
+          },
+          {
+            "id": 1304070654,
+            "url": "https://en.wikipedia.org/w/index.php?oldid=1304070654",
+            "sha256": "e38184e2bb90029ef4eef7a23457f5ad59c7172d66683384ad3545f94de63757",
+            "published_at": "2025-08-03T20:00:03.000000Z",
+            "received_at": "2026-11-25T12:09:06.807525Z",
+            "sentence_sha256": "0518d031dc2ade5025d5de87c5fbdf836f8f6dc1a689848261a5cb5c4e79fc7f"
+          }
+        ]
+      },
+      "id": "f804d0df8cbf49aa454e3615a296ad9f7e1d9ed4be52d026dad6da8d3abe506f",
+      "origin": "en.wikipedia.org",
+      "team": "Tottenham Hotspur FC",
+      "authority": "secondary",
+      "published_at": "2025-08-07T19:11:46.000000Z",
+      "received_at": "2026-11-25T12:09:06.807525Z",
+      "historical_revision": {
+        "id": 1304719079,
+        "url": "https://en.wikipedia.org/w/index.php?oldid=1304719079",
+        "sha256": "5d482861379f811b07d3506b9ded8e97f92eba9dce4d0d1faa787e335a54ef4f"
+      },
+      "url": "https://en.wikipedia.org/w/index.php?oldid=1304719079",
+      "layer": "biography",
+      "fixture_id": "epl/2025-26/tottenham-hotspur/burnley",
+      "kickoff": "2025-08-16T14:00:00.000000Z",
+      "roster_seen_at": "2026-11-25T12:03:11.438316Z"
+    }
+  ],
+  "matches": {
+    "club": [
+      {
+        "fixture_id": "epl/2025-26/liverpool/bournemouth",
+        "round": 1,
+        "home": "Liverpool FC",
+        "away": "AFC Bournemouth",
+        "cutoff": "2025-08-15T18:00:00.000000Z",
+        "score_90m": [
+          4,
+          2
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.6290553068664257,
+          "draw": 0.1976060129179653,
+          "away_win": 0.1733386802156086,
+          "total_over_2_5": 0.6280518214752286,
+          "home_over_1_5": 0.6407422657174283,
+          "away_over_1_5": 0.28539245013223097
+        },
+        "with_news_probabilities": {
+          "home_win": 0.6290553068664257,
+          "draw": 0.1976060129179653,
+          "away_win": 0.1733386802156086,
+          "total_over_2_5": 0.6280518214752286,
+          "home_over_1_5": 0.6407422657174283,
+          "away_over_1_5": 0.28539245013223097
+        },
+        "changed": false,
+        "score_without_news": 77.96443206600372,
+        "score_with_news": 77.96443206600372,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/aston-villa/newcastle-united",
+        "round": 1,
+        "home": "Aston Villa FC",
+        "away": "Newcastle United FC",
+        "cutoff": "2025-08-16T10:30:00.000000Z",
+        "score_90m": [
+          0,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.36179462396483336,
+          "draw": 0.23575563937404703,
+          "away_win": 0.40244973666111966,
+          "total_over_2_5": 0.6127653573405697,
+          "home_over_1_5": 0.4538832805518025,
+          "away_over_1_5": 0.48467647003612263
+        },
+        "with_news_probabilities": {
+          "home_win": 0.36179462396483336,
+          "draw": 0.23575563937404703,
+          "away_win": 0.40244973666111966,
+          "total_over_2_5": 0.6127653573405697,
+          "home_over_1_5": 0.4538832805518025,
+          "away_over_1_5": 0.48467647003612263
+        },
+        "changed": false,
+        "score_without_news": 68.62830030659065,
+        "score_with_news": 68.62830030659065,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/brighton-hove-albion/fulham",
+        "round": 1,
+        "home": "Brighton & Hove Albion FC",
+        "away": "Fulham FC",
+        "cutoff": "2025-08-16T13:00:00.000000Z",
+        "score_90m": [
+          1,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.45548843426467817,
+          "draw": 0.23432346850723873,
+          "away_win": 0.3101880972280832,
+          "total_over_2_5": 0.6036235934066746,
+          "home_over_1_5": 0.5160124065972491,
+          "away_over_1_5": 0.4054731738290099
+        },
+        "with_news_probabilities": {
+          "home_win": 0.45548843426467817,
+          "draw": 0.23432346850723873,
+          "away_win": 0.3101880972280832,
+          "total_over_2_5": 0.6036235934066746,
+          "home_over_1_5": 0.5160124065972491,
+          "away_over_1_5": 0.4054731738290099
+        },
+        "changed": false,
+        "score_without_news": 68.9996949720183,
+        "score_with_news": 68.9996949720183,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/sunderland/west-ham-united",
+        "round": 1,
+        "home": "Sunderland AFC",
+        "away": "West Ham United FC",
+        "cutoff": "2025-08-16T13:00:00.000000Z",
+        "score_90m": [
+          3,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.4508771929824561,
+          "draw": 0.22982456140350876,
+          "away_win": 0.3192982456140351,
+          "total_over_2_5": 0.5798245614035088,
+          "home_over_1_5": 0.4789473684210527,
+          "away_over_1_5": 0.3947368421052632
+        },
+        "with_news_probabilities": {
+          "home_win": 0.4508771929824561,
+          "draw": 0.22982456140350876,
+          "away_win": 0.3192982456140351,
+          "total_over_2_5": 0.5798245614035088,
+          "home_over_1_5": 0.4789473684210527,
+          "away_over_1_5": 0.3947368421052632
+        },
+        "changed": false,
+        "score_without_news": 79.19965758694984,
+        "score_with_news": 79.19965758694984,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/tottenham-hotspur/burnley",
+        "round": 1,
+        "home": "Tottenham Hotspur FC",
+        "away": "Burnley FC",
+        "cutoff": "2025-08-16T13:00:00.000000Z",
+        "score_90m": [
+          3,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.5922057206749437,
+          "draw": 0.1978776564340462,
+          "away_win": 0.2099166228910101,
+          "total_over_2_5": 0.6868636741949473,
+          "home_over_1_5": 0.6586458796360655,
+          "away_over_1_5": 0.3685747038296802
+        },
+        "with_news_probabilities": {
+          "home_win": 0.5922057206749437,
+          "draw": 0.1978776564340462,
+          "away_win": 0.2099166228910101,
+          "total_over_2_5": 0.6868636741949473,
+          "home_over_1_5": 0.6586458796360655,
+          "away_over_1_5": 0.3685747038296802
+        },
+        "changed": false,
+        "score_without_news": 88.12043322006801,
+        "score_with_news": 88.12043322006801,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/wolverhampton-wanderers/manchester-city",
+        "round": 1,
+        "home": "Wolverhampton Wanderers FC",
+        "away": "Manchester City FC",
+        "cutoff": "2025-08-16T15:30:00.000000Z",
+        "score_90m": [
+          0,
+          4
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.1681561591126895,
+          "draw": 0.19852112142279665,
+          "away_win": 0.633322719464514,
+          "total_over_2_5": 0.6140169590163698,
+          "home_over_1_5": 0.2703297595760606,
+          "away_over_1_5": 0.6341947179987165
+        },
+        "with_news_probabilities": {
+          "home_win": 0.1681561591126895,
+          "draw": 0.19852112142279665,
+          "away_win": 0.633322719464514,
+          "total_over_2_5": 0.6140169590163698,
+          "home_over_1_5": 0.2703297595760606,
+          "away_over_1_5": 0.6341947179987165
+        },
+        "changed": false,
+        "score_without_news": 88.57639325102105,
+        "score_with_news": 88.57639325102105,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/chelsea/crystal-palace",
+        "round": 1,
+        "home": "Chelsea FC",
+        "away": "Crystal Palace FC",
+        "cutoff": "2025-08-17T12:00:00.000000Z",
+        "score_90m": [
+          0,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1142,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.48037591119618184,
+          "draw": 0.2494198898046257,
+          "away_win": 0.2702041989991924,
+          "total_over_2_5": 0.5229137694548867,
+          "home_over_1_5": 0.48042866189480565,
+          "away_over_1_5": 0.31977039184972716
+        },
+        "with_news_probabilities": {
+          "home_win": 0.48037591119618184,
+          "draw": 0.2494198898046257,
+          "away_win": 0.2702041989991924,
+          "total_over_2_5": 0.5229137694548867,
+          "home_over_1_5": 0.48042866189480565,
+          "away_over_1_5": 0.31977039184972716
+        },
+        "changed": false,
+        "score_without_news": 73.99813683807727,
+        "score_with_news": 73.99813683807727,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/nottingham-forest/brentford",
+        "round": 1,
+        "home": "Nottingham Forest FC",
+        "away": "Brentford FC",
+        "cutoff": "2025-08-17T12:00:00.000000Z",
+        "score_90m": [
+          3,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1142,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.3841876140029968,
+          "draw": 0.24798153881395185,
+          "away_win": 0.3678308471830515,
+          "total_over_2_5": 0.5653771477045905,
+          "home_over_1_5": 0.43988000873676536,
+          "away_over_1_5": 0.42742402737198026
+        },
+        "with_news_probabilities": {
+          "home_win": 0.3841876140029968,
+          "draw": 0.24798153881395185,
+          "away_win": 0.3678308471830515,
+          "total_over_2_5": 0.5653771477045905,
+          "home_over_1_5": 0.43988000873676536,
+          "away_over_1_5": 0.42742402737198026
+        },
+        "changed": false,
+        "score_without_news": 75.6666909308841,
+        "score_with_news": 75.6666909308841,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/manchester-united/arsenal",
+        "round": 1,
+        "home": "Manchester United FC",
+        "away": "Arsenal FC",
+        "cutoff": "2025-08-17T14:30:00.000000Z",
+        "score_90m": [
+          0,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1145,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.20201390178900758,
+          "draw": 0.24154382149985762,
+          "away_win": 0.5564422767111349,
+          "total_over_2_5": 0.49537784542443425,
+          "home_over_1_5": 0.24072700783993506,
+          "away_over_1_5": 0.5127315947994713
+        },
+        "with_news_probabilities": {
+          "home_win": 0.20201390178900758,
+          "draw": 0.24154382149985762,
+          "away_win": 0.5564422767111349,
+          "total_over_2_5": 0.49537784542443425,
+          "home_over_1_5": 0.24072700783993506,
+          "away_over_1_5": 0.5127315947994713
+        },
+        "changed": false,
+        "score_without_news": 82.14523413996201,
+        "score_with_news": 82.14523413996201,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/leeds-united/everton",
+        "round": 1,
+        "home": "Leeds United FC",
+        "away": "Everton FC",
+        "cutoff": "2025-08-18T18:00:00.000000Z",
+        "score_90m": [
+          1,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1149,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.3401874855720902,
+          "draw": 0.27574039496387165,
+          "away_win": 0.38407211946403796,
+          "total_over_2_5": 0.4520128322277488,
+          "home_over_1_5": 0.3359097610826125,
+          "away_over_1_5": 0.3688486443211342
+        },
+        "with_news_probabilities": {
+          "home_win": 0.3401874855720902,
+          "draw": 0.27574039496387165,
+          "away_win": 0.38407211946403796,
+          "total_over_2_5": 0.4520128322277488,
+          "home_over_1_5": 0.3359097610826125,
+          "away_over_1_5": 0.3688486443211342
+        },
+        "changed": false,
+        "score_without_news": 80.43378383033193,
+        "score_with_news": 80.43378383033193,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/west-ham-united/chelsea",
+        "round": 2,
+        "home": "West Ham United FC",
+        "away": "Chelsea FC",
+        "cutoff": "2025-08-22T18:00:00.000000Z",
+        "score_90m": [
+          1,
+          5
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.27250192627362885,
+          "draw": 0.24392034043239622,
+          "away_win": 0.48357773329397485,
+          "total_over_2_5": 0.5503871194461643,
+          "home_over_1_5": 0.33889527193870317,
+          "away_over_1_5": 0.5005334917673544
+        },
+        "with_news_probabilities": {
+          "home_win": 0.27250192627362885,
+          "draw": 0.24392034043239622,
+          "away_win": 0.48357773329397485,
+          "total_over_2_5": 0.5503871194461643,
+          "home_over_1_5": 0.33889527193870317,
+          "away_over_1_5": 0.5005334917673544
+        },
+        "changed": false,
+        "score_without_news": 80.83270661317303,
+        "score_with_news": 80.83270661317303,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/manchester-city/tottenham-hotspur",
+        "round": 2,
+        "home": "Manchester City FC",
+        "away": "Tottenham Hotspur FC",
+        "cutoff": "2025-08-23T10:30:00.000000Z",
+        "score_90m": [
+          0,
+          2
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.6726556796843356,
+          "draw": 0.17499119269690822,
+          "away_win": 0.15235312761875602,
+          "total_over_2_5": 0.7085893352307957,
+          "home_over_1_5": 0.7174194103780771,
+          "away_over_1_5": 0.3162490307000067
+        },
+        "with_news_probabilities": {
+          "home_win": 0.6726556796843356,
+          "draw": 0.17499119269690822,
+          "away_win": 0.15235312761875602,
+          "total_over_2_5": 0.7085893352307957,
+          "home_over_1_5": 0.7174194103780771,
+          "away_over_1_5": 0.3162490307000067
+        },
+        "changed": false,
+        "score_without_news": 47.87246887489693,
+        "score_with_news": 47.87246887489693,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/bournemouth/wolverhampton-wanderers",
+        "round": 2,
+        "home": "AFC Bournemouth",
+        "away": "Wolverhampton Wanderers FC",
+        "cutoff": "2025-08-23T13:00:00.000000Z",
+        "score_90m": [
+          1,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.5037716240493244,
+          "draw": 0.23775622305092575,
+          "away_win": 0.2584721528997498,
+          "total_over_2_5": 0.5666862367624802,
+          "home_over_1_5": 0.5245517318172992,
+          "away_over_1_5": 0.33633963057342264
+        },
+        "with_news_probabilities": {
+          "home_win": 0.5037716240493244,
+          "draw": 0.23775622305092575,
+          "away_win": 0.2584721528997498,
+          "total_over_2_5": 0.5666862367624802,
+          "home_over_1_5": 0.5245517318172992,
+          "away_over_1_5": 0.33633963057342264
+        },
+        "changed": false,
+        "score_without_news": 77.64496510889562,
+        "score_with_news": 77.64496510889562,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/brentford/aston-villa",
+        "round": 2,
+        "home": "Brentford FC",
+        "away": "Aston Villa FC",
+        "cutoff": "2025-08-23T13:00:00.000000Z",
+        "score_90m": [
+          1,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.3909608695036202,
+          "draw": 0.24392383155156355,
+          "away_win": 0.3651152989448162,
+          "total_over_2_5": 0.5866023474463774,
+          "home_over_1_5": 0.45929201555234006,
+          "away_over_1_5": 0.43964059501816266
+        },
+        "with_news_probabilities": {
+          "home_win": 0.3909608695036202,
+          "draw": 0.24392383155156355,
+          "away_win": 0.3651152989448162,
+          "total_over_2_5": 0.5866023474463774,
+          "home_over_1_5": 0.45929201555234006,
+          "away_over_1_5": 0.43964059501816266
+        },
+        "changed": false,
+        "score_without_news": 74.2449084458318,
+        "score_with_news": 74.2449084458318,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/burnley/sunderland",
+        "round": 2,
+        "home": "Burnley FC",
+        "away": "Sunderland AFC",
+        "cutoff": "2025-08-23T13:00:00.000000Z",
+        "score_90m": [
+          2,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.21650055439259244,
+          "draw": 0.2255383812552644,
+          "away_win": 0.5579610643521432,
+          "total_over_2_5": 0.5777192686528894,
+          "home_over_1_5": 0.30241735354478977,
+          "away_over_1_5": 0.5662822748485115
+        },
+        "with_news_probabilities": {
+          "home_win": 0.21650055439259244,
+          "draw": 0.2255383812552644,
+          "away_win": 0.5579610643521432,
+          "total_over_2_5": 0.5777192686528894,
+          "home_over_1_5": 0.30241735354478977,
+          "away_over_1_5": 0.5662822748485115
+        },
+        "changed": false,
+        "score_without_news": 59.272838429361066,
+        "score_with_news": 59.272838429361066,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/arsenal/leeds-united",
+        "round": 2,
+        "home": "Arsenal FC",
+        "away": "Leeds United FC",
+        "cutoff": "2025-08-23T15:30:00.000000Z",
+        "score_90m": [
+          5,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.726252141891694,
+          "draw": 0.16818915650494695,
+          "away_win": 0.10555870160335894,
+          "total_over_2_5": 0.6200096052443064,
+          "home_over_1_5": 0.6909757867087587,
+          "away_over_1_5": 0.19202092735980264
+        },
+        "with_news_probabilities": {
+          "home_win": 0.726252141891694,
+          "draw": 0.16818915650494695,
+          "away_win": 0.10555870160335894,
+          "total_over_2_5": 0.6200096052443064,
+          "home_over_1_5": 0.6909757867087587,
+          "away_over_1_5": 0.19202092735980264
+        },
+        "changed": false,
+        "score_without_news": 91.6513809528641,
+        "score_with_news": 91.6513809528641,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/crystal-palace/nottingham-forest",
+        "round": 2,
+        "home": "Crystal Palace FC",
+        "away": "Nottingham Forest FC",
+        "cutoff": "2025-08-24T12:00:00.000000Z",
+        "score_90m": [
+          1,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1152,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.4175380695523782,
+          "draw": 0.2632641784372293,
+          "away_win": 0.3191977520103924,
+          "total_over_2_5": 0.49167141669554726,
+          "home_over_1_5": 0.4171306913255935,
+          "away_over_1_5": 0.3425586114752215
+        },
+        "with_news_probabilities": {
+          "home_win": 0.4175380695523782,
+          "draw": 0.2632641784372293,
+          "away_win": 0.3191977520103924,
+          "total_over_2_5": 0.49167141669554726,
+          "home_over_1_5": 0.4171306913255935,
+          "away_over_1_5": 0.3425586114752215
+        },
+        "changed": false,
+        "score_without_news": 76.43530861172754,
+        "score_with_news": 76.43530861172754,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/everton/brighton-hove-albion",
+        "round": 2,
+        "home": "Everton FC",
+        "away": "Brighton & Hove Albion FC",
+        "cutoff": "2025-08-24T12:00:00.000000Z",
+        "score_90m": [
+          2,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1152,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.3501017575370137,
+          "draw": 0.2752012349335642,
+          "away_win": 0.37469700752942214,
+          "total_over_2_5": 0.44945444318193684,
+          "home_over_1_5": 0.34142567550640895,
+          "away_over_1_5": 0.35987010072530073
+        },
+        "with_news_probabilities": {
+          "home_win": 0.3501017575370137,
+          "draw": 0.2752012349335642,
+          "away_win": 0.37469700752942214,
+          "total_over_2_5": 0.44945444318193684,
+          "home_over_1_5": 0.34142567550640895,
+          "away_over_1_5": 0.35987010072530073
+        },
+        "changed": false,
+        "score_without_news": 72.88783567168291,
+        "score_with_news": 72.88783567168291,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/fulham/manchester-united",
+        "round": 2,
+        "home": "Fulham FC",
+        "away": "Manchester United FC",
+        "cutoff": "2025-08-24T14:30:00.000000Z",
+        "score_90m": [
+          1,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1155,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.4250021090892073,
+          "draw": 0.2607860190636449,
+          "away_win": 0.3142118718471478,
+          "total_over_2_5": 0.48753814257321265,
+          "home_over_1_5": 0.41878686141287064,
+          "away_over_1_5": 0.3348191072492029
+        },
+        "with_news_probabilities": {
+          "home_win": 0.4250021090892073,
+          "draw": 0.2607860190636449,
+          "away_win": 0.3142118718471478,
+          "total_over_2_5": 0.48753814257321265,
+          "home_over_1_5": 0.41878686141287064,
+          "away_over_1_5": 0.3348191072492029
+        },
+        "changed": false,
+        "score_without_news": 76.54809220722993,
+        "score_with_news": 76.54809220722993,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/newcastle-united/liverpool",
+        "round": 2,
+        "home": "Newcastle United FC",
+        "away": "Liverpool FC",
+        "cutoff": "2025-08-25T18:00:00.000000Z",
+        "score_90m": [
+          2,
+          3
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1159,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.35770719754167807,
+          "draw": 0.22793413327915177,
+          "away_win": 0.41435866917917014,
+          "total_over_2_5": 0.6604174698073657,
+          "home_over_1_5": 0.48541032919450167,
+          "away_over_1_5": 0.5277575514716139
+        },
+        "with_news_probabilities": {
+          "home_win": 0.35770719754167807,
+          "draw": 0.22793413327915177,
+          "away_win": 0.41435866917917014,
+          "total_over_2_5": 0.6604174698073657,
+          "home_over_1_5": 0.48541032919450167,
+          "away_over_1_5": 0.5277575514716139
+        },
+        "changed": false,
+        "score_without_news": 78.3856539342489,
+        "score_with_news": 78.3856539342489,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/chelsea/fulham",
+        "round": 3,
+        "home": "Chelsea FC",
+        "away": "Fulham FC",
+        "cutoff": "2025-08-30T10:30:00.000000Z",
+        "score_90m": [
+          2,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.5146663008084137,
+          "draw": 0.23875786490540904,
+          "away_win": 0.24657583428617738,
+          "total_over_2_5": 0.5485705531285892,
+          "home_over_1_5": 0.5196144356474182,
+          "away_over_1_5": 0.3136508483632101
+        },
+        "with_news_probabilities": {
+          "home_win": 0.5146663008084137,
+          "draw": 0.23875786490540904,
+          "away_win": 0.24657583428617738,
+          "total_over_2_5": 0.5485705531285892,
+          "home_over_1_5": 0.5196144356474182,
+          "away_over_1_5": 0.3136508483632101
+        },
+        "changed": false,
+        "score_without_news": 79.8311580820833,
+        "score_with_news": 79.8311580820833,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/manchester-united/burnley",
+        "round": 3,
+        "home": "Manchester United FC",
+        "away": "Burnley FC",
+        "cutoff": "2025-08-30T13:00:00.000000Z",
+        "score_90m": [
+          3,
+          2
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.524223554623308,
+          "draw": 0.24455801721647288,
+          "away_win": 0.23121842816021904,
+          "total_over_2_5": 0.5095806722156213,
+          "home_over_1_5": 0.5007360244430484,
+          "away_over_1_5": 0.27616178788842216
+        },
+        "with_news_probabilities": {
+          "home_win": 0.524223554623308,
+          "draw": 0.24455801721647288,
+          "away_win": 0.23121842816021904,
+          "total_over_2_5": 0.5095806722156213,
+          "home_over_1_5": 0.5007360244430484,
+          "away_over_1_5": 0.27616178788842216
+        },
+        "changed": false,
+        "score_without_news": 70.4116425673298,
+        "score_with_news": 70.4116425673298,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/sunderland/brentford",
+        "round": 3,
+        "home": "Sunderland AFC",
+        "away": "Brentford FC",
+        "cutoff": "2025-08-30T13:00:00.000000Z",
+        "score_90m": [
+          2,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.37954360854082325,
+          "draw": 0.24978083695149625,
+          "away_win": 0.3706755545076807,
+          "total_over_2_5": 0.5560596012344118,
+          "home_over_1_5": 0.4301627453871962,
+          "away_over_1_5": 0.42340797109750833
+        },
+        "with_news_probabilities": {
+          "home_win": 0.37954360854082325,
+          "draw": 0.24978083695149625,
+          "away_win": 0.3706755545076807,
+          "total_over_2_5": 0.5560596012344118,
+          "home_over_1_5": 0.4301627453871962,
+          "away_over_1_5": 0.42340797109750833
+        },
+        "changed": false,
+        "score_without_news": 75.16374080375324,
+        "score_with_news": 75.16374080375324,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/tottenham-hotspur/bournemouth",
+        "round": 3,
+        "home": "Tottenham Hotspur FC",
+        "away": "AFC Bournemouth",
+        "cutoff": "2025-08-30T13:00:00.000000Z",
+        "score_90m": [
+          0,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.4601179632115203,
+          "draw": 0.23084645517558533,
+          "away_win": 0.30903558161289435,
+          "total_over_2_5": 0.6293610174176617,
+          "home_over_1_5": 0.5375055241997176,
+          "away_over_1_5": 0.42312983630757534
+        },
+        "with_news_probabilities": {
+          "home_win": 0.4601179632115203,
+          "draw": 0.23084645517558533,
+          "away_win": 0.30903558161289435,
+          "total_over_2_5": 0.6293610174176617,
+          "home_over_1_5": 0.5375055241997176,
+          "away_over_1_5": 0.42312983630757534
+        },
+        "changed": false,
+        "score_without_news": 69.11846090322689,
+        "score_with_news": 69.11846090322689,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/wolverhampton-wanderers/everton",
+        "round": 3,
+        "home": "Wolverhampton Wanderers FC",
+        "away": "Everton FC",
+        "cutoff": "2025-08-30T13:00:00.000000Z",
+        "score_90m": [
+          2,
+          3
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.34191162387710183,
+          "draw": 0.287727674651764,
+          "away_win": 0.3703607014711341,
+          "total_over_2_5": 0.39911882053888936,
+          "home_over_1_5": 0.30542791344116726,
+          "away_over_1_5": 0.3263516468792418
+        },
+        "with_news_probabilities": {
+          "home_win": 0.34191162387710183,
+          "draw": 0.287727674651764,
+          "away_win": 0.3703607014711341,
+          "total_over_2_5": 0.39911882053888936,
+          "home_over_1_5": 0.30542791344116726,
+          "away_over_1_5": 0.3263516468792418
+        },
+        "changed": false,
+        "score_without_news": 60.11602778257672,
+        "score_with_news": 60.11602778257672,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/leeds-united/newcastle-united",
+        "round": 3,
+        "home": "Leeds United FC",
+        "away": "Newcastle United FC",
+        "cutoff": "2025-08-30T15:30:00.000000Z",
+        "score_90m": [
+          0,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.1984325499873789,
+          "draw": 0.19941365781231504,
+          "away_win": 0.6021537922003062,
+          "total_over_2_5": 0.6710543372482098,
+          "home_over_1_5": 0.34491884850796467,
+          "away_over_1_5": 0.654048426957024
+        },
+        "with_news_probabilities": {
+          "home_win": 0.1984325499873789,
+          "draw": 0.19941365781231504,
+          "away_win": 0.6021537922003062,
+          "total_over_2_5": 0.6710543372482098,
+          "home_over_1_5": 0.34491884850796467,
+          "away_over_1_5": 0.654048426957024
+        },
+        "changed": false,
+        "score_without_news": 62.0371535193192,
+        "score_with_news": 62.0371535193192,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/brighton-hove-albion/manchester-city",
+        "round": 3,
+        "home": "Brighton & Hove Albion FC",
+        "away": "Manchester City FC",
+        "cutoff": "2025-08-31T12:00:00.000000Z",
+        "score_90m": [
+          2,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1161,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.2387465083186894,
+          "draw": 0.21919430686586747,
+          "away_win": 0.5420591848154431,
+          "total_over_2_5": 0.6295525455151018,
+          "home_over_1_5": 0.35841959657368727,
+          "away_over_1_5": 0.5905085380138941
+        },
+        "with_news_probabilities": {
+          "home_win": 0.2387465083186894,
+          "draw": 0.21919430686586747,
+          "away_win": 0.5420591848154431,
+          "total_over_2_5": 0.6295525455151018,
+          "home_over_1_5": 0.35841959657368727,
+          "away_over_1_5": 0.5905085380138941
+        },
+        "changed": false,
+        "score_without_news": 66.04380861591483,
+        "score_with_news": 66.04380861591483,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/nottingham-forest/west-ham-united",
+        "round": 3,
+        "home": "Nottingham Forest FC",
+        "away": "West Ham United FC",
+        "cutoff": "2025-08-31T12:00:00.000000Z",
+        "score_90m": [
+          0,
+          3
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1161,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.5223761628922189,
+          "draw": 0.23349706722107683,
+          "away_win": 0.24412676988670431,
+          "total_over_2_5": 0.5695878088349932,
+          "home_over_1_5": 0.5383084945083374,
+          "away_over_1_5": 0.3243539529330504
+        },
+        "with_news_probabilities": {
+          "home_win": 0.5223761628922189,
+          "draw": 0.23349706722107683,
+          "away_win": 0.24412676988670431,
+          "total_over_2_5": 0.5695878088349932,
+          "home_over_1_5": 0.5383084945083374,
+          "away_over_1_5": 0.3243539529330504
+        },
+        "changed": false,
+        "score_without_news": 65.4775172884784,
+        "score_with_news": 65.4775172884784,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/liverpool/arsenal",
+        "round": 3,
+        "home": "Liverpool FC",
+        "away": "Arsenal FC",
+        "cutoff": "2025-08-31T14:30:00.000000Z",
+        "score_90m": [
+          1,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1165,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.37279943492720236,
+          "draw": 0.2425283293283465,
+          "away_win": 0.3846722357444512,
+          "total_over_2_5": 0.5822007904122192,
+          "home_over_1_5": 0.44168369777967703,
+          "away_over_1_5": 0.45071449154889376
+        },
+        "with_news_probabilities": {
+          "home_win": 0.37279943492720236,
+          "draw": 0.2425283293283465,
+          "away_win": 0.3846722357444512,
+          "total_over_2_5": 0.5822007904122192,
+          "home_over_1_5": 0.44168369777967703,
+          "away_over_1_5": 0.45071449154889376
+        },
+        "changed": false,
+        "score_without_news": 74.06818909283363,
+        "score_with_news": 74.06818909283363,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/aston-villa/crystal-palace",
+        "round": 3,
+        "home": "Aston Villa FC",
+        "away": "Crystal Palace FC",
+        "cutoff": "2025-08-31T17:00:00.000000Z",
+        "score_90m": [
+          0,
+          3
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1166,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.45030363220113495,
+          "draw": 0.2597133425087367,
+          "away_win": 0.2899830252901285,
+          "total_over_2_5": 0.4930289247245725,
+          "home_over_1_5": 0.440904919389193,
+          "away_over_1_5": 0.31911487167480923
+        },
+        "with_news_probabilities": {
+          "home_win": 0.45030363220113495,
+          "draw": 0.2597133425087367,
+          "away_win": 0.2899830252901285,
+          "total_over_2_5": 0.4930289247245725,
+          "home_over_1_5": 0.440904919389193,
+          "away_over_1_5": 0.31911487167480923
+        },
+        "changed": false,
+        "score_without_news": 67.44510950011744,
+        "score_with_news": 67.44510950011744,
+        "delta": 0.0
+      }
+    ],
+    "club_and_selected_biographies": [
+      {
+        "fixture_id": "epl/2025-26/liverpool/bournemouth",
+        "round": 1,
+        "home": "Liverpool FC",
+        "away": "AFC Bournemouth",
+        "cutoff": "2025-08-15T18:00:00.000000Z",
+        "score_90m": [
+          4,
+          2
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.6290553068664257,
+          "draw": 0.1976060129179653,
+          "away_win": 0.1733386802156086,
+          "total_over_2_5": 0.6280518214752286,
+          "home_over_1_5": 0.6407422657174283,
+          "away_over_1_5": 0.28539245013223097
+        },
+        "with_news_probabilities": {
+          "home_win": 0.6290553068664257,
+          "draw": 0.1976060129179653,
+          "away_win": 0.1733386802156086,
+          "total_over_2_5": 0.6280518214752286,
+          "home_over_1_5": 0.6407422657174283,
+          "away_over_1_5": 0.28539245013223097
+        },
+        "changed": false,
+        "score_without_news": 77.96443206600372,
+        "score_with_news": 77.96443206600372,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/aston-villa/newcastle-united",
+        "round": 1,
+        "home": "Aston Villa FC",
+        "away": "Newcastle United FC",
+        "cutoff": "2025-08-16T10:30:00.000000Z",
+        "score_90m": [
+          0,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.36179462396483336,
+          "draw": 0.23575563937404703,
+          "away_win": 0.40244973666111966,
+          "total_over_2_5": 0.6127653573405697,
+          "home_over_1_5": 0.4538832805518025,
+          "away_over_1_5": 0.48467647003612263
+        },
+        "with_news_probabilities": {
+          "home_win": 0.36179462396483336,
+          "draw": 0.23575563937404703,
+          "away_win": 0.40244973666111966,
+          "total_over_2_5": 0.6127653573405697,
+          "home_over_1_5": 0.4538832805518025,
+          "away_over_1_5": 0.48467647003612263
+        },
+        "changed": false,
+        "score_without_news": 68.62830030659065,
+        "score_with_news": 68.62830030659065,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/brighton-hove-albion/fulham",
+        "round": 1,
+        "home": "Brighton & Hove Albion FC",
+        "away": "Fulham FC",
+        "cutoff": "2025-08-16T13:00:00.000000Z",
+        "score_90m": [
+          1,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.45548843426467817,
+          "draw": 0.23432346850723873,
+          "away_win": 0.3101880972280832,
+          "total_over_2_5": 0.6036235934066746,
+          "home_over_1_5": 0.5160124065972491,
+          "away_over_1_5": 0.4054731738290099
+        },
+        "with_news_probabilities": {
+          "home_win": 0.45548843426467817,
+          "draw": 0.23432346850723873,
+          "away_win": 0.3101880972280832,
+          "total_over_2_5": 0.6036235934066746,
+          "home_over_1_5": 0.5160124065972491,
+          "away_over_1_5": 0.4054731738290099
+        },
+        "changed": false,
+        "score_without_news": 68.9996949720183,
+        "score_with_news": 68.9996949720183,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/sunderland/west-ham-united",
+        "round": 1,
+        "home": "Sunderland AFC",
+        "away": "West Ham United FC",
+        "cutoff": "2025-08-16T13:00:00.000000Z",
+        "score_90m": [
+          3,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.4508771929824561,
+          "draw": 0.22982456140350876,
+          "away_win": 0.3192982456140351,
+          "total_over_2_5": 0.5798245614035088,
+          "home_over_1_5": 0.4789473684210527,
+          "away_over_1_5": 0.3947368421052632
+        },
+        "with_news_probabilities": {
+          "home_win": 0.4508771929824561,
+          "draw": 0.22982456140350876,
+          "away_win": 0.3192982456140351,
+          "total_over_2_5": 0.5798245614035088,
+          "home_over_1_5": 0.4789473684210527,
+          "away_over_1_5": 0.3947368421052632
+        },
+        "changed": false,
+        "score_without_news": 79.19965758694984,
+        "score_with_news": 79.19965758694984,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/tottenham-hotspur/burnley",
+        "round": 1,
+        "home": "Tottenham Hotspur FC",
+        "away": "Burnley FC",
+        "cutoff": "2025-08-16T13:00:00.000000Z",
+        "score_90m": [
+          3,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 1,
+        "applied": [
+          "f804d0df8cbf49aa454e3615a296ad9f7e1d9ed4be52d026dad6da8d3abe506f"
+        ],
+        "no_news_probabilities": {
+          "home_win": 0.5922057206749437,
+          "draw": 0.1978776564340462,
+          "away_win": 0.2099166228910101,
+          "total_over_2_5": 0.6868636741949473,
+          "home_over_1_5": 0.6586458796360655,
+          "away_over_1_5": 0.3685747038296802
+        },
+        "with_news_probabilities": {
+          "home_win": 0.5892580638412971,
+          "draw": 0.19864917788147685,
+          "away_win": 0.21209275827722635,
+          "total_over_2_5": 0.6861562876154766,
+          "home_over_1_5": 0.6564849841008349,
+          "away_over_1_5": 0.3704295497372144
+        },
+        "changed": true,
+        "score_without_news": 88.12043322006801,
+        "score_with_news": 87.99261551692418,
+        "delta": -0.12781770314383323
+      },
+      {
+        "fixture_id": "epl/2025-26/wolverhampton-wanderers/manchester-city",
+        "round": 1,
+        "home": "Wolverhampton Wanderers FC",
+        "away": "Manchester City FC",
+        "cutoff": "2025-08-16T15:30:00.000000Z",
+        "score_90m": [
+          0,
+          4
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1140,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.1681561591126895,
+          "draw": 0.19852112142279665,
+          "away_win": 0.633322719464514,
+          "total_over_2_5": 0.6140169590163698,
+          "home_over_1_5": 0.2703297595760606,
+          "away_over_1_5": 0.6341947179987165
+        },
+        "with_news_probabilities": {
+          "home_win": 0.1681561591126895,
+          "draw": 0.19852112142279665,
+          "away_win": 0.633322719464514,
+          "total_over_2_5": 0.6140169590163698,
+          "home_over_1_5": 0.2703297595760606,
+          "away_over_1_5": 0.6341947179987165
+        },
+        "changed": false,
+        "score_without_news": 88.57639325102105,
+        "score_with_news": 88.57639325102105,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/chelsea/crystal-palace",
+        "round": 1,
+        "home": "Chelsea FC",
+        "away": "Crystal Palace FC",
+        "cutoff": "2025-08-17T12:00:00.000000Z",
+        "score_90m": [
+          0,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1142,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.48037591119618184,
+          "draw": 0.2494198898046257,
+          "away_win": 0.2702041989991924,
+          "total_over_2_5": 0.5229137694548867,
+          "home_over_1_5": 0.48042866189480565,
+          "away_over_1_5": 0.31977039184972716
+        },
+        "with_news_probabilities": {
+          "home_win": 0.48037591119618184,
+          "draw": 0.2494198898046257,
+          "away_win": 0.2702041989991924,
+          "total_over_2_5": 0.5229137694548867,
+          "home_over_1_5": 0.48042866189480565,
+          "away_over_1_5": 0.31977039184972716
+        },
+        "changed": false,
+        "score_without_news": 73.99813683807727,
+        "score_with_news": 73.99813683807727,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/nottingham-forest/brentford",
+        "round": 1,
+        "home": "Nottingham Forest FC",
+        "away": "Brentford FC",
+        "cutoff": "2025-08-17T12:00:00.000000Z",
+        "score_90m": [
+          3,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1142,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.3841876140029968,
+          "draw": 0.24798153881395185,
+          "away_win": 0.3678308471830515,
+          "total_over_2_5": 0.5653771477045905,
+          "home_over_1_5": 0.43988000873676536,
+          "away_over_1_5": 0.42742402737198026
+        },
+        "with_news_probabilities": {
+          "home_win": 0.3841876140029968,
+          "draw": 0.24798153881395185,
+          "away_win": 0.3678308471830515,
+          "total_over_2_5": 0.5653771477045905,
+          "home_over_1_5": 0.43988000873676536,
+          "away_over_1_5": 0.42742402737198026
+        },
+        "changed": false,
+        "score_without_news": 75.6666909308841,
+        "score_with_news": 75.6666909308841,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/manchester-united/arsenal",
+        "round": 1,
+        "home": "Manchester United FC",
+        "away": "Arsenal FC",
+        "cutoff": "2025-08-17T14:30:00.000000Z",
+        "score_90m": [
+          0,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1145,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.20201390178900758,
+          "draw": 0.24154382149985762,
+          "away_win": 0.5564422767111349,
+          "total_over_2_5": 0.49537784542443425,
+          "home_over_1_5": 0.24072700783993506,
+          "away_over_1_5": 0.5127315947994713
+        },
+        "with_news_probabilities": {
+          "home_win": 0.20201390178900758,
+          "draw": 0.24154382149985762,
+          "away_win": 0.5564422767111349,
+          "total_over_2_5": 0.49537784542443425,
+          "home_over_1_5": 0.24072700783993506,
+          "away_over_1_5": 0.5127315947994713
+        },
+        "changed": false,
+        "score_without_news": 82.14523413996201,
+        "score_with_news": 82.14523413996201,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/leeds-united/everton",
+        "round": 1,
+        "home": "Leeds United FC",
+        "away": "Everton FC",
+        "cutoff": "2025-08-18T18:00:00.000000Z",
+        "score_90m": [
+          1,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1149,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.3401874855720902,
+          "draw": 0.27574039496387165,
+          "away_win": 0.38407211946403796,
+          "total_over_2_5": 0.4520128322277488,
+          "home_over_1_5": 0.3359097610826125,
+          "away_over_1_5": 0.3688486443211342
+        },
+        "with_news_probabilities": {
+          "home_win": 0.3401874855720902,
+          "draw": 0.27574039496387165,
+          "away_win": 0.38407211946403796,
+          "total_over_2_5": 0.4520128322277488,
+          "home_over_1_5": 0.3359097610826125,
+          "away_over_1_5": 0.3688486443211342
+        },
+        "changed": false,
+        "score_without_news": 80.43378383033193,
+        "score_with_news": 80.43378383033193,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/west-ham-united/chelsea",
+        "round": 2,
+        "home": "West Ham United FC",
+        "away": "Chelsea FC",
+        "cutoff": "2025-08-22T18:00:00.000000Z",
+        "score_90m": [
+          1,
+          5
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.27250192627362885,
+          "draw": 0.24392034043239622,
+          "away_win": 0.48357773329397485,
+          "total_over_2_5": 0.5503871194461643,
+          "home_over_1_5": 0.33889527193870317,
+          "away_over_1_5": 0.5005334917673544
+        },
+        "with_news_probabilities": {
+          "home_win": 0.27250192627362885,
+          "draw": 0.24392034043239622,
+          "away_win": 0.48357773329397485,
+          "total_over_2_5": 0.5503871194461643,
+          "home_over_1_5": 0.33889527193870317,
+          "away_over_1_5": 0.5005334917673544
+        },
+        "changed": false,
+        "score_without_news": 80.83270661317303,
+        "score_with_news": 80.83270661317303,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/manchester-city/tottenham-hotspur",
+        "round": 2,
+        "home": "Manchester City FC",
+        "away": "Tottenham Hotspur FC",
+        "cutoff": "2025-08-23T10:30:00.000000Z",
+        "score_90m": [
+          0,
+          2
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.6726556796843356,
+          "draw": 0.17499119269690822,
+          "away_win": 0.15235312761875602,
+          "total_over_2_5": 0.7085893352307957,
+          "home_over_1_5": 0.7174194103780771,
+          "away_over_1_5": 0.3162490307000067
+        },
+        "with_news_probabilities": {
+          "home_win": 0.6726556796843356,
+          "draw": 0.17499119269690822,
+          "away_win": 0.15235312761875602,
+          "total_over_2_5": 0.7085893352307957,
+          "home_over_1_5": 0.7174194103780771,
+          "away_over_1_5": 0.3162490307000067
+        },
+        "changed": false,
+        "score_without_news": 47.87246887489693,
+        "score_with_news": 47.87246887489693,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/bournemouth/wolverhampton-wanderers",
+        "round": 2,
+        "home": "AFC Bournemouth",
+        "away": "Wolverhampton Wanderers FC",
+        "cutoff": "2025-08-23T13:00:00.000000Z",
+        "score_90m": [
+          1,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.5037716240493244,
+          "draw": 0.23775622305092575,
+          "away_win": 0.2584721528997498,
+          "total_over_2_5": 0.5666862367624802,
+          "home_over_1_5": 0.5245517318172992,
+          "away_over_1_5": 0.33633963057342264
+        },
+        "with_news_probabilities": {
+          "home_win": 0.5037716240493244,
+          "draw": 0.23775622305092575,
+          "away_win": 0.2584721528997498,
+          "total_over_2_5": 0.5666862367624802,
+          "home_over_1_5": 0.5245517318172992,
+          "away_over_1_5": 0.33633963057342264
+        },
+        "changed": false,
+        "score_without_news": 77.64496510889562,
+        "score_with_news": 77.64496510889562,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/brentford/aston-villa",
+        "round": 2,
+        "home": "Brentford FC",
+        "away": "Aston Villa FC",
+        "cutoff": "2025-08-23T13:00:00.000000Z",
+        "score_90m": [
+          1,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.3909608695036202,
+          "draw": 0.24392383155156355,
+          "away_win": 0.3651152989448162,
+          "total_over_2_5": 0.5866023474463774,
+          "home_over_1_5": 0.45929201555234006,
+          "away_over_1_5": 0.43964059501816266
+        },
+        "with_news_probabilities": {
+          "home_win": 0.3909608695036202,
+          "draw": 0.24392383155156355,
+          "away_win": 0.3651152989448162,
+          "total_over_2_5": 0.5866023474463774,
+          "home_over_1_5": 0.45929201555234006,
+          "away_over_1_5": 0.43964059501816266
+        },
+        "changed": false,
+        "score_without_news": 74.2449084458318,
+        "score_with_news": 74.2449084458318,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/burnley/sunderland",
+        "round": 2,
+        "home": "Burnley FC",
+        "away": "Sunderland AFC",
+        "cutoff": "2025-08-23T13:00:00.000000Z",
+        "score_90m": [
+          2,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.21650055439259244,
+          "draw": 0.2255383812552644,
+          "away_win": 0.5579610643521432,
+          "total_over_2_5": 0.5777192686528894,
+          "home_over_1_5": 0.30241735354478977,
+          "away_over_1_5": 0.5662822748485115
+        },
+        "with_news_probabilities": {
+          "home_win": 0.21650055439259244,
+          "draw": 0.2255383812552644,
+          "away_win": 0.5579610643521432,
+          "total_over_2_5": 0.5777192686528894,
+          "home_over_1_5": 0.30241735354478977,
+          "away_over_1_5": 0.5662822748485115
+        },
+        "changed": false,
+        "score_without_news": 59.272838429361066,
+        "score_with_news": 59.272838429361066,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/arsenal/leeds-united",
+        "round": 2,
+        "home": "Arsenal FC",
+        "away": "Leeds United FC",
+        "cutoff": "2025-08-23T15:30:00.000000Z",
+        "score_90m": [
+          5,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1150,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.726252141891694,
+          "draw": 0.16818915650494695,
+          "away_win": 0.10555870160335894,
+          "total_over_2_5": 0.6200096052443064,
+          "home_over_1_5": 0.6909757867087587,
+          "away_over_1_5": 0.19202092735980264
+        },
+        "with_news_probabilities": {
+          "home_win": 0.726252141891694,
+          "draw": 0.16818915650494695,
+          "away_win": 0.10555870160335894,
+          "total_over_2_5": 0.6200096052443064,
+          "home_over_1_5": 0.6909757867087587,
+          "away_over_1_5": 0.19202092735980264
+        },
+        "changed": false,
+        "score_without_news": 91.6513809528641,
+        "score_with_news": 91.6513809528641,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/crystal-palace/nottingham-forest",
+        "round": 2,
+        "home": "Crystal Palace FC",
+        "away": "Nottingham Forest FC",
+        "cutoff": "2025-08-24T12:00:00.000000Z",
+        "score_90m": [
+          1,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1152,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.4175380695523782,
+          "draw": 0.2632641784372293,
+          "away_win": 0.3191977520103924,
+          "total_over_2_5": 0.49167141669554726,
+          "home_over_1_5": 0.4171306913255935,
+          "away_over_1_5": 0.3425586114752215
+        },
+        "with_news_probabilities": {
+          "home_win": 0.4175380695523782,
+          "draw": 0.2632641784372293,
+          "away_win": 0.3191977520103924,
+          "total_over_2_5": 0.49167141669554726,
+          "home_over_1_5": 0.4171306913255935,
+          "away_over_1_5": 0.3425586114752215
+        },
+        "changed": false,
+        "score_without_news": 76.43530861172754,
+        "score_with_news": 76.43530861172754,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/everton/brighton-hove-albion",
+        "round": 2,
+        "home": "Everton FC",
+        "away": "Brighton & Hove Albion FC",
+        "cutoff": "2025-08-24T12:00:00.000000Z",
+        "score_90m": [
+          2,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1152,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.3501017575370137,
+          "draw": 0.2752012349335642,
+          "away_win": 0.37469700752942214,
+          "total_over_2_5": 0.44945444318193684,
+          "home_over_1_5": 0.34142567550640895,
+          "away_over_1_5": 0.35987010072530073
+        },
+        "with_news_probabilities": {
+          "home_win": 0.3501017575370137,
+          "draw": 0.2752012349335642,
+          "away_win": 0.37469700752942214,
+          "total_over_2_5": 0.44945444318193684,
+          "home_over_1_5": 0.34142567550640895,
+          "away_over_1_5": 0.35987010072530073
+        },
+        "changed": false,
+        "score_without_news": 72.88783567168291,
+        "score_with_news": 72.88783567168291,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/fulham/manchester-united",
+        "round": 2,
+        "home": "Fulham FC",
+        "away": "Manchester United FC",
+        "cutoff": "2025-08-24T14:30:00.000000Z",
+        "score_90m": [
+          1,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1155,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.4250021090892073,
+          "draw": 0.2607860190636449,
+          "away_win": 0.3142118718471478,
+          "total_over_2_5": 0.48753814257321265,
+          "home_over_1_5": 0.41878686141287064,
+          "away_over_1_5": 0.3348191072492029
+        },
+        "with_news_probabilities": {
+          "home_win": 0.4250021090892073,
+          "draw": 0.2607860190636449,
+          "away_win": 0.3142118718471478,
+          "total_over_2_5": 0.48753814257321265,
+          "home_over_1_5": 0.41878686141287064,
+          "away_over_1_5": 0.3348191072492029
+        },
+        "changed": false,
+        "score_without_news": 76.54809220722993,
+        "score_with_news": 76.54809220722993,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/newcastle-united/liverpool",
+        "round": 2,
+        "home": "Newcastle United FC",
+        "away": "Liverpool FC",
+        "cutoff": "2025-08-25T18:00:00.000000Z",
+        "score_90m": [
+          2,
+          3
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1159,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.35770719754167807,
+          "draw": 0.22793413327915177,
+          "away_win": 0.41435866917917014,
+          "total_over_2_5": 0.6604174698073657,
+          "home_over_1_5": 0.48541032919450167,
+          "away_over_1_5": 0.5277575514716139
+        },
+        "with_news_probabilities": {
+          "home_win": 0.35770719754167807,
+          "draw": 0.22793413327915177,
+          "away_win": 0.41435866917917014,
+          "total_over_2_5": 0.6604174698073657,
+          "home_over_1_5": 0.48541032919450167,
+          "away_over_1_5": 0.5277575514716139
+        },
+        "changed": false,
+        "score_without_news": 78.3856539342489,
+        "score_with_news": 78.3856539342489,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/chelsea/fulham",
+        "round": 3,
+        "home": "Chelsea FC",
+        "away": "Fulham FC",
+        "cutoff": "2025-08-30T10:30:00.000000Z",
+        "score_90m": [
+          2,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.5146663008084137,
+          "draw": 0.23875786490540904,
+          "away_win": 0.24657583428617738,
+          "total_over_2_5": 0.5485705531285892,
+          "home_over_1_5": 0.5196144356474182,
+          "away_over_1_5": 0.3136508483632101
+        },
+        "with_news_probabilities": {
+          "home_win": 0.5146663008084137,
+          "draw": 0.23875786490540904,
+          "away_win": 0.24657583428617738,
+          "total_over_2_5": 0.5485705531285892,
+          "home_over_1_5": 0.5196144356474182,
+          "away_over_1_5": 0.3136508483632101
+        },
+        "changed": false,
+        "score_without_news": 79.8311580820833,
+        "score_with_news": 79.8311580820833,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/manchester-united/burnley",
+        "round": 3,
+        "home": "Manchester United FC",
+        "away": "Burnley FC",
+        "cutoff": "2025-08-30T13:00:00.000000Z",
+        "score_90m": [
+          3,
+          2
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.524223554623308,
+          "draw": 0.24455801721647288,
+          "away_win": 0.23121842816021904,
+          "total_over_2_5": 0.5095806722156213,
+          "home_over_1_5": 0.5007360244430484,
+          "away_over_1_5": 0.27616178788842216
+        },
+        "with_news_probabilities": {
+          "home_win": 0.524223554623308,
+          "draw": 0.24455801721647288,
+          "away_win": 0.23121842816021904,
+          "total_over_2_5": 0.5095806722156213,
+          "home_over_1_5": 0.5007360244430484,
+          "away_over_1_5": 0.27616178788842216
+        },
+        "changed": false,
+        "score_without_news": 70.4116425673298,
+        "score_with_news": 70.4116425673298,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/sunderland/brentford",
+        "round": 3,
+        "home": "Sunderland AFC",
+        "away": "Brentford FC",
+        "cutoff": "2025-08-30T13:00:00.000000Z",
+        "score_90m": [
+          2,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.37954360854082325,
+          "draw": 0.24978083695149625,
+          "away_win": 0.3706755545076807,
+          "total_over_2_5": 0.5560596012344118,
+          "home_over_1_5": 0.4301627453871962,
+          "away_over_1_5": 0.42340797109750833
+        },
+        "with_news_probabilities": {
+          "home_win": 0.37954360854082325,
+          "draw": 0.24978083695149625,
+          "away_win": 0.3706755545076807,
+          "total_over_2_5": 0.5560596012344118,
+          "home_over_1_5": 0.4301627453871962,
+          "away_over_1_5": 0.42340797109750833
+        },
+        "changed": false,
+        "score_without_news": 75.16374080375324,
+        "score_with_news": 75.16374080375324,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/tottenham-hotspur/bournemouth",
+        "round": 3,
+        "home": "Tottenham Hotspur FC",
+        "away": "AFC Bournemouth",
+        "cutoff": "2025-08-30T13:00:00.000000Z",
+        "score_90m": [
+          0,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.4601179632115203,
+          "draw": 0.23084645517558533,
+          "away_win": 0.30903558161289435,
+          "total_over_2_5": 0.6293610174176617,
+          "home_over_1_5": 0.5375055241997176,
+          "away_over_1_5": 0.42312983630757534
+        },
+        "with_news_probabilities": {
+          "home_win": 0.4601179632115203,
+          "draw": 0.23084645517558533,
+          "away_win": 0.30903558161289435,
+          "total_over_2_5": 0.6293610174176617,
+          "home_over_1_5": 0.5375055241997176,
+          "away_over_1_5": 0.42312983630757534
+        },
+        "changed": false,
+        "score_without_news": 69.11846090322689,
+        "score_with_news": 69.11846090322689,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/wolverhampton-wanderers/everton",
+        "round": 3,
+        "home": "Wolverhampton Wanderers FC",
+        "away": "Everton FC",
+        "cutoff": "2025-08-30T13:00:00.000000Z",
+        "score_90m": [
+          2,
+          3
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.34191162387710183,
+          "draw": 0.287727674651764,
+          "away_win": 0.3703607014711341,
+          "total_over_2_5": 0.39911882053888936,
+          "home_over_1_5": 0.30542791344116726,
+          "away_over_1_5": 0.3263516468792418
+        },
+        "with_news_probabilities": {
+          "home_win": 0.34191162387710183,
+          "draw": 0.287727674651764,
+          "away_win": 0.3703607014711341,
+          "total_over_2_5": 0.39911882053888936,
+          "home_over_1_5": 0.30542791344116726,
+          "away_over_1_5": 0.3263516468792418
+        },
+        "changed": false,
+        "score_without_news": 60.11602778257672,
+        "score_with_news": 60.11602778257672,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/leeds-united/newcastle-united",
+        "round": 3,
+        "home": "Leeds United FC",
+        "away": "Newcastle United FC",
+        "cutoff": "2025-08-30T15:30:00.000000Z",
+        "score_90m": [
+          0,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1160,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.1984325499873789,
+          "draw": 0.19941365781231504,
+          "away_win": 0.6021537922003062,
+          "total_over_2_5": 0.6710543372482098,
+          "home_over_1_5": 0.34491884850796467,
+          "away_over_1_5": 0.654048426957024
+        },
+        "with_news_probabilities": {
+          "home_win": 0.1984325499873789,
+          "draw": 0.19941365781231504,
+          "away_win": 0.6021537922003062,
+          "total_over_2_5": 0.6710543372482098,
+          "home_over_1_5": 0.34491884850796467,
+          "away_over_1_5": 0.654048426957024
+        },
+        "changed": false,
+        "score_without_news": 62.0371535193192,
+        "score_with_news": 62.0371535193192,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/brighton-hove-albion/manchester-city",
+        "round": 3,
+        "home": "Brighton & Hove Albion FC",
+        "away": "Manchester City FC",
+        "cutoff": "2025-08-31T12:00:00.000000Z",
+        "score_90m": [
+          2,
+          1
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1161,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.2387465083186894,
+          "draw": 0.21919430686586747,
+          "away_win": 0.5420591848154431,
+          "total_over_2_5": 0.6295525455151018,
+          "home_over_1_5": 0.35841959657368727,
+          "away_over_1_5": 0.5905085380138941
+        },
+        "with_news_probabilities": {
+          "home_win": 0.2387465083186894,
+          "draw": 0.21919430686586747,
+          "away_win": 0.5420591848154431,
+          "total_over_2_5": 0.6295525455151018,
+          "home_over_1_5": 0.35841959657368727,
+          "away_over_1_5": 0.5905085380138941
+        },
+        "changed": false,
+        "score_without_news": 66.04380861591483,
+        "score_with_news": 66.04380861591483,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/nottingham-forest/west-ham-united",
+        "round": 3,
+        "home": "Nottingham Forest FC",
+        "away": "West Ham United FC",
+        "cutoff": "2025-08-31T12:00:00.000000Z",
+        "score_90m": [
+          0,
+          3
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1161,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.5223761628922189,
+          "draw": 0.23349706722107683,
+          "away_win": 0.24412676988670431,
+          "total_over_2_5": 0.5695878088349932,
+          "home_over_1_5": 0.5383084945083374,
+          "away_over_1_5": 0.3243539529330504
+        },
+        "with_news_probabilities": {
+          "home_win": 0.5223761628922189,
+          "draw": 0.23349706722107683,
+          "away_win": 0.24412676988670431,
+          "total_over_2_5": 0.5695878088349932,
+          "home_over_1_5": 0.5383084945083374,
+          "away_over_1_5": 0.3243539529330504
+        },
+        "changed": false,
+        "score_without_news": 65.4775172884784,
+        "score_with_news": 65.4775172884784,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/liverpool/arsenal",
+        "round": 3,
+        "home": "Liverpool FC",
+        "away": "Arsenal FC",
+        "cutoff": "2025-08-31T14:30:00.000000Z",
+        "score_90m": [
+          1,
+          0
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1165,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.37279943492720236,
+          "draw": 0.2425283293283465,
+          "away_win": 0.3846722357444512,
+          "total_over_2_5": 0.5822007904122192,
+          "home_over_1_5": 0.44168369777967703,
+          "away_over_1_5": 0.45071449154889376
+        },
+        "with_news_probabilities": {
+          "home_win": 0.37279943492720236,
+          "draw": 0.2425283293283465,
+          "away_win": 0.3846722357444512,
+          "total_over_2_5": 0.5822007904122192,
+          "home_over_1_5": 0.44168369777967703,
+          "away_over_1_5": 0.45071449154889376
+        },
+        "changed": false,
+        "score_without_news": 74.06818909283363,
+        "score_with_news": 74.06818909283363,
+        "delta": 0.0
+      },
+      {
+        "fixture_id": "epl/2025-26/aston-villa/crystal-palace",
+        "round": 3,
+        "home": "Aston Villa FC",
+        "away": "Crystal Palace FC",
+        "cutoff": "2025-08-31T17:00:00.000000Z",
+        "score_90m": [
+          0,
+          3
+        ],
+        "club_coverage": [
+          true,
+          true
+        ],
+        "training_matches": 1166,
+        "eligible_news_claims": 0,
+        "applied": [],
+        "no_news_probabilities": {
+          "home_win": 0.45030363220113495,
+          "draw": 0.2597133425087367,
+          "away_win": 0.2899830252901285,
+          "total_over_2_5": 0.4930289247245725,
+          "home_over_1_5": 0.440904919389193,
+          "away_over_1_5": 0.31911487167480923
+        },
+        "with_news_probabilities": {
+          "home_win": 0.45030363220113495,
+          "draw": 0.2597133425087367,
+          "away_win": 0.2899830252901285,
+          "total_over_2_5": 0.4930289247245725,
+          "home_over_1_5": 0.440904919389193,
+          "away_over_1_5": 0.31911487167480923
+        },
+        "changed": false,
+        "score_without_news": 67.44510950011744,
+        "score_with_news": 67.44510950011744,
+        "delta": 0.0
+      }
+    ]
+  }
+}

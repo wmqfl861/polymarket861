@@ -1,9 +1,4 @@
-"""Fixed editorially labelled English test set, kept outside the extraction path.
-
-The fixture is fictional and each article body was written for this evaluation.
-These examples were not used to fit the classifiers. The results describe this
-language sample, not live publisher coverage or improvement to match forecasts.
-"""
+"""Offline scoring of authored cases, cited club prose and structured wire records."""
 
 from __future__ import annotations
 
@@ -124,24 +119,33 @@ def _ratio(numerator, denominator):
     return round(numerator / denominator, 4) if denominator else None
 
 
-def _score(cases):
+def _score(cases, contexts=None):
     correct = extracted = expected = grounded = exact = empty = empty_correct = 0
     linked = 0
     confusion = {field: Counter() for field in ("event", "status", "availability")}
     failures, cases_count = [], []
     for index, (authority, text, gold) in enumerate(cases, 1):
-        rows = extract(text, _ROSTER, authority=authority, team="Northbridge FC")
+        roster, team = contexts[index - 1] if contexts else (_ROSTER, "Northbridge FC")
+        rows = extract(text, roster, authority=authority, team=team)
         actual = [(r["player_id"], r["event"], r["status"], r["availability"]) for r in rows]
         matches = (Counter(actual) & Counter(gold)).total()
         correct += matches
         extracted += len(actual)
         expected += len(gold)
-        grounded += sum(text[r["start"]:r["end"]] == r["quote"] for r in rows)
+        grounded += sum(0 <= r["start"] < r["end"] <= len(text)
+                        and text[r["start"]:r["end"]] == r["quote"] for r in rows)
         linked += (Counter(t[0] for t in actual) & Counter(t[0] for t in gold)).total()
         if not gold:
             empty += 1
             empty_correct += int(not actual)
-        cases_count.append({"case": index, "expected": len(gold), "emitted": len(actual), "correct": matches})
+        case = {"case": index, "expected": len(gold), "emitted": len(actual), "correct": matches}
+        if contexts:
+            case["emitted_claims"] = [
+                {k: r[k] for k in ("player_id", "event", "status", "availability", "start", "end")}
+                | {"quote_sha256": hashlib.sha256(r["quote"].encode()).hexdigest()}
+                for r in rows
+            ]
+        cases_count.append(case)
         if matches == len(actual) == len(gold):
             exact += 1
         else:
@@ -163,8 +167,7 @@ def _score(cases):
         "task": "grounded English football availability and transfer-claim extraction",
         "model_version": MODEL_VERSION,
         "training_statements": sum(len(group[3]) for group in TRAINING_GROUPS),
-        "holdout_sha256": digest(cases), "holdout_source": "original, manually labelled English examples",
-        "live_publisher_articles": 0, "match_results_used": 0,
+        "match_results_used": 0,
         "articles": len(cases), "exact_articles": exact,
         "negative_articles": empty, "negative_articles_with_no_claim": empty_correct,
         "gold_claims": expected, "extracted_claims": extracted, "fully_correct_claims": correct,
@@ -179,11 +182,86 @@ def _score(cases):
 def evaluate():
     """Repeat the frozen language test and distinguish its development diagnostics."""
     held_out = _score(_HELD_OUT)
-    held_out["scope"] = "Held out of weight fitting and the initial rule-development cycle; English text only."
+    authored = {"holdout_source": "original, manually labelled English examples",
+                "live_publisher_articles": 0}
+    held_out.update(authored, holdout_sha256=digest(_HELD_OUT))
+    held_out["scope"] = ("Accuracy on developer-authored passages with a fictional roster. The held-out "
+                         "set was excluded from weight fitting and the initial rule-development cycle.")
     regression = _score(_REGRESSION_CASES)
+    regression.update(authored, holdout_sha256=digest(_REGRESSION_CASES))
     regression["scope"] = "Previously inspected challenge set; several polarity errors informed guard repairs."
     held_out["development_regression"] = regression
     return held_out
+
+
+def club_prose_score(path):
+    """Score each original excerpt in isolation against its published reference labels."""
+    raw = Path(path).read_bytes()
+    corpus = json.loads(raw)
+    if corpus["protocol"] != "epl-official-club-prose-excerpts-v1":
+        raise ValueError("unknown club prose corpus")
+    rosters = {club: [{"player_id": name, "name": name, "aliases": corpus["aliases"].get(name, [])}
+                      for name in names] for club, names in corpus["rosters"].items()}
+    cases, contexts = [], []
+    ids, urls = set(), set()
+    for row in corpus["passages"]:
+        team = row["publisher"]
+        roster = rosters[team]
+        if row["id"] in ids or row["url"] in urls or not row["text"].strip():
+            raise ValueError("duplicate club passage, duplicate source or empty text")
+        ids.add(row["id"])
+        urls.add(row["url"])
+        gold = [tuple(claim[k] for k in ("player", "event", "status", "availability"))
+                for claim in row["gold"]]
+        if any(claim[0] not in corpus["rosters"][team] for claim in gold):
+            raise ValueError("club prose label has no supplied player identity")
+        cases.append(("official", row["text"], gold))
+        contexts.append((roster, team))
+    result = _score(cases, contexts)
+    for case, row in zip(result["cases"], corpus["passages"], strict=True):
+        case.update(passage_id=row["id"], publisher=row["publisher"],
+                    excerpt_sha256=hashlib.sha256(row["text"].encode()).hexdigest())
+    return result | {
+        "scope": ("Exact claims in the cited, isolated English excerpts of official club articles, "
+                  "given a short reference roster. Labels were fixed before running the extractor."),
+        "corpus_sha256": hashlib.sha256(raw).hexdigest(), "corpus_protocol": corpus["protocol"],
+        "source_checked_date": corpus["source_checked_date"], "publishers": len({x[1] for x in contexts}),
+        "selection": corpus["selection"], "annotation": corpus["annotation"],
+        "identity_basis": corpus["identity_basis"],
+    }
+
+
+def published_wire_linkage(path):
+    """Recount the immutable 0.4.0 row decisions without claiming a new upstream collection."""
+    raw = Path(path).read_bytes()
+    fingerprint = hashlib.sha256(raw).hexdigest()
+    if fingerprint != "a6a48678ccadec520042c7a223af3a752c19f7e5c4797276149e93fa1ecbeeb4":
+        raise ValueError("expected the exact published 0.4.0 language report")
+    source = json.loads(raw)
+    if source["protocol"] != "news-language-validation-1":
+        raise ValueError("expected the historical structured-wire evaluation")
+    wire = source["real_wire"]
+    rows = wire["rows"]
+    if len({row["record_sha256"] for row in rows}) != len(rows):
+        raise ValueError("duplicate published wire record")
+    matched = sum(row["unique_exact_player"] for row in rows)
+    agreed = sum(row["exact_agreement"] for row in rows)
+    counts = {"records": len(rows), "unique_exact_names": matched, "exact_agreement": agreed,
+              "emitted": sum(len(row["emitted"]) for row in rows),
+              "abstentions": sum(not row["emitted"] for row in rows)}
+    if counts != wire["counts"]:
+        raise ValueError("published wire rows disagree with their summary")
+    return {
+        "scope": ("Historical 0.4.0 roster-name linkage and structured-field agreement, recounted "
+                  "from published row decisions. The adapter generated the source sentences from "
+                  "those fields. This panel supplies no publisher-prose labels or match outcomes."),
+        "source_report_sha256": fingerprint,
+        "source_model_version": source["model_version"], "as_of": wire["as_of"],
+        "projection_sha256": wire["projection_sha256"], "attribution": wire["attribution"],
+        "license": wire["license"], "counts": counts, "counts_by_provider_class": wire["counts_by_provider_class"],
+        "unique_exact_name_rate": _ratio(matched, len(rows)),
+        "label_agreement_given_unique_name": _ratio(agreed, matched),
+    }
 
 
 
@@ -250,12 +328,16 @@ def wire_score(wire_path, roster_dir, season, cutoff):
     total = {k: sum(t.get(k, 0) for t in per_type.values()) for k in
              ("records", "unique_exact_names", "emitted", "exact_agreement", "abstentions")}
     return {
-        "scope": "AI extraction from machine-normalized public provider fields, using an independently collected club roster. Agreement measures name and label consistency. Rumour truth, arbitrary news prose and match accuracy were not evaluated here.",
+        "scope": ("Template round-trip and name linkage. This benchmark reads adapter-generated "
+                  "sentences and compares their extracted labels with the same provider's fields. "
+                  "The independent club roster checks subject identity."),
         "as_of": cutoff, "season": season, "teams": len(rosters),
         "attribution": wire["attribution"], "license": wire["license"],
         "provider_receipts": receipts, "projection_sha256": hashlib.sha256(raw).hexdigest(),
         "roster_receipts_sha256": digest(rosters), "roster_receipts": rosters,
         "counts": total, "counts_by_provider_class": dict(sorted(per_type.items())),
+        "unique_exact_name_rate": _ratio(total["unique_exact_names"], total["records"]),
+        "label_agreement_given_unique_name": _ratio(total["exact_agreement"], total["unique_exact_names"]),
         "conditional_precision": _ratio(total["exact_agreement"], total["emitted"]),
         "end_to_end_recall": _ratio(total["exact_agreement"], total["records"]),
         "rows": rows,
@@ -283,9 +365,24 @@ def main():
     parser.add_argument("--roster-state", type=Path, help="runtime archive with the independent roster receipts")
     parser.add_argument("--season", help="registered season for the wire snapshot")
     parser.add_argument("--as-of", help="UTC evaluation bound after collection of the input snapshots")
+    parser.add_argument("--club-prose", type=Path, help="labelled excerpts of dated official club articles")
+    parser.add_argument("--published-wire", type=Path, help="historical 0.4.0 language report to recount")
     args = parser.parse_args()
     options = (args.wire_projection, args.roster_state, args.season, args.as_of)
     if any(options) and not all(options):
         parser.error("the wire projection, roster state, season and as-of must be supplied together")
-    outcome = report(*options) if all(options) else evaluate()
+    if args.published_wire and all(options):
+        parser.error("choose either a new wire projection or the published wire record")
+    if all(options):
+        outcome = report(*options)
+    elif args.club_prose or args.published_wire:
+        outcome = {"protocol": "news-language-validation-2", "model_version": MODEL_VERSION,
+                   "training_sha256": digest(TRAINING_GROUPS), "english_language": evaluate()}
+    else:
+        outcome = evaluate()
+    if args.club_prose:
+        outcome["protocol"] = "news-language-validation-2"
+        outcome["official_club_prose"] = club_prose_score(args.club_prose)
+    if args.published_wire:
+        outcome["published_wire_linkage"] = published_wire_linkage(args.published_wire)
     print(json.dumps(outcome, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False))

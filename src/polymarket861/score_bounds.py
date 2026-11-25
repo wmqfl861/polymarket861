@@ -3,7 +3,7 @@
 INVALID_SCORE = "invalid_regulation_score"
 
 
-def valid_score(pair):
+def valid_score(pair: object) -> bool:
     return (
         isinstance(pair, (list, tuple))
         and len(pair) == 2

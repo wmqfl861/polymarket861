@@ -6,8 +6,11 @@ import hashlib
 import json
 import re
 from collections import Counter, defaultdict
-from contextlib import closing
+from contextlib import closing, contextmanager, nullcontext
+from contextvars import ContextVar
+from dataclasses import dataclass
 from datetime import timedelta
+from pathlib import Path
 
 from . import (
     archive_proof,
@@ -26,6 +29,7 @@ MAX_SHIFT = timedelta(hours=36)
 MAX_AGE = timedelta(hours=24)
 REFRESH = timedelta(hours=6)
 DECISION_LEAD = timedelta(hours=1)
+_dispatch_checks = ContextVar("fixed_b1_schedule_checks", default=None)
 # The canonical official competition directory confirmed this ID on 2026-11-25.
 KNOWN_EPL = {2026: 5996}
 SCHEMA = """
@@ -497,6 +501,343 @@ def _review(db, f, at):
         (f["fixture_id"], f["schedule_version"], at),
     ).fetchone()
     return dict(row) if row else None
+
+
+def readiness(
+    root,
+    *,
+    season=None,
+    round_id=None,
+    news_days=None,
+    team=None,
+    fixture_ids=None,
+    at=None,
+    _with_frontier=False,
+    _connection=None,
+):
+    """Check the currently registered kickoff against local originals without revising it."""
+    from .football import team_key
+
+    at = store.iso(at or store.now_utc())
+    now = store.instant(at)
+    connection = (
+        nullcontext(_connection) if _connection is not None else closing(_db(root))
+    )
+    with connection as db, dbscope.bind(root, db) as snapshot:
+        if not db.in_transaction:
+            db.execute("BEGIN")
+        frontier = _frontier(db) if _with_frontier else None
+        registered = [
+            dict(r)
+            for r in db.execute(
+                """WITH latest AS (
+                SELECT f.*,s.precision,s.recorded_at,
+                  first_value(f.source) OVER (PARTITION BY fixture_id ORDER BY known_at,f.version) first_source,
+                  first_value(f.kickoff) OVER (PARTITION BY fixture_id ORDER BY known_at,f.version) first_kickoff,
+                  lag(f.kickoff) OVER (PARTITION BY fixture_id ORDER BY known_at,f.version) previous_kickoff,
+                  row_number() OVER (PARTITION BY fixture_id ORDER BY known_at DESC,f.version DESC) n
+                FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version)
+                WHERE f.known_at<=? AND s.recorded_at<=? AND (? IS NULL OR f.season=?)
+                ) SELECT * FROM latest WHERE n=1 ORDER BY kickoff,fixture_id""",
+                (at, at, season, season),
+            )
+        ]
+        future = [f for f in registered if f["kickoff"] > at]
+        if fixture_ids is not None:
+            targets = [f for f in future if f["fixture_id"] in fixture_ids]
+        elif news_days is None:
+            if round_id is None and future:
+                round_id = future[0]["round_id"]
+            targets = [f for f in future if f["round_id"] == round_id]
+        else:
+            end = store.iso(now + timedelta(days=news_days))
+            requested = team_key(team) if team else None
+            teams = set()
+            targets = []
+            for f in future:
+                if f["kickoff"] > end:
+                    break
+                clubs = {(f["season"], team_key(f[k])) for k in ("home", "away")}
+                if requested:
+                    clubs = {c for c in clubs if c[1] == requested}
+                if clubs - teams:
+                    targets.append(f)
+                teams.update(clubs)
+        pairs = Counter(
+            (
+                f["season"],
+                f["round_id"],
+                opportunity._club(f["home"]),
+                opportunity._club(f["away"]),
+            )
+            for f in registered
+        )
+        first_times = Counter(
+            (f["season"], f["round_id"], f["first_kickoff"])
+            for f in registered
+            if f["first_source"] == "openfootball"
+        )
+        current_times = Counter(
+            (f["season"], f["round_id"], f["kickoff"])
+            for f in registered
+            if f["source"] == "openfootball"
+        )
+        incidents = {}
+        for r in db.execute(
+            "SELECT payload FROM reports WHERE kind='incident' AND key LIKE 'epl-schedule-review-%'"
+        ):
+            for incident in json.loads(r[0]).get("items", []):
+                incidents[incident["fixture_id"]] = incident
+        events, errors = _events(root, db, now) if targets else ({}, [])
+        rounds = {}
+        items = []
+        for f in targets:
+            rnd = f["round_id"]
+            key = (f["season"], rnd)
+            if key not in rounds:
+                try:
+                    year = int(f["season"][:4])
+                    rounds[key] = _round(root, db, year, rnd, at), None
+                except (OSError, ValueError, KeyError, TypeError) as exc:
+                    rounds[key] = {}, str(exc)
+            pair = tuple(opportunity._club(f[k]) for k in ("home", "away"))
+            ol = rounds[key][0].get(pair)
+            markets = events.get(pair, [])
+            review = _review(db, f | {"schedule_version": f["version"]}, at)
+            slot = (f["season"], rnd, f["kickoff"])
+            bulk = (
+                f["source"] == "openfootball"
+                and max(first_times[slot], current_times[slot]) >= 10
+            )
+            native_times = {e["kickoff"] for e in markets}
+            if ol and ol.get("kickoff"):
+                native_times.add(ol["kickoff"])
+            incident = incidents.get(f["fixture_id"]) or {}
+            prior_dispute = (
+                incident.get("previous") == f["kickoff"]
+                and incident.get("observed_at", at) <= at
+            )
+            # Missing corroboration alone does not stop an ordinary registered B1 fixture.
+            # A held revision, a witnessed change, or ten identical provisional file entries does.
+            seal_reason = None
+            item = {
+                "fixture_id": f["fixture_id"],
+                "season": f["season"],
+                "round": rnd,
+                "home": f["home"],
+                "away": f["away"],
+                "kickoff": f["kickoff"],
+                "version": f["version"],
+                "source": f["source"],
+                "registered_at": f["recorded_at"],
+                "registration_locator": f["locator"],
+                "previous_kickoff": f["previous_kickoff"],
+                "bulk_placeholder": bulk,
+                "openligadb": ol,
+                "gamma": markets,
+                "review": {k: review[k] for k in ("action", "reviewer", "at", "reason")}
+                if review
+                else None,
+            }
+            try:
+                if f["precision"] == "date":
+                    seal_reason = (
+                        "date-only registration cannot anchor a news or decision cutoff"
+                    )
+                    raise ValueError(seal_reason)
+                if review and review["action"] == "withdrawn":
+                    seal_reason = "schedule withdrawn by operator: " + review["reason"]
+                    raise ValueError(seal_reason)
+                if f["source"] == SOURCE:
+                    try:
+                        attest(root, db, f, at)
+                    except (ValueError, OSError, KeyError, TypeError) as exc:
+                        seal_reason = str(exc)
+                        raise
+                if rounds[key][1]:
+                    raise ValueError(rounds[key][1])
+                _choose(
+                    f | {"schedule_source": f["source"], "result_version": None},
+                    ol,
+                    markets,
+                    pairs[f["season"], rnd, *pair] != 1,
+                    now,
+                )
+                if ol["kickoff"] != f["kickoff"]:
+                    raise ValueError(
+                        "agreed native kickoff has not been applied to the registered schedule"
+                    )
+                item.update(status="confirmed", news_eligible=True)
+            except (ValueError, OSError, KeyError, TypeError) as exc:
+                if seal_reason is None:
+                    if native_times - {f["kickoff"]} or prior_dispute:
+                        seal_reason = (
+                            "native kickoff conflicts with the registered schedule: "
+                            + str(exc)
+                        )
+                    elif bulk:
+                        seal_reason = (
+                            "unconfirmed bulk placeholder kickoff for this EPL round"
+                        )
+                # A separately registered local fixture retains its existing collection path.
+                # It is explicitly labelled, and never counts as two-source confirmation.
+                local = (
+                    f["source"] not in ("openfootball", SOURCE)
+                    and f["precision"] != "date"
+                    and not review
+                    and not seal_reason
+                    and not any(e["kickoff"] != f["kickoff"] for e in markets)
+                    and (ol is None or ol.get("kickoff") == f["kickoff"])
+                    and pairs[f["season"], rnd, *pair] == 1
+                )
+                item.update(
+                    status="local_registration" if local else "deferred",
+                    news_eligible=local,
+                    reason=str(exc),
+                )
+            item["fixed_b1_block_reason"] = seal_reason
+            items.append(item)
+    confirmed = sum(i["status"] == "confirmed" for i in items)
+    blocked = [i["fixture_id"] for i in items if not i["news_eligible"]]
+    round_registered = (
+        sum(f["round_id"] == round_id for f in registered)
+        if round_id is not None
+        else None
+    )
+    complete = round_registered == 10 if round_id is not None else True
+    report = {
+        "as_of": at,
+        "season": season,
+        "round": round_id,
+        "registered": len(items),
+        "registered_in_round": round_registered,
+        "expected_in_round": 10 if round_id is not None else None,
+        "confirmed": confirmed,
+        "blocked_fixtures": blocked,
+        "fixed_b1_blocked_fixtures": [
+            i["fixture_id"] for i in items if i["fixed_b1_block_reason"]
+        ],
+        "fixtures": items,
+        "state": "unavailable"
+        if not items
+        else "incomplete_round"
+        if not complete
+        else "ready"
+        if confirmed == len(items)
+        else "unconfirmed",
+        "source_errors": errors,
+        "action": None
+        if items and complete and confirmed == len(items)
+        else "Register the season with data refresh, then run season run for the event catalogue "
+        "and result-feed witnesses. Inspect season readiness before the first full news sync.",
+    }
+    if _with_frontier:
+        report["frontier"] = frontier
+        report["originals"] = snapshot.originals
+    return report
+
+
+def eligible_news(report):
+    return {
+        (f["fixture_id"], f["kickoff"], f["version"])
+        for f in report["fixtures"]
+        if f["news_eligible"]
+    }
+
+
+def _frontier(db):
+    """Cheap invalidation for the immutable schedule and provider receipt streams."""
+    values = list(
+        db.execute(
+            """SELECT (SELECT max(rowid) FROM fixture_versions), (SELECT max(rowid) FROM rf_native_requests),
+        (SELECT max(rowid) FROM epl_schedule_reviews), (SELECT max(rowid) FROM epl_schedule_holds)"""
+        ).fetchone()
+    )
+    gamma = db.execute("SELECT 1 FROM sqlite_master WHERE name='ma_events'").fetchone()
+    values.append(
+        db.execute("SELECT max(rowid) FROM ma_events").fetchone()[0] if gamma else None
+    )
+    return tuple(values)
+
+
+@dataclass(frozen=True)
+class FixedSchedules:
+    root: Path
+    frontier: tuple
+    checked: str
+    fixtures: dict
+    originals: dict
+
+
+def fixed_schedules(root, fixture_ids, at, *, db=None):
+    report = readiness(
+        root, fixture_ids=fixture_ids, at=at, _with_frontier=True, _connection=db
+    )
+    return FixedSchedules(
+        Path(root).resolve(),
+        report["frontier"],
+        report["as_of"],
+        {f["fixture_id"]: f for f in report["fixtures"]},
+        report["originals"],
+    )
+
+
+@contextmanager
+def dispatch_checks(checks):
+    token = _dispatch_checks.set(checks)
+    try:
+        yield
+    finally:
+        _dispatch_checks.reset(token)
+
+
+def require_fixed(root, fixture, at, checks=None, *, db=None):
+    """Reuse one verified dispatch batch until a schedule, original, or hold changes."""
+    at = store.iso(at)
+    fid = fixture["fixture_id"]
+    checks = checks or _dispatch_checks.get()
+    row = (
+        checks.fixtures.get(fid)
+        if checks and checks.root == Path(root).resolve()
+        else None
+    )
+    if row and checks.checked <= at <= store.iso(
+        store.instant(checks.checked) + timedelta(minutes=5)
+    ):
+        receipts = [r["received_at"] for r in row["gamma"]]
+        if row["openligadb"] and row["openligadb"].get("received_at"):
+            receipts.append(row["openligadb"]["received_at"])
+        expired = row["bulk_placeholder"] and any(
+            store.instant(stamp) + MAX_AGE < store.instant(at) for stamp in receipts
+        )
+        if db is None:
+            with closing(_db(root)) as connection:
+                current = _frontier(connection)
+        else:
+            current = _frontier(db)
+        if current != checks.frontier or expired:
+            row = None
+        else:
+            try:
+                dbscope.recheck_originals(checks)
+            except dbscope.EvidenceChanged:
+                row = None
+    else:
+        row = None
+    if row is None:
+        checks = fixed_schedules(root, {fid}, at, db=db)
+        row = checks.fixtures.get(fid)
+    if not row or (row["kickoff"], row["version"]) != (
+        fixture["kickoff"],
+        fixture["version"],
+    ):
+        raise ValueError("registered schedule changed before the fixed B1 decision")
+    if row["fixed_b1_block_reason"]:
+        raise ValueError(
+            "fixed B1 seal awaiting schedule verification: "
+            + row["fixed_b1_block_reason"]
+        )
+    return checks
 
 
 def _evaluate(db, f, ol, events, ambiguous, at, approval=None):

@@ -11,6 +11,7 @@ python -m pip install -c constraints/research.txt -e .
 pm861 --data-dir .pm861 data refresh --first 2022-23 --last 2026-27
 pm861 --data-dir .pm861 result-feed season 2026
 pm861 --data-dir .pm861 season run
+pm861 --data-dir .pm861 season readiness --year 2026
 pm861 --data-dir .pm861 season status
 ```
 

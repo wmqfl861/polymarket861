@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from collections import Counter, defaultdict
 from contextlib import closing
 from datetime import timedelta
@@ -38,6 +39,8 @@ _AS_OF = """WITH f AS (
  CASE WHEN coalesce(d.held,0)=0 THEN r.home_goals END AS goals,
  CASE WHEN coalesce(d.held,0)=0 THEN r.away_goals END AS away_goals,
  CASE WHEN coalesce(d.held,0)=0 THEN r.received_at END AS received,
+ CASE WHEN coalesce(d.held,0)=0 THEN r.source END AS result_source,
+ CASE WHEN coalesce(d.held,0)=0 THEN r.locator END AS result_locator,
  CASE WHEN d.held=1 THEN d.reason END AS hold_reason
  FROM f LEFT JOIN r ON r.fixture_id=f.fixture_id AND r.kickoff=f.kickoff AND r.n=1
  LEFT JOIN {times} t ON t.fixture_id=r.fixture_id AND t.version=r.version
@@ -45,7 +48,7 @@ _AS_OF = """WITH f AS (
  ORDER BY kickoff,f.fixture_id"""
 
 
-def status(root, year, at=None):
+def status(root, year, at=None, *, round_id=None):
     at = store.iso(at or store.now_utc())
     now = store.instant(at)
     with closing(store.connect(root)) as db:
@@ -64,10 +67,47 @@ def status(root, year, at=None):
                 {"season": f"{year}-{(year + 1) % 100:02d}", "at": at},
             )
         ]
+        proofs = {}
+        if db.execute(
+            "SELECT 1 FROM sqlite_master WHERE name='rf_admitted'"
+        ).fetchone():
+            proofs = {
+                (r["fixture"], r["kickoff"]): r
+                for r in db.execute(
+                    """WITH latest AS (
+                    SELECT a.*,row_number() OVER (PARTITION BY fixture,kickoff ORDER BY at DESC) n
+                    FROM rf_admitted a WHERE at<=? AND fixture IN (
+                      SELECT fixture_id FROM fixture_versions WHERE season=?)
+                    ) SELECT * FROM latest WHERE n=1""",
+                    (at, f"{year}-{(year + 1) % 100:02d}"),
+                )
+            }
         for fixture in fixtures:
             score = (fixture["goals"], fixture.pop("away_goals"))
             if score != (None, None) and not valid_score(score):
-                fixture.update(goals=None, received=None, hold_reason=INVALID_SCORE, kickoff=fixture["scheduled"])
+                fixture.update(
+                    goals=None,
+                    received=None,
+                    hold_reason=INVALID_SCORE,
+                    kickoff=fixture["scheduled"],
+                )
+            fixture["confirmation_method"] = fixture["result_source"]
+            admission = proofs.get((fixture["fixture_id"], fixture["scheduled"]))
+            if admission and fixture["result_source"] == "verified-result-pairing":
+                try:
+                    proof = json.loads(admission["proof"])
+                    same_score = json.loads(admission["score"]) == list(score)
+                except (ValueError, TypeError):
+                    proof, same_score = None, False
+                if (
+                    same_score
+                    and isinstance(proof, dict)
+                    and fixture["result_locator"]
+                    == "result-pairing:" + store.digest(proof)
+                ):
+                    fixture["confirmation_method"] = (
+                        proof.get("method") or fixture["result_source"]
+                    )
         has_facts = db.execute(
             "SELECT 1 FROM sqlite_master WHERE name='ev_facts'"
         ).fetchone()
@@ -124,6 +164,32 @@ def status(root, year, at=None):
             f["fixture_id"] for f in due_in_round if f["goals"] is None
         ],
     }
+    rounds = []
+    for rnd in sorted({f["round_id"] for f in fixtures}):
+        scheduled = [f for f in fixtures if f["round_id"] == rnd]
+        elapsed = [f for f in due if f["round_id"] == rnd]
+        admitted = [f for f in elapsed if f["goals"] is not None]
+        rounds.append(
+            {
+                "round": rnd,
+                "scheduled": len(scheduled),
+                "due": len(elapsed),
+                "received": len(admitted),
+                "result_sources": dict(Counter(f["result_source"] for f in admitted)),
+                "recorded_confirmation_methods": dict(
+                    Counter(f["confirmation_method"] for f in admitted)
+                ),
+                "latest_receipt": max((f["received"] for f in admitted), default=None),
+                "missing_fixture_ids": [
+                    f["fixture_id"] for f in elapsed if f["goals"] is None
+                ],
+                "held": [
+                    {"fixture_id": f["fixture_id"], "reason": f["hold_reason"]}
+                    for f in elapsed
+                    if f["hold_reason"]
+                ],
+            }
+        )
     oldest = (
         {
             "fixture_id": missing[0]["fixture_id"],
@@ -142,18 +208,20 @@ def status(root, year, at=None):
         if missing
         else None
     )
-    teams, blocked = {}, []
+    teams_by_round, blocked_by_round = defaultdict(dict), defaultdict(set)
     for f in future:
-        if f["round_id"] != next_round:
+        rnd = f["round_id"]
+        if rnd not in (next_round, round_id):
             continue
         cutoff = store.instant(f["kickoff"]) - timedelta(hours=1)
-        ctx = (
-            evidence.as_of_context(
-                root, f["fixture_id"], f["home"], f["away"], at, prospective=True
-            )
-            if f["fixture_id"] in player_fixtures
-            else None
-        )
+        ctx, player_error = None, None
+        if f["fixture_id"] in player_fixtures:
+            try:
+                ctx = evidence.as_of_context(
+                    root, f["fixture_id"], f["home"], f["away"], at, prospective=True
+                )
+            except (ValueError, OSError) as exc:
+                player_error = str(exc)
         for side in ("home", "away"):
             name = f[side]
             # Same last-two and strict 48h condition as make_forecast. Only results
@@ -174,7 +242,7 @@ def status(root, year, at=None):
                 if ctx
                 else []
             )
-            teams[name] = {
+            teams_by_round[rnd][name] = {
                 "fixture_id": f["fixture_id"],
                 "decision_cutoff": store.iso(cutoff),
                 "recent_fixtures": [g["fixture_id"] for g in recent],
@@ -190,12 +258,15 @@ def status(root, year, at=None):
                     ),
                 },
             }
+            if player_error:
+                teams_by_round[rnd][name]["players"]["reason"] = player_error
             if len(gaps) >= 2:
-                blocked.append(f["fixture_id"])
-    return {
+                blocked_by_round[rnd].add(f["fixture_id"])
+    report = {
         "state": ("stale" if overdue else "clear") if fixtures else "unavailable",
         "as_of": at,
         "latest_round": latest_round,
+        "rounds": rounds,
         "oldest_missing": oldest,
         "overdue_fixtures": overdue,
         "overdue_by_team": {
@@ -203,9 +274,16 @@ def status(root, year, at=None):
             for name, ids in by_team.items()
         },
         "next_round": next_round,
-        "next_round_teams": teams,
-        "next_round_blocked_fixtures": sorted(set(blocked)),
+        "next_round_teams": teams_by_round[next_round],
+        "next_round_blocked_fixtures": sorted(blocked_by_round[next_round]),
         "latest_admitted_receipt": max(
             (f["received"] for f in fixtures if f["received"]), default=None
         ),
     }
+    if round_id is not None and round_id != next_round:
+        report["requested_round"] = {
+            "round": round_id,
+            "teams": teams_by_round[round_id],
+            "blocked_fixtures": sorted(blocked_by_round[round_id]),
+        }
+    return report

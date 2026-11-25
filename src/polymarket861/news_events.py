@@ -11,6 +11,7 @@ from pathlib import Path
 
 from . import (
     dbscope,
+    evidence,
     football,
     input_manifest,
     news,
@@ -18,6 +19,8 @@ from . import (
     news_roster,
     paired_proof,
     pipeline,
+    result_freshness,
+    schedule_consensus,
     store,
 )
 
@@ -62,6 +65,49 @@ def _catalog(db):
     )
 
 
+def _weight_inputs(db, fixture, at):
+    """Detect independent result, minutes and lineup receipts at this decision cutoff."""
+    params = {"season": fixture["season"], "at": at, "home": fixture["home"], "away": fixture["away"]}
+    games = list(db.execute(
+        "SELECT fixture_id,kickoff,received,goals,away_goals FROM (" +
+        result_freshness._AS_OF.format(times="result_event_times") +
+        ") WHERE kickoff<:at AND (home IN (:home,:away) OR away IN (:home,:away)) ORDER BY fixture_id", params,
+    ))
+    result = {"matches": [tuple(g) for g in games]}
+    if not games:
+        return result
+    tables = {r[0] for r in db.execute(
+        "SELECT name FROM sqlite_master WHERE name IN ('news_usage_history','ev_facts','research_events')"
+    )}
+    if "news_usage_history" in tables:
+        result["directory"] = [tuple(r) for r in db.execute(
+            """SELECT club,max(known_at) FROM news_usage_history WHERE season=? AND club IN (?,?)
+            AND known_at<=? AND received_at<=? AND provider_as_of<=? GROUP BY club ORDER BY club""",
+            (fixture["season"], football.team_key(fixture["home"]), football.team_key(fixture["away"]), at, at, at),
+        )]
+    if "ev_facts" in tables:
+        when = evidence.utc(at)
+        marks = ",".join("?" for _ in games)
+        sources = db.execute(
+            f"""SELECT f.source_id,count(*),max(f.rowid),
+              (SELECT max(s.rowid) FROM ev_source_versions s WHERE s.source_id=f.source_id
+                 AND s.effective_at<=? AND s.recorded_at<=?),
+              max((SELECT max(q.rowid) FROM ev_quarantine q JOIN ev_incident_versions iv
+                 ON iv.incident_id=q.incident_id AND iv.updated_at=q.since WHERE q.evidence_id=f.evidence_id
+                 AND q.since<=? AND json_extract(iv.document,'$.quarantine_recorded_at')<=?))
+            FROM ev_facts f WHERE f.fixture_id IN ({marks}) AND f.field='lineup' AND f.team_key IN (?,?)
+              AND f.published_at<=? AND f.received_at<=? AND f.valid_from<=?
+              AND json_extract(f.document,'$.first_recorded_at')<=? GROUP BY f.source_id ORDER BY f.source_id""",
+            (when, when, when, when, *(g["fixture_id"] for g in games),
+             evidence.name_key(fixture["home"]), evidence.name_key(fixture["away"]), when, when, when, when),
+        )
+        result["lineups"] = [tuple(r) for r in sources]
+        if result["lineups"] and "research_events" in tables:
+            from .jobs_research import _pointer
+            result["lineup_source"] = _pointer(db, "source", "lineup", when)
+    return result
+
+
 def _cursor(db, fixture, at, roster_token):
     # A newer revision can target another fixture but still supersede this team's
     # original article. Delayed extraction, conflict quarantine and feed withdrawal
@@ -77,32 +123,28 @@ def _cursor(db, fixture, at, roster_token):
        GROUP BY a.team_key,a.source ORDER BY a.team_key,a.source""",
         (at, at, at, fixture["season"], *keys, at),
     )
-    return store.digest([roster_token, [list(r) for r in rows]])
+    # A different league game may move between publication and kickoff. A
+    # fresh wire observation may restore an unchanged but expired state.
+    schedule = db.execute(
+        """SELECT count(*),max(f.rowid) FROM fixture_versions f JOIN schedule_receipts r USING(fixture_id,version)
+        WHERE f.season=? AND (f.home IN (?,?) OR f.away IN (?,?)) AND f.known_at<=? AND r.recorded_at<=?""",
+        (fixture["season"], fixture["home"], fixture["away"], fixture["home"], fixture["away"], at, at),
+    ).fetchone()
+    wire = db.execute(
+        "SELECT max(rowid) FROM news_wire_polls WHERE fixture_id=? AND provider_at<=? AND observed_at<=? AND recorded_at<=?",
+        (fixture["fixture_id"], at, at, at),
+    ).fetchone()[0]
+    return store.digest([roster_token, fixture["version"], list(schedule), wire, _weight_inputs(db, fixture, at),
+                         [list(r) for r in rows]])
 
 
-def _claim(root, limit):
+def _claim(root, limit, eligible_schedules):
     with _writer(root) as db:
         at = _now()
-        relevant = {
-            tuple(row)
-            for row in db.execute(
-                """SELECT DISTINCT fixture_id,kickoff FROM news_articles
-            WHERE fixture_id IS NOT NULL AND kickoff>? AND recorded_at<=?
-            UNION SELECT fixture_id,kickoff FROM news_event_work WHERE kickoff>?""",
-                (at, at, at),
-            )
-        }
-        games = (
-            [
-                f
-                for f in news._schedule(db, at)
-                if f["kickoff"] > at
-                and f["precision"] != "date"
-                and (f["fixture_id"], f["kickoff"]) in relevant
-            ]
-            if relevant
-            else []
-        )
+        games = [
+            f for f in news._schedule(db, at)
+            if f["kickoff"] > at and (f["fixture_id"], f["kickoff"], f["version"]) in eligible_schedules
+        ] if eligible_schedules else []
         due = []
         manifest = _catalog(db)
         rosters = {}
@@ -148,6 +190,9 @@ def _claim(root, limit):
                 f | {"owner": owner, "cursor": cursor, "roster_expiry": roster_expiry}
             )
         return tasks, len(games), len(due)
+
+
+_WEIGHT_FIELDS = {"chance_of_playing": None, "duration_multiplier": 1, "importance_multiplier": 1}
 
 
 def _semantic(fixture, snapshot):
@@ -201,7 +246,27 @@ def _semantic(fixture, snapshot):
             )
         )
     fields = ("side", "player_id", "event", "status", "availability", "role", "state")
-    return [dict(zip(fields, v)) for v in sorted(states, key=store.canonical)]
+    result = [dict(zip(fields, v)) for v in sorted(states, key=store.canonical)]
+    active = {(item["side"], item["player_id"]): item for item in chosen}
+    for state in result:
+        if state["state"] == "active":
+            item = active[state["side"], state["player_id"]]
+            for key, neutral in _WEIGHT_FIELDS.items():
+                if item.get(key, neutral) != neutral:
+                    state[key] = item[key]
+    return result
+
+
+def _same_contributions(previous, state, pair):
+    """Preserve an old event when a new weighting representation gives the same football effects."""
+    def categories(items):
+        return [{k: v for k, v in row.items() if k not in _WEIGHT_FIELDS} for row in items]
+
+    def shifts(applied):
+        return sorted((r["side"], r["player_id"], r["own_log_shift"], r["opponent_log_shift"]) for r in applied)
+
+    return (categories(state) == categories(previous["state"])
+            and shifts(pair["applied"]) == shifts(previous["news_pair"]["applied"]))
 
 
 def _review(snapshot, roster_expiry):
@@ -211,6 +276,9 @@ def _review(snapshot, roster_expiry):
         deadlines.append(store.instant(roster_expiry))
     age = timedelta(days=news_model.POLICY["max_publication_age_days"], microseconds=1)
     for fact in snapshot["facts"]:
+        weight_review = news_model.next_weight_review(fact, cut)
+        if weight_review:
+            deadlines.append(weight_review)
         end = fact.get("expires_at") or fact.get("valid_until")
         if end and store.instant(end) > cut:
             deadlines.append(store.instant(end))
@@ -220,10 +288,10 @@ def _review(snapshot, roster_expiry):
     return store.iso(min(deadlines))
 
 
-def _head(db, key):
+def _head(db, fixture_id):
     return db.execute(
-        "SELECT * FROM news_event_updates WHERE fixture_id=? AND kickoff=? ORDER BY revision DESC LIMIT 1",
-        key,
+        "SELECT * FROM news_event_updates WHERE fixture_id=? ORDER BY seq DESC LIMIT 1",
+        (fixture_id,),
     ).fetchone()
 
 
@@ -282,7 +350,8 @@ def _report(root, task, previous, cache, history_root):
 
     def same(state):
         return (
-            store.digest(state) == previous["state_sha256"] if previous else not state
+            fixture["kickoff"] == previous["kickoff"] and store.digest(state) == previous["state_sha256"]
+            if previous else not state
         )
 
     cut, snapshot, state = sample()
@@ -317,6 +386,9 @@ def _report(root, task, previous, cache, history_root):
         or store.iso(evidence["latest_result_available_at"]) > cut
     ):
         raise ValueError("unverified football fixture or training history")
+    if (previous and previous["kickoff"] == fixture["kickoff"] and
+            _same_contributions(previous, state, pair)):
+        return None, _review(snapshot, task["roster_expiry"])
     return {
         **{
             k: fixture[k]
@@ -331,6 +403,8 @@ def _report(root, task, previous, cache, history_root):
         "state_sha256": store.digest(state),
         "trigger": "first_report"
         if not previous
+        else "schedule_changed"
+        if previous["kickoff"] != fixture["kickoff"]
         else "news_changed"
         if state
         else "news_removed",
@@ -351,7 +425,7 @@ def _run(root, task, cache, history_root):
     basis = {"fixture_id": key[0], "kickoff": key[1]}
     try:
         with closing(store.connect(root)) as db:
-            row = _head(db, key)
+            row = _head(db, key[0])
             previous = _verified(row) if row else None
         doc, review = _report(root, task, previous, cache, history_root)
         with _writer(root) as db, dbscope.bind(root, db):
@@ -377,7 +451,7 @@ def _run(root, task, cache, history_root):
             roster = news_roster.frontier(db, task["season"], at)
             if _cursor(db, task, at, roster["token"]) != task["cursor"]:
                 raise ValueError("news changed during calculation")
-            head = _head(db, key)
+            head = _head(db, key[0])
             if (head["digest"] if head else None) != (
                 previous["digest"] if previous else None
             ):
@@ -390,7 +464,10 @@ def _run(root, task, cache, history_root):
                     raise ValueError("news validity changed during calculation")
                 doc.update(
                     created_at=at,
-                    revision=previous["revision"] + 1 if previous else 1,
+                    # A legacy fixture can have multiple per-kickoff chains
+                    # which independently numbered their sealed revisions.
+                    revision=db.execute("SELECT coalesce(max(revision),0)+1 FROM news_event_updates WHERE fixture_id=?",
+                                        (key[0],)).fetchone()[0],
                     previous_digest=previous["digest"] if previous else None,
                 )
                 ident = store.digest(doc)
@@ -439,7 +516,19 @@ def refresh(data_dir, *, limit=2, history_root=None):
     """Process at most limit prospective fixtures. Retries survive restarts."""
     if type(limit) is not int or not 1 <= limit <= 100:
         raise ValueError("event refresh limit must be from 1 through 100")
-    tasks, eligible, due = _claim(data_dir, limit)
+    at = _now()
+    with news._db(data_dir) as db:
+        dbscope.prepare(db, "event-news", _SCHEMA)
+        relevant = {
+            r[0] for r in db.execute(
+                """SELECT DISTINCT fixture_id FROM news_articles
+                WHERE fixture_id IS NOT NULL AND recorded_at<=? UNION SELECT fixture_id FROM news_event_work""",
+                (at,),
+            )
+        }
+    schedule = schedule_consensus.readiness(data_dir, fixture_ids=relevant, at=at) if relevant else None
+    eligible_schedules = schedule_consensus.eligible_news(schedule) if schedule else set()
+    tasks, eligible, due = _claim(data_dir, limit, eligible_schedules)
     cache = {}
     items = [_run(data_dir, t, cache, history_root) for t in tasks]
     counts = {
@@ -453,6 +542,7 @@ def refresh(data_dir, *, limit=2, history_root=None):
         "attempted": len(items),
         **counts,
         "items": items,
+        "schedule_blocked_fixtures": schedule["blocked_fixtures"] if schedule else [],
     }
 
 

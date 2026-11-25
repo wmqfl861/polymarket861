@@ -18,6 +18,7 @@ from . import (
     season_alerts,
     season_backfill,
     season_health,
+    season_readiness,
     store,
 )
 
@@ -749,6 +750,12 @@ class Coordinator:
                 ).fetchone():
                     return
                 problems = list(season_health.service_problems(name, result))
+                if name == "forecast" and result.get("release_readiness", {}).get("ready") is False:
+                    problems.append(("release_approval", result["release_readiness"]["reason"]))
+                if name == "news" and result.get("schedule_readiness", {}).get("blocked_fixtures"):
+                    blocked = result["schedule_readiness"]["blocked_fixtures"]
+                    problems.append(("schedule_readiness", f"{len(blocked)} news fixture(s) awaiting confirmed kickoffs: "
+                                     + ", ".join(blocked) + ". " + result["schedule_readiness"]["action"]))
                 for cause, reason in problems:
                     season_alerts.report_cause(db, None, name, cause, reason, stamp)
                 if error:
@@ -764,13 +771,14 @@ class Coordinator:
                             "counts",
                             "next_window_opens",
                             "awaiting_exact_kickoff",
+                            "release_readiness",
                         )
                         if k in result
                     }
                 )
                 if name == "forecast":
                     for job in result.get("jobs", []):
-                        if job.get("state") in ("missed", "error"):
+                        if job.get("state") in ("missed", "error", "waiting_schedule"):
                             _alert(
                                 db,
                                 store.digest(
@@ -937,6 +945,11 @@ class Coordinator:
                 del self.futures[f]
         now = store.instant(store.now_utc())
         stamp = store.iso(now)
+        if self.first_tick:
+            release = season_readiness.release(self.root, stamp)
+            if not release["ready"]:
+                with closing(_db(self.root)) as db, db:
+                    season_alerts.report_cause(db, None, "forecast", "release_approval", release["reason"], stamp)
         if time.monotonic() >= self.next_plan:
             _plan(self.root, now)
             self.next_plan = time.monotonic() + 15
@@ -986,6 +999,14 @@ class Coordinator:
             ).fetchone()[0]
             for name in _SERVICES:
                 if self.once and name in self.services_started:
+                    continue
+                # A fresh runtime must finish its first catalogue attempt before
+                # results reconcile the two sources, then news can claim verified games.
+                dependency = {"results": "catalog", "news": "results"}.get(name)
+                if dependency and not db.execute(
+                    "SELECT 1 FROM season_services WHERE service=? AND updated IS NOT NULL",
+                    (dependency,),
+                ).fetchone():
                     continue
                 if next_critical and (
                     name in ("history", "news")
@@ -1248,6 +1269,12 @@ def register(subparsers):
     p = commands.add_parser("status")
     p.add_argument("--year", type=int)
     p.set_defaults(func=lambda a: status(a.data_dir, a.year))
+    p = commands.add_parser("readiness", help="逐场核验本机赛程、版本批准、赛果和实际训练样本")
+    p.add_argument("--year", type=int)
+    p.add_argument("--round", dest="round_id", type=int)
+    p.set_defaults(func=lambda a: season_readiness.report(
+        a.data_dir, a.year if a.year is not None else year_of(store.instant(store.now_utc())), a.round_id
+    ))
     p = commands.add_parser("watchdog", help="独立检查最后一次主循环心跳")
     p.add_argument("--alert-command", help="告警处理程序及固定参数")
     p.set_defaults(

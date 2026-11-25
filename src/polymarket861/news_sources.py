@@ -422,13 +422,31 @@ _NEWS_WORDS = re.compile(
 )
 
 
-def wiki_prose(wikitext):
-    """Narrative paragraphs in review/news sections; never scores, citations, or roster rows."""
+_QUOTE_TEMPLATES = {'"', "quote", "quotation", "cquote", "quote inline", "inline quote", "q"}
+_TEMPLATE = re.compile(r"\{\{([^{}]*)\}\}")
+_WIKILINK = re.compile(r"\[\[([^|\[\]]+)(?:\|([^\[\]]+))?\]\]")
+
+
+def _quote_text(match):
+    name, *params = match[1].split("|")
+    if name.strip().casefold() not in _QUOTE_TEMPLATES:
+        return " "
+    positional = None
+    for param in params:
+        key, sep, value = param.partition("=")
+        if sep and key.strip().casefold() in {"1", "quote", "text", "quotetext"}:
+            return "“" + value.strip() + "”"
+        if not sep and positional is None:
+            positional = param.strip()
+    return "“" + positional + "”" if positional else " "
+
+
+def _wiki_lines(wikitext):
     text = re.sub(r"<!--.*?-->|<ref\b[^>]*?/>|<ref\b[^>]*>.*?</ref\s*>|"
                   r"<blockquote\b[^>]*>.*?</blockquote\s*>", " ", wikitext, flags=re.I | re.S)
     text = re.sub(r"(?ms)^\s*\{\|.*?^\s*\|\}", "\n", text)
     headings = list(_HEADINGS.finditer(text))
-    hierarchy, result = {}, {}
+    hierarchy = {}
     for i, section in enumerate(headings):
         depth = len(section[1])
         hierarchy = {k: v for k, v in hierarchy.items() if k < depth}
@@ -440,22 +458,35 @@ def wiki_prose(wikitext):
         end = headings[i+1].start() if i + 1 < len(headings) else len(text)
         for line in text[section.end():end].splitlines():
             line = line.strip()
-            if (len(line) < 25 or len(line) > 16000 or line.startswith(("|", "!", "{", "[[File:", "[[Image:"))
+            if (len(line) < 25 or len(line) > 16000 or line.startswith(("|", "!", "[[File:", "[[Image:"))
+                    or (line.startswith("{") and line.partition("|")[0].lstrip("{").strip().casefold() not in _QUOTE_TEMPLATES)
                     or not _NEWS_WORDS.search(line)):
                 continue
-            # Keep Wikipedia's authored paraphrase, excluding marked direct quotations, citations,
-            # template expansion, table markup and external link labels from the licensed projection.
-            for _ in range(8):
-                changed = re.sub(r"\{\{[^{}]*\}\}", " ", line)
-                if changed == line:
-                    break
-                line = changed
-            line = re.sub(r"\[https?://[^\]]*\]|[\"“][^\"”\n]{1,2000}[\"”]", " ", line)
-            line = re.sub(r"\[\[([^|\[\]]+)(?:\|([^\[\]]+))?\]\]", lambda m: m[2] or m[1], line)
-            clean = " ".join(unescape(re.sub(r"<[^>]*>|'{2,5}", "", line)).lstrip("*# ").split())
-            if len(clean) >= 25 and _NEWS_WORDS.search(clean) and "{{" not in clean and "[[" not in clean:
-                result[store.digest(clean)] = clean
-    return result
+            yield line
+
+
+def _wiki_line(line, inline_quotes):
+    if inline_quotes:
+        # Resolve piped link labels before parsing named quote template fields.
+        line = _WIKILINK.sub(lambda m: m[2] or m[1], line)
+    for _ in range(8):
+        changed = _TEMPLATE.sub(_quote_text if inline_quotes else " ", line)
+        if changed == line:
+            break
+        line = changed
+    line = re.sub(r"\[https?://[^\]]*\]", " ", line)
+    if not inline_quotes:
+        line = re.sub(r'["“][^"”\n]{1,2000}["”]', " ", line)
+        line = _WIKILINK.sub(lambda m: m[2] or m[1], line)
+    clean = " ".join(unescape(re.sub(r"<[^>]*>|'{2,5}", "", line)).lstrip("*# ").split())
+    if len(clean) >= 25 and _NEWS_WORDS.search(clean) and "{{" not in clean and "[[" not in clean:
+        return clean
+    return None
+
+
+def wiki_prose(wikitext):
+    """Project narrative and inline quoted words, excluding references, tables and block quotations."""
+    return {store.digest(clean): clean for line in _wiki_lines(wikitext) if (clean := _wiki_line(line, True))}
 
 
 def _recent_passage(text, stamp, season):
@@ -489,8 +520,26 @@ def _wiki(source, raw, receipt, cursor):
     date = _as_known(latest.get("timestamp"), receipt)
     if type(ident) is not int or ident < 1 or ident < cursor.get("revid", 0):
         raise ValueError("invalid or regressing Wikipedia revision")
-    doc = wiki_prose(page["source"])
     previous, active = set(cursor.get("paragraphs", ())), set(cursor.get("active", ()))
+    aliases = cursor.get("quote_aliases", {})
+    migrating = bool(cursor.get("revid")) and "quote_aliases" not in cursor
+    doc, retained_aliases = {}, {}
+    for line in _wiki_lines(page["source"]):
+        clean = _wiki_line(line, True)
+        if clean is None:
+            continue
+        key = store.digest(clean)
+        legacy = aliases.get(key)
+        if migrating:
+            old = _wiki_line(line, False) if not line.startswith("{") else None
+            if old and store.digest(old) in previous:
+                legacy = store.digest(old)
+            elif old is None:
+                # A newly visible quote on upgrade has no proven publication time.
+                previous.add(key)
+        if legacy and legacy != key:
+            retained_aliases[key] = legacy
+        doc[legacy or key] = clean
     active_versions = dict(cursor.get("active_versions", {}))
     blocked = set(cursor.get("blocked", ()))
     stats = {"page_revision": ident, "narrative_paragraphs": len(doc), "baseline_only": not bool(cursor.get("revid"))}
@@ -509,7 +558,8 @@ def _wiki(source, raw, receipt, cursor):
             else:
                 conflicts.append(_conflict(key, active_versions.get(key, ident),
                                            "contradictory immutable Wikipedia revision"))
-        return [], dict(cursor, blocked=sorted(blocked)), {**stats, "revision_conflicts": conflicts}
+        return [], dict(cursor, paragraphs=sorted(previous), quote_aliases=retained_aliases,
+                        blocked=sorted(blocked)), {**stats, "revision_conflicts": conflicts}
     url = f"https://en.wikipedia.org/w/index.php?oldid={ident}"
     rows = []
     if cursor.get("revid"):
@@ -528,7 +578,7 @@ def _wiki(source, raw, receipt, cursor):
                 active_versions[key] = ident
     # First observation is a baseline. Updating an unrelated score, table or award
     # cannot turn the rest of an encyclopedia page into newly published team news.
-    return rows, {"revid": ident, "revision_time": date, "paragraphs": sorted(doc),
+    return rows, {"revid": ident, "revision_time": date, "paragraphs": sorted(doc), "quote_aliases": retained_aliases,
                   "active": sorted(active), "active_versions": active_versions}, stats
 
 
@@ -547,9 +597,10 @@ def _wire_person(value):
 
 def _wire_header(raw, received, cursor):
     data = json.loads(raw)
-    meta = data.get("meta", {})
-    if (not str(meta.get("source", "")).startswith("Touchline Wire")
-            or meta.get("attribution_url", "").rstrip("/") != WIRE_HOST
+    meta = data.get("meta") if isinstance(data, dict) else None
+    if (not isinstance(meta, dict) or not isinstance(meta.get("source"), str)
+            or not meta["source"].startswith("Touchline Wire")
+            or not isinstance(meta.get("attribution_url"), str) or meta["attribution_url"].rstrip("/") != WIRE_HOST
             or meta.get("license") != "Free for personal, academic, and open-source use with attribution"):
         raise ValueError("Touchline Wire attribution or reuse policy changed")
     snapshot = _as_known(meta.get("timestamp_iso"), received)
@@ -558,6 +609,95 @@ def _wire_header(raw, received, cursor):
     if snapshot < cursor.get("snapshot", ""):
         raise ValueError("Touchline Wire snapshot moved backwards")
     return data, snapshot
+
+
+WIRE_FIELDS = ("player_id", "display_name", "name", "team", "status", "category", "chance_of_playing")
+WIRE_MODEL = "touchline-availability-fields-v1"
+
+
+def wire_labels(fields):
+    """Map licensed publisher fields directly to the normalized claim vocabulary."""
+    status, category, chance = fields.get("status"), fields.get("category"), fields.get("chance_of_playing")
+    if chance is not None and (type(chance) is not int or not 0 <= chance <= 100):
+        raise ValueError("invalid availability percentage")
+    if (status, category) not in (("suspended", "suspension"), ("injured", "injury"), ("doubtful", "injury")):
+        raise ValueError("unrecognised availability state")
+    if chance is not None:
+        availability = "available" if chance == 100 else "out" if chance == 0 else "doubtful"
+    elif status == "suspended":
+        availability = "out"
+    elif status == "doubtful":
+        availability = "doubtful"
+    else:
+        availability = "unknown"
+    return category, availability
+
+
+def wire_fingerprint(fields):
+    # A missing optional percentage and an explicit null express the same state.
+    return store.digest([fields.get(k) for k in WIRE_FIELDS])
+
+
+def wire_claim(original, aliases):
+    """Resolve the supplied names against this roster; the quote is attribution only."""
+    from .news_ai import _name_key
+
+    fields = original["source_fields"]
+    event, availability = wire_labels(fields)
+    names = {_name_key(fields[k]) for k in ("display_name", "name") if _wire_person(fields.get(k))}
+    matches = [aliases[name] for name in names if name in aliases]
+    common = set.intersection(*matches) if matches else set()
+    # A surname on a shirt cannot overrule an unfamiliar full name.
+    if len(common) != 1 or (any(len(n) > 1 for n in names) and
+                            not any(len(n) > 1 and n in aliases for n in names)):
+        return []
+    text = original["text"]
+    return [{"player_id": next(iter(common)), "event": event, "status": "reported",
+             "availability": availability, "chance_of_playing": fields.get("chance_of_playing"),
+             "start": 0, "end": len(text), "quote": text, "model_version": WIRE_MODEL}]
+
+
+def _wire_row(source, scope, row, snapshot):
+    if not isinstance(row, dict) or not _wire_club(source, row.get("team")):
+        raise ValueError("missing Touchline Wire row or club identity")
+    player_id = row.get("player_id")
+    if type(player_id) is not int or player_id < 1:
+        raise ValueError("invalid Touchline Wire player identifier")
+    name = row.get("display_name") or row.get("name")
+    if not _wire_person(name):
+        raise ValueError("unrecognised Touchline Wire player name")
+    fields = {k: row[k] for k in WIRE_FIELDS if k in row}
+    if any(k in fields and fields[k] is not None and not _wire_person(fields[k])
+           for k in ("display_name", "name")):
+        raise ValueError("unrecognised Touchline Wire player name")
+    _, availability = wire_labels(fields)
+    status, chance = fields["status"], fields.get("chance_of_playing")
+    phrase = {"suspended": "is reported suspended", "doubtful": "is doubtful",
+              "injured": "is reported injured and unavailable" if availability == "out" else "is reported injured"}[status]
+    text = f"{name} {phrase} for {source['team']}."
+    if chance is not None:
+        text += f" The provider estimates a {chance}% chance of playing."
+    return _article(source, f"{scope}:player:{player_id}", source["url"], snapshot, snapshot,
+                    f"{name} — {source['team']} availability", text, observed_state_as_of=snapshot,
+                    updated_at=snapshot, time_basis="provider_snapshot", provider_player_id=player_id,
+                    source_fields=fields)
+
+
+def _wire_rejection(source, scope, row, exc):
+    # Only attributable scalar factual fields may enter quarantine. Free text,
+    # embedded third-party analysis and unscoped rows are represented by a hash.
+    fields = {}
+    if isinstance(row, dict) and _wire_club(source, row.get("team")):
+        fields = {k: row[k] for k in WIRE_FIELDS if k in row and
+                  (type(row[k]) is int or row[k] is None or
+                   isinstance(row[k], str) and row[k].isprintable() and len(row[k]) <= 120)}
+    player = fields.get("player_id")
+    # Some JSON implementations emit NaN or lone surrogates in a bad field.
+    # Fingerprint that row without copying it into the licensed projection.
+    encoded = json.dumps(row, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("ascii")
+    return {"reason": str(exc), "row_sha256": hashlib.sha256(encoded).hexdigest(),
+            "item": {"external_id": f"{scope}:player:{player}" if type(player) is int else "",
+                     "revision": store.digest(fields), "source_fields": fields}}
 
 
 def _wire_availability(source, raw, received, cursor):
@@ -569,77 +709,56 @@ def _wire_availability(source, raw, received, cursor):
     now = store.instant(snapshot)
     if football.season_year(source["season"]) != now.year - (now.month < 7):
         raise ValueError("current availability snapshot belongs to a different season")
-    by_player, fingerprints, duplicates = {}, {}, set()
+    # A positive foreign club means the provider returned a different population.
+    if any(isinstance(row, dict) and isinstance(row.get("team"), str) and row["team"].strip()
+           and not _wire_club(source, row["team"]) for row in rows):
+        raise ValueError("Touchline Wire did not honour the requested club filter")
     scope = store.digest([source["season"], football.team_key(source["team"])])[:16]
+    by_player, fingerprints, rejected, blocked, malformed = {}, {}, [], set(), set()
     for row in rows:
-        # An unknown club filter may return the entire league with HTTP 200.
-        if not _wire_club(source, row.get("team")):
-            raise ValueError("Touchline Wire did not honour the requested club filter")
-        player_id = row.get("player_id")
-        if type(player_id) is not int or player_id < 1:
-            raise ValueError("invalid Touchline Wire player identifier")
-        name = row.get("display_name") or row.get("name")
-        if not _wire_person(name):
-            raise ValueError("unrecognised Touchline Wire player name")
-        status = row.get("status")
-        chance = row.get("chance_of_playing")
-        if chance is not None and (type(chance) is not int or not 0 <= chance <= 100):
-            raise ValueError("invalid availability percentage")
-        if status == "suspended" and row.get("category") == "suspension":
-            phrase = "is reported suspended"
-        elif status == "doubtful" and row.get("category") == "injury":
-            phrase = "is doubtful"
-        elif status == "injured" and row.get("category") == "injury":
-            phrase = "is reported injured and unavailable" if chance == 0 else "is reported injured"
-        else:
-            raise ValueError("unrecognised availability state")
-        title = f"{name} — {source['team']} availability"
-        text = f"{name} {phrase} for {source['team']}."
-        if chance is not None:
-            text += f" The provider estimates a {chance}% chance of playing."
-        external = f"{scope}:player:{player_id}"
-        fields = {k: row[k] for k in ("player_id", "display_name", "name", "team", "status",
-                                      "category", "chance_of_playing") if k in row}
-        # Each genuinely new provider snapshot is a new observation of a standing status.
-        # This field is not an original injury announcement timestamp.
-        fingerprint = store.digest(fields)
-        key = str(player_id)
+        try:
+            doc = _wire_row(source, scope, row, snapshot)
+        except ValueError as exc:
+            rejected.append(_wire_rejection(source, scope, row, exc))
+            if isinstance(row, dict) and type(row.get("player_id")) is int:
+                malformed.add(str(row["player_id"]))
+            continue
+        key = str(doc["provider_player_id"])
+        fingerprint = store.digest(doc["source_fields"])  # compatible with 0.4.0 cursors
         if key in fingerprints and fingerprints[key] != fingerprint:
-            duplicates.add(key)
+            blocked.add(key)
         else:
-            fingerprints[key] = fingerprint
-            by_player[key] = _article(source, external, source["url"], snapshot, snapshot, title, text,
-                                      observed_state_as_of=snapshot, updated_at=snapshot,
-                                      time_basis="provider_snapshot", provider_player_id=player_id,
-                                      source_fields=fields)
-    ids = {int(key) for key in by_player}
-    blocked = set(duplicates)
+            fingerprints[key], by_player[key] = fingerprint, doc
+    blocked.update(malformed & by_player.keys())
+    prior = cursor.get("states", {})
+    previous_ids = {str(i) for i in cursor.get("players", ())}
     same = cursor.get("snapshot") == snapshot
-    prior = cursor.get("states")
+    previous_blocked = set(cursor.get("blocked", ()))
     if same:
-        blocked.update(cursor.get("blocked", ()))
-        if prior is not None:
-            blocked.update(key for key in prior.keys() | fingerprints.keys() if prior.get(key) != fingerprints.get(key))
-        else:
-            # Compatibility with cursors that retained just player IDs and an aggregate hash.
-            # Re-submit repeat IDs to normal intake: its immutable archive checks the original
-            # fields independently and can isolate just the changed players.
-            blocked.update(str(i) for i in set(cursor.get("players", ())) ^ ids)
+        blocked.update(previous_blocked)
+        blocked.update(k for k in prior.keys() & fingerprints.keys() if prior[k] != fingerprints[k])
+        if not rejected and cursor.get("complete", True):
+            blocked.update(previous_ids ^ fingerprints.keys())
     conflicts = [_conflict(f"{scope}:player:{key}", snapshot,
                            "contradictory player availability at one provider snapshot",
                            native_revision_at=snapshot) for key in sorted(blocked)]
-    documents = [doc for key, doc in by_player.items() if key not in blocked and (not same or prior is None)]
-    if same:
-        next_cursor = dict(cursor, blocked=sorted(blocked))
-        if prior is None:
-            next_cursor["states"] = fingerprints
-        return documents, next_cursor, {"player_rows": len(rows), "revision_conflicts": conflicts}
-    for old in sorted(set(cursor.get("players", ())) - ids):
-        documents.append(_article(source, f"{scope}:player:{old}", source["url"], snapshot,
-                                  snapshot, "Removed from availability wire", "", retracted=True,
-                                  updated_at=snapshot, time_basis="provider_snapshot"))
-    return documents, {"snapshot": snapshot, "states": fingerprints, "players": sorted(ids), "blocked": sorted(blocked)}, {
-        "player_rows": len(rows), "revision_conflicts": conflicts}
+    observations = [doc for key, doc in by_player.items() if key not in blocked]
+    documents = [doc for key, doc in by_player.items() if key not in blocked
+                 and (prior.get(key) != fingerprints[key] or key in previous_blocked)]
+    # A partial list cannot prove that a previously listed player disappeared.
+    # Carry possible members forward until a complete, newer response resolves them.
+    active = dict(prior) if rejected or same else {}
+    active.update(fingerprints)
+    ids = set(active) | (previous_ids if rejected or same else set())
+    if not same and not rejected:
+        for old in sorted(previous_ids - ids):
+            documents.append(_article(source, f"{scope}:player:{old}", source["url"], snapshot,
+                                      snapshot, "Removed from availability wire", "", retracted=True,
+                                      updated_at=snapshot, time_basis="provider_snapshot"))
+    return documents, {"snapshot": snapshot, "states": active, "players": sorted(map(int, ids)),
+                       "blocked": sorted(blocked), "complete": not rejected}, {
+        "player_rows": len(rows), "invalid_entries": len(rejected), "wire_rejections": rejected,
+        "wire_observations": observations, "provider_state_as_of": snapshot, "revision_conflicts": conflicts}
 
 
 def _wire_rumours(source, raw, received, cursor):

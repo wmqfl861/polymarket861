@@ -13,7 +13,7 @@ import zlib
 from contextlib import closing
 from pathlib import Path, PurePosixPath
 
-from .blob_storage import blob_name, blob_path
+from .blob_storage import blob_name, blob_size, open_blob
 from .store import canonical, connect, digest, iso, now_utc
 
 PORTABLE_FOLDERS = ("datasets", "sources", "openfootball", "job-work", "manifests")
@@ -129,10 +129,8 @@ def _snapshot(root, stage, prefix, files, compress):
         name = blob_name(sha)
         target = destination / name
         target.parent.mkdir(parents=True, exist_ok=True)
-        physical = blob_path(root, sha)
-        opener = gzip.open if physical.suffix == ".gz" else open
         try:
-            with opener(physical, "rb") as data:
+            with open_blob(root, sha) as data:
                 if compress:
                     with target.with_suffix(".gz").open("wb") as buf, gzip.GzipFile(
                         filename="", fileobj=buf, mode="wb", mtime=0, compresslevel=6
@@ -258,7 +256,7 @@ def storage_status(data_dir):
                 day["originals"] += 1
                 day["logical_bytes"] += size
                 try:
-                    day["stored_bytes"] += blob_path(directory, sha).stat().st_size
+                    day["stored_bytes"] += blob_size(directory, sha)[1]
                 except FileNotFoundError:
                     missing += 1
             page_size = db.execute("PRAGMA page_size").fetchone()[0]

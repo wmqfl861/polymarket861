@@ -12,7 +12,7 @@ from contextlib import closing
 from datetime import timedelta
 from pathlib import Path
 
-from . import dbscope, evidence, forward_window, jobs, pipeline, store
+from . import dbscope, evidence, forward_window, jobs, pipeline, schedule_consensus, season_readiness, store
 
 _WINDOW = timedelta(minutes=5)
 _LEASE = timedelta(seconds=30)
@@ -73,7 +73,7 @@ def _existing_seal(db, s):
     return seal["digest"] if seal else None
 
 
-def _claim(data_dir, slot):
+def _claim(data_dir, slot, schedule_reason=None):
     with closing(_open(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         now = store.now_utc()
@@ -115,6 +115,8 @@ def _claim(data_dir, slot):
             )
         if clock > until:
             reason = "elapsed without a timely seal"
+            if row["state"] == "waiting_schedule" and row["error"]:
+                reason += ": " + row["error"]
             db.execute(
                 "UPDATE forecast_dispatch SET state='missed',lease=NULL,valid_until=NULL,updated_at=?,error=? WHERE key=?",
                 (now, reason, slot["key"]),
@@ -122,6 +124,13 @@ def _claim(data_dir, slot):
             return {"state": "missed", "error": reason}
         if clock < until - _WINDOW or (row["available"] and now < row["available"]):
             return {"state": "waiting"}
+        if schedule_reason:
+            db.execute(
+                "UPDATE forecast_dispatch SET state='waiting_schedule',updated_at=?,error=?,"
+                "lease=NULL,valid_until=NULL,available=NULL WHERE key=?",
+                (now, schedule_reason, slot["key"]),
+            )
+            return {"state": "waiting_schedule", "error": schedule_reason}
         lease = uuid.uuid4().hex
         expires = store.iso(min(clock + _LEASE, until + timedelta(microseconds=1)))
         db.execute(
@@ -205,11 +214,18 @@ def _finish(data_dir, slot, claim, digest, error):
         }
 
 
-def _run_one(data_dir, root, evidence_path, slot):
+def _run_one(data_dir, root, evidence_path, slot, release, schedules):
     try:
-        claim = _claim(data_dir, slot)
+        claim = _claim(data_dir, slot, slot.get("schedule_reason"))
         if claim["state"] != "claimed":
             return slot | claim
+        active = release["active_version"]
+        version = slot["version"]
+        if not release["ready"] and (
+            version == active
+            or (active is None and (version == "B1" or version.startswith("B1@")))
+        ):
+            return slot | _finish(data_dir, slot, claim, None, release["reason"])
         stopped = threading.Event()
         monitor = threading.Thread(
             target=_heartbeat,
@@ -218,15 +234,16 @@ def _run_one(data_dir, root, evidence_path, slot):
         )
         monitor.start()
         try:
-            forecast = pipeline.make_forecast(
-                data_dir,
-                slot["fixture_id"],
-                root,
-                mode=slot["mode"],
-                horizon=slot["horizon"],
-                version=slot["version"],
-                evidence_path=evidence_path,
-            )
+            with schedule_consensus.dispatch_checks(schedules):
+                forecast = pipeline.make_forecast(
+                    data_dir,
+                    slot["fixture_id"],
+                    root,
+                    mode=slot["mode"],
+                    horizon=slot["horizon"],
+                    version=slot["version"],
+                    evidence_path=evidence_path,
+                )
             if forecast["kickoff"] != slot["kickoff"]:
                 raise ValueError("fixture schedule changed during dispatch")
             digest, error = forecast["digest"], None
@@ -261,9 +278,8 @@ def runner_status(data_dir):
 def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
     if type(workers) is not int or workers < 1:
         raise ValueError("workers must be a positive integer")
-    if not versions:
-        pipeline.prepare_builtin(data_dir)
     observed = store.now_utc()
+    release = season_readiness.release(data_dir, observed)
     clock = store.instant(observed)
     fixtures = store.eligible_fixtures(data_dir)
     with closing(_open(data_dir)) as db, db:
@@ -301,7 +317,7 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
             for key in old:
                 db.execute(
                     "UPDATE forecast_dispatch SET current_schedule=0,lease=NULL,valid_until=NULL,updated_at=?, "
-                    "state=CASE WHEN state IN ('running','error','waiting_lineups','ready') THEN 'superseded' ELSE state END WHERE key=?",
+                    "state=CASE WHEN state IN ('running','error','waiting_lineups','waiting_schedule','ready') THEN 'superseded' ELSE state END WHERE key=?",
                     (observed, key),
                 )
                 db.execute(
@@ -398,7 +414,11 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
                 old_state = recorded.get(slot["key"], {}).get("state")
                 if old_state in {"done", "missed"}:
                     previous["already_" + old_state] += 1
-                elif wait_for_lineups and old_state in (None, "waiting_lineups"):
+                elif wait_for_lineups and old_state in (
+                    None,
+                    "waiting_lineups",
+                    "waiting_schedule",
+                ):
                     waiting.append(
                         slot
                         | {
@@ -409,13 +429,34 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
                     )
                 else:
                     due.append(slot)
+    checking = [
+        s
+        for s in (*due, *waiting)
+        if s["cutoff"] >= observed
+        and (s["version"] == "B1" or s["version"].startswith("B1@"))
+    ]
+    schedules = None
+    if checking:
+        schedules = schedule_consensus.fixed_schedules(
+            data_dir, {s["fixture_id"] for s in checking}, observed
+        )
+        for slot in checking:
+            match = schedules.fixtures.get(slot["fixture_id"])
+            if not match or match["kickoff"] != slot["kickoff"]:
+                slot["schedule_reason"] = "registered schedule changed during dispatch"
+            elif match["fixed_b1_block_reason"]:
+                slot["schedule_reason"] = match["fixed_b1_block_reason"]
+        due.extend(s for s in waiting if s.get("schedule_reason"))
+        waiting = [s for s in waiting if not s.get("schedule_reason")]
     if waiting:
         # Persist the deferral for status/restarts. Another scheduler may already
         # own or have completed the same slot; its state takes precedence.
         with closing(_open(data_dir)) as db, db:
             db.executemany(
-                "INSERT OR IGNORE INTO forecast_dispatch(key,fixture_id,kickoff,horizon,version,mode,cutoff,state,updated_at,error) "
-                "VALUES(:key,:fixture_id,:kickoff,:horizon,:version,:mode,:cutoff,:state,:updated_at,:error)",
+                "INSERT INTO forecast_dispatch(key,fixture_id,kickoff,horizon,version,mode,cutoff,state,updated_at,error) "
+                "VALUES(:key,:fixture_id,:kickoff,:horizon,:version,:mode,:cutoff,:state,:updated_at,:error) "
+                "ON CONFLICT(key) DO UPDATE SET state=excluded.state,updated_at=excluded.updated_at,error=excluded.error "
+                "WHERE forecast_dispatch.state='waiting_schedule'",
                 [s | {"updated_at": observed} for s in waiting],
             )
     # Expired slots can be numerous after downtime; jobs that still have a real deadline run first.
@@ -429,11 +470,17 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
     )
     with ThreadPoolExecutor(max_workers=workers) as pool:
         records = list(
-            pool.map(lambda s: _run_one(data_dir, root, evidence_path, s), due)
+            pool.map(
+                lambda s: _run_one(
+                    data_dir, root, evidence_path, s, release, schedules
+                ),
+                due,
+            )
         )
     records.extend(waiting)
     summary = {
         "observed_at": observed,
+        "release_readiness": release,
         "next_window_opens": store.iso(min(future)) if future else None,
         "counts": dict(previous + Counter(r["state"] for r in records)),
         "superseded": superseded,

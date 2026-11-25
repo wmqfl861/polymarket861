@@ -104,7 +104,7 @@ class NewsArchiveEvidence(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ancestry"):
             history.extract_side(panel, {"3": proof}, f, "2026-11-25T00:00:00Z")
 
-    def test_published_cohort_keeps_every_game_and_omits_unrelated_friendly(self):
+    def test_published_cohort_separates_the_friendly_from_the_parent_linked_acl_absence(self):
         panel = json.loads(gzip.decompress(history.DEFAULT_INPUTS.read_bytes()))
         self.assertEqual(store.digest(panel), history.PUBLISHED_INPUTS)
         self.assertEqual(len(panel["snapshot"]), 60)
@@ -130,7 +130,27 @@ class NewsArchiveEvidence(unittest.TestCase):
         claims = history.extract_side(
             side, panel["revisions"], f, "2027-01-01T00:00:00Z"
         )
-        self.assertEqual(claims, [])
+        self.assertEqual(len(claims), 1)
+        claim = claims[0]
+        self.assertEqual((claim["player_name"], claim["event"], claim["status"], claim["availability"]),
+                         ("James Maddison", "injury", "reported", "out"))
+        self.assertEqual(claim["quote"], side["stories"][2]["text"])
+        self.assertEqual(claim["antecedent"]["quote"], side["stories"][0]["text"])
+        self.assertEqual(claim["historical_revision"]["id"], side["stories"][2]["origin"])
+        self.assertEqual(claim["antecedent"]["revisions"][0]["id"], side["stories"][2]["previous"])
+        self.assertLess(store.instant(claim["published_at"]), self.cut)
+        self.assertGreater(store.instant(claim["received_at"]), self.cut)
+        self.assertGreater(store.instant(claim["known_at"]), self.cut)
+        with self.assertRaisesRegex(ValueError, "precedes"):
+            history.extract_side(side, panel["revisions"], f, self.cut)
+        self.assertEqual(history.extract_side(side | {"stories": side["stories"][1:]},
+                                              panel["revisions"], f, "2027-01-01T00:00:00Z"), [])
+        # Newly captured data carries paragraph boundaries. Nearby selected
+        # sentences from different paragraphs cannot be spliced together.
+        separate = [story | {"closing_paragraph_sha256": str(i), "sentence_index": 0}
+                    for i, story in enumerate(side["stories"])]
+        self.assertEqual(history.extract_side(side | {"stories": separate},
+                                              panel["revisions"], f, "2027-01-01T00:00:00Z"), [])
         parsed = []
         for story in side["stories"]:
             for record in news_ai.extract(story["text"], side["roster"],

@@ -40,11 +40,16 @@ def _build_recipe(family, lines):
         for x in lines
     ):
         raise ValueError("select half-goal lines between 0.5 and 19.5")
-    from . import model_study
+    from . import model_study, news_model, news_study_plan
 
+    physical = model_study.decision_implementation()
     return {
         "family": family,
-        **model_study.decision_implementation(),
+        **physical,
+        "news_probability_source": news_study_plan.probability_sources(
+            model_study.PACKAGE_ROOT, physical["algorithm_source"]
+        ),
+        "news_probability_policy": [news_model.PROTOCOL, news_model.POLICY_SHA256],
         "lines": sorted(set(map(float, lines)) | {1.5, 2.5}),
     }
 
@@ -255,6 +260,12 @@ def make_forecast(
         raise ValueError("cannot replay a future decision")
     if replay and root is None and _snapshot is None:
         raise ValueError("historical replay requires its input archive")
+
+    chosen = requested or champion
+    fixed_builtin = not replay and horizon in HORIZONS and (chosen == "B1" or chosen.startswith("B1@"))
+    if fixed_builtin:
+        from . import schedule_consensus
+        fixed_schedules = schedule_consensus.require_fixed(data_dir, current_schedule, arrival)
 
     if requested is None and (champion == "B1" or champion.startswith("B1@")):
         build = prepare_builtin(data_dir)
@@ -492,6 +503,9 @@ def make_forecast(
                 paired_proof.check_replay_cache(old, proof)
             return old | {"digest": existing["digest"]}
         sealed_at = now_utc()
+        if fixed_builtin:
+            schedule_consensus.require_fixed(data_dir, current_schedule, sealed_at, fixed_schedules, db=db)
+            sealed_at = now_utc()
         if not replay and (
             (horizon != "early" and instant(sealed_at) > deadline)
             or instant(sealed_at) >= kickoff
@@ -531,6 +545,10 @@ def make_forecast(
         }
         if news_pair is not None:
             payload["news_pair"] = news_pair
+            if not replay and purpose == "main" and horizon in HORIZONS:
+                from .news_study_plan import declaration
+
+                payload["news_study"] = declaration(recipe, news_pair, context["player_news"])
         seal = digest(payload)
         db.execute(
             "INSERT INTO forecast_seals VALUES (?,?,?,?,?,?,?,?,?,?)",

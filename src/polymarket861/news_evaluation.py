@@ -15,7 +15,9 @@ from . import (
     experiment_statistics,
     football,
     historical_inputs,
+    news_market,
     news_model,
+    news_study_plan,
     paired_proof,
     result_admission,
     store,
@@ -191,7 +193,25 @@ def _proof_issue(db, fixture, entry, payload, cache):
     return None
 
 
-def _validate(db, fixture, entry, payload, cache):
+def _policy(value, db=None):
+    current = (news_model.PROTOCOL, news_model.POLICY_SHA256)
+    for identity in (current, news_study_plan.LEGACY_POLICY):
+        if value in (identity[0], identity[1], identity[0].rsplit("-", 1)[-1]):
+            return identity
+    if value in (None, "current"):
+        return current
+    if db is not None:
+        rows = db.execute(
+            "SELECT DISTINCT json_extract(recipe,'$.news_probability_policy') FROM model_recipes "
+            "WHERE json_extract(recipe,'$.news_probability_policy[0]')=? OR json_extract(recipe,'$.news_probability_policy[1]')=?",
+            (value, value),
+        ).fetchall()
+        if len(rows) == 1:
+            return tuple(json.loads(rows[0][0]))
+    raise ValueError("unknown sealed news probability policy")
+
+
+def _validate(db, fixture, entry, payload, cache, policy):
     if entry["digest"] != store.digest(payload) or any(
         entry[k] != payload.get(k)
         for k in (
@@ -209,11 +229,10 @@ def _validate(db, fixture, entry, payload, cache):
     pair = payload.get("news_pair")
     if not isinstance(pair, dict):
         return "no_sealed_news_pair"
-    if (
-        pair.get("protocol") != news_model.PROTOCOL
-        or pair.get("policy_sha256") != news_model.POLICY_SHA256
-        or pair.get("availability_basis") != news_model.LOCAL
-    ):
+    identity = (pair.get("protocol"), pair.get("policy_sha256"))
+    if (policy is not None and identity != policy) or pair.get(
+        "availability_basis"
+    ) != news_model.LOCAL:
         return "different_news_protocol_or_availability_basis"
     if (
         fixture.get("result_kickoff")
@@ -255,6 +274,16 @@ def _validate(db, fixture, entry, payload, cache):
         return "no_contemporaneous_news_coverage"
     if bool(pair["changed"]) != (pair["no_news"] != pair["with_news"]):
         return "inconsistent_news_arms"
+    for name in ARMS:
+        probs = pair[name]["probabilities"]
+        if (
+            any(
+                type(probs[k]) not in (float, int) or not 0 <= probs[k] <= 1
+                for k in football.PROB_KEYS
+            )
+            or abs(sum(probs[k] for k in ("home_win", "draw", "away_win")) - 1) > 1e-9
+        ):
+            return "invalid_news_probabilities"
     arm = {"B1": "no_news", "B3-news": "with_news"}.get(payload.get("model"))
     if arm and any(pair[arm][k] != payload[k] for k in ("probabilities", "totals")):
         return "arm_differs_from_sealed_model"
@@ -281,8 +310,6 @@ def _both_observed(coverage, fixture, cutoff):
 
 
 def _build(db, seal, cache):
-    # The base remains B1 even when a different family is primary. Primary
-    # recipe names alone should not split an unchanged paired implementation.
     key = ("recipe", seal["model_version"], seal["recipe_digest"])
     if key not in cache:
         row = db.execute(
@@ -291,10 +318,38 @@ def _build(db, seal, cache):
         recipe = json.loads(row[0]) if row else None
         if not recipe or store.digest(recipe) != seal["recipe_digest"]:
             raise ValueError("missing original model recipe")
-        cache[key] = store.digest(
-            {k: recipe[k] for k in ("algorithm_source", "numeric_runtime")}
+        cache[key] = recipe
+    recipe = cache[key]
+    pair = seal["news_pair"]
+    registered_policy = recipe.get(
+        "news_probability_policy", news_study_plan.LEGACY_POLICY
+    )
+    if tuple(registered_policy) != (pair["protocol"], pair["policy_sha256"]):
+        raise ValueError("news pair differs from its registered probability policy")
+    declaration = seal.get("news_study")
+    status = "no_prospective_study_declaration"
+    if "news_probability_source" in recipe:
+        expected = news_study_plan.declaration(
+            recipe, pair, seal["context"]["player_news"]
         )
-    return cache[key]
+        if declaration is not None:
+            if declaration != expected:
+                status = "different_or_invalid_study_declaration"
+            elif expected["era_sha256"] is None:
+                status = "unknown_or_mixed_extractor_configuration"
+            else:
+                return expected["era_sha256"], "declared"
+    # Prior seals retain their original physical provenance. Never assign them
+    # a prospective design or a modern extractor identity after the fact.
+    fallback = store.digest(
+        {
+            "physical": {
+                k: recipe[k] for k in ("algorithm_source", "numeric_runtime", "lines")
+            },
+            "policy_sha256": pair["policy_sha256"],
+        }
+    )
+    return fallback, status
 
 
 def _line_metrics(pair, home, away):
@@ -321,7 +376,7 @@ def _line_metrics(pair, home, away):
     return scores
 
 
-def _score_one(fixture, entry, payload, prior, db, cache, mode, verified):
+def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy=None):
     goals = (fixture["home_goals"], fixture["away_goals"])
     if mode == "replay":
         # Strict replay authenticates its archived season and label in _proof_issue.
@@ -369,7 +424,7 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified):
     if prior:
         return record | {"reason": prior}
     try:
-        issue = _validate(db, fixture, entry, payload, cache)
+        issue = _validate(db, fixture, entry, payload, cache, policy)
         if issue:
             return record | {"reason": issue}
         pair = payload["news_pair"]
@@ -384,11 +439,23 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified):
             news_slice = "rumour_only"
         else:
             news_slice = "no_applied_news"
+        implementation, study_status = _build(db, payload, cache)
+        if study_status == "declared" and fixture["fixture_id"] != football.fixture_id(
+            fixture["season"], fixture["home"], fixture["away"]
+        ):
+            study_status = "noncanonical_epl_fixture_identity"
         record.update(
             sealed=True,
             seal=entry["digest"],
             recipe=payload["recipe_digest"],
-            implementation=_build(db, payload, cache),
+            implementation=implementation,
+            study_status=study_status,
+            extractor_config_sha256=(payload.get("news_study") or {}).get(
+                "extractor_config_sha256"
+            ),
+            news_protocol=pair["protocol"],
+            policy_sha256=pair["policy_sha256"],
+            timely_news_coverage=news_study_plan.timely_coverage(pair),
             input_cutoff=pair["input_cutoff"],
             changed=pair["changed"],
             observed_both=pair["coverage"].get("both_teams_observed") is True,
@@ -397,6 +464,8 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified):
             news_slice=news_slice,
             digest=store.digest(pair),
         )
+        root = Path(db.execute("PRAGMA database_list").fetchone()[2]).parent
+        record["market_close"] = news_market.observe(db, root, fixture, entry, pair)
         if not record["completed"]:
             return record | {
                 "reason": "awaiting_verified_score",
@@ -424,7 +493,7 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified):
         return record | {"sealed": False, "reason": "invalid_seal_or_archived_evidence"}
 
 
-def _records(db, fixtures, horizon, mode):
+def _records(db, fixtures, horizon, mode, policy=None):
     ids = [f["fixture_id"] for f in fixtures]
     found = defaultdict(list)
     if ids:
@@ -461,7 +530,7 @@ def _records(db, fixtures, horizon, mode):
         outcome = verified.get(f["fixture_id"])
         matches = found.get((f["fixture_id"], f["kickoff"]), [])
         if len(matches) == 1:
-            yield _score_one(f, *matches[0], None, db, cache, mode, outcome)
+            yield _score_one(f, *matches[0], None, db, cache, mode, outcome, policy)
         else:
             reason = "ambiguous_primary_seal" if matches else "no_primary_seal"
             yield _score_one(f, None, None, reason, db, cache, mode, outcome)
@@ -528,7 +597,7 @@ def _complete_calendar(records):
     )
 
 
-def _summary(records, season, rnd, horizon, mode):
+def _summary(records, season, rnd, horizon, mode, policy=None):
     done = [r for r in records if r["scored"]]
     expected = max(10 if rnd else 380, len(records))
     sealed = [r for r in records if r["sealed"]]
@@ -584,8 +653,8 @@ def _summary(records, season, rnd, horizon, mode):
             verdict = "inconclusive"
     counts = Counter(r["reason"] for r in records if not r["sealed"])
     return {
-        "protocol": news_model.PROTOCOL,
-        "policy_sha256": news_model.POLICY_SHA256,
+        "protocol": (policy or _policy(None))[0],
+        "policy_sha256": (policy or _policy(None))[1],
         "season": season,
         "round_id": rnd,
         "horizon": horizon,
@@ -609,6 +678,7 @@ def _summary(records, season, rnd, horizon, mode):
         **_means(done),
         "endpoints": metrics,
         "lines": lines,
+        "market_close": news_market.summary(records),
         "affected": _means(changed),
         "covered_sample": _means(observed),
         "by_news_status": {key: _means(rows) for key, rows in sorted(slices.items())},
@@ -625,7 +695,9 @@ def _summary(records, season, rnd, horizon, mode):
     }
 
 
-def round_summary(db, season, round_id, *, horizon="T-60m", mode="technical"):
+def round_summary(
+    db, season, round_id, *, horizon="T-60m", mode="technical", policy=None
+):
     """Use the caller's SQLite snapshot, also when embedding into a versioned round report."""
     _check_scope(season, round_id, horizon, mode)
     fixtures = [
@@ -633,21 +705,24 @@ def round_summary(db, season, round_id, *, horizon="T-60m", mode="technical"):
         for f in store.eligible_fixture_rows(db, season=season)
         if f["round_id"] == round_id
     ]
-    return _summary(
-        list(_records(db, fixtures, horizon, mode)), season, round_id, horizon, mode
-    )
+    selected = _policy(policy, db)
+    rows = list(_records(db, fixtures, horizon, mode, selected))
+    return _summary(rows, season, round_id, horizon, mode, selected)
 
 
-def _evaluate(data_dir, season, rnd, horizon, mode):
+def _evaluate(data_dir, season, rnd, horizon, mode, policy):
     _check_scope(season, rnd, horizon, mode)
     with closing(store.connect(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
+        selected = _policy(policy, db)
         if rnd:
-            result = round_summary(db, season, rnd, horizon=horizon, mode=mode)
+            result = round_summary(
+                db, season, rnd, horizon=horizon, mode=mode, policy=policy
+            )
         else:
             fixtures = store.eligible_fixture_rows(db, season=season)
-            rows = list(_records(db, fixtures, horizon, mode))
-            result = _summary(rows, season, None, horizon, mode)
+            rows = list(_records(db, fixtures, horizon, mode, selected))
+            result = _summary(rows, season, None, horizon, mode, selected)
             groups = defaultdict(list)
             for row in rows:
                 groups[row["round_id"]].append(row)
@@ -660,7 +735,7 @@ def _evaluate(data_dir, season, rnd, horizon, mode):
                 }
                 for n, group in sorted(groups.items())
             ]
-        key = f"{season}/{rnd or 'season'}/{horizon}/{mode}/{news_model.PROTOCOL}"
+        key = f"{season}/{rnd or 'season'}/{horizon}/{mode}/{selected[0]}"
         prev = db.execute(
             "SELECT payload FROM reports WHERE kind='news-study' AND key=?", (key,)
         ).fetchone()
@@ -669,9 +744,53 @@ def _evaluate(data_dir, season, rnd, horizon, mode):
         return result
 
 
-def evaluate_round(data_dir, season, round_id, *, horizon="T-60m", mode="technical"):
-    return _evaluate(data_dir, season, round_id, horizon, mode)
+def evaluate_round(
+    data_dir, season, round_id, *, horizon="T-60m", mode="technical", policy=None
+):
+    return _evaluate(data_dir, season, round_id, horizon, mode, policy)
 
 
-def evaluate_season(data_dir, season, *, horizon="T-60m", mode="technical"):
-    return _evaluate(data_dir, season, None, horizon, mode)
+def evaluate_season(
+    data_dir, season, *, horizon="T-60m", mode="technical", policy=None
+):
+    return _evaluate(data_dir, season, None, horizon, mode, policy)
+
+
+def evaluate_accumulation(
+    data_dir, through_season, *, horizon="T-60m", mode="technical"
+):
+    """Use the original immutable declarations and one consistent read of all eligible seasons."""
+    from . import news_accumulation
+
+    _check_scope(through_season, None, horizon, mode)
+    last = football.season_year(through_season)
+    if mode == "replay" or last < news_study_plan.FIRST_SEASON:
+        raise ValueError(
+            "news accumulation requires prospective technical or formal seals from 2026-27 onward"
+        )
+    seasons = [
+        f"{y}-{(y + 1) % 100:02d}"
+        for y in range(news_study_plan.FIRST_SEASON, last + 1)
+    ]
+    with closing(store.connect(data_dir)) as db, db:
+        db.execute("BEGIN IMMEDIATE")
+        present = {
+            r[0] for r in db.execute("SELECT DISTINCT season FROM fixture_versions")
+        }
+        records = [
+            r
+            for season in seasons
+            if season in present
+            for r in _records(
+                db, store.eligible_fixture_rows(db, season=season), horizon, mode
+            )
+        ]
+        result = news_accumulation.summarize(records, seasons, horizon, mode)
+        key = f"{through_season}/{horizon}/{mode}/{news_study_plan.PLAN_SHA256}"
+        prev = db.execute(
+            "SELECT payload FROM reports WHERE kind='news-accumulation' AND key=?",
+            (key,),
+        ).fetchone()
+        if not prev or prev[0] != store.canonical(result):
+            store.put_report(db, "news-accumulation", key, result)
+        return result

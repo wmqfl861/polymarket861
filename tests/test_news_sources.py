@@ -83,7 +83,9 @@ class NewsSources(unittest.TestCase):
         later = "2026-11-25T12:30:00.000000Z"
         restored = run(src, availability([wire_row(), other], later), repeated["cursor"], at=later)
         self.assertFalse(restored["revision_conflicts"])
-        self.assertEqual([r["revision"] for r in restored["articles"]], [later, later])
+        self.assertEqual([(r["external_id"], r["revision"]) for r in restored["articles"]],
+                         [(victim["external_id"], later)])
+        self.assertEqual(len(restored["wire_observations"]), 2)
 
     def test_wire_requires_current_license_season_and_source_clock(self):
         src = news.default_sources(CLUB, SEASON)[0]

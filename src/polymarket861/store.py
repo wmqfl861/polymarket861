@@ -16,7 +16,7 @@ from typing import Any
 
 from .score_bounds import INVALID_SCORE, valid_score
 from . import dbscope
-from .blob_storage import blob_path, read_blob, representation
+from .blob_storage import blob_path, blob_size, read_blob, representation
 
 PROTOCOL = "epl-v1.1"
 
@@ -240,13 +240,14 @@ def archive_bytes(
                 canonical(metadata or {}),
             ),
         )
+    path, encoded_size = blob_size(data_dir, sha)
     return {
         "sha256": sha,
         "source": source,
         "observed_at": observed,
         "path": str(path),
         "size": len(payload),
-        "stored_size": path.stat().st_size,
+        "stored_size": encoded_size,
         "encoding": "gzip" if path.suffix == ".gz" else "identity",
     }
 

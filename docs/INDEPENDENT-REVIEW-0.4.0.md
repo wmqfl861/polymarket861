@@ -13,6 +13,18 @@
 
 最后两个提交之间只有 README、验收说明、实采报告和升级对照报告四项差异。最终 `src` 树为 `5be9bc0e8da4837c2c648184a8597a04c095c993`，`tests` 树为 `4cde2b3bd8c9129582bc9dc3c9e895c94e3e1347`。
 
+## 0.4.1 发布维护者补记 · 公开 Git 对象
+
+上表中的三个旧提交名属于当时的本地签署记录。以下为 `main` 历史中可检出的对应发布步骤。后两步的完整 Git tree 与上表逐字相符。首步只查到了公开开发提交及其 tree，历史签署时没有记录首个本地候选的 tree，因此无法独立核实这一步的字节等同性。
+
+| 步骤 | GitHub 提交 | 完整 Git tree |
+|---|---|---|
+| 公开的首个开发提交 | [52f607e](https://github.com/wmqfl861/polymarket861/commit/52f607ea48259d0a83e41be7fa21f1e1fdf588fd) | `2ee5a9d7d10f3ad5c09adc0bf726128f0528055a` |
+| 经过修订的候选 | [98625cd](https://github.com/wmqfl861/polymarket861/commit/98625cd5e708fda435512ca8c6ce20c05ff0bc59) | `6c73d746666103f21d592f1b51c0503a205c3234` |
+| 最终证据 | [bfea671](https://github.com/wmqfl861/polymarket861/commit/bfea6713d4b2250690c5c3ce8c82ff2573664932) | `fabd58f6a7499a95ee43cb3bfc907bfae3197c24` |
+
+可在克隆中运行 `git rev-parse 98625cd^{tree} bfea671^{tree}` 重查两次签署涉及的树。
+
 ## 六项暂缓原因及复验
 
 | 首轮发现 | 修订后的独立复验 |

@@ -124,6 +124,31 @@ class DashboardTests(unittest.TestCase):
 
 class DashboardBrowserTests(unittest.TestCase):
     @unittest.skipUnless(os.environ.get("PM861_TEST_CHROMIUM"), "optional Chromium browser smoke test")
+    def test_cross_season_news_report_distinguishes_measured_and_missing_price_pairs(self):
+        from playwright.sync_api import sync_playwright
+
+        row = {"kind": "news-accumulation", "key": "news-seasons", "payload": {
+            "first_season": "2026-27", "through_season": "2027-28", "horizon": "T-60m",
+            "scheduled": 760, "eligible_seals": 3, "eras": {"a" * 64: {
+                "score": {"pairs": 3, "mean": 0.1}, "home_close": {"pairs": 0, "mean": None},
+            }},
+        }}
+        with tempfile.TemporaryDirectory() as tmp, sync_playwright() as playwright:
+            path = Path(tmp) / "news.html"
+            path.write_text(render_dashboard([row]), encoding="utf-8")
+            browser = playwright.chromium.launch(executable_path=os.environ["PM861_TEST_CHROMIUM"])
+            try:
+                page = browser.new_page()
+                page.goto(path.as_uri())
+                page.locator("[data-page=rounds]").click()
+                detail = page.locator("#detail")
+                self.assertIn("主胜收盘配对", detail.inner_text())
+                cells = detail.locator("tbody tr").first.locator("td").all_text_contents()
+                self.assertEqual(cells, ["a" * 12, "3", "0.1", "0", "—"])
+            finally:
+                browser.close()
+
+    @unittest.skipUnless(os.environ.get("PM861_TEST_CHROMIUM"), "optional Chromium browser smoke test")
     def test_decision_scope_filters_links_and_mobile_layout(self):
         from playwright.sync_api import sync_playwright
 

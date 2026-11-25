@@ -54,6 +54,63 @@ def _proof(index, ident, cutoff):
     return item
 
 
+def _historical_claims(story, origin, recent, roster, team):
+    """Link a pronoun only to separately evidenced, bounded context from this source."""
+    direct = news_ai.extract(story["text"], roster, authority="secondary", team=team)
+    if direct or not news_ai._PRONOUN.match(story["text"]):
+        return direct
+    context = []
+    newer, newer_origin = story, origin
+    for earlier, proof in reversed(recent[-2:]):
+        if (proof["title"] != origin["title"] or earlier["known_from"] != story["known_from"]
+                or proof["id"] not in (newer_origin["parentid"], newer_origin["id"])
+                or proof["published_at"] > newer_origin["published_at"]):
+            break
+        if "closing_paragraph_sha256" in newer or "closing_paragraph_sha256" in earlier:
+            if (not newer.get("closing_paragraph_sha256")
+                    or newer["closing_paragraph_sha256"] != earlier.get("closing_paragraph_sha256")
+                    or newer["sentence_index"] != earlier.get("sentence_index", -2) + 1):
+                break
+        elif story["known_from"] != "biography":
+            break
+        context.insert(0, (earlier, proof))
+        newer, newer_origin = earlier, proof
+    # The original 0.4.0 panel omitted paragraph coordinates. Only a biography
+    # whose dated roster identity is also its named injury subject may use that
+    # legacy projection. Never attribute a floating pronoun from a club roundup.
+    if not context:
+        return []
+    legacy = "closing_paragraph_sha256" not in story
+    parts = [s["text"] for s, _ in context]
+    prefix = " ".join(parts) + " "
+    result = []
+    for item in news_ai.extract(prefix + story["text"], roster, authority="secondary", team=team):
+        anchor = item.get("antecedent")
+        if not anchor or item["start"] < len(prefix):
+            continue
+        if legacy and item["player_id"] != "enwiki-title:" + origin["title"]:
+            continue
+        offset = 0
+        for i, (source, proof) in enumerate(context):
+            last = offset + len(source["text"])
+            if offset <= anchor["start"] < anchor["end"] <= last:
+                item.update(start=item["start"] - len(prefix), end=item["end"] - len(prefix))
+                item["antecedent"] = {
+                    "quote": anchor["quote"], "start": anchor["start"] - offset, "end": anchor["end"] - offset,
+                    "sentence_sha256": source["sentence_sha256"],
+                    "basis": "roster_linked_biography_and_parent_revision" if legacy else "same_paragraph",
+                    "revisions": [
+                        {k: r[k] for k in ("id", "url", "sha256", "published_at", "received_at")}
+                        | {"sentence_sha256": s["sentence_sha256"]}
+                        for s, r in context[i:]
+                    ],
+                }
+                result.append(item)
+                break
+            offset = last + 1
+    return result
+
+
 def extract_side(side, revisions, fixture, extracted_at):
     cutoff = store.iso(fixture.kickoff - timedelta(hours=1))
     if (
@@ -80,7 +137,7 @@ def extract_side(side, revisions, fixture, extracted_at):
             ):
                 raise ValueError("source window mismatch")
         refs[last["title"]] = source
-    found = []
+    found, recent = [], []
     for story in side["stories"]:
         origin = _proof(revisions, story["origin"], cutoff)
         ref = refs.get(origin["title"])
@@ -102,15 +159,19 @@ def extract_side(side, revisions, fixture, extracted_at):
             or text_sha(story["text"]) != story["sentence_sha256"]
         ):
             raise ValueError("news passage or revision ancestry mismatch")
-        for item in news_ai.extract(
-            story["text"], roster, authority="secondary", team=side["team"]
-        ):
-            if not item["quote"] or item["quote"] not in story["text"]:
+        items = _historical_claims(story, origin, recent, roster, side["team"])
+        recent = [*recent[-1:], (story, origin)]
+        for item in items:
+            if not item["quote"] or story["text"][item["start"]:item["end"]] != item["quote"]:
                 raise ValueError("unanchored historical extractor output")
             game = {"home": fixture.home, "away": fixture.away, "kickoff": store.iso(fixture.kickoff)}
-            if not news.fixture_relevant(item["quote"], "", game, side["team"]):
+            anchor = item.get("antecedent", {})
+            if not news.fixture_relevant(item["quote"], "", game, side["team"], antecedent=anchor.get("quote", "")):
                 continue
-            received = max(origin["received_at"], roster_proof["received_at"])
+            received = max(origin["received_at"], roster_proof["received_at"],
+                           _proof(revisions, ref["closing"], cutoff)["received_at"],
+                           previous["received_at"] if previous else origin["received_at"],
+                           *(r["received_at"] for r in anchor.get("revisions", [])))
             if store.instant(extracted_at) < store.instant(received):
                 raise ValueError(
                     "research extraction precedes its actual source receipt"

@@ -19,11 +19,13 @@ from functools import lru_cache
 from importlib.resources import files
 
 from .news_ai_corpus import TRAINING_GROUPS
+from .news_scope import competition_target
 from .store import digest
 
 MODEL_VERSION = "squad-news-en-nb-1-" + digest({
     "training": TRAINING_GROUPS,
     "extractor": hashlib.sha256(files(__package__).joinpath("news_ai.py").read_bytes()).hexdigest(),
+    "scope": hashlib.sha256(files(__package__).joinpath("news_scope.py").read_bytes()).hexdigest(),
 })[:16]
 _WORD = re.compile(r"[^\W\d_]+(?:['’][^\W\d_]+)*")
 _TRANSLITERATE = str.maketrans({"ø": "o", "ł": "l", "æ": "ae", "œ": "oe", "đ": "d", "ð": "d", "ı": "i"})
@@ -206,8 +208,6 @@ _RETURN = re.compile(r"\b(?:return(?:s|ed|ing)?|resum(?:e|es|ed|ing)|rejoin\w*|b
 _OUT = re.compile(r"\b(?:ruled out|rule[sd]? (?:out|player out)|out (?:of|with|through|due to|because|injured|for)|remain(?:s|ed)? out|sidelin\w*|will be without|(?:is|are) without|unavailable|not (?:be )?(?:available|fit|ready|play|feature|participate)|won't (?:be available|play|feature)|will be absent|take no part|left out of|sit(?:s|ting)? out|will miss|would miss|misses out|miss(?:es)? (?:the |a |this |next |sunday|monday|tuesday|wednesday|thursday|friday|saturday)|keep\w* player out|out until)\b")
 _AVAILABLE = re.compile(r"\b(?:available(?: again)?(?: for (?:selection|the |this |saturday|sunday|monday|tuesday|wednesday|thursday|friday)| to (?:play|face))?|fit(?: again)? (?:to (?:play|face|return|start|feature)|for (?:the |this |saturday|sunday|squad|selection))|cleared to (?:play|return|start|feature)|(?:back in|returns? to|returned to|named in|in) the (?:matchday )?squad|fit again)\b")
 _IRRELEVANT = re.compile(r"\b(?:injury.time|stoppage.time|ruled offside|transfer(?:s|red)?|free agent|miss(?:es|ed)? (?:a |the |his |an )?(?:penalty|target|chance|flight|award|bus|opportunity)|ruled out (?:a |the |his )?(?:goal|appeal|move|sale|transfer)|returned? (?:the |a |his )?pass|fit for purpose|suspended (?:fine|sentence)|goals? ruled out)\b")
-_OTHER_COMP = re.compile(r"\b(?:champions league|europa league|conference league|fa cup|league cup|carabao cup|efl cup|international (?:duty|fixture|match)|world cup|european championship|nations league|uefa|under.21|u21|u18)\b")
-_PREMIER = re.compile(r"\b(?:premier league|premiership|epl)\b")
 _PAST = re.compile(r"\b(?:last (?:season|year|month|night|weekend|week|match|game|saturday|sunday)|years? ago|months? ago|as a youngster|in (?:19|20)\d\d|in (?:january|february|march|april|may|june|july|august|september|october|november|december) (?:19|20)\d\d|was substituted|after (?:the|their) defeat|scored|equaliser|equalizer|at the time|had missed|previously missed|missed (?:the|their|last)|former club|last time|in the reverse fixture)\b")
 _FORWARD = re.compile(r"\b(?:now|still|remains?|next|upcoming|ahead of|will (?:not |be |miss|serve|sit|face|return)|this weekend|this week|for selection)\b")
 # Explicitly past match references do not by themselves say anything about
@@ -352,7 +352,17 @@ _DIRECTIVE = re.compile(
 
 
 def _judgement(clause, authority, title, nomination=None):
-    normalized = _current_statement(_CONTRACTIONS.sub(lambda m: _EXPAND[m[1]], _fold(clause)))
+    full = _CONTRACTIONS.sub(lambda m: _EXPAND[m[1]], _fold(clause))
+    main = competition_target(full)
+    if main is None:
+        # Retain a specifically described diagnosis, with unknown readiness.
+        # The fixture matcher separately excludes an injury in another match.
+        if not _INJURY.search(full) or _OUT.search(full) or _AVAILABLE.search(full) or _DIS.search(full):
+            return None
+        main = full
+    elif main != full and _NEG.search(full) and not _NEG.search(main):
+        return None
+    normalized = _current_statement(main)
     if not normalized or not normalized.strip() or "?" in normalized or _HYPOTHETICAL.search(normalized):
         return None
     if (_RUMOUR.search(normalized) and _TRANSFER.search(normalized)
@@ -361,12 +371,11 @@ def _judgement(clause, authority, title, nomination=None):
         event, score = event_model.predict(_features(normalized))
         if event == "transfer":
             return "transfer", "rumour", "unknown", score
-    if (_IRRELEVANT.search(normalized)
-            or (_OTHER_COMP.search(normalized) and not _PREMIER.search(normalized))):
+    if _IRRELEVANT.search(normalized):
         return None
     if (_PAST.search(normalized) or re.search(r"\b(?:match report|highlights)\b", title)) and not _FORWARD.search(normalized):
         return None
-    injury = bool(_INJURY.search(normalized))
+    injury = bool(_INJURY.search(normalized) or (main != full and _INJURY.search(full)))
     discipline = bool(_DIS.search(normalized))
     returning = bool(_RETURN.search(normalized))
     appears_out = bool(_OUT.search(normalized) or re.search(r"\b(?:is|are|ruled) out[.!;,\s]*$", normalized))
@@ -450,9 +459,9 @@ def _judgement(clause, authority, title, nomination=None):
     else:
         readiness = "unknown"
 
-    if _RUMOUR.search(normalized) or (framing == "speculation" and frame_score > 0.7) or _RUMOUR.search(title):
+    if _RUMOUR.search(full) or (framing == "speculation" and frame_score > 0.7) or _RUMOUR.search(title):
         status = "rumour"
-    elif authority != "official" or _REPORTED.search(normalized) or soft or (framing in ("attributed", "speculation", "denial") and not re.search(r"\bconfirm(?:s|ed)?\b", normalized)):
+    elif authority != "official" or _REPORTED.search(full) or soft or (framing in ("attributed", "speculation", "denial") and not re.search(r"\bconfirm(?:s|ed)?\b", normalized)):
         status = "reported"
     else:
         status = "confirmed"
@@ -465,7 +474,7 @@ _CARRY = re.compile(r"^(?:(?:he|she|they)\s+)?(?:(?:is|are|has|have|had|can|will
 
 def _carried_predicate(chunk):
     text = _CONTRACTIONS.sub(lambda m: _EXPAND[m[1]], _fold(chunk.lstrip()))
-    return _CARRY.match(text)
+    return _CARRY.match(text) or re.match(r"^(?:(?:he|she) )?(?:will|would|could) (?:now )?miss\b", text)
 
 
 def _sentence_claims(sentence, offset, roster, authority, title, team, nomination):
@@ -557,6 +566,33 @@ def extract(text: str, roster: list[dict], *, authority: str = "secondary", titl
     return _extract(text, roster, authority, title, team)
 
 
+_PRONOUN = re.compile(
+    r"^\s*(?:(?:it (?:was|has been) |(?:the club|scans?) (?:has |have )?)"
+    r"(?:later |subsequently |now )?(?:confirmed|revealed|announced|reported) that )?"
+    r"(?P<subject>he|she)\b", re.I,
+)
+_SECOND_SUBJECT = re.compile(r"\b(?:and|alongside|along with|collided with|challenged by)\s+[A-ZÀ-Þ][\w’-]*")
+_INJURY_COMMENT = re.compile(
+    r"^\s*[^.!?]{0,55}\b(?:coach|manager)\b[^.!?]{0,60}\b(?:described|called) "
+    r"(?:the|his|her) (?:injury|diagnosis)\b", re.I,
+)
+
+
+def _followup(sentence, offset, antecedent, players, authority, title):
+    match = _PRONOUN.match(sentence)
+    if (not match or _HYPOTHETICAL.search(_fold(sentence)) or sentence.rstrip().endswith("?")
+            or not _subject_link(sentence, match.start("subject"), match.end("subject"), None)):
+        return None
+    phrase = sentence[:match.start("subject")] + "PLAYER" + sentence[match.end("subject"):]
+    origin = authority if antecedent["status"] == "confirmed" else "secondary"
+    result = _judgement(phrase, origin, title)
+    if result:
+        row = _record(sentence, offset, 0, len(sentence), antecedent["player_id"], players, result)
+        row["antecedent"] = {k: antecedent[k] for k in ("start", "end", "quote")}
+        return row
+    return None
+
+
 def _extract(text, roster, authority, title, team, nomination=None, selected=None):
     if not isinstance(text, str) or not isinstance(title, str):
         raise ValueError("news text and title must be strings")
@@ -569,13 +605,38 @@ def _extract(text, roster, authority, title, team, nomination=None, selected=Non
     if _DIRECTIVE.search(text) or _DIRECTIVE.search(title):
         return []
     roster_index = _roster_index(roster)
+    players, aliases, width = roster_index
     claims = []
+    antecedent = None
+    bridge_used = False
+    title = _fold(title)
     for start, end in _ranges(text, _PERIOD):
         sentence = text[start:end]
         if selected and (end <= selected[0] or start >= selected[1]):
             continue
-        if sentence.strip() and len(sentence) <= 1200:
-            claims.extend(_sentence_claims(sentence, start, roster_index, authority, _fold(title), team, nomination))
+        if not sentence.strip() or len(sentence) > 1200:
+            antecedent = None
+            continue
+        rows = _sentence_claims(sentence, start, roster_index, authority, title, team, nomination)
+        claims.extend(rows)
+        # Local model nominations must still quote their named subject. The
+        # deterministic path can resolve one follow-up within the same paragraph.
+        if nomination:
+            continue
+        mentions = _mentions(sentence, aliases, width)
+        if antecedent and not mentions and "\n" not in sentence.lstrip(" \t"):
+            followup = _followup(sentence, start, antecedent, players, authority, title)
+            if followup:
+                claims.append(followup)
+            elif not bridge_used and len(sentence) <= 240 and _INJURY_COMMENT.match(sentence):
+                bridge_used = True
+                continue
+        antecedent = None
+        bridge_used = False
+        if (len({m.ident for m in mentions}) == 1 and rows and "\n" not in sentence
+                and not _SECOND_SUBJECT.search(sentence) and not sentence.rstrip().endswith(";")
+                and all(r["status"] in {"confirmed", "reported"} and r["event"] != "transfer" for r in rows)):
+            antecedent = rows[-1]
     return claims
 
 

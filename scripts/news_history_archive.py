@@ -314,7 +314,7 @@ def source_stories(archive, title, kind, cut, start, proofs):
     old = paragraphs(opening["text"], kind) if opening else []
     stories = []
     for paragraph in paragraphs(closing["text"], kind):
-        for sentence in _BOUNDARY.split(paragraph):
+        for index, sentence in enumerate(_BOUNDARY.split(paragraph)):
             if (
                 len(sentence) > 1600
                 or not news_sources._NEWS_WORDS.search(sentence)
@@ -341,6 +341,8 @@ def source_stories(archive, title, kind, cut, start, proofs):
                     "known_from": kind,
                     "date_evidence": date_evidence,
                     "sentence_sha256": text_sha(sentence),
+                    "closing_paragraph_sha256": text_sha(paragraph),
+                    "sentence_index": index,
                 }
             )
     return ref, stories

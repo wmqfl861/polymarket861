@@ -1,0 +1,633 @@
+{
+  "protocol": "epl-official-club-prose-excerpts-v1",
+  "source_checked_date": "2026-11-25",
+  "selection": "One short, contiguous English excerpt from each of 32 public official men's club articles. Purposive coverage of pre-match briefings, medical updates, line-ups and reports, including multi-player claims and abstentions. Articles selected by publisher and topic; no extractor output or match outcome was used to choose or label passages.",
+  "annotation": "Codex editorial annotation from the excerpt, created before the evaluation run. Single annotator, no independent human adjudication. Text is limited to the included passage. Direct statements from the club or its coach are confirmed, explicit hope/may language is reported and doubtful. Injury includes illness; present physical problems with no stated selection decision have unknown availability. Returns to training have unknown eligibility, confirmed returns to the side are available. No claim for match action, pure recaps, an unnamed subject, or a completed transfer.",
+  "identity_basis": "Stable evaluation IDs use club-local canonical display names. Fixed short candidate lists include other named players in these articles and span publication dates; these are supplied reference identities for extraction, not historical squad snapshots.",
+  "rosters": {
+    "Liverpool FC": [
+      "Alisson Becker",
+      "Conor Bradley",
+      "Federico Chiesa",
+      "Diogo Jota",
+      "Harvey Elliott"
+    ],
+    "Manchester United": [
+      "Rasmus Højlund",
+      "Luke Shaw",
+      "Tyrell Malacia"
+    ],
+    "Chelsea FC": [
+      "Conor Gallagher",
+      "Trevoh Chalobah",
+      "Carney Chukwuemeka",
+      "Levi Colwill",
+      "Reece James",
+      "Christopher Nkunku"
+    ],
+    "Manchester City": [
+      "Rodri",
+      "Oscar Bobb",
+      "John Stones"
+    ],
+    "Tottenham Hotspur": [
+      "Heung-Min Son",
+      "Richarlison",
+      "James Maddison",
+      "Timo Werner",
+      "Yves Bissouma",
+      "Rodrigo Bentancur"
+    ],
+    "Brentford FC": [
+      "Mathias Jensen",
+      "Kristoffer Ajer",
+      "Aaron Hickey"
+    ],
+    "Crystal Palace": [
+      "Jeffrey Schlupp",
+      "Trevoh Chalobah",
+      "Marc Guéhi",
+      "Odsonne Edouard",
+      "Michael Olise",
+      "Ebere Eze",
+      "Adam Wharton"
+    ],
+    "Brighton & Hove Albion": [
+      "Lewis Dunk",
+      "Tariq Lamptey",
+      "Pervis Estupinan",
+      "Solly March",
+      "Kaoru Mitoma",
+      "Matt O'Riley"
+    ],
+    "Newcastle United": [
+      "Anthony Gordon",
+      "Alexander Isak",
+      "Kieran Trippier",
+      "Tino Livramento",
+      "Bruno Guimarães"
+    ],
+    "West Ham United": [
+      "Edson Álvarez",
+      "Mohammed Kudus",
+      "Niclas Füllkrug",
+      "Jarrod Bowen",
+      "Michail Antonio"
+    ],
+    "Aston Villa": [
+      "Diego Carlos",
+      "Boubacar Kamara",
+      "Ezri Konsa"
+    ],
+    "Wolverhampton Wanderers": [
+      "Pedro Neto",
+      "Mario Lemina",
+      "Matheus Cunha"
+    ],
+    "AFC Bournemouth": [
+      "Marcos Senesi",
+      "Mark Travers",
+      "Adam Smith",
+      "Dean Huijsen"
+    ],
+    "Fulham FC": [
+      "Raúl Jiménez",
+      "Willian",
+      "Ryan Sessegnon",
+      "Harrison Reed",
+      "Joachim Andersen",
+      "Jorge Cuenca"
+    ],
+    "Everton FC": [
+      "Jake O'Brien",
+      "Seamus Coleman"
+    ],
+    "Leicester City": [
+      "Abdul Fatawu",
+      "Wilfred Ndidi"
+    ]
+  },
+  "aliases": {
+    "Rasmus Højlund": [
+      "Rasmus Hojlund"
+    ]
+  },
+  "passages": [
+    {
+      "id": "club-01",
+      "publisher": "Liverpool FC",
+      "published_date": "2024-10-25",
+      "url": "https://www.liverpoolfc.com/news/arne-slots-fitness-update-alisson-becker-conor-bradley-federico-chiesa-and-diogo-jota",
+      "excerpt_unit": "clause",
+      "text": "Arne Slot offered an update on the fitness of Alisson Becker, Conor Bradley, Federico Chiesa and Diogo Jota",
+      "gold": [],
+      "annotation_note": "The clause anticipates an update without stating any player's condition."
+    },
+    {
+      "id": "club-02",
+      "publisher": "Liverpool FC",
+      "published_date": "2024-10-26",
+      "url": "https://www.liverpoolfc.com/news/arsenal-v-liverpool-team-news-2?amp=1",
+      "excerpt_unit": "sentence",
+      "text": "Goalkeeper Alisson Becker also remains sidelined, along with Harvey Elliott.",
+      "gold": [
+        {
+          "player": "Alisson Becker",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "out"
+        },
+        {
+          "player": "Harvey Elliott",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ],
+      "annotation_note": "Both remain unavailable. The excerpt gives no cause."
+    },
+    {
+      "id": "club-03",
+      "publisher": "Manchester United",
+      "published_date": "2024-02-23",
+      "url": "https://www.manutd.com/en/news/team-news-for-man-utd-v-fulham-on-24-february-2024",
+      "excerpt_unit": "sentence",
+      "text": "Manchester United will definitely be without Rasmus Hojlund and Luke Shaw for Saturday's meeting with Fulham at Old Trafford.",
+      "gold": [
+        {
+          "player": "Rasmus Højlund",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "out"
+        },
+        {
+          "player": "Luke Shaw",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ]
+    },
+    {
+      "id": "club-04",
+      "publisher": "Chelsea FC",
+      "published_date": "2024-03-07",
+      "url": "https://www.chelseafc.com/en/news/article/chelsea-injury-update-ahead-of-newcastle-united",
+      "excerpt_unit": "bullet",
+      "text": "Conor Gallagher – absent due to illness.",
+      "gold": [
+        {
+          "player": "Conor Gallagher",
+          "event": "injury",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ]
+    },
+    {
+      "id": "club-05",
+      "publisher": "Chelsea FC",
+      "published_date": "2024-03-28",
+      "url": "https://www.chelseafc.com/en/news/article/chelsea-injury-update-ahead-of-burnley",
+      "excerpt_unit": "bullet",
+      "text": "Trevoh Chalobah – in partial team training.",
+      "gold": [
+        {
+          "player": "Trevoh Chalobah",
+          "event": "return",
+          "status": "confirmed",
+          "availability": "unknown"
+        }
+      ],
+      "annotation_note": "Partial training describes recovery. Selection remains unspecified."
+    },
+    {
+      "id": "club-06",
+      "publisher": "Manchester City",
+      "published_date": "2024-09-25",
+      "url": "https://www.mancity.com/news/mens/injury-update-rodri-63862763",
+      "excerpt_unit": "sentence",
+      "text": "Manchester City FC can confirm that Rodri has suffered a ligament injury to his right knee.",
+      "gold": [
+        {
+          "player": "Rodri",
+          "event": "injury",
+          "status": "confirmed",
+          "availability": "unknown"
+        }
+      ],
+      "date_corroboration": "https://www.reuters.com/sports/soccer/man-citys-rodri-suffers-knee-ligament-injury-2024-09-25/"
+    },
+    {
+      "id": "club-07",
+      "publisher": "Tottenham Hotspur",
+      "published_date": "2024-10-17",
+      "url": "https://www.tottenhamhotspur.com/news/986727/team-news-spurs-vs-west-ham-son-and-richarlison-update",
+      "excerpt_unit": "clause",
+      "text": "Ange Postecoglou is hoping to have both Heung-Min Son and Richarlison back available for the London derby against West Ham United",
+      "gold": [
+        {
+          "player": "Heung-Min Son",
+          "event": "return",
+          "status": "reported",
+          "availability": "doubtful"
+        },
+        {
+          "player": "Richarlison",
+          "event": "return",
+          "status": "reported",
+          "availability": "doubtful"
+        }
+      ],
+      "annotation_note": "The coach hopes for two returns. Neither is assured."
+    },
+    {
+      "id": "club-08",
+      "publisher": "Tottenham Hotspur",
+      "published_date": "2024-10-19",
+      "url": "https://www.tottenhamhotspur.com/news/986311/confirmed-line-ups-spurs-vs-west-ham",
+      "excerpt_unit": "clause",
+      "text": "Richarlison also returns to the matchday squad for the first time since our league encounter against Everton in late August",
+      "gold": [
+        {
+          "player": "Richarlison",
+          "event": "return",
+          "status": "confirmed",
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "id": "club-09",
+      "publisher": "Tottenham Hotspur",
+      "published_date": "2024-05-13",
+      "url": "https://www.tottenhamhotspur.com/news/985458/team-news-spurs-vs-man-city-richarlison-injury-update",
+      "excerpt_unit": "sentence",
+      "text": "Richarlison will miss the remainder of the season through injury, Ange Postecoglou confirmed on Monday (13 May).",
+      "gold": [
+        {
+          "player": "Richarlison",
+          "event": "injury",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ]
+    },
+    {
+      "id": "club-10",
+      "publisher": "Brentford FC",
+      "published_date": "2024-05-04",
+      "url": "https://www.brentfordfc.com/en/news/article/first-team-kristoffer-ajer-mathias-jensen-brentford-injury-update-thomas-frank-04-05-2024",
+      "excerpt_unit": "sentence",
+      "text": "Brentford head coach Thomas Frank has given an injury update on Mathias Jensen and Kristoffer Ajer after Saturday's 0-0 draw with Fulham.",
+      "gold": [],
+      "annotation_note": "The subject of the briefing is named. No specific condition is asserted in this passage."
+    },
+    {
+      "id": "club-11",
+      "publisher": "Crystal Palace",
+      "published_date": "2024-02-03",
+      "url": "https://www.cpfc.co.uk/news/match-reports/live-blog-highlights-report-brighton-crystal-palace/",
+      "excerpt_unit": "match_summary",
+      "text": "Schlupp is denied by sprawling Verbruggen save",
+      "gold": [],
+      "annotation_note": "A goal attempt was denied."
+    },
+    {
+      "id": "club-12",
+      "publisher": "Crystal Palace",
+      "published_date": "2024-11-02",
+      "url": "https://www.cpfc.co.uk/news/match-reports/live-blog-highlights-match-report-wolverhampton-wanderers-crystal-palace-november-2024/",
+      "excerpt_unit": "match_summary",
+      "text": "Chalobah can’t adjust his feet after Guéhi heads back across goal.",
+      "gold": [],
+      "annotation_note": "This describes play."
+    },
+    {
+      "id": "club-13",
+      "publisher": "Brighton & Hove Albion",
+      "published_date": "2025-02-21",
+      "url": "https://www.brightonandhovealbion.com/media-article/mft-match-preview-soubha-pl-february-2025",
+      "excerpt_unit": "sentence",
+      "text": "Lewis Dunk is a doubt, according to the head coach.",
+      "gold": [
+        {
+          "player": "Lewis Dunk",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "doubtful"
+        }
+      ],
+      "annotation_note": "The club directly attributes the present doubt to its own coach."
+    },
+    {
+      "id": "club-14",
+      "publisher": "Brighton & Hove Albion",
+      "published_date": "2025-03-07",
+      "url": "https://www.brightonandhovealbion.com/media-article/mft-match-preview-bhaful-pl-march-2025",
+      "excerpt_unit": "sentence",
+      "text": "Tariq Lamptey is suspended but we have different options.",
+      "gold": [
+        {
+          "player": "Tariq Lamptey",
+          "event": "suspension",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ]
+    },
+    {
+      "id": "club-15",
+      "publisher": "Newcastle United",
+      "published_date": "2026-04-24",
+      "url": "https://www.newcastleunited.com/en/news/eddie-howes-team-news-update-gordon-bruno-and-livramento-latest",
+      "excerpt_unit": "sentence",
+      "text": "Eddie Howe says Anthony Gordon will miss Newcastle United's Premier League game at Arsenal on Saturday (kick-off 5.30pm BST).",
+      "gold": [
+        {
+          "player": "Anthony Gordon",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ]
+    },
+    {
+      "id": "club-16",
+      "publisher": "Newcastle United",
+      "published_date": "2025-04-04",
+      "url": "https://www.newcastleunited.com/en/news/howe-provides-fitness-update-ahead-of-foxes-trip",
+      "excerpt_unit": "sentence",
+      "text": "He has done individual training, not group training, and is still not feeling 100% pain-free so we will have to wait and see.",
+      "gold": [],
+      "annotation_note": "There is no named subject in the supplied excerpt."
+    },
+    {
+      "id": "club-17",
+      "publisher": "West Ham United",
+      "published_date": "2024-11-22",
+      "url": "https://www.whufc.com/en/news/team-news-lopetegui-provides-squad-update-ahead-newcastle-trip",
+      "excerpt_unit": "clause",
+      "text": "Mohammed Kudus and Edson Álvarez, who are suspended after recent red cards.",
+      "gold": [
+        {
+          "player": "Mohammed Kudus",
+          "event": "suspension",
+          "status": "confirmed",
+          "availability": "out"
+        },
+        {
+          "player": "Edson Álvarez",
+          "event": "suspension",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ]
+    },
+    {
+      "id": "club-18",
+      "publisher": "West Ham United",
+      "published_date": "2024-04-06",
+      "url": "https://www.whufc.com/en/news/team-news-alvarez-returns-wolves-clash",
+      "excerpt_unit": "clause",
+      "text": "Edson Álvarez returns to the starting line-up for West Ham United’s Premier League clash away at Wolverhampton Wanderers",
+      "gold": [
+        {
+          "player": "Edson Álvarez",
+          "event": "return",
+          "status": "confirmed",
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "id": "club-19",
+      "publisher": "Aston Villa",
+      "published_date": "2024-02-16",
+      "url": "https://www.avfc.co.uk/news/2024/february/16/team-news-for-fulham-fixture/",
+      "excerpt_unit": "sentence",
+      "text": "Diego Carlos and Boubacar Kamara have been added to Aston Villa’s injury list ahead of Saturday’s Premier League trip to Fulham.",
+      "gold": [
+        {
+          "player": "Diego Carlos",
+          "event": "injury",
+          "status": "confirmed",
+          "availability": "unknown"
+        },
+        {
+          "player": "Boubacar Kamara",
+          "event": "injury",
+          "status": "confirmed",
+          "availability": "unknown"
+        }
+      ],
+      "annotation_note": "The update names two injuries without an explicit availability decision."
+    },
+    {
+      "id": "club-20",
+      "publisher": "Aston Villa",
+      "published_date": "2025-08-29",
+      "url": "https://www.avfc.co.uk/news/2025/august/29/team-news-for-eagles-encounter/",
+      "excerpt_unit": "sentence",
+      "text": "Ezri Konsa returns to contention for Aston Villa’s Premier League clash against Crystal Palace on Sunday.",
+      "gold": [
+        {
+          "player": "Ezri Konsa",
+          "event": "return",
+          "status": "confirmed",
+          "availability": "available"
+        }
+      ],
+      "annotation_note": "Contention means eligible for selection."
+    },
+    {
+      "id": "club-21",
+      "publisher": "Wolverhampton Wanderers",
+      "published_date": "2024-01-19",
+      "url": "https://www.wolves.co.uk/news/mens-first-team/20240119-oneil-were-pleased-to-have-him-back/",
+      "excerpt_unit": "clause",
+      "text": "Gary O’Neil revealed that both Pedro Neto and Mario Lemina are fit and ready to start in the Premier League",
+      "gold": [
+        {
+          "player": "Pedro Neto",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "available"
+        },
+        {
+          "player": "Mario Lemina",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "id": "club-22",
+      "publisher": "Wolverhampton Wanderers",
+      "published_date": "2024-08-11",
+      "url": "https://www.wolves.co.uk/news/mens-first-team/20240811-neto-departs-following-five-year-stint/?isNative=true",
+      "excerpt_unit": "sentence",
+      "text": "Pedro Neto has completed a permanent move to Chelsea, following five years at Molineux.",
+      "gold": [],
+      "annotation_note": "The transfer is completed. The extraction task includes transfer speculation."
+    },
+    {
+      "id": "club-23",
+      "publisher": "AFC Bournemouth",
+      "published_date": "2024-04-06",
+      "url": "https://www.afcb.co.uk/news/2024/April/6/team-news-three-changes-against-hatters",
+      "excerpt_unit": "sentence",
+      "text": "Marcos Senesi makes a welcome return to the substitutes’ bench, the defender having missed the past four games due to a hamstring injury.",
+      "gold": [
+        {
+          "player": "Marcos Senesi",
+          "event": "return",
+          "status": "confirmed",
+          "availability": "available"
+        }
+      ],
+      "annotation_note": "Bench inclusion is current. The injury explains his earlier absence."
+    },
+    {
+      "id": "club-24",
+      "publisher": "AFC Bournemouth",
+      "published_date": "2025-12-12",
+      "url": "https://www.afcb.co.uk/news/2025/december/12/injury-news--iraola-hopeful-senesi-will-be-fit-to-face-manchester-united/",
+      "excerpt_unit": "sentence",
+      "text": "AFC Bournemouth head coach Andoni Iraola is hopeful Marcos Senesi will be available for Monday’s Premier League game with Manchester United.",
+      "gold": [
+        {
+          "player": "Marcos Senesi",
+          "event": "availability",
+          "status": "reported",
+          "availability": "doubtful"
+        }
+      ]
+    },
+    {
+      "id": "club-25",
+      "publisher": "AFC Bournemouth",
+      "published_date": "2024-09-21",
+      "url": "https://www.afcb.co.uk/news/2024/september/21/diaz-double-helps-liverpool-beat-cherries-/",
+      "excerpt_unit": "sentence",
+      "text": "Marcos Senesi, Mark Travers and Adam Smith were the trio to drop to the bench.",
+      "gold": [],
+      "annotation_note": "A report on a past selection supplies no new availability update."
+    },
+    {
+      "id": "club-26",
+      "publisher": "Fulham FC",
+      "published_date": "2024-03-01",
+      "url": "https://www.fulhamfc.com/news/2024/march/01/brighton-matchday-preview/",
+      "excerpt_unit": "sentence",
+      "text": "Raúl Jiménez is still out, but Marco Silva says Willian will return.",
+      "gold": [
+        {
+          "player": "Raúl Jiménez",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "out"
+        },
+        {
+          "player": "Willian",
+          "event": "return",
+          "status": "confirmed",
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "id": "club-27",
+      "publisher": "Fulham FC",
+      "published_date": "2024-11-29",
+      "url": "https://www.fulhamfc.com/news/2024/november/29/team-news-joa-set-for-spell-out/",
+      "excerpt_unit": "sentence",
+      "text": "Injury may also deny Ryan Sessegnon a return to Spurs, while Harrison Reed was already out.",
+      "gold": [
+        {
+          "player": "Ryan Sessegnon",
+          "event": "injury",
+          "status": "reported",
+          "availability": "doubtful"
+        },
+        {
+          "player": "Harrison Reed",
+          "event": "availability",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ],
+      "annotation_note": "The preview describes two different states. Reed's established absence continues into the fixture."
+    },
+    {
+      "id": "club-28",
+      "publisher": "Fulham FC",
+      "published_date": "2024-10-03",
+      "url": "https://www.fulhamfc.com/news/2024/october/03/matchday-preview-man-city/",
+      "excerpt_unit": "sentence",
+      "text": "There are no fresh injury concerns for Marco Silva.",
+      "gold": [],
+      "annotation_note": "Silva is the coach. The team-wide update names no player."
+    },
+    {
+      "id": "club-29",
+      "publisher": "Everton FC",
+      "published_date": "2025-05-16",
+      "url": "https://www.evertonfc.com/news/2025/may/16/Live-Blog--Moyes--Press-Conference--1-30pm-/",
+      "excerpt_unit": "clause",
+      "text": "Jake O'Brien is fit and available again for the Blues' last-ever Premier League game at Goodison Park.",
+      "gold": [
+        {
+          "player": "Jake O'Brien",
+          "event": "return",
+          "status": "confirmed",
+          "availability": "available"
+        }
+      ]
+    },
+    {
+      "id": "club-30",
+      "publisher": "Tottenham Hotspur",
+      "published_date": "2025-08-07",
+      "url": "https://www.tottenhamhotspur.com/news/983830/injury-update-james-maddison",
+      "excerpt_unit": "sentence",
+      "text": "We can confirm that James Maddison will undergo surgery for a ruptured Anterior Cruciate Ligament (ACL) in his right knee.",
+      "gold": [
+        {
+          "player": "James Maddison",
+          "event": "injury",
+          "status": "confirmed",
+          "availability": "unknown"
+        }
+      ],
+      "annotation_note": "The announcement gives a diagnosis and surgery. The quoted sentence gives no match eligibility."
+    },
+    {
+      "id": "club-31",
+      "publisher": "Leicester City",
+      "published_date": "2024-11-21",
+      "url": "https://www.lcfc.com/media-article/cooper-confirms-fatawus-long-term-absence",
+      "excerpt_unit": "clause",
+      "text": "Leicester City forward Abdul Fatawu has sustained an anterior cruciate ligament injury and is set for a prolonged spell on the sidelines",
+      "gold": [
+        {
+          "player": "Abdul Fatawu",
+          "event": "injury",
+          "status": "confirmed",
+          "availability": "out"
+        }
+      ]
+    },
+    {
+      "id": "club-32",
+      "publisher": "Crystal Palace",
+      "published_date": "2024-04-27",
+      "url": "https://www.cpfc.co.uk/news/match-reports/live-blog-highlights-report-fulham-crystal-palace/",
+      "excerpt_unit": "clause",
+      "text": "Odsonne Edouard, within seconds of coming on, tested Leno with a low shot across goal",
+      "gold": [],
+      "annotation_note": "A description of play supplies no new player status."
+    }
+  ]
+}

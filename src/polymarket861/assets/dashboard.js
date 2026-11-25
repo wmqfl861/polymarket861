@@ -6,7 +6,7 @@
   const pages = {
     matches: ["比赛详情", ["match", "ledger", "news-update"], "赛前预测或模拟账本"],
     sources: ["数据源", ["source", "market-coverage", "news-coverage"], "数据源或盘口覆盖报告"],
-    rounds: ["轮次成绩", ["round", "round-edition", "backtest", "market-replay", "trial-market-study", "news-study"], "轮次成绩或历史回测"],
+    rounds: ["轮次成绩", ["round", "round-edition", "backtest", "market-replay", "trial-market-study", "news-study", "news-accumulation"], "轮次成绩或历史回测"],
     incidents: ["错误与修复", ["incident"], "错误与修复报告"],
     experiments: ["实验与版本", ["experiment", "strategy", "qualification"], "实验和版本报告"],
     jobs: ["并行任务", ["jobs"], "并行任务报告"],
@@ -22,6 +22,7 @@
     "market-replay": "盘口回放",
     "trial-market-study": "盘口研究凭据",
     "news-study": "新闻预测对照",
+    "news-accumulation": "跨季新闻研究",
     "news-coverage": "球队消息采集",
     "news-update": "新闻触发预测",
     incident: "纠错记录",
@@ -112,6 +113,7 @@
     lower_score_this_season: "本赛季有新闻组的平均分更低",
     inconclusive: "本赛季的分差仍无法区分两组",
     pending: "仍有消息待处理", no_roster: "缺少名单", never_checked: "尚未采集", ok: "正常", partial: "部分成功", error: "失败",
+    stale_wire_observation: "伤停来源超过有效观测时间", absence_duration_limit: "持续伤停已衰减至零",
     training: "训练",
     manual: "人工记录",
     automated: "自动采集",
@@ -313,6 +315,8 @@
     if (row.kind === "market-replay") return p.title || "历史盘口分档";
     if (row.kind === "trial-market-study") return "归档与模拟回放对账";
     if (row.kind === "news-coverage") return "英超球队消息与采集状态";
+    if (row.kind === "news-accumulation")
+      return [p.first_season, p.through_season, p.horizon, "跨季新闻研究"].filter(Boolean).join(" · ");
     if (row.kind === "news-study")
       return [p.season, p.round_id ? "第 " + p.round_id + " 轮" : "赛季累计", p.horizon, "新闻预测对照"].filter(Boolean).join(" · ");
     if (row.kind === "jobs" && array(p.jobs).length) return "任务队列";
@@ -442,6 +446,52 @@
           used.has(id) ? "计入" : newsLabel(exclusions.get(id)) || "未调整"];
       }));
     }
+    const weighted = array(pair.applied).filter(item => item.player_importance);
+    if (weighted.length) {
+      const more = create("details", "");
+      more.append(create("summary", "", "查看逐名球员的权重依据"));
+      const basis = {neutral: "位置先验", confirmed_lineup_starts: "已确认首发",
+        epl_season_minutes_and_starts: "英超首发和分钟"};
+      table(more, ["球员", "依据", "已核首发／场数", "分钟", "来源出场概率", "人员系数", "伤停时长系数", "最终权重"],
+        weighted.map(item => {
+          const used = object(item.player_importance);
+          return [item.player_name, basis[used.basis] || used.basis,
+            used.matches ? used.starts + "／" + used.matches : null, used.minutes,
+            num(item.chance_of_playing) === null ? null : item.chance_of_playing + "%",
+            format(item.importance_multiplier), format(item.duration_multiplier), format(item.prior_weight)];
+        }));
+      box.append(more);
+    }
+    detail.append(box);
+  }
+
+  function marketClosePanel(close, detail) {
+    if (!close) return;
+    const box = panel("新闻调整与临近开球的盘口");
+    metrics(box, [["时限内封存", close.eligible_seals], ["有配对盘口的场次", close.paired_fixtures]]);
+    const cohorts = close.status === "multiple_probability_eras"
+      ? Object.entries(object(close.by_era)) : [["", close]];
+    for (const [era, cohort] of cohorts) {
+      const rows = Object.entries(object(cohort.endpoints)).filter(([, row]) => row.pairs > 0).map(([key, row]) => [
+        newsLabel(key), row.pairs, row.toward, row.away, row.unchanged, row.at_reference, format(row.mean_distance_gain_pp),
+      ]);
+      if (!rows.length) continue;
+      if (era) box.append(create("h4", "", "预测方法 " + era.slice(0, 12)));
+      table(box, ["方向", "合格配对", "调整朝向收盘", "调整背离收盘", "无调整", "原已相符", "平均缩短距离（百分点）"], rows);
+    }
+    if (!close.paired_fixtures) box.append(create("p", "note", "暂无可核验的决策与收盘盘口配对。"));
+    box.append(create("p", "note", "正值表示有新闻预测更接近收盘参考价。实际纸面收益见模拟账本。"));
+    detail.append(box);
+  }
+
+  function newsAccumulation(row, detail) {
+    const p = object(row.payload), box = panel("跨季新闻研究");
+    metrics(box, [["赛程场数", p.scheduled], ["符合条件的封存", p.eligible_seals], ["预测时点", p.horizon]]);
+    const entries = Object.entries(object(p.eras));
+    table(box, ["预测方法指纹", "赛果配对", "平均分差（分）", "主胜收盘配对", "平均缩短距离（百分点）"],
+      entries.map(([key, era]) => [key.slice(0, 12), object(era.score).pairs, format(object(era.score).mean),
+        object(era.home_close).pairs, format(object(era.home_close).mean)]));
+    if (!entries.length) box.append(create("p", "note", "尚无同一预测方法下可汇总的赛前封存。"));
     detail.append(box);
   }
 
@@ -483,15 +533,17 @@
 
     if (p.verdict) box.append(create("p", "note", newsLabel(p.verdict)));
     detail.append(box);
+    marketClosePanel(p.market_close, detail);
   }
   function renderNewsCoverage(row, detail) {
     const p = object(row.payload), counts = object(p.archive_counts);
     const box = panel("球队消息采集记录");
     metrics(box, [["球队与来源组合", array(p.streams).length], ["留存的文章版本", counts.news_articles],
       ["已留存球员主张", counts.news_claims], ["来源待采条目", p.pending_entries]]);
-    table(box, ["球队", "来源", "最近检查", "状态", "待采条目", "下次检查", "本次问题"], array(p.streams).map(stream => {
+    table(box, ["球队", "来源", "最近检查", "状态", "名单未匹配", "异常行", "待采条目", "下次检查", "本次问题"], array(p.streams).map(stream => {
       const last = object(stream.latest);
-      return [stream.team, stream.source, time(last.checked_at), newsLabel(last.state || "never_checked"), last.provider_pending,
+      return [stream.team, stream.source, time(last.checked_at), newsLabel(last.state || "never_checked"),
+        last.unmatched_players, object(last.provider_counts).invalid_entries, last.provider_pending,
         time(stream.next_at), array(last.issues).join(" · ")];
     }));
     detail.append(box);
@@ -1345,6 +1397,7 @@
     "market-replay": renderCoverage,
     "trial-market-study": renderCoverage,
     "news-study": (row, detail) => newsStudy(row.payload, detail),
+    "news-accumulation": newsAccumulation,
     "news-coverage": renderNewsCoverage,
     "news-update": (row, detail) => {
       const p = object(row.payload);
