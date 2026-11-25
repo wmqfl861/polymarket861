@@ -317,3 +317,62 @@ class SeasonTests(unittest.TestCase):
                 ).fetchone()[0],
                 4,
             )
+
+    def test_retry_fits_original_window_and_restart_preserves_cursor_cycle(self):
+        from concurrent.futures import Future
+
+        with contextlib.closing(season._db(self.root)) as db, db:
+            season._add(
+                db,
+                self.slug,
+                store.iso(KICK),
+                NOW,
+                NOW + timedelta(seconds=25),
+                "decision_book",
+                "book",
+            )
+            row = dict(db.execute("SELECT * FROM season_slots").fetchone())
+        worker = season.Coordinator(self.root)
+        fut = Future()
+        fut.set_result(
+            {
+                "fresh_by_deadline": 0,
+                "books": 2,
+                "retry_at": store.iso(NOW + timedelta(seconds=3)),
+            }
+        )
+        with contextlib.closing(season._db(self.root)) as db, db:
+            db.execute(
+                "UPDATE season_slots SET state='running',owner=?", (worker.identity,)
+            )
+        with patch.object(store, "now_utc", return_value=store.iso(NOW)):
+            worker._finish(fut, "book", row)
+        with contextlib.closing(season._db(self.root)) as db:
+            refreshed = db.execute(
+                "SELECT state,target,deadline FROM season_slots WHERE key=?",
+                (row["key"],),
+            ).fetchone()
+            self.assertEqual(
+                tuple(refreshed), ("pending", row["target"], row["deadline"])
+            )
+            self.assertEqual(
+                db.execute("SELECT not_before FROM season_retries").fetchone()[0],
+                store.iso(NOW + timedelta(seconds=3)),
+            )
+        worker.close()
+
+        def get(url, params):
+            nxt = {None: "a", "a": "b", "b": "a"}[params.get("cursor")]
+            return reply(
+                {"data": [], "pagination": {"has_more": True, "next_cursor": nxt}},
+                url,
+                NOW,
+            )
+
+        with patch.object(provider, "get", side_effect=get):
+            for _ in range(2):
+                self.assertFalse(
+                    ma.history(self.root, "trades", "42", limit=10, pages=1)["complete"]
+                )
+            with self.assertRaisesRegex(ValueError, "earlier run"):
+                ma.history(self.root, "trades", "42", limit=10, pages=1)

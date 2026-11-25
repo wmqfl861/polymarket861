@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS season_slots(
 CREATE INDEX IF NOT EXISTS season_slot_due ON season_slots(stage,state,target,deadline);
 CREATE TABLE IF NOT EXISTS season_services(
  service TEXT PRIMARY KEY,next_at TEXT NOT NULL,owner TEXT,until TEXT,updated TEXT,result TEXT);
+CREATE TABLE IF NOT EXISTS season_retries(slot TEXT PRIMARY KEY,attempts INTEGER NOT NULL,not_before TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS season_alerts(
  key TEXT PRIMARY KEY,fixture TEXT,role TEXT,occurred TEXT,reason TEXT);
 """
@@ -415,6 +416,7 @@ class Coordinator:
         self.next_plan = 0.0
         self.once = once
         self.services_started = set()
+        self.first_tick = True
 
     def _finish(self, future, kind, row):
         clock = store.instant(store.now_utc())
@@ -478,6 +480,13 @@ class Coordinator:
                 if name == "catalog":
                     self.next_plan = 0.0
                 return
+            db.execute("BEGIN IMMEDIATE")
+            owned = db.execute(
+                "SELECT 1 FROM season_slots WHERE key=? AND owner=? AND state='running'",
+                (row["key"], self.identity),
+            ).fetchone()
+            if not owned:
+                return
             state = "error" if error else "done"
             if result.get("exchange_started"):
                 state = "ended"
@@ -501,6 +510,32 @@ class Coordinator:
                 state = "partial"
             elif kind == "metadata" and (error or result.get("gaps")):
                 state = "gap"
+            if kind in ("book", "metadata") and state == "gap":
+                retry_at = result.get("retry_at") or max(
+                    (
+                        g.get("retry_at")
+                        for g in result.get("gaps", [])
+                        if g.get("retry_at")
+                    ),
+                    default=None,
+                )
+                if retry_at and clock < store.instant(row["deadline"]):
+                    retry = max(
+                        store.instant(retry_at), clock + timedelta(milliseconds=250)
+                    )
+                    old = db.execute(
+                        "SELECT attempts FROM season_retries WHERE slot=?",
+                        (row["key"],),
+                    ).fetchone()
+                    if retry < store.instant(row["deadline"]) and (
+                        not old or old[0] < 2
+                    ):
+                        db.execute(
+                            "INSERT INTO season_retries VALUES(?,1,?) ON CONFLICT(slot) DO UPDATE SET "
+                            "attempts=attempts+1,not_before=excluded.not_before",
+                            (row["key"], store.iso(retry)),
+                        )
+                        state = "pending"
             if state in ("error", "gap", "partial"):
                 _alert(
                     db,
@@ -562,6 +597,41 @@ class Coordinator:
         with closing(_db(self.root)) as db, db:
             db.execute("BEGIN IMMEDIATE")
             _expire(db, stamp)
+            if self.first_tick:
+                previous = db.execute(
+                    "SELECT updated FROM season_services WHERE service='heartbeat'"
+                ).fetchone()
+                if (
+                    previous
+                    and previous[0]
+                    and (now - store.instant(previous[0])).total_seconds() > 90
+                ):
+                    for f in db.execute(
+                        "SELECT fixture,kickoff FROM season_fixtures WHERE kickoff BETWEEN ? AND ? "
+                        "AND first_seen<?",
+                        (
+                            store.iso(now - timedelta(minutes=10)),
+                            store.iso(now + timedelta(days=7)),
+                            store.iso(now - timedelta(seconds=90)),
+                        ),
+                    ):
+                        _add(
+                            db,
+                            f["fixture"],
+                            f["kickoff"],
+                            now,
+                            now + timedelta(seconds=60),
+                            "resume",
+                            "book",
+                        )
+                    _alert(
+                        db,
+                        store.digest(["season_restart", previous[0]]),
+                        None,
+                        "heartbeat_gap",
+                        "resumed after collector heartbeat at " + previous[0],
+                    )
+                self.first_tick = False
             near = db.execute(
                 "SELECT 1 FROM season_slots WHERE state IN ('pending','running') AND stage='book' "
                 "AND role IN ('decision_book','execution_book') AND deadline>=? AND target<=? LIMIT 1",
@@ -602,9 +672,10 @@ class Coordinator:
                 rows = db.execute(
                     "WITH pick AS (SELECT s.*,row_number() OVER(PARTITION BY fixture ORDER BY deadline,key) n FROM season_slots s "
                     "WHERE stage=? AND target<=? AND deadline>=? AND (state='pending' OR (state='running' AND until<?)) "
+                    "AND NOT EXISTS(SELECT 1 FROM season_retries r WHERE r.slot=s.key AND r.not_before>?) "
                     "AND NOT EXISTS(SELECT 1 FROM season_slots a WHERE a.stage=s.stage AND a.fixture=s.fixture AND a.state='running' AND a.until>=?)) "
                     "SELECT * FROM pick WHERE n=1 ORDER BY deadline,target,fixture LIMIT ?",
-                    (stage, stamp, stamp, stamp, stamp, free),
+                    (stage, stamp, stamp, stamp, stamp, stamp, free),
                 ).fetchall()
                 for row in rows:
                     db.execute(
