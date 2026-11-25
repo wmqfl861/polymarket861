@@ -1037,7 +1037,13 @@ def _judge(data_dir, key, *, approval=None):
             state = (
                 "promoted" if promoted else "recommended" if recommended else "shadow"
             )
-            if selected and legacy:
+            if legacy and (
+                selected
+                or decision.get("reason")
+                in {"active_baseline_changed", "registered_recipe_not_executable"}
+            ):
+                if not selected:
+                    decision["activation_blocked_reason"] = decision["reason"]
                 decision["reason"] = "frozen_legacy_window_research_only"
             elif recommended:
                 decision["recommendation_digest"] = decision_id
