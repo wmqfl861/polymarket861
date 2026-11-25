@@ -6,6 +6,7 @@ from collections import Counter, defaultdict
 from contextlib import closing
 from datetime import timedelta
 
+from .score_bounds import INVALID_SCORE, valid_score
 from . import evidence, store
 from .evidence_sources import name_key
 from .football import team_key
@@ -33,8 +34,9 @@ _AS_OF = """WITH f AS (
 ), d AS (
  SELECT d.*,row_number() OVER (PARTITION BY fixture_id,kickoff ORDER BY at DESC) AS n
  FROM result_dispositions d WHERE at<=:at
-) SELECT f.fixture_id,f.round_id, CASE WHEN coalesce(d.held,0)=0 THEN coalesce(t.actual_kickoff,f.kickoff) ELSE f.kickoff END AS kickoff,f.home,f.away,
+) SELECT f.fixture_id,f.round_id, CASE WHEN coalesce(d.held,0)=0 THEN coalesce(t.actual_kickoff,f.kickoff) ELSE f.kickoff END AS kickoff,f.kickoff AS scheduled,f.home,f.away,
  CASE WHEN coalesce(d.held,0)=0 THEN r.home_goals END AS goals,
+ CASE WHEN coalesce(d.held,0)=0 THEN r.away_goals END AS away_goals,
  CASE WHEN coalesce(d.held,0)=0 THEN r.received_at END AS received,
  CASE WHEN d.held=1 THEN d.reason END AS hold_reason
  FROM f LEFT JOIN r ON r.fixture_id=f.fixture_id AND r.kickoff=f.kickoff AND r.n=1
@@ -62,6 +64,10 @@ def status(root, year, at=None):
                 {"season": f"{year}-{(year + 1) % 100:02d}", "at": at},
             )
         ]
+        for fixture in fixtures:
+            score = (fixture["goals"], fixture.pop("away_goals"))
+            if score != (None, None) and not valid_score(score):
+                fixture.update(goals=None, received=None, hold_reason=INVALID_SCORE, kickoff=fixture["scheduled"])
         has_facts = db.execute(
             "SELECT 1 FROM sqlite_master WHERE name='ev_facts'"
         ).fetchone()

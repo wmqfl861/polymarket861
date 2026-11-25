@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
+from .score_bounds import INVALID_SCORE, valid_score
 from . import dbscope
 from .blob_storage import blob_path, read_blob, representation
 
@@ -348,10 +349,8 @@ def record_result_db(db, outcome, *, recorded_at, actual_kickoff=None):
     }
     if not item["source"] or not item["locator"]:
         raise ValueError("a result needs a source and a locator")
-    if any(
-        type(item[k]) is not int or item[k] < 0 for k in ("home_goals", "away_goals")
-    ):
-        raise ValueError("goals must be non-negative integers")
+    if not valid_score((item["home_goals"], item["away_goals"])):
+        raise ValueError("regulation goals must be two integer counts in 0–50")
     grade = "observed"
     if "archive_at" in outcome:
         grade = "archived_upper_bound"
@@ -451,9 +450,16 @@ def eligible_fixture_rows(db, *, season=None):
     if season is not None:
         query += " AND f.season=?"
         args = (season,)
-    return [
-        dict(r) for r in db.execute(query + " ORDER BY f.kickoff,f.fixture_id", args)
-    ]
+    fixtures = []
+    for record in db.execute(query + " ORDER BY f.kickoff,f.fixture_id", args):
+        fixture = dict(record)
+        score = (fixture["home_goals"], fixture["away_goals"])
+        if score != (None, None) and not valid_score(score):
+            fixture.update(
+                home_goals=None, away_goals=None, result_disposition=INVALID_SCORE
+            )
+        fixtures.append(fixture)
+    return fixtures
 
 
 def evaluation_rows(

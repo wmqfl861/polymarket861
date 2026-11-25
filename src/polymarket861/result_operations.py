@@ -8,6 +8,7 @@ from contextlib import closing
 from datetime import timedelta
 from pathlib import Path
 
+from .score_bounds import valid_score
 from . import input_manifest, store
 from . import result_admission as admission
 from . import result_feed as feed
@@ -301,6 +302,11 @@ def manual(root, year, rnd, file, *, whole_round=True):
 
     raw = _raw_file(file)
     obj, ident, sha = _batch(root, raw, year, rnd, file)
+    if not all(
+        isinstance(r, dict) and valid_score((r.get("home_goals"), r.get("away_goals")))
+        for r in obj["matches"]
+    ):
+        raise ValueError("invalid regulation score: expected two integer counts in 0–50")
     with closing(admission.database(root)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         previous = db.execute(
@@ -341,10 +347,6 @@ def manual(root, year, rnd, file, *, whole_round=True):
                     or r.get("status") != "final"
                     or r.get("period") != "regulation"
                     or not str(r.get("locator") or "").strip()
-                    or any(
-                        type(r.get(k)) is not int or r[k] < 0
-                        for k in ("home_goals", "away_goals")
-                    )
                 ):
                     raise ValueError(
                         "invalid, duplicate or unmatched regulation match and source locator"

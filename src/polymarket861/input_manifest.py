@@ -11,6 +11,7 @@ from collections import defaultdict
 from contextlib import closing
 from pathlib import Path
 
+from .score_bounds import INVALID_SCORE, valid_score
 from . import dbscope
 from . import football
 from .store import archive_bytes, read_blob, canonical, connect, digest, iso, now_utc
@@ -123,13 +124,25 @@ def _effective_rows(db, fixtures):
     proven_schedules, later_checks = result_links(db)
     reviewed = defaultdict(list)
     bound_results = set()
+    invalid_openfootball = set()
+    adjudicated = set()
     for r in db.execute(
         "SELECT r.*,s.kickoff,t.actual_kickoff FROM result_versions r JOIN result_schedule_refs s "
-        "USING(fixture_id,version) LEFT JOIN result_event_times t USING(fixture_id,version) WHERE r.source!='openfootball' ORDER BY recorded_at,version"
+        "USING(fixture_id,version) LEFT JOIN result_event_times t USING(fixture_id,version) ORDER BY recorded_at,version"
     ):
         fid = r["fixture_id"]
         if fid not in ids:
             continue
+        key = (fid, r["kickoff"])
+        if r["source"] == "openfootball":
+            # The ordinary archive uses its own receipt stream. Replay legacy
+            # corrupt rows and their corrections without overwriting an adjudication.
+            if not valid_score((r["home_goals"], r["away_goals"])):
+                invalid_openfootball.add(key)
+            elif key not in invalid_openfootball or key in adjudicated:
+                continue
+        else:
+            adjudicated.add(key)
         at = max(r["recorded_at"], r["received_at"])
         raw_kickoff = iso(ids[fid].kickoff)
         adjusted = proven_schedules.get((fid, r["kickoff"]))
@@ -227,6 +240,10 @@ def _effective_rows(db, fixtures):
             if key[1] == "score" and at < (row.get("result_kickoff") or iso(ids[key[0]].kickoff)):
                 continue
             if key[1] == "score":
+                if not row.get("retracted") and not valid_score(row.get("score")):
+                    # Keep the original version and its knowledge time. A corrupt
+                    # revision withdraws the prior score until a valid correction.
+                    row = row | {"score": None, "retracted": True, "source": INVALID_SCORE}
                 effective = authoritative_schedules.get(
                     key[0], iso(ids[key[0]].kickoff)
                 )

@@ -3,6 +3,7 @@
 from collections import Counter
 from datetime import timedelta
 
+from .score_bounds import valid_score
 from . import opportunity, store
 
 SOURCE = "verified-result-pairing"
@@ -53,13 +54,7 @@ def _other(event):
 
 
 def _final(r):
-    score = r["score"]
-    return (
-        r["status"] == "final"
-        and isinstance(score, (tuple, list))
-        and len(score) == 2
-        and all(type(g) is int and g >= 0 for g in score)
-    )
+    return r["status"] == "final" and valid_score(r["score"])
 
 
 def _repeat(rows, actual):

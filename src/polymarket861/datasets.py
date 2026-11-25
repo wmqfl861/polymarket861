@@ -249,6 +249,15 @@ def observe(
         for fixture in batch:
             if fixture.status == "quarantined":
                 quarantined += 1
+                if fixture.quarantine_reason:
+                    conflicts.append(
+                        {
+                            "fixture_id": fixture.fixture_id,
+                            "kind": "score",
+                            "reason": fixture.quarantine_reason,
+                            "source": locator,
+                        }
+                    )
                 continue
             fid = fixture.fixture_id
             known = schedules.get(fid)

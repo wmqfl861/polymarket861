@@ -21,6 +21,7 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
+from .score_bounds import INVALID_SCORE, valid_score
 from .football_model import (
     DECAY_PER_DAY,
     DEFAULT_LINES,
@@ -118,11 +119,7 @@ def blob_sha(raw):
 
 
 def _score(pair):
-    if (
-        not isinstance(pair, (list, tuple))
-        or len(pair) != 2
-        or any(type(v) is not int or not 0 <= v <= 50 for v in pair)
-    ):
+    if not valid_score(pair):
         raise ValueError(
             "full-time goals must be a pair of nonnegative integer counts (0–50)"
         )
@@ -155,6 +152,7 @@ class Fixture:
     source_blob: str = ""
     status: str = "scheduled"
     schedule_grades: tuple = ()
+    quarantine_reason: str | None = None
 
 
 def read_json_rows(path):
@@ -221,14 +219,11 @@ def _parsed_version(row, kickoff):
     actual = utc(row["result_kickoff"]) if row.get("result_kickoff") else None
     if finalized < (actual or kickoff) or published < finalized or received < published:
         raise ValueError("inconsistent kickoff/finalization/publication/receipt order")
-    score = (
-        None
-        if row.get("retracted")
-        else _score(row.get("score", [row.get("home_goals"), row.get("away_goals")]))
-    )
-    return ResultVersion(
-        received, score, grade, str(row.get("source", "local-observation")), actual
-    )
+    pair = row.get("score", [row.get("home_goals"), row.get("away_goals")])
+    source = str(row.get("source", "local-observation"))
+    if not row.get("retracted") and not valid_score(pair):
+        return ResultVersion(received, None, grade, INVALID_SCORE, actual)
+    return ResultVersion(received, None if row.get("retracted") else tuple(pair), grade, source, actual)
 
 
 def verify_2019_repair(matches, comparison_csv=None):
@@ -303,6 +298,19 @@ def _parse_match(season, row, evidence, lag_hours, source_blob):
     raw_score = row.get("score")
     if isinstance(raw_score, dict):
         raw_score = raw_score.get("ft")
+    if raw_score is not None and not valid_score(raw_score):
+        return Fixture(
+            fid,
+            season,
+            rnd,
+            kickoff,
+            home,
+            away,
+            source_blob=source_blob,
+            status="quarantined",
+            kickoff_precision="minute" if hh else "date",
+            quarantine_reason=INVALID_SCORE,
+        )
     final = _score(raw_score) if raw_score is not None else None
     status = (
         "completed"

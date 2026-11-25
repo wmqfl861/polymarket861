@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
+from .score_bounds import INVALID_SCORE, valid_score
 from . import dbscope
 from .football import fixture_id, read_json_rows
 from .store import (
@@ -107,18 +108,21 @@ def _full_time(data, year, *, only_round=None):
         score = None
         error = None
         if match.get("matchIsFinished") is True:
-            finals = [
-                r
-                for r in match.get("matchResults", [])
-                if r.get("resultTypeKind") == "After90Minutes"
-            ]
-            if len(finals) == 1 and all(
-                type(finals[0].get(k)) is int and finals[0][k] >= 0
-                for k in ("pointsTeam1", "pointsTeam2")
-            ):
-                score = [finals[0]["pointsTeam1"], finals[0]["pointsTeam2"]]
-            else:
+            results = match.get("matchResults")
+            finals = (
+                [r for r in results if r.get("resultTypeKind") == "After90Minutes"]
+                if isinstance(results, list)
+                and all(isinstance(r, dict) for r in results)
+                else []
+            )
+            if len(finals) != 1:
                 error = "ambiguous_90_minute_final"
+            else:
+                pair = [finals[0].get("pointsTeam1"), finals[0].get("pointsTeam2")]
+                if valid_score(pair):
+                    score = pair
+                else:
+                    error = INVALID_SCORE
         yield fid, mid, rnd, kickoff, score, error
 
 
@@ -160,6 +164,16 @@ def reconcile(root, year):
     for row in rows:
         score = json.loads(row["score"]) if row["score"] else None
         known = official.get(row["fixture"])
+        if score is not None and not valid_score(score):
+            counts[INVALID_SCORE] += 1
+            conflicts.append(
+                {
+                    "fixture_id": row["fixture"],
+                    "reason": INVALID_SCORE,
+                    "sha256": row["source_sha"],
+                }
+            )
+            continue
         if score is None:
             counts["without_confirmed_90m"] += 1
             if instant(row["kickoff"]) < collected - timedelta(days=1):
@@ -388,12 +402,13 @@ def trial_sidecar(root, year, base_evidence, output):
         if row["score"] is not None:
             observed_scores.add(row["fixture"])
         receipt = row["observed_at"]
-        # A withdrawal is an explicit version and must not become a zero score.
+        # A withdrawal, including a malformed legacy score, is an explicit version.
+        score = json.loads(row["score"]) if row["score"] else None
         entries.append(
             {
                 "fixture_id": row["fixture"],
-                "score": json.loads(row["score"]) if row["score"] else None,
-                "retracted": row["score"] is None,
+                "score": score if valid_score(score) else None,
+                "retracted": not valid_score(score),
                 "archive_at": receipt,
                 "published_by": receipt,
                 "finalized_by": receipt,

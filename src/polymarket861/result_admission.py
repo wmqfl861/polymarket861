@@ -9,6 +9,7 @@ from contextlib import closing
 from datetime import timedelta
 from functools import lru_cache
 
+from .score_bounds import INVALID_SCORE, valid_score
 from . import dbscope, result_pairings, store
 
 INTERVAL = timedelta(minutes=30)
@@ -56,11 +57,12 @@ def enqueue(db, season, rnd):
 
 
 def last_result(db, fid, kickoff):
-    return db.execute(
+    row = db.execute(
         "SELECT r.*,t.actual_kickoff FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
         "LEFT JOIN result_event_times t USING(fixture_id,version) WHERE r.fixture_id=? AND s.kickoff=? ORDER BY r.version DESC LIMIT 1",
         (fid, kickoff),
     ).fetchone()
+    return row if row and valid_score((row["home_goals"], row["away_goals"])) else None
 
 
 def last_disposition(db, fid, kickoff, at):
@@ -287,7 +289,7 @@ def _pair(events):
     """Find two consecutive consistent states separated by the confirmation interval."""
     last = events[-1]
     fields = ("source_id", "round", "kickoff", "score", "error")
-    if last["score"] is None or last["error"]:
+    if not valid_score(last["score"]) or last["error"]:
         return None
     earliest = store.instant(last["kickoff"]) + timedelta(minutes=90)
     # A regression to unfinished or a changed final breaks the chain.
@@ -464,6 +466,7 @@ def reconcile(root, year):
                 "ambiguous_source_fixture",
                 "ambiguous_source_match_id",
                 "ambiguous_90_minute_final",
+                INVALID_SCORE,
             }:
                 reason = latest["error"]
             elif training_review and not withdrawn_manual:

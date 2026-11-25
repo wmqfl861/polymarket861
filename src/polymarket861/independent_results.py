@@ -15,6 +15,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
+from .score_bounds import INVALID_SCORE, valid_score
 from . import dbscope, store
 from .result_feed import AGENT
 
@@ -257,16 +258,24 @@ def _article(page, year, roster):
         report = _REPORT.fullmatch(fields.get("report", "").strip("[] "))
         match_id = "premierleague:" + report[1] if report else None
         result = fields.get("result", "").strip().upper()
-        pair = re.fullmatch(r"(\d{1,2})\s*[–\-]\s*(\d{1,2})", fields.get("score", ""))
+        score_text = fields.get("score", "")
+        pair = re.fullmatch(r"([0-9]{1,2})\s*[–\-]\s*([0-9]{1,2})", score_text)
         score, status = None, "unfinished"
         reported_score = (
             list(map(int, pair.groups()))
             if pair and result in {"W", "D", "L"}
             else None
         )
+        invalid = bool(
+            result in {"W", "D", "L"}
+            and re.fullmatch(r"[+0-9.\s–-]+", score_text)
+            and not valid_score(reported_score)
+        )
         if result in {"W", "D", "L"}:
             status = "unverified"
-            if (
+            if invalid:
+                status = "conflict"
+            elif (
                 reported_score
                 and kickoff
                 and rnd
@@ -301,6 +310,7 @@ def _article(page, year, roster):
                 "kickoff": kickoff,
                 "score": score,
                 "reported_score": reported_score,
+                "score_error": INVALID_SCORE if invalid else None,
                 "status": status,
                 "source_match_id": match_id,
                 "revision": attribution,
@@ -349,6 +359,8 @@ def _decode(raw, titles, year):
                 "source_match_id",
             )
         }
+        if any(s["score_error"] for s in sources):
+            claim["error"] = INVALID_SCORE
         contradictory = len({s["club"] for s in sources}) != len(sources)
         comparison = asserted or sources
         for field in ("round", "kickoff", "reported_score", "source_match_id"):
