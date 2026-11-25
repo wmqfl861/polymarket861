@@ -324,7 +324,8 @@ def _decide(root, db, account, fixture, cut, clock, actions, gaps):
     existing = {
         (r["condition_id"], r["token"]): r
         for r in db.execute(
-            "SELECT id,fixture,condition_id,token,status,COALESCE(json_extract(plan,'$.order_protocol'),?) AS protocol "
+            "SELECT id,fixture,condition_id,token,status,json_extract(result,'$.reason') AS reason, "
+            "COALESCE(json_extract(plan,'$.order_protocol'),?) AS protocol "
             "FROM research_shadow_orders WHERE account=? AND fixture=? AND cutoff=?",
             (LEGACY_PROTOCOL, account, fixture["fixture_id"], iso(cut)),
         )
@@ -350,6 +351,7 @@ def _decide(root, db, account, fixture, cut, clock, actions, gaps):
                     "fixture_id": previous["fixture"],
                     "token_id": token,
                     "state": previous["status"],
+                    "reason": previous["reason"],
                     "order_protocol": protocol,
                     "repeated": True,
                 }

@@ -180,6 +180,34 @@ class ShadowProtocol(unittest.TestCase):
                 self.assertEqual(Decimal(initial) - spent, Decimal(report["cash"]))
                 self.assertGreater(report["counts"].get("skipped", 0), 0)
 
+    def test_empty_cash_and_repeated_skips_retain_the_economic_reason(self):
+        self.market(range(1))
+        self.books(self.first)
+        with f.at(self.first):
+            ledger.open_account(self.root, "main", "formal")
+            with ledger.connection(self.root, True) as db:
+                db.execute("UPDATE paper_accounts SET cash='0' WHERE account='main'")
+            with shadow.db_for(self.root) as db:
+                db.execute(
+                    "INSERT INTO research_shadow_accounts VALUES('research-shadow','10000','0')"
+                )
+        with f.at(f.CUT - timedelta(seconds=5)):
+            formal = opportunity.process(self.root, f.SLUG)
+            self.assertEqual(
+                {x["reason"] for x in formal["decisions"]}, {"insufficient cash"}
+            )
+            first = self.execute()
+            again = self.execute()
+            self.assertEqual(
+                {x["reason"] for x in first["actions"]},
+                {"insufficient_edge_depth_cash_or_minimum"},
+            )
+            self.assertEqual(
+                [(x["id"], x["reason"]) for x in first["actions"]],
+                [(x["id"], x["reason"]) for x in again["actions"]],
+            )
+            self.assertTrue(all(x["repeated"] for x in again["actions"]))
+
     def test_scoped_depth_and_legacy_order_finish_as_sealed(self):
         self.market(range(1))
         self.books(self.first, size="40")

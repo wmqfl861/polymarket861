@@ -720,9 +720,12 @@ def freeze(data_dir, account, intent, book, *, replay_op=None):
                 unit(intent.get("limit_price")),
                 number(intent.get("quantity"), "requested size"),
             )
-            budget = min(MAX_ORDER, number(intent.get("budget", MAX_ORDER)), cash)
-            if budget <= 0 or qty <= 0 or qty % UNIT or limit <= 0:
+            requested_budget = number(intent.get("budget", MAX_ORDER))
+            if requested_budget <= 0 or qty <= 0 or qty % UNIT or limit <= 0:
                 raise ValueError("invalid size, price or available cash")
+            if cash <= 0:
+                raise ValueError("insufficient cash")
+            budget = min(MAX_ORDER, requested_budget, cash)
             obj.update(
                 fair_low=fmt(fair),
                 fair_high=fmt(upper),
