@@ -367,6 +367,8 @@ class ResultIdentity(unittest.TestCase):
             round_number=1,
         )
         self.assertEqual(graded["scored"], 1)
+        unsealed = football.score_round(good_history, [pred], season=game.season, round_number=1)
+        self.assertEqual((unsealed["completed"], unsealed["missing"]), (1, 1))
         details = []
         football.backtest(
             good_history,

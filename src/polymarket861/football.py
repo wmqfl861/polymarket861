@@ -818,6 +818,8 @@ def score_round(
                 and int(pred["cutoff_minutes"]) != cutoff_minutes
             ):
                 continue
+            if moved and not pred.get("sealed_at"):
+                continue
             if pred.get("sealed_at") and utc(pred["sealed_at"]) > cutoff:
                 continue
             # A bare vector is supported for a caller which already bound this
