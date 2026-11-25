@@ -261,7 +261,12 @@ def storage_status(data_dir):
                     day["stored_bytes"] += blob_path(directory, sha).stat().st_size
                 except FileNotFoundError:
                     missing += 1
-            measurements = {"first_received_utc_day": dict(sorted(by_day.items())), "missing_originals": missing}
+            page_size = db.execute("PRAGMA page_size").fetchone()[0]
+            measurements = {
+                "first_received_utc_day": dict(sorted(by_day.items())),
+                "missing_originals": missing,
+                "sqlite_reusable_bytes": page_size * db.execute("PRAGMA freelist_count").fetchone()[0],
+            }
             if db.execute("SELECT 1 FROM sqlite_master WHERE name='ma_contract_receipts'").fetchone():
                 measurements["contract_receipts"] = db.execute("SELECT count(*) FROM ma_contract_receipts").fetchone()[0]
                 measurements["contract_bodies"] = db.execute("SELECT count(*) FROM ma_contract_payloads").fetchone()[0]
