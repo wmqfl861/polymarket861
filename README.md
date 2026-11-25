@@ -33,7 +33,7 @@ pm861 --data-dir .pm861 dashboard export --output .pm861/dashboard.html
 | 目标 | 正常入口和输出 |
 |---|---|
 | 刷新公共领域数据 | `data refresh --first 2022-23 --last 2026-27` 锁定上游提交，校验逐季文件，归档原始内容、时间和本机可用的输入清单。已有固定版本可用 `data observe 数据根目录 --register-season 2026-27`。从本机实际观察时刻开始使用历史终场记录。 |
-| 更新当季赛果 | `result-feed season 2026` 拉取 OpenLigaDB。经间隔复收并与赛程核对后，确认的 90 分钟结果进入后续训练和轮报。冲突、未完赛及来源回滚在独立记录中可查。 |
+| 更新当季赛果 | `result-feed season 2026` 拉取 OpenLigaDB 和英格兰俱乐部的 Wikimedia 赛季修订。核对身份、轮次、实际开球，并以两个提供方的终场或单源独立复收确认。用 `result-feed freshness 2026` 查看逐队缺口和下一轮影响。冲突、未完赛及来源回滚在独立记录中可查。 |
 | 记录新闻、伤停和天气 | `source` 登记免费用途、字段和使用范围。`evidence` 导入球员名单、状态、牌、场外消息及气象事实，区分预计与已确认版本。`feeds` 提供 GDELT 发现与有起报时间的天气试采。每种来源按实际使用条件启用。 |
 | 封存赛前预测 | `fixture list --season 2026-27` 查比赛标识。`forecast make 比赛标识 数据根目录 --horizon early` 生成带本机收件凭据的提前技术观察。标准时点用 `run due 数据根目录 --workers 2`，可由本机计划任务每分钟调用，也可加 `--repeat 60` 前台持续运行。 |
 | 调度全赛季 | `season run --repeat` 协调未来赛程、盘口、预测与结算；`season backfill 2025 --max-pages 10` 按游标补采，`season status` 查看迟到与漏窗。 |
@@ -43,6 +43,8 @@ pm861 --data-dir .pm861 dashboard export --output .pm861/dashboard.html
 | 并行维护和回滚 | `run due` 会从新轮报、错误、来源异常及每周免费源缺口生成去重的本地研究任务。可用 `maintenance tick` 单独检查，或用 `jobs enqueue` 登记带依赖任务。`jobs run --workers 2` 并行运行。允许调用已有的本机 Codex 时加 `--allow-codex`。`experiment register` 预登记候选与窗口，`experiment evaluate` 计算证据，`experiment approve 键 --reviewer 名称 --reason 理由` 具名确认模型切换，`experiment rollback` 可恢复先前版本。 |
 | 比较选单策略 | `strategy register` 预登记固定预算、候选选择规则和自预登记起始轮起的连续 38 个未来官方轮次，可跨赛季。用 `strategy history` 重放可执行历史盘，`strategy freeze` 和 `strategy execute` 在纸面账户执行赛前配对。用 `strategy score` 查看按轮统计的扣费后收盘价格优势和风险。 |
 | 检查正式模拟是否可以开始 | `trial readiness` 返回实测历史覆盖、连续技术轮次、历史盘口回放与账本自检。条件满足后用 `trial activate 未来UTC时刻` 登记往后生效的纸面协议。 |
+| 复核安装包升级 | 已有库可运行 `forecast release-compare 历史目录` 比较五季同场输出，再按报告摘要与具名决定生效。新旧程序与输入的绑定方式见[版本及实验签核](docs/model-release-governance.md)。 |
+| 查看运行容量 | `storage status` 汇总 SQLite 与压缩原件的实际字节数、逐日首次收件量和合约正文复用情况。 |
 | 恢复运行状态 | `backup create 新备份目录`、`backup verify 备份目录`、`backup restore 备份目录 新运行目录`。保留数据库、归档证据、已登记输入与工作产物。 |
 
 表格里的命令均接在 `pm861 --data-dir 运行目录` 之后。联网接口失败会记录缺口。标准评分或账本能够独立运行，本地 Codex 只用于有权限的维护和研究任务。当前运行目录、原始响应、密钥和登录状态保存在用户本机。
@@ -57,6 +59,8 @@ pm861 --data-dir .pm861 dashboard export --output .pm861/dashboard.html
 | Polymarket 完整赛季目录 | 2025/26 枚举 380 个主赛事。380 场有可映射的胜平负、297 场有全场大小，在该目录中没有匹配到全场主客单队大小。2026/27 采样当日枚举 129 场，均发现四种玩法。 | 挂牌、可取得报价、可执行成交分别计数。源更新时重新发现。 |
 | 合约规则与费用 | 2026/27 目录中有 2,736 个已映射合约。2,451 个可解释规则的合约全部启用手续费，其余 285 个的规则尚待核对。 | 正式模拟缺少经核验的当期收费资产与舍入依据。0.2.0 的独立影子可在其余条件满足时按合约费率估算。 |
 | 已完赛的五场行情 | 123 条机会记录，有逐笔成交的 B 档 12 条，只有价格曲线的 C 档 18 条，其余 93 条缺证据或未挂牌。可执行 A 档为 0。 | 行情研究的真实样本。历史模拟收益率为空。合成账本样例另列。 |
+
+[本版赛果实收与前瞻检查](reports/result-sources-2026-11-25-0.3.0.json) · [实际市场延迟与回补](docs/EXECUTION-COLLECTION.md) · [五季新旧概率对照](reports/research/release-probability-comparison-0.3.0.json)
 
 [五季概率报告](reports/historical-football.json) · [严格历史覆盖](reports/historical-football-strict.json) · [真实一轮成绩单](reports/round-2025-26-01.json) · [真实市场覆盖](reports/historical-market-coverage.json) · [逐季合约条款核对](reports/contract-rule-coverage.json) · [免费源与赛前采样](reports/first-run.json)
 
