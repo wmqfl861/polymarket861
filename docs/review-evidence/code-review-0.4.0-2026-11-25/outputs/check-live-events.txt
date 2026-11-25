@@ -1,0 +1,17 @@
+fixture | claims applied | lam mu rho | dlog_home dlog_away | max fit residual | d(home_win, draw, away_win, over2.5)
+arsenal/manchester-city                c= 8 a= 6 lam=1.4953 mu=1.0208 rho=-0.05320 dh=-0.00835 da=-0.00455 drho=+2.9e-15 res=3.1e-15 d=(-0.0022,+0.0014,+0.0008,-0.0044) {'reported': 6, 'rumour': 2} excl={'unsupported_event': 2}
+brighton-hove-albion/newcastle-united  c=10 a= 8 lam=1.9324 mu=1.2159 rho=-0.05320 dh=-0.04275 da=+0.03375 drho=-7.0e-14 res=1.1e-14 d=(-0.0277,+0.0066,+0.0211,-0.0084) {'reported': 8, 'rumour': 2} excl={'unsupported_event': 2}
+crystal-palace/hull-city               c=10 a=10 lam=1.2081 mu=1.2023 rho=-0.05320 dh=+0.01575 da=-0.01025 drho=-1.9e-15 res=2.1e-15 d=(+0.0079,-0.0005,-0.0073,+0.0018) {'reported': 10} excl={}
+everton/liverpool                      c= 8 a= 7 lam=1.1561 mu=1.3962 rho=-0.05320 dh=+0.06570 da=-0.01880 drho=+8.7e-16 res=1.3e-14 d=(+0.0257,-0.0016,-0.0240,+0.0132) {'reported': 7, 'rumour': 1} excl={'unsupported_event': 1}
+fulham/bournemouth                     c= 9 a= 6 lam=1.2968 mu=1.2955 rho=-0.05320 dh=+0.02485 da=-0.02340 drho=-5.2e-15 res=5.6e-15 d=(+0.0148,-0.0003,-0.0145,+0.0007) {'reported': 6, 'rumour': 3} excl={'unsupported_event': 3}
+ipswich-town/aston-villa               c= 4 a= 4 lam=1.3769 mu=1.9613 rho=-0.05320 dh=+0.02990 da=-0.02310 drho=+7.5e-15 res=2.9e-15 d=(+0.0161,+0.0028,-0.0189,-0.0006) {'reported': 4} excl={}
+leeds-united/coventry-city             c=10 a= 8 lam=1.7115 mu=0.9995 rho=-0.05320 dh=+0.04035 da=-0.03390 drho=-1.1e-14 res=4.9e-15 d=(+0.0249,-0.0076,-0.0173,+0.0090) {'reported': 8, 'rumour': 2} excl={'unsupported_event': 2}
+manchester-united/brentford            c=13 a=12 lam=1.6347 mu=1.4344 rho=-0.05320 dh=-0.02700 da=-0.00980 drho=+5.9e-14 res=1.6e-14 d=(-0.0077,+0.0032,+0.0045,-0.0127) {'reported': 12, 'rumour': 1} excl={'unsupported_event': 1}
+nottingham-forest/chelsea              c= 9 a= 8 lam=1.4103 mu=1.4001 rho=-0.05320 dh=+0.04735 da=-0.00790 drho=-1.4e-14 res=2.5e-15 d=(+0.0195,-0.0034,-0.0161,+0.0135) {'reported': 8, 'rumour': 1} excl={'unsupported_event': 1}
+sunderland/tottenham-hotspur           c= 9 a= 9 lam=1.3022 mu=1.2168 rho=-0.05320 dh=-0.00025 da=-0.06200 drho=+1.5e-14 res=4.4e-15 d=(+0.0157,+0.0041,-0.0198,-0.0189) {'reported': 9} excl={}
+mean change over 10 fixtures (home_win, draw, away_win, over2.5, home>1.5, away>1.5): [ 0.00871  0.00045 -0.00916 -0.00067  0.00647 -0.00707]
+mean |change|: [0.01622 0.00315 0.01445 0.00832 0.01474 0.01007]  max |change|: [0.02772 0.00757 0.02403 0.01891 0.02839 0.02652]
+change in expected total goals per fixture: [-0.0171 -0.0391  0.0069  0.0525  0.0027 -0.003   0.0372 -0.0575  0.0574
+ -0.0735] mean -0.0034
+sum claims 90 sum applied 78
+status totals {'reported': 78, 'rumour': 12} excluded totals {'unsupported_event': 12}

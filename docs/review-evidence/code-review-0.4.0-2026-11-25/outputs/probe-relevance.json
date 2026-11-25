@@ -1,0 +1,22 @@
+[
+ {
+  "sentence": "Aldo Ashdown has been ruled out of the match against Chelsea.",
+  "relevant_with_placeholder_saturday_kickoff": true,
+  "relevant_with_real_friday_kickoff": true
+ },
+ {
+  "sentence": "Aldo Ashdown will miss Friday's game against Chelsea with a hamstring injury.",
+  "relevant_with_placeholder_saturday_kickoff": false,
+  "relevant_with_real_friday_kickoff": true
+ },
+ {
+  "sentence": "Aldo Ashdown will miss the match against Chelsea after injuring his ankle in the Carabao Cup tie on Tuesday.",
+  "relevant_with_placeholder_saturday_kickoff": false,
+  "relevant_with_real_friday_kickoff": false
+ },
+ {
+  "sentence": "Aldo Ashdown will miss the Premier League match against Chelsea after returning injured from international duty.",
+  "relevant_with_placeholder_saturday_kickoff": false,
+  "relevant_with_real_friday_kickoff": false
+ }
+]

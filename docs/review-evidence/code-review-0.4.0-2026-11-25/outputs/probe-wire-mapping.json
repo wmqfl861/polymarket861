@@ -1,0 +1,164 @@
+{
+ "policy_absence_weight": {
+  "confirmed": {
+   "out": 1.0,
+   "doubtful": 0.45
+  },
+  "reported": {
+   "out": 0.45,
+   "doubtful": 0.2
+  }
+ },
+ "provider_state_to_model": [
+  {
+   "provider": {
+    "status": "suspended",
+    "category": "suspension",
+    "chance_of_playing": null
+   },
+   "synthesized_text": "Aldo Ashdown is reported suspended for Chelsea FC.",
+   "claim": [
+    "suspension",
+    "reported",
+    "out"
+   ],
+   "model_weight": 0.45,
+   "enters_model": true
+  },
+  {
+   "provider": {
+    "status": "doubtful",
+    "category": "injury",
+    "chance_of_playing": 75
+   },
+   "synthesized_text": "Aldo Ashdown is doubtful for Chelsea FC. The provider estimates a 75% chance of playing.",
+   "claim": [
+    "availability",
+    "reported",
+    "doubtful"
+   ],
+   "model_weight": 0.2,
+   "enters_model": true
+  },
+  {
+   "provider": {
+    "status": "doubtful",
+    "category": "injury",
+    "chance_of_playing": 50
+   },
+   "synthesized_text": "Aldo Ashdown is doubtful for Chelsea FC. The provider estimates a 50% chance of playing.",
+   "claim": [
+    "availability",
+    "reported",
+    "doubtful"
+   ],
+   "model_weight": 0.2,
+   "enters_model": true
+  },
+  {
+   "provider": {
+    "status": "doubtful",
+    "category": "injury",
+    "chance_of_playing": 25
+   },
+   "synthesized_text": "Aldo Ashdown is doubtful for Chelsea FC. The provider estimates a 25% chance of playing.",
+   "claim": [
+    "availability",
+    "reported",
+    "doubtful"
+   ],
+   "model_weight": 0.2,
+   "enters_model": true
+  },
+  {
+   "provider": {
+    "status": "injured",
+    "category": "injury",
+    "chance_of_playing": 0
+   },
+   "synthesized_text": "Aldo Ashdown is reported injured and unavailable for Chelsea FC. The provider estimates a 0% chance of playing.",
+   "claim": [
+    "injury",
+    "reported",
+    "out"
+   ],
+   "model_weight": 0.45,
+   "enters_model": true
+  },
+  {
+   "provider": {
+    "status": "injured",
+    "category": "injury",
+    "chance_of_playing": null
+   },
+   "synthesized_text": "Aldo Ashdown is reported injured for Chelsea FC.",
+   "claim": [
+    "injury",
+    "reported",
+    "unknown"
+   ],
+   "model_weight": null,
+   "enters_model": false
+  },
+  {
+   "provider": {
+    "status": "injured",
+    "category": "injury",
+    "chance_of_playing": 25
+   },
+   "synthesized_text": "Aldo Ashdown is reported injured for Chelsea FC. The provider estimates a 25% chance of playing.",
+   "claim": [
+    "injury",
+    "reported",
+    "unknown"
+   ],
+   "model_weight": null,
+   "enters_model": false
+  },
+  {
+   "provider": {
+    "status": "injured",
+    "category": "injury",
+    "chance_of_playing": 50
+   },
+   "synthesized_text": "Aldo Ashdown is reported injured for Chelsea FC. The provider estimates a 50% chance of playing.",
+   "claim": [
+    "injury",
+    "reported",
+    "unknown"
+   ],
+   "model_weight": null,
+   "enters_model": false
+  },
+  {
+   "provider": {
+    "status": "injured",
+    "category": "injury",
+    "chance_of_playing": 75
+   },
+   "synthesized_text": "Aldo Ashdown is reported injured for Chelsea FC. The provider estimates a 75% chance of playing.",
+   "claim": [
+    "injury",
+    "reported",
+    "unknown"
+   ],
+   "model_weight": null,
+   "enters_model": false
+  }
+ ],
+ "one_bad_row_next_to_a_valid_row": {
+  "unknown category": {
+   "whole_club_poll_fails_with": "unrecognised availability state"
+  },
+  "unknown status": {
+   "whole_club_poll_fails_with": "unrecognised availability state"
+  },
+  "name with digits or brackets": {
+   "whole_club_poll_fails_with": "unrecognised Touchline Wire player name"
+  }
+ },
+ "listed_player_not_on_roster": {
+  "text": "Cato Calder is reported injured and unavailable for Chelsea FC. The provider estimates a 0% chance of playing.",
+  "claims": 0
+ }
+}

@@ -1,0 +1,3 @@
+no_news: lambda_home=1.410293491 lambda_away=1.400116882 rho=-0.053203538 max_abs_err=1.799e-14
+with_news: lambda_home=1.478677093 lambda_away=1.389099534 rho=-0.053203538 max_abs_err=3.589e-14
+log shift home=+0.047350 away=-0.007900 rho diff=-1.88e-14

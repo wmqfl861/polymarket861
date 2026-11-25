@@ -1,0 +1,37 @@
+{
+ "command": "pm861 --data-dir <fresh 0.4.0 data dir after `data refresh --first 2022-23 --last 2026-27` only> result-feed freshness 2026",
+ "state": "stale",
+ "as_of": "2026-11-25T13:45:44.705827Z",
+ "latest_round": {
+  "round": 11,
+  "due": 10,
+  "received": 0,
+  "scheduled": 10
+ },
+ "overdue_fixtures": 60,
+ "overdue_rounds": [
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
+ ],
+ "teams_with_overdue_results": 20,
+ "next_round": 12,
+ "next_round_blocked_fixtures": [
+  "epl/2026-27/arsenal/manchester-city",
+  "epl/2026-27/brighton-hove-albion/newcastle-united",
+  "epl/2026-27/crystal-palace/hull-city",
+  "epl/2026-27/everton/liverpool",
+  "epl/2026-27/fulham/bournemouth",
+  "epl/2026-27/ipswich-town/aston-villa",
+  "epl/2026-27/leeds-united/coventry-city",
+  "epl/2026-27/manchester-united/brentford",
+  "epl/2026-27/nottingham-forest/chelsea",
+  "epl/2026-27/sunderland/tottenham-hotspur"
+ ],
+ "decision_cutoffs_registered": [
+  "2026-11-28T14:00:00.000000Z"
+ ]
+}
