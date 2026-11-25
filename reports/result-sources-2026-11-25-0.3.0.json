@@ -1,5 +1,7 @@
 {
-  "verification_code": "356570c",
+  "verification_code": "356570c1ba225ce30d1e9002c82ae685cbe2a48c",
+  "verification_tree": "18180ea48a4b0b3a930d4c03a30e0e81c6d4d11f",
+  "tree_identity": "Git tree of the code used locally to re-read archived 90-minute proofs and produce the ten early forecasts; commit identities may be rewritten during publication.",
   "season": "2026-27",
   "observed_through": "2026-11-25T10:39:52.848712Z",
   "complete_recheck_at": "2026-11-25T10:39:58.733861Z",
