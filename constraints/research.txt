@@ -4,3 +4,4 @@ scipy==1.17.0
 tzdata==2026.6
 playwright==1.62.0
 ruff==0.17.6
+mypy==1.18.2

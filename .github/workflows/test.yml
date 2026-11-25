@@ -21,8 +21,9 @@ jobs:
           python-version: ${{ matrix.python }}
           cache: pip
           cache-dependency-path: constraints/research.txt
-      - run: python -m pip install -c constraints/research.txt -e . ruff
+      - run: python -m pip install -c constraints/research.txt -e . ruff mypy
       - run: ruff check src tests scripts
+      - run: mypy --strict --follow-imports=silent src/polymarket861/blob_storage.py
       - if: matrix.python == '3.12'
         run: |
           python -m pip install -c constraints/research.txt playwright
