@@ -1,0 +1,1683 @@
+{
+  "scope": "Actual EPL data, collected before kickoff on this installation. Early technical and event forecasts. No match results, T-60 seals or P&L are inferred from these observations.",
+  "attribution": [
+    "Tactical Data by Touchline Wire (https://touchlinewire.com/docs#attribution), normalized factual observations.",
+    "English Wikipedia contributors (CC BY-SA 4.0), team roster and season revision identities."
+  ],
+  "ingestion": {
+    "state": "ok",
+    "eligible_streams": 60,
+    "due_streams": 60,
+    "attempted": 60,
+    "succeeded": 60,
+    "pending_streams": 0,
+    "pending_entries": 0,
+    "failures": 0,
+    "articles_added": 134,
+    "claims_added": 91
+  },
+  "source_checks": [
+    {
+      "team": "AFC Bournemouth",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/fulham/bournemouth",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:14.858109Z",
+      "response_sha256": "ae9da97d1eb0835d399754921f9d9f1b66fccf2552ffe38d0e72af3d0ff73a96",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 4,
+      "claims_added": 4,
+      "issues": []
+    },
+    {
+      "team": "AFC Bournemouth",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/fulham/bournemouth",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:21.988201Z",
+      "response_sha256": "b2778a4a3d8c5fca250f52e377fe3f8715d98031ac247bd77a7c1e3a396f3d95",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 7,
+      "claims_added": 3,
+      "issues": []
+    },
+    {
+      "team": "AFC Bournemouth",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/fulham/bournemouth",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:42.578632Z",
+      "response_sha256": "dff73f7f4b340595f50551ec5b2d2ce3b19e21ec55fd2e36fca2c9d2b924ea36",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Arsenal FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/arsenal/manchester-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:14.414832Z",
+      "response_sha256": "22b6e243078e429500b8fb1f13bf4912637ad4126fd716e834fe126ad6c00498",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 3,
+      "claims_added": 3,
+      "issues": []
+    },
+    {
+      "team": "Arsenal FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/arsenal/manchester-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:22.146717Z",
+      "response_sha256": "747bc30dbb54264a6284667ff6d85d8b18fff4b1e415fc9e4a3745b10dd8600f",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 3,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Arsenal FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/arsenal/manchester-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:42.585702Z",
+      "response_sha256": "c2c8ab49afdaa7a12d73dbda9987e74bf0bc76e7a123d706575fd3a378ba5f5d",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Aston Villa FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:14.561769Z",
+      "response_sha256": "c30254c2b6f903f22f7c8130fed1cfeb96e89c371ec23fe34c825495f20545aa",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 4,
+      "claims_added": 4,
+      "issues": []
+    },
+    {
+      "team": "Aston Villa FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:22.023378Z",
+      "response_sha256": "4d2f1c9ff0b6112de32f64c66d42157d527c61da7626c60745582527c374faf7",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 2,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Aston Villa FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:42.549306Z",
+      "response_sha256": "79424cdd8d5cb7cdd3f0e8652f595613c1e4d32f94b59cd9a7c04faa2ce094d0",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Brentford FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/manchester-united/brentford",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:14.644763Z",
+      "response_sha256": "5c0b66c15c2917e1e3b09563dd3c5f87ccb7cfce9c5b4ac19d7e8308127d9499",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 6,
+      "claims_added": 6,
+      "issues": []
+    },
+    {
+      "team": "Brentford FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/manchester-united/brentford",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:21.890575Z",
+      "response_sha256": "e7320cebf41d0e45e41e3ca469c5f63ada9b52c668f408355c1ecce26b4a64de",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 4,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Brentford FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/manchester-united/brentford",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:45:42.523675Z",
+      "response_sha256": "3674ec21024c92fa880118517fb98c8524db1a84a44004a7631136b2b4281542",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Brighton & Hove Albion FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:03.730919Z",
+      "response_sha256": "fcf0101298cdabeb46ff33216a0dcba4bab99b6ee62706dd9fe416c0cf8b3e8c",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 7,
+      "claims_added": 6,
+      "issues": []
+    },
+    {
+      "team": "Brighton & Hove Albion FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:10.794386Z",
+      "response_sha256": "04573fe47117b57baf226da37be11cdaaa115f4eb27b2c5094190016de815d92",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 5,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Brighton & Hove Albion FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:17.732240Z",
+      "response_sha256": "713aae91e7572103308f48ed76430b63b6e736fe68b76e9f7dde19e307827bf8",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Chelsea FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:03.684823Z",
+      "response_sha256": "5314ce4cfcbda953be4ad87a7676cf05f0023efda13c844ad44d849e180ce662",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 7,
+      "claims_added": 6,
+      "issues": []
+    },
+    {
+      "team": "Chelsea FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:11.252939Z",
+      "response_sha256": "8cf39cc5fd1d5a2143f94ab7668d61eca862d5b3cdb516dc0244f3c2992b991e",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 3,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Chelsea FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:17.763242Z",
+      "response_sha256": "b3904cdc3fa292bf5a71325adc35cce4a11f713a2f98b1c46eb4e83676f79e6c",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Coventry City FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:03.620081Z",
+      "response_sha256": "916e01e1f65d914e47fadc964f8dfb55d75f8c340422594553a40a4a03a24873",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 6,
+      "claims_added": 6,
+      "issues": []
+    },
+    {
+      "team": "Coventry City FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:11.277684Z",
+      "response_sha256": "fa027738cce0d12a2961134d475b5c38f92ef7e7bd258450a358e5cb5301ce04",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 2,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Coventry City FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:17.784612Z",
+      "response_sha256": "efbf272910f66983acc34e002c653b40cf9d8333ad517c147c52d466eeccce34",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 30,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Crystal Palace FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:03.946384Z",
+      "response_sha256": "a252cbdb2ff4a477b85646cd7fc2926e51e3718ec3afe5840e751ed68a64d10c",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 4,
+      "claims_added": 4,
+      "issues": []
+    },
+    {
+      "team": "Crystal Palace FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:11.152782Z",
+      "response_sha256": "8f6967f4765cff4ce1ebf0120cb3bf815a59e0aaf6ebba7ee9f86558e7564e94",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 1,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Crystal Palace FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:17.749983Z",
+      "response_sha256": "e877bceccdc509629226310ea5779fbdd9e426ef893707d1c748e5969dc1d593",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Everton FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/everton/liverpool",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:38.217040Z",
+      "response_sha256": "29427a0eaf88e855e8cd603f14820b2a5c3c1c56dbd0628cbf41ac9fc0818a4f",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 21,
+      "articles_added": 1,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Everton FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/everton/liverpool",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:45.027631Z",
+      "response_sha256": "c94b88d3c58cc891fdc75388a7a5f98242b9241a2ba71e0c481b70d212d057e2",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 21,
+      "articles_added": 2,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Everton FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/everton/liverpool",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:51.895187Z",
+      "response_sha256": "b89b476cce9e9c600c77a55203d11493ccec64808b216f9133fdbbce8f8602ec",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 21,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Fulham FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/fulham/bournemouth",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:38.271532Z",
+      "response_sha256": "42aa6b7af9f784e73b50ea327bb57f4a1e40e1fbe3eacaddc790047df137d6c6",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 2,
+      "claims_added": 2,
+      "issues": []
+    },
+    {
+      "team": "Fulham FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/fulham/bournemouth",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:44.981190Z",
+      "response_sha256": "fe5bd27542bb7ed5f9ae226a5cf22b032bfe411d97fff1e5fd3067549c63977f",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 2,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Fulham FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/fulham/bournemouth",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:51.863871Z",
+      "response_sha256": "5ab63a2c5893b04e90cb6d2f5722be443e3529b40111df4d75ca0a30b1dcab45",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Hull City AFC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:38.309154Z",
+      "response_sha256": "0dc33a63000f53d3788972dd82ef63e6d4b6e9b785c0525c978380b46f75c483",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 33,
+      "articles_added": 6,
+      "claims_added": 6,
+      "issues": []
+    },
+    {
+      "team": "Hull City AFC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:46.249964Z",
+      "response_sha256": "2c76face9ce3ca4a1aee587d29391972669d2aef2050b6ed7dbb58882d3abc28",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 33,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Hull City AFC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:51.927064Z",
+      "response_sha256": "6bc13acf5bddcaf727c716fc41c80d5309fef386bd6ebfe553b721a55a051dd5",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 33,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Ipswich Town FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:38.316371Z",
+      "response_sha256": "7d1958d6999f44906ecf3004d1dc7dc825da861e02853f3430d95398cb848246",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Ipswich Town FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:45.040013Z",
+      "response_sha256": "092a6a99d0f839b7158e3606b863449a157d23322f9b613b418ecdc5a34b3145",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 1,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Ipswich Town FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:46:51.837175Z",
+      "response_sha256": "b932b43c464ba919af1ddfa0e917b988c24c579eb0000ef6781ed78648afa542",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 28,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Leeds United FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:12.790985Z",
+      "response_sha256": "90268821c8b918e857af0e898178ee4f7b9cb66993a5b157185feaf5ae39deff",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 24,
+      "articles_added": 3,
+      "claims_added": 2,
+      "issues": []
+    },
+    {
+      "team": "Leeds United FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:19.242568Z",
+      "response_sha256": "a9a6be228e96e00a604e7c26bde58111b999d9942a0aa4cb6a6762460555d245",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 24,
+      "articles_added": 2,
+      "claims_added": 2,
+      "issues": []
+    },
+    {
+      "team": "Leeds United FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:26.340495Z",
+      "response_sha256": "dd75e3961a160b1a922a4412845ae2bc504f2c71bfbd6464f247eecc405b5194",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 24,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Liverpool FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/everton/liverpool",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:13.809580Z",
+      "response_sha256": "367747124575ef2f9d176a20c24da1909f616762d075b44831721cd620f316e2",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 31,
+      "articles_added": 6,
+      "claims_added": 6,
+      "issues": []
+    },
+    {
+      "team": "Liverpool FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/everton/liverpool",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:19.257008Z",
+      "response_sha256": "c82d1c77fea0b6252c13c34785f2e436d335cada174635c4aa46c6d0aa65c9d4",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 31,
+      "articles_added": 1,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Liverpool FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/everton/liverpool",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:26.369227Z",
+      "response_sha256": "47fb3ebb76a0e41a752ca401fdc84e6b779db2de427143d883bedaa2319cd01e",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 31,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Manchester City FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/arsenal/manchester-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:13.674651Z",
+      "response_sha256": "f5fb85c2732f7338f4f1d5e5e4260695f6da460511dc8ddb2a28259061682374",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 26,
+      "articles_added": 3,
+      "claims_added": 3,
+      "issues": []
+    },
+    {
+      "team": "Manchester City FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/arsenal/manchester-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:19.221541Z",
+      "response_sha256": "cb51593e49b44fa1dbb25c540ec748eef70e7cc8cb2ba9abf7af88ce7b750f74",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 26,
+      "articles_added": 3,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Manchester City FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/arsenal/manchester-city",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:26.372457Z",
+      "response_sha256": "3d62699a6bc4f00ddbc079297c331dcec691dbd67dd9978f84d0ed41c173ca17",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 26,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Manchester United FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/manchester-united/brentford",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:13.832255Z",
+      "response_sha256": "943e577e5d9076b1ad1632b3783ac9df3cd44426dcb2ec754078f7af8929a652",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 31,
+      "articles_added": 6,
+      "claims_added": 6,
+      "issues": []
+    },
+    {
+      "team": "Manchester United FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/manchester-united/brentford",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:19.308605Z",
+      "response_sha256": "fb817f0f891873293b0ebe10a1eeb56d2b0af13742fcb2857cb23d86210e5ab6",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 31,
+      "articles_added": 4,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Manchester United FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/manchester-united/brentford",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:26.326041Z",
+      "response_sha256": "3cddd12184770904e2deb8a3b94d8c0f42e3a08edf890bdc7c504b8176ac4cfa",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 31,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Newcastle United FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:48.086593Z",
+      "response_sha256": "9341a0a6c59869df5a47009a173ec7e289db711aa67729d064369af7ef5039b6",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 2,
+      "claims_added": 2,
+      "issues": []
+    },
+    {
+      "team": "Newcastle United FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:54.864914Z",
+      "response_sha256": "6ecd9b3488f9216e71ef2f81f323869a02c3db747d7aca81f75e841733974b26",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 2,
+      "claims_added": 1,
+      "issues": []
+    },
+    {
+      "team": "Newcastle United FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:48:01.556929Z",
+      "response_sha256": "6fb0f012fe3363d84133b0853507b44137b7c4838bbea40fbe1f2c0bce97fe43",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 25,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Nottingham Forest FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:48.081211Z",
+      "response_sha256": "271fb2ae0731a7952ff9422cd59a9e17b903c2bd450e6a5cb17c180ca56668b7",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 24,
+      "articles_added": 2,
+      "claims_added": 2,
+      "issues": []
+    },
+    {
+      "team": "Nottingham Forest FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:54.911189Z",
+      "response_sha256": "4cfa2cf2964d482c96b86440ceaccb29657d36c3391dfc7b8297291aaa72c3ab",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 24,
+      "articles_added": 3,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Nottingham Forest FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:48:01.512560Z",
+      "response_sha256": "b448e556ab5cda49fc4cd2885cad45c09b1d365a975815ded34bcb71ba9a8854",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 24,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Sunderland AFC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:47.819929Z",
+      "response_sha256": "aacffd5cf05a6d37ecd5b38414cbcac1396dc8deffc66a7442310071bdf73d58",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 4,
+      "claims_added": 3,
+      "issues": []
+    },
+    {
+      "team": "Sunderland AFC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:54.781716Z",
+      "response_sha256": "3f14809dcc8fd7045401d7d45fdaec5c8b3ee59a6ff7f760fbc3afa787a4d24a",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Sunderland AFC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:48:01.564585Z",
+      "response_sha256": "088536e7873b294d661ca723fdfc972130acfc8e93045a752c00223c288c86f8",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Tottenham Hotspur FC",
+      "source": "touchline-availability",
+      "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:47.760853Z",
+      "response_sha256": "b06b42aa177440381bbb8ce73e0a075b2b384249226142a0047534a129b25dd3",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 6,
+      "claims_added": 6,
+      "issues": []
+    },
+    {
+      "team": "Tottenham Hotspur FC",
+      "source": "touchline-rumours",
+      "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:47:54.834630Z",
+      "response_sha256": "ec759abc35946eeae4c80f0a483f2a8c3ec3113df084e4588490eca37b2045ab",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 5,
+      "claims_added": 0,
+      "issues": []
+    },
+    {
+      "team": "Tottenham Hotspur FC",
+      "source": "wikipedia-season-news",
+      "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+      "state": "ok",
+      "checked_at": "2026-11-25T12:48:01.573858Z",
+      "response_sha256": "294d0fa6cdc888ddac2414d4746e80c4198bb4a6f0a91bf0beeee4bd7ea6d577",
+      "response_hash_basis": "upstream_response_bytes",
+      "roster_players": 29,
+      "articles_added": 0,
+      "claims_added": 0,
+      "issues": []
+    }
+  ],
+  "event_refresh": {
+    "state": "ok",
+    "eligible": 10,
+    "due": 8,
+    "attempted": 8,
+    "published": 8,
+    "unchanged": 0,
+    "deferred": 0
+  },
+  "immediate_repeat": {
+    "state": "idle",
+    "eligible": 10,
+    "due": 0,
+    "attempted": 0,
+    "published": 0,
+    "unchanged": 0,
+    "deferred": 0
+  },
+  "event_predictions": [
+    {
+      "fixture": "epl/2026-27/arsenal/manchester-city",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:01.794092Z",
+      "created_at": "2026-11-25T12:48:01.817810Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "0a40754946f0ce2db06ec0deb1c68f5a75053ce44a7144929496a540187e0af6",
+      "semantic_state": "c54e4f7895f6f70bdf1b8ab6e0ef29407b7188bba208365127baed93145dcae5",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 8,
+      "status": {
+        "reported": 6,
+        "rumour": 2
+      },
+      "applied": 6,
+      "excluded": {
+        "unsupported_event": 2
+      },
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.27189693195331804,
+          "with_news": 0.27019241490722473
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.251812942346202,
+          "with_news": 0.25261683231425885
+        },
+        {
+          "market": "draw",
+          "without_news": 0.27302108461601204,
+          "with_news": 0.2743733735859094
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.44061299524073994,
+          "with_news": 0.43643636614824277
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.4751659730377861,
+          "with_news": 0.47300979409983185
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.460322874492304,
+          "with_news": 0.4559513255676459
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/brighton-hove-albion/newcastle-united",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:01.829224Z",
+      "created_at": "2026-11-25T12:48:01.836591Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "ee68c2b4aaa895edca792fa99e64b133d7aaae7f1cfb4172e01db10526acf82f",
+      "semantic_state": "721982f7f396807b1b28e5bf0b0441914db57973fb5d2c3a513ad7e858bd4737",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 10,
+      "status": {
+        "reported": 8,
+        "rumour": 2
+      },
+      "applied": 8,
+      "excluded": {
+        "unsupported_event": 2
+      },
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.3431055901172084,
+          "with_news": 0.35809082443991586
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.23289628962476927,
+          "with_news": 0.2540250769357141
+        },
+        {
+          "market": "draw",
+          "without_news": 0.23172299099254076,
+          "with_news": 0.23830951024458868
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.5753880559998772,
+          "with_news": 0.5523195487746223
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.53538071938269,
+          "with_news": 0.507665412819697
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.6091986526559435,
+          "with_news": 0.600814531555799
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/crystal-palace/hull-city",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:02.916937Z",
+      "created_at": "2026-11-25T12:48:02.940259Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "71791999d42dac3d533cc1bf3aa7716cc3f388c42dcbd5fd694433391be636ab",
+      "semantic_state": "49edaf86a27295fb8925a96ecb8bde2f92974157af119a1511964eb38f293247",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 10,
+      "status": {
+        "reported": 10
+      },
+      "applied": 10,
+      "excluded": {},
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.33820371381025366,
+          "with_news": 0.3337695289060816
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.35369702332079916,
+          "with_news": 0.3463695910437969
+        },
+        {
+          "market": "draw",
+          "without_news": 0.2897897316245115,
+          "with_news": 0.2892450957469086
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.34030404713865536,
+          "with_news": 0.3472145385136748
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.3565132450546892,
+          "with_news": 0.3643853132092945
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.4330100751811332,
+          "with_news": 0.4348132450774245
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/everton/liverpool",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:02.951190Z",
+      "created_at": "2026-11-25T12:48:02.957768Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "69313ddd256ee9802acd272d7a67aaa3987263be48171bfe92d60e58882be49b",
+      "semantic_state": "82d72a9e9c98dfb803014c793e4b5dadb98b88aa82346e8d22135ab3327c39c5",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 8,
+      "status": {
+        "reported": 7,
+        "rumour": 1
+      },
+      "applied": 7,
+      "excluded": {
+        "unsupported_event": 1
+      },
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.4068701149520596,
+          "with_news": 0.3978502158903375
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.4176585571442098,
+          "with_news": 0.39362664695063426
+        },
+        {
+          "market": "draw",
+          "without_news": 0.2778495580821235,
+          "with_news": 0.2762122853244697
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.32144170299130603,
+          "with_news": 0.3498328773782047
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.30449188477366673,
+          "with_news": 0.33016106772489606
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.4695354769156723,
+          "with_news": 0.4827795067346686
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/fulham/bournemouth",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:02.968776Z",
+      "created_at": "2026-11-25T12:48:02.975419Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "3f3cc087574354e0e3aee8580e05df9f81f2cec096b3fdfce0a1137d14f2b8b2",
+      "semantic_state": "965263152687282568c6ee514034cc643f11ae9b8859ff0452c13aa879f61cad",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 9,
+      "status": {
+        "reported": 6,
+        "rumour": 3
+      },
+      "applied": 6,
+      "excluded": {
+        "unsupported_event": 3
+      },
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.3715819489214145,
+          "with_news": 0.36091999800218577
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.3608196415770877,
+          "with_news": 0.346313674887755
+        },
+        {
+          "market": "draw",
+          "without_news": 0.27775155579211863,
+          "with_news": 0.2774156554146279
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.3720423572489492,
+          "with_news": 0.38356681671100473
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.3614288026307939,
+          "with_news": 0.376270669697617
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.47963555349089626,
+          "with_news": 0.480305921981927
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/ipswich-town/aston-villa",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:02.984894Z",
+      "created_at": "2026-11-25T12:48:02.990814Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "bc1d9117d4e20f862d5f801597c71e232f3cb461093749ce3e34a61bb7ff6f65",
+      "semantic_state": "86909830c238f2ff2b008d722f0bb5d60b504fb278197838dd03142ddc51d715",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 4,
+      "status": {
+        "reported": 4
+      },
+      "applied": 4,
+      "excluded": {},
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.5834118518183571,
+          "with_news": 0.5709193745046065
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.506281914628143,
+          "with_news": 0.48734860553899834
+        },
+        {
+          "market": "draw",
+          "without_news": 0.2293804143907736,
+          "with_news": 0.23218921229792397
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.40015056476289934,
+          "with_news": 0.4145866353956699
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.26433767098108346,
+          "with_news": 0.2804621821630779
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.6481741355188193,
+          "with_news": 0.6475810153538889
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/leeds-united/coventry-city",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:03.000592Z",
+      "created_at": "2026-11-25T12:48:03.007846Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "4ebea1351e29c0e1719f46edf9240746a305c8429ad3c6f5a4b87ba7859fb049",
+      "semantic_state": "96f7a707941d9425c94495b2f859b6d871bde9ad6a071dc09b89661eb30e0833",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 10,
+      "status": {
+        "reported": 8,
+        "rumour": 2
+      },
+      "applied": 8,
+      "excluded": {
+        "unsupported_event": 2
+      },
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.2640461588723833,
+          "with_news": 0.2517929784557855
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.21401692843118622,
+          "with_news": 0.19667097866084857
+        },
+        {
+          "market": "draw",
+          "without_news": 0.2512114740604436,
+          "with_news": 0.2436428130176088
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.5103024053343151,
+          "with_news": 0.5317621800569141
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.5347715975083701,
+          "with_news": 0.5596862083215427
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.509047032329071,
+          "with_news": 0.5180781688654311
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/manchester-united/brentford",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:03.018410Z",
+      "created_at": "2026-11-25T12:48:03.025445Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "40661fb70f0079ca35d55f59382ce07a930e61b5f145bcd3a04f5d7a9410636a",
+      "semantic_state": "3a34f4d3b6322cf1bcd7a5ff6cd1f31bd21fa07b3384e21f7acbe30df2035c85",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 13,
+      "status": {
+        "reported": 12,
+        "rumour": 1
+      },
+      "applied": 12,
+      "excluded": {
+        "unsupported_event": 1
+      },
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.4199693482876382,
+          "with_news": 0.41517870134070733
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.3313648399570415,
+          "with_news": 0.3358756216640761
+        },
+        {
+          "market": "draw",
+          "without_news": 0.25019254286647374,
+          "with_news": 0.2533564609903262
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.4861974539475499,
+          "with_news": 0.4721992969275263
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.4184426171764844,
+          "with_news": 0.41076791734559764
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.5920971087987993,
+          "with_news": 0.5793814331708255
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/nottingham-forest/chelsea",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:03.039023Z",
+      "created_at": "2026-11-25T12:48:03.046720Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "fb9a647ddf8f34cd65d56da0487b818cf19331267d40120d582f451901cc1052",
+      "semantic_state": "73230d3d4e4277aa7b4df3c835dc5e3f6bb9d4d8634656a92c149e8e006ede97",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 9,
+      "status": {
+        "reported": 8,
+        "rumour": 1
+      },
+      "applied": 8,
+      "excluded": {
+        "unsupported_event": 1
+      },
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.4082076375897455,
+          "with_news": 0.4043982280609406
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.3652430573172037,
+          "with_news": 0.3491619451461765
+        },
+        {
+          "market": "draw",
+          "without_news": 0.26490595279381085,
+          "with_news": 0.2614904314807278
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.4117157151081986,
+          "with_news": 0.4350127449566449
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.36985098988898546,
+          "with_news": 0.38934762337309553
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.5330241953462278,
+          "with_news": 0.5465441015528558
+        }
+      ]
+    },
+    {
+      "fixture": "epl/2026-27/sunderland/tottenham-hotspur",
+      "kickoff": "2026-11-28T15:00:00.000000Z",
+      "cutoff": "2026-11-25T12:48:03.059713Z",
+      "created_at": "2026-11-25T12:48:03.067467Z",
+      "revision": 1,
+      "previous": null,
+      "receipt": "3607b4ec651edcacf476b0d5e606a0443434114f47d2cc7a397a13f2b2081285",
+      "semantic_state": "0899347899c917825417858ed90a92dc84439558af3d230bbf5a6daaa824ee72",
+      "history_manifest_sha256": "f2c3b47d12ddb6e877e08b4f9b19523a2b43224758ce101be2ea011bc1876f88",
+      "news_policy": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
+      "both": true,
+      "claims": 9,
+      "status": {
+        "reported": 9
+      },
+      "applied": 9,
+      "excluded": {},
+      "changed": true,
+      "probabilities": [
+        {
+          "market": "away_over_1_5",
+          "without_news": 0.34344212630069015,
+          "with_news": 0.3169232852773178
+        },
+        {
+          "market": "away_win",
+          "without_news": 0.3386682109889956,
+          "with_news": 0.31886416698440856
+        },
+        {
+          "market": "draw",
+          "without_news": 0.28213134866477424,
+          "with_news": 0.2862441842502003
+        },
+        {
+          "market": "home_over_1_5",
+          "without_news": 0.37394267441229745,
+          "with_news": 0.3738274059786575
+        },
+        {
+          "market": "home_win",
+          "without_news": 0.37920044034623024,
+          "with_news": 0.3948916487653913
+        },
+        {
+          "market": "total_over_2_5",
+          "without_news": 0.46104589673674534,
+          "with_news": 0.44213301041963793
+        }
+      ]
+    }
+  ],
+  "example_seal": {
+    "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+    "home": "Nottingham Forest FC",
+    "away": "Chelsea FC",
+    "kickoff": "2026-11-28T15:00:00.000000Z",
+    "horizon": "early",
+    "mode": "technical",
+    "input_cutoff": "2026-11-25T12:48:04.917060Z",
+    "sealed_at": "2026-11-25T12:48:05.097739Z",
+    "main_model": "B1",
+    "main_seal": "a4409dd44f7b24448ecb15eea0c9d1a2e4a79b489e63e42ee303457f5e0f10ea",
+    "candidate_seal": "7f7ba39f410db776d4d9f24f0e3570ccfa44b49dc114f46030ce2c08de1c7cdf",
+    "main_recipe": "2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
+    "candidate_recipe": "f775146c2c40ae4ac01a1fd0161e4248664048dfa547f5555a84dfcfc7260c6f",
+    "same_training": true,
+    "same_frame": true,
+    "candidate_equals_attached": true,
+    "probabilities": {
+      "no_news": {
+        "home_win": 0.36985098988898546,
+        "draw": 0.26490595279381085,
+        "away_win": 0.3652430573172037,
+        "total_over_2_5": 0.5330241953462278,
+        "home_over_1_5": 0.4117157151081986,
+        "away_over_1_5": 0.4082076375897455
+      },
+      "with_news": {
+        "home_win": 0.38934762337309553,
+        "draw": 0.2614904314807278,
+        "away_win": 0.3491619451461765,
+        "total_over_2_5": 0.5465441015528558,
+        "home_over_1_5": 0.4350127449566449,
+        "away_over_1_5": 0.4043982280609406
+      }
+    },
+    "totals": {
+      "no_news": {
+        "total": {
+          "0.5": {
+            "over": 0.9334975038074191,
+            "under": 0.06650249619258086
+          },
+          "1.5": {
+            "over": 0.7770106001600298,
+            "under": 0.22298939983997024
+          },
+          "2.5": {
+            "over": 0.5330241953462278,
+            "under": 0.4669758046537722
+          },
+          "3.5": {
+            "over": 0.3103795514328871,
+            "under": 0.6896204485671129
+          }
+        },
+        "home": {
+          "0.5": {
+            "over": 0.7559283601055612,
+            "under": 0.2440716398944388
+          },
+          "1.5": {
+            "over": 0.4117157151081986,
+            "under": 0.5882842848918014
+          },
+          "2.5": {
+            "over": 0.1689952887872134,
+            "under": 0.8310047112127866
+          },
+          "3.5": {
+            "over": 0.05489294302380275,
+            "under": 0.9451070569761972
+          }
+        },
+        "away": {
+          "0.5": {
+            "over": 0.7534318570336199,
+            "under": 0.24656814296638008
+          },
+          "1.5": {
+            "over": 0.4082076375897455,
+            "under": 0.5917923624102546
+          },
+          "2.5": {
+            "over": 0.1665305087911511,
+            "under": 0.833469491208849
+          },
+          "3.5": {
+            "over": 0.05373843281142556,
+            "under": 0.9462615671885745
+          }
+        }
+      },
+      "with_news": {
+        "total": {
+          "0.5": {
+            "over": 0.936964926722381,
+            "under": 0.06303507327761904
+          },
+          "1.5": {
+            "over": 0.7864230352299388,
+            "under": 0.21357696477006116
+          },
+          "2.5": {
+            "over": 0.5465441015528558,
+            "under": 0.4534558984471442
+          },
+          "3.5": {
+            "over": 0.32317394546815353,
+            "under": 0.6768260545318465
+          }
+        },
+        "home": {
+          "0.5": {
+            "over": 0.7720609689002449,
+            "under": 0.2279390310997551
+          },
+          "1.5": {
+            "over": 0.4350127449566449,
+            "under": 0.5649872550433551
+          },
+          "2.5": {
+            "over": 0.18582000092453857,
+            "under": 0.8141799990754615
+          },
+          "3.5": {
+            "over": 0.0629948001235164,
+            "under": 0.9370051998764836
+          }
+        },
+        "away": {
+          "0.5": {
+            "over": 0.7507003105410136,
+            "under": 0.2492996894589864
+          },
+          "1.5": {
+            "over": 0.4043982280609406,
+            "under": 0.5956017719390594
+          },
+          "2.5": {
+            "over": 0.16387419734455905,
+            "under": 0.836125802655441
+          },
+          "3.5": {
+            "over": 0.05250359100814123,
+            "under": 0.9474964089918587
+          }
+        }
+      }
+    },
+    "evidence": [
+      {
+        "player_name": "Emiliano Martínez",
+        "player_id": "enwiki:35727432",
+        "team": "Chelsea FC",
+        "event": "availability",
+        "status": "reported",
+        "availability": "doubtful",
+        "source": "touchline-availability",
+        "origin": "touchlinewire.com",
+        "url": "https://touchlinewire.com/api/v1/injuries?club=chelsea",
+        "published_at": "2026-11-25T12:46:03.442478Z",
+        "received_at": "2026-11-25T12:46:03.510882Z",
+        "known_at": "2026-11-25T12:46:03.666195Z",
+        "original_sha256": "4380f4d226b0b1e801a8d95c3a2ae0ce00cd44b27d6ec657f19627bad570a1a5"
+      },
+      {
+        "player_name": "Reece James",
+        "player_id": "enwiki:57778547",
+        "team": "Chelsea FC",
+        "event": "injury",
+        "status": "reported",
+        "availability": "out",
+        "source": "touchline-availability",
+        "origin": "touchlinewire.com",
+        "url": "https://touchlinewire.com/api/v1/injuries?club=chelsea",
+        "published_at": "2026-11-25T12:46:03.442478Z",
+        "received_at": "2026-11-25T12:46:03.510882Z",
+        "known_at": "2026-11-25T12:46:03.681823Z",
+        "original_sha256": "23ca58304b139d05a132eaeb78996eb91e41dfea3e1a91d091bcbf638cdaccc2"
+      },
+      {
+        "player_name": "Maxence Lacroix",
+        "player_id": "enwiki:59523746",
+        "team": "Chelsea FC",
+        "event": "injury",
+        "status": "reported",
+        "availability": "out",
+        "source": "touchline-availability",
+        "origin": "touchlinewire.com",
+        "url": "https://touchlinewire.com/api/v1/injuries?club=chelsea",
+        "published_at": "2026-11-25T12:46:03.442478Z",
+        "received_at": "2026-11-25T12:46:03.510882Z",
+        "known_at": "2026-11-25T12:46:03.663403Z",
+        "original_sha256": "ab8d9b158b610e377f938d2cd029e4804b569320a8cb14cdae3d89e7c3a1c8e9"
+      },
+      {
+        "player_name": "João Pedro",
+        "player_id": "enwiki:60453906",
+        "team": "Chelsea FC",
+        "event": "injury",
+        "status": "reported",
+        "availability": "out",
+        "source": "touchline-availability",
+        "origin": "touchlinewire.com",
+        "url": "https://touchlinewire.com/api/v1/injuries?club=chelsea",
+        "published_at": "2026-11-25T12:46:03.442478Z",
+        "received_at": "2026-11-25T12:46:03.510882Z",
+        "known_at": "2026-11-25T12:46:03.679871Z",
+        "original_sha256": "c6a02d3b5782bac4b68436dead5c150ee078c3a3efdb09e4e113892868bcbb17"
+      },
+      {
+        "player_name": "Cole Palmer",
+        "player_id": "enwiki:65462052",
+        "team": "Chelsea FC",
+        "event": "transfer",
+        "status": "rumour",
+        "availability": "unknown",
+        "source": "touchline-rumours",
+        "origin": "football365",
+        "url": "https://touchlinewire.com/api/v1/rumours?club=CHE",
+        "published_at": "2026-11-25T00:42:57.000000Z",
+        "received_at": "2026-11-25T12:46:11.197038Z",
+        "known_at": "2026-11-25T12:46:11.248962Z",
+        "original_sha256": "fd644320f826be07916f209368b42c1494d9e6152fcf8d213471a1ca462ff37b"
+      },
+      {
+        "player_name": "Jorrel Hato",
+        "player_id": "enwiki:72182625",
+        "team": "Chelsea FC",
+        "event": "injury",
+        "status": "reported",
+        "availability": "out",
+        "source": "touchline-availability",
+        "origin": "touchlinewire.com",
+        "url": "https://touchlinewire.com/api/v1/injuries?club=chelsea",
+        "published_at": "2026-11-25T12:46:03.442478Z",
+        "received_at": "2026-11-25T12:46:03.510882Z",
+        "known_at": "2026-11-25T12:46:03.672761Z",
+        "original_sha256": "fc0784116d295375c43a07f5b72b58bd481dbbf66393373399ad7c082ef1e0ea"
+      },
+      {
+        "player_name": "Josh Acheampong",
+        "player_id": "enwiki:76800929",
+        "team": "Chelsea FC",
+        "event": "availability",
+        "status": "reported",
+        "availability": "doubtful",
+        "source": "touchline-availability",
+        "origin": "touchlinewire.com",
+        "url": "https://touchlinewire.com/api/v1/injuries?club=chelsea",
+        "published_at": "2026-11-25T12:46:03.442478Z",
+        "received_at": "2026-11-25T12:46:03.510882Z",
+        "known_at": "2026-11-25T12:46:03.676824Z",
+        "original_sha256": "ddb81627a80c5ad4f16367ddfa4404cfcb3cb4d194fd35dd0f49282c16ca1c1f"
+      },
+      {
+        "player_name": "Nicolás Domínguez",
+        "player_id": "enwiki:54028601",
+        "team": "Nottingham Forest FC",
+        "event": "injury",
+        "status": "reported",
+        "availability": "out",
+        "source": "touchline-availability",
+        "origin": "touchlinewire.com",
+        "url": "https://touchlinewire.com/api/v1/injuries?club=nott-m-forest",
+        "published_at": "2026-11-25T12:47:47.970920Z",
+        "received_at": "2026-11-25T12:47:48.051083Z",
+        "known_at": "2026-11-25T12:47:48.077544Z",
+        "original_sha256": "f5c1c0e2514c96885d02e65227d20d0c3a590067e9437efad8f8042dcfdd1669"
+      },
+      {
+        "player_name": "Nicolò Savona",
+        "player_id": "enwiki:72520262",
+        "team": "Nottingham Forest FC",
+        "event": "injury",
+        "status": "reported",
+        "availability": "out",
+        "source": "touchline-availability",
+        "origin": "touchlinewire.com",
+        "url": "https://touchlinewire.com/api/v1/injuries?club=nott-m-forest",
+        "published_at": "2026-11-25T12:47:47.970920Z",
+        "received_at": "2026-11-25T12:47:48.051083Z",
+        "known_at": "2026-11-25T12:47:48.079997Z",
+        "original_sha256": "e9764a4a17f80ca3654fa7931a93e18b3981e16d5ff95bee06caa11a812fa793"
+      }
+    ]
+  },
+  "official_round_window": {
+    "season": "2026-27",
+    "round_id": 12,
+    "horizon": "T-60m",
+    "expected": 10,
+    "completed": 0,
+    "sealed": 0,
+    "scored": 0,
+    "changed": 0,
+    "delta": null,
+    "verdict": "insufficient_evidence"
+  },
+  "normal_news_service": {
+    "state": "ok",
+    "eligible": 10,
+    "due": 10,
+    "attempted": 2,
+    "published": 2,
+    "unchanged": 0,
+    "deferred": 0
+  },
+  "source_checks_total": 60,
+  "season_service_poll": {
+    "checked_at": "2026-11-25T12:48:08.683018Z",
+    "next_at": "2026-11-25T12:49:08.683018Z",
+    "health": "ok",
+    "error": null
+  },
+  "schedule_at_example_seal": {
+    "registered": 380,
+    "kickoffs_passed": 110,
+    "future": 270
+  },
+  "source_candidate_tree": "6c73d746666103f21d592f1b51c0503a205c3234"
+}

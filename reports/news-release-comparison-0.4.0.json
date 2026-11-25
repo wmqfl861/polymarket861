@@ -1,0 +1,113 @@
+{
+  "scope": "Isolated v0.3.0 → v0.4.0 built-in B1 release migration, pinned five-season 24-hour result-lag protocol. This checks version compatibility, not news gains. Named approval exercised in an isolated test database only.",
+  "old_version": {
+    "version": "B1",
+    "recipe": "20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
+    "study_sha256": "c20c703cbbada00acbe9d57d573693df296358e4a337b160e6229ac823a837db",
+    "method": "T60-final-schedule-result-lag24h-v1",
+    "matches": 1900,
+    "seasons": [
+      "2021-22",
+      "2022-23",
+      "2023-24",
+      "2024-25",
+      "2025-26"
+    ]
+  },
+  "release_comparison": {
+    "from_version": "B1",
+    "baseline_identity": {
+      "source": "measured_on_incumbent"
+    },
+    "to_version": "B1@2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
+    "comparison": {
+      "method": "T60-final-schedule-result-lag24h-v1",
+      "history_quality": "24h_lag_sensitivity_final_archive_schedule",
+      "historical_context": "no_archived_news_or_lineups",
+      "formal_eligibility": false,
+      "candidate_recipe": "2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
+      "baseline_recipe": "20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
+      "candidate_sha256": "7608db434a0d588c5fe0e549e6eac3f46a7e785d976e480c60804e3a2bdedba9",
+      "baseline_sha256": "d77684bf2905da3a17183704327a59feff46d8cf66ca22c70228c327db2153fa",
+      "input_blobs": {
+        "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+        "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+        "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+        "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+        "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+        "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+        "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+        "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+      },
+      "seasons": [
+        "2021-22",
+        "2022-23",
+        "2023-24",
+        "2024-25",
+        "2025-26"
+      ],
+      "denominator": 1900,
+      "paired_count": 1900,
+      "rounds": 190,
+      "changed_predictions": 0,
+      "changed_training_views": 0,
+      "candidate_score": 75.44781323408776,
+      "baseline_score": 75.44781323408776,
+      "candidate_count": 1900,
+      "baseline_count": 1900,
+      "comparison_rejections": {},
+      "inference": {
+        "method": "round-cluster-t-v1",
+        "unit": "season_and_official_round",
+        "rounds": 190,
+        "matches": 1900,
+        "degrees_of_freedom": 189,
+        "family_comparisons": 10,
+        "family_confidence": 0.95,
+        "individual_confidence": 0.995,
+        "critical_t": 2.8403659628523235
+      },
+      "intervals": {
+        "overall": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        },
+        "result": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        },
+        "total": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        },
+        "home": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        },
+        "away": {
+          "difference": 0.0,
+          "standard_error": 0.0,
+          "lower": 0.0,
+          "upper": 0.0
+        }
+      }
+    },
+    "report_sha256": "04bdf26f033675a6b2070705aa44d0426a7f2898963506a45c3e89dedbfb783b"
+  },
+  "approval_test": {
+    "version": "B1@2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
+    "effective_at": "2026-11-25T12:44:56.500401Z",
+    "comparison": "04bdf26f033675a6b2070705aa44d0426a7f2898963506a45c3e89dedbfb783b",
+    "legacy_reference": null,
+    "reviewer": "Release integration fixture",
+    "reason": "Isolated release test of prospective activation after comparing the measured 0.3.0 incumbent with the corrected 0.4.0 release."
+  }
+}
