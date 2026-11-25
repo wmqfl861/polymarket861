@@ -5,6 +5,7 @@ import hashlib
 import json
 from collections import defaultdict
 from contextlib import closing
+from functools import lru_cache
 from datetime import timedelta
 from pathlib import Path
 
@@ -13,7 +14,16 @@ from . import dbscope, football, forward_window, store
 
 METHOD = "T60-final-schedule-result-lag24h-v1"
 BENCHMARK = tuple(f"{y}-{(y + 1) % 100:02}" for y in range(2021, 2026))
-LEGACY_COMMIT = "8993f15cfcc61042aedc5e885bb82217488ecb33"
+LEGACY_RELEASE = "432e0afe485230bd7caa46eb0d1d68b26f01db25"
+LEGACY_BENCHMARK_CHECKOUT = "8993f15cfcc61042aedc5e885bb82217488ecb33"
+LEGACY_INSTALLATIONS = (LEGACY_RELEASE, LEGACY_BENCHMARK_CHECKOUT)
+# git ls-tree yields the same four objects in the published release and the subsequent audit checkout.
+LEGACY_EXECUTION_OBJECTS = {
+    "src": "9ac7efa8f5a176d41225ba8d6ae627c50d19d575",
+    "pyproject.toml": "6ccb6c35bb23f2991841937595afd2c819adf4f5",
+    "constraints": "33a340b07b5bf16fb9b12c393ad3b19b6348ab94",
+    "deploy": "e60bd9a39a37cb553dfc94ec1797c0087bedeff7",
+}
 LEGACY_RECIPE = "7594c08a37d847a7c40f256974e2817ffe9c9d7eb8cf720b47a5b7f61dcbb29f"
 LEGACY_BENCHMARK = "72f5f905fe8fe014bcef0016e9a810f2a1d925a3b86c3c00eeb9ae22a0ddb795"
 SCHEMA = """
@@ -24,16 +34,42 @@ CREATE TABLE IF NOT EXISTS model_release_comparisons (
 CREATE TABLE IF NOT EXISTS model_release_decisions (
  release_id INTEGER PRIMARY KEY REFERENCES builtin_model_releases(id), comparison TEXT NOT NULL,
  reviewer TEXT NOT NULL, reason TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS model_release_legacy_confirmations (
+ release_id INTEGER PRIMARY KEY REFERENCES model_release_decisions(release_id), installed_commit TEXT NOT NULL);
 """
 
 
-def source_hashes(names):
-    base = Path(__file__).parent
-    return {n: hashlib.sha256((base / n).read_bytes()).hexdigest() for n in names}
+PACKAGE_ROOT = Path(__file__).parent
+# These modules render/export views, copy or verify backups, or only expose a package version/entry point.
+# Decision, collection, validation and statistical extensions are included by default.
+NON_DECISION_MODULES = frozenset(
+    {"dashboard.py", "operations.py", "__init__.py", "__main__.py", "cli.py"}
+)
 
 
-def source_digest(names):
-    return store.digest(source_hashes(names))
+@lru_cache(maxsize=512)
+def _file_sha(path, identity):
+    # Reuse bytes only while device, inode, size and both change clocks match.
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def decision_implementation():
+    """Version operational Python modules and numerical dependencies used in decision evidence."""
+    import numpy
+    import scipy
+
+    sources = {}
+    for path in sorted(PACKAGE_ROOT.rglob("*.py")):
+        name = path.relative_to(PACKAGE_ROOT).as_posix()
+        if name in NON_DECISION_MODULES:
+            continue
+        st = path.stat()
+        identity = (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
+        sources[name] = _file_sha(path, identity)
+    return {
+        "algorithm_source": sources,
+        "numeric_runtime": {"numpy": numpy.__version__, "scipy": scipy.__version__},
+    }
 
 
 def _db(data_dir):
@@ -319,7 +355,9 @@ def release_report(data_dir, root, *, benchmark_only=False):
             if local
             else {
                 "source": "reproduced_tagged_predecessor",
-                "reference_commit": LEGACY_COMMIT,
+                "reference_commit": LEGACY_RELEASE,
+                "benchmark_checkout": LEGACY_BENCHMARK_CHECKOUT,
+                "identical_execution_git_objects": LEGACY_EXECUTION_OBJECTS,
                 "reference_pipeline_sha256": "46d04d6080969e467a6752121fc946c2f61dac668698c3454b906416dbee0449",
                 "legacy_recipe_files": ["football.py", "football_model.py"],
                 "local_previous_pipeline_independently_known": False,
@@ -340,18 +378,42 @@ def release_report(data_dir, root, *, benchmark_only=False):
     return report | {"report_sha256": ident}
 
 
+def _stored_comparison(db, report_sha):
+    row = db.execute(
+        "SELECT body FROM model_release_comparisons WHERE digest=?", (report_sha,)
+    ).fetchone()
+    if not row or store.digest(json.loads(row[0])) != report_sha:
+        raise ValueError("a verified local release comparison is required")
+    return json.loads(row[0])
+
+
+def _release_decision(db, report_sha):
+    row = db.execute(
+        "SELECT r.version,r.effective_at,d.*,l.installed_commit AS legacy_reference FROM model_release_decisions d "
+        "JOIN builtin_model_releases r ON r.id=d.release_id LEFT JOIN model_release_legacy_confirmations l "
+        "ON l.release_id=d.release_id WHERE d.comparison=? ORDER BY r.id DESC LIMIT 1",
+        (report_sha,),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def inspect_release(data_dir, report_sha):
+    """Read the retained comparison and the exact identity signed, including pre-confirmation records."""
+    with closing(_db(data_dir)) as db:
+        return {
+            "report_sha256": report_sha,
+            "report": _stored_comparison(db, report_sha),
+            "decision": _release_decision(db, report_sha),
+        }
+
+
 def approve_release(data_dir, report_sha, reviewer, reason, *, legacy_reference=None):
     signature = stats.signoff(reviewer, reason)
     from . import pipeline
 
     with closing(_db(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
-        row = db.execute(
-            "SELECT body FROM model_release_comparisons WHERE digest=?", (report_sha,)
-        ).fetchone()
-        if not row or store.digest(json.loads(row[0])) != report_sha:
-            raise ValueError("a verified local release comparison is required")
-        report = json.loads(row[0])
+        report = _stored_comparison(db, report_sha)
         old, new = report["from_version"], report["to_version"]
         c = report["comparison"]
         if new != "B1@" + store.digest(
@@ -366,19 +428,41 @@ def approve_release(data_dir, report_sha, reviewer, reason, *, legacy_reference=
                 raise ValueError(
                     "release recipe differs from the reviewed physical build"
                 )
-        decision = db.execute(
-            "SELECT r.version,r.effective_at,d.* FROM model_release_decisions d JOIN builtin_model_releases r ON r.id=d.release_id WHERE comparison=? ORDER BY r.id DESC LIMIT 1",
-            (report_sha,),
-        ).fetchone()
-        if decision and store.builtin_model_at(db) == new:
-            return dict(decision)
-        if (
-            report["baseline_identity"]["source"] == "reproduced_tagged_predecessor"
-            and legacy_reference != LEGACY_COMMIT
+        identity = report.get("baseline_identity", {})
+        # An early preparation report can lack the provenance block. The known two-file recipe still
+        # needs an explicit installation identity before a new decision can use it.
+        packaged = identity.get("source") == "reproduced_tagged_predecessor" or (
+            not identity and c["baseline_recipe"] == LEGACY_RECIPE
+        )
+        if packaged and (
+            c["baseline_recipe"] != LEGACY_RECIPE
+            or identity.get("reference_commit", LEGACY_RELEASE)
+            not in LEGACY_INSTALLATIONS
+        ):
+            raise ValueError("the retained benchmark identifies an unknown predecessor")
+        if legacy_reference is not None and (
+            not packaged or legacy_reference not in LEGACY_INSTALLATIONS
         ):
             raise ValueError(
-                "the old two-file recipe did not identify its pipeline; confirm the actual previous installation with --legacy-reference "
-                + LEGACY_COMMIT
+                "unverified predecessor commit supplied for this comparison"
+            )
+        decision = _release_decision(db, report_sha)
+        if decision and store.builtin_model_at(db) == new:
+            if legacy_reference is not None and decision["legacy_reference"] not in (
+                None,
+                legacy_reference,
+            ):
+                raise ValueError(
+                    "the existing decision confirms a different installed commit"
+                )
+            return decision
+        if packaged and legacy_reference is None:
+            raise ValueError(
+                "confirm the actual previous installation with --legacy-reference "
+                + LEGACY_RELEASE
+                + " (published 0.2.0) or "
+                + LEGACY_BENCHMARK_CHECKOUT
+                + " (equivalent audit checkout)"
             )
         if store.builtin_model_at(db) != old:
             raise ValueError("active builtin changed since release comparison")
@@ -401,10 +485,16 @@ def approve_release(data_dir, report_sha, reviewer, reason, *, legacy_reference=
             "INSERT INTO model_release_decisions VALUES(?,?,?,?)",
             (release_id, report_sha, signature["reviewer"], signature["reason"]),
         )
+        if packaged:
+            db.execute(
+                "INSERT INTO model_release_legacy_confirmations VALUES(?,?)",
+                (release_id, legacy_reference),
+            )
     return {
         "version": new,
         "effective_at": stamp,
         "comparison": report_sha,
+        "legacy_reference": legacy_reference,
         **signature,
     }
 
@@ -440,6 +530,11 @@ def register(forecasts):
             a.data_dir, a.root, benchmark_only=a.benchmark_only
         )
     )
+    saved = forecasts.add_parser(
+        "release-report", help="read a retained comparison and its original sign-off"
+    )
+    saved.add_argument("report_sha256")
+    saved.set_defaults(func=lambda a: inspect_release(a.data_dir, a.report_sha256))
     decide = forecasts.add_parser(
         "release-approve", help="activate the reviewed built-in prospectively"
     )

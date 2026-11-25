@@ -17,7 +17,9 @@ if (
     hashlib.sha256(Path(pipeline.__file__).read_bytes()).hexdigest()
     != "46d04d6080969e467a6752121fc946c2f61dac668698c3454b906416dbee0449"
 ):
-    raise SystemExit("Run against the predecessor checkout at 8993f15.")
+    raise SystemExit(
+        "Use the published 0.2.0 checkout at 432e0af or its source-identical audit checkout at 8993f15."
+    )
 wanted = [f"{y}-{(y + 1) % 100:02}" for y in range(2021, 2026)]
 required = {f"{y}-{(y + 1) % 100:02}" for y in range(2018, 2026)}
 fixtures = [

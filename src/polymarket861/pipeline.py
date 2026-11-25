@@ -41,42 +41,10 @@ def _build_recipe(family, lines):
     ):
         raise ValueError("select half-goal lines between 0.5 and 19.5")
     from . import model_study
-    import numpy
-    import scipy
 
-    # Bind training, prediction assembly, evidence selection, and scheduling of as-of inputs.
-    core = {
-        "pipeline.py",
-        "input_manifest.py",
-        "store.py",
-        "evidence.py",
-        "evidence_sources.py",
-        "paired_proof.py",
-        "archive_proof.py",
-        "kickoff_proof.py",
-        "historical_inputs.py",
-        "jobs_research.py",
-        "forward_window.py",
-        "model_study.py",
-        "market_provider.py",
-    }
-    base = Path(__file__).parent
-    ingestion = {
-        p.name
-        for pattern in (
-            "football*.py",
-            "context_*.py",
-            "result_*.py",
-            "independent_results*.py",
-            "schedule_*.py",
-        )
-        for p in base.glob(pattern)
-    }
-    code = model_study.source_hashes(sorted(core | ingestion))
     return {
         "family": family,
-        "algorithm_source": code,
-        "numeric_runtime": {"numpy": numpy.__version__, "scipy": scipy.__version__},
+        **model_study.decision_implementation(),
         "lines": sorted(set(map(float, lines)) | {1.5, 2.5}),
     }
 

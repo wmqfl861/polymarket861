@@ -32,11 +32,11 @@ pm861 --data-dir "$STATE" experiment evaluate league-frequency-2026
 
 ## 内置版本换代
 
-生产预测绑定家族、大小球线、算法、训练和预测装配、证据筛选、赛果准入、赛程与时点输入等代码摘要，以及 NumPy 和 SciPy 版本。新增、删除或修改结果收集、赛程、上下文和足球计算模块都会改变实施指纹。预测还封存当时实际使用的输入清单、证据帧和训练摘要。各自的模型版本绑定不可覆盖。选单登记单独绑定规则、选单、账本和证据实现代码。不同依赖版本可能产生不同的实施指纹。
+生产预测绑定家族、大小球线、参与运行和判定的 Python 文件的逐文件 SHA-256，以及 NumPy 和 SciPy 版本。选单试验同时登记规则参数和同一份实施清单。这份清单覆盖收集器更新训练数据、调度器选取首发时点、盘口匹配球队、统计分组和账本资格等间接依赖，也涵盖日后新增的执行模块。纯展示的 `dashboard.py`、备份与恢复的 `operations.py`、仅代理到实际处理程序的 CLI 入口、包版本标记、文档和静态页面资源在清单之外。只改这些文件时，已批准的模型和选单指纹仍相同。概率预测另封存当时实际使用的输入清单、证据帧和训练摘要。五季比较会给出实际概率是否变化。
 
-1. 更换版本前运行 `pm861 --data-dir "$STATE" forecast release-baseline "$HISTORY"`，冻结正在使用的内置实现的五季逐场输出。0.2.0 旧库可使用随包提供的标准版本基准。旧配方只记录两个算法文件，无法单凭旧库识别本地实际的训练装配代码。若采用随包基准，负责人须核实上一个安装包的提交，并在第 3 步加上 `--legacy-reference 8993f15cfcc61042aedc5e885bb82217488ecb33`。自定义旧实现须先提供其真实冻结基准。
+1. 更换版本前运行 `pm861 --data-dir "$STATE" forecast release-baseline "$HISTORY"`，冻结正在使用的内置实现的五季逐场输出。0.2.0 旧库可使用随包提供的标准版本基准。旧配方只记录两个算法文件，无法单凭旧库识别本地实际的训练装配代码。若采用随包基准，负责人须核实上一个安装包的提交，并在第 3 步加上 `--legacy-reference 432e0afe485230bd7caa46eb0d1d68b26f01db25`。如实际安装的是随后只增加审核文档的提交 `8993f15cfcc61042aedc5e885bb82217488ecb33`，应填其完整编号。系统保存负责人实际签署的编号。自定义旧实现须先提供其真实冻结基准。
 2. 安装新包后运行 `pm861 --data-dir "$STATE" forecast release-compare "$HISTORY"`。五季为 2021/22 至 2025/26，含 1,900 场、190 个官方轮。报告给出两个实现摘要、同一批原始文件与截止规则、综合与分项分差、训练视图及全盘口输出变化数。资料不足时，旧预测可用 `forecast get PREDICTION_SHA256` 独立取回，新默认预测等待有效版本。
 3. 核对后运行 `pm861 --data-dir "$STATE" forecast release-approve "$REPORT_SHA256" --reviewer "$REVIEWER" --reason "$REVIEW_REASON"`。签署事务再次检查两边实施指纹、报告、现用版本和已冻结的比较资料。新版本只在实际签署后生效。本轮报告的 `main_model_rollout` 列出每个实际封存的主版本、采用该版本的比赛以及切换对应的截止点。
-4. 独立复核者可在空目录运行 `pm861 --data-dir "$VERIFY_STATE" forecast release-compare "$HISTORY" --reference-0.2.0`，对照随包的旧版基准。旧版基准使用 `8993f15` 的真实实现，从固定八季原始档案生成。用该提交的 `src` 作为 `PYTHONPATH`，运行当前仓库的 `scripts/reproduce_probability_baseline.py "$HISTORY" regenerated.json.gz`，即可独立还原逐场输出。
+4. 独立复核者可在空目录运行 `pm861 --data-dir "$VERIFY_STATE" forecast release-compare "$HISTORY" --reference-0.2.0`，对照随包的旧版基准。0.2.0 的正式发布提交是 `432e0af`，随包基准在 `8993f15` 审核检出上生成。两者的 `src`、`constraints`、`deploy` 与 `pyproject.toml` 有相同的 Git 对象。可使用发布提交的 `src` 作为 `PYTHONPATH`，运行当前仓库的 `scripts/reproduce_probability_baseline.py "$HISTORY" regenerated.json.gz`，即可独立还原逐场输出。`forecast release-report REPORT_SHA256` 可按摘要取回原对照及签署详情。历史记录若没有单独保存确认的安装提交，查询时保留空值。
 
 0.2.0 与此次发布的 B1 在五季样本上得分均为 75.447813，1,900 场中改变了六项核心概率或任一已配置大小球线的场次为 0。历史的球队新闻和首发缺乏可验证的逐场档案，当季输入处理更改的实际表现需要后续前向样本。这次发布比较用于复核，用户本机的版本决定仍需负责人签署。[五季版本对照](../reports/research/release-probability-comparison-0.3.0.json)

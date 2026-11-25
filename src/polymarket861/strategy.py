@@ -80,18 +80,9 @@ def recipe(values):
 
 
 def implementation_digest():
-    from .model_study import source_digest
+    from .model_study import decision_implementation
 
-    return source_digest(
-        (
-            "strategy.py",
-            "strategy_scope.py",
-            "ledger.py",
-            "ledger_rules.py",
-            "ledger_terms.py",
-            "archive_proof.py",
-        )
-    )
+    return digest(decision_implementation())
 
 
 def _trial(db, key, *, executable=True):
@@ -251,9 +242,17 @@ def register_trial(
             spec["forward_window"] = previous.get(
                 "forward_window"
             ) or forward_window.register(season, first_round, span, schedule, stamp)
-            spec["implementation"] = (
-                previous.get("implementation") or implementation_digest()
-            )
+            if not previous:
+                from .model_study import decision_implementation
+
+                spec["implementation_manifest"] = decision_implementation()
+                spec["implementation"] = digest(spec["implementation_manifest"])
+            else:
+                spec["implementation"] = previous["implementation"]
+                if "implementation_manifest" in previous:
+                    spec["implementation_manifest"] = previous[
+                        "implementation_manifest"
+                    ]
         if old and "history_scope" not in json.loads(old[0]):
             # Retain the original immutable registration; the live account reconciliation still applies.
             spec.pop("history_scope")
