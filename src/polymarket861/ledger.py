@@ -113,10 +113,10 @@ def fixture_batch(data_dir):
     with closing(store.connect(data_dir)) as db:
         for name, schema in (
             ("paper-ledger", SCHEMA),
-            ("market-archive", market_archive._SCHEMA),
             ("research", jobs_research._SCHEMA),
         ):
             dbscope.prepare(db, name, schema)
+        market_archive.prepare(db)
         with db:
             db.execute("BEGIN IMMEDIATE")
             with dbscope.bind(data_dir, db) as batch:

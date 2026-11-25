@@ -58,11 +58,15 @@ CREATE TABLE IF NOT EXISTS ma_walks (
 """
 
 
+def prepare(db):
+    dbscope.prepare(db, "market-archive", _SCHEMA)
+    contract_storage.prepare(db)
+
+
 def database(root):
     db = connect(root)
     try:
-        dbscope.prepare(db, "market-archive", _SCHEMA)
-        contract_storage.prepare(db)
+        prepare(db)
     except BaseException:
         db.close()
         raise

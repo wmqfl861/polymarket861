@@ -480,7 +480,7 @@ def run(data_dir, slug, *, account="research-shadow", fixture_id=None):
     actions, recovered, gaps = [], [], []
     clock = started
     with db_for(data_dir) as db:
-        dbscope.prepare(db, "market-archive", market_archive._SCHEMA)
+        market_archive.prepare(db)
         dbscope.prepare(db, "research", jobs_research._SCHEMA)
         try:
             with db, dbscope.bind(data_dir, db) as batch:

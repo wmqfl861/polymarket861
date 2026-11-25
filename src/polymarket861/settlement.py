@@ -123,7 +123,7 @@ def _positions(root, account, limit, now):
     with ledger.connection(root) as db:
         dbscope.prepare(db, "research-shadow", shadow.SCHEMA)
         dbscope.prepare(db, "settlement", SCHEMA)
-        dbscope.prepare(db, "market-archive", market_archive._SCHEMA)
+        market_archive.prepare(db)
         sql = """
           WITH balances AS (
             SELECT 'formal' mode,i.account,i.id,i.fixture,i.token,i.condition_id,i.status,i.original plan,i.result,i.fingerprint,i.cutoff

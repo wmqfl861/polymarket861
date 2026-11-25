@@ -72,16 +72,27 @@ def prepare(db):
     if kind() == "view":
         return
     # Old receipts move atomically, including their row identifiers and malformed legacy bodies.
-    with db:
-        db.execute("BEGIN IMMEDIATE")
+    own = not db.in_transaction
+    db.execute("BEGIN IMMEDIATE" if own else "SAVEPOINT install_contract_storage")
+    try:
         existing = kind()
-        if existing == "view":
-            return
-        if existing == "table":
-            db.execute("ALTER TABLE ma_contracts RENAME TO ma_contracts_v020")
-            db.execute("DROP INDEX IF EXISTS ma_market_fixture")
-            db.execute("DROP INDEX IF EXISTS ma_contracts_condition_time")
-        dbscope.prepare(db, "market-contract-storage", _SCHEMA)
-        if existing == "table":
-            _migrate(db)
-            db.execute("DROP TABLE ma_contracts_v020")
+        if existing != "view":
+            if existing == "table":
+                db.execute("ALTER TABLE ma_contracts RENAME TO ma_contracts_v020")
+                db.execute("DROP INDEX IF EXISTS ma_market_fixture")
+                db.execute("DROP INDEX IF EXISTS ma_contracts_condition_time")
+            dbscope.prepare(db, "market-contract-storage", _SCHEMA)
+            if existing == "table":
+                _migrate(db)
+                db.execute("DROP TABLE ma_contracts_v020")
+        if own:
+            db.commit()
+        else:
+            db.execute("RELEASE install_contract_storage")
+    except BaseException:
+        if own:
+            db.rollback()
+        else:
+            db.execute("ROLLBACK TO install_contract_storage")
+            db.execute("RELEASE install_contract_storage")
+        raise
