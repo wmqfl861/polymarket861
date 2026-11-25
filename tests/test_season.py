@@ -507,3 +507,58 @@ class SeasonTests(unittest.TestCase):
                 )
             ]
             self.assertEqual(set(reasons), {"reschedule_seen_late"})
+
+    def test_archived_early_but_planned_late_and_contiguous_reinstatement(self):
+        early = KICK - timedelta(minutes=100)
+        late = KICK - timedelta(minutes=50)
+        ingest(self.root, native(self.slug), early)
+        # Another identical native snapshot cannot erase the first observed kickoff.
+        ingest(self.root, native(self.slug), late - timedelta(seconds=1))
+        with contextlib.redirect_stderr(io.StringIO()):
+            season._plan(self.root, late)
+        with contextlib.closing(season._db(self.root)) as db:
+            reasons = [
+                json.loads(r[0])
+                for r in db.execute(
+                    "SELECT detail FROM season_slots WHERE state='missed'"
+                )
+            ]
+            self.assertEqual(
+                sum(r["reason"] == "collector_window_missed" for r in reasons), 5
+            )
+            self.assertEqual(sum(r["reason"] == "first_seen_late" for r in reasons), 2)
+            self.assertTrue(
+                all(
+                    r["schedule_seen_at"] == store.iso(early)
+                    and r["first_planned_at"] == store.iso(late)
+                    for r in reasons
+                )
+            )
+        # A sequence fully archived before the first planner tick still has a real revision boundary.
+        another = "epl-cc-dd-2026-11-25"
+        ingest(self.root, native(another, idx=4), early)
+        ingest(
+            self.root,
+            native(another, KICK + timedelta(days=16), idx=4),
+            early + timedelta(minutes=5),
+        )
+        restored = late - timedelta(minutes=1)
+        ingest(self.root, native(another, idx=4), restored)
+        with contextlib.redirect_stderr(io.StringIO()):
+            season._plan(self.root, late)
+        with contextlib.closing(season._db(self.root)) as db:
+            restored_rows = [
+                json.loads(r[0])
+                for r in db.execute(
+                    "SELECT detail FROM season_slots WHERE fixture=? AND state='missed'",
+                    (another,),
+                )
+            ]
+            self.assertEqual(len(restored_rows), 7)
+            self.assertTrue(
+                all(
+                    r["reason"] == "reschedule_seen_late"
+                    and r["schedule_seen_at"] == store.iso(restored)
+                    for r in restored_rows
+                )
+            )

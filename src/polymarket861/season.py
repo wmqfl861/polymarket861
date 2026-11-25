@@ -48,8 +48,64 @@ def _add(db, fixture, kickoff, when, deadline, role, stage):
     return key
 
 
+def _schedule_origin(db, root, fixture, kick, at):
+    """Earliest authentic main-event receipt in the current uninterrupted kickoff revision."""
+    from .archive_proof import original_receipt
+
+    records = db.execute(
+        "SELECT received_at,sha,event_id,kickoff FROM ma_events WHERE slug=? "
+        "AND received_at<=? ORDER BY received_at,sha",
+        (fixture, store.iso(at)),
+    ).fetchall()
+
+    def matches(record):
+        try:
+            return store.instant(record["kickoff"]) == kick
+        except (ValueError, TypeError):
+            return False
+
+    def genuine(record):
+        try:
+            reply, op, selector, _ = original_receipt(
+                db, root, record["sha"], record["received_at"], {"event", "catalog"}
+            )
+            body = json.loads(reply.body)
+            events = (
+                [body]
+                if op == "event" and selector == fixture and isinstance(body, dict)
+                else body
+                if op == "catalog" and isinstance(body, list)
+                else []
+            )
+            hits = [
+                e
+                for e in events
+                if isinstance(e, dict)
+                and e.get("slug") == fixture
+                and str(e.get("id")) == record["event_id"]
+            ]
+            return len(hits) == 1 and store.instant(
+                hits[0]["startTime"]
+            ) == store.instant(record["kickoff"])
+        except (KeyError, ValueError, TypeError, OSError):
+            return False
+
+    boundary = next(
+        (r["received_at"] for r in reversed(records) if not matches(r) and genuine(r)),
+        None,
+    )
+    for r in records:
+        if (
+            (boundary is None or r["received_at"] > boundary)
+            and matches(r)
+            and genuine(r)
+        ):
+            return store.instant(r["received_at"]), r["sha"], boundary is not None
+    return None, None, boundary is not None
+
+
 def _critical_windows(
-    db, fixture, kick, known_delays, now, schedule_seen, revised, source
+    db, fixture, kick, known_delays, now, schedule_seen, first_planned, revised, source
 ):
     """Record fixed measurement opportunities even if discovery happened after a cutoff."""
 
@@ -57,7 +113,9 @@ def _critical_windows(
         key = _add(db, fixture, store.iso(kick), target, deadline, role, stage)
         if deadline >= now:
             return
-        if schedule_seen > deadline:
+        if schedule_seen is None:
+            reason = "schedule_observation_unverified"
+        elif schedule_seen > deadline:
             reason = "reschedule_seen_late" if revised else "first_seen_late"
         else:
             reason = "collector_window_missed"
@@ -66,7 +124,9 @@ def _critical_windows(
             "horizon": horizon,
             "scheduled_at": store.iso(target),
             "deadline": store.iso(deadline),
-            "schedule_seen_at": store.iso(schedule_seen),
+            "schedule_seen_at": store.iso(schedule_seen) if schedule_seen else None,
+            "first_planned_at": store.iso(first_planned),
+            "attribution_version": 3,
             "checked_at": store.iso(now),
             "schedule_source_sha256": source,
         }
@@ -75,6 +135,26 @@ def _critical_windows(
             "WHERE key=? AND state IN ('pending','superseded')",
             (store.canonical(detail), key),
         ).rowcount
+        if not changed:
+            prior = db.execute(
+                "SELECT detail FROM season_slots WHERE key=? AND state='missed'", (key,)
+            ).fetchone()
+            earlier = json.loads(prior[0]) if prior and prior[0] else {}
+            if earlier.get("reason") in (
+                "collector_window_missed",
+                "first_seen_late",
+                "reschedule_seen_late",
+            ) and not earlier.get("attribution_version"):
+                # Upgrade prior local diagnoses without replacing receipts or issuing a duplicate alert.
+                detail["previous_attribution"] = earlier["reason"]
+                db.execute(
+                    "UPDATE season_slots SET detail=? WHERE key=?",
+                    (store.canonical(detail), key),
+                )
+                db.execute(
+                    "UPDATE season_alerts SET reason=? WHERE key=?",
+                    (f"{reason} {horizon} deadline {store.iso(deadline)}", key),
+                )
         if changed:
             _alert(
                 db,
@@ -135,13 +215,18 @@ def _plan(root, now):
                 )
             old = json.loads(row["plan"]) if row["plan"] else {}
             revised = bool(row["prior"] and row["prior"] != kickoff)
-            seen = (
+            planned = (
                 now
                 if revised or not row["first_seen"]
-                else store.instant(old.get("schedule_seen_at") or row["first_seen"])
+                else store.instant(
+                    old.get("first_planned_at")
+                    or old.get("schedule_seen_at")
+                    or row["first_seen"]
+                )
             )
             if not lower <= kickoff <= upper:
                 if revised:
+                    since, origin, _ = _schedule_origin(db, root, tag, kick, now)
                     db.execute(
                         "UPDATE season_fixtures SET kickoff=?,plan=?,updated=? WHERE fixture=?",
                         (
@@ -149,7 +234,12 @@ def _plan(root, now):
                             store.canonical(
                                 {
                                     "outside_window": True,
-                                    "schedule_seen_at": store.iso(now),
+                                    "schedule_seen_at": store.iso(since)
+                                    if since
+                                    else None,
+                                    "schedule_source_sha256": origin,
+                                    "first_planned_at": store.iso(now),
+                                    "attribution_version": 3,
                                 }
                             ),
                             store.iso(now),
@@ -177,12 +267,19 @@ def _plan(root, now):
                 (tag, store.iso(now)),
             ).fetchone()
             version = store.digest(
-                ["critical-windows-v2", kickoff, latest["received_at"], latest["sha"]]
+                ["critical-windows-v3", kickoff, latest["received_at"], latest["sha"]]
             )
             # The main receipt changes far more often than the grid. Skip recalculating an
             # unchanged schedule in the seconds leading up to a capture.
             if row["prior"] == kickoff and old.get("version") == version:
                 continue
+            seen, source, has_prior = _schedule_origin(db, root, tag, kick, now)
+            seen_text = store.iso(seen) if seen else None
+            if (
+                old.get("attribution_version") == 3
+                and old.get("schedule_seen_at") != seen_text
+            ):
+                planned = now
             active = db.execute(
                 "WITH latest AS (SELECT *,row_number() OVER(PARTITION BY slug ORDER BY received_at DESC,sha DESC) n "
                 "FROM ma_events WHERE fixture=? AND received_at<=?) SELECT DISTINCT json_extract(c.payload,'$.seconds_delay') delay "
@@ -204,7 +301,10 @@ def _plan(root, now):
                         {
                             "delays": delays,
                             "known_delays": known_delays,
-                            "schedule_seen_at": store.iso(seen),
+                            "schedule_seen_at": seen_text,
+                            "schedule_source_sha256": source,
+                            "first_planned_at": store.iso(planned),
+                            "attribution_version": 3,
                             "version": version,
                         }
                     ),
@@ -212,10 +312,23 @@ def _plan(root, now):
                     store.iso(now),
                 ),
             )
-            if row["prior"] == kickoff and old.get("known_delays") == known_delays:
+            if (
+                row["prior"] == kickoff
+                and old.get("attribution_version") == 3
+                and old.get("schedule_seen_at") == seen_text
+                and old.get("known_delays") == known_delays
+            ):
                 continue
             _critical_windows(
-                db, tag, kick, known_delays, now, seen, revised, row["sha"]
+                db,
+                tag,
+                kick,
+                known_delays,
+                now,
+                seen,
+                planned,
+                revised or has_prior,
+                source,
             )
 
             if row["prior"] != kickoff:
