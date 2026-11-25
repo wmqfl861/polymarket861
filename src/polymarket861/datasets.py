@@ -422,6 +422,7 @@ def observe(
             manifest = input_manifest.verify_observed_inputs(data_dir, manifest["root"])
     from .jobs import review_due_experiments
     from .pipeline import publish_round
+    from .round_history import ready_for_experiment_review
 
     reviews = []
     batch = (manifest["digest"], register_season or "")
@@ -443,18 +444,14 @@ def observe(
         defaults = (
             [("B1", "technical", "T-60m")] if (season, rnd) in tracked_rounds else []
         )
-        formal_round_complete = False
+        review_due = False
         for version, mode, horizon in runs or defaults:
             closed = publish_round(
                 data_dir, season, rnd, version=version, mode=mode, horizon=horizon
             )
-            if (
-                mode == "formal"
-                and horizon == "T-60m"
-                and closed["status"] in {"final", "incomplete"}
-            ):
-                formal_round_complete = True
-        if formal_round_complete:
+            if ready_for_experiment_review(closed):
+                review_due = True
+        if review_due:
             reviews.append(review_due_experiments(data_dir, season, rnd))
     with closing(connect(data_dir)) as db, db:
         db.execute(

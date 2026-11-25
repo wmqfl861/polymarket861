@@ -19,6 +19,20 @@ CREATE TABLE IF NOT EXISTS round_report_editions (
 )"""
 
 
+def ready_for_experiment_review(report):
+    """A complete set of official results can close a prospective T−60m research window."""
+    expected = report.get("expected")
+    completed = report.get("completed")
+    return (
+        report.get("mode") in ("technical", "formal")
+        and report.get("horizon") == "T-60m"
+        and type(expected) is int
+        and expected > 0
+        and type(completed) is int
+        and completed == expected
+    )
+
+
 def _key(season, round_id, horizon, mode, version):
     return f"{season}/{round_id}/{horizon}/{mode}/{version}"
 

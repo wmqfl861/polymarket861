@@ -9,7 +9,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from . import evidence, football, paired_proof
-from .round_history import publish_round, register_history
+from .round_history import publish_round, ready_for_experiment_review, register_history
 from .store import (
     PROTOCOL,
     builtin_model_at,
@@ -585,10 +585,7 @@ def import_result_and_score(data_dir, outcome):
     reviews = []
     from .jobs import review_due_experiments
 
-    if any(
-        r["mode"] in ("formal", "technical") and r["completed"] == r["expected"]
-        for r in reports
-    ):
+    if any(ready_for_experiment_review(r) for r in reports):
         reviews = review_due_experiments(
             data_dir, fixture["season"], fixture["round_id"]
         )

@@ -15,7 +15,7 @@ from . import result_feed as feed
 
 def publications(root):
     from .jobs import review_due_experiments
-    from .round_history import publish_round
+    from .round_history import publish_round, ready_for_experiment_review
 
     with closing(admission.database(root)) as db:
         queue = list(
@@ -69,9 +69,7 @@ def publications(root):
                 }
             )
         reviews = []
-        if any(
-            r["mode"] == "formal" and r["completed"] == r["expected"] for r in emitted
-        ):
+        if any(ready_for_experiment_review(r) for r in emitted):
             reviews = review_due_experiments(root, season, rnd)
         reports.append(
             {

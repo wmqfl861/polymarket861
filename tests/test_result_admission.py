@@ -131,6 +131,45 @@ class VerifiedResults(unittest.TestCase):
             if f["fixture_id"] == fid
         )
 
+    def test_verified_feed_closes_a_technical_only_t60_round_once(self):
+        for i in range(8):
+            home, away = f"Home {i} FC", f"Away {i} FC"
+            raw = match(100 + i, home, away, [2, 1])
+            self.rows.append(raw)
+            store.register_fixture(
+                self.root,
+                {
+                    "fixture_id": football.fixture_id(SEASON, home, away),
+                    "season": SEASON,
+                    "round_id": 1,
+                    "home": home,
+                    "away": away,
+                    "kickoff": raw["matchDateTimeUTC"],
+                    "known_at": START,
+                    "source": "openfootball",
+                    "locator": "archived schedule",
+                },
+            )
+        self.time = store.iso("2026-08-21T17:59:00Z")
+        pipeline.make_forecast(self.root, self.fids[0], None, mode="technical", horizon="T-60m")
+        self.set_time(0)
+        self.collect(self.rows, season=True)
+        self.assertEqual(self.reconcile()["available_results"], 0)
+        self.set_time(43)
+        self.collect(self.rows)
+        closed = self.reconcile()
+        self.assertEqual(closed["available_results"], 10)
+        reports = closed["rounds"][0]["reports"]
+        self.assertEqual({r["mode"] for r in reports}, {"technical"})
+        self.assertIn(
+            ("T-60m", 10, 10), {(r["horizon"], r["completed"], r["expected"]) for r in reports}
+        )
+        self.assertEqual(
+            closed["rounds"][0]["experiment_reviews"],
+            {"season": SEASON, "round_id": 1, "windows": []},
+        )
+        self.assertEqual(self.reconcile()["rounds"], [])
+
     def test_two_receipts_restore_correct_remove_at_actual_admission(self):
         fid = self.fids[0]
         self.set_time(0)

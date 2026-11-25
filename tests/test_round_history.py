@@ -26,6 +26,22 @@ PROBS = dict(
 
 
 class RoundEditions(unittest.TestCase):
+    def test_review_requires_a_complete_prospective_t60_report(self):
+        report = {"mode": "technical", "horizon": "T-60m", "expected": 10, "completed": 10}
+        for mode in ("formal", "technical"):
+            self.assertTrue(history.ready_for_experiment_review(report | {"mode": mode}))
+        for change in (
+            {"mode": "replay"},
+            {"horizon": "T-24h"},
+            {"horizon": "early"},
+            {"completed": 9},
+            {"expected": None, "completed": None},
+            {"expected": 0, "completed": 0},
+            {"expected": True, "completed": True},
+        ):
+            with self.subTest(change=change):
+                self.assertFalse(history.ready_for_experiment_review(report | change))
+
     def setUp(self):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)

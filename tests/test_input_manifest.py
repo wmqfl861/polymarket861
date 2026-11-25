@@ -262,7 +262,14 @@ class InputManifestTests(unittest.TestCase):
         review = Mock(return_value={"reviewed": []})
         with (
             patch(
-                "polymarket861.pipeline.publish_round", return_value={"status": "final"}
+                "polymarket861.pipeline.publish_round",
+                return_value={
+                    "status": "final",
+                    "mode": "formal",
+                    "horizon": "T-60m",
+                    "expected": 10,
+                    "completed": 10,
+                },
             ) as publish,
             patch("polymarket861.jobs.review_due_experiments", review),
         ):
@@ -270,6 +277,26 @@ class InputManifestTests(unittest.TestCase):
             self.observe()
         self.assertEqual(publish.call_count, 2)
         review.assert_called_once_with(self.runtime, self.season, 1)
+
+    def test_openfootball_complete_technical_round_routes_review_once(self):
+        fixtures = [
+            self.rows[0] | {"team1": f"Home {i} FC", "team2": f"Away {i} FC"} for i in range(10)
+        ]
+        self.observe(
+            [f | {"score": {}} for f in fixtures],
+            clock="2024-08-14T10:00:00Z",
+            revision="1" * 40,
+        )
+        partial = self.observe(
+            fixtures[:-1] + [fixtures[-1] | {"score": {}}], revision="2" * 40
+        )
+        self.assertEqual(partial["experiment_reviews"], [])
+        final = self.observe(fixtures, clock="2024-08-17T14:00:00Z", revision="3" * 40)
+        self.assertEqual(
+            final["experiment_reviews"], [{"season": self.season, "round_id": 1, "windows": []}]
+        )
+        again = self.observe(fixtures, clock="2024-08-17T14:00:00Z", revision="3" * 40)
+        self.assertEqual(again["experiment_reviews"], [])
 
     def test_managed_file_tamper_detected_before_training(self):
         r = self.observe()
