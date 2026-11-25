@@ -465,6 +465,55 @@ def evaluation_rows(
         )
 
 
+def _replay_at_cutoff(db, entry, fixture, payload, proof):
+    from .paired_proof import POLICY
+    from .pipeline import HORIZONS
+
+    lead = HORIZONS.get(entry["horizon"])
+    if not lead or not proof:
+        return False
+    cutoff = iso(instant(fixture["result_kickoff"]) - lead)
+    if (
+        any(
+            payload.get(k) != entry[k]
+            for k in (
+                "fixture_id",
+                "kickoff",
+                "cutoff",
+                "sealed_at",
+                "model_version",
+                "mode",
+                "horizon",
+                "protocol",
+            )
+        )
+        or proof.get("season") != fixture["season"]
+        or proof.get("round_id") != fixture["round_id"]
+        or entry["cutoff"] != cutoff
+        or proof.get("input_cutoff") != cutoff
+        or proof.get("policy") != POLICY
+        or not isinstance(proof.get("last_result"), str)
+        or proof["last_result"] > cutoff
+        or digest({k: v for k, v in proof.items() if k != "sha256"})
+        != proof.get("sha256")
+    ):
+        return False
+    if not db.execute(
+        "SELECT 1 FROM sqlite_master WHERE name='comparison_snapshots'"
+    ).fetchone():
+        return False
+    row = db.execute(
+        "SELECT document FROM comparison_snapshots WHERE digest=?",
+        (proof.get("snapshot"),),
+    ).fetchone()
+    if not row:
+        return False
+    snapshot = json.loads(row[0])
+    return digest(snapshot) == proof["snapshot"] and any(
+        f["season"] == fixture["season"] for f in snapshot["files"]
+    )
+
+
 def scored_fixture_rows(
     db, fixtures, version, horizon, mode, protocol=PROTOCOL, *, one_round=False
 ):
@@ -486,18 +535,19 @@ def scored_fixture_rows(
             not fixture
             or fixture["home_goals"] is None
             or fixture["kickoff"] != entry["kickoff"]
-            or fixture.get("result_kickoff")
-            and (
-                entry["sealed_at"] >= fixture["result_kickoff"]
-                or horizon != "early"
-                and fixture["result_kickoff"] != entry["kickoff"]
-            )
+            or fixture.get("result_kickoff") and horizon != "early"
+            and fixture["result_kickoff"] != entry["kickoff"]
         ):
             continue
         payload = json.loads(entry["data_json"])
         if digest(payload) != entry["digest"]:
             raise ValueError("forecast evidence hash mismatch")
-        if mode != "replay" and entry["sealed_at"] > entry["cutoff"]:
+        proof = from_seal(payload)
+        actual = fixture.get("result_kickoff")
+        if mode == "replay":
+            if actual and not _replay_at_cutoff(db, entry, fixture, payload, proof):
+                continue
+        elif entry["sealed_at"] > entry["cutoff"] or actual and entry["sealed_at"] >= actual:
             continue
         result.append(
             fixture
@@ -508,7 +558,7 @@ def scored_fixture_rows(
             | {
                 "probabilities": payload["probabilities"],
                 "recipe_digest": payload["recipe_digest"],
-                "comparison_proof": from_seal(payload),
+                "comparison_proof": proof,
             }
         )
     return result

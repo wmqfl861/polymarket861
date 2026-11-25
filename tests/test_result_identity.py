@@ -1,7 +1,8 @@
 import hashlib
+import io
 import json
 import unittest
-from contextlib import closing
+from contextlib import closing, redirect_stdout
 from copy import deepcopy
 from datetime import timedelta
 from unittest.mock import patch
@@ -9,6 +10,7 @@ from unittest.mock import patch
 import test_result_admission as result_case
 import test_schedule_consensus as schedule_case
 from polymarket861 import (
+    cli,
     football,
     independent_results,
     input_manifest,
@@ -140,6 +142,85 @@ class ResultIdentity(unittest.TestCase):
             if f.fixture_id == self.fid
         )
         self.assertIsNone(f.result_versions[-1].score)
+
+    def test_cli_strict_replay_uses_historical_cutoff_and_requires_its_input_snapshot(
+        self,
+    ):
+        self.case.time = store.iso("2026-08-21T15:00:00Z")
+        late = pipeline.make_forecast(
+            self.root, self.case.fids[1], None, horizon="early"
+        )
+        self.case.set_time(0)
+        rows = deepcopy(self.case.rows)
+        rows[1]["matchDateTimeUTC"] = "2026-08-21T12:00:00Z"
+        self.case.collect(rows)
+        a, b = self.case.fids
+        self.evidence(rows[0]["matchDateTimeUTC"], [2, 1])
+        witness = self.secondary[a][0]
+        self.secondary[b] = [
+            witness
+            | {
+                "kickoff": store.iso(rows[1]["matchDateTimeUTC"]),
+                "score": [1, 0],
+                "source_match_id": "epl:735",
+            }
+        ]
+        self.assertEqual(self.case.reconcile()["available_results"], 2)
+        view = input_manifest.verify_observed_inputs(self.root)
+        self.case.set_time(60)
+        stdout = io.StringIO()
+        with redirect_stdout(stdout):
+            code = cli.main(
+                [
+                    "--data-dir",
+                    str(self.root),
+                    "forecast",
+                    "replay-round",
+                    view["root"],
+                    "2026-27",
+                    "1",
+                    "--evidence",
+                    view["evidence_path"],
+                ]
+            )
+        self.assertEqual(code, 0)
+        report = json.loads(stdout.getvalue())["round_report"]
+        self.assertEqual(report["count"], 1)
+        result = store.evaluation_rows(
+            self.root, report["model_version"], mode="replay"
+        )
+        forward = store.evaluation_rows(
+            self.root, late["model_version"], horizon="early", mode="technical"
+        )
+        self.assertNotIn(b, [r["fixture_id"] for r in forward])
+        self.assertEqual([r["fixture_id"] for r in result], [a])
+        self.assertGreater(result[0]["sealed_at"], result[0]["result_kickoff"])
+        self.assertLess(result[0]["cutoff"], result[0]["result_kickoff"])
+        with closing(store.connect(self.root)) as db, db:
+            row = db.execute(
+                "SELECT * FROM forecast_seals WHERE mode='replay' AND fixture_id=?",
+                (a,),
+            ).fetchone()
+            body = json.loads(row["data_json"])
+            # A shape-correct generic seal cannot assert an unregistered snapshot.
+            body["model_version"] = "generic"
+            body["input_manifest_sha256"] = "f" * 64
+            proof = body["comparison_proof"]
+            proof["snapshot"] = body["input_manifest_sha256"]
+            proof["sha256"] = store.digest(
+                {k: v for k, v in proof.items() if k != "sha256"}
+            )
+            fake = dict(row) | {
+                "model_version": "generic",
+                "data_json": store.canonical(body),
+                "digest": store.digest(body),
+            }
+            db.execute(
+                "INSERT INTO forecast_seals VALUES (:fixture_id,:kickoff,:cutoff,:horizon,:model_version,"
+                ":protocol,:mode,:sealed_at,:digest,:data_json)",
+                fake,
+            )
+        self.assertEqual(store.evaluation_rows(self.root, "generic", mode="replay"), [])
 
     def test_operator_withdrawal_persists_until_named_release_and_reverification(self):
         self.case.set_time(0)
