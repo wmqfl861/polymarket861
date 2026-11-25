@@ -133,6 +133,15 @@ class ShadowAndSettlement(unittest.TestCase):
             "proof": [{"sha256": "e" * 64}],
         }
 
+    def test_first_run_report_has_no_fictitious_balance(self):
+        empty = shadow.report(self.root)
+        self.assertEqual(empty["account_state"], "unstarted")
+        self.assertEqual(empty["orders"], [])
+        self.assertIsNone(empty["cash"])
+        self.assertIsNone(empty["settled_roi"])
+        with shadow.db_for(self.root) as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM research_shadow_accounts").fetchone()[0], 0)
+
     def test_independent_fee_missing_flags_lineups_scheduled_mark_and_formal_isolation(
         self,
     ):

@@ -338,7 +338,7 @@ def report(data_dir, account="research-shadow"):
         acc = db.execute(
             "SELECT * FROM research_shadow_accounts WHERE account=?", (account,)
         ).fetchone()
-        if not acc:
+        if not acc and account != "research-shadow":
             raise ValueError("unknown research shadow account")
         orders = []
         classes = Counter()
@@ -412,8 +412,9 @@ def report(data_dir, account="research-shadow"):
             "mode": "research_shadow",
             "eligible_for_formal": False,
             "eligible_for_A": False,
-            "initial_cash": acc["initial"],
-            "cash": acc["cash"],
+            "account_state": "initialized" if acc else "unstarted",
+            "initial_cash": acc["initial"] if acc else None,
+            "cash": acc["cash"] if acc else None,
             "counts": dict(classes),
             "orders": orders,
             "strata": list(groups.values()),
@@ -435,7 +436,8 @@ def report(data_dir, account="research-shadow"):
             "realized_pnl": fmt(pnl) if settled else None,
             "settled_roi": fmt(pnl / spent) if spent else None,
         }
-    store.save_report(data_dir, "shadow", account, output)
+    if acc:
+        store.save_report(data_dir, "shadow", account, output)
     return output
 
 
