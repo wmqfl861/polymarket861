@@ -25,8 +25,8 @@
   },
   "spec_sha256": "ed19c6c2b23caa953cc46a9c0e1f348ad20d078b4495f425de22cc96a94ac632",
   "implementation_sha256": {
-    "football_candidates.py": "46ebd89765cac6b1505eb06f58a21736376b73efe068145d687275a733f7d713",
-    "football.py": "a7283a3c9b4ebb2752590eb6388a973f328ea672c50e7c3b5531154154e2908b",
+    "football_candidates.py": "ad005520826c866daaa14affcff9c949c68c5fb8e9b8e5887a6a53c4f53f6bcd",
+    "football.py": "5203d6ec18e4e9168dc5e3536323081af090e8101a695fbf6cc45690a6575dc4",
     "football_model.py": "093e90294315132d2c60826734bb7a12fc329264ca8d4863bb3ad69bd5b2b829",
     "experiment_statistics.py": "d4c6572570f2522397f430cec84f8b09b1cf76de762e6df35d420cc40749404e"
   },
@@ -136,6 +136,9 @@
   ],
   "paired_n": 0,
   "denominator": 1900,
+  "forecast_omissions": {
+    "unverified_historical_timing": 1900
+  },
   "coverage_by_season": {
     "2021-22": [
       0,

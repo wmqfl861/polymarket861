@@ -43,13 +43,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         4,
         2
       ],
       "status": "scored",
-      "digest": "953f8c3c921e90d4591ca1fa85b98253d6ff2bedb4e5601558e4ccf9daa6f740",
+      "digest": "825dcffd57f9386beb0b8f346ac101c1316ed9e2a3c6a3c7edb3415befa84cbc",
       "score": 77.96443206600372,
       "losses": {
         "result": 0.10334719988209284,
@@ -68,7 +68,106 @@
         "total": 0.4651325976457267,
         "home": 0.44512798448200813,
         "away": 1.253890027925496
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-15T18:00:00.000000Z",
+        "input_cutoff": "2025-08-15T18:00:00.000000Z",
+        "model": {
+          "score": 77.96443206600372,
+          "item_scores": {
+            "result": 89.66528001179071,
+            "total": 86.16545524921048,
+            "home": 87.09338803581531,
+            "away": 48.9336049671984
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "8b72ba1db2172ce9903a3c2f3c19b6aaa73c1bc9ede9de67eddda696d4107361",
+          "score": 73.93649969221299,
+          "item_scores": {
+            "result": 77.18467220683287,
+            "total": 82.34526008002463,
+            "home": 72.85041551246539,
+            "away": 63.365650969529106
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-15T18:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-15T18:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": 4.027932373790733,
+            "by_family": {
+              "away": -14.432046002330708,
+              "home": 14.24297252334992,
+              "result": 12.480607804957842,
+              "total": 3.820195169185851
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-15T19:00:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "52bb7e86409979327d1a2fed0bfc8d4b15d0de91c2d9cb2b73bcd53731cb2506"
     },
     {
       "fixture_id": "epl/2025-26/aston-villa/newcastle-united",
@@ -77,13 +176,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         0,
         0
       ],
       "status": "scored",
-      "digest": "81a82bce8a990180d7c0e49e76cad97003b99f5621e0028894aa72eb65b532c2",
+      "digest": "211177e63c1ea114b7c8405cb8dcb8f01afa626912281e4fde48556608dbd55d",
       "score": 68.62830030659065,
       "losses": {
         "result": 0.4384652916085158,
@@ -102,7 +201,106 @@
         "total": 0.9487244579036073,
         "home": 0.6049225542000396,
         "away": 0.6629603620398204
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-16T10:30:00.000000Z",
+        "input_cutoff": "2025-08-16T10:30:00.000000Z",
+        "model": {
+          "score": 68.62830030659065,
+          "item_scores": {
+            "result": 56.153470839148426,
+            "total": 62.45186168432839,
+            "home": 79.39899676355337,
+            "away": 76.50887193933235
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "8235f7c801aa48b4793182cafe78e940248e9c1b1ae3dc4d96ea8318ca65e0f5",
+          "score": 70.73474530624809,
+          "item_scores": {
+            "result": 55.079409048938146,
+            "total": 66.38034779932286,
+            "home": 77.06094182825484,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-16T10:30:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-16T10:30:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": -2.106444999657441,
+            "by_family": {
+              "away": -7.909410609144103,
+              "home": 2.33805493529853,
+              "result": 1.0740617902102798,
+              "total": -3.9284861149944703
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-16T11:30:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "08e09d40857646247522ccf207680877a67ad2c8444b41a63607944b180c12fa"
     },
     {
       "fixture_id": "epl/2025-26/brighton-hove-albion/fulham",
@@ -111,13 +309,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         1,
         1
       ],
       "status": "scored",
-      "digest": "3e898352869f3a4318fc84767bbe52f8ed06c38ed384cc529f504b5c75984146",
+      "digest": "48ecaad07855d79c9f31b1a40bed909a7882f40774ff3507539e89b077c2af50",
       "score": 68.9996949720183,
       "losses": {
         "result": 0.44497346014482614,
@@ -136,7 +334,106 @@
         "total": 0.9253909974870324,
         "home": 0.725696006059439,
         "away": 0.5199894399484286
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-16T13:00:00.000000Z",
+        "input_cutoff": "2025-08-16T13:00:00.000000Z",
+        "model": {
+          "score": 68.9996949720183,
+          "item_scores": {
+            "result": 55.50265398551739,
+            "total": 63.56385574828136,
+            "home": 73.37311962377153,
+            "away": 83.55915053050296
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "ee7562d9c9cd6cbb447265e12b15ac3453079629244e5b1c69ceb0eb3c6229c7",
+          "score": 70.73474530624809,
+          "item_scores": {
+            "result": 55.079409048938146,
+            "total": 66.38034779932286,
+            "home": 77.06094182825484,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-16T13:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-16T13:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": -1.7350503342297827,
+            "by_family": {
+              "away": -0.8591320179734936,
+              "home": -3.687822204483311,
+              "result": 0.4232449365792448,
+              "total": -2.8164920510415
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-16T14:00:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "798000ffa8009bfa305db6f2f4484f7be854c4472b9fc12dda18bd1a78695fad"
     },
     {
       "fixture_id": "epl/2025-26/sunderland/west-ham-united",
@@ -145,13 +442,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         3,
         0
       ],
       "status": "scored",
-      "digest": "86eda8abd99f1b472297ed8ead2935b72ca88986e8b9061e36a29a964c26cc5f",
+      "digest": "11c7ce7133337862bc52dcd2baec1341413b5ecfc734b54b68f56a0a01cb07e7",
       "score": 79.19965758694984,
       "losses": {
         "result": 0.22815327793167128,
@@ -170,7 +467,106 @@
         "total": 0.5450297015368548,
         "home": 0.736164565643636,
         "away": 0.5020919437972363
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-16T13:00:00.000000Z",
+        "input_cutoff": "2025-08-16T13:00:00.000000Z",
+        "model": {
+          "score": 79.19965758694984,
+          "item_scores": {
+            "result": 77.18467220683287,
+            "total": 82.34526008002463,
+            "home": 72.85041551246539,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "37dfc5b2da2e1bebd4ddf0e254dae85226300424a4475f0a8028c3f1980afa30",
+          "score": 79.19965758694984,
+          "item_scores": {
+            "result": 77.18467220683287,
+            "total": 82.34526008002463,
+            "home": 72.85041551246539,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-16T13:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-16T13:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": 0.0,
+            "by_family": {
+              "away": 0.0,
+              "home": 0.0,
+              "result": 0.0,
+              "total": 0.0
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-16T14:00:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "b6f365dc7330afa807aa511aafdb12ddfd6f8b4442d5905f5823880995d429ed"
     },
     {
       "fixture_id": "epl/2025-26/tottenham-hotspur/burnley",
@@ -179,13 +575,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         3,
         0
       ],
       "status": "scored",
-      "digest": "6d81376b7d014861392598b4ccfe249bb2e8ab7fc34ffbaafda33ce8c6fcd915",
+      "digest": "f737bc26304c4fb34837cf8e27bf6c6ff52cf564e35312b18d659ec9e936f2f6",
       "score": 88.12043322006801,
       "losses": {
         "result": 0.1247583648660195,
@@ -204,7 +600,106 @@
         "total": 0.37561944284835125,
         "home": 0.4175692490974231,
         "away": 0.45977564003973903
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-16T13:00:00.000000Z",
+        "input_cutoff": "2025-08-16T13:00:00.000000Z",
+        "model": {
+          "score": 88.12043322006801,
+          "item_scores": {
+            "result": 87.52416351339805,
+            "total": 90.19456414613119,
+            "home": 88.34773645105645,
+            "away": 86.41526876968635
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "c8fb24ffa2a6d450f82e3ee992379773ea7016b12229e6088c6bab9aa593566e",
+          "score": 79.19965758694984,
+          "item_scores": {
+            "result": 77.18467220683287,
+            "total": 82.34526008002463,
+            "home": 72.85041551246539,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-16T13:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-16T13:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": 8.920775633118168,
+            "by_family": {
+              "away": 1.9969862212098946,
+              "home": 15.49732093859106,
+              "result": 10.33949130656518,
+              "total": 7.849304066106555
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-16T14:00:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "e10e778a4450cad3e96db1fe56e87a7535e1d87eaeeb544c52951138869edefb"
     },
     {
       "fixture_id": "epl/2025-26/wolverhampton-wanderers/manchester-city",
@@ -213,13 +708,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         0,
         4
       ],
       "status": "scored",
-      "digest": "68e562757c47d2ae35bcbf5595443c6405201b8799fdd07dcedca9fb71d9ab57",
+      "digest": "56fa3f4a908236c0806412b17604b6d97147c2f32801b2e0ae4268b5da1ec254",
       "score": 88.57639325102105,
       "losses": {
         "result": 0.1010696787796982,
@@ -238,7 +733,106 @@
         "total": 0.4877327306686014,
         "home": 0.31516257234503425,
         "away": 0.4553992455175613
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-16T15:30:00.000000Z",
+        "input_cutoff": "2025-08-16T15:30:00.000000Z",
+        "model": {
+          "score": 88.57639325102105,
+          "item_scores": {
+            "result": 89.89303212203018,
+            "total": 85.10170920730292,
+            "home": 92.69218210875493,
+            "away": 86.61864956599614
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "d99f7fe0ef80ef039a08cddac6403464e15913a26f6f2e26babb3aa4f8341253",
+          "score": 71.69965758694983,
+          "item_scores": {
+            "result": 64.02677746999078,
+            "total": 82.34526008002463,
+            "home": 77.06094182825484,
+            "away": 63.365650969529106
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-16T15:30:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-16T15:30:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": 16.87673566407122,
+            "by_family": {
+              "away": 23.25299859646703,
+              "home": 15.631240280500094,
+              "result": 25.8662546520394,
+              "total": 2.7564491272782874
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-16T16:30:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "c4c595eab6da5585b10335118f41481c94e81b5275892c9e91995d7abf13280d"
     },
     {
       "fixture_id": "epl/2025-26/chelsea/crystal-palace",
@@ -247,13 +841,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         0,
         0
       ],
       "status": "scored",
-      "digest": "084f63d91a708afb84945012f5559c38e5fe38781b311c71cd36a7b073d668d5",
+      "digest": "3e95a352e7ea4984a44686430e38f15c7875a062e7997497aa4e07ab44e1c6db",
       "score": 73.99813683807727,
       "losses": {
         "result": 0.43357091351762866,
@@ -272,7 +866,106 @@
         "total": 0.7400580276078199,
         "home": 0.654751157167507,
         "away": 0.3853248787614517
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-17T12:00:00.000000Z",
+        "input_cutoff": "2025-08-17T12:00:00.000000Z",
+        "model": {
+          "score": 73.99813683807727,
+          "item_scores": {
+            "result": 56.64290864823713,
+            "total": 72.65611897144817,
+            "home": 76.91883008299665,
+            "away": 89.77468964962719
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "b8647aa04c27c413e91641962162737d6e1cca2a9a2d35ef9bb26692101181e3",
+          "score": 70.73474530624809,
+          "item_scores": {
+            "result": 55.079409048938146,
+            "total": 66.38034779932286,
+            "home": 77.06094182825484,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-17T12:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-17T12:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": 3.2633915318291855,
+            "by_family": {
+              "away": 5.356407101150737,
+              "home": -0.14211174525819104,
+              "result": 1.5634995992989857,
+              "total": 6.275771172125303
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-17T13:00:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "91643c00b8ab6b33ee5b6e68779e1bae4c8e843500749bc7c8f8ba8a151892ce"
     },
     {
       "fixture_id": "epl/2025-26/nottingham-forest/brentford",
@@ -281,13 +974,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         3,
         1
       ],
       "status": "scored",
-      "digest": "f246fee54e0cbfe73bd98b1b542777f1537d578360ed73e225f058c92ea20f86",
+      "digest": "173d0d9884945fe0d48396006aadaae196fefd848d5ad0cb9b29a7e2f9489ca8",
       "score": 75.6666909308841,
       "losses": {
         "result": 0.2880096352396295,
@@ -306,7 +999,106 @@
         "total": 0.5702622524655604,
         "home": 0.8212532966777017,
         "away": 0.55760984907766
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-17T12:00:00.000000Z",
+        "input_cutoff": "2025-08-17T12:00:00.000000Z",
+        "model": {
+          "score": 75.6666909308841,
+          "item_scores": {
+            "result": 71.19903647603705,
+            "total": 81.11029762626026,
+            "home": 68.62655953872739,
+            "away": 81.73087008251166
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "843cedaac44f8c838069e9ec3229f595ad7fe36523a77de4913e6c6247ba7c11",
+          "score": 79.19965758694984,
+          "item_scores": {
+            "result": 77.18467220683287,
+            "total": 82.34526008002463,
+            "home": 72.85041551246539,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-17T12:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-17T12:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": -3.5329666560657387,
+            "by_family": {
+              "away": -2.6874124659647975,
+              "home": -4.223855973737997,
+              "result": -5.985635730795821,
+              "total": -1.2349624537643678
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-17T13:00:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "110a6679b61f37fcb846eafea9012261187c435cddd05206d403df1d0b224d05"
     },
     {
       "fixture_id": "epl/2025-26/manchester-united/arsenal",
@@ -315,13 +1107,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         0,
         1
       ],
       "status": "scored",
-      "digest": "2eec1fd4a903dd28041b430d1dbc882cf9b778551ee23870aed2f3d3845e88fd",
+      "digest": "04dde83c7b57f2d24a8f7ec91250907ed9231f4e4fc9f186aaa6f23f200587bd",
       "score": 82.14523413996201,
       "losses": {
         "result": 0.14794824405498763,
@@ -340,7 +1132,106 @@
         "total": 0.6839453385159064,
         "home": 0.27539389278833115,
         "away": 0.718940167679286
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-17T14:30:00.000000Z",
+        "input_cutoff": "2025-08-17T14:30:00.000000Z",
+        "model": {
+          "score": 82.14523413996201,
+          "item_scores": {
+            "result": 85.20517559450124,
+            "total": 75.46007902626452,
+            "home": 94.20505076964318,
+            "away": 73.71063116943908
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "177335b0bd684aea681ce375ef9bce5c50835c6da625191245ff5267f3859da6",
+          "score": 72.97158741151122,
+          "item_scores": {
+            "result": 64.02677746999078,
+            "total": 66.38034779932286,
+            "home": 77.06094182825484,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-17T14:30:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-17T14:30:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": 9.173646728450791,
+            "by_family": {
+              "away": -10.707651379037372,
+              "home": 17.14410894138834,
+              "result": 21.178398124510466,
+              "total": 9.07973122694166
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-17T15:30:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "b7482782004644101ae94211c92590c978f18f6107c1524f3d6e2c18dcb57408"
     },
     {
       "fixture_id": "epl/2025-26/leeds-united/everton",
@@ -349,13 +1240,13 @@
       "result_version": 1,
       "result_source": "openfootball",
       "result_locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/41e223ee5954e6b634beb4bc70d7188b3183c665",
-      "result_received_at": "2026-11-25T05:11:36.886786Z",
+      "result_received_at": "2026-11-25T10:55:15.806747Z",
       "goals": [
         1,
         0
       ],
       "status": "scored",
-      "digest": "fbf2a4f16b60ad31b59d64b8522265126fc3f8e3ea5b1d35571719ae17fad428",
+      "digest": "240d8a2c7d2cb7f46192e06289d50b09ac12956898d3c860f17d15a838d21d67",
       "score": 80.43378383033193,
       "losses": {
         "result": 0.3294483562800554,
@@ -374,7 +1265,106 @@
         "total": 0.6015034087822856,
         "home": 0.4093372367555239,
         "away": 0.4602095788352194
-      }
+      },
+      "comparison": {
+        "state": "graded",
+        "decision_at": "2025-08-18T18:00:00.000000Z",
+        "input_cutoff": "2025-08-18T18:00:00.000000Z",
+        "model": {
+          "score": 80.43378383033193,
+          "item_scores": {
+            "result": 67.05516437199447,
+            "total": 79.56843995014489,
+            "home": 88.71646324094222,
+            "away": 86.39506775824614
+          }
+        },
+        "baseline": {
+          "source": "embedded_same_input",
+          "probabilities": {
+            "away_over_1_5": 0.3947368421052632,
+            "away_win": 0.3192982456140351,
+            "draw": 0.22982456140350876,
+            "home_over_1_5": 0.4789473684210527,
+            "home_win": 0.4508771929824561,
+            "total_over_2_5": 0.5798245614035088
+          },
+          "input_proof_sha256": "d9752cbdf1af5ba1cd6c30472aa6436287fdc4f1b55b4d9ec2f97b28bf404e15",
+          "score": 76.26106109572176,
+          "item_scores": {
+            "result": 77.18467220683287,
+            "total": 66.38034779932286,
+            "home": 77.06094182825484,
+            "away": 84.41828254847645
+          }
+        },
+        "baseline_missing": null,
+        "market": {
+          "target": "2025-08-18T18:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "items": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "frozen_market": {
+          "target": "2025-08-18T18:00:00.000000Z",
+          "batch": null,
+          "received_at": null,
+          "probabilities": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "score": null,
+          "item_scores": {}
+        },
+        "paired_deltas": {
+          "baseline": {
+            "score": 4.172722734610176,
+            "by_family": {
+              "away": 1.9767852097696874,
+              "home": 11.655521412687378,
+              "result": -10.129507834838407,
+              "total": 13.18809215082203
+            }
+          },
+          "market": {
+            "score": null,
+            "by_family": {}
+          },
+          "frozen_market": {
+            "score": null,
+            "by_family": {}
+          }
+        },
+        "close": {
+          "basis": "shadow_planned",
+          "reason": "no_verified_actual_kickoff",
+          "target": "2025-08-18T19:00:00.000000Z",
+          "proof_id": null,
+          "received_at": null,
+          "batch": null,
+          "family_receipts": {},
+          "missing": {
+            "result": "no_gamma_archive",
+            "total": "no_gamma_archive",
+            "home": "no_gamma_archive",
+            "away": "no_gamma_archive"
+          },
+          "items": {}
+        }
+      },
+      "comparison_sha256": "4279be8ead489d347a9311313dec04938e383faedded4f87553c8681db942a43"
     }
   ],
   "status": "final",
@@ -581,8 +1571,309 @@
     }
   },
   "hit_rule": "Unique highest 1X2 probability or binary probability above 0.5; exact ties reported separately.",
+  "main_model_rollout": {
+    "versions": [
+      {
+        "version": "B1",
+        "fixtures": [
+          "epl/2025-26/liverpool/bournemouth",
+          "epl/2025-26/aston-villa/newcastle-united",
+          "epl/2025-26/brighton-hove-albion/fulham",
+          "epl/2025-26/sunderland/west-ham-united",
+          "epl/2025-26/tottenham-hotspur/burnley",
+          "epl/2025-26/wolverhampton-wanderers/manchester-city",
+          "epl/2025-26/chelsea/crystal-palace",
+          "epl/2025-26/nottingham-forest/brentford",
+          "epl/2025-26/manchester-united/arsenal",
+          "epl/2025-26/leeds-united/everton"
+        ]
+      }
+    ],
+    "switches": []
+  },
+  "comparisons": {
+    "schema": 1,
+    "distance_interval": {
+      "cluster": "fixture",
+      "resamples": 2000,
+      "seed": 861,
+      "minimum_fixtures": 2
+    },
+    "expected": 10,
+    "completed": 10,
+    "pairs": {
+      "baseline": {
+        "paired": 10,
+        "expected": 10,
+        "missing": 0,
+        "model_mean": 78.37327571419068,
+        "reference_mean": 74.46720144659896,
+        "delta": 3.9060742675917313,
+        "by_family": {
+          "result": {
+            "paired": 10,
+            "missing": 0,
+            "delta": 5.681041464852717
+          },
+          "total": {
+            "paired": 10,
+            "missing": 0,
+            "delta": 3.498960229265935
+          },
+          "home": {
+            "paired": 10,
+            "missing": 0,
+            "delta": 6.845542910833582
+          },
+          "away": {
+            "paired": 10,
+            "missing": 0,
+            "delta": -0.4012475345853126
+          }
+        }
+      },
+      "market": {
+        "paired": 0,
+        "expected": 10,
+        "missing": 10,
+        "model_mean": null,
+        "reference_mean": null,
+        "delta": null,
+        "by_family": {
+          "result": {
+            "paired": 0,
+            "missing": 10,
+            "delta": null
+          },
+          "total": {
+            "paired": 0,
+            "missing": 10,
+            "delta": null
+          },
+          "home": {
+            "paired": 0,
+            "missing": 10,
+            "delta": null
+          },
+          "away": {
+            "paired": 0,
+            "missing": 10,
+            "delta": null
+          }
+        }
+      },
+      "frozen_market": {
+        "paired": 0,
+        "expected": 10,
+        "missing": 10,
+        "model_mean": null,
+        "reference_mean": null,
+        "delta": null,
+        "by_family": {
+          "result": {
+            "paired": 0,
+            "missing": 10,
+            "delta": null
+          },
+          "total": {
+            "paired": 0,
+            "missing": 10,
+            "delta": null
+          },
+          "home": {
+            "paired": 0,
+            "missing": 10,
+            "delta": null
+          },
+          "away": {
+            "paired": 0,
+            "missing": 10,
+            "delta": null
+          }
+        }
+      }
+    },
+    "closing_distance": {
+      "verified_actual": {
+        "result": {
+          "paired": 0,
+          "expected": 10,
+          "missing": 10,
+          "tokens": 0,
+          "mse": null,
+          "fixture_bootstrap_ci95": null,
+          "paired_mse": {
+            "b0_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            },
+            "market_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            }
+          }
+        },
+        "total": {
+          "paired": 0,
+          "expected": 10,
+          "missing": 10,
+          "tokens": 0,
+          "mse": null,
+          "fixture_bootstrap_ci95": null,
+          "paired_mse": {
+            "b0_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            },
+            "market_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            }
+          }
+        },
+        "home": {
+          "paired": 0,
+          "expected": 10,
+          "missing": 10,
+          "tokens": 0,
+          "mse": null,
+          "fixture_bootstrap_ci95": null,
+          "paired_mse": {
+            "b0_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            },
+            "market_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            }
+          }
+        },
+        "away": {
+          "paired": 0,
+          "expected": 10,
+          "missing": 10,
+          "tokens": 0,
+          "mse": null,
+          "fixture_bootstrap_ci95": null,
+          "paired_mse": {
+            "b0_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            },
+            "market_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            }
+          }
+        }
+      },
+      "shadow_planned": {
+        "result": {
+          "paired": 0,
+          "expected": 10,
+          "missing": 10,
+          "tokens": 0,
+          "mse": null,
+          "fixture_bootstrap_ci95": null,
+          "paired_mse": {
+            "b0_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            },
+            "market_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            }
+          }
+        },
+        "total": {
+          "paired": 0,
+          "expected": 10,
+          "missing": 10,
+          "tokens": 0,
+          "mse": null,
+          "fixture_bootstrap_ci95": null,
+          "paired_mse": {
+            "b0_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            },
+            "market_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            }
+          }
+        },
+        "home": {
+          "paired": 0,
+          "expected": 10,
+          "missing": 10,
+          "tokens": 0,
+          "mse": null,
+          "fixture_bootstrap_ci95": null,
+          "paired_mse": {
+            "b0_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            },
+            "market_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            }
+          }
+        },
+        "away": {
+          "paired": 0,
+          "expected": 10,
+          "missing": 10,
+          "tokens": 0,
+          "mse": null,
+          "fixture_bootstrap_ci95": null,
+          "paired_mse": {
+            "b0_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            },
+            "market_squared_distance": {
+              "paired": 0,
+              "reference_mse": null,
+              "model_mse": null
+            }
+          }
+        }
+      }
+    },
+    "missing_family_reasons": {
+      "market": {
+        "no_gamma_archive": 40
+      },
+      "frozen_market": {
+        "no_gamma_archive": 40
+      },
+      "close": {
+        "no_gamma_archive": 40
+      }
+    },
+    "method": "Market midpoints use a common native batch received in the preceding 30s. 1X2 Yes is normalized over three compatible contracts. Totals use the Over midpoint with both directions verified. Closing distance is the squared difference to the conservative fair value under 0–1% exceptional outcomes; each fixture carries equal weight within each family."
+  },
   "report_version": 1,
-  "report_sha256": "0d3ff27b1621f872da652bfecfb77fddaf477d8481b60711ee0bd5869561aecc",
-  "report_published_at": "2026-11-25T05:11:37.920026Z",
+  "report_sha256": "664c47748187469878c9b3e4d5aae2c0b9b4eeded2c6330da2d007d80b376145",
+  "report_published_at": "2026-11-25T10:55:17.503461Z",
   "report_origin": "published"
 }

@@ -1,41 +1,32 @@
 {
+  "from_version": "B1",
   "baseline_identity": {
+    "source": "reproduced_tagged_predecessor",
+    "reference_commit": "432e0afe485230bd7caa46eb0d1d68b26f01db25",
+    "benchmark_checkout": "8993f15cfcc61042aedc5e885bb82217488ecb33",
+    "identical_execution_git_objects": {
+      "src": "9ac7efa8f5a176d41225ba8d6ae627c50d19d575",
+      "pyproject.toml": "6ccb6c35bb23f2991841937595afd2c819adf4f5",
+      "constraints": "33a340b07b5bf16fb9b12c393ad3b19b6348ab94",
+      "deploy": "e60bd9a39a37cb553dfc94ec1797c0087bedeff7"
+    },
+    "reference_pipeline_sha256": "46d04d6080969e467a6752121fc946c2f61dac668698c3454b906416dbee0449",
     "legacy_recipe_files": [
       "football.py",
       "football_model.py"
     ],
-    "local_previous_pipeline_independently_known": false,
-    "reference_commit": "8993f15cfcc61042aedc5e885bb82217488ecb33",
-    "reference_pipeline_sha256": "46d04d6080969e467a6752121fc946c2f61dac668698c3454b906416dbee0449",
-    "source": "reproduced_tagged_predecessor"
+    "local_previous_pipeline_independently_known": false
   },
+  "to_version": "B1@20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
   "comparison": {
-    "baseline_count": 1900,
-    "baseline_recipe": "7594c08a37d847a7c40f256974e2817ffe9c9d7eb8cf720b47a5b7f61dcbb29f",
-    "baseline_score": 75.44781323408776,
-    "baseline_sha256": "739e5379e83993e27d87356281cffb49d01b2663145911ca9a4101e75a14db99",
-    "candidate_count": 1900,
-    "candidate_recipe": "9d143bba620fb87328557f5095a28f503d9c46a98624c66638ccc3e5160a52d3",
-    "candidate_score": 75.44781323408776,
-    "candidate_sha256": "50b254b527bf2046f6217c484ae9a5518f3b16e90f1a16d67bec780e47404d36",
-    "changed_predictions": 0,
-    "changed_training_views": 0,
-    "comparison_rejections": {},
-    "denominator": 1900,
-    "formal_eligibility": false,
-    "historical_context": "no_archived_news_or_lineups",
+    "method": "T60-final-schedule-result-lag24h-v1",
     "history_quality": "24h_lag_sensitivity_final_archive_schedule",
-    "inference": {
-      "critical_t": 2.8403659628523235,
-      "degrees_of_freedom": 189,
-      "family_comparisons": 10,
-      "family_confidence": 0.95,
-      "individual_confidence": 0.995,
-      "matches": 1900,
-      "method": "round-cluster-t-v1",
-      "rounds": 190,
-      "unit": "season_and_official_round"
-    },
+    "historical_context": "no_archived_news_or_lineups",
+    "formal_eligibility": false,
+    "candidate_recipe": "20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
+    "baseline_recipe": "7594c08a37d847a7c40f256974e2817ffe9c9d7eb8cf720b47a5b7f61dcbb29f",
+    "candidate_sha256": "d77684bf2905da3a17183704327a59feff46d8cf66ca22c70228c327db2153fa",
+    "baseline_sha256": "739e5379e83993e27d87356281cffb49d01b2663145911ca9a4101e75a14db99",
     "input_blobs": {
       "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
       "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
@@ -46,50 +37,66 @@
       "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
       "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
     },
-    "intervals": {
-      "away": {
-        "difference": 0.0,
-        "lower": 0.0,
-        "standard_error": 0.0,
-        "upper": 0.0
-      },
-      "home": {
-        "difference": 0.0,
-        "lower": 0.0,
-        "standard_error": 0.0,
-        "upper": 0.0
-      },
-      "overall": {
-        "difference": 0.0,
-        "lower": 0.0,
-        "standard_error": 0.0,
-        "upper": 0.0
-      },
-      "result": {
-        "difference": 0.0,
-        "lower": 0.0,
-        "standard_error": 0.0,
-        "upper": 0.0
-      },
-      "total": {
-        "difference": 0.0,
-        "lower": 0.0,
-        "standard_error": 0.0,
-        "upper": 0.0
-      }
-    },
-    "method": "T60-final-schedule-result-lag24h-v1",
-    "paired_count": 1900,
-    "rounds": 190,
     "seasons": [
       "2021-22",
       "2022-23",
       "2023-24",
       "2024-25",
       "2025-26"
-    ]
+    ],
+    "denominator": 1900,
+    "paired_count": 1900,
+    "rounds": 190,
+    "changed_predictions": 0,
+    "changed_training_views": 0,
+    "candidate_score": 75.44781323408776,
+    "baseline_score": 75.44781323408776,
+    "candidate_count": 1900,
+    "baseline_count": 1900,
+    "comparison_rejections": {},
+    "inference": {
+      "method": "round-cluster-t-v1",
+      "unit": "season_and_official_round",
+      "rounds": 190,
+      "matches": 1900,
+      "degrees_of_freedom": 189,
+      "family_comparisons": 10,
+      "family_confidence": 0.95,
+      "individual_confidence": 0.995,
+      "critical_t": 2.8403659628523235
+    },
+    "intervals": {
+      "overall": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "result": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "total": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "home": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "away": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      }
+    }
   },
-  "from_version": "B1",
-  "report_sha256": "ba64a0a187d8ab0d7775d3f181e7539f0f4fc8ab8ea2f398a1e7d09a97a47551",
-  "to_version": "B1@9d143bba620fb87328557f5095a28f503d9c46a98624c66638ccc3e5160a52d3"
+  "report_sha256": "b4aa1a5c208cfd47fdc28d981fa0103520bd8a351276a58a11ead004bc93daf8"
 }

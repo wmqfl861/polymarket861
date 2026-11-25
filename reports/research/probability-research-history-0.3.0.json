@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-25T10:31:35.857698Z",
+  "as_of": "2026-11-25T10:55:21.003744Z",
   "assessment": null,
   "baseline": "B1",
   "candidate": "B0-comparator",
@@ -9,13 +9,13 @@
   "experiment_state": "shadow",
   "history": {
     "baseline_count": 760,
-    "baseline_recipe": "9d143bba620fb87328557f5095a28f503d9c46a98624c66638ccc3e5160a52d3",
+    "baseline_recipe": "20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
     "baseline_score": 74.79192453945089,
-    "baseline_sha256": "797b0f8304d10faeaa3870f90e2d6685190a6f2db57c14f2e98b0aa30a4d6fca",
+    "baseline_sha256": "413a68de7ac558d70b7bebe61d45dc7136453ef20c0258d2ba6cb4376842ad45",
     "candidate_count": 760,
-    "candidate_recipe": "08d8442f8e46750707a1b7ae73cbf78ea7a942e5f3214e6529e704d49db4f2fc",
+    "candidate_recipe": "a6ef6afdd1a55ada520abd05b7e06400be095e980a4bc95dd17aa44fd90f7e32",
     "candidate_score": 73.47423245614017,
-    "candidate_sha256": "0af23e7e9a60f9e72aab46c77474335eb029dcfde63a6d6d7c570d2c0430cf6c",
+    "candidate_sha256": "ed9777ae8cb30e42a75abe1a9669238146c6b8f1cb89ff91f6e1ab5d72fc970f",
     "changed_predictions": 758,
     "changed_training_views": 0,
     "comparison_rejections": {},
@@ -99,12 +99,12 @@
       11
     ]
   ],
-  "registered_at": "2026-11-25T10:31:30.613810Z",
-  "registration_digest": "c586e1f9e2ea28178f91960a35843d957dc7a48f1e5744465036592e40d8882d",
-  "registration_receipt_sha256": "7e36bf1716cb0d7c26954bcee36b5dc6f25f0aa89a130226ef4d610949d693c3",
+  "registered_at": "2026-11-25T10:55:14.161646Z",
+  "registration_digest": "2ed5f3cb2135ee44ec555e5270e57c6853fb6179915084b3b1afb0debc954707",
+  "registration_receipt_sha256": "f94902952311baa7407aec593a1660824c3b5620d2b40e589211469f8491aa8f",
   "registration_schedule_receipt_range": [
-    "2026-11-25T10:31:30.595359Z",
-    "2026-11-25T10:31:30.595359Z"
+    "2026-11-25T10:55:14.080936Z",
+    "2026-11-25T10:55:14.080936Z"
   ],
   "state_context": "isolated-probability-study-v1",
   "window_fixture_labels_known_at_registration": 270

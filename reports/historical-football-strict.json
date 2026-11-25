@@ -4736,9 +4736,9 @@
     "input": "For a pinned data run, use football fetch INPUT --from-season FIRST --to-season LAST, using the input blob range above.",
     "command": "pm861 --data-dir RUNTIME football backtest INPUT --from-season 2021-22 --to-season 2025-26 --horizons 1440 60 --bootstrap 2000 --seed 861 --summary-output SUMMARY.json --details MATCHES.jsonl",
     "source_code_sha256": {
-      "football.py": "a7283a3c9b4ebb2752590eb6388a973f328ea672c50e7c3b5531154154e2908b",
+      "football.py": "5203d6ec18e4e9168dc5e3536323081af090e8101a695fbf6cc45690a6575dc4",
       "football_model.py": "093e90294315132d2c60826734bb7a12fc329264ca8d4863bb3ad69bd5b2b829",
-      "historical_inputs.py": "1360fae0e490604a19759d20a41cded41e632d8f5e88547fc569c95feabfd76e"
+      "historical_inputs.py": "0b8b3482109bf54880ce77be95e9c48439ba8df969c44dd4a788ebb023a1b30d"
     }
   }
 }
