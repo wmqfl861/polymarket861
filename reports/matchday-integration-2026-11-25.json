@@ -1,0 +1,71 @@
+{
+  "run": "one bounded normal CLI pass against public providers and an existing private runtime",
+  "package": "0.2.0",
+  "command": "pm861 --data-dir STATE season run --workers 5",
+  "ended_at": "2026-11-25T07:34:45.520593Z",
+  "heartbeat_at": "2026-11-25T07:34:45.505463Z",
+  "exchange_scheduled_next_7d": 11,
+  "registered_football_next_7d": 10,
+  "matched_exact_teams_and_kickoff": 3,
+  "unmatched_count": 7,
+  "slots": {
+    "done": 22,
+    "pending": 11775
+  },
+  "services": {
+    "catalog": {
+      "error": null
+    },
+    "forecast": {
+      "error": null
+    },
+    "results": {
+      "error": null,
+      "season": "2026-27",
+      "status": "degraded",
+      "available_results": 61,
+      "minimum_confirmation_minutes": 30,
+      "coverage": {
+        "awaiting_second_receipt": 79,
+        "cross_source_score_conflict": 1,
+        "schedule_or_round_mismatch": 8,
+        "unfinished": 280,
+        "verified_two_receipts": 12
+      },
+      "training": "refreshed"
+    },
+    "settlements": {
+      "error": null,
+      "examined": 0,
+      "paper_only": true,
+      "states": {}
+    },
+    "history": {
+      "error": null
+    }
+  },
+  "history_progress": {
+    "year": 2026,
+    "catalog_complete": false,
+    "catalog_next_offset": 400,
+    "fixtures": 46,
+    "outcome_tokens": 1362,
+    "jobs": {
+      "event": {
+        "done": 5,
+        "pending": 14
+      },
+      "trades": {
+        "pending": 89
+      },
+      "prices": {
+        "done": 1,
+        "pending": 18617
+      }
+    },
+    "tier_A": 0,
+    "execution_roi": null
+  },
+  "formal_readiness": false,
+  "coverage_note": "Service snapshots depend on this database’s prior receipts. The separately archived complete rounds 1 through 11 result-admission study is documented in result-feed-2026-11-25.json. A queued slot is a planned observation, never an observed book or fill."
+}
