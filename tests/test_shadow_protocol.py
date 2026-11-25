@@ -1,7 +1,9 @@
+import io
 import json
 import unittest
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing, redirect_stderr
 from datetime import timedelta
 from decimal import Decimal, ROUND_FLOOR
 from unittest.mock import patch
@@ -13,6 +15,8 @@ from polymarket861 import (
     market_archive,
     market_provider,
     opportunity,
+    season,
+    season_health,
     settlement,
     shadow,
     store,
@@ -21,7 +25,7 @@ from polymarket861 import ledger_rules as rules
 
 
 class ShadowProtocol(unittest.TestCase):
-    def market(self, lines, *, reverse=False):
+    def market(self, lines, *, reverse=False, market_type="totals"):
         original = f.event
 
         def many(slug=f.SLUG):
@@ -36,6 +40,7 @@ class ShadowProtocol(unittest.TestCase):
                     template
                     | {
                         "conditionId": f"0x{ident:064x}",
+                        "sportsMarketType": market_type,
                         "clobTokenIds": json.dumps([f"{ident}01", f"{ident}02"]),
                         "slug": f"{f.SLUG}-total-{line}pt5",
                         "line": line + 0.5,
@@ -180,6 +185,53 @@ class ShadowProtocol(unittest.TestCase):
                 self.assertEqual(Decimal(initial) - spent, Decimal(report["cash"]))
                 self.assertGreater(report["counts"].get("skipped", 0), 0)
 
+    def test_missing_decision_catalog_alerts_only_during_the_decision_window(self):
+        for lines, market_type, reason in (
+            ([], "totals", "no verified listing at decision"),
+            ([1], "unsupported_player_prop", "no verified token mapping at decision"),
+        ):
+            with self.subTest(reason=reason):
+                self.market(lines, market_type=market_type)
+                decision = f.CUT - timedelta(seconds=5)
+                for when in (f.CUT - timedelta(seconds=31), self.second):
+                    with f.at(when):
+                        idle = season._paper(self.root, f.SLUG)["shadow"]
+                        self.assertEqual((idle["state"], idle["gaps"]), ("idle", 0))
+                with f.at(decision):
+                    diagnostic = self.execute()
+                    self.assertEqual(diagnostic["actions"], [])
+                    self.assertEqual(len(diagnostic["gaps"]), 1)
+                    gap = diagnostic["gaps"][0]
+                    self.assertEqual(
+                        (gap["fixture_id"], gap["decision_at"], gap["listed_markets"]),
+                        (f.FID, store.iso(f.CUT), len(lines)),
+                    )
+                    self.assertEqual(
+                        gap["mapping_errors"],
+                        {"outside_supported_full_time_families": 1} if lines else {},
+                    )
+                    result = season._paper(self.root, f.SLUG)
+                    self.assertEqual(
+                        result["shadow"]["operational_reasons"], {reason: 1}
+                    )
+                    self.assertEqual(result["shadow"]["state"], "gap")
+                    slot = {
+                        "fixture": f.SLUG,
+                        "kickoff": store.iso(f.KICK),
+                        "role": "decision",
+                    }
+                    with (
+                        closing(season._db(self.root)) as db,
+                        db,
+                        redirect_stderr(io.StringIO()),
+                    ):
+                        season_health.paper_state(db, result, slot, store.iso(decision))
+                        alert = db.execute(
+                            "SELECT reason FROM season_alerts WHERE fixture=? AND role='paper_shadow'",
+                            (f.SLUG,),
+                        ).fetchone()
+                        self.assertIn(reason, alert[0])
+
     def test_empty_cash_and_repeated_skips_retain_the_economic_reason(self):
         self.market(range(1))
         self.books(self.first)
@@ -198,6 +250,9 @@ class ShadowProtocol(unittest.TestCase):
             )
             first = self.execute()
             again = self.execute()
+            self.assertEqual(
+                season._paper(self.root, f.SLUG)["shadow"]["state"], "no_value"
+            )
             self.assertEqual(
                 {x["reason"] for x in first["actions"]},
                 {"insufficient_edge_depth_cash_or_minimum"},

@@ -10,6 +10,7 @@ from . import (
     jobs_research,
     ledger,
     market_archive,
+    market_provider,
     opportunity,
     shadow_market,
     store,
@@ -316,11 +317,29 @@ def _decide(root, db, account, fixture, cut, clock, actions, gaps):
     markets = market_archive.contracts(root, fixture["market_slug"], as_of=iso(clock))
     groups = {}
     for market in markets:
-        if not market["mapping_error"]:
+        if not market["mapping_error"] and market["family"] in market_provider.FAMILIES:
             for token in market["tokens"]:
                 groups.setdefault(
                     (market["condition_id"], token["token_id"]), []
                 ).append(market)
+    if not groups:
+        gaps.append(
+            {
+                "reason": "no verified token mapping at decision"
+                if markets
+                else "no verified listing at decision",
+                "fixture_id": fixture["fixture_id"],
+                "decision_at": iso(cut),
+                "listed_markets": len(markets),
+                "mapping_errors": dict(
+                    Counter(
+                        m["mapping_error"] or "no supported token direction"
+                        for m in markets
+                    )
+                ),
+            }
+        )
+        return
     existing = {
         (r["condition_id"], r["token"]): r
         for r in db.execute(
