@@ -32,6 +32,7 @@ from .jobs_research import (
 __all__ = [
     "active_candidate",
     "active_version",
+    "model_for_decision",
     "approve_candidate",
     "evaluate_candidate",
     "experiment_status",
