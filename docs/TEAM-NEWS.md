@@ -1,0 +1,109 @@
+# 英超球队消息与赛前预测
+
+从 0.4.0 起，同一个赛季值守进程负责采集球队消息、更新名单、冻结赛前概率和在独立赛果到齐后评分。在网页的「数据源」查看球队最近一次采集，在「比赛详情」查看球员证据、是否入模及主客双方各条大小球线的变化，在「轮次成绩」查看同场对照。
+
+## 首次使用
+
+在已安装的环境中运行以下命令。所有命令使用同一个数据目录。首次启动应在目标比赛的决策窗之前完成，给名单刷新和来源轮换预留时间。
+
+```sh
+pm861 --data-dir .pm861 data refresh --first 2022-23 --last 2026-27
+pm861 --data-dir .pm861 result-feed season 2026
+pm861 --data-dir .pm861 news sync --limit 60 --workers 3
+pm861 --data-dir .pm861 season run --repeat
+```
+
+前三条用于初始化赛程、赛果和本轮的新闻覆盖。最后一条前台持续运行，可按比赛日手册设为系统服务。调度器在未来赛程中轮换球队与来源，避开关键盘口采样窗口，遵守来源最短刷新间隔和失败退避。单次采集通常每个流间隔至少 20 分钟，预测的「已覆盖」要求过去 6 小时内该队有合格的来源检查。覆盖率表达采集状况，无法衡量互联网上全部消息的完整性。
+
+在另一个终端查看数据。比赛 ID 可由第一条命令获得。下面使用 2026/27 诺丁汉森林主场对切尔西举例。
+
+```sh
+pm861 --data-dir .pm861 fixture list --season 2026-27
+pm861 --data-dir .pm861 news status
+pm861 --data-dir .pm861 news sources --team "Chelsea FC" --season 2026-27
+pm861 --data-dir .pm861 news roster "Chelsea FC" 2026-27
+pm861 --data-dir .pm861 news facts epl/2026-27/nottingham-forest/chelsea
+pm861 --data-dir .pm861 forecast make epl/2026-27/nottingham-forest/chelsea --horizon early
+pm861 --data-dir .pm861 dashboard serve --port 8765
+```
+
+在服务器本机打开 `http://127.0.0.1:8765/`。远程 Linux 机器可在本地终端运行 `ssh -L 8765:127.0.0.1:8765 用户名@服务器` 看同一页面。提前预览只在开球前运行，一旦封存，同场同版本同一时点的命令返回原件。获取最新新闻使用 `news facts`，查历史所见加 `--at UTC时刻`，核对一则消息使用 `news article 原文SHA256`。日常值守会继续为 T−24 h 和 T−60 min 各封存一次。
+
+## 收到新消息后立即看预测
+
+每次 `news sync` 或自动新闻轮询结束，系统都会检查尚未开赛的比赛。有实质变化的球员消息会触发新的研究预测，更新记录保留前一版本摘要、当时的消息和两组概率。删除旧消息、伤员回归或撤回也能触发重算。相同的重复报道不会反复生成相同更新。来源断线或缺少可验证的历史数据时，采集记录保留，后续轮询再处理。值守每次限量处理，期间仍可查看两次固定决策时刻的独立封存。
+
+```sh
+pm861 --data-dir .pm861 news updates epl/2026-27/nottingham-forest/chelsea
+pm861 --data-dir .pm861 news reforecast --limit 10
+```
+
+在「比赛详情」选择“新闻触发预测”可查看各次变化。新闻更新频繁的比赛不会因此在轮次评分中获得更大权重。
+
+## 数据从哪里来
+
+| 默认来源 | 收集及解释 |
+|---|---|
+| Touchline Wire 球队伤停 | 读取球队、球员及结构化可用状态，保留来源、时间与署名。二手来源最高标为“报道”。 |
+| Touchline Wire 转会传闻 | 只取与当季现役球员及所在俱乐部相符的离队传闻。保留消息及来源，传闻的进球率权重为零。 |
+| 英文维基百科球队赛季页 | 首次记录版本，以后检查新加的相关文字。版本、来源和许可随记录保存。静态历史文本不会被当成本次新增报道。 |
+| 英文维基百科球队一线队名单 | 使用球队赛季页和球员页面身份核对姓名、别名及可核的位置，保留当时已收到的版本。名单用于身份识别，出场首发证据另行核验。 |
+
+内置源无需数据密钥。Touchline Wire 的免费使用范围和署名要求适用于其数据。维基摘录须保留署名及 CC BY-SA 条件。[Tactical Data by Touchline Wire](https://touchlinewire.com/) · [Touchline Wire API](https://touchlinewire.com/docs#attribution) · [Wikimedia 条款](https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use)
+
+可逐队补充确实允许自动获取、留存、提取和建模的免费英文 RSS/Atom。官网的一手直接声明可登记为 `official`，媒体报道为 `secondary`。仅提供可读取的 RSS 地址不能证明有这些使用权。下例的环境变量替换为已核对的真实地址及署名。
+
+```sh
+pm861 --data-dir .pm861 news add-feed club-press --team "Chelsea FC" \
+  --url "$FEED_URL" --license "$LICENSE_NAME" --license-url "$LICENSE_URL" \
+  --attribution "$PUBLISHER_CREDIT" --authority official --grant-free-use
+pm861 --data-dir .pm861 news disable-feed club-press
+```
+
+## 消息怎样进入预测
+
+1. **核对人和原文。** 内置英语监督分类器在本机 CPU 上运行，使用随包语料及球队当时可见的名单。每项结论需要唯一球员、可逐字定位的原句和适用比赛。多义姓名、对手球员、青训、其他赛事、旧赛后战报可能被排除。文章可以被留存而没有可入模的结论。
+2. **记录确定性。** 系统分别保留传闻、报道、确认、否认，以及缺阵、出战存疑、可出战和未知。官方措辞也须指向该球员及本场。二手转载不会升级为官方确认。相互矛盾、转载、恢复训练和正式可出场分别处理，可以查看排除理由。
+3. **冻结当时证据。** 发布、来源版本、系统收件、名单观察及解析完成时间分别记录。持续更新的伤停表按每次实际观测留痕。迟到的消息、赛后更正或新模型重新提取只影响之后的可用视图。技术预览、正式决策和历史发布时间重建在报告中分别标记。
+4. **同时运算两组。** 两组共享 B1 的比分分布基线、同一预测时点、同一比赛和盘口线。B3 对合格缺阵或存疑按位置、消息确定性作有上限的进球率调整，从一个联合比分分布生成胜平负、全场大小和两支球队各自的大小。回归会解除已知缺阵影响。当前权重是待验证的固定假设，同位置球员没有球星溢价。
+5. **按真实赛果算分。** 以核验的 90 分钟赛果为准，同场比较两组得分、各项 Brier 和对数损失。轮报显示总场次、已封存、已评分、概率改变及双方来源覆盖。重复运行可核对比分更正和历史轮报版本。
+
+新库的正式候选管理继续沿用原有流程。日常主模型默认 B1，其封存报告包含 `news_pair.no_news` 和 `news_pair.with_news`。需要拿到 B3 自己的完整研究预测时可运行以下命令。B3 的独立封存和提前预览不替代正式前向资格或盘口结算。
+
+```sh
+pm861 --data-dir .pm861 forecast make epl/2026-27/nottingham-forest/chelsea --horizon early --model-version B3
+pm861 --data-dir .pm861 news evaluate 2026-27 12 --horizon T-60m
+pm861 --data-dir .pm861 news evaluate 2026-27 --horizon T-60m
+pm861 --data-dir .pm861 forecast round 2026-27 12 --mode technical
+```
+
+同一轮的 T−24 h 和 T−60 min 独立评分。整季判定要求完整 380 场、38 个官方轮次、至少 361 场双方有覆盖的已评分配对，以及相同实现下的按轮聚类同时置信区间。单场方向变动或少量场次的均分上涨无法证明稳定增益。概率评分与按 Polymarket 实际可交易价格、费率及兑付计算的纸面收益各有独立账本。[历史新闻回测](NEWS-HISTORICAL.md)
+
+## 接入已有的本地语言模型
+
+随包的监督分类器可直接运行。如部署机器已经提供兼容 OpenAI Chat Completions 的本地服务，可在启动值守的同一环境设置下面两个变量。模型名称使用本地已经加载的名称，无需数据服务密钥。环境变量的示例采用 Linux shell，Windows 服务可在其运行环境中设置相同变量。
+
+```sh
+export PM861_NEWS_LLM_URL="http://127.0.0.1:11434/v1"
+export PM861_NEWS_LLM_MODEL="本机模型名"
+pm861 --data-dir .pm861 season run --repeat
+```
+
+本地模型可补充对自然语言的识别。服务只收到有限的相关英文片段和候选名单，必须逐字引用并通过球员、状态与比赛核验。每篇消息可查本次实际使用的后端、模型、跳过或回退原因；本地端点不可用时，随包分类器继续工作。可选 `PM861_NEWS_LLM_TIMEOUT_SECONDS` 范围为 1–45 秒，默认 20 秒。
+
+## 现有 0.3.0 实例升级
+
+已在运行的实例会记住执行版本的指纹。在已有 0.3.0 环境先停止旧值守、备份并保留旧 B1 的固定五季比较基准。`HISTORY` 指向覆盖旧版固定基准及训练季的同一份完整历史目录。只有最近几个赛季的初始化目录可能缺少训练季，可用 README 的 `football fetch` 补齐。
+
+```sh
+pm861 --data-dir .pm861 backup create /路径/新备份目录 --compress
+pm861 --data-dir .pm861 forecast release-baseline "$HISTORY"
+```
+
+安装新版后，用同一库和同一份历史输入生成新旧报告，复核差异再由具名审核者批准。批准仅适用于将来的正常运行版本。新闻候选与 B1 的足球质量比较仍由后续赛果独立评分。
+
+```sh
+pm861 --data-dir .pm861 forecast release-compare "$HISTORY"
+pm861 --data-dir .pm861 forecast release-approve "$REPORT_SHA256" --reviewer "$REVIEWER" --reason "$REASON"
+pm861 --data-dir .pm861 season run --repeat
+```

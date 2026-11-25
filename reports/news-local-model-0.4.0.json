@@ -1,0 +1,103 @@
+{
+  "scope": "Small synthetic English interoperability probes using actual Q4_K_M weights on CPU. All sentences are authored tests, including those with real player names. No actual football news or predictions implied. No overall quality estimate. Each endpoint existed only inside this check. Accepted may overlap bundled classifier. Additional counts only new grounded claims.",
+  "llama_cpp": {
+    "version": "b12722",
+    "release": "https://github.com/ggml-org/llama.cpp/releases/tag/b12722",
+    "asset": "llama-b12722-bin-ubuntu-x64.tar.gz",
+    "sha256": "52644621cbcbd34d276786c1250a1c7c7506d300e513cc28e840b405847f0351"
+  },
+  "models": [
+    {
+      "model": "Qwen/Qwen2.5-0.5B-Instruct-GGUF",
+      "revision": "9217f5db79a29953eb74d5343926648285ec7e67",
+      "gguf_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+      "local_policy": "grounded-local-chat-v1-bd91412c11826388",
+      "url": "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/tree/9217f5db79a29953eb74d5343926648285ec7e67",
+      "cases": [
+        {
+          "synthetic_text": "Cole Palmer has been given the green light to play.",
+          "status": "ok",
+          "returned": 1,
+          "accepted": 0,
+          "additional": 0,
+          "bundled_plus_verified": []
+        },
+        {
+          "synthetic_text": "Cole Palmer will miss the next game with an ankle injury.",
+          "status": "ok",
+          "returned": 1,
+          "accepted": 1,
+          "additional": 0,
+          "bundled_plus_verified": [
+            {
+              "event": "injury",
+              "status": "reported",
+              "availability": "out"
+            }
+          ]
+        },
+        {
+          "synthetic_text": "There are rumours that Cole Palmer may leave Chelsea.",
+          "status": "ok",
+          "returned": 1,
+          "accepted": 0,
+          "additional": 0,
+          "bundled_plus_verified": [
+            {
+              "event": "transfer",
+              "status": "rumour",
+              "availability": "unknown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+      "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+      "gguf_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+      "local_policy": "grounded-local-chat-v1-bd91412c11826388",
+      "url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/tree/91cad51170dc346986eccefdc2dd33a9da36ead9",
+      "cases": [
+        {
+          "synthetic_text": "Alf Brook has been given the green light to play.",
+          "status": "ok",
+          "returned": 1,
+          "accepted": 0,
+          "additional": 0,
+          "bundled_plus_verified": []
+        },
+        {
+          "synthetic_text": "Alf Brook was omitted from the travelling party.",
+          "status": "ok",
+          "returned": 1,
+          "accepted": 0,
+          "additional": 0,
+          "bundled_plus_verified": []
+        },
+        {
+          "synthetic_text": "Alf Brook will miss the next game with an ankle injury.",
+          "status": "ok",
+          "returned": 1,
+          "accepted": 1,
+          "additional": 0,
+          "bundled_plus_verified": [
+            {
+              "event": "injury",
+              "status": "confirmed",
+              "availability": "out"
+            }
+          ]
+        },
+        {
+          "synthetic_text": "Alf Brook has a new boot deal.",
+          "status": "ok",
+          "returned": 1,
+          "accepted": 0,
+          "additional": 0,
+          "bundled_plus_verified": []
+        }
+      ]
+    }
+  ]
+}

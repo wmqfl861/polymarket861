@@ -277,9 +277,9 @@ def _bound_recipe(data_dir, version):
             "SELECT 1 FROM model_recipes WHERE version=?", (version,)
         ).fetchone():
             return _executable_recipe(conn, version)
-    if version in {"B0", "B1", "B2"}:
-        from .pipeline import register_recipe
+    from .pipeline import FAMILIES, register_recipe
 
+    if version in FAMILIES:
         return register_recipe(data_dir, version, version)["recipe_digest"]
     return None
 

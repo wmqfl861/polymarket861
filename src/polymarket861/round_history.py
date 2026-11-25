@@ -299,6 +299,12 @@ def publish_round(
         report["comparisons"] = comparisons.summary(
             report["fixtures"], report["expected"]
         )
+        if horizon in ("T-24h", "T-60m") and mode in ("technical", "formal"):
+            from .news_evaluation import round_summary
+
+            news_study = round_summary(db, season, round_id, horizon=horizon, mode=mode)
+            if news_study["sealed"]:
+                report["news_study"] = news_study
         checksum = store.digest(report)
         if head and checksum == head["sha256"]:
             return report | _publication(head)

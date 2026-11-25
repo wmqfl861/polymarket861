@@ -1,0 +1,423 @@
+{
+  "scope": "English Wikipedia club first-team squads, locally observed. Player roles use unambiguous current English Wikipedia position categories only. Not a confirmed match lineup. No backwards effective date.",
+  "season": "2026-27",
+  "collected_from": "2026-11-25T12:02:25.930984Z",
+  "collected_through": "2026-11-25T12:04:42.725893Z",
+  "source": "enwiki-first-team-squad",
+  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "attribution": "English Wikipedia contributors",
+  "registry_observed": {
+    "AFC Bournemouth": 28,
+    "Arsenal FC": 25,
+    "Aston Villa FC": 28,
+    "Brentford FC": 29,
+    "Brighton & Hove Albion FC": 30,
+    "Chelsea FC": 30,
+    "Coventry City FC": 30,
+    "Crystal Palace FC": 28,
+    "Everton FC": 21,
+    "Fulham FC": 25,
+    "Hull City AFC": 33,
+    "Ipswich Town FC": 28,
+    "Leeds United FC": 24,
+    "Liverpool FC": 31,
+    "Manchester City FC": 26,
+    "Manchester United FC": 31,
+    "Newcastle United FC": 25,
+    "Nottingham Forest FC": 24,
+    "Sunderland AFC": 29,
+    "Tottenham Hotspur FC": 29
+  },
+  "eligible_player_count": 554,
+  "role_counts": {
+    "goalkeeper": 66,
+    "defender": 162,
+    "midfielder": 156,
+    "forward": 134,
+    "unknown": 36
+  },
+  "clubs": [
+    {
+      "team": "AFC Bournemouth",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377641135",
+      "revision": 1377641135,
+      "published_at": "2026-09-30T08:33:01.000000Z",
+      "squad_sha256": "a50c79cad9e7786680cc2340a5ad4fad8f4f89bafa8167a3b8267e8890e3b317",
+      "identity_sha256": [
+        "cc9ea0e7444a9c4ed0482a6304f043d1d1c467c14e01fbb846850c93d14eacfc"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:02:39.965230Z",
+      "player_count": 28,
+      "known_position_count": 27,
+      "status": "updated",
+      "next_at": "2026-11-25T18:02:39.965230Z"
+    },
+    {
+      "team": "Arsenal FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1381285441",
+      "revision": 1381285441,
+      "published_at": "2026-10-21T09:09:50.000000Z",
+      "squad_sha256": "ccbec9c44157830914123f8484d99e0a74f86eccb2e587688cc06a429216a763",
+      "identity_sha256": [
+        "d94ab4925c013c52db37ae07d0f08e9df48d97770d40f20bcf0d4f7d6070b6a8"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:02:39.996845Z",
+      "player_count": 25,
+      "known_position_count": 22,
+      "status": "updated",
+      "next_at": "2026-11-25T18:02:39.996845Z"
+    },
+    {
+      "team": "Aston Villa FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377643760",
+      "revision": 1377643760,
+      "published_at": "2026-09-30T08:58:11.000000Z",
+      "squad_sha256": "fed6007f879290edeb81797f24be24c705b37fa2c876cb1bf85b1168a9f01546",
+      "identity_sha256": [
+        "dac8a989d6f1800af84dc393a1a5b8fba81d4894d0b64de4f3489a2f8dce397a"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:02:53.896579Z",
+      "player_count": 28,
+      "known_position_count": 26,
+      "status": "updated",
+      "next_at": "2026-11-25T18:02:53.896579Z"
+    },
+    {
+      "team": "Brentford FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377640845",
+      "revision": 1377640845,
+      "published_at": "2026-09-30T08:30:06.000000Z",
+      "squad_sha256": "796cdff1364f4bb6886eed073cc776ed32c1aa446d121ba1264bb4c844e65ae6",
+      "identity_sha256": [
+        "7d4c4d5425d4e5b7302015713f3951425211d41ca8e8ea1b31fd87042604a5e2"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:02:54.078823Z",
+      "player_count": 29,
+      "known_position_count": 26,
+      "status": "updated",
+      "next_at": "2026-11-25T18:02:54.078823Z"
+    },
+    {
+      "team": "Brighton & Hove Albion FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1378656516",
+      "revision": 1378656516,
+      "published_at": "2026-10-05T14:04:02.000000Z",
+      "squad_sha256": "a9f0a9bbcf8ab3dfd5aeac2a5542bc2d3a8380bd21fe21937260ff89298301e6",
+      "identity_sha256": [
+        "7633a286c96e2ba7cf1ff2cc9db58bb29a6a727c7d7376ab71dc90c5bb438969"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:03:06.938038Z",
+      "player_count": 30,
+      "known_position_count": 29,
+      "status": "updated",
+      "next_at": "2026-11-25T18:03:06.938038Z"
+    },
+    {
+      "team": "Chelsea FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1373200900",
+      "revision": 1373200900,
+      "published_at": "2026-09-04T15:01:00.000000Z",
+      "squad_sha256": "cbea392454dc7664a683461b4056e334d47d666b450ec0fd2cac719f99615b34",
+      "identity_sha256": [
+        "4b104e3f85d63970aee5d577bca3e7d88f67b6b54b3737945664d5621a3ecbc4"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:03:07.044198Z",
+      "player_count": 30,
+      "known_position_count": 28,
+      "status": "updated",
+      "next_at": "2026-11-25T18:03:07.044198Z"
+    },
+    {
+      "team": "Coventry City FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1379380222",
+      "revision": 1379380222,
+      "published_at": "2026-10-09T17:00:08.000000Z",
+      "squad_sha256": "7b6c29a2ae14b477fc99a81ae5ace4e79bfd58fce46bafe04eda6fc539210765",
+      "identity_sha256": [
+        "1f787dfa4591eb922ca6835eb350dc39bcf00ffd742270960cbf37acdac3a6ae"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:03:20.432284Z",
+      "player_count": 30,
+      "known_position_count": 30,
+      "status": "updated",
+      "next_at": "2026-11-25T18:03:20.432284Z"
+    },
+    {
+      "team": "Crystal Palace FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1386057222",
+      "revision": 1386057222,
+      "published_at": "2026-11-16T17:49:01.000000Z",
+      "squad_sha256": "88a663f2caa046bf7e1180bd1d1dc9ccb666828752c8be7a5c1d9ce6072f112b",
+      "identity_sha256": [
+        "0903b3349ffbf34f192ed1dbd8aa35b8b8cc725a22bf81f72f9dedf853f6d9a9"
+      ],
+      "unlinked_player_rows": 1,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:03:20.555683Z",
+      "player_count": 28,
+      "known_position_count": 26,
+      "status": "updated",
+      "next_at": "2026-11-25T18:03:20.555683Z"
+    },
+    {
+      "team": "Everton FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377645756",
+      "revision": 1377645756,
+      "published_at": "2026-09-30T09:17:14.000000Z",
+      "squad_sha256": "5ca4ff66717794ab179869a21eecff5456f19f93e543d72f8abce4402da61446",
+      "identity_sha256": [
+        "3c95f53b8368cabf0649f2f9a1e5da3f448d20f59c4a5ddebca00f29efddc9f3"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:03:34.166993Z",
+      "player_count": 21,
+      "known_position_count": 19,
+      "status": "updated",
+      "next_at": "2026-11-25T18:03:34.166993Z"
+    },
+    {
+      "team": "Fulham FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1375559544",
+      "revision": 1375559544,
+      "published_at": "2026-09-18T15:06:45.000000Z",
+      "squad_sha256": "19473b919466f82fbdf50a2baa904b7b0e87f25fc236365784143c4ddb752942",
+      "identity_sha256": [
+        "aaa603d8a4124cf943e84f29d8aec725870c1f4652945e54ce37f8e6275d9e38"
+      ],
+      "unlinked_player_rows": 1,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:03:34.135410Z",
+      "player_count": 25,
+      "known_position_count": 22,
+      "status": "updated",
+      "next_at": "2026-11-25T18:03:34.135410Z"
+    },
+    {
+      "team": "Hull City AFC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377646149",
+      "revision": 1377646149,
+      "published_at": "2026-09-30T09:22:09.000000Z",
+      "squad_sha256": "d16affc9b21d8181a306079354fb1ab3dc411a1b931ac41bf57c1956ce8a11b1",
+      "identity_sha256": [
+        "b47de2133373858315ea1d9bea3872026a2f1e0479846a44f093911a8c46de3f"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:03:48.306023Z",
+      "player_count": 33,
+      "known_position_count": 31,
+      "status": "updated",
+      "next_at": "2026-11-25T18:03:48.306023Z"
+    },
+    {
+      "team": "Ipswich Town FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377647280",
+      "revision": 1377647280,
+      "published_at": "2026-09-30T09:35:44.000000Z",
+      "squad_sha256": "120adce53b5fa87bfbe6db2ec0c69da431d9b3836aa3c3648ebf00c968cc5573",
+      "identity_sha256": [
+        "9aa9b7f058e28400f69c30352a7cdeca4ab72edd39728a09edd360ffeb54d728"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:03:48.345547Z",
+      "player_count": 28,
+      "known_position_count": 28,
+      "status": "updated",
+      "next_at": "2026-11-25T18:03:48.345547Z"
+    },
+    {
+      "team": "Leeds United FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1379564239",
+      "revision": 1379564239,
+      "published_at": "2026-10-10T19:10:47.000000Z",
+      "squad_sha256": "b27e2ec5c7f12e2e0cf93b6c37dd348a0838031535413e4e5c01d5e538ddba5d",
+      "identity_sha256": [
+        "de4e2799bcc921f5ee843b09e69da721bb25b88f72d4e7572822f8e589da0243"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:04:01.725127Z",
+      "player_count": 24,
+      "known_position_count": 21,
+      "status": "updated",
+      "next_at": "2026-11-25T18:04:01.725127Z"
+    },
+    {
+      "team": "Liverpool FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1374219087",
+      "revision": 1374219087,
+      "published_at": "2026-09-10T16:15:37.000000Z",
+      "squad_sha256": "362fe7d1c5a2ebcf93f5ab3d158b24f4352aba15d70725d4c079098267435e55",
+      "identity_sha256": [
+        "458b85a0c337029c466025047797b39511e52e3a4c3c2bb88d3504f31efe51b1"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:04:01.645495Z",
+      "player_count": 31,
+      "known_position_count": 28,
+      "status": "updated",
+      "next_at": "2026-11-25T18:04:01.645495Z"
+    },
+    {
+      "team": "Manchester City FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1379381966",
+      "revision": 1379381966,
+      "published_at": "2026-10-09T17:14:53.000000Z",
+      "squad_sha256": "51d18e54647ca168f8a3262c9278216c6d0f3b4748f28cef6e74041386333015",
+      "identity_sha256": [
+        "85595e87b8144c4562044934ae0e75f293aa0d419b9c14391ea10f8bce4d045b"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:04:15.543058Z",
+      "player_count": 26,
+      "known_position_count": 23,
+      "status": "updated",
+      "next_at": "2026-11-25T18:04:15.543058Z"
+    },
+    {
+      "team": "Manchester United FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1386403627",
+      "revision": 1386403627,
+      "published_at": "2026-11-18T09:34:34.000000Z",
+      "squad_sha256": "fcd4de85db14f50d04b89463c6508ee5e6129aec981324593f37b71e836b24e9",
+      "identity_sha256": [
+        "305539b603a2ffd649315cd54007c8b3d55e05e431fd32d1e1ed7d1d05cc8fe3"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:04:15.590160Z",
+      "player_count": 31,
+      "known_position_count": 29,
+      "status": "updated",
+      "next_at": "2026-11-25T18:04:15.590160Z"
+    },
+    {
+      "team": "Newcastle United FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377648009",
+      "revision": 1377648009,
+      "published_at": "2026-09-30T09:45:40.000000Z",
+      "squad_sha256": "2c5f848ca83c95b8a572a27d87e6ec12bf1270c53a6ae10a50f118a6585cb864",
+      "identity_sha256": [
+        "9415e8cc035a7cbe8c3f5c0e895bee7e207d7c52cad01fb81a2b3261a4c0aa7b"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [
+        "Aidan Harris"
+      ],
+      "seen_at": "2026-11-25T12:04:28.957539Z",
+      "player_count": 25,
+      "known_position_count": 24,
+      "status": "updated",
+      "next_at": "2026-11-25T18:04:28.957539Z"
+    },
+    {
+      "team": "Nottingham Forest FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377642117",
+      "revision": 1377642117,
+      "published_at": "2026-09-30T08:42:14.000000Z",
+      "squad_sha256": "56834666674540b9469b4e84a61bb5c1d79fb86ad5b876f946ea5fe9fd394d4e",
+      "identity_sha256": [
+        "3c44049b6e48d8822789a19620524ed22e007d06f9249e78b5b323fcf4ad387f"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:04:28.983112Z",
+      "player_count": 24,
+      "known_position_count": 24,
+      "status": "updated",
+      "next_at": "2026-11-25T18:04:28.983112Z"
+    },
+    {
+      "team": "Sunderland AFC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1379385887",
+      "revision": 1379385887,
+      "published_at": "2026-10-09T17:48:47.000000Z",
+      "squad_sha256": "ce8e2b4f5fef8f41c5adf6f499af91469326ec987c4b43fc0ca20e15be274f54",
+      "identity_sha256": [
+        "54b639ebc1c87b4087f6278123d02b8bb4e0d0948b406bd40e55d5f7b8f82f39"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:04:42.708519Z",
+      "player_count": 29,
+      "known_position_count": 28,
+      "status": "updated",
+      "next_at": "2026-11-25T18:04:42.708519Z"
+    },
+    {
+      "team": "Tottenham Hotspur FC",
+      "season": "2026-27",
+      "source": "enwiki-first-team-squad",
+      "source_url": "https://en.wikipedia.org/w/index.php?oldid=1383080031",
+      "revision": 1383080031,
+      "published_at": "2026-10-31T21:56:28.000000Z",
+      "squad_sha256": "2531955706eaefed4f1872b1138e09d54769445dc9d5c5c4ea4e713c26134e72",
+      "identity_sha256": [
+        "5d15ad937f3f0586d5dff56b58f334c2e8d5c8525503b9e6b39e67d5e4c0964e"
+      ],
+      "unlinked_player_rows": 0,
+      "unresolved_titles": [],
+      "seen_at": "2026-11-25T12:04:42.722517Z",
+      "player_count": 29,
+      "known_position_count": 27,
+      "status": "updated",
+      "next_at": "2026-11-25T18:04:42.722517Z"
+    }
+  ]
+}

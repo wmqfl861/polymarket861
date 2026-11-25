@@ -2,9 +2,11 @@
 
 英超赛前概率预测与 Polymarket 国际站模拟账本。系统在同一份比分分布上给出胜平负、全场进球大小、主队进球大小和客队进球大小。默认在开球前 24 小时、60 分钟分别封存预测。模拟买入使用买方实际能取得的卖盘、深度和费用，持有至合约兑付。
 
-**当前版本为 0.3.0。** 仓库包含可安装程序、中文本地看板、端到端回归测试和真实历史研究报告。首次运行会建立自己的 SQLite 数据库。建设期影子、历史重放、正式前向模拟各有独立标记。代码采用 Python 3.11 及以上版本，数据接口只读，纸面账户不需要钱包。
+**当前版本为 0.4.0。** 赛季服务持续采集球队消息，本地文本分类器按当时的球队名单识别球员。球员情况变化会触发独立的赛前预测更新。每场主预测同时按固定时点保存使用新闻与不使用新闻的概率，可以在中文看板查看原句、更新历史、两组概率以及赛后分差。首次运行会建立自己的 SQLite 数据库。建设期模拟、历史回放和正式前向模拟分别记录。程序使用 Python 3.11 及以上版本和只读数据接口。
 
-[系统蓝图 1.3](docs/polymarket861-EPL-v1.md) · [开发计划及验收口径](docs/polymarket861-EPL-development-plan.md) · [比赛日操作手册](docs/MATCHDAY.md) · [Claude 复审逐项处置](docs/CLAUDE-REVIEW-RESPONSE-0.3.0.md) · [本版独立终审](docs/INDEPENDENT-REVIEW-0.3.0.md)
+[系统蓝图 1.4](docs/polymarket861-EPL-v1.md) · [开发计划及验收口径](docs/polymarket861-EPL-development-plan.md) · [比赛日操作手册](docs/MATCHDAY.md) · [球队新闻操作与评测](docs/TEAM-NEWS.md) · [0.3.0 复审处置](docs/CLAUDE-REVIEW-RESPONSE-0.3.0.md)
+
+默认来源包括 Touchline Wire 的公开接口与英语维基百科的俱乐部赛季修订。[Tactical Data by Touchline Wire](https://touchlinewire.com/) · [Touchline Wire 开发说明](https://touchlinewire.com/docs#attribution) · [英语维基百科贡献者，CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 ## 用固定数据跑通历史回放
 
@@ -34,7 +36,7 @@ pm861 --data-dir .pm861 dashboard export --output .pm861/dashboard.html
 |---|---|
 | 刷新公共领域数据 | `data refresh --first 2022-23 --last 2026-27` 锁定上游提交，校验逐季文件，归档原始内容、时间和本机可用的输入清单。已有固定版本可用 `data observe 数据根目录 --register-season 2026-27`。从本机实际观察时刻开始使用历史终场记录。 |
 | 更新当季赛果 | `result-feed season 2026` 拉取 OpenLigaDB 和英超各队的 Wikimedia 赛季条目修订。核对身份、轮次、实际开球，并以两个提供方的终场或单源独立复收确认。用 `result-feed freshness 2026` 查看逐队缺口和下一轮影响。冲突、未完赛及来源回滚在独立记录中可查。 |
-| 记录新闻、伤停和天气 | `source` 登记免费用途、字段和使用范围。`evidence` 导入球员名单、状态、牌、场外消息及气象事实，区分预计与已确认版本。`feeds` 提供 GDELT 发现与有起报时间的天气试采。每种来源按实际使用条件启用。 |
+| 收集和评测球队新闻 | `season run --repeat` 调度免费消息、球队名单和本地识别。`news status` 查各队覆盖，`news facts 比赛ID` 查有来源的球员消息，`news evaluate 2026-27 12` 查同场对照。可用 `news add-feed` 接入有明确免费授权的球队 RSS 或 Atom。GDELT 索引及天气试采仍可通过 `feeds` 单独使用。 |
 | 封存赛前预测 | `fixture list --season 2026-27` 查比赛标识。`forecast make 比赛标识 数据根目录 --horizon early` 生成带本机收件凭据的提前技术观察。标准时点用 `run due 数据根目录 --workers 2`，可由本机计划任务每分钟调用，也可加 `--repeat 60` 前台持续运行。 |
 | 调度全赛季 | `season run --repeat` 协调未来赛程、盘口、预测与结算；`season backfill 2025 --max-pages 10` 按游标补采，`season status` 查看迟到与漏窗。 |
 | 归档盘口并回放 | `market discover`、`market capture`、`market watch` 和 `market history` 记录主赛事、附属赛事、两侧盘口、成交与曲线。`trial study-archive --fixture 已完赛主赛事slug` 使用同库真实历史证据建立回放报告。按 `--help` 查看某个采集器的参数。 |

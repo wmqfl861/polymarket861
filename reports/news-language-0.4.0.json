@@ -1,0 +1,2476 @@
+{
+  "english_language": {
+    "articles": 36,
+    "cases": [
+      {
+        "case": 1,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 2,
+        "correct": 0,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 3,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 4,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 5,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 1
+      },
+      {
+        "case": 6,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 7,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 8,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 9,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 10,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 11,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 12,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 13,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 14,
+        "correct": 2,
+        "emitted": 2,
+        "expected": 2
+      },
+      {
+        "case": 15,
+        "correct": 2,
+        "emitted": 2,
+        "expected": 2
+      },
+      {
+        "case": 16,
+        "correct": 0,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 17,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 1
+      },
+      {
+        "case": 18,
+        "correct": 0,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 19,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 20,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 21,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 1
+      },
+      {
+        "case": 22,
+        "correct": 1,
+        "emitted": 1,
+        "expected": 1
+      },
+      {
+        "case": 23,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 1
+      },
+      {
+        "case": 24,
+        "correct": 2,
+        "emitted": 2,
+        "expected": 2
+      },
+      {
+        "case": 25,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 26,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 27,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 28,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 29,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 30,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 31,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 32,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 33,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 34,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 35,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      },
+      {
+        "case": 36,
+        "correct": 0,
+        "emitted": 0,
+        "expected": 0
+      }
+    ],
+    "confusion": {
+      "availability": {
+        "available": {
+          "available": 2
+        },
+        "doubtful": {
+          "abstained": 2,
+          "doubtful": 3,
+          "unknown": 1
+        },
+        "out": {
+          "out": 11
+        },
+        "unknown": {
+          "abstained": 2,
+          "unknown": 6
+        }
+      },
+      "event": {
+        "availability": {
+          "abstained": 2,
+          "availability": 8
+        },
+        "injury": {
+          "abstained": 1,
+          "injury": 8
+        },
+        "return": {
+          "return": 3
+        },
+        "suspension": {
+          "abstained": 1,
+          "suspension": 3
+        },
+        "transfer": {
+          "transfer": 1
+        }
+      },
+      "status": {
+        "confirmed": {
+          "abstained": 3,
+          "confirmed": 7,
+          "reported": 1
+        },
+        "denied": {
+          "abstained": 1
+        },
+        "reported": {
+          "reported": 12
+        },
+        "rumour": {
+          "reported": 1,
+          "rumour": 2
+        }
+      }
+    },
+    "development_regression": {
+      "articles": 48,
+      "cases": [
+        {
+          "case": 1,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 2,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 3,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 4,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 5,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 6,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 7,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 8,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 9,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 10,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 11,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 12,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 13,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 14,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 15,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 16,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 17,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 18,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 19,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 20,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 21,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 22,
+          "correct": 2,
+          "emitted": 2,
+          "expected": 2
+        },
+        {
+          "case": 23,
+          "correct": 2,
+          "emitted": 2,
+          "expected": 2
+        },
+        {
+          "case": 24,
+          "correct": 2,
+          "emitted": 2,
+          "expected": 2
+        },
+        {
+          "case": 25,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 26,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 27,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 28,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 29,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 1
+        },
+        {
+          "case": 30,
+          "correct": 1,
+          "emitted": 1,
+          "expected": 1
+        },
+        {
+          "case": 31,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 32,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 33,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 34,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 35,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 36,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 37,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 38,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 39,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 40,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 41,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 42,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 43,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 44,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 45,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 46,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 47,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        },
+        {
+          "case": 48,
+          "correct": 0,
+          "emitted": 0,
+          "expected": 0
+        }
+      ],
+      "confusion": {
+        "availability": {
+          "available": {
+            "abstained": 1,
+            "available": 3
+          },
+          "doubtful": {
+            "abstained": 1,
+            "doubtful": 4
+          },
+          "out": {
+            "abstained": 1,
+            "out": 13
+          },
+          "unknown": {
+            "abstained": 2,
+            "unknown": 8
+          }
+        },
+        "event": {
+          "availability": {
+            "availability": 8
+          },
+          "injury": {
+            "abstained": 3,
+            "injury": 10
+          },
+          "return": {
+            "abstained": 1,
+            "return": 4
+          },
+          "suspension": {
+            "abstained": 1,
+            "suspension": 5
+          },
+          "transfer": {
+            "transfer": 1
+          }
+        },
+        "status": {
+          "confirmed": {
+            "abstained": 3,
+            "confirmed": 12
+          },
+          "denied": {
+            "denied": 4
+          },
+          "reported": {
+            "abstained": 2,
+            "reported": 9
+          },
+          "rumour": {
+            "rumour": 3
+          }
+        }
+      },
+      "errors": [
+        {
+          "case": 12,
+          "expected": [
+            [
+              "byrne",
+              "suspension",
+              "reported",
+              "out"
+            ]
+          ],
+          "extracted": []
+        },
+        {
+          "case": 14,
+          "expected": [
+            [
+              "reed",
+              "injury",
+              "confirmed",
+              "doubtful"
+            ]
+          ],
+          "extracted": []
+        },
+        {
+          "case": 26,
+          "expected": [
+            [
+              "martin",
+              "injury",
+              "confirmed",
+              "unknown"
+            ]
+          ],
+          "extracted": []
+        },
+        {
+          "case": 27,
+          "expected": [
+            [
+              "dahl",
+              "return",
+              "confirmed",
+              "available"
+            ]
+          ],
+          "extracted": []
+        },
+        {
+          "case": 29,
+          "expected": [
+            [
+              "byrne",
+              "injury",
+              "reported",
+              "unknown"
+            ]
+          ],
+          "extracted": []
+        }
+      ],
+      "exact_articles": 43,
+      "exact_claim_precision": 1.0,
+      "exact_claim_recall": 0.8485,
+      "exact_evidence_spans": 28,
+      "extracted_claims": 28,
+      "fully_correct_claims": 28,
+      "gold_claims": 33,
+      "holdout_sha256": "a46ae1eabbb4f4ab3182b906493257b9a06efa4495988a423f82469e8a25bedb",
+      "holdout_source": "original, manually labelled English examples",
+      "linked_subject_precision": 1.0,
+      "linked_subject_recall": 0.8485,
+      "live_publisher_articles": 0,
+      "match_results_used": 0,
+      "model_version": "squad-news-en-nb-1-9fcf6d2950835eea",
+      "negative_articles": 18,
+      "negative_articles_with_no_claim": 18,
+      "scope": "Previously inspected challenge set; several polarity errors informed guard repairs.",
+      "task": "grounded English football availability and transfer-claim extraction",
+      "training_statements": 143
+    },
+    "errors": [
+      {
+        "case": 2,
+        "expected": [
+          [
+            "byrne",
+            "injury",
+            "confirmed",
+            "out"
+          ]
+        ],
+        "extracted": [
+          [
+            "byrne",
+            "injury",
+            "reported",
+            "out"
+          ]
+        ]
+      },
+      {
+        "case": 5,
+        "expected": [
+          [
+            "other-reed",
+            "suspension",
+            "denied",
+            "unknown"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 16,
+        "expected": [
+          [
+            "byrne",
+            "injury",
+            "reported",
+            "doubtful"
+          ]
+        ],
+        "extracted": [
+          [
+            "byrne",
+            "injury",
+            "reported",
+            "unknown"
+          ]
+        ]
+      },
+      {
+        "case": 17,
+        "expected": [
+          [
+            "other-reed",
+            "availability",
+            "confirmed",
+            "doubtful"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 18,
+        "expected": [
+          [
+            "reed",
+            "injury",
+            "rumour",
+            "unknown"
+          ]
+        ],
+        "extracted": [
+          [
+            "reed",
+            "injury",
+            "reported",
+            "unknown"
+          ]
+        ]
+      },
+      {
+        "case": 21,
+        "expected": [
+          [
+            "byrne",
+            "injury",
+            "confirmed",
+            "unknown"
+          ]
+        ],
+        "extracted": []
+      },
+      {
+        "case": 23,
+        "expected": [
+          [
+            "martin",
+            "availability",
+            "confirmed",
+            "doubtful"
+          ]
+        ],
+        "extracted": []
+      }
+    ],
+    "exact_articles": 29,
+    "exact_claim_precision": 0.8696,
+    "exact_claim_recall": 0.7407,
+    "exact_evidence_spans": 23,
+    "extracted_claims": 23,
+    "fully_correct_claims": 20,
+    "gold_claims": 27,
+    "holdout_sha256": "5697ca28ff69da73f3a542baf8867d1c166cd7ebde4ef5ac54873abee27aafda",
+    "holdout_source": "original, manually labelled English examples",
+    "linked_subject_precision": 1.0,
+    "linked_subject_recall": 0.8519,
+    "live_publisher_articles": 0,
+    "match_results_used": 0,
+    "model_version": "squad-news-en-nb-1-9fcf6d2950835eea",
+    "negative_articles": 12,
+    "negative_articles_with_no_claim": 12,
+    "scope": "Held out of weight fitting and the initial rule-development cycle; English text only.",
+    "task": "grounded English football availability and transfer-claim extraction",
+    "training_statements": 143
+  },
+  "metric_definitions": {
+    "exact_claim": "All of player ID, event type, evidential status and availability match one labelled claim; additional emitted claims count against precision.",
+    "exact_evidence_span": "The saved quote equals the exact original Unicode slice at the saved start/end offsets.",
+    "wire_agreement": "Exactly one complete provider display/subject name matches a trusted roster name/alias after case, punctuation and diacritic normalization; exactly one grounded claim has that ID and agrees with the structured provider's event, status and availability."
+  },
+  "model_version": "squad-news-en-nb-1-9fcf6d2950835eea",
+  "protocol": "news-language-validation-1",
+  "real_wire": {
+    "as_of": "2026-11-25T12:07:19Z",
+    "attribution": "Tactical Data by Touchline Wire (https://touchlinewire.com).",
+    "conditional_precision": 1.0,
+    "counts": {
+      "abstentions": 13,
+      "emitted": 122,
+      "exact_agreement": 122,
+      "records": 135,
+      "unique_exact_names": 122
+    },
+    "counts_by_provider_class": {
+      "doubtful": {
+        "abstentions": 0,
+        "emitted": 17,
+        "exact_agreement": 17,
+        "records": 17,
+        "unique_exact_names": 17
+      },
+      "injured": {
+        "abstentions": 4,
+        "emitted": 55,
+        "exact_agreement": 55,
+        "records": 59,
+        "unique_exact_names": 55
+      },
+      "suspended": {
+        "abstentions": 0,
+        "emitted": 6,
+        "exact_agreement": 6,
+        "records": 6,
+        "unique_exact_names": 6
+      },
+      "transfer": {
+        "abstentions": 9,
+        "emitted": 44,
+        "exact_agreement": 44,
+        "records": 53,
+        "unique_exact_names": 44
+      }
+    },
+    "end_to_end_recall": 0.9037,
+    "license": "Free for personal, academic, and open-source use with attribution",
+    "projection_sha256": "72fc638ec935e63e98d85c9b3b5d848fbf579e82de2acdcecb2965265d0ee755",
+    "provider_receipts": [
+      {
+        "provider_snapshot": "2026-11-25T12:07:17.267359+00:00",
+        "received_at": "2026-11-25T12:07:17.379432Z",
+        "requested_at": "2026-11-25T12:07:08.960197Z",
+        "response_sha256": "6776d69180aaa08a5886767666df8e6c8282597dca02b69b62f27135f4329ab9",
+        "url": "https://touchlinewire.com/api/v1/injuries"
+      },
+      {
+        "provider_snapshot": "2026-11-25T12:07:18.164501+00:00",
+        "received_at": "2026-11-25T12:07:18.343846Z",
+        "requested_at": "2026-11-25T12:07:08.961315Z",
+        "response_sha256": "15203a0627e32d6933ad6b0fb82b5f0078bff054f772818c6d56c6fa4a19d803",
+        "url": "https://touchlinewire.com/api/v1/rumours"
+      }
+    ],
+    "roster_receipts": [
+      {
+        "identity_sha256": [
+          "cc9ea0e7444a9c4ed0482a6304f043d1d1c467c14e01fbb846850c93d14eacfc"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 28,
+        "revision": 1377641135,
+        "seen_at": "2026-11-25T12:02:39.965230Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377641135",
+        "squad_sha256": "a50c79cad9e7786680cc2340a5ad4fad8f4f89bafa8167a3b8267e8890e3b317",
+        "team": "AFC Bournemouth"
+      },
+      {
+        "identity_sha256": [
+          "d94ab4925c013c52db37ae07d0f08e9df48d97770d40f20bcf0d4f7d6070b6a8"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 25,
+        "revision": 1381285441,
+        "seen_at": "2026-11-25T12:02:39.996845Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1381285441",
+        "squad_sha256": "ccbec9c44157830914123f8484d99e0a74f86eccb2e587688cc06a429216a763",
+        "team": "Arsenal FC"
+      },
+      {
+        "identity_sha256": [
+          "dac8a989d6f1800af84dc393a1a5b8fba81d4894d0b64de4f3489a2f8dce397a"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 28,
+        "revision": 1377643760,
+        "seen_at": "2026-11-25T12:02:53.896579Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377643760",
+        "squad_sha256": "fed6007f879290edeb81797f24be24c705b37fa2c876cb1bf85b1168a9f01546",
+        "team": "Aston Villa FC"
+      },
+      {
+        "identity_sha256": [
+          "7d4c4d5425d4e5b7302015713f3951425211d41ca8e8ea1b31fd87042604a5e2"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 29,
+        "revision": 1377640845,
+        "seen_at": "2026-11-25T12:02:54.078823Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377640845",
+        "squad_sha256": "796cdff1364f4bb6886eed073cc776ed32c1aa446d121ba1264bb4c844e65ae6",
+        "team": "Brentford FC"
+      },
+      {
+        "identity_sha256": [
+          "7633a286c96e2ba7cf1ff2cc9db58bb29a6a727c7d7376ab71dc90c5bb438969"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 30,
+        "revision": 1378656516,
+        "seen_at": "2026-11-25T12:03:06.938038Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1378656516",
+        "squad_sha256": "a9f0a9bbcf8ab3dfd5aeac2a5542bc2d3a8380bd21fe21937260ff89298301e6",
+        "team": "Brighton & Hove Albion FC"
+      },
+      {
+        "identity_sha256": [
+          "4b104e3f85d63970aee5d577bca3e7d88f67b6b54b3737945664d5621a3ecbc4"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 30,
+        "revision": 1373200900,
+        "seen_at": "2026-11-25T12:03:07.044198Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1373200900",
+        "squad_sha256": "cbea392454dc7664a683461b4056e334d47d666b450ec0fd2cac719f99615b34",
+        "team": "Chelsea FC"
+      },
+      {
+        "identity_sha256": [
+          "1f787dfa4591eb922ca6835eb350dc39bcf00ffd742270960cbf37acdac3a6ae"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 30,
+        "revision": 1379380222,
+        "seen_at": "2026-11-25T12:03:20.432284Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1379380222",
+        "squad_sha256": "7b6c29a2ae14b477fc99a81ae5ace4e79bfd58fce46bafe04eda6fc539210765",
+        "team": "Coventry City FC"
+      },
+      {
+        "identity_sha256": [
+          "0903b3349ffbf34f192ed1dbd8aa35b8b8cc725a22bf81f72f9dedf853f6d9a9"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 28,
+        "revision": 1386057222,
+        "seen_at": "2026-11-25T12:03:20.555683Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1386057222",
+        "squad_sha256": "88a663f2caa046bf7e1180bd1d1dc9ccb666828752c8be7a5c1d9ce6072f112b",
+        "team": "Crystal Palace FC"
+      },
+      {
+        "identity_sha256": [
+          "3c95f53b8368cabf0649f2f9a1e5da3f448d20f59c4a5ddebca00f29efddc9f3"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 21,
+        "revision": 1377645756,
+        "seen_at": "2026-11-25T12:03:34.166993Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377645756",
+        "squad_sha256": "5ca4ff66717794ab179869a21eecff5456f19f93e543d72f8abce4402da61446",
+        "team": "Everton FC"
+      },
+      {
+        "identity_sha256": [
+          "aaa603d8a4124cf943e84f29d8aec725870c1f4652945e54ce37f8e6275d9e38"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 25,
+        "revision": 1375559544,
+        "seen_at": "2026-11-25T12:03:34.135410Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1375559544",
+        "squad_sha256": "19473b919466f82fbdf50a2baa904b7b0e87f25fc236365784143c4ddb752942",
+        "team": "Fulham FC"
+      },
+      {
+        "identity_sha256": [
+          "b47de2133373858315ea1d9bea3872026a2f1e0479846a44f093911a8c46de3f"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 33,
+        "revision": 1377646149,
+        "seen_at": "2026-11-25T12:03:48.306023Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377646149",
+        "squad_sha256": "d16affc9b21d8181a306079354fb1ab3dc411a1b931ac41bf57c1956ce8a11b1",
+        "team": "Hull City AFC"
+      },
+      {
+        "identity_sha256": [
+          "9aa9b7f058e28400f69c30352a7cdeca4ab72edd39728a09edd360ffeb54d728"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 28,
+        "revision": 1377647280,
+        "seen_at": "2026-11-25T12:03:48.345547Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377647280",
+        "squad_sha256": "120adce53b5fa87bfbe6db2ec0c69da431d9b3836aa3c3648ebf00c968cc5573",
+        "team": "Ipswich Town FC"
+      },
+      {
+        "identity_sha256": [
+          "de4e2799bcc921f5ee843b09e69da721bb25b88f72d4e7572822f8e589da0243"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 24,
+        "revision": 1379564239,
+        "seen_at": "2026-11-25T12:04:01.725127Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1379564239",
+        "squad_sha256": "b27e2ec5c7f12e2e0cf93b6c37dd348a0838031535413e4e5c01d5e538ddba5d",
+        "team": "Leeds United FC"
+      },
+      {
+        "identity_sha256": [
+          "458b85a0c337029c466025047797b39511e52e3a4c3c2bb88d3504f31efe51b1"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 31,
+        "revision": 1374219087,
+        "seen_at": "2026-11-25T12:04:01.645495Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1374219087",
+        "squad_sha256": "362fe7d1c5a2ebcf93f5ab3d158b24f4352aba15d70725d4c079098267435e55",
+        "team": "Liverpool FC"
+      },
+      {
+        "identity_sha256": [
+          "85595e87b8144c4562044934ae0e75f293aa0d419b9c14391ea10f8bce4d045b"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 26,
+        "revision": 1379381966,
+        "seen_at": "2026-11-25T12:04:15.543058Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1379381966",
+        "squad_sha256": "51d18e54647ca168f8a3262c9278216c6d0f3b4748f28cef6e74041386333015",
+        "team": "Manchester City FC"
+      },
+      {
+        "identity_sha256": [
+          "305539b603a2ffd649315cd54007c8b3d55e05e431fd32d1e1ed7d1d05cc8fe3"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 31,
+        "revision": 1386403627,
+        "seen_at": "2026-11-25T12:04:15.590160Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1386403627",
+        "squad_sha256": "fcd4de85db14f50d04b89463c6508ee5e6129aec981324593f37b71e836b24e9",
+        "team": "Manchester United FC"
+      },
+      {
+        "identity_sha256": [
+          "9415e8cc035a7cbe8c3f5c0e895bee7e207d7c52cad01fb81a2b3261a4c0aa7b"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 25,
+        "revision": 1377648009,
+        "seen_at": "2026-11-25T12:04:28.957539Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377648009",
+        "squad_sha256": "2c5f848ca83c95b8a572a27d87e6ec12bf1270c53a6ae10a50f118a6585cb864",
+        "team": "Newcastle United FC"
+      },
+      {
+        "identity_sha256": [
+          "3c44049b6e48d8822789a19620524ed22e007d06f9249e78b5b323fcf4ad387f"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 24,
+        "revision": 1377642117,
+        "seen_at": "2026-11-25T12:04:28.983112Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1377642117",
+        "squad_sha256": "56834666674540b9469b4e84a61bb5c1d79fb86ad5b876f946ea5fe9fd394d4e",
+        "team": "Nottingham Forest FC"
+      },
+      {
+        "identity_sha256": [
+          "54b639ebc1c87b4087f6278123d02b8bb4e0d0948b406bd40e55d5f7b8f82f39"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 29,
+        "revision": 1379385887,
+        "seen_at": "2026-11-25T12:04:42.708519Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1379385887",
+        "squad_sha256": "ce8e2b4f5fef8f41c5adf6f499af91469326ec987c4b43fc0ca20e15be274f54",
+        "team": "Sunderland AFC"
+      },
+      {
+        "identity_sha256": [
+          "5d15ad937f3f0586d5dff56b58f334c2e8d5c8525503b9e6b39e67d5e4c0964e"
+        ],
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "player_count": 29,
+        "revision": 1383080031,
+        "seen_at": "2026-11-25T12:04:42.722517Z",
+        "source_url": "https://en.wikipedia.org/w/index.php?oldid=1383080031",
+        "squad_sha256": "2531955706eaefed4f1872b1138e09d54769445dc9d5c5c4ea4e713c26134e72",
+        "team": "Tottenham Hotspur FC"
+      }
+    ],
+    "roster_receipts_sha256": "aa0b5f33d64cb8866a3e28977d1b2ac1262ec5633b75c0f8655bb2e66cf18e0d",
+    "rows": [
+      {
+        "emitted": [
+          "enwiki:69566738"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "819d1b8f454a0790d5d52cc9b7bf8606c41fe338ec035bc26f5ecb9c0a2fa7ef",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:77744002"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "794ffc63a90cd10855789c0e870b48a7999760a4b44f2c0c152319a724e64cc4",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:58693316"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "8bd79e3dbbc25667a8d74d76b0a6a04c8ada02235c220e0f84d5687b2344bb11",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:79572764"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "d721563ae97d563380cd7d1ef3b25044b7426f2838d02b084d1916be10eb5146",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:73579573"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "9f123a9677cb05a8d7ffaccf0533aabb307fb74401139b94863e8c62a1b3fc94",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:54990098"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "e5bedf5fb1f7b96136b896e563e369f1b2ac50dd28c988e5c1926f25a4aa267a",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:67497758"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "20e9beaa61b1b7a9145b97c95930723de42da58db3b8bc53d6594c87d780f559",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65364817"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "e827fb86da9f2476e938c74af55ebf35bbece9b2511b32f8de1ef312530bcc4b",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:67497758"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "0f89deedc525b8243d0aa90b95d1fbb415b97e3e1921fbce7ad0eeb07d48c6b8",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:73579573"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "9f2f9fcbba9c3b4894c69a59137be345708ae3492a24d29a2fd37207c25c9cc4",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "08f1f843b66f8b249f0ef3475b21b3889f2a68dc328914ec6f6ef3b212486bc8",
+        "team": "AFC Bournemouth",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:46313438"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "4032c32c188e8933b34b1b188afa29107366db9815c196291f9618a533a8a533",
+        "team": "Arsenal FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:59196657"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "1f77c4f3563938951b53ce7761ef7356d0647f98081a6516b1da7d660585f806",
+        "team": "Arsenal FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:78056959"
+        ],
+        "exact_agreement": true,
+        "provider_class": "suspended",
+        "record_sha256": "8daed672003cdfd4ba889dbc569b95234310cec249e8a3ee05c1a5bf9a9d7f5a",
+        "team": "Arsenal FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:64276407"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "13155d3af981aa1153c72e4c32950b20370a5d98eff01bffe06fef722b2a3146",
+        "team": "Arsenal FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "79edefaf54f110491b1edbcb2bc8b3043d3314ce9f92486428dce64dbf728251",
+        "team": "Arsenal FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:64276407"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "2b9d05206c3896894f4f326572494ff98b1f6725df15da2963e680a9461760a2",
+        "team": "Arsenal FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:70248902"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "2172c9d03f4423d9122141e2683902574ad37e9367cac19d4881dcc889fc6eba",
+        "team": "Aston Villa FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65314554"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "5a640868886a6aa2b98c4a22877dd51284429611847d63351ad3e5689af678f8",
+        "team": "Aston Villa FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65753707"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "810e83e3d8b8d373368c790803420d79dd285243fa6d67cd71d92d921c7ba8b3",
+        "team": "Aston Villa FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:56113678"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "8ace0fd66e31459772aa0c2f8b4d2e401b7fff19525564f5146585980720c361",
+        "team": "Aston Villa FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:66976582"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "9beff2bc3b935dd14e4934b6322ecab7f9f0cbbfab349513b3900a10fab23652",
+        "team": "Aston Villa FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:66976582"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "15b142f42e4b749675ba7d17c025ecb03d8eb7eb1b4e1f0b6d39d60789652721",
+        "team": "Aston Villa FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65407676"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "761e6310e0c7d7c9fec24b8eded22702ae98f398154cec1f8df39f451ca8e32a",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:55297338"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "8a663f7857c1ec9f90f639dc81a4a4f44a668a4d71466a1c33e6d255fc31cdcf",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:62928637"
+        ],
+        "exact_agreement": true,
+        "provider_class": "suspended",
+        "record_sha256": "11066593d7437b2610e3ce276f20f844c57ac04404d046b9bf3e517f63013622",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:80934232"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "eaa74426f091497ae1d4fa7fd8841c6ec063d6c0477c8fec6dfbf50abb6c3b72",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:44705241"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "25e2951677636c422f43cd7497bff3dce0b8a417c984d8484fd69fafca58d0d3",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:68466459"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "4e6ef803c65424d4572263f2d2847acdac9c71003a0977996940596c77cef2d4",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:76222368"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "cb67bedd62e6d3d62f9c57bcc2951708a61b6e56ca6060062496ed6c5bb419d3",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:76222368"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "1e8a7452208cbc905927e86b2c83867990f6c2dac560e797bae8f2155090f1e8",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:68470733"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "7ff0608bbb26d6b2b754025f8c7be78c589bb882f5cea496a075ceb8ab1e0049",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:60455572"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "f793381f68c3ffada4b6b8e14a8516755f5d78646038a63c94bdc50810bfa571",
+        "team": "Brentford FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:66217477"
+        ],
+        "exact_agreement": true,
+        "provider_class": "suspended",
+        "record_sha256": "15c67c7f7fe34884c2974b9200801d7a49f5427260d5ce6610846a1b143a8406",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "injured",
+        "record_sha256": "6cf76af16e0486cc104bf84d14af3f37bc03760e920d38d5e585228ea8014566",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:82683316"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "f2d06fd73405f79419ee54ddf3de3d80093864c4e3231ba8cf1ae289e9c75bf7",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:72648908"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "5d721952195ea55ecbf107cd87b373be643d494bda211a8511daa105c375b335",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:68556540"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "3b4deb77b9f16f514a1138a11cb7e59171bf2e8120f2d696b84c84fa45b84ca8",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:62567413"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "ac42fdba63a80ab9fce805c121b0feb26b774fcd27abee4a01ad71e6fdfde7ec",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:67023315"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "d4858f4673920ca3c8d088cb6d019e962099ae0c4e640d9aaccd8994ce4fd151",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:67559341"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "e3f43ac5a39031a9f6be7da2a027f19f1b741d36f1c3578a3f7b2420ecf63831",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:72227715"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "a691da38335124fc4278ec37b951b25596b51fef3923cc08e986e8a7e1668564",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:69483816"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "e822dad8fb0bbebf49bca4f311aec58ae303b4b320809154408ec24dfdccdd80",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65619782"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "a6698e02e4890d533d7dab650ceb0dc85572b3acadf583174475624aff89457d",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "8a87c2a66bef5fe6d5102fbaf68d777cc3c382fff230c6300fc85aeedb094df9",
+        "team": "Brighton & Hove Albion FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:57778547"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "f5eb1b9bf44a0610c33728ea9fb3c0fdaba9aeda5af21d82acfa85b010dcca1e",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:72182625"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "4ce5decb1f70f54db3605cbf9d0823ed93608270ed160633f18a41dd75c70053",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:76800929"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "e7d13599353d621fd57d505532b9e6332c01b5fbea214be6a2797050396ba4d7",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "injured",
+        "record_sha256": "267e2bcc88f9ac4a55b31fa1090ab7bfdcdebfb3a37fe69de40a84084f4b1942",
+        "team": "Chelsea FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:60453906"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "dc0cadda3d2ccb33519663c0669cd817006ff939968facdb7dcaa58bb5fc4809",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:59523746"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "14eb834d083c626365bd4beb98c0b61266a832615d91ec4993d256f6005a0a5d",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:35727432"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "49e1dcd0d0f44b681f1de6aababc5d96e03a136de74fa42661e2498cea325f26",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:68046437"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "bb093c7cef2c1b7de55acf9a6dcbbf01810f15ce67b37e5ab696d08facc511e9",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:68783809"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "ed303492d9905ebf216d5db9aecaeefb0be7e2344b96f56ccd7bc55c5cc4bffa",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65462052"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "1eef5f2107b20b67d87a7a686f38bac66111260d5eae4851a9090f253085ab50",
+        "team": "Chelsea FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:58315728"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "f5b33c49af57184efa1b7e4bd63ec3d58d451b8f3837ee80843da303e2c58954",
+        "team": "Coventry City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65414441"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "4bc88bdbe23a13b5cb497b5cfac8ee1c234d03a56ac3e5a9f184e4d44fc0d2bd",
+        "team": "Coventry City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:54816431"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "345fad3890ab744ca4d3db2e97d9106ec7a2c9235e386f206f4bff9abddac793",
+        "team": "Coventry City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:70689182"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "15d6dfb1fae6c3707f87f87a8008f4a435036df35a2e312910676f9b65826e07",
+        "team": "Coventry City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:40672996"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "62edcc44ff9996035b1639f132fd950836adb514c61b50013ac4d2c30a056fdd",
+        "team": "Coventry City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:46273038"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "b5e08848075e65f4c58a7b1d40f4d36d6258fb359b4387a3500930050d07e382",
+        "team": "Coventry City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:62583019"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "e75304eadee2444821416b8118768858074be3cf2031f28db5ba6827f3c82813",
+        "team": "Coventry City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:62583019"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "0a4dece53b7ea2003a9f47afc28b6ff40769f38a56b382c709387e799960e75f",
+        "team": "Coventry City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:66354271"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "cae01b055133d5e846624e1e96c7b57e90c68e3909994cdb33a1ce92ec7057c1",
+        "team": "Crystal Palace FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:51591292"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "26ebf5bd017b17c4a82f83dafc01b5933c7373b9a0b1d06b223f7a7d83d81429",
+        "team": "Crystal Palace FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:51696038"
+        ],
+        "exact_agreement": true,
+        "provider_class": "suspended",
+        "record_sha256": "a18df5e7e327c6383fc242e0626e5aafc5ff16d5af41a472f3b5e5acdc7db928",
+        "team": "Crystal Palace FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:51778671"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "fe95b6590a311e6c54c28f00d0bae0a7aa8af9eb583079d64a19c7482b6d225f",
+        "team": "Crystal Palace FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:51591292"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "5e4f0c0d9e63e5682b1fe4435e9d4e8a2ba7a453ebda12f4ddf1275f17622fec",
+        "team": "Crystal Palace FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:30579555"
+        ],
+        "exact_agreement": true,
+        "provider_class": "suspended",
+        "record_sha256": "8628938d6f9b9423d0acbd406bcbda3a464cdc7cd703a7495926a5a2b5d391e2",
+        "team": "Everton FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:77603169"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "b145a2acb26172f730e322bd78da9249056419643c00aab2842496fea84fcd9c",
+        "team": "Everton FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:40522842"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "2a46e05410c183ce646b2442abc584fe295ba29ce2289176282748854e818705",
+        "team": "Everton FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:24109813"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "0fd9c42d63581cb1818104d622d4e3cf84fdf7557c7c5afdeb33ad403875217d",
+        "team": "Fulham FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:78539319"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "bfaf06657f78b9e65fe0c216c135819e30e39a81e0b5fc9bbf6b5de1e058668d",
+        "team": "Fulham FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:64799597"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "0a48b013528b4ad240da6975406f24792fd32bb700411ef0fc6a36a2e231c72b",
+        "team": "Fulham FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:54838702"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "6515e8cef2f58403c00c5ae936baefe7d7ecfdae1c7285ac96ca2a92974686d8",
+        "team": "Fulham FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:72716844"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "3de8166c8683591b167b221d11714382d13df3e46f5bfd68fb9dca428ce4ce43",
+        "team": "Hull City AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65433412"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "562b99698a3568e323d32ff5b516e7603f74b6d8030e7700ef6084737bb606a8",
+        "team": "Hull City AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:71188337"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "320403fd948aab69a1c70692c63e706ad1cb44c8a17f2fa31ed0b4fc4e5ba9c4",
+        "team": "Hull City AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:43666319"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "ab8c995dd5a81e92c16749fd7a675bcc0c3ac06bd10a0967d552f95d990dab18",
+        "team": "Hull City AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:58215931"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "e4aa4125aa2495444f835ec8c82f2a7bc9ec75bc20f205a48def3d1fddb52011",
+        "team": "Hull City AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:80394227"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "991a35e9e3463f3913e5be5a6ded1a4bfb1771f34b5426d4491931406e58e144",
+        "team": "Hull City AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:51867087"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "f2e10be1fc55544b1cb6e67db60d99ce1da63cb336bb6840b6a6dc7c2c0e04fa",
+        "team": "Ipswich Town FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:53732593"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "db7bc1feb2d1c912fb86abe7de83c3e035bde85b64e5f9d28b41c6e2c30dab8f",
+        "team": "Leeds United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65370375"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "6a43eb887000714af0abded9285fbcb2f7d26ffb4ec96f3fbe7c3531a65b7330",
+        "team": "Leeds United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "injured",
+        "record_sha256": "f4c0330aeddddf296184ccbbb7251780e4ae8de7f57bcad1a5ecf5d46e5782f0",
+        "team": "Leeds United FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:46519908"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "c23c8b64c9e338cf1717869569bec858620935bb0ca3c37a511438152751753f",
+        "team": "Leeds United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:46519908"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "0774e3e5b946f0e8839b3b3217f46561fed367ed800208a1a8acec97eb771529",
+        "team": "Leeds United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:71419109"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "84de1961334cbc6148261deae20665965360d6472306a369331d17962e7d73e2",
+        "team": "Liverpool FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:61887400"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "35e7acf75274a1dfc62f6496203094e75b0e279b659c0bd8ab59149e4e9484d6",
+        "team": "Liverpool FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:67804380"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "618f12f235cc33c6c6c9ef5a29c23a8c445822d4ff7891915de0875abefc2657",
+        "team": "Liverpool FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:76609626"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "b5b1f342eb13edc92780a4a95b08c10abdb059d9518a0d19b9143349c1a5ee75",
+        "team": "Liverpool FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:58558393"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "39c3e11d2bb32d629c1c31b0b4609c6b33f891ec17d44e15c537bba3bbc3a207",
+        "team": "Liverpool FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65623991"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "772ebecbfc838363a15fa03d8bdab4ffabd110b1a8bd90c3e4f4896c81661259",
+        "team": "Liverpool FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "2e3cdaf1637a0043cde95aab90cc567080814b64eed69f0ad6b47ae6c325b145",
+        "team": "Liverpool FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:61882672"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "03423f9a11fffb43d2b80535b7d4d6c0a15532cb534b80996b5fd37bc677129e",
+        "team": "Manchester City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:62235661"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "1c1fc8b9ff3d8107e0c277cc0fc94914170616c74eafc14fad8b917d98c93635",
+        "team": "Manchester City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:57382651"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "e2fd61585d7abe57bbc6c5c2f67ea17754f2df16c0c977727d7f3b7c017af76b",
+        "team": "Manchester City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:54333646"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "4f5b5c314e120399b284acbbee5450e29facb85fbd7f0f0626c8ceb485a9a12d",
+        "team": "Manchester City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:56884579"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "d257933da2c85f668a9dcfc78d6a49aa04cd0276ef8cf1bd97b13d3b6f2959b5",
+        "team": "Manchester City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:54333646"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "abdfd202314833be35e20d810422c006c3627e37378f73204077a0d264f30754",
+        "team": "Manchester City FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:71485247"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "94a11bf259b393eb778d43eb3e821ec26fafa8d18a17220a5aceb17ae7f8b184",
+        "team": "Manchester United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:70797086"
+        ],
+        "exact_agreement": true,
+        "provider_class": "suspended",
+        "record_sha256": "5c04379a92a78798989ba6d79e4d50bc373c84c29172509fcbe799d09fc8ef4e",
+        "team": "Manchester United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:34529343"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "51bdb470fe6e74620f9c9f8e78445fd699986a270327526fdcf904b16b94b9cf",
+        "team": "Manchester United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:49547315"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "acb975fe139d427e4700e76651a521d568942334acd7250876b3781770323aca",
+        "team": "Manchester United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:62748187"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "dd8581ea523d99fa3ad4c7ebf3fce0a156df01485634f420bffae2e96729aaf7",
+        "team": "Manchester United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:61902206"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "050cb74fa35adf32afb7b30777bac733f17d61d31f333360af0b4295273a61b0",
+        "team": "Manchester United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "88f875e71032ac7607656532d77128c39ad9fa0762e65c219e3afc4d99540bc6",
+        "team": "Manchester United FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:37898553"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "b670d4342ce14753116c00b6a98fcd2938c282ab3b790ece3c0ea46beec685b0",
+        "team": "Manchester United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "8722797ced70e9023d63ff5c44f097201e54ee4d2feda0c43d195be8ab1a0716",
+        "team": "Manchester United FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:62176258"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "6c3df95da85faf3481e7e0f5b5a2d96b88d9e3cd19b60914d75a14e2ca0c5888",
+        "team": "Manchester United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:79421553"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "84f85b62dbeb41426ccb7b7ad18e5b3a667e0617077a2cf1cf47b22c516cb06e",
+        "team": "Newcastle United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:46903611"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "6db01f844d16eff7853e4d6287d6fedacbde0a789ee47993ff2d166974921223",
+        "team": "Newcastle United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:63312565"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "01a4ae9f9b2532f208106eb7423599a44250e666cb577ca9bc9a39e607bf1ff4",
+        "team": "Newcastle United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:69704983"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "3277e7988d298f543b5425f438e284347a26acf60d8f8e203f80cde708ed73c7",
+        "team": "Newcastle United FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:72520262"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "6dcdb9b9d295adace975508764b6cc1ee0f3651540dbb3ba144e9633c0203822",
+        "team": "Nottingham Forest FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:54028601"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "8fcb03be31608ce5d2e7912bc2efaf6b6889048a87a488bff52acbf9b658fd2b",
+        "team": "Nottingham Forest FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:52800908"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "759cbc4f847e9f034ea92731b54f1c109a26ed20923075ac7597f6a9be78f080",
+        "team": "Nottingham Forest FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "d59a7bba0536d5ce431e0ee8d968e2b30e1d3418eeaa1e2bd58bbe2f8fd8ffb1",
+        "team": "Nottingham Forest FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:65409225"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "61933bf99ded360c8f72405c425e668890849996ea38df846ceda9a46f92cca2",
+        "team": "Nottingham Forest FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "injured",
+        "record_sha256": "f8c3342ed9f2da6327e64da12c86bfdbd9a8f861965151e5626301d2926d221f",
+        "team": "Sunderland AFC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:69056666"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "28310e4589785d92ad0f357054ad690df46743d87d8ca87aa16322c8ed7da8e0",
+        "team": "Sunderland AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:28626100"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "6c6275dfb2fbc0d62c7adab0617d03c9c6e9f1c7d3c484d98be0b7ad188d65e0",
+        "team": "Sunderland AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:74172796"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "bcbcb3773dd540e5fbe0aa8ad0b51264e503bdb8c2a9b1d6373011d23b4b6cf5",
+        "team": "Sunderland AFC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:65366944"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "6e1f1977e7a79f7caca26d1f61998e122099d4bbffc312076c2f88f780b788b6",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:63879136"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "b241fcf1e40a2f88701970f9260f3203af934df50d438f5134498085876ef8d2",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:68483686"
+        ],
+        "exact_agreement": true,
+        "provider_class": "doubtful",
+        "record_sha256": "114416953d8a1fe97971f35623667c77135591c10c03d267d23461711f08559e",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:71477882"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "993b3e4a6fb7caff9420fd96778d710d8ac1409ea941f89d39da8af048a6dad3",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:72326172"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "13ec01d29c406fb52bce4c3751f60f6b8dd7703609c30e9d76adead1c52d9bf1",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:58931792"
+        ],
+        "exact_agreement": true,
+        "provider_class": "injured",
+        "record_sha256": "5016f14ec263deb20ba27bc41af41a22bdc8c63a4c1d3b69a6e3c04ad431fcf6",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "d186c689ff36df2265c92185047034bbffb812d90e5fdd1e736841861b2ee424",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:61423411"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "ad14080791af14848fe0ea64efd9418f222edcc7c65c7b20c44c53d6ec68d5ab",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:72167382"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "4d65199a41bfc2871a4d7f76240779f235b8b3574fd1f92f73ca64ba481bb311",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [
+          "enwiki:61423411"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "af376e37ea3286d6a3cdbccf04125b42d84c593d6a275badbb8b118d8b756f1d",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      },
+      {
+        "emitted": [],
+        "exact_agreement": false,
+        "provider_class": "transfer",
+        "record_sha256": "617d2001a1665a72ff9b1fbceadaf9f2d7d69031967f651693fbd5e7ef2908be",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": false
+      },
+      {
+        "emitted": [
+          "enwiki:47469008"
+        ],
+        "exact_agreement": true,
+        "provider_class": "transfer",
+        "record_sha256": "bed92c5fd698d5c0f4210d7c216624dc31d4a459df80c6568ca9ad4d3de0ef87",
+        "team": "Tottenham Hotspur FC",
+        "unique_exact_player": true
+      }
+    ],
+    "scope": "AI extraction from machine-normalized public provider fields, using an independently collected club roster. Agreement measures name and label consistency. Rumour truth, arbitrary news prose and match accuracy were not evaluated here.",
+    "season": "2026-27",
+    "teams": 20
+  },
+  "training_sha256": "beb32535a62e6194b009dca43fd99e3e3b71c47c965cdfa1172dfef457b7193b"
+}

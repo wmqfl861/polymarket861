@@ -517,6 +517,18 @@ def _daily_catalog(root, now):
     return {"fixtures": len(result["fixtures_observed"]), "window": result["window"]}
 
 
+def sync_news(root, *, history_root=None, **options):
+    """Reconcile new source observations, then process pending pregame news changes."""
+    from . import news, news_events
+
+    result = news.sync(root, **options)
+    try:
+        updates = news_events.refresh(root, limit=2, history_root=history_root)
+    except (OSError, ValueError, RuntimeError) as exc:
+        updates = {"state": "error", "reason": str(exc), "items": []}
+    return result | {"prediction_updates": updates}
+
+
 def _service(root, name, now, options):
     if name == "catalog":
         return _daily_catalog(root, now)
@@ -531,6 +543,8 @@ def _service(root, name, now, options):
         from .result_feed import sync_season
 
         return sync_season(root, year_of(now))
+    if name == "news":
+        return sync_news(root, history_root=options.get("football_root"))
     if name == "settlements":
         from .settlement import sync
 
@@ -669,6 +683,7 @@ _SERVICES = {
     "results": 900,
     "settlements": 180,
     "history": 120,
+    "news": 60,
 }
 
 
@@ -706,6 +721,7 @@ class Coordinator:
                 ("metadata", max(2, workers // 2)),
                 ("paper", max(2, workers // 2)),
                 ("service", 5),
+                ("news", 1),
             )
         }
         self.futures = {}
@@ -972,7 +988,7 @@ class Coordinator:
                 if self.once and name in self.services_started:
                     continue
                 if next_critical and (
-                    name == "history"
+                    name in ("history", "news")
                     or (
                         name == "results"
                         and next_critical <= store.iso(now + timedelta(seconds=45))
@@ -992,7 +1008,8 @@ class Coordinator:
                     "UPDATE season_services SET owner=?,until=? WHERE service=?",
                     (self.identity, store.iso(now + timedelta(minutes=5)), name),
                 )
-                fut = self.pools["service"].submit(
+                pool = self.pools["news" if name == "news" else "service"]
+                fut = pool.submit(
                     _service, self.root, name, now, self.options
                 )
                 self.futures[fut] = ("service", dict(row))

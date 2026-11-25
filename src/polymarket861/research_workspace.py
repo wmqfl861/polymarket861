@@ -40,6 +40,13 @@ _MODULES = (
     "football_candidates.py",
     "datasets.py",
     "context_feeds.py",
+    "news_sources.py",
+    "news_ai.py",
+    "news_local_ai.py",
+    "news_roster.py",
+    "news_events.py",
+    "news_model.py",
+    "news_evaluation.py",
     "evidence.py",
     "evidence_sources.py",
     "input_manifest.py",
@@ -413,7 +420,7 @@ PROMPT = """Review the allowlisted code excerpts and published aggregates suppli
 The task topic and permitted evidence references are in the supplied JSON. Return one JSON proposal under the schema.
 Use evidence_refs taken from reference.json sample_refs (use 'input' for the task itself).
 parameters_json encodes one JSON object. For kind note use {}. For a model use {"family":"B0",
-"B1" or "B2"} with a falsifiable hypothesis; local code will select the baseline and the
+"B1", "B2" or "B3"} with a falsifiable hypothesis; local code will select the baseline and the
 predeclared historical round. For a free source or a change in field use, give source_id, field,
 terms_url, source_url, baseline, reference_source. Identify the actual licence and intended use;
 if it is unknown, say so. For adapter or parser corrections use {"diff":"<unified Git diff>"}.
@@ -699,9 +706,11 @@ def _prompt(work, manifest):
             "football_model.py",
             "football_candidates.py",
             "experiment_statistics.py",
+            "news_model.py",
+            "news_evaluation.py",
         ),
-        "source": ("evidence_sources.py", "context_feeds.py", "datasets.py"),
-        "discovery": ("evidence_sources.py", "context_feeds.py", "result_feed.py"),
+        "source": ("evidence_sources.py", "context_feeds.py", "datasets.py", "news_sources.py", "news_ai.py"),
+        "discovery": ("evidence_sources.py", "context_feeds.py", "result_feed.py", "news_sources.py"),
     }
     snippets = {}
     for module in names[brief["topic"]]:

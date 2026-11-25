@@ -71,6 +71,18 @@ def service_problems(name, result):
     if name == "history":
         for err in result.get("catalog_errors", []):
             yield "catalog", str(err.get("error") or err)
+    elif name == "news":
+        for stream in result.get("streams", []):
+            if stream.get("state") in ("error", "no_roster", "pending", "lease_lost", "degraded"):
+                cause = f"{stream.get('source')}/{stream.get('team')}"
+                detail = ", ".join(map(str, stream.get("issues", []))) or stream["state"]
+                yield cause, f"{cause} — {detail}"
+        updates = result.get("prediction_updates") or {}
+        if updates.get("state") == "error":
+            yield "news-prediction", updates.get("reason") or "event-driven forecast failed"
+        for item in updates.get("items", []):
+            if item.get("status") in ("deferred", "error"):
+                yield "news-prediction/" + str(item.get("fixture_id")), str(item.get("reason") or item["status"])
     elif name == "results":
         source_failures = {}
         for attempt in result.get("fetches", []):

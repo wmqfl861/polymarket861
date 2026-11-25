@@ -29,12 +29,12 @@ from .store import (
 )
 
 HORIZONS = {"T-24h": timedelta(hours=24), "T-60m": timedelta(minutes=60)}
-FAMILIES = ("B0", "B1", "B2")
+FAMILIES = ("B0", "B1", "B2", "B3")
 
 
 def _build_recipe(family, lines):
     if family not in FAMILIES:
-        raise ValueError("select a version name and a supported B0/B1/B2 family")
+        raise ValueError("select a version name and a supported model family")
     if not lines or any(
         isinstance(x, bool) or float(x) < 0.5 or float(x) % 1 != 0.5 or float(x) > 20
         for x in lines
@@ -76,7 +76,8 @@ def prepare_builtin(data_dir):
         return builtin_model_at(db)
 
 
-def probability(engine, home, away, kickoff, cutoff, season, recipe, context):
+def _forecast_arms(engine, home, away, kickoff, cutoff, season, recipe, context, *, include_pair):
+    family = recipe["family"]
     result = engine.forecast(
         home,
         away,
@@ -84,10 +85,33 @@ def probability(engine, home, away, kickoff, cutoff, season, recipe, context):
         cutoff,
         season=season,
         lines=recipe["lines"],
-        baseline=recipe["family"] == "B0",
+        baseline=family == "B0",
     )
-    if recipe["family"] == "B2":
-        return football.apply_context(result, context, lines=recipe["lines"])
+    pair = None
+    if include_pair or family == "B3":
+        from .news_model import paired_prediction
+
+        # The two news arms always start from the same team-strength distribution,
+        # including its ordinary cold-start fallback, whatever the active recipe is.
+        team_model = result
+        if family == "B0":
+            team_model = engine.forecast(home, away, kickoff, cutoff, season=season, lines=recipe["lines"])
+        observation = context.get("player_news", {})
+        with_news, pair = paired_prediction(
+            team_model, observation.get("facts", []), home=home, away=away,
+            lines=recipe["lines"], cutoff=iso(cutoff), coverage=observation.get("coverage"),
+        )
+        if family == "B3":
+            result = with_news
+    if family == "B2":
+        result = football.apply_context(result, context, lines=recipe["lines"])
+    return result, pair
+
+
+def probability(engine, home, away, kickoff, cutoff, season, recipe, context):
+    result, _ = _forecast_arms(
+        engine, home, away, kickoff, cutoff, season, recipe, context, include_pair=False
+    )
     return result
 
 
@@ -284,7 +308,9 @@ def make_forecast(
             return [dict(row) for row in rows]
 
     def context_at(cutoff, prospective):
-        return evidence.as_of_context(
+        from . import news
+
+        context = evidence.as_of_context(
             data_dir,
             fixture_id,
             fixture["home"],
@@ -292,6 +318,10 @@ def make_forecast(
             iso(cutoff),
             prospective=prospective,
         )
+        # Replay must use the same local publication, receipt and extraction
+        # cutoffs as live prediction. Old sealed frames remain readable as-is.
+        context["player_news"] = news.snapshot(data_dir, fixture_id, iso(cutoff))
+        return context
 
     manifest = None
     frame = None
@@ -371,7 +401,7 @@ def make_forecast(
             updated.append(match)
         history = updated
     engine = football.FootballEngine(history)
-    result = probability(
+    result, news_pair = _forecast_arms(
         engine,
         fixture["home"],
         fixture["away"],
@@ -380,6 +410,7 @@ def make_forecast(
         fixture["season"],
         recipe,
         context,
+        include_pair=purpose == "main",
     )
     proof = paired_proof.make_proof(
         fixture,
@@ -498,6 +529,8 @@ def make_forecast(
             "source_health": {"overdue_team_results": overdue, "critical_stale": stale},
             "time_witness": "local_only",
         }
+        if news_pair is not None:
+            payload["news_pair"] = news_pair
         seal = digest(payload)
         db.execute(
             "INSERT INTO forecast_seals VALUES (?,?,?,?,?,?,?,?,?,?)",

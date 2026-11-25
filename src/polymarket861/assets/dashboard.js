@@ -4,9 +4,9 @@
   const byId = (id) => document.getElementById(id);
   const reports = JSON.parse(byId("report-data").textContent);
   const pages = {
-    matches: ["比赛详情", ["match", "ledger"], "赛前预测或模拟账本"],
-    sources: ["数据源", ["source", "market-coverage"], "数据源或盘口覆盖报告"],
-    rounds: ["轮次成绩", ["round", "round-edition", "backtest", "market-replay", "trial-market-study"], "轮次成绩或历史回测"],
+    matches: ["比赛详情", ["match", "ledger", "news-update"], "赛前预测或模拟账本"],
+    sources: ["数据源", ["source", "market-coverage", "news-coverage"], "数据源或盘口覆盖报告"],
+    rounds: ["轮次成绩", ["round", "round-edition", "backtest", "market-replay", "trial-market-study", "news-study"], "轮次成绩或历史回测"],
     incidents: ["错误与修复", ["incident"], "错误与修复报告"],
     experiments: ["实验与版本", ["experiment", "strategy", "qualification"], "实验和版本报告"],
     jobs: ["并行任务", ["jobs"], "并行任务报告"],
@@ -21,6 +21,9 @@
     backtest: "概率回测",
     "market-replay": "盘口回放",
     "trial-market-study": "盘口研究凭据",
+    "news-study": "新闻预测对照",
+    "news-coverage": "球队消息采集",
+    "news-update": "新闻触发预测",
     incident: "纠错记录",
     experiment: "实验记录",
     strategy: "选单策略",
@@ -94,6 +97,21 @@
     news: "新闻",
     weather: "天气",
     prediction: "预测",
+    missing_grounded_identity: "缺少可核对的球员或原句", invalid_claim: "字段不完整",
+    different_fixture: "适用于另一场比赛", different_team: "球员所属球队不同",
+    different_kickoff: "对应旧赛程", invalid_claim_clocks: "时间凭据无效",
+    inconsistent_claim_clocks: "时间顺序有冲突", roster_unavailable_at_cutoff: "名单晚于截止点",
+    missing_historical_revision: "缺少当时的来源版本", unavailable_at_cutoff: "截止时尚未收到",
+    publication_outside_window: "超出有效窗口", unsupported_event: "此类事件未计入进球率",
+    retracted: "已撤回", unverified_confirmation: "缺少一手确认", availability_unknown: "出场状态未知",
+    availability_restored_or_disputed: "可能已恢复或遭否认", conflicting_current_availability: "当前消息互相矛盾",
+    duplicate_or_superseded_player: "重复或已有更新", ambiguous_club_identity: "球队身份不明确",
+    degraded: "降级运行", transfer: "转会", insufficient_evidence: "证据不足，继续观察",
+    no_observed_changes: "本赛季配对预测没有出现概率变化",
+    higher_score_this_season: "本赛季有新闻组的平均分更高",
+    lower_score_this_season: "本赛季有新闻组的平均分更低",
+    inconclusive: "本赛季的分差仍无法区分两组",
+    no_roster: "缺少名单", never_checked: "尚未采集", ok: "正常", partial: "部分成功", error: "失败",
     training: "训练",
     manual: "人工记录",
     automated: "自动采集",
@@ -290,9 +308,13 @@
     if (row.kind === "strategy") return "选单策略 · " + (p.trial || row.key);
     if (row.kind === "source" && row.key === "openfootball" && p.registered_fixtures != null)
       return "OpenFootball 英超赛程与赛果";
+    if (row.kind === "news-update") return [p.home, "vs", p.away, "· 新闻更新", p.revision].join(" ");
     if (row.kind === "market-coverage") return p.title || "英超盘口覆盖";
     if (row.kind === "market-replay") return p.title || "历史盘口分档";
     if (row.kind === "trial-market-study") return "归档与模拟回放对账";
+    if (row.kind === "news-coverage") return "英超球队消息与采集状态";
+    if (row.kind === "news-study")
+      return [p.season, p.round_id ? "第 " + p.round_id + " 轮" : "赛季累计", p.horizon, "新闻预测对照"].filter(Boolean).join(" · ");
     if (row.kind === "jobs" && array(p.jobs).length) return "任务队列";
     if (row.kind === "experiment" && p.candidates) return "候选与正式版本";
     return first(p.title, p.name, p.account, p.root_cause, row.key) || row.kind;
@@ -357,6 +379,107 @@
       cell.append(meter, create("small", "fair-odds", "公平赔率 " + modelOdds(value)));
     }
   }
+  const newsLabels = {
+    confirmed: "已确认", reported: "媒体报道", rumour: "传闻", denied: "已否认",
+    injury: "伤病", suspension: "停赛", availability: "出场情况", return: "回归",
+    available: "可出场", out: "缺阵", doubtful: "出场存疑", unknown: "待核",
+    adjusted: "预测已调整", no_applicable_news: "没有可用于调整的消息",
+    unconfirmed_rumour: "传闻不计入", unresolved_conflict: "来源有冲突",
+    missing_grounded_identity: "缺少可核对的球员或原句", invalid_claim: "字段不完整",
+    different_fixture: "适用于另一场比赛", different_team: "球员所属球队不同",
+    different_kickoff: "对应旧赛程", invalid_claim_clocks: "时间凭据无效",
+    inconsistent_claim_clocks: "时间顺序有冲突", roster_unavailable_at_cutoff: "名单晚于截止点",
+    missing_historical_revision: "缺少当时的来源版本", unavailable_at_cutoff: "截止时尚未收到",
+    publication_outside_window: "超出有效窗口", unsupported_event: "此类事件未计入进球率",
+    retracted: "已撤回", unverified_confirmation: "缺少一手确认", availability_unknown: "出场状态未知",
+    availability_restored_or_disputed: "可能已恢复或遭否认", conflicting_current_availability: "当前消息互相矛盾",
+    duplicate_or_superseded_player: "重复或已有更新", ambiguous_club_identity: "球队身份不明确",
+    degraded: "降级运行", transfer: "转会", insufficient_evidence: "证据不足，继续观察",
+    no_observed_changes: "本赛季配对预测没有出现概率变化",
+    higher_score_this_season: "本赛季有新闻组的平均分更高",
+    lower_score_this_season: "本赛季有新闻组的平均分更低",
+    inconclusive: "本赛季的分差仍无法区分两组",
+    no_roster: "缺少名单", never_checked: "尚未采集", ok: "正常", partial: "部分成功", error: "失败",
+    training: "训练", expired_claim: "消息已过期", no_team_rates: "球队基线缺少进球率",
+  };
+  const newsLabel = (value) => Object.hasOwn(newsLabels, value) ? newsLabels[value] : translated(value);
+
+  function newsPrediction(p, detail) {
+    if (!p.news_pair) return;
+    const pair = p.news_pair, coverage = object(pair.coverage);
+    const box = panel("球队消息与预测变化");
+    facts(box, [
+      ["消息截止", time(pair.input_cutoff)],
+      ["在时限内完成采集的球队", ["home", "away"].filter(side => object(coverage[side]).observed).map(side => p[side]).join("、") || "尚无采集凭据"],
+    ]);
+    if (pair.changed) {
+      const before = pair.no_news, after = pair.with_news;
+      const shifts = [];
+      function add(label, a, b) {
+        shifts.push([label, probability(a), probability(b), format((b - a) * 100)]);
+      }
+      for (const [key, label] of [["home_win", "主胜"], ["draw", "平局"], ["away_win", "客胜"]])
+        add(label, before.probabilities[key], after.probabilities[key]);
+      for (const family of ["total", "home", "away"])
+        for (const [line, value] of Object.entries(object(after.totals[family])))
+          for (const [direction, label] of [["over", "大"], ["under", "小"]])
+            add(names[family] + label + " " + line, before.totals[family][line][direction], value[direction]);
+      table(box, ["方向", "不使用新闻", "使用新闻", "变化（百分点）"], shifts);
+    } else {
+      box.append(create("p", "note", "两组预测相同。当前消息未改变本场概率。"));
+    }
+    const items = array(object(object(p.context).player_news).facts);
+    if (items.length) {
+      const used = new Set(array(pair.applied).map(f => f.id));
+      const exclusions = new Map(array(pair.excluded).map(f => [f.id, f.reason]));
+      table(box, ["球队／球员", "事件", "消息状态", "原句", "来源", "收件时间", "入模情况"], items.map(f => {
+        const id = f.id || f.claim_id;
+        const link = safeLink(f.url || f.locator);
+        if (link) link.textContent = f.attribution || f.source || f.origin || "原文";
+        return [[f.team, f.player_name].filter(Boolean).join(" · "), newsLabel(f.event),
+          [newsLabel(f.status), newsLabel(f.availability)].filter(Boolean).join(" · "),
+          f.quote, link || f.origin, time(f.received_at),
+          used.has(id) ? "计入" : newsLabel(exclusions.get(id)) || "未调整"];
+      }));
+    }
+    detail.append(box);
+  }
+
+  function newsStudy(p, detail) {
+    const box = panel("新闻对比赛预测有帮助吗？");
+    metrics(box, [
+      ["同场已评分", format(p.scored) + " / " + format(p.expected)],
+      ["概率改变的已评分场次", format(p.changed)],
+      ["无新闻均分", format(object(p.scores).no_news)],
+      ["有新闻均分", format(object(p.scores).with_news)],
+    ]);
+    facts(box, [
+      ["有新闻减无新闻（分）", format(p.delta)],
+      ["已封存配对", p.sealed],
+      ["两个球队均有采集的场次", p.observed_both],
+    ]);
+    const interval = object(p.interval);
+    const bounds = object(object(interval.endpoints).score);
+    if (num(bounds.lower) !== null && num(bounds.upper) !== null)
+      facts(box, [["按轮聚类的同时 95% 区间（分）", format(bounds.lower) + " 至 " + format(bounds.upper)],
+        ["参与区间估计的轮数", interval.rounds]]);
+
+    if (p.verdict) box.append(create("p", "note", newsLabel(p.verdict)));
+    detail.append(box);
+  }
+  function renderNewsCoverage(row, detail) {
+    const p = object(row.payload), counts = object(p.archive_counts);
+    const box = panel("球队消息采集记录");
+    metrics(box, [["球队与来源组合", array(p.streams).length], ["留存的文章版本", counts.news_articles],
+      ["已留存球员主张", counts.news_claims]]);
+    table(box, ["球队", "来源", "最近检查", "状态", "下次检查", "本次问题"], array(p.streams).map(stream => {
+      const last = object(stream.latest);
+      return [stream.team, stream.source, time(last.checked_at), newsLabel(last.state || "never_checked"),
+        time(stream.next_at), array(last.issues).join(" · ")];
+    }));
+    detail.append(box);
+  }
+
   function renderMatch(row, detail, heading) {
     const p = object(row.payload),
       probs = object(p.probabilities);
@@ -418,6 +541,7 @@
       create("p", "note", "足球公平赔率按正常完赛概率的倒数计算。合约实际费用与特殊兑付见对应账本。"),
     );
     detail.append(box);
+    newsPrediction(p, detail);
     const fixtureId = first(p.fixture_id, p.match_id);
     const matchIntents = [];
     if (fixtureId) {
@@ -641,6 +765,7 @@
       ["评估状态", translated(p.status)],
     ]);
     const scored = Object.entries(item);
+    if (p.news_study) newsStudy(p.news_study, detail);
     if (scored.length)
       table(
         box,
@@ -1202,6 +1327,16 @@
     "market-coverage": renderCoverage,
     "market-replay": renderCoverage,
     "trial-market-study": renderCoverage,
+    "news-study": (row, detail) => newsStudy(row.payload, detail),
+    "news-coverage": renderNewsCoverage,
+    "news-update": (row, detail) => {
+      const p = object(row.payload);
+      const box = panel("消息到达后的赛前预测");
+      facts(box, [["版本", p.revision], ["计算时间", time(p.created_at)], ["开球", time(p.kickoff)]]);
+      box.append(create("p", "note", "此记录随球员消息变化生成。轮次评分使用固定 T−24 h、T−60 min 的封存预测。"));
+      detail.append(box);
+      newsPrediction({...p, context: {player_news: p.snapshot}}, detail);
+    },
   };
   function showDetail(row) {
     const detail = byId("detail");
