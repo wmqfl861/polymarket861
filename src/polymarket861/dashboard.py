@@ -108,8 +108,14 @@ def render_dashboard(reports: Iterable[Mapping]) -> str:
 
 
 def _report_rows(data_dir: Path) -> list:
+    from .ledger import ledger_details
     from .store import list_reports
-    return list_reports(data_dir)
+
+    rows = list_reports(data_dir)
+    for row in rows:
+        if row["kind"] == "ledger" and row["payload"].get("detail_view") == "on_demand":
+            row["payload"] = ledger_details(data_dir, row["key"])
+    return rows
 
 
 def export_dashboard(data_dir: Path, output: Path) -> dict:

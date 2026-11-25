@@ -1,20 +1,16 @@
 """Rebuild eligible exchange observations from native Gamma and CLOB responses."""
 
-import hashlib
 import json
 from datetime import timedelta
 from urllib.parse import parse_qs, urlsplit
 
 from . import market_provider as provider
-from . import store
+from . import dbscope, store
 from .ledger_rules import check_book, instant, iso
 
 
 def _body(root, sha):
-    payload = store.blob_path(root, sha).read_bytes()
-    if hashlib.sha256(payload).hexdigest() != sha:
-        raise ValueError("exchange response hash mismatch")
-    return payload
+    return dbscope.verified_bytes(root, store.blob_path(root, sha), sha, "exchange response hash mismatch")
 
 
 def original_receipt(db, root, sha, received_at, operations):
@@ -96,6 +92,27 @@ def _event_capture(db, root, sha, received_at, event_slug):
 
 def original_market(db, root, condition, as_of, *, receipt_at=None, sha=None):
     """Recover one independently keyed original Gamma market at the specified time."""
+    key = ("market", condition, store.iso(as_of), receipt_at, sha)
+    return dbscope.checked(root, key, lambda: _verified_market(db, root, condition, as_of, receipt_at, sha))
+
+
+def _gamma_markets(db, root, sha, received_at, slug):
+    """Parse a verified Gamma response once for all tokens in this transaction."""
+    active = dbscope.current(root)
+    key = ("gamma_conditions", sha, received_at, slug)
+    if active is not None and key in active.checked:
+        return active.checked[key]
+    event = _event_capture(db, root, sha, received_at, slug)
+    by_condition = {}
+    for market in provider.normalized_markets(event):
+        by_condition.setdefault(market["condition_id"], []).append(market)
+    result = (by_condition, event.get("teams") or [], event.get("title"))
+    if active is not None:
+        active.checked[key] = result
+    return result
+
+
+def _verified_market(db, root, condition, as_of, receipt_at, sha):
     if not db.execute(
         "SELECT 1 FROM sqlite_master WHERE name='ma_contracts'"
     ).fetchone():
@@ -103,7 +120,7 @@ def original_market(db, root, condition, as_of, *, receipt_at=None, sha=None):
     at = store.iso(as_of)
     rows = db.execute(
         "SELECT event_slug,market_slug,received_at,sha,payload FROM ma_contracts "
-        "WHERE received_at<=? AND json_extract(payload,'$.condition_id')=? ORDER BY received_at DESC",
+        "WHERE json_valid(payload) AND received_at<=? AND json_extract(payload,'$.condition_id')=? ORDER BY received_at DESC",
         (at, condition),
     )
     for row in rows:
@@ -112,12 +129,8 @@ def original_market(db, root, condition, as_of, *, receipt_at=None, sha=None):
         if sha is not None and row["sha"] != sha:
             continue
         slug = row["event_slug"]
-        native = _event_capture(db, root, row["sha"], row["received_at"], slug)
-        candidates = [
-            m
-            for m in provider.normalized_markets(native)
-            if m["condition_id"] == condition
-        ]
+        rows_by_condition, teams, title = _gamma_markets(db, root, row["sha"], row["received_at"], slug)
+        candidates = rows_by_condition.get(condition, [])
         if (
             len(candidates) != 1
             or candidates[0]["mapping_error"]
@@ -144,20 +157,15 @@ def original_market(db, root, condition, as_of, *, receipt_at=None, sha=None):
         for head in latest:
             if (head["received_at"], head["sha"]) == (row["received_at"], row["sha"]):
                 continue
-            event = _event_capture(db, root, head["sha"], head["received_at"], slug)
-            matches = [
-                m
-                for m in provider.normalized_markets(event)
-                if m["condition_id"] == condition
-            ]
-            if matches != candidates or event.get("teams") != native.get("teams"):
+            latest_markets, latest_teams, _ = _gamma_markets(db, root, head["sha"], head["received_at"], slug)
+            if latest_markets.get(condition, []) != candidates or latest_teams != teams:
                 raise ValueError(
                     "latest captured Gamma event removed or changed this market"
                 )
         return dict(
             market,
-            event_teams=native.get("teams") or [],
-            event_title=native.get("title"),
+            event_teams=teams,
+            event_title=title,
         )
     raise ValueError("no original Gamma contract at the requested time")
 

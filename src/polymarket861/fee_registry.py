@@ -3,12 +3,11 @@
 import hashlib
 import json
 import re
-from contextlib import closing
 from dataclasses import asdict, dataclass
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
-from . import market_provider, store
+from . import dbscope, market_provider, store
 from .ledger_rules import ROUNDINGS, UNIT, number
 
 
@@ -212,9 +211,10 @@ def _proof(db, root, doc, version, at):
             and store.instant(row["requested_at"]) <= store.instant(row["observed_at"])
             and store.instant(doc.published_at) <= store.instant(row["observed_at"])
         ):
-            payload = store.blob_path(root, doc.sha256).read_bytes()
-            if hashlib.sha256(payload).hexdigest() != doc.sha256:
-                raise ValueError("reviewed fee policy bytes failed integrity check")
+            dbscope.verified_bytes(
+                root, store.blob_path(root, doc.sha256), doc.sha256,
+                "reviewed fee policy bytes failed integrity check",
+            )
             return {
                 "url": doc.url,
                 "sha256": doc.sha256,
@@ -256,8 +256,12 @@ def resolve(data_dir, market, at):
         )
     policy = matches[0]
     version = _checked(policy)
-    with closing(store.connect(data_dir)) as db:
-        proofs = [_proof(db, data_dir, d, version, cutoff) for d in policy.documents]
+    def documents():
+        with dbscope.reading(data_dir) as db:
+            return [_proof(db, data_dir, doc, version, cutoff) for doc in policy.documents]
+
+    key = ("fee_policy_documents", version, store.iso(cutoff))
+    proofs = dbscope.checked(data_dir, key, documents)
     return {
         "enabled": True,
         "version": version,

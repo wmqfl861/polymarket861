@@ -3,15 +3,15 @@
 import json
 import re
 from collections import Counter, defaultdict
-from contextlib import closing, contextmanager
+from contextlib import contextmanager
 from datetime import timedelta
 from decimal import ROUND_DOWN
 from pathlib import Path
 
 import numpy as np
 
+from . import dbscope
 from . import experiment_statistics as stats
-
 from . import ledger as L
 from . import store, strategy_scope
 from .ledger_rules import (
@@ -51,12 +51,9 @@ CREATE TABLE IF NOT EXISTS selection_events(id INTEGER PRIMARY KEY,trial TEXT NO
 
 @contextmanager
 def database(root, write=False):
-    with closing(store.connect(root)) as db:
-        db.executescript(SCHEMA)
-        with db:
-            if write:
-                db.execute("BEGIN IMMEDIATE")
-            yield db
+    with L.connection(root, write=write) as db:
+        dbscope.prepare(db, "strategy", SCHEMA)
+        yield db
 
 
 def recipe(values):

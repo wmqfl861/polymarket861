@@ -8,6 +8,7 @@ import hashlib
 import json
 from urllib.error import URLError
 
+from . import dbscope
 from . import market_provider as provider
 from .market_provider import (
     CLOB,
@@ -24,14 +25,17 @@ CREATE TABLE IF NOT EXISTS ma_requests (
   id INTEGER PRIMARY KEY, operation TEXT NOT NULL, selector TEXT NOT NULL,
   requested_at TEXT NOT NULL, received_at TEXT NOT NULL, status TEXT NOT NULL, sha TEXT, detail TEXT);
 CREATE INDEX IF NOT EXISTS ma_req_select ON ma_requests(operation,selector,id);
+CREATE INDEX IF NOT EXISTS ma_req_receipt ON ma_requests(sha,received_at,operation);
 CREATE TABLE IF NOT EXISTS ma_events (
   slug TEXT NOT NULL, fixture TEXT NOT NULL, event_id TEXT NOT NULL,
   kickoff TEXT, received_at TEXT NOT NULL, sha TEXT NOT NULL, PRIMARY KEY(slug,received_at,sha));
+CREATE INDEX IF NOT EXISTS ma_events_fixture_time ON ma_events(fixture,received_at,slug);
 CREATE TABLE IF NOT EXISTS ma_contracts (
   fixture TEXT NOT NULL, event_slug TEXT NOT NULL, market_slug TEXT NOT NULL,
   received_at TEXT NOT NULL, sha TEXT NOT NULL, payload TEXT NOT NULL,
   PRIMARY KEY(event_slug,market_slug,received_at,sha));
 CREATE INDEX IF NOT EXISTS ma_market_fixture ON ma_contracts(fixture,received_at);
+CREATE INDEX IF NOT EXISTS ma_contracts_condition_time ON ma_contracts(json_extract(payload,'$.condition_id'),received_at DESC) WHERE json_valid(payload);
 CREATE TABLE IF NOT EXISTS ma_books (
   token TEXT NOT NULL, received_at TEXT NOT NULL, sha TEXT NOT NULL, payload TEXT NOT NULL,
   PRIMARY KEY(token,received_at,sha));
@@ -46,7 +50,7 @@ CREATE TABLE IF NOT EXISTS ma_walks (
 
 def database(root):
     db = connect(root)
-    db.executescript(_SCHEMA)
+    dbscope.prepare(db, "market-archive", _SCHEMA)
     return db
 
 
@@ -205,7 +209,7 @@ def catalog(root, season, *, pages=10, page_size=30, offset=0):
 
 
 def contracts(root, fixture, *, as_of=None):
-    with closing(database(root)) as db:
+    with dbscope.reading(root, database) as db:
         rows = db.execute(
             """
           WITH current AS (SELECT *,row_number() OVER(PARTITION BY slug ORDER BY received_at DESC,sha DESC) AS n
@@ -257,7 +261,7 @@ def _record_book(root, contract, token, raw, reply, sha):
 
 
 def fixture_times(root, fixture, *, as_of=None):
-    with closing(database(root)) as db:
+    with dbscope.reading(root, database) as db:
         times = db.execute(
             "SELECT kickoff FROM (SELECT kickoff,row_number() OVER(PARTITION BY slug "
             "ORDER BY received_at DESC,sha DESC) n FROM ma_events WHERE fixture=? AND received_at<=?) "

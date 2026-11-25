@@ -5,11 +5,10 @@ from __future__ import annotations
 import hashlib
 import json
 import time
-from contextlib import closing
 from datetime import timedelta
 from decimal import ROUND_FLOOR
 
-from . import football, jobs, ledger, market_provider, store
+from . import dbscope, football, jobs, ledger, market_provider, store
 from . import market_archive as archive
 from .ledger_rules import (
     MAX_ORDER,
@@ -27,7 +26,7 @@ from .ledger_rules import (
 def _event(data_dir, slug, at):
     from .archive_proof import original_receipt
 
-    with closing(archive.database(data_dir)) as db:
+    with dbscope.reading(data_dir, archive.database) as db:
         row = db.execute(
             "SELECT * FROM ma_events WHERE slug=? AND received_at<=? ORDER BY received_at DESC,sha DESC LIMIT 1",
             (slug, store.iso(at)),
@@ -71,6 +70,11 @@ def _club(name):
 
 
 def verified_fixture(data_dir, market_slug, fixture_id, at):
+    key = ("fixture_binding", market_slug, fixture_id, store.iso(at))
+    return dbscope.checked(data_dir, key, lambda: _verified_fixture(data_dir, market_slug, fixture_id, at))
+
+
+def _verified_fixture(data_dir, market_slug, fixture_id, at):
     match = market_provider.FIXTURE.fullmatch(str(market_slug))
     if not match or match[5]:
         raise ValueError("supply the main EPL exchange fixture slug")
@@ -125,7 +129,7 @@ def _locate(data_dir, slug, fixture_id, at):
     if fixture_id:
         return verified_fixture(data_dir, slug, fixture_id, at)
     event, _ = _event(data_dir, slug, at)
-    with closing(store.connect(data_dir)) as db:
+    with dbscope.reading(data_dir) as db:
         ids = [
             r[0]
             for r in db.execute(
@@ -191,7 +195,7 @@ def _unique_market(rows):
 
 
 def _forecast(data_dir, fixture, cutoff, as_of, version):
-    with closing(store.connect(data_dir)) as db:
+    with dbscope.reading(data_dir) as db:
         row = db.execute(
             "SELECT digest,sealed_at FROM forecast_seals WHERE fixture_id=? AND kickoff=? AND cutoff=? "
             "AND model_version=? AND mode='formal' AND horizon='T-60m' AND protocol=? AND sealed_at<=?",
@@ -224,7 +228,7 @@ def _terms(data_dir, fixture, condition, token, at):
 
 def _book(data_dir, contract, target, stage, kickoff, seen_by):
     """Use the same raw-receipt verifier and time ordering as the ledger."""
-    with closing(archive.database(data_dir)) as db:
+    with dbscope.reading(data_dir, archive.database) as db:
         return ledger.eligible_book(
             db, data_dir, contract, target, kickoff, stage, observed_by=seen_by
         )
@@ -296,18 +300,22 @@ def _main_rows(data_dir, account=None, fixture=None):
 def _actual(data_dir, intent):
     from .kickoff_proof import resolve
 
-    return resolve(
-        data_dir, intent["match_id"], intent["kickoff"], intent["decision_at"]
-    )
+    with dbscope.reading(data_dir) as db:
+        return resolve(data_dir, intent["match_id"], intent["kickoff"], intent["decision_at"], db=db)
+
+
+_LOG_SCHEMA = """
+CREATE TABLE IF NOT EXISTS opportunity_log (
+    identity TEXT PRIMARY KEY,account TEXT NOT NULL,market_slug TEXT NOT NULL,cutoff TEXT,
+    first_seen TEXT NOT NULL,last_seen TEXT NOT NULL,detail TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS opportunity_history ON opportunity_log(account,market_slug,first_seen,identity);
+"""
 
 
 def _save_tick(data_dir, report):
-    # The live page can change each second; retain distinct missing, frozen and executed evidence separately.
-    with closing(store.connect(data_dir)) as db, db:
-        db.execute(
-            "CREATE TABLE IF NOT EXISTS opportunity_log (identity TEXT PRIMARY KEY,account TEXT NOT NULL,market_slug TEXT NOT NULL,"
-            "cutoff TEXT,first_seen TEXT NOT NULL,last_seen TEXT NOT NULL,detail TEXT NOT NULL)"
-        )
+    # Keep separate evidence for missing, frozen, and executed opportunities.
+    with ledger.connection(data_dir, write=True) as db:
+        dbscope.prepare(db, "opportunity-log", _LOG_SCHEMA)
         for stage, entries in (
             ("decision", report["decisions"]),
             ("gap", report["gaps"]),
@@ -322,7 +330,8 @@ def _save_tick(data_dir, report):
                     "detail": entry,
                 }
                 db.execute(
-                    "INSERT INTO opportunity_log VALUES(?,?,?,?,?,?,?) ON CONFLICT(identity) DO UPDATE SET last_seen=excluded.last_seen",
+                    "INSERT INTO opportunity_log VALUES(?,?,?,?,?,?,?) ON CONFLICT(identity) DO UPDATE "
+                    "SET first_seen=min(first_seen,excluded.first_seen),last_seen=max(last_seen,excluded.last_seen)",
                     (
                         store.digest(item),
                         report["account"],
@@ -333,13 +342,17 @@ def _save_tick(data_dir, report):
                         store.canonical(item),
                     ),
                 )
-        store.put_report(
-            db, "opportunity", report["market_slug"] + "/" + report["account"], report
-        )
+        key = report["market_slug"] + "/" + report["account"]
+        last = db.execute(
+            "SELECT json_extract(payload,'$.observed_at') FROM reports WHERE kind='opportunity' AND key=?",
+            (key,),
+        ).fetchone()
+        if last is None or not last[0] or last[0] <= report["observed_at"]:
+            store.put_report(db, "opportunity", key, report)
 
 
 def history(data_dir, slug, *, account="main"):
-    with closing(store.connect(data_dir)) as db:
+    with dbscope.reading(data_dir) as db:
         if not db.execute(
             "SELECT 1 FROM sqlite_master WHERE type='table' AND name='opportunity_log'"
         ).fetchone():
@@ -359,14 +372,20 @@ def history(data_dir, slug, *, account="main"):
 
 def process(data_dir, slug, *, account="main", fixture_id=None):
     """One local foreground tick. Prices are public archived books; all balances are simulated."""
+    report = {"market_slug": slug, "account": account, "decisions": [], "gaps": []}
+    try:
+        with ledger.fixture_batch(data_dir):
+            _process_fixture(data_dir, slug, account, fixture_id, report)
+    except (ledger.DecisionWindowClosed, dbscope.EvidenceChanged) as exc:
+        # Every change in the failed tick rolled back. Keep only its actual outcome.
+        report.update(observed_at=store.now_utc(), decisions=[], gaps=[{"reason": str(exc)}])
+        _save_tick(data_dir, report)
+    return report
+
+
+def _process_fixture(data_dir, slug, account, fixture_id, report):
     clock = store.instant(store.now_utc())
-    report = {
-        "market_slug": slug,
-        "account": account,
-        "observed_at": store.iso(clock),
-        "decisions": [],
-        "gaps": [],
-    }
+    report["observed_at"] = store.iso(clock)
 
     def gap(reason, **fields):
         report["gaps"].append(fields | {"reason": str(reason)})
@@ -456,6 +475,8 @@ def process(data_dir, slug, *, account="main", fixture_id=None):
                                 "reason": out.get("reason"),
                             }
                         )
+                    except (ledger.DecisionWindowClosed, dbscope.EvidenceChanged):
+                        raise
                     except (ValueError, KeyError, TypeError, OSError) as exc:
                         gap(exc, **fields)
         else:
@@ -508,8 +529,12 @@ def process(data_dir, slug, *, account="main", fixture_id=None):
                             "reason": out.get("close_missing_reason"),
                         }
                     )
+            except dbscope.EvidenceChanged:
+                raise
             except (KeyError, TypeError, ValueError, OSError) as exc:
                 gap(exc, intent_id=row["id"])
+    except (ledger.DecisionWindowClosed, dbscope.EvidenceChanged):
+        raise
     except (KeyError, TypeError, ValueError, OSError) as exc:
         gap(exc)
     _save_tick(data_dir, report)
@@ -608,7 +633,7 @@ def archived_inputs(data_dir, slugs, research_rows, *, account=None):
     if not originals:
         return research_rows
     requested = set(slugs)
-    with closing(archive.database(data_dir)) as db:
+    with dbscope.reading(data_dir, archive.database) as db:
         conditions = {}
         for slug in requested:
             for r in db.execute(

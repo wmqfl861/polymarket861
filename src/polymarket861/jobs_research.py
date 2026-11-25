@@ -13,7 +13,7 @@ import numpy as np
 
 from . import experiment_statistics as stats
 from . import paired_proof
-from . import store
+from . import dbscope, store
 from .football_model import ITEM_KEYS, score_probabilities
 
 
@@ -44,7 +44,7 @@ _SEED = 861
 
 def _open(data_dir):
     conn = store.connect(data_dir)
-    conn.executescript(_SCHEMA)
+    dbscope.prepare(conn, "research", _SCHEMA)
     return conn
 
 
@@ -94,7 +94,7 @@ def _get(conn, key):
 
 
 def get_candidate(data_dir, key):
-    with closing(_open(data_dir)) as conn:
+    with dbscope.reading(data_dir, _open) as conn:
         return _get(conn, key)
 
 
@@ -148,9 +148,12 @@ def _pointer(conn, kind, scope, at):
 
 
 def active_version(data_dir, kind="model", scope="epl", default=None, *, at=None):
-    with closing(_open(data_dir)) as conn:
-        version, _ = _pointer(conn, kind, scope, at)
-        return version if version is not None else default
+    def read():
+        with dbscope.reading(data_dir, _open) as conn:
+            version, _ = _pointer(conn, kind, scope, at)
+            return version if version is not None else default
+
+    return dbscope.checked(data_dir, ("active_version", kind, scope, default, at), read)
 
 
 def active_candidate(data_dir, kind="model", scope="epl", *, at=None):

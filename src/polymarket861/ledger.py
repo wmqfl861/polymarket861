@@ -8,7 +8,7 @@ from datetime import timedelta
 from decimal import ROUND_DOWN
 from pathlib import Path
 
-from . import kickoff_proof, store
+from . import dbscope, kickoff_proof, store
 from .archive_proof import eligible_book, research_tier
 from .ledger_rules import (
     MAX_GAP,
@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS paper_replay_witnesses(
  account TEXT NOT NULL, intent_id TEXT NOT NULL, opportunity_digest TEXT NOT NULL, payload TEXT NOT NULL,
  PRIMARY KEY(account,intent_id), FOREIGN KEY(account,opportunity_digest)
  REFERENCES paper_replay_members(account,opportunity_digest));
+CREATE INDEX IF NOT EXISTS paper_intents_pending ON paper_intents(account,status,cutoff,priority,fixture,condition_id,token,id);
 CREATE TABLE IF NOT EXISTS paper_depth(
  account TEXT NOT NULL, condition_id TEXT NOT NULL, token TEXT NOT NULL, snapshot TEXT NOT NULL,
  price TEXT NOT NULL, consumed TEXT NOT NULL, PRIMARY KEY(account,condition_id,token,snapshot,price));
@@ -68,14 +69,63 @@ CREATE UNIQUE INDEX IF NOT EXISTS paper_terminal ON paper_resolutions(account,co
 """
 
 
+class DecisionWindowClosed(ValueError):
+    """No new paper intent in this transaction was committed before T−60."""
+
+
 @contextmanager
 def connection(root, write=False):
+    active = dbscope.current(root)
+    if active is not None:
+        db = active.db
+        if not write:
+            yield db
+            return
+        pending, deadline = active.dirty.copy(), active.deadline
+        recovery = active.recovered_until.copy()
+        db.execute("SAVEPOINT ledger_action")
+        try:
+            yield db
+        except BaseException:
+            db.execute("ROLLBACK TO ledger_action")
+            active.dirty, active.deadline, active.recovered_until = pending, deadline, recovery
+            raise
+        finally:
+            db.execute("RELEASE ledger_action")
+        return
     with closing(store.connect(root)) as db:
-        db.executescript(SCHEMA)
+        dbscope.prepare(db, "paper-ledger", SCHEMA)
         with db:
             if write:
                 db.execute("BEGIN IMMEDIATE")
             yield db
+
+
+@contextmanager
+def fixture_batch(data_dir):
+    """One local writer and commit for a fixture tick. External captures precede this scope."""
+    if dbscope.current(data_dir) is not None:
+        with connection(data_dir, write=True) as db:
+            yield db
+        return
+    from . import jobs_research, market_archive
+
+    with closing(store.connect(data_dir)) as db:
+        for name, schema in (
+            ("paper-ledger", SCHEMA),
+            ("market-archive", market_archive._SCHEMA),
+            ("research", jobs_research._SCHEMA),
+        ):
+            dbscope.prepare(db, name, schema)
+        with db:
+            db.execute("BEGIN IMMEDIATE")
+            with dbscope.bind(data_dir, db) as batch:
+                yield db
+                for account in sorted(batch.dirty):
+                    _publish_compact(db, account)
+                dbscope.recheck_originals(batch)
+                if batch.deadline is not None and instant(store.now_utc()) > batch.deadline:
+                    raise DecisionWindowClosed("fixture batch missed the decision deadline; no new intents committed")
 
 
 def account_row(db, account):
@@ -422,9 +472,30 @@ def reservations(db, account):
     return result
 
 
+def _publish_compact(db, account):
+    acc = account_row(db, account)
+    reserved = sum(reservations(db, account).values(), ZERO)
+    store.put_report(db, "ledger", account, {
+        "account": account,
+        "mode": acc["mode"],
+        **_binding(db, account),
+        "protocol": PROTOCOL,
+        "initial_cash": acc["initial"],
+        "cash": acc["cash"],
+        "reserved_cash": fmt(reserved),
+        "available_cash": fmt(number(acc["cash"]) - reserved),
+        "detail_view": "on_demand",
+    })
+
+
 def _publish(db, account):
-    if account_row(db, account)["mode"] != "historical":
-        store.put_report(db, "ledger", account, _summary(db, account))
+    if account_row(db, account)["mode"] == "historical":
+        return
+    batch = dbscope.for_connection(db)
+    if batch is not None:
+        batch.dirty.add(account)
+    else:
+        _publish_compact(db, account)
 
 
 def freeze(data_dir, account, intent, book, *, replay_op=None):
@@ -694,6 +765,16 @@ def freeze(data_dir, account, intent, book, *, replay_op=None):
                 (account, ident, digest(replay_op), packed(replay_op)),
             )
         _publish(db, account)
+        if mode in ("formal", "shadow"):
+            if instant(store.now_utc()) > cutoff:
+                raise DecisionWindowClosed("decision deadline elapsed before saving the new intent")
+            batch = dbscope.current(data_dir)
+            if batch is not None:
+                batch.deadline = min(batch.deadline, cutoff) if batch.deadline else cutoff
+                if obj["status"] == "frozen" and account in batch.recovered_until:
+                    expires = instant(obj["execution_target"]) + timedelta(seconds=5)
+                    seen = batch.recovered_until[account]
+                    batch.recovered_until[account] = min(expires, seen) if seen else expires
         return obj
 
 
@@ -825,11 +906,18 @@ def recover(data_dir, account, *, before_id=None):
         if mode not in ("formal", "shadow"):
             return {"account": account, "recovered": []}
         now = instant(store.now_utc())
+        batch = dbscope.current(data_dir)
+        if batch is not None and account in batch.recovered_until:
+            expires = batch.recovered_until[account]
+            if expires is None or now <= expires:
+                return {"account": account, "recovered": []}
+        next_expiry = None
         jobs = []
         for row in sorted(_ordered(db, account), key=_execution_order):
             out = json.loads(row["result"])
             at = instant(out["execution_target"])
             if row["id"] == before_id or now <= at + timedelta(seconds=5):
+                next_expiry = at + timedelta(seconds=5)
                 break
             intent = json.loads(row["original"])["intent"]
             jobs.append(
@@ -850,6 +938,8 @@ def recover(data_dir, account, *, before_id=None):
     for ident, book in jobs:
         result = evaluate(data_dir, account, ident, book, _recover=False)
         done.append({"intent_id": ident, "status": result["status"]})
+    if batch is not None and before_id is None:
+        batch.recovered_until[account] = next_expiry
     return {"account": account, "recovered": done}
 
 
@@ -1350,11 +1440,23 @@ def _summary(db, account):
     }
 
 
+def ledger_details(data_dir, account):
+    """Assemble a consistent current audit without writing to the ledger."""
+    with connection(data_dir) as db:
+        if not db.in_transaction:
+            db.execute("BEGIN")
+        return _summary(db, account)
+
+
 def ledger_report(data_dir, account):
+    # Full evidence revalidation can be slow. Release the write lock before reading it.
     with connection(data_dir, True) as db:
-        payload = _summary(db, account)
-        store.put_report(db, "ledger", account, payload)
-        return payload
+        batch = dbscope.current(data_dir)
+        if batch is None:
+            _publish_compact(db, account)
+        else:
+            batch.dirty.add(account)
+    return ledger_details(data_dir, account)
 
 
 def audit_risk(

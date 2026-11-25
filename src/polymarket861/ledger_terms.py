@@ -2,12 +2,11 @@
 
 import hashlib
 import re
-from contextlib import closing
 from datetime import datetime
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
-from . import store
+from . import dbscope, store
 from .ledger_rules import instant, number
 from .market_provider import teams
 
@@ -285,7 +284,7 @@ def _terms_with_fee(data_dir, market, token_id, at, match_id, fee):
     fixture = market["fixture"]
     registered = False
     if match_id is not None:
-        with closing(store.connect(data_dir)) as connection:
+        with dbscope.reading(data_dir) as connection:
             registered = (
                 connection.execute(
                     "SELECT 1 FROM fixture_versions WHERE fixture_id=? LIMIT 1",
@@ -329,11 +328,9 @@ def _terms_with_fee(data_dir, market, token_id, at, match_id, fee):
 
 def contract_at(data_dir, condition_id, token_id, at, *, match_id=None):
     """Resolve one international token against the last original receipt by the cutoff."""
-    from contextlib import closing
-
     from .archive_proof import original_market
 
-    with closing(store.connect(data_dir)) as db:
+    with dbscope.reading(data_dir) as db:
         market = original_market(db, data_dir, condition_id, at)
     return from_original(data_dir, market, token_id, at, match_id)
 

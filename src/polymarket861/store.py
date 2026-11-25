@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Any
 
 
+from . import dbscope
+
 PROTOCOL = "epl-v1.1"
 
 
@@ -72,6 +74,8 @@ CREATE TABLE IF NOT EXISTS result_versions (
     received_at TEXT NOT NULL, recorded_at TEXT NOT NULL, source TEXT NOT NULL, locator TEXT NOT NULL,
     PRIMARY KEY(fixture_id, version)
 );
+CREATE INDEX IF NOT EXISTS fixture_at_kickoff ON fixture_versions(kickoff,known_at,fixture_id);
+CREATE INDEX IF NOT EXISTS observations_receipt ON observations(source,sha256,observed_at);
 CREATE TABLE IF NOT EXISTS core_metadata (name TEXT PRIMARY KEY,value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS schedule_receipts (
     fixture_id TEXT NOT NULL,version INTEGER NOT NULL,recorded_at TEXT NOT NULL,precision TEXT NOT NULL,
@@ -127,7 +131,7 @@ def connect(data_dir: Path | str) -> sqlite3.Connection:
                 ):
                     raise
                 time.sleep(0.025)
-        db.executescript(_SCHEMA)
+        dbscope.prepare(db, "core", _SCHEMA)
         if not db.execute(
             "SELECT 1 FROM core_metadata WHERE name='schedule_receipts'"
         ).fetchone():
@@ -287,7 +291,7 @@ def register_fixture(data_dir, row: dict) -> dict:
 
 
 def fixture_at(data_dir, fixture_id, at=None, *, prospective=False) -> dict:
-    with closing(connect(data_dir)) as db:
+    with dbscope.reading(data_dir) as db:
         cutoff = iso(at or now_utc())
         query = (
             "SELECT f.*,s.recorded_at,s.precision FROM fixture_versions f "
@@ -472,7 +476,14 @@ def scored_fixture_rows(
 
 
 def check_formal_forecast(data_dir, forecast_digest, fixture_id, kickoff, decision_at):
-    with closing(connect(data_dir)) as db:
+    key = ("sealed_forecast", forecast_digest, fixture_id, iso(kickoff), iso(decision_at))
+    return dbscope.checked(data_dir, key, lambda: _checked_forecast(
+        data_dir, forecast_digest, fixture_id, kickoff, decision_at
+    ))
+
+
+def _checked_forecast(data_dir, forecast_digest, fixture_id, kickoff, decision_at):
+    with dbscope.reading(data_dir) as db:
         row = db.execute(
             "SELECT * FROM forecast_seals WHERE digest=? AND fixture_id=? AND kickoff=? "
             "AND cutoff=? AND protocol=? AND horizon='T-60m' AND mode='formal'",
@@ -484,7 +495,7 @@ def check_formal_forecast(data_dir, forecast_digest, fixture_id, kickoff, decisi
     if digest(payload) != forecast_digest:
         raise ValueError("invalid sealed forecast digest")
     manifest_id = payload.get("input_manifest_sha256")
-    with closing(connect(data_dir)) as db:
+    with dbscope.reading(data_dir) as db:
         exists = db.execute(
             "SELECT 1 FROM sqlite_master WHERE type='table' AND name='football_input_manifests'"
         ).fetchone()
@@ -517,12 +528,21 @@ def check_formal_forecast(data_dir, forecast_digest, fixture_id, kickoff, decisi
 
 def require_formal(data_dir, *, at=None) -> dict:
     when = iso(at or now_utc())
-    with closing(connect(data_dir)) as db:
+    batch = dbscope.current(data_dir)
+    key = ("trial_activation", PROTOCOL)
+    if batch is not None and key in batch.checked:
+        start, end, manifest = batch.checked[key]
+        if start <= when and (end is None or when < end):
+            return json.loads(manifest)
+    with dbscope.reading(data_dir) as db:
         row = db.execute(
-            "SELECT * FROM trial_activations WHERE protocol=? AND starts_at<=? "
-            "ORDER BY starts_at DESC LIMIT 1",
-            (PROTOCOL, when),
+            "SELECT starts_at,manifest,(SELECT min(starts_at) FROM trial_activations "
+            "WHERE protocol=? AND starts_at>?) AS next_start FROM trial_activations "
+            "WHERE protocol=? AND starts_at<=? ORDER BY starts_at DESC LIMIT 1",
+            (PROTOCOL, when, PROTOCOL, when),
         ).fetchone()
     if not row:
         raise ValueError("formal paper trial has no eligible activation for this time")
+    if batch is not None:
+        batch.checked[key] = (row["starts_at"], row["next_start"], row["manifest"])
     return json.loads(row["manifest"])
