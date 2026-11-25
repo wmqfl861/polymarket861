@@ -155,7 +155,7 @@ class Opportunities(unittest.TestCase):
             ):
                 archive.discover(self.root, SLUG)
 
-    def seal(self):
+    def prepare_inputs(self):
         raw = self.root / "inputs"
         (raw / CHAMP).mkdir(parents=True)
         games = [
@@ -241,6 +241,10 @@ class Opportunities(unittest.TestCase):
                     for club in (HOME, AWAY)
                 ],
             )
+        return data
+
+    def seal(self):
+        data = self.prepare_inputs()
         with at(CUT - timedelta(minutes=1)):
             return pipeline.make_forecast(
                 self.root,

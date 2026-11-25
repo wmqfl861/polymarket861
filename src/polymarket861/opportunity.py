@@ -454,7 +454,9 @@ def _process_fixture(data_dir, slug, account, fixture_id, report):
                         if old:
                             report["decisions"].append(
                                 fields
-                                | {"state": old["status"], "intent_id": old["id"]}
+                                | {"state": old["status"], "intent_id": old["id"],
+                                   "reason": json.loads(old["result"]).get("reason"),
+                                   "repeated": True}
                             )
                             continue
                         _unique_market(listings[key])

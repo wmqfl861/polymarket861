@@ -1,0 +1,10 @@
+[Unit]
+Description=Check the Premier League collector heartbeat
+
+[Service]
+Type=oneshot
+Environment=PM861_DATA_DIR=%h/.local/share/polymarket861/state
+ExecStart=%h/.local/share/polymarket861/venv/bin/pm861 season watchdog
+TimeoutStartSec=30
+UMask=0077
+NoNewPrivileges=yes

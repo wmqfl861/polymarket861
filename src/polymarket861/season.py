@@ -9,8 +9,17 @@ from contextlib import closing
 from datetime import timedelta
 from pathlib import Path
 
+from .season_alerts import emit as _alert
 from . import market_archive as exchange
-from . import opportunity, runner, season_backfill, store
+from . import (
+    dbscope,
+    opportunity,
+    runner,
+    season_alerts,
+    season_backfill,
+    season_health,
+    store,
+)
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS season_fixtures(
@@ -19,17 +28,27 @@ CREATE TABLE IF NOT EXISTS season_slots(
  key TEXT PRIMARY KEY,fixture TEXT NOT NULL,kickoff TEXT NOT NULL,target TEXT NOT NULL,deadline TEXT NOT NULL,
  role TEXT NOT NULL,stage TEXT NOT NULL,state TEXT NOT NULL,owner TEXT,until TEXT,detail TEXT);
 CREATE INDEX IF NOT EXISTS season_slot_due ON season_slots(stage,state,target,deadline);
+CREATE INDEX IF NOT EXISTS season_slot_open_deadline ON season_slots(deadline) WHERE state IN ('pending','running');
+CREATE INDEX IF NOT EXISTS season_slot_revision ON season_slots(fixture,kickoff,state);
+CREATE INDEX IF NOT EXISTS season_paper_detail ON season_slots(target DESC) WHERE stage='paper' AND detail IS NOT NULL;
+CREATE INDEX IF NOT EXISTS season_main_kickoff ON ma_events(julianday(kickoff),slug,received_at) WHERE slug=fixture;
 CREATE TABLE IF NOT EXISTS season_services(
  service TEXT PRIMARY KEY,next_at TEXT NOT NULL,owner TEXT,until TEXT,updated TEXT,result TEXT);
 CREATE TABLE IF NOT EXISTS season_retries(slot TEXT PRIMARY KEY,attempts INTEGER NOT NULL,not_before TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS season_alerts(
  key TEXT PRIMARY KEY,fixture TEXT,role TEXT,occurred TEXT,reason TEXT);
+CREATE INDEX IF NOT EXISTS season_alert_time ON season_alerts(occurred DESC);
+CREATE TABLE IF NOT EXISTS season_alert_causes(
+ cause TEXT PRIMARY KEY,key TEXT NOT NULL,occurred TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS season_alert_delivery(
+ key TEXT PRIMARY KEY,available TEXT NOT NULL,attempts INTEGER NOT NULL,delivered TEXT,error TEXT);
+CREATE INDEX IF NOT EXISTS season_alert_available ON season_alert_delivery(available) WHERE delivered IS NULL;
 """
 
 
 def _db(root):
     db = exchange.database(root)
-    db.executescript(_SCHEMA)
+    dbscope.prepare(db, "season-coordinator", _SCHEMA)
     return db
 
 
@@ -195,12 +214,21 @@ def _plan(root, now):
     lower = store.iso(now - timedelta(minutes=10))
     upper = store.iso(now + timedelta(days=7))
     with closing(_db(root)) as db, db:
+        # Discover by kickoff, then look up the latest receipt for each candidate. A
+        # later postponement must beat an older receipt inside the seven-day window.
+        # Recheck each previously tracked fixture with one primary-key seek, including
+        # fixtures moved out of range. The season's old per-minute receipts stay cold.
         current = db.execute(
-            "WITH latest AS (SELECT *,row_number() OVER(PARTITION BY slug ORDER BY received_at DESC,sha DESC) n "
-            "FROM ma_events WHERE received_at<=?) SELECT e.fixture,e.kickoff,e.received_at,e.sha,s.plan,s.first_seen,s.kickoff AS prior "
-            "FROM latest e LEFT JOIN season_fixtures s ON s.fixture=e.fixture WHERE e.n=1 AND e.slug=e.fixture "
-            "AND (julianday(e.kickoff) BETWEEN julianday(?) AND julianday(?) OR s.fixture IS NOT NULL)",
-            (store.iso(now), lower, upper),
+            "WITH candidates(slug) AS (SELECT slug FROM ma_events WHERE slug=fixture "
+            "AND julianday(kickoff) BETWEEN julianday(?) AND julianday(?) AND received_at<=? "
+            "UNION SELECT fixture FROM season_fixtures) "
+            "SELECT e.fixture,e.kickoff,e.received_at,e.sha,s.plan,s.first_seen,s.kickoff AS prior "
+            "FROM candidates c JOIN ma_events e ON e.rowid=(SELECT m.rowid FROM ma_events m "
+            "WHERE m.slug=c.slug AND m.received_at<=? ORDER BY received_at DESC,sha DESC LIMIT 1) "
+            "LEFT JOIN season_fixtures s ON s.fixture=c.slug WHERE e.slug=e.fixture AND "
+            "(julianday(e.kickoff) BETWEEN julianday(?) AND julianday(?) OR "
+            "(s.fixture IS NOT NULL AND julianday(s.kickoff)<>julianday(e.kickoff)))",
+            (lower, upper, store.iso(now), store.iso(now), lower, upper),
         ).fetchall()
         for row in current:
             tag = row["fixture"]
@@ -267,7 +295,12 @@ def _plan(root, now):
                 (tag, store.iso(now)),
             ).fetchone()
             version = store.digest(
-                ["critical-windows-v3", kickoff, latest["received_at"], latest["sha"]]
+                [
+                    "critical-windows-v3/hourly-far-books",
+                    kickoff,
+                    latest["received_at"],
+                    latest["sha"],
+                ]
             )
             # The main receipt changes far more often than the grid. Skip recalculating an
             # unchanged schedule in the seconds leading up to a capture.
@@ -291,6 +324,20 @@ def _plan(root, now):
                 {max(5, int(r["delay"])) for r in active if type(r["delay"]) is int}
             )
             delays = known_delays or [5]
+            if revised or old.get("far_book_minutes") != 60:
+                # Preserve real receipts, leases and terminal gaps across the cadence upgrade.
+                db.execute(
+                    "UPDATE season_slots SET state='superseded',detail=? WHERE fixture=? AND kickoff=? "
+                    "AND stage='book' AND role='periodic' AND state='pending' AND target>=? "
+                    "AND unixepoch(kickoff)-unixepoch(target)>172800 "
+                    "AND (unixepoch(kickoff)-unixepoch(target))%3600<>0",
+                    (
+                        store.canonical({"reason": "far_book_hourly"}),
+                        tag,
+                        kickoff,
+                        store.iso(now),
+                    ),
+                )
             db.execute(
                 "INSERT INTO season_fixtures VALUES(?,?,?,?,?) ON CONFLICT(fixture) DO UPDATE SET kickoff=excluded.kickoff,"
                 "plan=excluded.plan,updated=excluded.updated",
@@ -306,6 +353,7 @@ def _plan(root, now):
                             "first_planned_at": store.iso(planned),
                             "attribution_version": 3,
                             "version": version,
+                            "far_book_minutes": 60,
                         }
                     ),
                     store.iso(now),
@@ -364,7 +412,13 @@ def _plan(root, now):
                     deadline = target + timedelta(
                         seconds=12 if role == "closing_book" else 45
                     )
-                    _add(db, tag, kickoff, target, deadline, role, "book")
+                    before = int((kick - target).total_seconds())
+                    if (
+                        role == "closing_book"
+                        or before <= 48 * 3600
+                        or before % 3600 == 0
+                    ):
+                        _add(db, tag, kickoff, target, deadline, role, "book")
                     if (
                         role == "closing_book"
                         or int((kick - target).total_seconds()) % 900 == 0
@@ -386,16 +440,20 @@ def _plan(root, now):
 
 
 def _status_events(root, fixture, at):
+    events = []
     with closing(exchange.database(root)) as db:
-        rows = db.execute(
-            "SELECT slug,received_at FROM (SELECT *,row_number() OVER(PARTITION BY slug "
-            "ORDER BY received_at DESC,sha DESC) n FROM ma_events WHERE fixture=? AND received_at<=?) WHERE n=1",
-            (fixture, at),
-        ).fetchall()
+        for slug in (fixture, fixture + "-more-markets"):
+            row = db.execute(
+                "SELECT slug FROM ma_events WHERE slug=? AND fixture=? AND received_at<=? "
+                "ORDER BY received_at DESC,sha DESC LIMIT 1",
+                (slug, fixture, at),
+            ).fetchone()
+            if row:
+                events.append(row["slug"])
     return {
-        "events": [r["slug"] for r in rows],
+        "events": events,
         "gaps": []
-        if len(rows) == 2
+        if len(events) == 2
         else [{"reason": "no archived auxiliary event at capture"}],
     }
 
@@ -454,7 +512,8 @@ def _daily_catalog(root, now):
     if not result["page_walk_complete"]:
         raise ValueError("seven-day event catalogue exceeded page budget")
     from . import schedule_consensus
-    schedule_consensus.sync(root,year_of(now),fetch=False)
+
+    schedule_consensus.sync(root, year_of(now), fetch=False)
     return {"fixtures": len(result["fixtures_observed"]), "window": result["window"]}
 
 
@@ -477,7 +536,9 @@ def _service(root, name, now, options):
 
         return sync(root, limit=50)
     if name == "history":
-        return season_backfill.backfill(root, year_of(now), max_pages=24, workers=3)
+        return season_backfill.backfill(
+            root, year_of(now), max_pages=96, workers=4, page_size=1000, max_seconds=85
+        )
     raise ValueError("unknown season service")
 
 
@@ -485,22 +546,23 @@ def _paper(root, fixture):
     from .shadow import run
 
     output = {}
-    for name, fn, account in (
-        ("formal", opportunity.process, "main"),
-        ("shadow", run, "research-shadow"),
+    for name, fn, account, action_key in (
+        ("formal", opportunity.process, "main", "decisions"),
+        ("shadow", run, "research-shadow", "actions"),
     ):
+        started = store.now_utc()
         try:
-            value = fn(root, fixture, account=account)
+            output[name] = season_health.account_summary(
+                account, fn(root, fixture, account=account), action_key, started
+            )
+        except Exception as exc:
             output[name] = {
                 "account": account,
-                "as_of": value.get("as_of"),
-                "gaps": len(value.get("gaps") or []),
-                "decisions": len(value.get("decisions") or [])
-                if isinstance(value.get("decisions"), list)
-                else value.get("decisions"),
+                "as_of": started,
+                "state": "error",
+                "error": str(exc) or type(exc).__name__,
+                "error_type": type(exc).__name__,
             }
-        except Exception as exc:
-            output[name] = {"error": str(exc)}
     return output
 
 
@@ -517,13 +579,25 @@ def _slot(root, item):
         }
     if exchange.market_state(root, fixture):
         return {"exchange_started": True, "books": 0}
-    result = exchange.capture(
-        root,
-        fixture,
-        workers=2,
-        discovery=_status_events(root, fixture, store.now_utc()),
-        deadline=item["deadline"],
-    )
+    discovery = _status_events(root, fixture, store.now_utc())
+    if item["role"] == "execution_book":
+        result = exchange.capture_execution(
+            root,
+            fixture,
+            target=item["target"],
+            deadline=item["deadline"],
+            kickoff=item["kickoff"],
+            discovery=discovery,
+            research=item.get("execution_research", False),
+        )
+    else:
+        result = exchange.capture(
+            root,
+            fixture,
+            workers=2,
+            discovery=discovery,
+            deadline=item["deadline"],
+        )
     rows = result["observations"]
     deadline = store.instant(item["deadline"])
     good = [
@@ -546,23 +620,20 @@ def _slot(root, item):
         "batch_error": result["batch_error"],
         "retry_at": result.get("retry_at"),
         "discovery_gaps": result["discovery_gaps"],
+        **{
+            k: result[k]
+            for k in (
+                "scope",
+                "requested_tokens",
+                "no_frozen_intents",
+                "attempt_latency_ms",
+                "hedge_started",
+                "research_submitted",
+                "non_frozen_count",
+            )
+            if k in result
+        },
     }
-
-
-def _alert(db, key, fixture, role, reason):
-    now = store.now_utc()
-    inserted = db.execute(
-        "INSERT OR IGNORE INTO season_alerts VALUES(?,?,?,?,?)",
-        (key, fixture, role, now, reason),
-    ).rowcount
-    if inserted:
-        print(
-            store.canonical(
-                {"season_alert": role, "fixture": fixture, "reason": reason, "at": now}
-            ),
-            file=sys.stderr,
-            flush=True,
-        )
 
 
 def _expire(db, now):
@@ -603,7 +674,15 @@ _SERVICES = {
 
 class Coordinator:
     def __init__(
-        self, root, *, workers=6, football_root=None, evidence=None, once=False
+        self,
+        root,
+        *,
+        workers=6,
+        football_root=None,
+        evidence=None,
+        once=False,
+        alert_command=None,
+        execution_research=False,
     ):
         if not 1 <= workers <= 32:
             raise ValueError("workers must be within 1..32")
@@ -611,6 +690,13 @@ class Coordinator:
         self.workers = workers
         self.identity = uuid.uuid4().hex
         self.options = {"football_root": football_root, "evidence": evidence}
+        self.execution_research = execution_research
+        self.alert_argv = season_alerts.command_args(alert_command)
+        self.delivery_pool = (
+            ThreadPoolExecutor(max_workers=1) if self.alert_argv else None
+        )
+        self.delivery = None
+        self.next_delivery = 0.0
         self.pools = {
             name: ThreadPoolExecutor(
                 max_workers=size, thread_name_prefix="season-" + name
@@ -640,9 +726,18 @@ class Coordinator:
         with closing(_db(self.root)) as db, db:
             if kind == "service":
                 name = row["service"]
+                db.execute("BEGIN IMMEDIATE")
+                if not db.execute(
+                    "SELECT 1 FROM season_services WHERE service=? AND owner=?",
+                    (name, self.identity),
+                ).fetchone():
+                    return
+                problems = list(season_health.service_problems(name, result))
+                for cause, reason in problems:
+                    season_alerts.report_cause(db, None, name, cause, reason, stamp)
                 if error:
-                    _alert(
-                        db, store.digest([name, stamp[:13], error]), None, name, error
+                    season_alerts.report_cause(
+                        db, None, name, "service_exception", error, stamp
                     )
                 summary = (
                     result
@@ -682,7 +777,17 @@ class Coordinator:
                             clock + timedelta(seconds=30 if error else _SERVICES[name])
                         ),
                         stamp,
-                        store.canonical({"error": error, "summary": summary}),
+                        store.canonical(
+                            {
+                                "error": error,
+                                "health": "error"
+                                if error
+                                else "degraded"
+                                if problems
+                                else "ok",
+                                "summary": summary,
+                            }
+                        ),
                         name,
                         self.identity,
                     ),
@@ -714,6 +819,10 @@ class Coordinator:
                     "AND stage IN ('book','metadata')",
                     (row["fixture"], row["kickoff"]),
                 )
+            elif kind == "paper" and not error:
+                state = season_health.paper_state(db, result, row, stamp)
+            elif kind == "book" and result.get("no_frozen_intents"):
+                state = "done"
             elif kind == "book" and not result.get("fresh_by_deadline"):
                 state = "gap"
             elif kind == "book" and result["fresh_by_deadline"] < result["books"]:
@@ -746,7 +855,11 @@ class Coordinator:
                             (row["key"], store.iso(retry)),
                         )
                         state = "pending"
-            if state in ("error", "gap", "partial"):
+            if kind == "paper" and error:
+                season_alerts.report_cause(
+                    db, row["fixture"], "paper", "task_exception", error, stamp
+                )
+            elif state in ("error", "gap", "partial") and kind != "paper":
                 _alert(
                     db,
                     row["key"],
@@ -759,11 +872,18 @@ class Coordinator:
                         or "no verified timely observation"
                     ),
                 )
+            detail_error = error
+            if kind == "paper" and state == "error" and not detail_error:
+                detail_error = " | ".join(
+                    f"{name}: {result[name]['error']}"
+                    for name in ("formal", "shadow")
+                    if result[name].get("error")
+                )
             db.execute(
                 "UPDATE season_slots SET state=?,owner=NULL,until=NULL,detail=? WHERE key=? AND owner=?",
                 (
                     state,
-                    store.canonical({"error": error, **result}),
+                    store.canonical({"error": detail_error, **result}),
                     row["key"],
                     self.identity,
                 ),
@@ -772,6 +892,7 @@ class Coordinator:
             if (
                 kind == "book"
                 and state in ("done", "partial")
+                and not result.get("no_frozen_intents")
                 and row["role"] in ("decision_book", "execution_book", "closing_book")
             ):
                 until = store.instant(row["deadline"])
@@ -842,15 +963,21 @@ class Coordinator:
                         "resumed after collector heartbeat at " + previous[0],
                     )
                 self.first_tick = False
-            near = db.execute(
-                "SELECT 1 FROM season_slots WHERE state IN ('pending','running') AND stage='book' "
-                "AND role IN ('decision_book','execution_book') AND deadline>=? AND target<=? LIMIT 1",
-                (stamp, store.iso(now + timedelta(seconds=45))),
-            ).fetchone()
+            next_critical = db.execute(
+                "SELECT min(target) FROM season_slots WHERE state IN ('pending','running') AND stage='book' "
+                "AND role IN ('decision_book','execution_book') AND deadline>=? AND target<=?",
+                (stamp, store.iso(now + timedelta(seconds=100))),
+            ).fetchone()[0]
             for name in _SERVICES:
                 if self.once and name in self.services_started:
                     continue
-                if near and name in ("history", "results"):
+                if next_critical and (
+                    name == "history"
+                    or (
+                        name == "results"
+                        and next_critical <= store.iso(now + timedelta(seconds=45))
+                    )
+                ):
                     continue
                 db.execute(
                     "INSERT OR IGNORE INTO season_services(service,next_at) VALUES(?,'')",
@@ -896,13 +1023,24 @@ class Coordinator:
                             row["key"],
                         ),
                     )
-                    fut = self.pools[stage].submit(_slot, self.root, dict(row))
+                    item = dict(row)
+                    if self.execution_research and item["role"] == "execution_book":
+                        item["execution_research"] = True
+                    fut = self.pools[stage].submit(_slot, self.root, item)
                     self.futures[fut] = (stage, dict(row))
                     added += 1
             db.execute(
                 "INSERT INTO season_services(service,next_at,updated) VALUES('heartbeat','',?) ON CONFLICT(service) DO UPDATE SET updated=excluded.updated",
                 (stamp,),
             )
+        if self.delivery_pool and time.monotonic() >= self.next_delivery:
+            if self.delivery is None or self.delivery.done():
+                if self.delivery is not None:
+                    self.delivery.result()
+                self.delivery = self.delivery_pool.submit(
+                    season_alerts.deliver, self.root, self.alert_argv
+                )
+            self.next_delivery = time.monotonic() + 1
         return added
 
     def close(self):
@@ -911,9 +1049,21 @@ class Coordinator:
         for f, (kind, row) in self.futures.items():
             self._finish(f, kind, row)
         self.futures.clear()
+        if self.delivery_pool:
+            self.delivery_pool.shutdown(wait=True)
+            if self.once:
+                # A fast one-shot run may finish before the next delivery poll. Flush
+                # newly committed alerts only after all acquisition workers have stopped.
+                end = time.monotonic() + season_alerts.TIMEOUT
+                while time.monotonic() < end:
+                    sent = season_alerts.deliver(self.root, self.alert_argv)
+                    if not sent or sent["error"]:
+                        break
 
 
 def status(root, year=None):
+    from . import result_freshness
+
     now = store.instant(store.now_utc())
     with closing(_db(root)) as db:
         states = {
@@ -950,6 +1100,27 @@ def status(root, year=None):
                 "SELECT fixture,role,occurred,reason FROM season_alerts ORDER BY occurred DESC LIMIT 12"
             )
         ]
+        paper = [
+            dict(r) | {"detail": json.loads(r["detail"])}
+            for r in db.execute(
+                "SELECT fixture,role,target,state,detail FROM season_slots WHERE stage='paper' "
+                "AND detail IS NOT NULL ORDER BY target DESC LIMIT 8"
+            )
+        ]
+        delivery = {
+            "undelivered_last_hour": db.execute(
+                "SELECT count(*) FROM season_alerts a JOIN season_alert_delivery d USING(key) "
+                "WHERE a.occurred>=? AND d.delivered IS NULL",
+                (store.iso(now - timedelta(hours=1)),),
+            ).fetchone()[0],
+            "recent_attempts": [
+                dict(r)
+                for r in db.execute(
+                    "SELECT a.role,a.occurred,d.attempts,d.delivered,d.error FROM season_alerts a "
+                    "JOIN season_alert_delivery d USING(key) WHERE d.attempts>0 ORDER BY a.occurred DESC LIMIT 5"
+                )
+            ],
+        }
         fixtures = db.execute(
             "SELECT count(*) FROM season_fixtures WHERE kickoff>=? AND kickoff<=?",
             (
@@ -961,6 +1132,7 @@ def status(root, year=None):
         if s["result"]:
             s["result"] = json.loads(s["result"])
     return {
+        "data_dir": str(Path(root).expanduser().resolve()),
         "observed_at": store.iso(now),
         "heartbeat": heartbeat[0] if heartbeat else None,
         "heartbeat_stale": not heartbeat
@@ -972,17 +1144,33 @@ def status(root, year=None):
         "next_capture_or_action": next_row,
         "services": services,
         "recent_alerts": alerts,
+        "recent_paper_slots": paper,
+        "alert_delivery": delivery,
+        "result_freshness": result_freshness.status(
+            root, year or year_of(now), at=store.iso(now)
+        ),
         "backfill": season_backfill.status(root, year or year_of(now)),
     }
 
 
-def run(root, *, repeat=False, workers=6, football_root=None, evidence=None):
+def run(
+    root,
+    *,
+    repeat=False,
+    workers=6,
+    football_root=None,
+    evidence=None,
+    alert_command=None,
+    execution_research=False,
+):
     agent = Coordinator(
         root,
         workers=workers,
         football_root=football_root,
         evidence=evidence,
         once=not repeat,
+        alert_command=alert_command,
+        execution_research=execution_research,
     )
     try:
         while True:
@@ -1021,6 +1209,14 @@ def register(subparsers):
     p.add_argument("--workers", type=int, default=6)
     p.add_argument("--football-root", type=Path)
     p.add_argument("--evidence", type=Path)
+    p.add_argument(
+        "--alert-command", help="告警处理程序及固定参数；每条 JSON 从标准输入读取"
+    )
+    p.add_argument(
+        "--execution-research",
+        action="store_true",
+        help="执行簿时段并行另采非冻结方向的研究行情",
+    )
     p.set_defaults(
         func=lambda a: run(
             a.data_dir,
@@ -1028,9 +1224,18 @@ def register(subparsers):
             workers=a.workers,
             football_root=a.football_root,
             evidence=a.evidence,
+            alert_command=a.alert_command,
+            execution_research=a.execution_research,
         )
     )
     p = commands.add_parser("status")
     p.add_argument("--year", type=int)
     p.set_defaults(func=lambda a: status(a.data_dir, a.year))
+    p = commands.add_parser("watchdog", help="独立检查最后一次主循环心跳")
+    p.add_argument("--alert-command", help="告警处理程序及固定参数")
+    p.set_defaults(
+        func=lambda a: season_alerts.heartbeat(
+            a.data_dir, alert_command=a.alert_command
+        )
+    )
     season_backfill.add_parser(commands)

@@ -1,0 +1,11 @@
+[Unit]
+Description=Check the Premier League collector every minute
+
+[Timer]
+OnStartupSec=2min
+OnUnitActiveSec=1min
+AccuracySec=2s
+Unit=polymarket861-watchdog.service
+
+[Install]
+WantedBy=timers.target
