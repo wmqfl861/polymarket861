@@ -91,5 +91,26 @@
         "execution_roi": null
       }
     ]
+  },
+  "after_installing_prospective_schedule_admission": {
+    "command": "pm861 --data-dir STATE season run --workers 5",
+    "observed_at": "2026-11-25T07:58:04.058548Z",
+    "registered_football_next_7d": 10,
+    "unique_exact_matches": 10,
+    "remaining_mismatches": 0,
+    "exchange_scheduled_next_7d": 11,
+    "slots": {
+      "done": 33,
+      "missed": 30,
+      "pending": 11745
+    },
+    "service_errors": {
+      "catalog": null,
+      "forecast": null,
+      "results": null,
+      "settlements": null,
+      "history": null
+    },
+    "available_season_results": 91
   }
 }
