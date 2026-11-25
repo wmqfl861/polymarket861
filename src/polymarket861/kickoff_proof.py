@@ -95,7 +95,7 @@ def _permission(root, db, when):
         )
     try:
         permitted = (
-            hashlib.sha256(store.blob_path(root, sha).read_bytes()).hexdigest() == sha
+            hashlib.sha256(store.read_blob(root, sha)).hexdigest() == sha
         )
     except OSError:
         permitted = False
@@ -458,7 +458,7 @@ def resolve(
                 url = release["source_url"]
                 permission = release["licence_sha256"]
                 try:
-                    licence = store.blob_path(data_dir, permission).read_bytes()
+                    licence = store.read_blob(data_dir, permission)
                 except OSError as exc:
                     raise ValueError(
                         "published open licence original is missing"
@@ -488,7 +488,7 @@ def resolve(
                     "the provider event was attached to conflicting fixtures"
                 )
             try:
-                raw = store.blob_path(data_dir, r["source_sha256"]).read_bytes()
+                raw = store.read_blob(data_dir, r["source_sha256"])
             except OSError as exc:
                 raise ValueError(
                     "independent kickoff source bytes are unavailable"

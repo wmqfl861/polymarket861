@@ -51,7 +51,7 @@ def _check_rows(db, data_dir, raw_fixtures, rows, side_sha):
 
     @lru_cache(maxsize=25)
     def archived_season(season, sha256, git_sha):
-        raw = store.blob_path(data_dir, sha256).read_bytes()
+        raw = store.read_blob(data_dir, sha256)
         if (
             hashlib.sha256(raw).hexdigest() != sha256
             or football.blob_sha(raw) != git_sha

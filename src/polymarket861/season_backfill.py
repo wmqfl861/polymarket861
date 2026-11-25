@@ -47,7 +47,7 @@ def _seed(root, year, now):
     for row in rows:
         by_blob[row["sha"]].append(row)
     for sha, rows in by_blob.items():
-        raw = store.blob_path(root, sha).read_bytes()
+        raw = store.read_blob(root, sha)
         if hashlib.sha256(raw).hexdigest() != sha:
             raise ValueError("catalogue archive digest mismatch")
         body = json.loads(raw)

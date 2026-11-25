@@ -40,7 +40,7 @@ def _sha(raw):
 def _retain(data_dir, raw, kind):
     sha = _sha(raw)
     path = store.blob_path(data_dir, sha)
-    if path.is_file() and _sha(path.read_bytes()) == sha:
+    if path.is_file() and _sha(store.read_blob(data_dir, sha)) == sha:
         with closing(store.connect(data_dir)) as db:
             tracked = db.execute(
                 "SELECT 1 FROM observations WHERE sha256=? LIMIT 1", (sha,)
@@ -111,13 +111,13 @@ def _verified_scope(db, ident, files, aux):
 def _snapshot_view(data_dir, doc, ident):
     base = Path(data_dir) / "comparison" / ident
     for f in doc["files"]:
-        raw = store.blob_path(data_dir, f["sha256"]).read_bytes()
+        raw = store.read_blob(data_dir, f["sha256"])
         if _sha(raw) != f["sha256"] or football.blob_sha(raw) != f["git_blob"]:
             raise ValueError("historical source archive failed verification")
         input_manifest._install(base / "sources" / f["season"] / "en.1.json", raw)
     path = None
     if doc["evidence_sha256"] is not None:
-        raw = store.blob_path(data_dir, doc["evidence_sha256"]).read_bytes()
+        raw = store.read_blob(data_dir, doc["evidence_sha256"])
         if _sha(raw) != doc["evidence_sha256"]:
             raise ValueError("historical timing evidence failed verification")
         path = base / "evidence.jsonl"

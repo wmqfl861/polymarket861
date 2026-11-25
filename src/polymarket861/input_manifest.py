@@ -12,7 +12,7 @@ from contextlib import closing
 from pathlib import Path
 
 from . import football
-from .store import archive_bytes, blob_path, canonical, connect, digest, iso, now_utc
+from .store import archive_bytes, read_blob, canonical, connect, digest, iso, now_utc
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS football_input_manifests(
@@ -232,7 +232,7 @@ def _materialize(data_dir, manifest, identity):
     # Use a per-manifest view for training so only attested files are consumed.
     src = scoped / "sources"
     for item in manifest["files"]:
-        raw = blob_path(data_dir, item["sha256"]).read_bytes()
+        raw = read_blob(data_dir, item["sha256"])
         if _hash(raw) != item["sha256"] or football.blob_sha(raw) != item["git_blob"]:
             raise ValueError("football source archive failed its content hash")
         for folder in (base, src):
@@ -240,7 +240,7 @@ def _materialize(data_dir, manifest, identity):
     seasons = {item["season"] for item in manifest["files"]}
     if {p.parent.name for p in src.glob("????-??/en.1.json")} != seasons:
         raise ValueError("unexpected season in the verified football input directory")
-    aux = blob_path(data_dir, manifest["evidence_sha256"]).read_bytes()
+    aux = read_blob(data_dir, manifest["evidence_sha256"])
     if _hash(aux) != manifest["evidence_sha256"]:
         raise ValueError("football sidecar failed its archive hash")
     sidecar = scoped / "observations.jsonl"

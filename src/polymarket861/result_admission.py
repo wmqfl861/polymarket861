@@ -149,7 +149,7 @@ def _raw_rows(root, db, year, at, *, target=None, round_id=None):
                 native and (native["url"] != url or native["started_at"] > stamp)
             ):
                 raise ValueError("invalid native receipt identity")
-            raw = store.blob_path(root, sha).read_bytes()
+            raw = store.read_blob(root, sha)
             if hashlib.sha256(raw).hexdigest() != sha:
                 raise ValueError("OpenLigaDB archive hash mismatch")
             rows = _decode(raw, year, rnd)
@@ -250,7 +250,7 @@ def _reference(db, root, season, at):
             raise ValueError("invalid football input manifest")
         item = next((x for x in manifest["files"] if x["season"] == season), None)
         if item:
-            raw = store.blob_path(root, item["sha256"]).read_bytes()
+            raw = store.read_blob(root, item["sha256"])
             if (
                 hashlib.sha256(raw).hexdigest() != item["sha256"]
                 or football.blob_sha(raw) != item["git_blob"]

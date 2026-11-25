@@ -113,14 +113,14 @@ def _gamma_markets(db, root, sha, received_at, slug):
 
 
 def _verified_market(db, root, condition, as_of, receipt_at, sha):
-    if not db.execute(
-        "SELECT 1 FROM sqlite_master WHERE name='ma_contracts'"
-    ).fetchone():
+    schema = db.execute("SELECT type FROM sqlite_master WHERE name='ma_contracts'").fetchone()
+    if not schema:
         raise ValueError("missing captured Gamma contract")
     at = store.iso(as_of)
+    condition_field = "condition_id" if schema[0] == "view" else "json_extract(payload,'$.condition_id')"
     rows = db.execute(
         "SELECT event_slug,market_slug,received_at,sha,payload FROM ma_contracts "
-        "WHERE json_valid(payload) AND received_at<=? AND json_extract(payload,'$.condition_id')=? ORDER BY received_at DESC",
+        f"WHERE json_valid(payload) AND received_at<=? AND {condition_field}=? ORDER BY received_at DESC",
         (at, condition),
     )
     for row in rows:

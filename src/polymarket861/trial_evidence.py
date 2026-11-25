@@ -73,7 +73,7 @@ def qualified_seals(data_dir, fixtures):
 
         @lru_cache(maxsize=32)
         def schedule(season, sha, git_sha):
-            raw = store.blob_path(data_dir, sha).read_bytes()
+            raw = store.read_blob(data_dir, sha)
             if (
                 hashlib.sha256(raw).hexdigest() != sha
                 or football.blob_sha(raw) != git_sha

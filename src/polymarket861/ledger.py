@@ -1557,7 +1557,7 @@ def _blob(root, key):
     path = store.blob_path(root, key or "")
     if not path.is_file():
         raise ValueError("missing archived evidence blob")
-    body = path.read_bytes()
+    body = store.read_blob(root, key)
     if hashlib.sha256(body).hexdigest() != key:
         raise ValueError("archived evidence hash mismatch")
     return body

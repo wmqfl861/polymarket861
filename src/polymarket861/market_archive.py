@@ -14,7 +14,7 @@ from http.client import HTTPException
 from urllib.error import URLError
 from urllib.parse import urlsplit
 
-from . import dbscope
+from . import contract_storage, dbscope
 from . import market_provider as provider
 from .market_provider import (
     CLOB,
@@ -43,12 +43,6 @@ CREATE TABLE IF NOT EXISTS ma_events (
   slug TEXT NOT NULL, fixture TEXT NOT NULL, event_id TEXT NOT NULL,
   kickoff TEXT, received_at TEXT NOT NULL, sha TEXT NOT NULL, PRIMARY KEY(slug,received_at,sha));
 CREATE INDEX IF NOT EXISTS ma_events_fixture_time ON ma_events(fixture,received_at,slug);
-CREATE TABLE IF NOT EXISTS ma_contracts (
-  fixture TEXT NOT NULL, event_slug TEXT NOT NULL, market_slug TEXT NOT NULL,
-  received_at TEXT NOT NULL, sha TEXT NOT NULL, payload TEXT NOT NULL,
-  PRIMARY KEY(event_slug,market_slug,received_at,sha));
-CREATE INDEX IF NOT EXISTS ma_market_fixture ON ma_contracts(fixture,received_at);
-CREATE INDEX IF NOT EXISTS ma_contracts_condition_time ON ma_contracts(json_extract(payload,'$.condition_id'),received_at DESC) WHERE json_valid(payload);
 CREATE TABLE IF NOT EXISTS ma_books (
   token TEXT NOT NULL, received_at TEXT NOT NULL, sha TEXT NOT NULL, payload TEXT NOT NULL,
   PRIMARY KEY(token,received_at,sha));
@@ -66,7 +60,12 @@ CREATE TABLE IF NOT EXISTS ma_walks (
 
 def database(root):
     db = connect(root)
-    dbscope.prepare(db, "market-archive", _SCHEMA)
+    try:
+        dbscope.prepare(db, "market-archive", _SCHEMA)
+        contract_storage.prepare(db)
+    except BaseException:
+        db.close()
+        raise
     return db
 
 
@@ -212,18 +211,7 @@ def _ingest(db, event, reply, sha):
         ),
     )
     for contract in provider.normalized_markets(event):
-        contract.update(recorded_at=reply.received_at, source_sha256=sha)
-        db.execute(
-            "INSERT OR IGNORE INTO ma_contracts VALUES (?,?,?,?,?,?)",
-            (
-                match[1],
-                event["slug"],
-                contract["slug"],
-                reply.received_at,
-                sha,
-                canonical(contract),
-            ),
-        )
+        contract_storage.record(db, match[1], event["slug"], reply.received_at, sha, contract)
     return True
 
 
@@ -283,7 +271,7 @@ def catalog(root, season, *, pages=10, page_size=30, offset=0):
 
 
 def league_tag(root):
-    from .store import blob_path
+    from .store import read_blob
 
     sports = None
     with closing(database(root)) as db:
@@ -293,7 +281,7 @@ def league_tag(root):
             (iso(moment(now_utc()) - timedelta(days=7)),),
         ).fetchone()
     if cached:
-        raw = blob_path(root, cached["sha"]).read_bytes()
+        raw = read_blob(root, cached["sha"])
         if hashlib.sha256(raw).hexdigest() == cached["sha"]:
             sports = json.loads(raw)
     if sports is None:
@@ -1163,12 +1151,12 @@ def replay_inputs(root, fixtures, *, account=None):
     from functools import lru_cache
 
     from .archive_proof import research_tier
-    from .store import blob_path
+    from .store import read_blob
 
     @lru_cache(maxsize=8)
     def raw_page(sha):
         try:
-            body = blob_path(root, sha).read_bytes()
+            body = read_blob(root, sha)
             if hashlib.sha256(body).hexdigest() != sha:
                 return []
             rows = json.loads(body)["data"]
@@ -1284,7 +1272,7 @@ def replay_inputs(root, fixtures, *, account=None):
 
 def reindex(root):
     """Rebuild derived event/market mappings from unchanged evidence; preserve revised rows."""
-    from .store import blob_path
+    from .store import read_blob
 
     changes = 0
     with closing(database(root)) as db, db:
@@ -1296,7 +1284,7 @@ def reindex(root):
         ).fetchall()
         db.execute("BEGIN IMMEDIATE")
         for batch in batches:
-            raw = json.loads(blob_path(root, batch["sha"]).read_bytes())
+            raw = json.loads(read_blob(root, batch["sha"]))
             for event in raw if isinstance(raw, list) else [raw]:
                 if not isinstance(event, dict) or not FIXTURE.fullmatch(
                     str(event.get("slug", ""))

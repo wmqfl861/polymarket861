@@ -79,9 +79,11 @@ def _identity(stat):
 
 
 def verified_bytes(root, path, sha, error):
+    from .blob_storage import decoded
+
     with path.open("rb") as file:
         identity = _identity(os.fstat(file.fileno()))
-        payload = file.read()
+        payload = decoded(path, file.read())
         if identity != _identity(os.fstat(file.fileno())):
             raise EvidenceChanged(f"archived original {sha} changed while reading")
     if hashlib.sha256(payload).hexdigest() != sha:
@@ -93,14 +95,16 @@ def verified_bytes(root, path, sha, error):
 
 
 def recheck_originals(batch):
+    from .blob_storage import decoded
+
     # A writer lock protects the SQLite receipt rows, not content-addressed files.
     for path, (sha, identity) in batch.originals.items():
         try:
             if _identity(path.stat()) == identity:
                 continue
-            if hashlib.sha256(path.read_bytes()).hexdigest() == sha:
+            if hashlib.sha256(decoded(path, path.read_bytes())).hexdigest() == sha:
                 continue
-        except OSError:
+        except (OSError, ValueError):
             pass
         raise EvidenceChanged(f"archived original {sha} changed during the fixture tick")
 

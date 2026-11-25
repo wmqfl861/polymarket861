@@ -13,7 +13,8 @@ import zlib
 from contextlib import closing
 from pathlib import Path, PurePosixPath
 
-from .store import blob_path, canonical, connect, digest, iso, now_utc
+from .blob_storage import blob_name, blob_path
+from .store import canonical, connect, digest, iso, now_utc
 
 PORTABLE_FOLDERS = ("datasets", "sources", "openfootball", "job-work", "manifests")
 NESTED_STORE = "season-catalog"
@@ -48,7 +49,7 @@ def _entry(root, name, sha):
     if not parts:
         raise ValueError("missing backup path")
     if parts[0] == "archive":
-        valid = PurePosixPath(*parts).as_posix() == blob_path(Path("."), sha).as_posix()
+        valid = PurePosixPath(*parts).as_posix() == blob_name(sha).as_posix()
     else:
         valid = (
             parts == ("runtime.sqlite3",)
@@ -101,7 +102,7 @@ def verify_backup(backup: Path) -> dict:
             if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
                 raise ValueError("SQLite integrity check failed")
             required = {
-                (prefix / blob_path(Path("."), r[0])).as_posix()
+                (prefix / blob_name(r[0])).as_posix()
                 for r in db.execute("SELECT DISTINCT sha256 FROM observations")
             }
             if required - set(files):
@@ -125,20 +126,20 @@ def _snapshot(root, stage, prefix, files, compress):
         destination / "runtime.sqlite3"
     )
     for sha in hashes:
-        name = blob_path(Path("."), sha)
+        name = blob_name(sha)
         target = destination / name
         target.parent.mkdir(parents=True, exist_ok=True)
-        if compress:
-            with (
-                (root / name).open("rb") as data,
-                target.with_name(target.name + ".gz").open("wb") as buf,
-            ):
-                with gzip.GzipFile(
+        physical = blob_path(root, sha)
+        opener = gzip.open if physical.suffix == ".gz" else open
+        with opener(physical, "rb") as data:
+            if compress:
+                with target.with_suffix(".gz").open("wb") as buf, gzip.GzipFile(
                     filename="", fileobj=buf, mode="wb", mtime=0, compresslevel=6
                 ) as gz:
                     shutil.copyfileobj(data, gz)
-        else:
-            shutil.copyfile(root / name, target)
+            else:
+                with target.open("wb") as out:
+                    shutil.copyfileobj(data, out)
         files[(prefix / name).as_posix()] = sha
     for folder in PORTABLE_FOLDERS:
         for path in sorted((root / folder).rglob("*")):
@@ -234,7 +235,45 @@ def witness_manifest(data_dir, start, end):
     }
 
 
+def storage_status(data_dir):
+    """Measure actual SQLite files and the referenced evidence footprint in each runtime."""
+    root = Path(data_dir).resolve()
+    if not (root / "runtime.sqlite3").is_file():
+        raise ValueError("data directory has no runtime database")
+    result = {"measured_at": now_utc(), "stores": {}}
+    for label, directory in (("runtime", root), (NESTED_STORE, root / NESTED_STORE)):
+        database = directory / "runtime.sqlite3"
+        if not database.is_file():
+            continue
+        by_day = {}
+        missing = 0
+        with closing(sqlite3.connect(database.as_uri() + "?mode=ro", uri=True)) as db:
+            for sha, size, first in db.execute(
+                "SELECT sha256,MAX(size),MIN(observed_at) FROM observations GROUP BY sha256"
+            ):
+                day = by_day.setdefault(first[:10], {"originals": 0, "logical_bytes": 0, "stored_bytes": 0})
+                day["originals"] += 1
+                day["logical_bytes"] += size
+                try:
+                    day["stored_bytes"] += blob_path(directory, sha).stat().st_size
+                except FileNotFoundError:
+                    missing += 1
+            measurements = {"first_received_utc_day": dict(sorted(by_day.items())), "missing_originals": missing}
+            if db.execute("SELECT 1 FROM sqlite_master WHERE name='ma_contract_receipts'").fetchone():
+                measurements["contract_receipts"] = db.execute("SELECT count(*) FROM ma_contract_receipts").fetchone()[0]
+                measurements["contract_bodies"] = db.execute("SELECT count(*) FROM ma_contract_payloads").fetchone()[0]
+        for suffix, key in (("", "database_bytes"), ("-wal", "wal_bytes"), ("-shm", "shm_bytes")):
+            try:
+                measurements[key] = Path(str(database) + suffix).stat().st_size
+            except FileNotFoundError:
+                measurements[key] = 0
+        result["stores"][label] = measurements
+    return result
+
+
 def register(subparsers):
+    storage = subparsers.add_parser("storage", help="实测数据库和归档原件占用").add_subparsers(required=True)
+    storage.add_parser("status").set_defaults(func=lambda a: storage_status(a.data_dir))
     witness = subparsers.add_parser("witness", help="导出封存摘要清单")
     manifest = witness.add_subparsers(dest="witness_action", required=True).add_parser(
         "manifest"

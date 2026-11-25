@@ -15,6 +15,7 @@ from typing import Any
 
 
 from . import dbscope
+from .blob_storage import blob_path, read_blob, representation
 
 PROTOCOL = "epl-v1.1"
 
@@ -192,12 +193,6 @@ def builtin_model_at(db, at=None):
     return row[0] if row else "B1"
 
 
-def blob_path(root, sha: str) -> Path:
-    if len(sha) != 64 or any(c not in "0123456789abcdef" for c in sha):
-        raise ValueError("invalid SHA-256")
-    return Path(root) / "archive" / sha[:2] / sha
-
-
 def archive_bytes(
     data_dir,
     source,
@@ -214,10 +209,11 @@ def archive_bytes(
     path = blob_path(data_dir, sha)
     path.parent.mkdir(parents=True, exist_ok=True)
     if not path.exists():
+        path, stored = representation(path, payload)
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
             temp = Path(stream.name)
             try:
-                stream.write(payload)
+                stream.write(stored)
                 stream.flush()
                 os.fsync(stream.fileno())
             finally:
@@ -226,7 +222,7 @@ def archive_bytes(
             os.replace(temp, path)
         finally:
             temp.unlink(missing_ok=True)
-    if hashlib.sha256(path.read_bytes()).hexdigest() != sha:
+    if hashlib.sha256(read_blob(data_dir, sha)).hexdigest() != sha:
         raise ValueError(f"stored evidence failed hash verification: {sha}")
     with closing(connect(data_dir)) as db, db:
         db.execute(
@@ -246,6 +242,8 @@ def archive_bytes(
         "observed_at": observed,
         "path": str(path),
         "size": len(payload),
+        "stored_size": path.stat().st_size,
+        "encoding": "gzip" if path.suffix == ".gz" else "identity",
     }
 
 

@@ -85,7 +85,7 @@ def _league_id(root, db, year, at):
     ).fetchone()
     if not obs or json.loads(obs[0]).get("url") != registry:
         raise ValueError("unverified competition receipt")
-    raw = store.blob_path(root, config["sha"]).read_bytes()
+    raw = store.read_blob(root, config["sha"])
     if hashlib.sha256(raw).hexdigest() != config["sha"]:
         raise ValueError("invalid competition directory hash")
     return _competition(json.loads(raw), year)

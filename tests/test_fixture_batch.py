@@ -169,7 +169,7 @@ class FixtureWriter(unittest.TestCase):
                 raw.commit()
             with closing(archive.database(root)) as db:
                 self.assertEqual(db.execute("SELECT payload FROM ma_contracts").fetchone()[0], "malformed old row")
-                self.assertIn("ma_contracts_condition_time", str([tuple(r) for r in db.execute("PRAGMA index_list(ma_contracts)")]))
+                self.assertIn("ma_contracts_condition_time", str([tuple(r) for r in db.execute("PRAGMA index_list(ma_contract_receipts)")]))
             with ledger.fixture_batch(root) as db:
                 plans = db.execute("EXPLAIN QUERY PLAN SELECT id FROM paper_intents WHERE account='main' AND status='frozen' ORDER BY cutoff,priority,fixture,condition_id,token,id").fetchall()
                 self.assertIn("paper_intents_pending", str([tuple(r) for r in plans]))
