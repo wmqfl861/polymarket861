@@ -1,10 +1,9 @@
 """Evidence retained by the separate scheduled-kickoff research account."""
 
 import json
-from contextlib import closing
 from datetime import timedelta
 
-from . import archive_proof, jobs, ledger_terms, store
+from . import archive_proof, dbscope, jobs, ledger_terms, store
 from .ledger_rules import check_book, digest, fmt, instant, iso, number, unit
 
 
@@ -108,6 +107,8 @@ def book(db, root, contract, target, kickoff, stage, *, seen_by):
             }
             check_book(sample, contract, cutoff, planned, stage)
             return sample
+        except dbscope.EvidenceChanged:
+            raise
         except (ValueError, KeyError, TypeError, OSError, OverflowError):
             continue
     return None
@@ -123,7 +124,7 @@ def forecast(root, fixture, cutoff, seen_by):
         ("formal", "technical"),
         when,
     )
-    with closing(store.connect(root)) as db:
+    with dbscope.reading(root) as db:
         rows = db.execute(
             "SELECT * FROM forecast_seals WHERE fixture_id=? AND kickoff=? AND cutoff=? AND horizon='T-60m' "
             "AND mode IN ('technical','formal') AND protocol=? AND model_version=? AND sealed_at<=? "

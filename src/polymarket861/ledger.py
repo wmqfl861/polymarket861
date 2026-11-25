@@ -469,10 +469,20 @@ def _ordered(db, account):
 
 def reservations(db, account):
     available = number(account_row(db, account)["cash"])
+    return reserve_budgets(
+        available,
+        (
+            (row["id"], number(json.loads(row["result"])["budget"]))
+            for row in _ordered(db, account)
+        ),
+    )
+
+
+def reserve_budgets(available, ordered_budgets):
     result = {}
-    for row in _ordered(db, account):
-        amount = min(available, number(json.loads(row["result"])["budget"]))
-        result[row["id"]] = amount
+    for ident, budget in ordered_budgets:
+        amount = min(available, budget)
+        result[ident] = amount
         available -= amount
     return result
 
@@ -783,11 +793,12 @@ def freeze(data_dir, account, intent, book, *, replay_op=None):
         return obj
 
 
-def _remaining(db, account, condition, token, snapshot):
+def _remaining(db, account, condition, token, snapshot, *, research=False):
+    table = "research_shadow_depth" if research else "paper_depth"
     used = {
         number(r["price"]): number(r["consumed"])
         for r in db.execute(
-            "SELECT price,consumed FROM paper_depth WHERE account=? AND condition_id=? AND token=? AND snapshot=?",
+            f"SELECT price,consumed FROM {table} WHERE account=? AND condition_id=? AND token=? AND snapshot=?",
             (account, condition, token, snapshot["key"]),
         )
     }
@@ -796,7 +807,8 @@ def _remaining(db, account, condition, token, snapshot):
     ]
 
 
-def _consume(db, account, condition, token, first, second, used):
+def _consume(db, account, condition, token, first, second, used, *, research=False):
+    table = "research_shadow_depth" if research else "paper_depth"
     totals = defaultdict(lambda: ZERO)
     for a, b, q in used:
         totals[first["key"], a] += q
@@ -805,31 +817,33 @@ def _consume(db, account, condition, token, first, second, used):
     for (key, p), q in totals.items():
         params = (account, condition, token, key, fmt(p.normalize()))
         row = db.execute(
-            "SELECT consumed FROM paper_depth WHERE account=? AND condition_id=? AND token=? "
+            f"SELECT consumed FROM {table} WHERE account=? AND condition_id=? AND token=? "
             "AND snapshot=? AND price=?",
             params,
         ).fetchone()
         consumed = q + (number(row[0]) if row else ZERO)
         db.execute(
-            "INSERT OR REPLACE INTO paper_depth VALUES (?,?,?,?,?,?)",
+            f"INSERT OR REPLACE INTO {table} VALUES (?,?,?,?,?,?)",
             (*params, fmt(consumed)),
         )
 
 
-def _risk_scenarios(db, account, fixture, contract):
+def _risk_scenarios(db, account, fixture, contract, *, research=False):
+    query = (
+        "SELECT plan AS original,result FROM research_shadow_orders "
+        "WHERE account=? AND fixture=? AND status IN ('held','settled')"
+        if research
+        else "SELECT original,result FROM paper_intents WHERE account=? AND fixture=? AND status IN ('filled','settled')"
+    )
     held = []
-    for row in db.execute(
-        "SELECT original,result FROM paper_intents WHERE account=? AND fixture=? "
-        "AND status IN ('filled','settled')",
-        (account, fixture),
-    ):
+    for row in db.execute(query, (account, fixture)):
         original, out = json.loads(row["original"]), json.loads(row["result"])
         held.append(
             (
                 original["intent"]["contract"],
                 number(out["net_shares"]),
                 number(out["spent"]),
-                number(out["proceeds"]) if out["proceeds"] is not None else None,
+                number(out["proceeds"]) if out.get("proceeds") is not None else None,
             )
         )
     all_contracts = [c for c, *_ in held] + [contract]
@@ -891,8 +905,11 @@ def _risk_scenarios(db, account, fixture, contract):
 
 
 def _execution_order(row):
+    return (json.loads(row["result"])["execution_target"], *reservation_order(row))
+
+
+def reservation_order(row):
     return (
-        json.loads(row["result"])["execution_target"],
         row["cutoff"],
         row["priority"],
         row["fixture"],
