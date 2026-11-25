@@ -22,7 +22,7 @@
   "scope": "retrospective_descriptive",
   "availability_basis": "publication_time_reconstruction",
   "study_inputs_sha256": "85326e6eeefe3960895a46071cad1305401f98dba777f3310e8326e2441a23bc",
-  "news_extractor": "squad-news-en-nb-1-9fcf6d2950835eea",
+  "news_extractor": "squad-news-en-nb-1-4930edd5a0a1d93f",
   "news_prior": "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
   "openfootball_commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
   "score_source_objects": {
@@ -89,8 +89,8 @@
     },
     "club_and_selected_biographies": {
       "matches_scored": 30,
-      "matches_with_extracted_claims": 1,
-      "extracted_claims": 1,
+      "matches_with_extracted_claims": 0,
+      "extracted_claims": 0,
       "accepted_player_impacts": 0,
       "changed_matches": 0,
       "scores": {
@@ -125,36 +125,7 @@
       "verdict": "insufficient_historical_evidence"
     }
   },
-  "claims": [
-    {
-      "player_id": "enwiki-title:James Maddison",
-      "player_name": "James Maddison",
-      "event": "injury",
-      "status": "reported",
-      "availability": "unknown",
-      "quote": "Maddison returned for 2025–26 pre-season, but sustained another knee injury during a friendly against Newcastle United.",
-      "start": 0,
-      "end": 119,
-      "model_version": "squad-news-en-nb-1-9fcf6d2950835eea",
-      "confidence": 0.971438,
-      "id": "20c54c720b820f1344819aeb3b6ddeb62d36d9c66d12accbcc78d515a7c015bd",
-      "origin": "en.wikipedia.org",
-      "team": "Tottenham Hotspur FC",
-      "authority": "secondary",
-      "published_at": "2025-08-03T20:00:03.000000Z",
-      "received_at": "2026-11-25T12:09:06.807525Z",
-      "historical_revision": {
-        "id": 1304070654,
-        "url": "https://en.wikipedia.org/w/index.php?oldid=1304070654",
-        "sha256": "e38184e2bb90029ef4eef7a23457f5ad59c7172d66683384ad3545f94de63757"
-      },
-      "url": "https://en.wikipedia.org/w/index.php?oldid=1304070654",
-      "layer": "biography",
-      "fixture_id": "epl/2025-26/tottenham-hotspur/burnley",
-      "kickoff": "2025-08-16T14:00:00.000000Z",
-      "roster_seen_at": "2026-11-25T12:03:11.438316Z"
-    }
-  ],
+  "claims": [],
   "matches": {
     "club": [
       {
@@ -1466,7 +1437,7 @@
           true
         ],
         "training_matches": 1140,
-        "eligible_news_claims": 1,
+        "eligible_news_claims": 0,
         "applied": [],
         "no_news_probabilities": {
           "home_win": 0.5922057206749437,

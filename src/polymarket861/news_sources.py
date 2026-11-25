@@ -242,6 +242,10 @@ def _article(source, ident, url, published, revision, title, text, **metadata):
     }
 
 
+def _conflict(external_id, revision, reason, **details):
+    return {"external_id": external_id, "revision": str(revision), "reason": reason, **details}
+
+
 class _Text(HTMLParser):
     def __init__(self):
         super().__init__()
@@ -290,8 +294,9 @@ def _feed_item(source, item, atom, receipt):
         when = _as_known(item.get("when"), receipt)
         if not ident or len(ident) > 2048:
             raise ValueError("invalid Atom deleted-entry reference")
-        return _article(source, ident, source["url"], when, when, "", "", retracted=True,
-                        updated_at=when, time_basis="publisher_withdrawal")
+        return _article(source, ident, source["url"], when, "native:" + when, "", "", retracted=True,
+                        updated_at=when, native_revision_at=when, legacy_revision=when,
+                        time_basis="publisher_withdrawal")
 
     if atom:
         ident = item.findtext(ATOM + "id")
@@ -300,18 +305,18 @@ def _feed_item(source, item, atom, receipt):
         title = _contents(item.find(ATOM + "title"))
         body = _contents(item.find(ATOM + "content")) or _contents(item.find(ATOM + "summary"))
         publish = item.findtext(ATOM + "published") or item.findtext(ATOM + "updated")
-        update = item.findtext(ATOM + "updated") or publish
+        updated_marker = item.findtext(ATOM + "updated")
     else:
         link = item.findtext("link")
         ident = item.findtext("guid") or link
         title = _contents(item.find("title"))
         body = _contents(item.find(CONTENT + "encoded")) or _contents(item.find("description"))
         publish = item.findtext("pubDate") or item.findtext(DC + "date")
-        update = item.findtext(ATOM + "updated") or publish
+        updated_marker = item.findtext(ATOM + "updated")
     link = _public_url(link)
     if not ident or len(ident) > 2048 or not (title or body):
         raise ValueError("missing or oversized feed item identity/content")
-    published, updated = _as_known(publish, receipt), _as_known(update, receipt)
+    published, updated = _as_known(publish, receipt), _as_known(updated_marker or publish, receipt)
     if updated < published:
         raise ValueError("edit time precedes publication")
     # A club-hosted feed can syndicate articles from unrelated publishers.
@@ -320,8 +325,13 @@ def _feed_item(source, item, atom, receipt):
     text = body if not title or body.startswith(title) else f"{title}. {body}".strip()
     if len(text) > 24000:
         raise ValueError("article exceeds accepted text budget")
-    return _article(source, ident, link, published, store.digest([link, published, updated, title, body]),
-                    title, text, updated_at=updated, time_basis="publisher_article")
+    content_revision = store.digest([link, published, updated, title, body])
+    # RSS pubDate alone does not identify a revision. Atom/explicit updated does,
+    # even when a broken publisher changes the bytes under that same version.
+    marker = {"native_revision_at": updated, "legacy_revision": content_revision} if updated_marker else {}
+    revision = "native:" + updated if updated_marker else content_revision
+    return _article(source, ident, link, published, revision, title, text, updated_at=updated,
+                    time_basis="publisher_article", **marker)
 
 
 def _feed(source, raw, receipt, cursor):
@@ -341,37 +351,61 @@ def _feed(source, raw, receipt, cursor):
         raise ValueError("expected RSS 2.0 or Atom")
     if len(items) > MAX_ITEMS:
         raise ValueError("feed item limit exceeded")
-    accepted, rejected = {}, 0
+    accepted, rejected, conflicts = {}, 0, {}
+    prior = cursor.get("rows", {})
+    native = dict(cursor.get("native", {}))
     for item in items:
         try:
             row = _feed_item(source, item, atom, receipt)
         except (ValueError, TypeError, OverflowError):
             rejected += 1
             continue
-        if row["external_id"] in accepted:
-            old = accepted[row["external_id"]]
-            if row["updated_at"] == old["updated_at"] and row != old:
-                raise ValueError("conflicting publisher revisions in one feed")
-            if row["updated_at"] <= old["updated_at"]:
+        ident, rev = row["external_id"], row["revision"]
+        key = store.digest(ident)
+        if row.get("native_revision_at"):
+            content = row["legacy_revision"]
+            earlier = native.get(key, {})
+            if earlier.get("revision") == rev and (earlier["content"] != content or earlier.get("blocked")):
+                native[key] = {**earlier, "blocked": True}
+                conflicts[ident, rev] = _conflict(ident, rev, "contradictory publisher content under one explicit revision", native_revision_at=row["updated_at"])
+                if earlier.get("archived", rev) != rev:
+                    old_rev = earlier["archived"]
+                    conflicts[ident, old_rev] = _conflict(ident, old_rev, "contradictory legacy content under one explicit revision")
                 continue
-        accepted[row["external_id"]] = row
-    if rejected and not accepted:
+            if not earlier or rev > earlier["revision"]:
+                archived = content if prior.get(key) == content else rev
+                native[key] = {"revision": rev, "content": content, "archived": archived}
+        old = accepted.get(ident)
+        if old and row["updated_at"] == old["updated_at"] and row != old:
+            for variant in (old, row):
+                ver = variant["revision"]
+                conflicts[ident, ver] = _conflict(ident, ver, "contradictory publisher entries at one revision")
+            continue
+        if not old or row["updated_at"] > old["updated_at"]:
+            accepted[ident] = row
+    if rejected and not accepted and not conflicts:
         raise ValueError(f"all {rejected} publisher feed entries had invalid dates, rights scope or content")
-    # Process a large publisher feed across bounded polls, prioritizing the freshest
-    # edits for imminent matches. Entries falling out of an RSS window are not withdrawals.
-    prior = cursor.get("rows", {})
+    # Retain the complete bounded feed under this response's first receipt. The
+    # extractor drains its own durable queue; a rolling publisher window may
+    # already have removed any overflow by the time we poll it again.
     known, pending = {}, []
     for row in accepted.values():
         key = store.digest(row["external_id"])
-        if prior.get(key) == row["revision"]:
+        if (row["external_id"], row["revision"]) in conflicts:
+            continue
+        if key in prior and prior[key] in (row["revision"], row.get("legacy_revision")):
             known[key] = row["revision"]
         else:
             pending.append(row)
     pending.sort(key=lambda r: (r["updated_at"], r["external_id"]), reverse=True)
-    batch = pending[:100]
-    known.update((store.digest(row["external_id"]), row["revision"]) for row in batch)
-    return batch, {"rows": known}, {"entries": len(items), "invalid_entries": rejected,
-                                    "pending_entries": len(pending) - len(batch)}
+    known.update((store.digest(row["external_id"]), row["revision"]) for row in pending)
+    # Rows outside the current feed window remain protected by the stable native
+    # revision identity in the immutable archive, without unbounded cursor growth.
+    present = {store.digest(row["external_id"]) for row in accepted.values()} | {
+        store.digest(ident) for ident, _ in conflicts}
+    return pending, {"rows": known, "native": {k: v for k, v in native.items() if k in present}}, {
+        "entries": len(items), "invalid_entries": rejected, "revision_conflicts": list(conflicts.values()),
+        "pending_entries": 0}
 
 
 _HEADINGS = re.compile(r"^(={2,6})\s*([^=\n]+?)\s*\1\s*$", re.M)
@@ -457,8 +491,25 @@ def _wiki(source, raw, receipt, cursor):
         raise ValueError("invalid or regressing Wikipedia revision")
     doc = wiki_prose(page["source"])
     previous, active = set(cursor.get("paragraphs", ())), set(cursor.get("active", ()))
-    if ident == cursor.get("revid") and set(doc) != previous:
-        raise ValueError("Wikipedia narrative changed under the same revision")
+    active_versions = dict(cursor.get("active_versions", {}))
+    blocked = set(cursor.get("blocked", ()))
+    stats = {"page_revision": ident, "narrative_paragraphs": len(doc), "baseline_only": not bool(cursor.get("revid"))}
+    if ident == cursor.get("revid"):
+        blocked.update(active - set(doc))
+        blocked.update(k for k in set(doc) - previous if _recent_passage(doc[k], date, source["season"]))
+        if cursor.get("revision_time", date) != date:
+            blocked.update(k for k in active if active_versions.get(k, ident) == ident)
+        conflicts = []
+        for key in sorted(blocked):
+            if key in active and key not in active_versions:
+                # Older releases retained each paragraph's ID, but not the specific
+                # page revision which introduced it. Bound this hold to that paragraph.
+                conflicts.append({"external_id": key, "revision_through": ident,
+                                  "reason": "contradictory immutable Wikipedia revision"})
+            else:
+                conflicts.append(_conflict(key, active_versions.get(key, ident),
+                                           "contradictory immutable Wikipedia revision"))
+        return [], dict(cursor, blocked=sorted(blocked)), {**stats, "revision_conflicts": conflicts}
     url = f"https://en.wikipedia.org/w/index.php?oldid={ident}"
     rows = []
     if cursor.get("revid"):
@@ -466,18 +517,19 @@ def _wiki(source, raw, receipt, cursor):
             rows.append(_article(source, key, url, date, ident, page["title"], "",
                                  retracted=True, updated_at=date, time_basis="publisher_withdrawal"))
             active.remove(key)
-        for key in sorted(set(doc) - previous):
+            active_versions.pop(key, None)
+        for key in sorted((set(doc) - previous) | (blocked & set(doc))):
             if _recent_passage(doc[key], date, source["season"]):
                 # "published_at" identifies the revision containing the new-to-us passage.
                 # No claim is made that this is the first revision to introduce it.
                 rows.append(_article(source, key, url, date, ident, page["title"], doc[key],
                                      updated_at=date, time_basis="observed_publisher_revision"))
                 active.add(key)
+                active_versions[key] = ident
     # First observation is a baseline. Updating an unrelated score, table or award
     # cannot turn the rest of an encyclopedia page into newly published team news.
-    return rows, {"revid": ident, "paragraphs": sorted(doc), "active": sorted(active)}, {
-        "page_revision": ident, "narrative_paragraphs": len(doc), "baseline_only": not bool(cursor.get("revid"))
-    }
+    return rows, {"revid": ident, "revision_time": date, "paragraphs": sorted(doc),
+                  "active": sorted(active), "active_versions": active_versions}, stats
 
 
 def _wire_club(source, value):
@@ -517,19 +569,18 @@ def _wire_availability(source, raw, received, cursor):
     now = store.instant(snapshot)
     if football.season_year(source["season"]) != now.year - (now.month < 7):
         raise ValueError("current availability snapshot belongs to a different season")
-    ids, documents = set(), []
+    by_player, fingerprints, duplicates = {}, {}, set()
     scope = store.digest([source["season"], football.team_key(source["team"])])[:16]
     for row in rows:
         # An unknown club filter may return the entire league with HTTP 200.
         if not _wire_club(source, row.get("team")):
             raise ValueError("Touchline Wire did not honour the requested club filter")
         player_id = row.get("player_id")
-        if type(player_id) is not int or player_id < 1 or player_id in ids:
-            raise ValueError("missing or ambiguous Touchline Wire player identifier")
+        if type(player_id) is not int or player_id < 1:
+            raise ValueError("invalid Touchline Wire player identifier")
         name = row.get("display_name") or row.get("name")
         if not _wire_person(name):
             raise ValueError("unrecognised Touchline Wire player name")
-        ids.add(player_id)
         status = row.get("status")
         chance = row.get("chance_of_playing")
         if chance is not None and (type(chance) is not int or not 0 <= chance <= 100):
@@ -551,21 +602,44 @@ def _wire_availability(source, raw, received, cursor):
                                       "category", "chance_of_playing") if k in row}
         # Each genuinely new provider snapshot is a new observation of a standing status.
         # This field is not an original injury announcement timestamp.
-        documents.append(_article(source, external, source["url"], snapshot, snapshot, title, text,
-                                  observed_state_as_of=snapshot, updated_at=snapshot,
-                                  time_basis="provider_snapshot", provider_player_id=player_id,
-                                  source_fields=fields))
+        fingerprint = store.digest(fields)
+        key = str(player_id)
+        if key in fingerprints and fingerprints[key] != fingerprint:
+            duplicates.add(key)
+        else:
+            fingerprints[key] = fingerprint
+            by_player[key] = _article(source, external, source["url"], snapshot, snapshot, title, text,
+                                      observed_state_as_of=snapshot, updated_at=snapshot,
+                                      time_basis="provider_snapshot", provider_player_id=player_id,
+                                      source_fields=fields)
+    ids = {int(key) for key in by_player}
+    blocked = set(duplicates)
+    same = cursor.get("snapshot") == snapshot
+    prior = cursor.get("states")
+    if same:
+        blocked.update(cursor.get("blocked", ()))
+        if prior is not None:
+            blocked.update(key for key in prior.keys() | fingerprints.keys() if prior.get(key) != fingerprints.get(key))
+        else:
+            # Compatibility with cursors that retained just player IDs and an aggregate hash.
+            # Re-submit repeat IDs to normal intake: its immutable archive checks the original
+            # fields independently and can isolate just the changed players.
+            blocked.update(str(i) for i in set(cursor.get("players", ())) ^ ids)
+    conflicts = [_conflict(f"{scope}:player:{key}", snapshot,
+                           "contradictory player availability at one provider snapshot",
+                           native_revision_at=snapshot) for key in sorted(blocked)]
+    documents = [doc for key, doc in by_player.items() if key not in blocked and (not same or prior is None)]
+    if same:
+        next_cursor = dict(cursor, blocked=sorted(blocked))
+        if prior is None:
+            next_cursor["states"] = fingerprints
+        return documents, next_cursor, {"player_rows": len(rows), "revision_conflicts": conflicts}
     for old in sorted(set(cursor.get("players", ())) - ids):
         documents.append(_article(source, f"{scope}:player:{old}", source["url"], snapshot,
                                   snapshot, "Removed from availability wire", "", retracted=True,
                                   updated_at=snapshot, time_basis="provider_snapshot"))
-    semantic = store.digest([(d["external_id"], d["text"]) for d in sorted(
-        (d for d in documents if not d.get("retracted")), key=lambda d: d["external_id"])])
-    if cursor.get("snapshot") == snapshot:
-        if cursor.get("digest") != semantic:
-            raise ValueError("publisher sent contradictory availability at the same timestamp")
-        documents = []
-    return documents, {"snapshot": snapshot, "digest": semantic, "players": sorted(ids)}, {"player_rows": len(rows)}
+    return documents, {"snapshot": snapshot, "states": fingerprints, "players": sorted(ids), "blocked": sorted(blocked)}, {
+        "player_rows": len(rows), "revision_conflicts": conflicts}
 
 
 def _wire_rumours(source, raw, received, cursor):
@@ -577,7 +651,12 @@ def _wire_rumours(source, raw, received, cursor):
             or not payload.get("club_filter")
             or payload.get("club_filter") != _RUMOUR_CODES.get(football.team_key(team), payload["club_filter"])):
         raise ValueError("incomplete or unscoped Touchline Wire speculation feed")
-    documents, seen = [], {}
+    documents, seen, revisions = [], {}, {}
+    prior, prior_versions = cursor.get("rows", {}), cursor.get("revisions", {})
+    prev_blocked = set(cursor.get("blocked", ()))
+    same_snapshot = cursor.get("snapshot") == snapshot
+    blocked = set(prev_blocked) if same_snapshot else set()
+    native_times = {}
     for row in rows:
         name, external = row.get("subject_name"), row.get("id")
         # Prospective signings are not current squad members. Do not associate players
@@ -588,7 +667,8 @@ def _wire_rumours(source, raw, received, cursor):
             continue
         published = _as_known(row.get("published_at"), received)
         change = row.get("last_updated") or published
-        if isinstance(change, str) and re.fullmatch(r"\d{4}-\d\d-\d\d", change):
+        day_only = isinstance(change, str) and re.fullmatch(r"\d{4}-\d\d-\d\d", change)
+        if day_only:
             day = datetime.strptime(change, "%Y-%m-%d").date()
             if day > store.instant(snapshot).date():
                 raise ValueError("future rumour revision date")
@@ -605,15 +685,32 @@ def _wire_rumours(source, raw, received, cursor):
         if not isinstance(origin, str) or len(origin) > 180:
             origin = source["origin"]
         fingerprint = store.digest([external, published, change, status, name, origin, targets])
+        if external in seen and seen[external] != fingerprint:
+            blocked.add(external)
+        old_token = native_times.get(external) or cursor.get("native_times", {}).get(external)
+        native = bool(row.get("last_updated")) and not day_only
+        if native:
+            native_times[external] = updated
+            if old_token == updated and (prior.get(external) != fingerprint or external in prev_blocked):
+                blocked.add(external)
         seen[external] = fingerprint
-        if cursor.get("rows", {}).get(external) == fingerprint:
+        legacy = store.digest([fingerprint, updated])
+        rev = "native:" + updated if native else legacy
+        revision_meta = {"native_revision_at": updated, "legacy_revision": legacy} if native else {}
+        if external in prev_blocked and not native and not same_snapshot:
+            # Coarse last_updated dates can legitimately contain several versions.
+            # A later dataset explicitly corroborates the once-disputed observation.
+            rev = store.digest([fingerprint, updated, snapshot])
+        revisions[external] = rev
+        if prior.get(external) == fingerprint and external not in prev_blocked:
+            revisions[external] = prior_versions.get(external, legacy)
             continue
         if status != "active":
             # Withdrawal removes an existing rumour. It does not confirm a transfer.
             if status in ("debunked", "ruled_out", "confirmed", "resolved"):
                 documents.append(_article(source, external, source["url"], published,
-                                          store.digest([fingerprint, updated]), "Withdrawn transfer speculation", "", retracted=True,
-                                          updated_at=updated, time_basis="publisher_withdrawal"))
+                                          rev, "Withdrawn transfer speculation", "", retracted=True,
+                                          updated_at=updated, time_basis="publisher_withdrawal", **revision_meta))
             continue
         title = f"Transfer speculation about {name}"
         target_phrase = f" to join {targets[0]}" if len(targets) == 1 else ""
@@ -622,10 +719,24 @@ def _wire_rumours(source, raw, received, cursor):
                                       "target_club_names", "status", "published_at", "last_updated",
                                       "source_outlet", "cited_origin") if k in row}
         documents.append(_article(source, external, source["url"], published,
-                                  store.digest([fingerprint, updated]), title, text, updated_at=updated,
+                                  rev, title, text, updated_at=updated,
                                   time_basis="publisher_report", origin=origin,
-                                  evidence_class="transfer_rumour", source_fields=fields))
-    return documents, {"snapshot": snapshot, "rows": seen}, {"upstream_rumours": len(rows)}
+                                  evidence_class="transfer_rumour", source_fields=fields, **revision_meta))
+    if same_snapshot:
+        blocked.update(k for k in prior.keys() | seen.keys() if prior.get(k) != seen.get(k))
+    conflicts = [_conflict(k, rev, "contradictory transfer report at one provider revision",
+                           **({"native_revision_at": native_times[k]} if k in native_times else {}))
+                 for k in sorted(blocked) for rev in sorted({v for v in (prior_versions.get(k), revisions.get(k)) if v})]
+    if same_snapshot:
+        # Old cursors kept just the previous content fingerprint. Intake can identify
+        # the exact prior archive row as it stood before this collision was received.
+        conflicts.extend({"external_id": k, "latest_observed_before": received,
+                          "reason": "contradictory transfer report at one provider revision"}
+                         for k in sorted(blocked) if k in prior and k not in prior_versions)
+        return [], dict(cursor, blocked=sorted(blocked)), {"upstream_rumours": len(rows), "revision_conflicts": conflicts}
+    return [d for d in documents if d["external_id"] not in blocked], {
+        "snapshot": snapshot, "rows": seen, "revisions": revisions, "native_times": native_times,
+        "blocked": sorted(blocked)}, {"upstream_rumours": len(rows), "revision_conflicts": conflicts}
 
 
 def poll(source, team, season, cursor=None, *, getter=None):

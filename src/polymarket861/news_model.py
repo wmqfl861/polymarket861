@@ -162,6 +162,40 @@ def _inspect(row, cutoff, clubs, basis, baseline):
     return item, None
 
 
+def _supported_absence(absences):
+    # Keep each origin's current availability and still-valid support for it.
+    # An agreeing wire update cannot downgrade a club's own confirmation.
+    by_origin = defaultdict(list)
+    for item in absences:
+        by_origin[item["origin"]].append(item)
+    support = []
+    for origin in by_origin.values():
+        last = max(i["effective_at"] for i in origin)
+        latest = [i for i in origin if i["effective_at"] == last]
+        available = {i["availability"] for i in latest}
+        if len(available) != 1:
+            support.extend(latest)
+            continue
+        changed = max(
+            (i["effective_at"] for i in origin if i["availability"] not in available),
+            default="",
+        )
+        support.extend(i for i in origin if i["effective_at"] > changed)
+    # A new club confirmation can resolve older disagreement. A later
+    # contradictory independent report keeps the player's state disputed.
+    official = max(
+        (i["effective_at"] for i in support if i["status"] == "confirmed"), default=""
+    )
+    current = [i for i in support if i["effective_at"] >= official]
+    if len({i["availability"] for i in current}) != 1:
+        return None
+    strongest = [i for i in current if i["status"] == "confirmed"] or current
+    last = max(i["effective_at"] for i in strongest)
+    return min(
+        (i for i in strongest if i["effective_at"] == last), key=lambda i: i["id"]
+    )
+
+
 def _active_claims(facts, cutoff, clubs, basis, baseline):
     by_player, excluded = defaultdict(list), []
     for fact in facts:
@@ -217,14 +251,12 @@ def _active_claims(facts, cutoff, clubs, basis, baseline):
         if clears:
             last_clear = max(i["effective_at"] for i in clears)
             absences = [i for i in absences if i["effective_at"] > last_clear]
-        latest = max(i["effective_at"] for i in absences)
-        candidates = [i for i in absences if i["effective_at"] == latest]
-        if len({i["availability"] for i in candidates}) > 1:
+        item = _supported_absence(absences)
+        if item is None:
             excluded.extend(
                 i | {"reason": "conflicting_current_availability"} for i in items
             )
             continue
-        item = min(candidates, key=lambda i: (i["status"] != "confirmed", i["id"]))
         chosen.append(item)
         for other in items:
             if other is not item:

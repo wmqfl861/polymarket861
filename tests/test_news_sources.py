@@ -53,8 +53,10 @@ class NewsSources(unittest.TestCase):
         self.assertNotIn("publisher's prose", json.dumps(row))
         self.assertEqual(first["next_poll_after"], store.iso(store.instant(CLOCK) + timedelta(minutes=6)))
         self.assertFalse(run(src, availability([wire_row()]), first["cursor"])["articles"])
-        with self.assertRaisesRegex(ValueError, "contradictory"):
-            run(src, availability([]), first["cursor"])
+        vanished = run(src, availability([]), first["cursor"])
+        self.assertEqual([(c["external_id"], c["revision"]) for c in vanished["revision_conflicts"]],
+                         [(row["external_id"], row["revision"])])
+        self.assertEqual(vanished["articles"], [])
         with self.assertRaisesRegex(ValueError, "club filter"):
             run(src, availability([wire_row() | {"team": "Spurs"}]), first["cursor"])
         later = "2026-11-25T12:40:00.000000Z"
@@ -65,6 +67,23 @@ class NewsSources(unittest.TestCase):
         self.assertNotIn("recovered", removed["text"])
         with self.assertRaisesRegex(ValueError, "backwards"):
             run(src, availability([wire_row()]), updated["cursor"])
+
+    def test_provider_revisions_quarantine_precise_player_and_recover(self):
+        src = news.default_sources(CLUB, SEASON)[0]
+        out = wire_row() | {"status": "injured", "chance_of_playing": 0}
+        other = wire_row() | {"player_id": 5, "display_name": "Rob Example"}
+        base = run(src, availability([out, other]))
+        victim = base["articles"][0]
+        contradicted = run(src, availability([wire_row(), other]), base["cursor"])
+        hold, = contradicted["revision_conflicts"]
+        self.assertEqual((hold["external_id"], hold["revision"]), (victim["external_id"], victim["revision"]))
+        self.assertEqual(contradicted["articles"], [])
+        repeated = run(src, availability([other, out]), contradicted["cursor"])
+        self.assertEqual(repeated["revision_conflicts"], [hold])
+        later = "2026-11-25T12:30:00.000000Z"
+        restored = run(src, availability([wire_row(), other], later), repeated["cursor"], at=later)
+        self.assertFalse(restored["revision_conflicts"])
+        self.assertEqual([r["revision"] for r in restored["articles"]], [later, later])
 
     def test_wire_requires_current_license_season_and_source_clock(self):
         src = news.default_sources(CLUB, SEASON)[0]
@@ -99,6 +118,26 @@ class NewsSources(unittest.TestCase):
         blob["data"]["club_filter"] = None
         with self.assertRaisesRegex(ValueError, "unscoped"):
             run(source, blob)
+
+    def test_coarse_rumour_date_does_not_mask_a_contradiction_in_one_precise_snapshot(self):
+        src = news.default_sources(CLUB, SEASON)[1]
+        def state(at, club):
+            story = {"id": "rumour-1", "rumour_type": "transfer", "subject_name": "Joe Example",
+                     "current_club": "Chelsea", "target_club_names": [club], "status": "active",
+                     "published_at": "2026-11-23T12:43:00Z", "last_updated": "2026-11-25"}
+            return availability([], at) | {"data": {"club_filter": "CHE", "season": "2026/27", "count": 1,
+                                                    "rumours": [story]}}
+        first = run(src, state(CLOCK, "Spurs"))
+        row, = first["articles"]
+        second = run(src, state(CLOCK, "Arsenal"), first["cursor"])
+        self.assertIn((row["external_id"], row["revision"]),
+                      [(c["external_id"], c["revision"]) for c in second["revision_conflicts"]])
+        self.assertFalse(second["articles"])
+        later = "2026-11-25T12:30:00.000000Z"
+        third = run(src, state(later, "Arsenal"), second["cursor"], at=later)
+        restored, = third["articles"]
+        self.assertNotEqual(restored["revision"], row["revision"])
+        self.assertIn("join Arsenal", restored["text"])
 
     def test_wiki_initial_snapshot_and_unrelated_table_edits_are_not_news(self):
         source = news.default_sources(CLUB, SEASON)[2]
@@ -154,18 +193,23 @@ class NewsSources(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "document type"):
             run(src, "<!DOCTYPE root><rss><channel /></rss>")
 
-    def test_large_feed_finishes_in_bounded_polls_and_malformed_feed_is_visible(self):
+    def test_complete_feed_retains_oldest_before_window_rotates_and_refuses_oversized_feed(self):
         src = feed()
         def text(i):
             return (f'<item><guid>{i}</guid><link>https://chelsea.example/n/{i}</link>'
                     f'<title>Story {i}</title><pubDate>Tue, 24 Nov 2026 10:05:00 GMT</pubDate></item>')
-        raw = '<rss><channel>' + ''.join(text(i) for i in range(140)) + '</channel></rss>'
-        initial = run(src, raw)
-        rest = run(src, raw, initial["cursor"])
-        self.assertEqual(initial["pending_entries"], 40)
-        self.assertEqual(rest["pending_entries"], 0)
-        self.assertEqual(len({r["external_id"] for r in initial["articles"] + rest["articles"]}), 140)
-        self.assertFalse(run(src, raw, rest["cursor"])["articles"])
+        def window(ids):
+            return '<rss><channel>' + ''.join(text(i) for i in ids) + '</channel></rss>'
+        initial = run(src, window(range(101)))
+        self.assertEqual(initial["pending_entries"], 0)
+        self.assertEqual({r["external_id"] for r in initial["articles"]}, {str(i) for i in range(101)})
+        restored_cursor = json.loads(json.dumps(initial["cursor"]))
+        later = run(src, window(range(1, 102)), restored_cursor)
+        self.assertEqual([r["external_id"] for r in later["articles"]], ["101"])
+        self.assertFalse(later["articles"][0].get("retracted"))
+        self.assertEqual(len(run(src, window(range(news.MAX_ITEMS)))["articles"]), news.MAX_ITEMS)
+        with self.assertRaisesRegex(ValueError, "limit exceeded"):
+            run(src, window(range(news.MAX_ITEMS + 1)), restored_cursor)
         with self.assertRaisesRegex(ValueError, "all 1 publisher"):
             run(src, '<rss><channel><item><guid>broken</guid></item></channel></rss>')
 
@@ -190,6 +234,65 @@ class NewsSources(unittest.TestCase):
             return Reply(b"", CLOCK, CLOCK, {}, "https://unrelated.example/payload")
         with self.assertRaisesRegex(ValueError, "does not match"):
             news.poll(src, CLUB, SEASON, getter=redirected)
+
+    def test_same_atom_update_and_id_conflict_across_polls_and_in_one_response(self):
+        src = feed()
+        def entry(ident, body, clock="10:00"):
+            return (f'<entry><id>{ident}</id><updated>2026-11-24T{clock}:00Z</updated>'
+                    f'<link href="https://chelsea.example/{ident}"/><content>{body}</content></entry>')
+        def pack(*rows):
+            return '<feed xmlns="http://www.w3.org/2005/Atom">' + ''.join(rows) + '</feed>'
+        absence, available = entry("A", "Player is out"), entry("A", "Player is available")
+        stable, new = entry("B", "Another player is absent"), entry("C", "Team update")
+        first = run(src, pack(absence, stable))
+        expected = next(a for a in first["articles"] if a["external_id"] == "A")
+        result = run(src, pack(available, stable, new), first["cursor"])
+        conflict, = result["revision_conflicts"]
+        self.assertEqual((conflict["external_id"], conflict["revision"], conflict["native_revision_at"]),
+                         ("A", expected["revision"], expected["updated_at"]))
+        self.assertEqual([r["external_id"] for r in result["articles"]], ["C"])
+        repeated = run(src, pack(absence, stable, new), result["cursor"])
+        self.assertFalse(repeated["articles"])
+        self.assertEqual(repeated["revision_conflicts"], [conflict])
+        same_batch = run(src, pack(absence, available, stable))
+        self.assertEqual([r["external_id"] for r in same_batch["articles"]], ["B"])
+        self.assertEqual(same_batch["revision_conflicts"], [conflict])
+        later = run(src, pack(entry("A", "Player is available", "11:00"), stable, new), repeated["cursor"])
+        self.assertFalse(later["revision_conflicts"])
+        self.assertGreater(later["articles"][0]["revision"], expected["revision"])
+
+        # Previously deployed cursors only knew the content-derived archive ID. A
+        # matching observation upgrades them in place without introducing new news.
+        legacy = {"binding": first["cursor"]["binding"], "rows": {store.digest("A"): expected["legacy_revision"]}}
+        upgraded = run(src, pack(absence), legacy)
+        self.assertEqual(upgraded["articles"], [])
+        collision = run(src, pack(available), upgraded["cursor"])
+        self.assertEqual({c["revision"] for c in collision["revision_conflicts"]},
+                         {expected["revision"], expected["legacy_revision"]})
+
+    def test_wiki_same_revision_isolates_affected_paragraph_even_if_introduced_earlier(self):
+        source = news.default_sources(CLUB, SEASON)[2]
+        def page(revid, body):
+            return {"title": source["page_title"], "content_model": "wikitext", "source": "==Team news==\n" + body,
+                    "latest": {"id": revid, "timestamp": "2026-11-24T11:00:00Z"},
+                    "license": {"url": news.WIKI_LICENSE}}
+        joe = "On 24 November, Joe Example was ruled out after an injury during the training session."
+        rob = "On 24 November, Rob Example was suspended and will miss the match after his red card."
+        body = joe + "\n\n" + rob
+        base = run(source, page(99, ""))
+        fresh = run(source, page(100, body), base["cursor"])
+        self.assertEqual(len(fresh["articles"]), 2)
+        target = next(a for a in fresh["articles"] if a["text"] == joe)
+        unchanged = run(source, page(101, body), fresh["cursor"])
+        collision = run(source, page(101, rob), unchanged["cursor"])
+        isolated, = collision["revision_conflicts"]
+        self.assertEqual((isolated["external_id"], isolated["revision"]), (target["external_id"], "100"))
+        legacy_cursor = {k: v for k, v in unchanged["cursor"].items() if k != "active_versions"}
+        old, = run(source, page(101, rob), legacy_cursor)["revision_conflicts"]
+        self.assertEqual((old["external_id"], old["revision_through"]), (target["external_id"], 101))
+        recovered = run(source, page(102, body), collision["cursor"])
+        reissued, = recovered["articles"]
+        self.assertEqual((reissued["external_id"], reissued["revision"]), (target["external_id"], "102"))
 
 
 if __name__ == "__main__":

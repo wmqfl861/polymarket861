@@ -247,9 +247,9 @@ class MatchdayNewsTests(unittest.TestCase):
                 page.on("pageerror", lambda exc: errors.append(str(exc)))
                 for section, row, phrases in [
                     ("matches", match_row, ["球队消息与预测变化", "Morgan Smith", "Leo James", "缺阵", "传闻", "变化（百分点）"]),
-                    ("matches", event, ["消息到达后的赛前预测", "可出场", "两组预测相同"]),
-                    ("sources", coverage, ["球队消息采集记录", "arsenal-bulletins", "chelsea-bulletins"]),
-                    ("rounds", round_row, ["新闻对比赛预测有帮助吗？", "1 / 10", "证据不足，继续观察"]),
+                    ("matches", event, ["消息到达后的赛前预测", "可出场", "两组预测相同", "查看前一次新闻预测", "上次更新"]),
+                    ("sources", coverage, ["球队消息采集记录", "arsenal-bulletins", "chelsea-bulletins", "待采条目"]),
+                    ("rounds", round_row, ["新闻对比赛预测有帮助吗？", "无新闻 Brier", "逐条大小球线的评分", "1 / 10", "证据不足，继续观察"]),
                 ]:
                     page.goto(f"{path.as_uri()}#{section}/{row['id']}")
                     detail = page.locator("#detail")

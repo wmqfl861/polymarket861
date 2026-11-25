@@ -5,7 +5,7 @@ from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import Mock
 
-from polymarket861 import store
+from polymarket861 import news_ai, store
 from scripts import news_history_archive as archive, reproduce_news_history as history
 
 
@@ -104,7 +104,7 @@ class NewsArchiveEvidence(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ancestry"):
             history.extract_side(panel, {"3": proof}, f, "2026-11-25T00:00:00Z")
 
-    def test_published_cohort_keeps_all_thirty_and_linked_historical_claims(self):
+    def test_published_cohort_keeps_every_game_and_omits_unrelated_friendly(self):
         panel = json.loads(gzip.decompress(history.DEFAULT_INPUTS.read_bytes()))
         self.assertEqual(store.digest(panel), history.PUBLISHED_INPUTS)
         self.assertEqual(len(panel["snapshot"]), 60)
@@ -130,19 +130,20 @@ class NewsArchiveEvidence(unittest.TestCase):
         claims = history.extract_side(
             side, panel["revisions"], f, "2027-01-01T00:00:00Z"
         )
-        links = [c for c in claims if c["player_name"] == "James Maddison"]
-        self.assertTrue(links)
-        self.assertTrue(
-            all(
-                c["status"] == "reported" and c["availability"] == "unknown"
-                for c in links
-            )
-        )
-        self.assertTrue(
-            all(
-                store.instant(c["published_at"])
-                < self.cut
-                < store.instant(c["received_at"])
-                for c in links
-            )
-        )
+        self.assertEqual(claims, [])
+        parsed = []
+        for story in side["stories"]:
+            for record in news_ai.extract(story["text"], side["roster"],
+                                          authority="secondary", team=side["team"]):
+                if record["player_name"] != "James Maddison":
+                    continue
+                self.assertEqual((record["event"], record["status"], record["availability"]),
+                                 ("injury", "reported", "unknown"))
+                self.assertIn("friendly against Newcastle United", record["quote"])
+                self.assertFalse(history.news.fixture_relevant(record["quote"], "",
+                                  {"kickoff": store.iso(f.kickoff), "home": f.home, "away": f.away}, side["team"]))
+                proof = panel["revisions"][str(story["origin"])]
+                self.assertLess(store.instant(proof["published_at"]), self.cut)
+                self.assertGreater(store.instant(proof["received_at"]), self.cut)
+                parsed.append(record)
+        self.assertEqual(len(parsed), 1)

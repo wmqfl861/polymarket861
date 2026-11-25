@@ -5,12 +5,14 @@ from __future__ import annotations
 import html
 import json
 import re
+import sqlite3
 import unicodedata
 import uuid
 from collections import Counter
 from contextlib import closing
 from datetime import timedelta
 from email.utils import parsedate_to_datetime
+from pathlib import Path
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 
@@ -466,52 +468,153 @@ def refresh(data_dir, team, season, *, getter=wiki._get):
     return base | report | {"next_at": next_at}
 
 
-def as_of(data_dir, team, season, cutoff):
-    """Fresh locally known identities for one club. Withhold concurrent cross-club claims."""
+def _latest(db, season, cutoff):
+    # One indexed seek per club even if the database contains years of poll receipts.
+    # Existing stores may predate the news module. Reads must not create a schema.
+    if not db.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='news_roster_receipts'"
+    ).fetchone():
+        return []
+    return db.execute(
+        """WITH RECURSIVE clubs(club) AS (
+             SELECT min(club) FROM news_roster_receipts WHERE season=:season
+             UNION ALL SELECT (SELECT min(r.club) FROM news_roster_receipts r
+               WHERE r.season=:season AND r.club>clubs.club) FROM clubs WHERE club IS NOT NULL
+           )
+           SELECT r.club, r.seen_at, r.digest FROM clubs
+           JOIN news_roster_receipts r ON r.rowid=(
+             SELECT i.rowid FROM news_roster_receipts i WHERE i.season=:season AND i.club=clubs.club
+             AND i.seen_at<=:cutoff ORDER BY i.seen_at DESC LIMIT 1)
+           ORDER BY r.club""",
+        {"season": season, "cutoff": cutoff},
+    ).fetchall()
+
+
+def _expiry(stamp):
+    # Existing as_of semantics permit evidence exactly seven days old.
+    return store.iso(store.instant(stamp) + _MAX_AGE + timedelta(microseconds=1))
+
+
+def frontier(db, season, cutoff):
+    """Season-wide roster-change cursor and next already-determined freshness boundary.
+
+    This can run once per season in the event scheduler's transaction. Any club can
+    affect a different club's eligibility by claiming the same player. The token only
+    uses receipts already visible at the cutoff. Future receipts are never exposed;
+    a new receipt changes the token on the next pass that can actually observe it.
+    """
     season_year(season)
-    through = store.instant(cutoff)
-    earliest = store.iso(through - _MAX_AGE)
-    with closing(_connection(data_dir)) as db:
-        rows = db.execute(
-            """SELECT r.club, r.seen_at, r.digest, c.document FROM news_roster_receipts AS r
-               JOIN (SELECT club, max(seen_at) AS latest FROM news_roster_receipts
-                     WHERE season=? AND seen_at BETWEEN ? AND ? GROUP BY club) AS t
-                 ON r.club=t.club AND r.seen_at=t.latest
-               JOIN news_roster_content AS c ON c.digest=r.digest WHERE r.season=?""",
-            (season, earliest, store.iso(through), season),
-        ).fetchall()
-    counts, ours = Counter(), None
-    for row in rows:
-        doc = json.loads(row["document"])
+    at = store.iso(cutoff)
+    states, next_at = [], None
+    for club, seen, fingerprint in _latest(db, season, at):
+        expiry = _expiry(seen)
+        fresh = at < expiry
+        states.append((club, seen, fingerprint, fresh))
+        if fresh and (next_at is None or expiry < next_at):
+            next_at = expiry
+    return {"token": store.digest(states), "next_at": next_at}
+
+
+def roster_views(db, teams, season, cutoff):
+    """Resolve both sides and all concurrent cross-club claims in one read-only snapshot.
+
+    Each requested club gets its receipt state, source digest and first excluded
+    instant. An unseen, stale or explicitly withdrawn roster supplies no eligible
+    player. A gap in this club's source data differs from a player held out because
+    another currently observed club claims his identity.
+    """
+    season_year(season)
+    at = store.iso(cutoff)
+    views = {
+        _key(team): {
+            "state": "never_observed",
+            "known": False,
+            "seen_at": None,
+            "digest": None,
+            "expires_at": None,
+            "players": [],
+            "ambiguous_player_ids": [],
+        }
+        for team in teams
+    }
+    if not views:
+        return views
+    counts, requested, active = Counter(), {}, {}
+    for club, seen, fingerprint in _latest(db, season, at):
+        expiry = _expiry(seen)
+        fresh = at < expiry
+        if club in views:
+            views[club].update(
+                state="available" if fresh else "expired",
+                known=True,
+                seen_at=seen,
+                digest=fingerprint,
+                expires_at=expiry,
+            )
+        if fresh:
+            if fingerprint in active:
+                raise ValueError(
+                    "one roster receipt claims conflicting club identities"
+                )
+            active[fingerprint] = club
+    # Zero observed target clubs cannot have any eligible players at this cutoff.
+    if not any(view["state"] == "available" for view in views.values()):
+        return views
+    placeholders = ",".join("?" for _ in active)
+    documents = db.execute(
+        f"SELECT digest, document FROM news_roster_content WHERE digest IN ({placeholders})",
+        tuple(active),
+    ).fetchall()
+    if len(documents) != len(active):
+        raise ValueError("missing content for a stored roster receipt")
+    for fingerprint, raw in documents:
+        club = active[fingerprint]
+        doc = json.loads(raw)
         if (
-            store.digest(doc) != row["digest"]
+            store.digest(doc) != fingerprint
             or doc["season"] != season
-            or _key(doc["team"]) != row["club"]
+            or _key(doc["team"]) != club
         ):
             raise ValueError("stored roster identity or digest mismatch")
         counts.update(p["player_id"] for p in doc["players"])
-        if row["club"] == _key(team):
-            ours = doc, row["seen_at"]
-    if not ours:
+        if club not in views:
+            continue
+        if doc.get("withheld") or not doc["players"]:
+            views[club]["state"] = "withdrawn"
+        else:
+            requested[club] = doc
+    for club, doc in requested.items():
+        view = views[club]
+        source = {
+            k: doc[k]
+            for k in (
+                "team",
+                "season",
+                "source",
+                "source_url",
+                "squad_sha256",
+                "identity_sha256",
+                "revision",
+                "published_at",
+                "license",
+                "attribution",
+            )
+        }
+        for player in doc["players"]:
+            if counts[player["player_id"]] == 1:
+                view["players"].append(player | source | {"seen_at": view["seen_at"]})
+            else:
+                view["ambiguous_player_ids"].append(player["player_id"])
+    return views
+
+
+def as_of(data_dir, team, season, cutoff):
+    """Fresh, locally observed and unambiguous identities for a club."""
+    path = Path(data_dir).expanduser() / "runtime.sqlite3"
+    if not path.is_file():
         return []
-    doc, seen = ours
-    source = {
-        k: doc[k]
-        for k in (
-            "team",
-            "season",
-            "source",
-            "source_url",
-            "squad_sha256",
-            "identity_sha256",
-            "revision",
-            "published_at",
-            "license",
-            "attribution",
-        )
-    }
-    return [
-        p | source | {"seen_at": seen}
-        for p in doc["players"]
-        if counts[p["player_id"]] == 1
-    ]
+    with closing(
+        sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=5)
+    ) as db:
+        db.execute("BEGIN")
+        return roster_views(db, [team], season, cutoff)[_key(team)]["players"]

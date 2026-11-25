@@ -140,9 +140,7 @@ def _collection_health(db, topic, task_inputs):
     """Project actual collection tables. Generic reports and supplied task fields are never samples."""
     from .evidence_sources import FIELDS, USES
 
-    if topic not in ("source", "incident", "discovery") or not _table(
-        db, "ev_source_versions"
-    ):
+    if topic not in ("source", "incident", "discovery"):
         return {}
     subject = None
     if isinstance(task_inputs, dict) and _table(db, "research_maintenance_subjects"):
@@ -157,6 +155,14 @@ def _collection_health(db, topic, task_inputs):
         ).fetchone()
         if row:
             subject = row[0]
+    if topic == "source":
+        from .news import RESEARCH_SOURCE, research_health
+        if subject == RESEARCH_SOURCE:
+            # Recompute from actual checks. User-supplied report bodies are
+            # never passed into the model-visible workspace.
+            return {"news_collection_health": research_health(db)}
+    if not _table(db, "ev_source_versions"):
+        return {}
     if topic == "incident":
         if not _table(db, "ev_quarantine"):
             return {}

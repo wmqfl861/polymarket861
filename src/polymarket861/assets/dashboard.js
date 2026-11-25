@@ -111,7 +111,7 @@
     higher_score_this_season: "本赛季有新闻组的平均分更高",
     lower_score_this_season: "本赛季有新闻组的平均分更低",
     inconclusive: "本赛季的分差仍无法区分两组",
-    no_roster: "缺少名单", never_checked: "尚未采集", ok: "正常", partial: "部分成功", error: "失败",
+    pending: "仍有消息待处理", no_roster: "缺少名单", never_checked: "尚未采集", ok: "正常", partial: "部分成功", error: "失败",
     training: "训练",
     manual: "人工记录",
     automated: "自动采集",
@@ -399,7 +399,7 @@
     higher_score_this_season: "本赛季有新闻组的平均分更高",
     lower_score_this_season: "本赛季有新闻组的平均分更低",
     inconclusive: "本赛季的分差仍无法区分两组",
-    no_roster: "缺少名单", never_checked: "尚未采集", ok: "正常", partial: "部分成功", error: "失败",
+    pending: "仍有消息待处理", no_roster: "缺少名单", never_checked: "尚未采集", ok: "正常", partial: "部分成功", error: "失败",
     training: "训练", expired_claim: "消息已过期", no_team_rates: "球队基线缺少进球率",
   };
   const newsLabel = (value) => Object.hasOwn(newsLabels, value) ? newsLabels[value] : translated(value);
@@ -458,6 +458,23 @@
       ["已封存配对", p.sealed],
       ["两个球队均有采集的场次", p.observed_both],
     ]);
+    const markets = {result: "胜平负", total: "全场大 2.5", home: "主队大 1.5", away: "客队大 1.5"};
+    const metricsFor = (label, m) => [label, m.count, format(object(m.brier).no_news),
+      format(object(m.brier).with_news), format(object(m.log_loss).no_news), format(object(m.log_loss).with_news)];
+    const headings = ["玩法", "场数", "无新闻 Brier", "有新闻 Brier", "无新闻对数损失", "有新闻对数损失"];
+    if (p.scored > 0) {
+      table(box, headings, Object.entries(object(p.endpoints)).map(([k, m]) => metricsFor(markets[k] || k, m)));
+      const allLines = Object.entries(object(p.lines));
+      if (allLines.length) {
+        const more = create("details", "");
+        more.append(create("summary", "", "逐条大小球线的评分"));
+        table(more, headings, allLines.map(([key, m]) => {
+          const [family, line] = key.split("/");
+          return metricsFor((names[family] || family) + " " + line, m);
+        }));
+        box.append(more);
+      }
+    }
     const interval = object(p.interval);
     const bounds = object(object(interval.endpoints).score);
     if (num(bounds.lower) !== null && num(bounds.upper) !== null)
@@ -471,10 +488,10 @@
     const p = object(row.payload), counts = object(p.archive_counts);
     const box = panel("球队消息采集记录");
     metrics(box, [["球队与来源组合", array(p.streams).length], ["留存的文章版本", counts.news_articles],
-      ["已留存球员主张", counts.news_claims]]);
-    table(box, ["球队", "来源", "最近检查", "状态", "下次检查", "本次问题"], array(p.streams).map(stream => {
+      ["已留存球员主张", counts.news_claims], ["来源待采条目", p.pending_entries]]);
+    table(box, ["球队", "来源", "最近检查", "状态", "待采条目", "下次检查", "本次问题"], array(p.streams).map(stream => {
       const last = object(stream.latest);
-      return [stream.team, stream.source, time(last.checked_at), newsLabel(last.state || "never_checked"),
+      return [stream.team, stream.source, time(last.checked_at), newsLabel(last.state || "never_checked"), last.provider_pending,
         time(stream.next_at), array(last.issues).join(" · ")];
     }));
     detail.append(box);
@@ -1333,6 +1350,16 @@
       const p = object(row.payload);
       const box = panel("消息到达后的赛前预测");
       facts(box, [["版本", p.revision], ["计算时间", time(p.created_at)], ["开球", time(p.kickoff)]]);
+      const prior = p.previous_digest && reports.find(r => r.kind === "news-update" && r.key === p.previous_digest);
+      if (prior) {
+        box.append(reportLink(prior, "查看前一次新闻预测"));
+        const before = object(object(prior.payload.news_pair).with_news).probabilities || {};
+        const after = object(object(p.news_pair).with_news).probabilities || {};
+        const markets = [["home_win", "主胜"], ["draw", "平局"], ["away_win", "客胜"],
+          ["total_over_2_5", "全场大 2.5"], ["home_over_1_5", "主队大 1.5"], ["away_over_1_5", "客队大 1.5"]];
+        table(box, ["玩法", "上次更新", "本次更新"], markets.map(([key, label]) =>
+          [label, probability(before[key]), probability(after[key])]));
+      }
       box.append(create("p", "note", "此记录随球员消息变化生成。轮次评分使用固定 T−24 h、T−60 min 的封存预测。"));
       detail.append(box);
       newsPrediction({...p, context: {player_news: p.snapshot}}, detail);

@@ -23,6 +23,7 @@ MAX_AGE = timedelta(days=7)
 COVERAGE_AGE = timedelta(hours=6)
 POLL_INTERVAL = timedelta(minutes=20)
 LEASE = timedelta(minutes=8)
+RESEARCH_SOURCE = "epl-team-news"
 MAX_BATCH = 100
 MAX_TEXT = 180_000
 
@@ -59,11 +60,22 @@ CREATE INDEX IF NOT EXISTS news_latest_revision ON news_articles(
 CREATE INDEX IF NOT EXISTS news_articles_fixture ON news_articles(fixture_id,kickoff,recorded_at);
 CREATE TABLE IF NOT EXISTS news_poll_proofs (
  id TEXT PRIMARY KEY,payload TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS news_feed_inbox (
+ seq INTEGER PRIMARY KEY,season TEXT NOT NULL,team_key TEXT NOT NULL,source TEXT NOT NULL,
+ receipt TEXT NOT NULL REFERENCES news_poll_proofs(id),item_index INTEGER NOT NULL,
+ received_at TEXT NOT NULL,payload TEXT NOT NULL,UNIQUE(receipt,item_index));
+CREATE INDEX IF NOT EXISTS news_inbox_stream ON news_feed_inbox(season,team_key,source,seq);
 CREATE TABLE IF NOT EXISTS news_article_proofs (
  article INTEGER PRIMARY KEY REFERENCES news_articles(seq),receipt TEXT NOT NULL REFERENCES news_poll_proofs(id));
 CREATE TABLE IF NOT EXISTS news_revision_conflicts (
  article INTEGER NOT NULL REFERENCES news_articles(seq),other_sha256 TEXT NOT NULL,recorded_at TEXT NOT NULL,
  PRIMARY KEY(article,other_sha256));
+CREATE TABLE IF NOT EXISTS news_publisher_conflicts (
+ season TEXT NOT NULL,team_key TEXT NOT NULL,source TEXT NOT NULL,external_id TEXT NOT NULL,
+ selector_kind TEXT NOT NULL,selector TEXT NOT NULL,recorded_at TEXT NOT NULL,
+ receipt TEXT NOT NULL REFERENCES news_poll_proofs(id),reason TEXT NOT NULL,
+ fixture_id TEXT NOT NULL,kickoff TEXT NOT NULL,
+ PRIMARY KEY(season,team_key,source,external_id,selector_kind,selector));
 CREATE TABLE IF NOT EXISTS news_extractions (
  article INTEGER PRIMARY KEY REFERENCES news_articles(seq),known_at TEXT NOT NULL,
  model_version TEXT NOT NULL,roster_sha256 TEXT NOT NULL,claim_count INTEGER NOT NULL);
@@ -363,7 +375,7 @@ def _target_for(publication, games, now):
     return None
 
 
-def _poll_proof(root, task, response, local_start, received):
+def _poll_proof(root, task, response, local_start, received, stage_feed):
     raw_digest = response.get("response_sha256")
     if raw_digest is not None and (
         not isinstance(raw_digest, str)
@@ -382,7 +394,10 @@ def _poll_proof(root, task, response, local_start, received):
         "received_at": network_received,
         "observed_at": received,
         "request_url": response.get("request_url") or task["config"].get("url"),
-        "response_sha256": raw_digest or store.digest(response["articles"]),
+        "response_sha256": raw_digest or store.digest(
+            {"articles": response["articles"], "revision_conflicts": response["revision_conflicts"]}
+            if response.get("revision_conflicts") else response["articles"]
+        ),
         "hash_basis": "upstream_response_bytes"
         if raw_digest
         else "adapter_article_projection",
@@ -395,7 +410,129 @@ def _poll_proof(root, task, response, local_start, received):
             "INSERT OR IGNORE INTO news_poll_proofs VALUES (?,?)",
             (ident, store.canonical(proof)),
         )
+        if stage_feed:
+            # A rolling feed can remove an entry before the next tick or while
+            # this process restarts. Capture the authorized original projections
+            # atomically with their first physical response and actual receipt.
+            db.executemany(
+                """INSERT OR IGNORE INTO news_feed_inbox
+                (season,team_key,source,receipt,item_index,received_at,payload) VALUES (?,?,?,?,?,?,?)""",
+                ((*_key(task), ident, i, received, store.canonical(item))
+                 for i, item in enumerate(response["articles"])),
+            )
     return ident, proof
+
+
+def _matches_marker(kind, marker, revision, updated):
+    if kind == "native_at":
+        # A witnessed newer edition already supersedes older statements about
+        # this same story, even if both variants of the new edition collided in
+        # a single response before either could be archived as an article.
+        return updated <= marker
+    if kind == "wiki_through":
+        return revision.isascii() and revision.isdecimal() and int(revision) <= int(marker)
+    return kind == "revision" and revision == marker
+
+
+def _provider_conflicts(root, task, conflicts, received, receipt):
+    """Keep exact upstream contradictions independent of the moving provider cursor.
+
+    Link to already captured versions in the event worker's receipt stream. If a
+    collision was first seen within one response, retain its native identity so
+    either variant stays isolated even if it returns alone later.
+    """
+    if not isinstance(conflicts, list) or len(conflicts) > 2000:
+        raise ValueError("invalid publisher revision conflicts")
+    prepared = []
+    for conflict in conflicts:
+        if not isinstance(conflict, dict):
+            raise ValueError("invalid publisher revision contradiction")
+        external = _nonempty(conflict.get("external_id"), "conflicted external id", 2048)
+        reason = _nonempty(conflict.get("reason"), "conflict reason", 512)
+        selectors = []
+        for key in ("revision", "legacy_revision"):
+            value = conflict.get(key)
+            if type(value) in (int, str):
+                selectors.append(("revision", _nonempty(str(value), "conflicted revision", 1024)))
+        if conflict.get("native_revision_at"):
+            stamp = store.iso(conflict["native_revision_at"])
+            if stamp > received:
+                raise ValueError("publisher conflict revision is in the future")
+            selectors.append(("native_at", stamp))
+        through = conflict.get("revision_through")
+        if through is not None:
+            if task["config"].get("kind") != "wiki" or type(through) is not int or through <= 0:
+                raise ValueError("invalid publisher revision boundary")
+            selectors.append(("wiki_through", str(through)))
+        before = conflict.get("latest_observed_before")
+        if before is not None:
+            before = store.iso(before)
+            if task["source"] != "touchline-rumours" or before > received:
+                raise ValueError("invalid scoped prior publisher observation")
+            selectors.append(("observed_before", before))
+        if not selectors:
+            raise ValueError("missing publisher revision identity")
+        prepared.append((external, reason, selectors))
+    with _db(root, write=True) as db:
+        if not _owns(db, task):
+            raise ValueError("news collection lease expired")
+        at = _utc()
+        for external, reason, selectors in prepared:
+            key = (*_key(task), external)
+            old = db.execute(
+                """SELECT seq,revision,updated_at,recorded_at FROM news_articles WHERE season=? AND team_key=?
+                AND source=? AND external_id=? ORDER BY updated_at DESC,seq DESC""", key
+            ).fetchall()
+            for kind, marker in selectors[:]:
+                if kind == "observed_before":
+                    prior = next((row for row in old if row["recorded_at"] <= marker), None)
+                    if prior is not None:
+                        selectors.append(("revision", prior["revision"]))
+            for kind, marker in selectors:
+                db.execute(
+                    "INSERT OR IGNORE INTO news_publisher_conflicts VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                    (*key, kind, marker, at, receipt, reason, task["target"]["fixture_id"], task["target"]["kickoff"]),
+                )
+                for row in old:
+                    if _matches_marker(kind, marker, row["revision"], row["updated_at"]):
+                        db.execute(
+                            """INSERT INTO news_revision_conflicts SELECT ?,receipt,recorded_at FROM news_publisher_conflicts
+                            WHERE season=? AND team_key=? AND source=? AND external_id=? AND selector_kind=? AND selector=?
+                            ON CONFLICT(article,other_sha256) DO NOTHING""", (row["seq"], *key, kind, marker)
+                        )
+
+
+def _open_conflicts(root, task):
+    with _db(root) as db:
+        return db.execute(
+            """SELECT count(DISTINCT m.external_id) FROM news_publisher_conflicts m
+            LEFT JOIN news_articles a ON a.seq=(SELECT n.seq FROM news_articles n WHERE n.season=m.season
+                AND n.team_key=m.team_key AND n.source=m.source AND n.external_id=m.external_id
+                ORDER BY n.updated_at DESC,n.seq DESC LIMIT 1)
+            WHERE m.season=? AND m.team_key=? AND m.source=? AND m.fixture_id=? AND m.kickoff=?
+            AND (a.seq IS NULL OR EXISTS (SELECT 1 FROM news_revision_conflicts q WHERE q.article=a.seq))""",
+            (*_key(task), task["target"]["fixture_id"], task["target"]["kickoff"]),
+        ).fetchone()[0]
+
+
+def _native_legacy_match(root, db, key, item, obj):
+    if not item.get("native_revision_at"):
+        return None
+    if store.iso(item["native_revision_at"]) != obj["updated_at"]:
+        raise ValueError("native revision clock differs from article revision")
+    rows = db.execute(
+        """SELECT revision,original_sha256 FROM news_articles WHERE season=? AND team_key=? AND source=?
+        AND external_id=? AND updated_at=?""", (*key, obj["updated_at"])
+    ).fetchall()
+    found = False
+    for row in rows:
+        if not re.fullmatch(r"[0-9a-f]{64}", row["revision"]):
+            continue
+        prior = json.loads(store.read_blob(root, row["original_sha256"]))
+        if any(prior[k] != obj[k] for k in ("url", "title", "text", "published_at", "retracted")):
+            return False
+        found = True
+    return True if found else None
 
 
 def _archive(root, task, item, received, proof_id):
@@ -409,7 +546,8 @@ def _archive(root, task, item, received, proof_id):
             AND source=? AND external_id=? AND revision=?""",
             unique,
         ).fetchone()
-    if old and old["original_sha256"] == sha:
+        legacy_match = _native_legacy_match(root, db, unique[:-1], item, obj)
+    if legacy_match is not False and ((old and old["original_sha256"] == sha) or legacy_match is True):
         return 0
     store.archive_bytes(
         root,
@@ -418,14 +556,12 @@ def _archive(root, task, item, received, proof_id):
         observed_at=received,
         metadata={"source_id": task["source"], "team": task["team_key"]},
     )
-    if old:
-        with _db(root, write=True) as db:
-            if not _owns(db, task):
-                raise ValueError("news collection lease expired")
-            db.execute(
-                "INSERT OR IGNORE INTO news_revision_conflicts VALUES (?,?,?)",
-                (old["seq"], sha, _utc()),
-            )
+    if old or legacy_match is False:
+        marker = {"external_id": obj["external_id"], "revision": obj["revision"],
+                  "reason": "same news revision has different content"}
+        if item.get("native_revision_at"):
+            marker["native_revision_at"] = obj["updated_at"]
+        _provider_conflicts(root, task, [marker], received, proof_id)
         raise ValueError("same news revision has different content; revision isolated")
     with _db(root, write=True) as db:
         if not _owns(db, task):
@@ -461,6 +597,14 @@ def _archive(root, task, item, received, proof_id):
                 "INSERT INTO news_article_proofs VALUES (?,?)",
                 (ins.lastrowid, proof_id),
             )
+            markers = db.execute(
+                """SELECT selector_kind,selector,receipt,recorded_at FROM news_publisher_conflicts
+                WHERE season=? AND team_key=? AND source=? AND external_id=?""", unique[:-1]
+            )
+            for marker in markers:
+                if _matches_marker(marker["selector_kind"], marker["selector"], obj["revision"], obj["updated_at"]):
+                    db.execute("INSERT OR IGNORE INTO news_revision_conflicts VALUES (?,?,?)",
+                               (ins.lastrowid, marker["receipt"], marker["recorded_at"]))
         return ins.rowcount
 
 
@@ -475,10 +619,18 @@ _NEWER = """NOT EXISTS (SELECT 1 FROM news_articles n WHERE n.season=a.season
 
 _CUP_CONTEXT = re.compile(
     r"\b(champions league|europa league|conference league|fa cup|league cup|carabao cup|"
-    r"world cup|international duty|youth league|under[- ](?:18|21|23)|women['’]s)\b",
+    r"world cup|international duty|(?:pre[- ]?season|international|club) friendly|"
+    r"friendly (?:match|against|with)|youth league|under[- ](?:18|21|23)|women['’]s)\b",
     re.I,
 )
-_OTHER_GAME = re.compile(r"\b(?:against|versus|vs\.?)\s+([\w’' -]{2,65})", re.I)
+# Look ahead so two opponent references in one sentence are checked separately.
+_OPPONENT = re.compile(
+    r"(?=\b(?:against|versus|vs\.?|(?:trip|visit|journey|travell?ing|travels?)\s+to|"
+    r"(?:visit|visits)\s+(?:of|from)|(?:game|match|tie|fixture|clash|meeting)\s+"
+    r"(?:with|at|away\s+to)|(?:away|at\s+home)\s+to)\s+([\w’' .&-]{1,75}))",
+    re.I,
+)
+_NON_OPPONENT = re.compile(r"^(?:the (?:odds|clock)|medical advice)\b", re.I)
 
 
 _ALIASES = {
@@ -499,30 +651,24 @@ _ALIASES = {
 }
 
 
-def _relevant(quote, title, task, game):
-    if _CUP_CONTEXT.search(quote + " " + title):
-        return False
-    opponent = team_key(
-        game["away"] if team_key(game["home"]) == task["team_key"] else game["home"]
-    )
-    for match in _OTHER_GAME.finditer(quote + " " + title):
-        words = team_key(match.group(1))
-        valid = (opponent, *_ALIASES.get(opponent, ()))
-        if any(words == name or words.startswith(name + "-") for name in valid):
-            continue
-        # A named opponent outside the domestic fixture list (e.g. Celtic)
-        # is equally unrelated. Lowercase generic phrases are ignored.
-        if match[1][:1].isupper():
-            return False
-        for other in task["games"]:
-            for side in ("home", "away"):
-                name = team_key(other[side])
-                if name != task["team_key"] and any(
-                    words == a or words.startswith(a + "-")
-                    for a in (name, *_ALIASES.get(name, ()))
-                ):
-                    return False
+def fixture_relevant(quote, title, game, team):
+    """Match the stated opponent, competition and local match date before assigning news."""
     combined = quote + " " + title
+    if _CUP_CONTEXT.search(combined):
+        return False
+    home, away = team_key(game["home"]), team_key(game["away"])
+    clubs = {home: away, away: home}
+    opponent = clubs.get(team_key(team))
+    if not opponent:
+        return False
+    aliases = (opponent, *_ALIASES.get(opponent, ()))
+    for match in _OPPONENT.finditer(combined):
+        target = match[1].strip()
+        if _NON_OPPONENT.match(target):
+            continue
+        named = team_key(target).removeprefix("the-")
+        if not any(named == alias or named.startswith(alias + "-") for alias in aliases):
+            return False
     if _RECAP.search(combined) and not _FUTURE.search(quote):
         return False
     # Named dates in an explicitly match-specific claim must agree with this
@@ -714,7 +860,7 @@ def _extract_pending(root, task, players, extract, settings, decision):
     target = task["target"]
     with _db(root) as db:
         articles = db.execute(
-            """SELECT a.*,p.receipt receipt_id,pp.payload source_proof FROM news_articles a
+            """SELECT a.*,p.receipt receipt_id,pp.payload source_proof,count(*) OVER () pending_total FROM news_articles a
             LEFT JOIN news_article_proofs p ON p.article=a.seq LEFT JOIN news_poll_proofs pp ON pp.id=p.receipt
             LEFT JOIN news_analysis_runs r ON r.seq=(SELECT seq FROM news_analysis_runs
                 WHERE article=a.seq ORDER BY known_at DESC,seq DESC LIMIT 1)
@@ -732,7 +878,7 @@ def _extract_pending(root, task, players, extract, settings, decision):
                 at,
                 at,
                 at,
-                MAX_BATCH + 1,
+                MAX_BATCH,
             ),
         ).fetchall()
     roster_sha = store.digest(players)
@@ -742,8 +888,8 @@ def _extract_pending(root, task, players, extract, settings, decision):
     fallbacks = Counter()
     abstentions = 0
     begun = monotonic()
-    remaining = len(articles)
-    for article in articles[:MAX_BATCH]:
+    remaining = articles[0]["pending_total"] if articles else 0
+    for article in articles:
         if monotonic() - begun > 25:
             break
         original = json.loads(store.read_blob(root, article["original_sha256"]))
@@ -768,7 +914,7 @@ def _extract_pending(root, task, players, extract, settings, decision):
         )
         for claim in claims:
             fact = _grounded(claim, original, identities)
-            if _relevant(fact["quote"], original["title"], task, target):
+            if fixture_relevant(fact["quote"], original["title"], target, task["team"]):
                 rows.append(fact)
         meta["fixture_scope_excluded"] = len(claims) - len(rows)
         with _db(root, write=True) as db:
@@ -856,6 +1002,7 @@ def _extract_pending(root, task, players, extract, settings, decision):
     return {
         "claims_added": total,
         "backlog": remaining > 0,
+        "analysis_remaining": remaining,
         "analysis_backends": dict(backends),
         "fallbacks": dict(fallbacks),
         "zero_claim_analyses": abstentions,
@@ -874,6 +1021,8 @@ def _finish(root, task, detail, cursor, provider_after):
             if not failed
             else timedelta(minutes=min(60, 3 * 2 ** (failed - 1)))
         )
+        if detail.get("provider_pending", 0):
+            delay = timedelta(minutes=1)
         next_at = max(_plus(at, delay), provider_after or "")
         db.execute(
             """UPDATE news_streams SET next_at=?,provider_after=?,owner=NULL,lease_until=NULL,
@@ -885,7 +1034,7 @@ def _finish(root, task, detail, cursor, provider_after):
             s.startswith("extraction:") for s in detail["issues"]
         ):
             retry = _plus(at, min(delay, timedelta(minutes=15)))
-        if detail["state"] == "pending":
+        if detail.get("extraction_pending") or detail.get("inbox_pending") or detail.get("archive_incomplete"):
             retry = _plus(at, timedelta(minutes=1))
         if detail["state"] == "degraded":
             retry = _plus(at, timedelta(minutes=30))
@@ -946,7 +1095,38 @@ def _reject(root, task, item, received, receipt, exc):
         )
 
 
+def _accept_item(root, task, item, received, receipt, detail):
+    try:
+        detail["articles_added"] += _archive(root, task, item, received, receipt)
+    except (KeyError, TypeError, ValueError) as exc:
+        detail["rejected_items"] = detail.get("rejected_items", 0) + 1
+        _reject(root, task, item, received, receipt, exc)
+        if len(detail["issues"]) < 3:
+            detail["issues"].append("article: " + str(exc)[:240])
+
+
+def _drain_feed_inbox(root, task, detail):
+    with _db(root) as db:
+        pending = db.execute(
+            """SELECT seq,received_at,receipt,payload FROM news_feed_inbox
+            WHERE season=? AND team_key=? AND source=? ORDER BY seq LIMIT ?""", (*_key(task), MAX_BATCH)
+        ).fetchall()
+    for row in pending:
+        _accept_item(root, task, json.loads(row["payload"]), row["received_at"], row["receipt"], detail)
+        # A crash between archiving and acknowledging simply retries the immutable row.
+        with _db(root, write=True) as db:
+            if not _owns(db, task):
+                raise ValueError("news collection lease expired")
+            db.execute("DELETE FROM news_feed_inbox WHERE seq=?", (row["seq"],))
+    with _db(root) as db:
+        return db.execute(
+            "SELECT count(*) FROM news_feed_inbox WHERE season=? AND team_key=? AND source=?", _key(task)
+        ).fetchone()[0]
+
+
 def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, decision):
+    from .news_sources import MAX_ITEMS
+
     target = task["target"]
     detail = {
         "team": task["team"],
@@ -983,7 +1163,11 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
             if result.get("next_poll_after"):
                 provider_after = store.iso(result["next_poll_after"])
             articles = result["articles"]
-            if not isinstance(articles, list) or len(articles) > MAX_BATCH:
+            stage_feed = (task["config"].get("kind") == "feed" and task["config"].get("free") is True
+                and result.get("response_sha256") and result.get("request_url") == task["config"].get("url")
+                and isinstance(result.get("entries"), int))
+            limit = MAX_ITEMS if stage_feed else MAX_BATCH
+            if not isinstance(articles, list) or len(articles) > limit:
                 raise ValueError("invalid or over-limit news batch")
             detail["provider_counts"] = {
                 k: result[k]
@@ -991,31 +1175,35 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
                     "player_rows",
                     "upstream_rumours",
                     "invalid_entries",
+                    "pending_entries",
                     "baseline_only",
                     "revisions",
                 )
                 if k in result and type(result[k]) in (bool, int)
             }
+            pending = result.get("pending_entries", 0)
+            if type(pending) is not int or pending < 0:
+                raise ValueError("invalid publisher continuation count")
+            detail["provider_pending"] = pending
             if result.get("invalid_entries"):
                 issues.append("publisher feed included invalid entries")
             candidate_cursor = store.canonical(result.get("cursor") or {})
             if len(candidate_cursor) > 2_000_000:
                 raise ValueError("news cursor exceeds the storage bound")
-            proof_id, proof = _poll_proof(root, task, result, local_start, received)
+            proof_id, proof = _poll_proof(root, task, result, local_start, received, stage_feed)
             detail["source_observed_at"] = received
             detail["response_sha256"] = proof["response_sha256"]
             detail["response_hash_basis"] = proof["hash_basis"]
-            for item in articles:
-                try:
-                    detail["articles_added"] += _archive(
-                        root, task, item, received, proof_id
-                    )
-                except (KeyError, TypeError, ValueError) as exc:
-                    _reject(root, task, item, received, proof_id, exc)
-                    if len(issues) < 3:
-                        issues.append("article: " + str(exc)[:240])
+            conflicts = result.get("revision_conflicts", [])
+            if conflicts:
+                _provider_conflicts(root, task, conflicts, received, proof_id)
+                detail["revision_conflicts"] = len(conflicts)
+                issues.append("publisher returned contradictory content for a single revision")
+            if not stage_feed:
+                for item in articles:
+                    _accept_item(root, task, item, received, proof_id, detail)
             cursor = candidate_cursor
-            detail["fetch_complete"] = not issues
+            detail["network_complete"] = not issues and detail["provider_pending"] == 0
         except Exception as exc:
             issues.append("poll: " + str(exc)[:240])
             retry = getattr(exc, "retry_after", None)
@@ -1030,7 +1218,7 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
             last = db.execute(
                 """SELECT detail FROM news_checks WHERE season=? AND team_key=? AND source=?
                 AND fixture_id=? AND kickoff=? AND json_extract(detail,'$.polled')=1
-                AND json_extract(detail,'$.fetch_complete')=1 ORDER BY checked_at DESC,id DESC LIMIT 1""",
+                ORDER BY checked_at DESC,id DESC LIMIT 1""",
                 (*_key(task), target["fixture_id"], target["kickoff"]),
             ).fetchone()
         if last:
@@ -1040,16 +1228,35 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
                 "response_sha256",
                 "response_hash_basis",
                 "provider_counts",
+                "provider_pending",
+                "revision_conflicts",
+                "network_complete",
             ):
                 if field in prior:
                     detail[field] = prior[field]
+            detail["network_complete"] = prior.get("network_complete", prior.get("fetch_complete", False))
+            if not detail["network_complete"] and not detail.get("provider_pending"):
+                issues.append("latest source check incomplete for this fixture")
         else:
             issues.append("no previously successful source receipt for this fixture")
+    try:
+        if task["config"].get("kind") == "feed":
+            detail["inbox_pending"] = _drain_feed_inbox(root, task, detail)
+        outstanding = _open_conflicts(root, task)
+        if outstanding:
+            if not detail.get("revision_conflicts"):
+                issues.append("an earlier publisher revision contradiction remains unresolved")
+            detail["revision_conflicts"] = max(outstanding, detail.get("revision_conflicts", 0))
+    except Exception as exc:
+        detail["archive_incomplete"] = True
+        issues.append("archive: " + str(exc)[:240])
+    detail["fetch_complete"] = bool(detail.get("network_complete") and not issues and not detail.get("inbox_pending"))
     backlog = False
     if roster:
         try:
             analysis = _extract_pending(root, task, roster, extract, settings, decision)
             backlog = analysis.pop("backlog")
+            detail["extraction_pending"] = backlog
             detail.update(analysis)
         except Exception as exc:
             issues.append("extraction: " + str(exc)[:240])
@@ -1058,14 +1265,21 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
     elif not roster:
         detail["state"] = "no_roster"
         issues.append("no usable contemporaneous player roster")
+    elif detail.get("provider_pending", 0):
+        detail["state"] = "pending"
+        issues.append(
+            f"{detail['provider_pending']} publisher feed entries await collection"
+        )
+    elif detail.get("inbox_pending") or backlog:
+        detail["state"] = "pending"
+        issues.append("locally captured news articles await processing")
     elif detail.get("fallbacks"):
         detail["state"] = "degraded"
         issues.append(
             "configured local language model fell back to the bundled extractor"
         )
-    elif backlog:
-        detail["state"] = "pending"
-        issues.append("unprocessed news articles remain")
+    detail["pending_entries"] = (detail.get("provider_pending", 0) + detail.get("inbox_pending", 0)
+                                + detail.get("analysis_remaining", 0))
     return _finish(root, task, detail, cursor, provider_after)
 
 
@@ -1184,6 +1398,7 @@ def sync(
     if streams:
         with _db(data_dir, write=True) as db:
             store.put_report(db, "news-coverage", "epl-teams", _status_db(db))
+            _publish_research_health(db)
     return {
         "state": (
             "idle"
@@ -1192,12 +1407,16 @@ def sync(
             if successes == len(tasks)
             else "partial"
             if successes
+            else "pending"
+            if all(s["state"] == "pending" for s in streams)
             else "error"
         ),
         "eligible_streams": eligible,
         "due_streams": due,
         "attempted": len(streams),
         "succeeded": successes,
+        "pending_streams": sum(s["state"] == "pending" for s in streams),
+        "pending_entries": sum(s.get("pending_entries", 0) for s in streams),
         "failures": len(streams) - successes,
         "articles_added": sum(s["articles_added"] for s in streams),
         "claims_added": sum(s["claims_added"] for s in streams),
@@ -1257,6 +1476,9 @@ def _side_coverage(db, game, side, at):
                 "checked_at": stamp,
                 "source_observed_at": observed,
                 "availability_observed": eligible,
+                "fetch_complete": bool(raw.get("fetch_complete")),
+                "pending_entries": raw.get("pending_entries", raw.get("provider_pending", 0)),
+                "revision_conflicts": raw.get("revision_conflicts", 0),
                 "roster_status": raw.get("roster_status"),
                 "roster_players": raw.get("roster_players", 0),
                 "issues": raw.get("issues", []),
@@ -1292,7 +1514,23 @@ def _current_claims(facts):
             ]
             keep = strong or stories
             latest = max(f["effective_at"] for f in keep)
-            retained.extend(f for f in keep if f["effective_at"] == latest)
+            newest = [f for f in keep if f["effective_at"] == latest]
+            retained.extend(newest)
+            official_versions = [
+                f
+                for f in keep
+                if f["authority"] == "official" and f["status"] == "confirmed"
+            ]
+            # A syndicated paraphrase, even when it names the club as the
+            # underlying source, cannot erase the surviving club original.
+            # The SQL revision filter has already removed replaced originals.
+            if official_versions and any(f["authority"] != "official" for f in newest):
+                official_latest = max(f["effective_at"] for f in official_versions)
+                retained.extend(
+                    f
+                    for f in official_versions
+                    if f["effective_at"] == official_latest and f not in newest
+                )
         official = [
             f
             for f in retained
@@ -1392,6 +1630,35 @@ def snapshot(data_dir, fixture_id, cutoff):
         coverage = {
             side: _side_coverage(db, game, side, at) for side in ("home", "away")
         }
+        # A player can transfer, a club can withdraw its squad, and a fresh
+        # squad at another club can make a previously clear identity ambiguous.
+        # Read membership from the same point-in-time database snapshot as
+        # the articles. The roster captured during extraction is only its
+        # original provenance.
+        from .news_roster import roster_views
+
+        squads = roster_views(db, [game["home"], game["away"]], game["season"], at)
+        eligible = {}
+        for side in ("home", "away"):
+            club = team_key(game[side])
+            roster = squads[club]
+            eligible[club] = {str(p["player_id"]): p for p in roster["players"]}
+            coverage[side]["roster"] = {
+                k: roster.get(k)
+                for k in (
+                    "state",
+                    "seen_at",
+                    "expires_at",
+                    "digest",
+                    "ambiguous_player_ids",
+                )
+            }
+            coverage[side]["roster"].update(
+                eligible_players=len(eligible[club]), excluded_claims=0
+            )
+            if not eligible[club]:
+                for source in coverage[side]["sources"]:
+                    source["availability_observed"] = False
         run_join = ""
         run_filter = ""
         args = (fixture_id, game["kickoff"], at, at, at, at, at, at, at)
@@ -1432,11 +1699,20 @@ def snapshot(data_dir, fixture_id, cutoff):
         ):
             bad_sources.add((team_key(fact["team"]), fact["source"]))
             continue
+        club = team_key(fact["team"])
+        player = eligible.get(club, {}).get(str(fact["player_id"]))
+        if player is None:
+            for side in ("home", "away"):
+                if club == team_key(game[side]):
+                    coverage[side]["roster"]["excluded_claims"] += 1
+            continue
         facts.append(
             fact
             | {
                 "id": row["id"],
                 "effective_at": fact.get("effective_at", fact["published_at"]),
+                "roster_validated_at": squads[club]["seen_at"],
+                "active_roster_sha256": squads[club]["digest"],
             }
         )
     for side in coverage.values():
@@ -1444,6 +1720,12 @@ def snapshot(data_dir, fixture_id, cutoff):
             if (team_key(side["team"]), src["id"]) in bad_sources:
                 src["status"] = "invalid_archive"
                 src["availability_observed"] = False
+        if side["roster"]["excluded_claims"]:
+            # The feed was actually polled, but could not supply a fully
+            # squad-grounded comparison for this club.
+            side["roster"]["coverage_gap"] = "reported_player_no_longer_unique_member"
+            for source in side["sources"]:
+                source["availability_observed"] = False
         side["observed"] = any(s["availability_observed"] for s in side["sources"])
     observed = sum(side["observed"] for side in coverage.values())
     coverage.update(observed_teams=observed, both_teams_observed=observed == 2)
@@ -1457,6 +1739,85 @@ def snapshot(data_dir, fixture_id, cutoff):
 
 def as_of(data_dir, fixture_id, cutoff):
     return snapshot(data_dir, fixture_id, cutoff)["facts"]
+
+
+def _health_issue(detail):
+    if not detail:
+        return None
+    state = detail.get("state")
+    counts = detail.get("provider_counts") or {}
+    if detail.get("revision_conflicts"):
+        return "revision_conflict", "invalid"
+    if detail.get("rejected_items") or counts.get("invalid_entries"):
+        return "rejected_items", "invalid"
+    if state == "pending" and detail.get("provider_pending"):
+        return "provider_backlog", "late"
+    return {
+        "no_roster": ("roster_unavailable", "freshness_unknown"),
+        "degraded": ("model_degraded", "error"),
+        "error": ("collector_error", "error"),
+        "lease_lost": ("interrupted", "late"),
+        "pending": ("analysis_backlog", "late"),
+    }.get(state)
+
+
+def research_health(db):
+    """Allowlisted issue categories and coarse counts, recomputed from durable checks.
+
+    Checkpoint/cursor, item text, identities, URLs, decision and result fields
+    never enter the researcher copy. A progressing publisher backlog stays an
+    operational status; two nonprogressing observations qualify for research.
+    """
+    if not db.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='news_checks'"
+    ).fetchone():
+        return {}
+    rows = db.execute(
+        """SELECT c.detail current,p.detail previous,
+        CASE s.source WHEN 'touchline-availability' THEN 'availability'
+         WHEN 'touchline-rumours' THEN 'rumours' WHEN 'wikipedia-season-news' THEN 'wiki'
+         ELSE 'publisher_feed' END AS category
+        FROM news_streams s
+        LEFT JOIN news_feed_config f ON f.id=s.source
+        JOIN news_checks c ON c.id=(SELECT id FROM news_checks n WHERE n.season=s.season
+          AND n.source=s.source AND n.team_key=s.team_key ORDER BY n.checked_at DESC,n.id DESC LIMIT 1)
+        JOIN news_checks p ON p.id=(SELECT id FROM news_checks n WHERE n.season=s.season
+          AND n.source=s.source AND n.team_key=s.team_key ORDER BY n.checked_at DESC,n.id DESC LIMIT 1 OFFSET 1)
+        WHERE f.disabled_at IS NULL AND c.checked_at>=?""",
+        (_plus(_utc(), -timedelta(days=2)),),
+    )
+    affected = Counter()
+    for row in rows:
+        current = json.loads(row["current"])
+        previous = json.loads(row["previous"])
+        issue = _health_issue(current)
+        if not issue or issue != _health_issue(previous):
+            continue
+        if (
+            issue[0] in ("provider_backlog", "analysis_backlog")
+            and current.get("pending_entries", current.get("provider_pending", 0))
+            < previous.get("pending_entries", previous.get("provider_pending", 0))
+        ):
+            continue
+        affected[(row["category"], *issue)] += 1
+    return {
+        source + "." + cause: {
+            "status": status,
+            "affected_streams": ("1" if n == 1 else "2–4" if n < 5 else "5+"),
+        }
+        for (source, cause, status), n in sorted(affected.items())
+    }
+
+
+def _publish_research_health(db):
+    report = {"source_id": RESEARCH_SOURCE, "health": research_health(db)}
+    prior = db.execute(
+        "SELECT payload FROM reports WHERE kind='source' AND key=?", (RESEARCH_SOURCE,)
+    ).fetchone()
+    if prior is None and not report["health"]:
+        return
+    if prior is None or store.canonical(report) != prior[0]:
+        store.put_report(db, "source", RESEARCH_SOURCE, report)
 
 
 def _status_db(db, team=None):
@@ -1484,12 +1845,16 @@ def _status_db(db, team=None):
             "news_extractions",
             "news_claims",
             "news_rejected_items",
+            "news_publisher_conflicts",
             "news_analysis_runs",
         )
     }
     return {
         "streams": streams,
         "archive_counts": counts,
+        "pending_entries": sum(
+            (s["latest"] or {}).get("pending_entries", (s["latest"] or {}).get("provider_pending", 0)) for s in streams
+        ),
         "last_states": dict(
             Counter((s["latest"] or {}).get("state", "never_checked") for s in streams)
         ),
@@ -1536,6 +1901,17 @@ def article(data_dir, sha):
         ).fetchall()
         if not records:
             raise ValueError("unknown archived news document")
+        conflicts = [
+            dict(row) for row in db.execute(
+                """SELECT DISTINCT m.reason,m.recorded_at AS observed_at,m.receipt,
+                json_extract(p.payload,'$.response_sha256') AS response_sha256
+                FROM news_articles a JOIN news_revision_conflicts c ON c.article=a.seq
+                JOIN news_publisher_conflicts m ON m.receipt=c.other_sha256 AND m.season=a.season
+                AND m.team_key=a.team_key AND m.source=a.source AND m.external_id=a.external_id
+                JOIN news_poll_proofs p ON p.id=m.receipt
+                WHERE a.original_sha256=? ORDER BY m.recorded_at""", (sha,)
+            )
+        ]
         analyses = [
             dict(r) | {"metadata": json.loads(r["metadata"])}
             for r in db.execute(
@@ -1550,6 +1926,7 @@ def article(data_dir, sha):
     return json.loads(store.read_blob(data_dir, sha)) | {
         "original_sha256": sha,
         "collection_receipts": proofs,
+        "revision_conflicts": conflicts,
         "analyses": analyses,
     }
 

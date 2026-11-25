@@ -1,5 +1,7 @@
 import json
+import sqlite3
 import unittest
+from contextlib import closing
 from datetime import timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -231,6 +233,110 @@ class NewsRoster(unittest.TestCase):
         self.assertNotIn("position", by_name["Known Hybrid"])
         self.assertEqual(len(by_name["Known Hybrid"]["position_categories"]), 2)
         self.assertNotIn("position", by_name["No Role Claimed"])
+
+    def test_cutoff_views_frontier_and_cross_club_expiry_inside_reader_transaction(
+        self,
+    ):
+        old = self.refresh()["seen_at"]
+        player = self.wiki.members[0]
+        self.wiki.now += timedelta(days=1)
+        self.wiki.members = [player, *[f"Other Member{n}" for n in range(10)]]
+        overlap = self.refresh("Arsenal FC")["seen_at"]
+        first_excluded = store.instant(old) + timedelta(days=7, microseconds=1)
+        with closing(
+            sqlite3.connect(
+                (self.root / "runtime.sqlite3").as_uri() + "?mode=ro", uri=True
+            )
+        ) as db:
+            db.execute("PRAGMA query_only=ON")
+            db.execute("BEGIN")
+            r = lambda at: roster.roster_views(
+                db, ("Chelsea FC", "Arsenal FC", "Forest FC"), "2026-27", at
+            )
+            h = lambda at: roster.frontier(db, "2026-27", at)
+            before = r(old)
+            first = before["chelsea"]
+            self.assertEqual(first["state"], "available")
+            self.assertTrue(first["known"])
+            ident = next(
+                p["player_id"] for p in first["players"] if p["name"] == player
+            )
+            self.assertEqual(before["arsenal"]["state"], "never_observed")
+            self.assertFalse(before["arsenal"]["known"])
+            initial = h(old)
+            self.assertEqual(initial["next_at"], store.iso(first_excluded))
+            self.assertEqual(
+                initial, h(store.instant(overlap) - timedelta(microseconds=1))
+            )
+            # A third club's concurrent claim affects eligibility for both teams, even
+            # with no article/roster changes at the original target club.
+            clash = r(overlap)
+            for key in ("arsenal", "chelsea"):
+                self.assertIn(ident, clash[key]["ambiguous_player_ids"])
+                self.assertNotIn(ident, {p["player_id"] for p in clash[key]["players"]})
+            update = h(overlap)
+            self.assertNotEqual(update["token"], initial["token"])
+            self.assertEqual(update["next_at"], initial["next_at"])
+            self.assertEqual(update, h(first_excluded - timedelta(microseconds=1)))
+            fresh = r(first_excluded)
+            self.assertEqual(fresh["chelsea"]["state"], "expired")
+            self.assertTrue(fresh["chelsea"]["known"])
+            self.assertEqual(fresh["chelsea"]["players"], [])
+            self.assertEqual(fresh["arsenal"]["ambiguous_player_ids"], [])
+            self.assertIn(ident, {p["player_id"] for p in fresh["arsenal"]["players"]})
+            next_state = h(first_excluded)
+            self.assertNotEqual(next_state["token"], update["token"])
+            self.assertEqual(next_state["next_at"], fresh["arsenal"]["expires_at"])
+            self.assertIsNone(h(next_state["next_at"])["next_at"])
+            self.assertEqual(db.total_changes, 0)
+
+    def test_frontier_empty_legacy_and_withdrawal_has_no_silent_acceptance(self):
+        self.assertEqual(
+            roster.as_of(self.root, "Chelsea FC", "2026-27", self.wiki.now), []
+        )
+        self.assertFalse((self.root / "runtime.sqlite3").exists())
+        blank = sqlite3.connect(":memory:")
+        with closing(blank):
+            blank.execute("PRAGMA query_only=ON")
+            self.assertFalse(
+                roster.roster_views(blank, ["Chelsea FC"], "2026-27", self.wiki.now)[
+                    "chelsea"
+                ]["known"]
+            )
+            self.assertIsNone(
+                roster.frontier(blank, "2026-27", self.wiki.now)["next_at"]
+            )
+            self.assertFalse(blank.execute("select name from sqlite_master").fetchall())
+        old = self.refresh()["seen_at"]
+        self.wiki.now += timedelta(hours=7)
+
+        def missing(url):
+            title = parse_qs(urlsplit(url).query)["titles"][0]
+            return json.dumps(
+                {
+                    "query": {
+                        "rightsinfo": {"url": roster.wiki.LICENSE},
+                        "pages": [{"title": title, "ns": 10, "missing": True}],
+                    }
+                }
+            ).encode()
+
+        withdrawn = roster.refresh(self.root, "Chelsea FC", "2026-27", getter=missing)
+        with closing(
+            sqlite3.connect(
+                (self.root / "runtime.sqlite3").as_uri() + "?mode=ro", uri=True
+            )
+        ) as db:
+            then = roster.frontier(db, "2026-27", old)
+            after = roster.frontier(db, "2026-27", withdrawn["seen_at"])
+            self.assertNotEqual(then["token"], after["token"])
+            club = roster.roster_views(
+                db, ["Chelsea FC"], "2026-27", withdrawn["seen_at"]
+            )["chelsea"]
+            self.assertTrue(club["known"])
+            self.assertEqual(club["state"], "withdrawn")
+            self.assertEqual(club["players"], [])
+            self.assertEqual(roster.frontier(db, "2026-27", old), then)
 
     def test_slow_network_lease_commits_before_fetch(self):
         concurrent = []

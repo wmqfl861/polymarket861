@@ -50,7 +50,8 @@
             }
           ]
         }
-      ]
+      ],
+      "bundled_classifier": "squad-news-en-nb-1-4930edd5a0a1d93f"
     },
     {
       "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
@@ -97,7 +98,8 @@
           "additional": 0,
           "bundled_plus_verified": []
         }
-      ]
+      ],
+      "bundled_classifier": "squad-news-en-nb-1-4930edd5a0a1d93f"
     }
   ]
 }

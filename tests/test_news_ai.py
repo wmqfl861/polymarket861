@@ -133,6 +133,36 @@ class NewsExtractionTest(unittest.TestCase):
         self.assertIsNone(propose("Westford's Frost is nursing a bruised foot.", "injury", "unknown"))
         self.assertIsNone(propose("Holt is nursing a bruised foot.", "injury", "unknown", name="eli"))
 
+    def test_past_absence_cannot_be_carried_into_current_or_implicitly_contrasted_fixture(self):
+        prefix = "Kai Frost was ruled out for last weekend"
+        text = prefix + " but will be back in the squad."
+        self.assertEqual(self.read(text), [("kai", "return", "confirmed", "available")])
+        self.assertEqual(news_ai.extract(text, self.roster, authority="official")[0]["quote"], text)
+        for past in (prefix + ".", "Kai Frost had missed last week's trip.",
+                     "Kai Frost was ruled out for the previous fixture."):
+            self.assertEqual(self.read(past), [])
+        self.assertEqual(self.read(prefix + " but he will be assessed tomorrow."),
+                         [("kai", "availability", "confirmed", "doubtful")])
+        self.assertEqual(self.read(prefix + " but he will not be available for selection."),
+                         [("kai", "availability", "confirmed", "out")])
+        for aux in ("will not", "won't"):
+            denied = self.read(prefix + " but " + aux + " be back in the squad.")
+            self.assertTrue(all(r[3] == "unknown" for r in denied))
+        named = prefix + ", while Sam Holt will be back in the squad."
+        self.assertEqual(self.read(named), [("sam", "return", "confirmed", "available")])
+        self.assertEqual(self.read(prefix + " but will be back in the squad next month."), [])
+        upcoming = "Kai Frost is ruled out for this weekend but will be back in the squad next month."
+        self.assertEqual(self.read(upcoming), [("kai", "availability", "confirmed", "out")])
+        trailing = "Kai Frost will be back in the squad after being ruled out for last weekend."
+        self.assertEqual(self.read(trailing), [("kai", "return", "confirmed", "available")])
+        # The local model cannot select just the past half of a contrasting quotation.
+        proposal = {"player_id": "kai", "event": "availability", "status": "confirmed",
+                    "availability": "out", "quote": prefix, "start": 0, "end": len(prefix)}
+        self.assertIsNone(news_ai.validate_local_claim(text, self.roster, proposal,
+                                                       authority="official", team="Arsenal"))
+        first = "Sam Holt and Kai Frost were ruled out for last weekend but will be back in the squad."
+        self.assertFalse(any(r[3] == "out" for r in self.read(first)))
+
     def test_repeatable_model_and_input_limits(self):
         first = self.read("Sam Holt will miss the game through injury.")
         news_ai._models.cache_clear()

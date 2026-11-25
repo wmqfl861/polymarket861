@@ -698,7 +698,7 @@
       "linked_subject_recall": 0.8485,
       "live_publisher_articles": 0,
       "match_results_used": 0,
-      "model_version": "squad-news-en-nb-1-9fcf6d2950835eea",
+      "model_version": "squad-news-en-nb-1-4930edd5a0a1d93f",
       "negative_articles": 18,
       "negative_articles_with_no_claim": 18,
       "scope": "Previously inspected challenge set; several polarity errors informed guard repairs.",
@@ -825,7 +825,7 @@
     "linked_subject_recall": 0.8519,
     "live_publisher_articles": 0,
     "match_results_used": 0,
-    "model_version": "squad-news-en-nb-1-9fcf6d2950835eea",
+    "model_version": "squad-news-en-nb-1-4930edd5a0a1d93f",
     "negative_articles": 12,
     "negative_articles_with_no_claim": 12,
     "scope": "Held out of weight fitting and the initial rule-development cycle; English text only.",
@@ -837,7 +837,7 @@
     "exact_evidence_span": "The saved quote equals the exact original Unicode slice at the saved start/end offsets.",
     "wire_agreement": "Exactly one complete provider display/subject name matches a trusted roster name/alias after case, punctuation and diacritic normalization; exactly one grounded claim has that ID and agrees with the structured provider's event, status and availability."
   },
-  "model_version": "squad-news-en-nb-1-9fcf6d2950835eea",
+  "model_version": "squad-news-en-nb-1-4930edd5a0a1d93f",
   "protocol": "news-language-validation-1",
   "real_wire": {
     "as_of": "2026-11-25T12:07:19Z",

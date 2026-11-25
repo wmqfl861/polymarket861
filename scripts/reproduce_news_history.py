@@ -10,7 +10,7 @@ from collections import Counter, defaultdict
 from datetime import timedelta
 from pathlib import Path
 
-from polymarket861 import experiment_statistics, football, news_ai, news_model, store
+from polymarket861 import experiment_statistics, football, news, news_ai, news_model, store
 
 if __package__:
     from .news_history_archive import PANELS, PLAN, SEASON, capture, cohort, text_sha
@@ -107,6 +107,9 @@ def extract_side(side, revisions, fixture, extracted_at):
         ):
             if not item["quote"] or item["quote"] not in story["text"]:
                 raise ValueError("unanchored historical extractor output")
+            game = {"home": fixture.home, "away": fixture.away, "kickoff": store.iso(fixture.kickoff)}
+            if not news.fixture_relevant(item["quote"], "", game, side["team"]):
+                continue
             received = max(origin["received_at"], roster_proof["received_at"])
             if store.instant(extracted_at) < store.instant(received):
                 raise ValueError(

@@ -15,6 +15,7 @@ from . import (
     input_manifest,
     news,
     news_model,
+    news_roster,
     paired_proof,
     pipeline,
     store,
@@ -61,7 +62,7 @@ def _catalog(db):
     )
 
 
-def _cursor(db, fixture, at):
+def _cursor(db, fixture, at, roster_token):
     # A newer revision can target another fixture but still supersede this team's
     # original article. Delayed extraction, conflict quarantine and feed withdrawal
     # also change what is admissible without adding an article for this fixture.
@@ -76,7 +77,7 @@ def _cursor(db, fixture, at):
        GROUP BY a.team_key,a.source ORDER BY a.team_key,a.source""",
         (at, at, at, fixture["season"], *keys, at),
     )
-    return store.digest([list(r) for r in rows])
+    return store.digest([roster_token, [list(r) for r in rows]])
 
 
 def _claim(root, limit):
@@ -104,31 +105,37 @@ def _claim(root, limit):
         )
         due = []
         manifest = _catalog(db)
+        rosters = {}
         for f in games:
             key = (f["fixture_id"], f["kickoff"])
             job = db.execute(
                 "SELECT * FROM news_event_work WHERE fixture_id=? AND kickoff=?", key
             ).fetchone()
-            if job and (
-                (job["owner"] and job["lease_until"] > at)
-                or (job["retry_at"] > at and job["retry_manifest"] == manifest)
-            ):
+            if job and job["owner"] and job["lease_until"] > at:
                 continue
-            cursor = _cursor(db, f, at)
+            # Membership at any club can make another club's player ambiguous.
+            # Share the small receipt index across all fixtures in this season.
+            year = f["season"]
+            if year not in rosters:
+                rosters[year] = news_roster.frontier(db, year, at)
+            roster = rosters[year]
+            cursor = _cursor(db, f, at, roster["token"])
             if (
                 job
-                and not job["last_error"]
                 and job["cursor"] == cursor
-                and job["review_at"] > at
+                and (
+                    (job["retry_at"] > at and job["retry_manifest"] == manifest)
+                    or (not job["last_error"] and job["review_at"] > at)
+                )
             ):
                 continue
-            due.append((job["ticket"] if job else 0, f, cursor))
+            due.append((job["ticket"] if job else 0, f, cursor, roster["next_at"]))
         due.sort(key=lambda item: (item[0], item[1]["kickoff"], item[1]["fixture_id"]))
         ticket = db.execute(
             "SELECT coalesce(max(ticket),0) FROM news_event_work"
         ).fetchone()[0]
         tasks = []
-        for i, (_, f, cursor) in enumerate(due[:limit], 1):
+        for i, (_, f, cursor, roster_expiry) in enumerate(due[:limit], 1):
             owner = uuid.uuid4().hex
             key = (f["fixture_id"], f["kickoff"])
             db.execute(
@@ -137,7 +144,9 @@ def _claim(root, limit):
                lease_until=excluded.lease_until""",
                 (*key, ticket + i, owner, store.iso(store.instant(at) + LEASE)),
             )
-            tasks.append(f | {"owner": owner, "cursor": cursor})
+            tasks.append(
+                f | {"owner": owner, "cursor": cursor, "roster_expiry": roster_expiry}
+            )
         return tasks, len(games), len(due)
 
 
@@ -195,9 +204,11 @@ def _semantic(fixture, snapshot):
     return [dict(zip(fields, v)) for v in sorted(states, key=store.canonical)]
 
 
-def _review(snapshot):
+def _review(snapshot, roster_expiry):
     cut = store.instant(snapshot["cutoff"])
     deadlines = [cut + RECHECK]
+    if roster_expiry:
+        deadlines.append(store.instant(roster_expiry))
     age = timedelta(days=news_model.POLICY["max_publication_age_days"], microseconds=1)
     for fact in snapshot["facts"]:
         end = fact.get("expires_at") or fact.get("valid_until")
@@ -276,7 +287,7 @@ def _report(root, task, previous, cache, history_root):
 
     cut, snapshot, state = sample()
     if same(state):
-        return None, _review(snapshot)
+        return None, _review(snapshot, task["roster_expiry"])
     if "history" not in cache:
         cache["history"] = _history(root, history_root)
     manifest, seen, engine, recipe = cache["history"]
@@ -286,7 +297,7 @@ def _report(root, task, previous, cache, history_root):
     if seen > cut:
         raise ValueError("football history was unavailable at decision time")
     if same(state):
-        return None, _review(snapshot)
+        return None, _review(snapshot, task["roster_expiry"])
     model, pair = pipeline._forecast_arms(
         engine,
         fixture["home"],
@@ -332,7 +343,7 @@ def _report(root, task, previous, cache, history_root):
         "recipe_sha256": store.digest(recipe),
         "lines": recipe["lines"],
         "fallback_reason": model.get("fallback_reason"),
-    }, _review(snapshot)
+    }, _review(snapshot, task["roster_expiry"])
 
 
 def _run(root, task, cache, history_root):
@@ -363,7 +374,8 @@ def _run(root, task, cache, history_root):
             ):
                 raise ValueError("fixture changed or already started")
             store.ensure_unfinished_at(db, *key, at)
-            if _cursor(db, task, at) != task["cursor"]:
+            roster = news_roster.frontier(db, task["season"], at)
+            if _cursor(db, task, at, roster["token"]) != task["cursor"]:
                 raise ValueError("news changed during calculation")
             head = _head(db, key)
             if (head["digest"] if head else None) != (
@@ -410,8 +422,15 @@ def _run(root, task, cache, history_root):
             # A newly arrived story should be eligible on the very next pass.
             retry = at if reason == "news changed during calculation" else at + RETRY
             db.execute(
-                "UPDATE news_event_work SET owner=NULL,lease_until='',retry_at=?,retry_manifest=?,last_error=? WHERE fixture_id=? AND kickoff=? AND owner=?",
-                (store.iso(retry), _catalog(db), reason, *key, task["owner"]),
+                "UPDATE news_event_work SET owner=NULL,lease_until='',cursor=?,retry_at=?,retry_manifest=?,last_error=? WHERE fixture_id=? AND kickoff=? AND owner=?",
+                (
+                    task["cursor"],
+                    store.iso(retry),
+                    _catalog(db),
+                    reason,
+                    *key,
+                    task["owner"],
+                ),
             )
         return basis | {"status": "deferred", "reason": reason}
 

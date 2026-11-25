@@ -162,6 +162,39 @@ class NewsModelTests(unittest.TestCase):
         self.assertEqual(p["status"], "no_team_rates")
         self.assertEqual(result["matrix"], fallback["matrix"])
 
+    def test_an_agreeing_reprint_preserves_the_latest_still_supported_confirmation(
+        self,
+    ):
+        club = claim(cluster_id="official-story")
+        wire = claim(
+            id="wire",
+            origin="independent paper",
+            authority="secondary",
+            status="reported",
+            published_at="2023-08-12T08:05Z",
+        )
+        expected = self.pair(club)[1]
+        for source in (wire, wire | {"origin": club["origin"]}):
+            both = self.pair(source, club)[1]
+            self.assertEqual(both["with_news"], expected["with_news"])
+            self.assertEqual(both["applied"][0]["prior_weight"], 1)
+        contrary = wire | {"availability": "doubtful"}
+        self.assertFalse(self.pair(club, contrary)[1]["changed"])
+        correction = club | {
+            "id": "new-club",
+            "published_at": "2023-08-12T08:10Z",
+            "availability": "doubtful",
+        }
+        reconciled = self.pair(club, contrary, correction)[1]
+        self.assertEqual(reconciled["applied"][0]["id"], "new-club")
+        self.assertEqual(reconciled["with_news"], self.pair(correction)[1]["with_news"])
+        withdrawn = self.pair(
+            club,
+            wire,
+            claim(id="remove", cluster_id="official-story", status="withdrawn"),
+        )[1]
+        self.assertEqual(withdrawn["with_news"], self.pair(wire)[1]["with_news"])
+
     def test_public_archive_research_never_backdates_a_local_receipt(self):
         fact = claim(
             received_at="2026-11-25T09:00Z",
@@ -188,9 +221,45 @@ class NewsModelTests(unittest.TestCase):
             availability_basis=news_model.HISTORICAL,
         )
         self.assertFalse(late_correction["changed"])
+        _, late_republication = self.pair(
+            fact
+            | {
+                "published_at": "2023-08-13T08:00Z",
+                "effective_at": fact["published_at"],
+            },
+            availability_basis=news_model.HISTORICAL,
+        )
+        self.assertFalse(late_republication["changed"])
 
 
 class NewsEvidenceTests(unittest.TestCase):
+    def test_coverage_uses_documented_availability_and_both_local_clocks(self):
+        source = {
+            "status": "degraded",
+            "availability_observed": True,
+            "checked_at": CUT,
+            "source_observed_at": CUT,
+        }
+        fixture = {"home": HOME, "away": AWAY}
+        coverage = {
+            k: {"team": name, "observed": True, "sources": [source.copy()]}
+            for k, name in fixture.items()
+        }
+        self.assertTrue(
+            news_evaluation._both_observed(coverage, fixture, store.iso(CUT))
+        )
+        for change in (
+            {"availability_observed": False},
+            {"checked_at": "2023-08-13T08:00Z"},
+            {"source_observed_at": "2023-08-13T08:00Z"},
+            {"status": "stale"},
+        ):
+            with self.subTest(change=change):
+                coverage["away"]["sources"] = [source | change]
+                self.assertFalse(
+                    news_evaluation._both_observed(coverage, fixture, store.iso(CUT))
+                )
+
     def test_real_seal_early_vs_late_arrival_readmission_and_result_revision(self):
         season = "2023-24"
         kickoff = "2023-08-12T14:00Z"
@@ -276,20 +345,9 @@ class NewsEvidenceTests(unittest.TestCase):
             )
 
             def finish(h, a, stamp):
-                with at(stamp):
-                    store.record_result(
-                        root,
-                        dict(
-                            fixture_id=fid,
-                            home_goals=h,
-                            away_goals=a,
-                            source="league result",
-                            locator="final/" + stamp,
-                            finalized_at=stamp,
-                            published_at=stamp,
-                            received_at=stamp,
-                        ),
-                    )
+                from test_news_outcome_admission import admit_final
+
+                admit_final(root, HOME, AWAY, kickoff, [h, a], stamp)
 
             finish(0, 2, "2023-08-12T18:00Z")
             first = news_evaluation.evaluate_round(root, season, 1)

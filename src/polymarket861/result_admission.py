@@ -722,147 +722,201 @@ def reconcile(root, year):
 
 
 def verified_regulation(root, fixture_id, *, at=None):
-    """Return an as-of, raw-reverified 90-minute final; a manual/withdrawn/disputed result cannot settle."""
+    """Return a raw-reverified, as-of regulation final from the admission protocol."""
     from . import result_feed as feed
 
     cutoff = store.iso(at or feed.now_utc())
     with closing(database(root)) as db:
-        row = db.execute(
-            "SELECT * FROM rf_admitted WHERE fixture=? AND at<=? ORDER BY at DESC LIMIT 1",
-            (fixture_id, cutoff),
+        db.execute("BEGIN")
+        season = db.execute(
+            "SELECT f.season FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
+            "WHERE fixture_id=? AND f.known_at<=? AND s.recorded_at<=? ORDER BY f.known_at DESC LIMIT 1",
+            (fixture_id, cutoff, cutoff),
         ).fetchone()
-        if not row:
-            return None
-        try:
-            f = store.fixture_at(root, fixture_id, at=cutoff, prospective=True)
-            if f["kickoff"] != row["kickoff"]:
-                return None
-            state = last_disposition(db, fixture_id, f["kickoff"], cutoff)
-            if state and state["held"]:
-                return None
-            year = int(f["season"][:4])
-            sources, errors = _raw_rows(root, db, year, cutoff, target=fixture_id)
-            snapshots = sources.get(fixture_id, [])
-            from . import independent_results
-
-            independent = independent_results.verified(root, db, year, cutoff)
-            local = db.execute(
-                "WITH ranked AS (SELECT f.*,row_number() OVER(PARTITION BY fixture_id ORDER BY known_at DESC) n "
-                "FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
-                "WHERE f.season=? AND f.known_at<=? AND s.recorded_at<=?) SELECT * FROM ranked WHERE n=1",
-                (f["season"], cutoff, cutoff),
-            ).fetchall()
-            unique = result_pairings.unique_fixtures(local)
-            fresh, reason = result_pairings.decision(
-                f, snapshots, independent.get(fixture_id, []), unique, cutoff
-            )
-            if (
-                fixture_id not in unique
-                or reason
-                or any(e["scope"] in (None, f["round_id"]) for e in errors)
-            ):
-                return None
-            saved = json.loads(row["proof"])
-            if isinstance(saved, dict):
-                if not fresh or result_pairings.signature(
-                    saved
-                ) != result_pairings.signature(fresh):
-                    return None
-                # Reproduce the ORIGINAL proof at the actual admission cutoff, even if
-                # newer receipts report the same score. A mutation cannot replace it.
-                old = [e for e in snapshots if e["received"] <= row["at"]]
-                others = [
-                    e
-                    for e in independent.get(fixture_id, [])
-                    if e["received"] <= row["at"]
-                ]
-                original, error = result_pairings.decision(
-                    f, old, others, unique, row["at"]
-                )
-                score = json.loads(row["score"])
-                if error or original != saved or saved["score"] != score:
-                    return None
-                if (
-                    _reference(db, root, f["season"], cutoff).get(fixture_id, score)
-                    != score
-                ):
-                    return None
-                current = db.execute(
-                    "SELECT r.*,t.actual_kickoff FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
-                    "LEFT JOIN result_event_times t USING(fixture_id,version) "
-                    "WHERE fixture_id=? AND s.kickoff=? AND r.recorded_at<=? ORDER BY version DESC LIMIT 1",
-                    (fixture_id, f["kickoff"], cutoff),
-                ).fetchone()
-                if (
-                    not current
-                    or current["source"] != result_pairings.SOURCE
-                    or (
-                        [current["home_goals"], current["away_goals"]] != score
-                        or current["actual_kickoff"] != saved["actual_kickoff"]
-                        or current["locator"] != "result-pairing:" + store.digest(saved)
-                    )
-                ):
-                    return None
+        if season:
+            result = verified_season_regulation(
+                root, db, season[0], [fixture_id], at=cutoff
+            ).get(fixture_id)
+            if result:
                 return {
-                    "fixture_id": fixture_id,
-                    "home_goals": score[0],
-                    "away_goals": score[1],
-                    "kickoff": saved["actual_kickoff"],
-                    "registry_kickoff": f["kickoff"],
-                    "confirmed_at": row["at"],
-                    "source": result_pairings.SOURCE,
-                    "proof": saved,
-                    "status": "final",
-                    "period": "regulation",
+                    key: value
+                    for key, value in result.items()
+                    if key != "result_version"
                 }
-            if len(snapshots) < 2 or not _anchor(f, snapshots[-1]):
-                return None
-            pair = _pair(snapshots)
-            score = json.loads(row["score"])
-            stamp = row["at"]
-            if (
-                not pair
-                or pair[-1]["score"] != score
-                or _reference(db, root, f["season"], cutoff).get(fixture_id, score)
-                != score
-            ):
-                return None
-            observed = db.execute(
-                "SELECT r.* FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
-                "WHERE r.fixture_id=? AND s.kickoff=? AND r.recorded_at<=? ORDER BY r.version DESC LIMIT 1",
-                (fixture_id, f["kickoff"], cutoff),
-            ).fetchone()
-            if (
-                not observed
-                or observed["source"] not in {"openfootball", "openligadb"}
-                or [observed["home_goals"], observed["away_goals"]] != score
-            ):
-                return None
-            proof = json.loads(row["proof"])
-            if not _same_run(snapshots, proof):
-                return None
-            if any(
-                not any(
-                    a["sha256"] == b["sha256"]
-                    and a["received"] == b["received"]
-                    and a["source_id"] == b["source_id"]
-                    and a["score"] == score
-                    and a["url"] == b["url"]
-                    for a in snapshots
-                )
-                for b in proof
-            ):
-                return None
-            return {
-                "fixture_id": fixture_id,
-                "home_goals": score[0],
-                "away_goals": score[1],
-                "kickoff": f["kickoff"],
-                "confirmed_at": stamp,
-                "source": "openligadb",
-                "proof": proof,
-                "status": "final",
-                "period": "regulation",
-            }
+        return None
+
+
+def verified_season_regulation(root, db, season, fixture_ids, *, at):
+    """Re-derive requested final results in the caller's snapshot, reading season originals once."""
+    from . import independent_results, schedule_consensus
+
+    ids = tuple(dict.fromkeys(fixture_ids))
+    if (
+        not ids
+        or not db.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='rf_admitted'"
+        ).fetchone()
+    ):
+        return {}
+    cutoff = store.iso(at)
+    placeholders = ",".join("?" for _ in ids)
+    rows = db.execute(
+        "WITH ranked AS (SELECT *,row_number() OVER(PARTITION BY fixture ORDER BY at DESC) n "
+        f"FROM rf_admitted WHERE at<=? AND fixture IN ({placeholders})) SELECT * FROM ranked WHERE n=1",
+        (cutoff, *ids),
+    ).fetchall()
+    if not rows:
+        return {}
+    local = {
+        f["fixture_id"]: dict(f)
+        for f in db.execute(
+            "WITH ranked AS (SELECT f.*,s.recorded_at,s.precision,"
+            "row_number() OVER(PARTITION BY fixture_id ORDER BY known_at DESC) n "
+            "FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
+            "WHERE f.season=? AND f.known_at<=? AND s.recorded_at<=?) SELECT * FROM ranked WHERE n=1",
+            (season, cutoff, cutoff),
+        )
+    }
+    unique = result_pairings.unique_fixtures(local.values())
+    try:
+        year = int(season[:4])
+        sources, errors = _raw_rows(root, db, year, cutoff)
+        independent = independent_results.verified(root, db, year, cutoff)
+        reference = _reference(db, root, season, cutoff)
+    except (ValueError, KeyError, TypeError, OSError):
+        return {}
+    results = {}
+    for row in rows:
+        fid = row["fixture"]
+        f = local.get(fid)
+        if not f or f["kickoff"] != row["kickoff"]:
+            continue
+        state = last_disposition(db, fid, f["kickoff"], cutoff)
+        if state and state["held"]:
+            continue
+        try:
+            if f["source"] == "openligadb+gamma-schedule":
+                schedule_consensus.attest(root, db, f, cutoff)
+            result = _verify_final(
+                db,
+                f,
+                row,
+                cutoff,
+                unique,
+                sources.get(fid, []),
+                independent.get(fid, []),
+                errors,
+                reference,
+            )
         except (ValueError, KeyError, TypeError, OSError):
+            continue
+        if result:
+            results[fid] = result
+    return results
+
+
+def _verify_final(
+    db, f, row, cutoff, unique, snapshots, independent, errors, reference
+):
+    fixture_id = f["fixture_id"]
+    fresh, reason = result_pairings.decision(f, snapshots, independent, unique, cutoff)
+    if (
+        fixture_id not in unique
+        or reason
+        or any(e["scope"] in (None, f["round_id"]) for e in errors)
+    ):
+        return None
+    saved = json.loads(row["proof"])
+    if isinstance(saved, dict):
+        if not fresh or result_pairings.signature(saved) != result_pairings.signature(
+            fresh
+        ):
             return None
+        # Reproduce the ORIGINAL proof at the actual admission cutoff, even if
+        # newer receipts report the same score. A mutation cannot replace it.
+        old = [e for e in snapshots if e["received"] <= row["at"]]
+        others = [e for e in independent if e["received"] <= row["at"]]
+        original, error = result_pairings.decision(f, old, others, unique, row["at"])
+        score = json.loads(row["score"])
+        if error or original != saved or saved["score"] != score:
+            return None
+        if reference.get(fixture_id, score) != score:
+            return None
+        current = db.execute(
+            "SELECT r.*,t.actual_kickoff FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
+            "LEFT JOIN result_event_times t USING(fixture_id,version) "
+            "WHERE fixture_id=? AND s.kickoff=? AND r.recorded_at<=? ORDER BY version DESC LIMIT 1",
+            (fixture_id, f["kickoff"], cutoff),
+        ).fetchone()
+        if (
+            not current
+            or current["source"] != result_pairings.SOURCE
+            or (
+                [current["home_goals"], current["away_goals"]] != score
+                or current["actual_kickoff"] != saved["actual_kickoff"]
+                or current["locator"] != "result-pairing:" + store.digest(saved)
+            )
+        ):
+            return None
+        return {
+            "fixture_id": fixture_id,
+            "home_goals": score[0],
+            "away_goals": score[1],
+            "kickoff": saved["actual_kickoff"],
+            "registry_kickoff": f["kickoff"],
+            "result_version": current["version"],
+            "confirmed_at": row["at"],
+            "source": result_pairings.SOURCE,
+            "proof": saved,
+            "status": "final",
+            "period": "regulation",
+        }
+    if len(snapshots) < 2 or not _anchor(f, snapshots[-1]):
+        return None
+    pair = _pair(snapshots)
+    score = json.loads(row["score"])
+    stamp = row["at"]
+    if (
+        not pair
+        or pair[-1]["score"] != score
+        or reference.get(fixture_id, score) != score
+    ):
+        return None
+    observed = db.execute(
+        "SELECT r.* FROM result_versions r JOIN result_schedule_refs s USING(fixture_id,version) "
+        "WHERE r.fixture_id=? AND s.kickoff=? AND r.recorded_at<=? ORDER BY r.version DESC LIMIT 1",
+        (fixture_id, f["kickoff"], cutoff),
+    ).fetchone()
+    if (
+        not observed
+        or observed["source"] not in {"openfootball", "openligadb"}
+        or [observed["home_goals"], observed["away_goals"]] != score
+    ):
+        return None
+    proof = saved
+    if not _same_run(snapshots, proof):
+        return None
+    if any(
+        not any(
+            a["sha256"] == b["sha256"]
+            and a["received"] == b["received"]
+            and a["source_id"] == b["source_id"]
+            and a["score"] == score
+            and a["url"] == b["url"]
+            for a in snapshots
+        )
+        for b in proof
+    ):
+        return None
+    return {
+        "fixture_id": fixture_id,
+        "home_goals": score[0],
+        "away_goals": score[1],
+        "kickoff": f["kickoff"],
+        "confirmed_at": stamp,
+        "result_version": observed["version"],
+        "source": "openligadb",
+        "proof": proof,
+        "status": "final",
+        "period": "regulation",
+    }

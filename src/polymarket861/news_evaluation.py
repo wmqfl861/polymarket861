@@ -17,6 +17,7 @@ from . import (
     historical_inputs,
     news_model,
     paired_proof,
+    result_admission,
     store,
 )
 
@@ -320,7 +321,24 @@ def _line_metrics(pair, home, away):
     return scores
 
 
-def _score_one(fixture, entry, payload, prior, db, cache):
+def _score_one(fixture, entry, payload, prior, db, cache, mode, verified):
+    goals = (fixture["home_goals"], fixture["away_goals"])
+    if mode == "replay":
+        # Strict replay authenticates its archived season and label in _proof_issue.
+        completed = goals[0] is not None
+    else:
+        completed = bool(
+            verified
+            and verified["fixture_id"] == fixture["fixture_id"]
+            and verified["status"] == "final"
+            and verified["period"] == "regulation"
+            and verified["result_version"] == fixture["result_version"]
+            and verified.get("registry_kickoff", verified["kickoff"])
+            == fixture["kickoff"]
+            and verified["kickoff"]
+            == (fixture.get("result_kickoff") or fixture["kickoff"])
+            and (verified["home_goals"], verified["away_goals"]) == goals
+        )
     record = {
         "fixture_id": fixture["fixture_id"],
         "season": fixture["season"],
@@ -332,10 +350,22 @@ def _score_one(fixture, entry, payload, prior, db, cache):
         "result_source": fixture.get("result_source"),
         "result_received_at": fixture.get("received_at"),
         "schedule_version": fixture["schedule_version"],
-        "completed": fixture["home_goals"] is not None,
+        "completed": completed,
         "sealed": False,
         "scored": False,
     }
+    if mode != "replay":
+        record["result_admission"] = (
+            "verified_regulation" if completed else "awaiting_verified_score"
+        )
+        if completed:
+            record.update(
+                result_proof_sha256=store.digest(verified["proof"]),
+                result_confirmed_at=verified["confirmed_at"],
+                result_admission_source=verified["source"],
+            )
+        elif fixture.get("result_disposition"):
+            record["result_disposition"] = fixture["result_disposition"]
     if prior:
         return record | {"reason": prior}
     try:
@@ -372,7 +402,6 @@ def _score_one(fixture, entry, payload, prior, db, cache):
                 "reason": "awaiting_verified_score",
                 "result_disposition": fixture.get("result_disposition"),
             }
-        goals = (fixture["home_goals"], fixture["away_goals"])
         scores = {
             arm: football.score_probabilities(pair[arm]["probabilities"], *goals)
             for arm in ARMS
@@ -418,13 +447,24 @@ def _records(db, fixtures, horizon, mode):
             ):
                 found[(row["fixture_id"], row["kickoff"])].append((row, payload))
     cache = {}
+    verified = {}
+    if mode != "replay" and fixtures:
+        root = Path(db.execute("PRAGMA database_list").fetchone()[2]).parent
+        verified = result_admission.verified_season_regulation(
+            root,
+            db,
+            fixtures[0]["season"],
+            [f["fixture_id"] for f in fixtures if f["home_goals"] is not None],
+            at=store.now_utc(),
+        )
     for f in fixtures:
+        outcome = verified.get(f["fixture_id"])
         matches = found.get((f["fixture_id"], f["kickoff"]), [])
         if len(matches) == 1:
-            yield _score_one(f, *matches[0], None, db, cache)
+            yield _score_one(f, *matches[0], None, db, cache, mode, outcome)
         else:
             reason = "ambiguous_primary_seal" if matches else "no_primary_seal"
-            yield _score_one(f, None, None, reason, db, cache)
+            yield _score_one(f, None, None, reason, db, cache, mode, outcome)
 
 
 def _means(rows):
@@ -564,6 +604,7 @@ def _summary(records, season, rnd, horizon, mode):
             "both_teams_observed": len(observed) / expected,
             "schedule_missing": expected - len(records),
             "final_without_pair": completed - len(done),
+            "sealed_awaiting_final": sum(not r["completed"] for r in sealed),
         },
         **_means(done),
         "endpoints": metrics,

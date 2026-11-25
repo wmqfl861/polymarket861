@@ -209,7 +209,44 @@ _IRRELEVANT = re.compile(r"\b(?:injury.time|stoppage.time|ruled offside|transfer
 _OTHER_COMP = re.compile(r"\b(?:champions league|europa league|conference league|fa cup|league cup|carabao cup|efl cup|international (?:duty|fixture|match)|world cup|european championship|nations league|uefa|under.21|u21|u18)\b")
 _PREMIER = re.compile(r"\b(?:premier league|premiership|epl)\b")
 _PAST = re.compile(r"\b(?:last (?:season|year|month|night|weekend|week|match|game|saturday|sunday)|years? ago|months? ago|as a youngster|in (?:19|20)\d\d|in (?:january|february|march|april|may|june|july|august|september|october|november|december) (?:19|20)\d\d|was substituted|after (?:the|their) defeat|scored|equaliser|equalizer|at the time|had missed|previously missed|missed (?:the|their|last)|former club|last time|in the reverse fixture)\b")
-_FORWARD = re.compile(r"\b(?:now|still|remains?|next|upcoming|ahead of|will (?:not |be |miss|serve|sit|face|return)|ruled out for|this weekend|this week|for selection)\b")
+_FORWARD = re.compile(r"\b(?:now|still|remains?|next|upcoming|ahead of|will (?:not |be |miss|serve|sit|face|return)|this weekend|this week|for selection)\b")
+# Explicitly past match references do not by themselves say anything about
+# the next fixture. Keep the main predicate for e.g. "will return after last
+# weekend's absence" and retain the entire sentence as its published evidence.
+_PAST_MATCH = re.compile(
+    r"\b(?:last|previous) (?:weekend|week|match|game|fixture|season|month|year|"
+    r"monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b|"
+    r"\b(?:yesterday|previously|earlier this (?:week|month|season)|"
+    r"(?:a|one|two|three|four|several|[0-9]+) (?:days?|weeks?|months?|years?) ago)\b"
+)
+_BACKGROUND = re.compile(r"\s+(?:after|despite|following|having|because of|due to|since|from)\b")
+_DISTANT = re.compile(
+    r"\b(?:(?:next|the following) (?:month|season|year)|(?:in|after) "
+    r"(?:one|two|three|four|five|six|several|a few|[1-9]\d*) (?:weeks?|months?|years?)(?:' time)?"
+    r"|(?:in|at) (?:the |next )?pre.season)\b"
+)
+
+
+def _current_statement(text):
+    """Scope the predicate to the upcoming match, or decline a past-only clause."""
+    if not _PAST_MATCH.search(text):
+        return text
+    for boundary in _BACKGROUND.finditer(text):
+        current, background = text[:boundary.start()], text[boundary.end():]
+        if _PAST_MATCH.search(background) and not _PAST_MATCH.search(current) and re.search(r"\bplayer\b", current):
+            return current
+    # Inverted order, e.g. "After missing last weekend, PLAYER is available".
+    for comma in re.finditer(",", text):
+        back, current = text[:comma.start()], text[comma.end():]
+        if _PAST_MATCH.search(back) and not _PAST_MATCH.search(current) and "player" in current:
+            return current
+    # A continuing restriction explicitly expressed as the current state of
+    # the named player is meaningful. A speculative or older quote isn't.
+    if re.search(r"\bplayer (?:is (?:still|now|currently)|remains|continues to)\b", text):
+        return text
+    return None
+
+
 _HYPOTHETICAL = re.compile(r"\b(?:if|suppose|imagine|hypothetical|what if|in case|were to|ignore (?:all |previous |prior )?instructions|pretend)\b")
 _PERIOD = re.compile(r"[.!?]+(?=\s|$)|[;\n]+|$")
 
@@ -315,8 +352,8 @@ _DIRECTIVE = re.compile(
 
 
 def _judgement(clause, authority, title, nomination=None):
-    normalized = _CONTRACTIONS.sub(lambda m: _EXPAND[m[1]], _fold(clause))
-    if not normalized.strip() or "?" in normalized or _HYPOTHETICAL.search(normalized):
+    normalized = _current_statement(_CONTRACTIONS.sub(lambda m: _EXPAND[m[1]], _fold(clause)))
+    if not normalized or not normalized.strip() or "?" in normalized or _HYPOTHETICAL.search(normalized):
         return None
     if (_RUMOUR.search(normalized) and _TRANSFER.search(normalized)
             and not _NEG.search(normalized) and not _PAST.search(normalized)):
@@ -343,6 +380,8 @@ def _judgement(clause, authority, title, nomination=None):
         elif nomination == "return" and _LOCAL_RETURN.search(normalized):
             returning = True
             available = bool(available or _LOCAL_CLEARED.search(normalized))
+    if _DISTANT.search(normalized) and (returning or available) and not appears_out:
+        return None
     if not (injury or discipline or returning or appears_out or available or uncertain):
         return None
 
@@ -389,7 +428,14 @@ def _judgement(clause, authority, title, nomination=None):
     if denial or negated_claim:
         # A rejected absence, return or diagnosis is not proof of its converse.
         return event, "denied", "unknown", event_score
-    negative_return = re.search(r"\b(?:not (?:yet )?(?:back|recover\w*|return\w*|clear\w*)|yet to (?:recover|return)|not been cleared)\b", normalized)
+    negative_return = re.search(
+        r"\b(?:not (?:(?:yet|be|been|ready to|expected to) )*(?:back|recover\w*|return\w*|clear\w*)"
+        r"|no longer (?:back|in the squad|return\w*)|yet to (?:recover|return))\b", normalized
+    )
+    if negative_return and (available or re.search(r"\b(?:play|start|the (?:matchday )?squad)\b", normalized)):
+        # Negating a return phrase prevents its affirmative lexical cues from
+        # confirming match fitness; explicit nonselection is handled separately.
+        available = False
     soft = bool(_SOFT.search(normalized))
     if uncertain or (soft and (appears_out or returning or available)):
         readiness = "doubtful"
@@ -414,7 +460,12 @@ def _judgement(clause, authority, title, nomination=None):
 
 
 _CONTRAST = re.compile(r"\s*,?\s*\b(?:while|whereas|but|however|although)\b[, ]*", re.I)
-_CARRY = re.compile(r"^(?:(?:he|she|they)\s+)?(?:(?:is|are|has|have|can|will|was|were)\s+)?(?:now |still |since )?(?:back in the squad|fit to |available for |cleared to |returned to the (?:matchday )?squad|ruled out|unavailable|sustain(?:ed|s)?\b|suffer(?:ed|s)?\b|picked up\b|miss the (?:game|match)|injured\b)", re.I)
+_CARRY = re.compile(r"^(?:(?:he|she|they)\s+)?(?:(?:is|are|has|have|had|can|will|would|may|might|could|was|were|should|be|been|not|no|longer|yet|expected|likely|to|again|still|now|since)\s+){0,12}(?:back in (?:the |our )?(?:matchday )?squad|fit to |available(?: for |\b)|cleared to |return(?:s|ed)? (?:to |for |at |on |with |again|next)|return[.!; ]*$|assess(?:ed|ment)\b|returned to the (?:matchday )?squad|ruled out|unavailable|sustain(?:ed|s)?\b|suffer(?:ed|s)?\b|picked up\b|miss the (?:game|match)|injured\b)", re.I)
+
+
+def _carried_predicate(chunk):
+    text = _CONTRACTIONS.sub(lambda m: _EXPAND[m[1]], _fold(chunk.lstrip()))
+    return _CARRY.match(text)
 
 
 def _sentence_claims(sentence, offset, roster, authority, title, team, nomination):
@@ -434,7 +485,7 @@ def _sentence_claims(sentence, offset, roster, authority, title, team, nominatio
         chunk = sentence[left:right]
         mentions = _mentions(chunk, aliases, width)
         if not mentions:
-            if prior and _CARRY.match(chunk.lstrip()):
+            if prior and _carried_predicate(chunk):
                 ident, start, origin, local_title = prior
                 result = _judgement("PLAYER " + chunk, origin, local_title, nomination)
                 if result:
@@ -465,7 +516,17 @@ def _sentence_claims(sentence, offset, roster, authority, title, team, nominatio
             if result:
                 for ident in dict.fromkeys(m.ident for m in group):
                     claims.append(_record(sentence, offset, left + begin, left + end, ident, players, result))
-    return claims
+    resolved = []
+    for row in claims:
+        # Two independently worded statements about the same player's availability in
+        # one sentence may refer to different matches. Resolve only recognized
+        # continuations above; otherwise abstain for a contradictory subject.
+        opposite = any(other["player_id"] == row["player_id"] and
+                       {row["availability"], other["availability"]} == {"out", "available"}
+                       for other in claims)
+        if not opposite:
+            resolved.append(row)
+    return resolved
 
 
 def _record(sentence, offset, start, end, ident, players, judgement):
