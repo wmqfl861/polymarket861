@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from contextlib import closing
 
-from . import jobs, store
+from . import jobs, research_workspace, store
 from .evidence_sources import coverage_gaps
 
 
@@ -30,7 +30,18 @@ _TASKS = {
 
 
 def _submit(data_dir, topic, ident, snapshot):
-    inputs = {"topic": topic, "subject": ident, "evidence": snapshot}
+    with closing(store.connect(data_dir)) as db, db:
+        ref = research_workspace.opaque_ref(
+            db, "maintenance-" + topic, [ident, snapshot]
+        )
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS research_maintenance_subjects(ref TEXT PRIMARY KEY, topic TEXT NOT NULL, subject TEXT NOT NULL)"
+        )
+        db.execute(
+            "INSERT OR IGNORE INTO research_maintenance_subjects VALUES(?,?,?)",
+            (ref, topic, ident),
+        )
+    inputs = {"topic": topic, "source_ref": ref}
     key = f"research-{topic}-{store.digest(inputs)}"
     return jobs.enqueue_job(
         data_dir, key, task=_TASKS[topic], kind="codex", inputs=inputs

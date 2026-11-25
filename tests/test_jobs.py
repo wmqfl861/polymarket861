@@ -104,19 +104,20 @@ class QueueTests(TempStore):
         self.assertEqual(set(deps),{"clubs","weather"})
 
     def test_real_external_process_uses_attempt_directory_and_sandbox_arguments(self):
-        # A fixture CLI records the actual subprocess cwd/argv; no model service is contacted.
-        executable = self.root/"fixture-codex"
-        executable.write_text('#!/usr/bin/env python3\nimport os,sys,json\nprint(json.dumps({"cwd":os.getcwd(),"args":sys.argv[1:],"private":os.getenv("GH_TOKEN"),"prompt":sys.stdin.read()}))\n')
-        executable.chmod(0o700)
+        from test_research_disclosure import controlled_cli, note
+        from pathlib import Path
+
+        executable=controlled_cli(self.root,note())
         jobs.enqueue_job(self.root,"assist",kind="codex",task="inspect input")
         with patch.object(jobs.shutil,"which",return_value=str(executable)), patch.dict("os.environ",{"GH_TOKEN":"do-not-pass"}):
-            jobs.run_workers(self.root,allow_codex=True)
-        folder = Path(jobs.jobs_status(self.root)["jobs"][0]["output"])
-        invocation = json.loads((folder/"codex.jsonl").read_text())
-        self.assertEqual(Path(invocation["cwd"]),folder)
-        self.assertIn("workspace-write",invocation["args"])
-        self.assertIn("input.json",invocation["prompt"])
-        self.assertIsNone(invocation["private"])
+            result=jobs.run_workers(self.root,allow_codex=True)
+        self.assertEqual(result["attempts"][0]["outcome"],"done")
+        job=jobs.jobs_status(self.root)["jobs"][0]
+        folder=Path(job["output"])
+        invocation=json.loads((folder/"codex.jsonl").read_text())
+        self.assertFalse(Path(invocation["cwd"]).is_relative_to(self.root))
+        self.assertEqual(invocation["topic"],"discovery")
+        self.assertEqual(job["result"]["research_isolation"]["os_probe"],"passed")
 
 
 def season_games(year, rounds):

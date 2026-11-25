@@ -1,3 +1,4 @@
+import difflib
 import json
 import subprocess
 import tempfile
@@ -5,7 +6,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from polymarket861 import jobs, research_workspace as rw
+from polymarket861 import football, jobs, research_workspace as rw
+from test_research_disclosure import controlled_cli
 
 
 class ResearchWorkspaceTests(unittest.TestCase):
@@ -17,7 +19,11 @@ class ResearchWorkspaceTests(unittest.TestCase):
         self.project.mkdir()
         tracked = self.project / "src/polymarket861/football.py"
         tracked.parent.mkdir(parents=True)
-        tracked.write_text("origin = 1\n")
+        self.source = Path(football.__file__).read_text()
+        tracked.write_text(self.source)
+        unexpected = self.project / "reports" / "private-outcomes.json"
+        unexpected.parent.mkdir()
+        unexpected.write_text("WITHHELD_LABEL_73x19_PRIVATE_NEWS")
         for args in (
             ["init", "-q"],
             ["add", "."],
@@ -44,16 +50,7 @@ class ResearchWorkspaceTests(unittest.TestCase):
             "parameters_json": json.dumps(params),
             "evidence_refs": ["input"] if refs is None else refs,
         }
-        binary = self.base / "fixture-cli"
-        binary.write_text(
-            "#!/usr/bin/env python3\nimport pathlib,sys,json\n"
-            "p=pathlib.Path(sys.argv[sys.argv.index('--output-last-message')+1])\n"
-            "assert sys.argv[sys.argv.index('--sandbox')+1]=='read-only'\n"
-            "assert pathlib.Path('reference/src/polymarket861/football.py').read_text()=='origin = 1\\n'\n"
-            "assert not pathlib.Path('reference/private.txt').exists()\n"
-            f"p.write_text({json.dumps(item)!r})\n"
-        )
-        binary.chmod(0o700)
+        binary = controlled_cli(self.base, item)
         jobs.enqueue_job(
             self.state,
             ident,
@@ -80,7 +77,18 @@ class ResearchWorkspaceTests(unittest.TestCase):
             rw.verify(self.state, key)
 
     def test_only_known_evidence_and_reviewable_patch(self):
-        diff = "diff --git a/src/polymarket861/football.py b/src/polymarket861/football.py\n--- a/src/polymarket861/football.py\n+++ b/src/polymarket861/football.py\n@@ -1 +1 @@\n-origin = 1\n+origin = 2\n"
+        name = "src/polymarket861/football.py"
+        updated = self.source.replace(
+            "Premier League fixture history", "EPL fixture history", 1
+        )
+        diff = "".join(
+            difflib.unified_diff(
+                self.source.splitlines(keepends=True),
+                updated.splitlines(keepends=True),
+                fromfile="a/" + name,
+                tofile="b/" + name,
+            )
+        )
         key, run = self.run_one("patch", {"diff": diff})
         self.assertEqual(run["proposals"][0]["state"], "awaiting_code_review")
         self.assertTrue(rw.verify(self.state, key)["applies_to_source"])
