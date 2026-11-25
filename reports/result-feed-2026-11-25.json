@@ -1,0 +1,110 @@
+{
+  "season": "2026-27",
+  "admitted_at": "2026-11-25T07:16:22.540713Z",
+  "attribution": "Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0",
+  "license": "https://www.openligadb.de/en/license",
+  "api_terms": "https://www.openligadb.de/en/terms-of-use",
+  "source_receipts": [
+    {
+      "scope": "season",
+      "received_at": "2026-11-25T04:03:36.470756Z",
+      "sha256": "b8b95a74468c081c2b9c6779b8c0aeb05d5c4c4d191c456b610bb2a9441a73b1",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026"
+    },
+    {
+      "scope": "1",
+      "received_at": "2026-11-25T07:12:14.754720Z",
+      "sha256": "d74132581d5154cb9f878d2103f5809de5b8fe21f5ba6e75521a0cbdd39b953a",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/1"
+    },
+    {
+      "scope": "2",
+      "received_at": "2026-11-25T07:12:28.584474Z",
+      "sha256": "07e46ec50cf6a652bbcfe0ff3ce4c0e30d674f387321b065d5b64c6009b8248a",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/2"
+    },
+    {
+      "scope": "3",
+      "received_at": "2026-11-25T07:12:42.160150Z",
+      "sha256": "3f50ee36162696a03573e7186ced3c1e589c41078b95f981016999fc410a0979",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/3"
+    },
+    {
+      "scope": "4",
+      "received_at": "2026-11-25T07:12:56.704922Z",
+      "sha256": "07dc651931b6790a0d3ed92d4a06548028ace8eceba256c863c87424228c5b65",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/4"
+    },
+    {
+      "scope": "5",
+      "received_at": "2026-11-25T07:13:10.572193Z",
+      "sha256": "461005acd1be5fad102772171870b04ceeb21dd9c51cdb558be358886688c7e7",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/5"
+    },
+    {
+      "scope": "6",
+      "received_at": "2026-11-25T07:13:25.180543Z",
+      "sha256": "854b246204291e3913e3b1fda7b323d44f89f07adaec8fa76b5a2b41de8e8c71",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/6"
+    },
+    {
+      "scope": "7",
+      "received_at": "2026-11-25T07:13:39.668462Z",
+      "sha256": "5ca06f8e9e35b272f23cad124d808231bf9a45b5e874dcb8a9fb9edde95eaa18",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/7"
+    },
+    {
+      "scope": "8",
+      "received_at": "2026-11-25T07:13:53.880568Z",
+      "sha256": "6480d70442340b7ba299241059b06d61a3aabb30b58cc5c435b342a8e580374d",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/8"
+    },
+    {
+      "scope": "9",
+      "received_at": "2026-11-25T07:14:08.620209Z",
+      "sha256": "01ff032e044ab656dff5f9d8a5300fa83f61717a24e709f984fd3c27a6a3fd14",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/9"
+    },
+    {
+      "scope": "10",
+      "received_at": "2026-11-25T07:14:22.764575Z",
+      "sha256": "dd946469ae98ab8285b37acd0c4b155e2fe7627ef2932c3ce2739e4869bdcf3a",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/10"
+    },
+    {
+      "scope": "11",
+      "received_at": "2026-11-25T07:14:36.616319Z",
+      "sha256": "b4eafcf5c8c4285acdd4590b1e013a4de6100f7e74f914569d160a49294ce208",
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/11"
+    }
+  ],
+  "registered_fixtures": 380,
+  "two_receipt_90_minute_scores": 91,
+  "openfootball_agreements": 49,
+  "new_results": 42,
+  "isolated_score_conflicts": 1,
+  "isolated_schedule_conflicts": 8,
+  "overdue_without_a_usable_result": 19,
+  "raw_unfinished_in_round_11": 10,
+  "raw_openfootball": {
+    "revision": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "current_season_final_scores": 50,
+    "source": "https://github.com/openfootball/football.json"
+  },
+  "training": {
+    "fixture": "Nottingham Forest FC vs Chelsea FC 2026-11-27",
+    "before_cutoff": "2026-11-25T07:00:00Z",
+    "before_n": 1190,
+    "after_cutoff": "2026-11-25T07:17:53.455019Z",
+    "after_n": 1231,
+    "current_season_results_before": 50,
+    "current_season_results_after": 91,
+    "manifest": "407170da84a931bd065237a9e223ad364d13d9e6a667c07b285b8fbf483339a7"
+  },
+  "qualification": {
+    "before_ready": false,
+    "after_ready": false,
+    "before_verified_historical_T60": 0,
+    "after_verified_historical_T60": 0
+  }
+}

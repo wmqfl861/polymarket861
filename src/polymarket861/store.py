@@ -80,6 +80,10 @@ CREATE TABLE IF NOT EXISTS schedule_receipts (
 CREATE TABLE IF NOT EXISTS result_schedule_refs (
     fixture_id TEXT NOT NULL,version INTEGER NOT NULL,kickoff TEXT NOT NULL,PRIMARY KEY(fixture_id,version)
 );
+CREATE TABLE IF NOT EXISTS result_dispositions (
+    fixture_id TEXT NOT NULL, kickoff TEXT NOT NULL, at TEXT NOT NULL,
+    held INTEGER NOT NULL, reason TEXT NOT NULL, PRIMARY KEY(fixture_id,kickoff,at)
+);
 CREATE TABLE IF NOT EXISTS result_time_grades (
     fixture_id TEXT NOT NULL,version INTEGER NOT NULL,grade TEXT NOT NULL,PRIMARY KEY(fixture_id,version)
 );
@@ -301,6 +305,13 @@ def fixture_at(data_dir, fixture_id, at=None, *, prospective=False) -> dict:
 
 def record_result(data_dir, outcome: dict) -> dict:
     """Record the independent scorer's evidence, including corrections as new versions."""
+    with closing(connect(data_dir)) as db, db:
+        db.execute("BEGIN IMMEDIATE")
+        return record_result_db(db, outcome, recorded_at=now_utc())
+
+
+def record_result_db(db, outcome, *, recorded_at):
+    """Append one version in the caller's existing write transaction."""
     item = {
         k: outcome[k]
         for k in ("fixture_id", "home_goals", "away_goals", "source", "locator")
@@ -322,53 +333,51 @@ def record_result(data_dir, outcome: dict) -> dict:
     else:
         for k in ("finalized_at", "published_at", "received_at"):
             item[k] = iso(outcome[k])
-    with closing(connect(data_dir)) as db, db:
-        db.execute("BEGIN IMMEDIATE")
-        fixed = db.execute(
-            "SELECT * FROM fixture_versions WHERE fixture_id=? ORDER BY known_at DESC LIMIT 1",
-            (item["fixture_id"],),
-        ).fetchone()
-        if (
-            not fixed
-            or not fixed["kickoff"]
-            < item["finalized_at"]
-            <= item["published_at"]
-            <= item["received_at"]
-            <= now_utc()
+    fixed = db.execute(
+        "SELECT * FROM fixture_versions WHERE fixture_id=? ORDER BY known_at DESC LIMIT 1",
+        (item["fixture_id"],),
+    ).fetchone()
+    if (
+        not fixed
+        or not fixed["kickoff"]
+        < item["finalized_at"]
+        <= item["published_at"]
+        <= item["received_at"]
+        <= recorded_at
+    ):
+        raise ValueError(
+            "result time sequence must be kickoff < final <= published <= received <= now"
+        )
+    if outcome.get("kickoff") and iso(outcome["kickoff"]) != fixed["kickoff"]:
+        raise ValueError("result is for a different schedule revision")
+    if fixed["known_at"] > item["received_at"] and fixed["version"] > 1:
+        raise ValueError("result predates the latest schedule revision")
+    row = db.execute(
+        "SELECT * FROM result_versions WHERE fixture_id=? ORDER BY version DESC LIMIT 1",
+        (item["fixture_id"],),
+    ).fetchone()
+    if row:
+        if all(item[k] == row[k] for k in item):
+            return dict(row)
+        if (item["published_at"], item["received_at"]) <= (
+            row["published_at"],
+            row["received_at"],
         ):
-            raise ValueError(
-                "result time sequence must be kickoff < final <= published <= received <= now"
-            )
-        if outcome.get("kickoff") and iso(outcome["kickoff"]) != fixed["kickoff"]:
-            raise ValueError("result is for a different schedule revision")
-        if fixed["known_at"] > item["received_at"] and fixed["version"] > 1:
-            raise ValueError("result predates the latest schedule revision")
-        row = db.execute(
-            "SELECT * FROM result_versions WHERE fixture_id=? ORDER BY version DESC LIMIT 1",
-            (item["fixture_id"],),
-        ).fetchone()
-        if row:
-            if all(item[k] == row[k] for k in item):
-                return dict(row)
-            if (item["published_at"], item["received_at"]) <= (
-                row["published_at"],
-                row["received_at"],
-            ):
-                raise ValueError("an older result cannot supersede a later correction")
-        item.update(version=row["version"] + 1 if row else 1, recorded_at=now_utc())
-        db.execute(
-            "INSERT INTO result_versions VALUES (:fixture_id,:version,:home_goals,:away_goals,"
-            ":finalized_at,:published_at,:received_at,:recorded_at,:source,:locator)",
-            item,
-        )
-        db.execute(
-            "INSERT INTO result_schedule_refs VALUES (?,?,?)",
-            (item["fixture_id"], item["version"], fixed["kickoff"]),
-        )
-        db.execute(
-            "INSERT INTO result_time_grades VALUES (?,?,?)",
-            (item["fixture_id"], item["version"], grade),
-        )
+            raise ValueError("an older result cannot supersede a later correction")
+    item.update(version=row["version"] + 1 if row else 1, recorded_at=recorded_at)
+    db.execute(
+        "INSERT INTO result_versions VALUES (:fixture_id,:version,:home_goals,:away_goals,"
+        ":finalized_at,:published_at,:received_at,:recorded_at,:source,:locator)",
+        item,
+    )
+    db.execute(
+        "INSERT INTO result_schedule_refs VALUES (?,?,?)",
+        (item["fixture_id"], item["version"], fixed["kickoff"]),
+    )
+    db.execute(
+        "INSERT INTO result_time_grades VALUES (?,?,?)",
+        (item["fixture_id"], item["version"], grade),
+    )
     return item | {"time_grade": grade}
 
 
@@ -391,11 +400,16 @@ def eligible_fixture_rows(db, *, season=None):
     ), r AS (
         SELECT r.*,link.kickoff,row_number() OVER(PARTITION BY r.fixture_id,link.kickoff ORDER BY r.version DESC) AS n
         FROM result_versions r JOIN result_schedule_refs link USING(fixture_id,version)
-    ) SELECT f.fixture_id,f.season,f.round_id,f.home,f.away,f.kickoff,f.known_at,r.home_goals,
-        r.away_goals,r.finalized_at,r.received_at,r.version AS result_version,s.precision,s.recorded_at,
+    ) , disposition AS (
+        SELECT *,row_number() OVER(PARTITION BY fixture_id,kickoff ORDER BY at DESC) AS n FROM result_dispositions
+    ) SELECT f.fixture_id,f.season,f.round_id,f.home,f.away,f.kickoff,f.known_at,
+        CASE WHEN coalesce(d.held,0)=0 THEN r.home_goals END AS home_goals,
+        CASE WHEN coalesce(d.held,0)=0 THEN r.away_goals END AS away_goals,
+        d.reason AS result_disposition, r.finalized_at,r.received_at,r.version AS result_version,s.precision,s.recorded_at,
         f.version AS schedule_version,r.source AS result_source,r.locator AS result_locator
         FROM f JOIN schedule_receipts s ON f.fixture_id=s.fixture_id AND f.version=s.version
-        LEFT JOIN r ON f.fixture_id=r.fixture_id AND f.kickoff=r.kickoff AND r.n=1 WHERE f.n=1"""
+        LEFT JOIN r ON f.fixture_id=r.fixture_id AND f.kickoff=r.kickoff AND r.n=1
+        LEFT JOIN disposition d ON f.fixture_id=d.fixture_id AND f.kickoff=d.kickoff AND d.n=1 WHERE f.n=1"""
     args = ()
     if season is not None:
         query += " AND f.season=?"

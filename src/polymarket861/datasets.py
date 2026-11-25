@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 import tempfile
 from contextlib import closing
 from pathlib import Path
@@ -17,8 +18,8 @@ from .store import (
     instant,
     iso,
     now_utc,
-    register_fixture,
     record_result,
+    register_fixture,
     save_report,
 )
 
@@ -51,26 +52,95 @@ def _seasons(first, last):
     return [f"{yr}-{(yr + 1) % 100:02d}" for yr in range(lo, hi + 1)]
 
 
+GIT_REMOTE = "https://github.com/openfootball/football.json.git"
+
+
+def _provider_head():
+    try:
+        return json.loads(_get(BASE + "/commits/HEAD"))["sha"]
+    except OSError:
+        # The public Git transport has a separate quota from GitHub's anonymous API.
+        data = _get(GIT_REMOTE + "/info/refs?service=git-upload-pack")
+        offset = 0
+        while offset + 4 <= len(data):
+            size = int(data[offset : offset + 4], 16)
+            offset += 4
+            if size == 0:
+                continue
+            if size < 4 or offset + size - 4 > len(data):
+                raise ValueError("invalid OpenFootball Git advertisement")
+            line = data[offset : offset + size - 4].split(b"\0", 1)[0].strip()
+            offset += size - 4
+            match = re.fullmatch(rb"([0-9a-f]{40}) HEAD", line)
+            if match:
+                return match[1].decode("ascii")
+        raise ValueError("OpenFootball did not advertise a HEAD commit")
+
+
+def _git_season_objects(revision, seasons, root):
+    # Git verifies the commit and its tree before deriving file identities offline.
+    with tempfile.TemporaryDirectory(prefix="pm861-openfootball-git-") as folder:
+
+        def git(*args):
+            try:
+                return subprocess.run(
+                    ["git", "-C", folder, *args],
+                    check=True,
+                    capture_output=True,
+                    timeout=45,
+                ).stdout
+            except (OSError, subprocess.SubprocessError) as exc:
+                raise OSError("OpenFootball Git object fallback unavailable") from exc
+
+        git("init", "--bare", "--quiet")
+        git(
+            "-c",
+            "http.version=HTTP/1.1",
+            "fetch",
+            "--depth=1",
+            "--no-tags",
+            GIT_REMOTE,
+            revision,
+        )
+        if git("rev-parse", "FETCH_HEAD^{commit}").decode().strip() != revision:
+            raise ValueError("Git fallback fetched a different source revision")
+        objects = {}
+        for season in seasons:
+            address = f"{revision}:{season}/en.1.json"
+            sha = git("rev-parse", address).decode().strip()
+            raw = git("cat-file", "blob", sha)
+            if football.blob_sha(raw) != sha:
+                raise ValueError("Git fallback returned inconsistent season bytes")
+            _atomic(root / season / "en.1.json", raw)
+            objects[season] = sha
+        return objects
+
+
 def refresh(data_dir, first, last, *, revision="latest"):
     """Pin once per batch. Verify the Git blob before installing each downloaded file."""
     is_current_head = revision == "latest"
     if is_current_head:
-        revision = json.loads(_get(BASE + "/commits/HEAD"))["sha"]
+        revision = _provider_head()
     if re.fullmatch(r"[0-9a-f]{40}", revision) is None:
         raise ValueError("expected a full upstream commit")
     root = Path(data_dir) / "sources" / "openfootball" / revision
     expected = {}
-    for season in _seasons(first, last):
+    seasons = _seasons(first, last)
+    for season in seasons:
         known = (
             football.SOURCE_BLOBS.get(season)
             if revision == football.SOURCE_COMMIT
             else None
         )
         if not known:
-            metadata = json.loads(
-                _get(BASE + f"/contents/{season}/en.1.json?ref=" + quote(revision))
-            )
-            known = metadata["sha"]
+            try:
+                metadata = json.loads(
+                    _get(BASE + f"/contents/{season}/en.1.json?ref=" + quote(revision))
+                )
+                known = metadata["sha"]
+            except OSError:
+                expected = _git_season_objects(revision, seasons, root)
+                break
         path = root / season / "en.1.json"
         if not path.exists() or football.blob_sha(path.read_bytes()) != known:
             url = f"https://raw.githubusercontent.com/openfootball/football.json/{revision}/{season}/en.1.json"
@@ -330,6 +400,26 @@ def observe(
     manifest = input_manifest.create_observed_inputs(
         data_dir, revision, manifest_files, fixtures, sidecars
     )
+    if register_season:
+        with closing(connect(data_dir)) as db:
+            table = db.execute(
+                "SELECT 1 FROM sqlite_master WHERE name='rf_cache'"
+            ).fetchone()
+            tracked = (
+                table
+                and db.execute(
+                    "SELECT 1 FROM rf_cache WHERE season=? LIMIT 1",
+                    (football.season_year(register_season),),
+                ).fetchone()
+            )
+        if tracked:
+            # An independent fallback refresh can reveal a contradictory final immediately.
+            # Publish the corrected sidecar and round editions even without a scheduler tick.
+            from . import result_admission, result_operations
+
+            result_admission.reconcile(data_dir, football.season_year(register_season))
+            result_operations.publications(data_dir)
+            manifest = input_manifest.verify_observed_inputs(data_dir, manifest["root"])
     from .jobs import review_due_experiments
     from .pipeline import publish_round
 

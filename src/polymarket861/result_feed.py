@@ -1,4 +1,4 @@
-"""OpenLigaDB EPL candidate results. The archive and trial sidecar never alter official results."""
+"""Licensed EPL match results, independent regulation confirmation and research sidecars."""
 
 from __future__ import annotations
 
@@ -50,7 +50,14 @@ def _db(root):
 
 
 def _get(url):
-    req = Request(url, headers={"Accept": "application/json", "User-Agent": AGENT})
+    req = Request(
+        url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": AGENT,
+            "Cache-Control": "no-cache",
+        },
+    )
     with urlopen(req, timeout=25) as response:
         data = response.read(8 * 1024 * 1024 + 1)
     if len(data) > 8 * 1024 * 1024:
@@ -81,6 +88,7 @@ def _full_time(data, year, *, only_round=None):
         rnd = match["group"]["groupOrderID"]
         if (
             type(mid) is not int
+            or mid <= 0
             or mid in ids
             or fid in fixtures
             or names[0] == names[1]
@@ -202,12 +210,14 @@ def reconcile(root, year):
     return result
 
 
-def sync(root, year, *, round_id=None):
+def sync(root, year, *, round_id=None, confirm=False):
+    from . import result_admission
+
     if not 2000 <= year <= 2100 or (round_id is not None and not 1 <= round_id <= 38):
         raise ValueError("invalid EPL season or round")
     scope = str(round_id or "season")
     checked = now_utc()
-    with closing(_db(root)) as db:
+    with closing(result_admission.database(root)) as db:
         old = db.execute(
             "SELECT * FROM rf_cache WHERE season=? AND scope=?", (year, scope)
         ).fetchone()
@@ -224,7 +234,9 @@ def sync(root, year, *, round_id=None):
 
     if retry and instant(checked) < instant(retry["retry_at"]):
         return cached("backoff; retry after " + retry["retry_at"])
-    if old and instant(checked) - instant(old["checked_at"]) < timedelta(hours=6):
+    if old and instant(checked) - instant(old["checked_at"]) < (
+        result_admission.INTERVAL if confirm else timedelta(hours=6)
+    ):
         return cached("local_cache")
     # Full-season bootstrap, then small changed-round requests. A full-season
     # refetch after bootstrap is deliberately not an automatic poll of 380 matches.
@@ -237,7 +249,7 @@ def sync(root, year, *, round_id=None):
             if not isinstance(parsed, str) or not parsed:
                 raise ValueError("invalid OpenLigaDB change marker")
             marker = parsed
-            if old and old["marker"] == marker:
+            if old and old["marker"] == marker and not confirm:
                 with closing(_db(root)) as db, db:
                     db.execute(
                         "UPDATE rf_cache SET checked_at=? WHERE season=? AND scope=?",
@@ -263,6 +275,10 @@ def sync(root, year, *, round_id=None):
         )
         with closing(_db(root)) as db, db:
             db.execute("BEGIN IMMEDIATE")
+            db.execute(
+                "INSERT OR IGNORE INTO rf_native_requests VALUES(?,?,?,?,?,?)",
+                (year, scope, checked, seen, ref["sha256"], url),
+            )
             # The earliest actual sighting of an unchanged score is retained. A
             # later correction/retraction is appended and never leaks into old cutoffs.
             for fid, mid, rnd, kickoff, score, _error in rows:
@@ -368,14 +384,50 @@ def trial_sidecar(root, year, base_evidence, output):
     }
 
 
+def sync_primary(root, year, *, round_id=None):
+    capture = sync(root, year, round_id=round_id, confirm=round_id is not None)
+    return capture | {"regulation": sync_season(root, year, offline=True)}
+
+
+def sync_season(root, year, *, offline=False):
+    from .result_operations import season
+
+    return season(root, year, offline=offline)
+
+
+def import_round(root, year, round_id, file):
+    from .result_operations import manual
+
+    return manual(root, year, round_id, file)
+
+
+def rollback_batch(root, batch_id, reason):
+    from .result_operations import rollback
+
+    return rollback(root, batch_id, reason)
+
+
 def register(subparsers):
     cmd = subparsers.add_parser(
         "result-feed", help="候选免费赛果、对账与影子样本"
     ).add_subparsers(required=True)
+    p = cmd.add_parser("season", help="确认英超90分钟比分、刷新训练输入并发布逐轮评分")
+    p.add_argument("year", type=int)
+    p.add_argument("--offline", action="store_true")
+    p.set_defaults(func=lambda a: sync_season(a.data_dir, a.year, offline=a.offline))
+    p = cmd.add_parser("import-round", help="从获准原件原子导入已登记整轮的90分钟赛果")
+    p.add_argument("year", type=int)
+    p.add_argument("round_id", type=int)
+    p.add_argument("file", type=Path)
+    p.set_defaults(func=lambda a: import_round(a.data_dir, a.year, a.round_id, a.file))
+    p = cmd.add_parser("rollback-batch", help="撤销整批赛果并保留原件、理由和历次评分")
+    p.add_argument("batch_id")
+    p.add_argument("--reason", required=True)
+    p.set_defaults(func=lambda a: rollback_batch(a.data_dir, a.batch_id, a.reason))
     p = cmd.add_parser("sync", help="缓存并核对 OpenLigaDB 当季或单轮赛果")
     p.add_argument("year", type=int, help="赛季开始年份")
     p.add_argument("--round", dest="round_id", type=int)
-    p.set_defaults(func=lambda a: sync(a.data_dir, a.year, round_id=a.round_id))
+    p.set_defaults(func=lambda a: sync_primary(a.data_dir, a.year, round_id=a.round_id))
     p = cmd.add_parser("compare", help="重新对照正式比分并隔离冲突")
     p.add_argument("year", type=int)
     p.set_defaults(func=lambda a: reconcile(a.data_dir, a.year))

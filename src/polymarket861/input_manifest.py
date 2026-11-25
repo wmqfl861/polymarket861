@@ -146,6 +146,38 @@ def _effective_rows(db, fixtures):
                 "archive_at": at,
                 "source": f"{r['source']}:{r['locator']}; result v{r['version']}",
             }
+    states = defaultdict(list)
+    for change in db.execute("SELECT * FROM result_dispositions ORDER BY at"):
+        fid = change["fixture_id"]
+        if fid in ids and change["kickoff"] == iso(ids[fid].kickoff):
+            states[fid].append(change)
+    for fid, changes in states.items():
+        versions = streams[fid, "score"]
+        original = dict(versions)
+        for idx, change in enumerate(changes):
+            at = change["at"]
+            if change["held"]:
+                until = changes[idx + 1]["at"] if idx + 1 < len(changes) else None
+                for stamp in list(versions):
+                    if at <= stamp and (until is None or stamp < until):
+                        del versions[stamp]
+                versions[at] = {
+                    "fixture_id": fid,
+                    "score": None,
+                    "retracted": True,
+                    "archive_at": at,
+                    "published_by": at,
+                    "finalized_by": at,
+                    "source": change["reason"],
+                }
+            elif at not in versions:
+                prior = [stamp for stamp in original if stamp <= at]
+                if prior:
+                    versions[at] = original[max(prior)] | {
+                        "archive_at": at,
+                        "published_by": at,
+                        "finalized_by": at,
+                    }
     for (fid, kind), versions in streams.items():
         if kind == "schedule" and versions:
             authoritative_schedules[fid] = versions[max(versions)]["kickoff"]
