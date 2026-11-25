@@ -25,6 +25,9 @@ def main(argv=None):
         pipeline,
         result_feed,
         runner,
+        season,
+        settlement,
+        shadow,
         strategy,
     )
 
@@ -49,6 +52,9 @@ def main(argv=None):
         jobs,
         pipeline,
         runner,
+        season,
+        settlement,
+        shadow,
         strategy,
         result_feed,
         dashboard,
