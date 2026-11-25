@@ -1,0 +1,663 @@
+{
+  "reproduce": "pm861 --data-dir RUNTIME experiment football-study INPUT --from-season 2021-22 --to-season 2025-26 --archive-lag-hours 24",
+  "protocol": {
+    "version": "football-candidates-1",
+    "baseline": "B1 including its original B0 fallback",
+    "horizon_minutes": 60,
+    "fold": "freeze both candidates each August 1 at 00:00 UTC; score the following EPL season",
+    "calibration": {
+      "prior_prediction_seasons": 3,
+      "minimum_oof_pairs": 100,
+      "penalty": 8,
+      "target": "full-match over 2.5",
+      "matrix": "rescale mass above/below 2.5, preserving conditional scoreline distribution within each set",
+      "applies": "B1 predictions only"
+    },
+    "newcomer": {
+      "previous_complete_seasons": 5,
+      "prior_games": 8,
+      "minimum_team_seasons": 3,
+      "applies": "original unseen_team fallback only; the previous complete season must identify non-incumbents",
+      "estimator": "attack and defensive strength of previously promoted team-seasons relative to EPL goals per team game"
+    },
+    "inference": "match-weighted difference in four-item score, clustered by season and official round; two candidate primary contrasts, simultaneous 95% t intervals; item contrasts descriptive",
+    "activation": "research_only; prospective registration and new approved production recipe required"
+  },
+  "spec_sha256": "ed19c6c2b23caa953cc46a9c0e1f348ad20d078b4495f425de22cc96a94ac632",
+  "implementation_sha256": {
+    "football_candidates.py": "46ebd89765cac6b1505eb06f58a21736376b73efe068145d687275a733f7d713",
+    "football.py": "a7283a3c9b4ebb2752590eb6388a973f328ea672c50e7c3b5531154154e2908b",
+    "football_model.py": "093e90294315132d2c60826734bb7a12fc329264ca8d4863bb3ad69bd5b2b829",
+    "experiment_statistics.py": "d4c6572570f2522397f430cec84f8b09b1cf76de762e6df35d420cc40749404e"
+  },
+  "input_provenance": {
+    "policy": "upstream-bytes-local-receipt-v1",
+    "snapshot": "25ed4a67fd37ed9ce4a298ca543d6cc5ef99c8451fb47ef61ab59e6b96d812c2",
+    "season_files": [
+      {
+        "season": "2010-11",
+        "sha256": "a94631cc82fd4034d4da5f5594d32cb191942f0b594e3a9cd9dcf29fe7dfa707",
+        "git_blob": "9fe7c43945ed5bb7249ae2488397262d0d72ca88"
+      },
+      {
+        "season": "2011-12",
+        "sha256": "94e29260ec3500ba69e1ffe829576b0c6297cb570ecc223ab13a2fdcae81fb98",
+        "git_blob": "72c0c8ca26ce53bdafb71a3d12ea4e51fe8790a3"
+      },
+      {
+        "season": "2012-13",
+        "sha256": "d41f9131f9dda654bff9067ffd370468b895b5ed4e9691a4b5cad2b2550fbc8b",
+        "git_blob": "b9fba456fccee350f06ced85600229dfe8d895d4"
+      },
+      {
+        "season": "2013-14",
+        "sha256": "821ea8a8a078753993ed1cc9f86fb739ec18824ef07aee1df4e83f6915e29782",
+        "git_blob": "f8f06a0494c657638a6ad055effdf65c33c164c3"
+      },
+      {
+        "season": "2014-15",
+        "sha256": "2f24151bffd3d377810f3d2e85ead0f1b3dfef00153c6ea31f5e9ced63281a4d",
+        "git_blob": "4ac8e36323109731fb60fc3db678a0b358074e12"
+      },
+      {
+        "season": "2015-16",
+        "sha256": "4d8ab70f5d2c29231320be7404310bc1b0fbc6e6be0284e5ee667f581406fead",
+        "git_blob": "d7384b9c162eea51ea0da500b8f6c73a170ee0bd"
+      },
+      {
+        "season": "2016-17",
+        "sha256": "9c8cdb27355678ab81aacbbabc34a08d00b399aacc28ef4b733da4954a344f17",
+        "git_blob": "b09de9d55b17571e6c9c64fefe83522dfc02ce6f"
+      },
+      {
+        "season": "2017-18",
+        "sha256": "b635f2442a94aa91d85f282fc5e8f7f5dc4f0d04e3e30c4472102f5708d7548c",
+        "git_blob": "c0ccb9c85503d1e24482be7c5117f6277c5a0e2f"
+      },
+      {
+        "season": "2018-19",
+        "sha256": "e2224d86f0605a5a1b5b019c845cdecb13aca1d88035686d4159b875250d4730",
+        "git_blob": "334909dfb533959f15a6d2bf08a096adcfa7d21f"
+      },
+      {
+        "season": "2019-20",
+        "sha256": "9e1695f85ce5553f762e809dea357ec0a95838939be89569060a83c4e98a302d",
+        "git_blob": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc"
+      },
+      {
+        "season": "2020-21",
+        "sha256": "21ddf26b48469da530c51ccc4857bf1a534bda3aed08766b55185efb142e9a20",
+        "git_blob": "081509058af75c0c012d64e980dc4fa53720d933"
+      },
+      {
+        "season": "2021-22",
+        "sha256": "fbdfd426fa18fa2f8630b77de87c082734da495ac4668d6d72f29f76b73b9564",
+        "git_blob": "5eadd9d91c71d45634f3969192ad908653681b23"
+      },
+      {
+        "season": "2022-23",
+        "sha256": "8d09f0f9846981626cdfec48903e1f21e7c79aabe6f92535c9e092e8e79b808b",
+        "git_blob": "0b6230e60d8cd7402810a5f515f6762d8b385b74"
+      },
+      {
+        "season": "2023-24",
+        "sha256": "03e13eafbf78dfe00d7e89dd3bf6643986eb6e8fd86c7664aeb8c5bc0bed88d0",
+        "git_blob": "f62b11dfaf06cffd1236c2777caebb880a0cfea1"
+      },
+      {
+        "season": "2024-25",
+        "sha256": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75",
+        "git_blob": "504f2e732fbc3c9caeb98e4382b13b094453b840"
+      },
+      {
+        "season": "2025-26",
+        "sha256": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1",
+        "git_blob": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+      },
+      {
+        "season": "2026-27",
+        "sha256": "bb91f0ab3e8359df163bb9ec98549bfed85e200dd4c32f3bd606b5890d932dd2",
+        "git_blob": "60e281f0fcc51cfca1a901353666a688cf62a8ba"
+      }
+    ],
+    "sidecar_sha256": null,
+    "observed_manifest": null,
+    "source_authenticated": true,
+    "source_revision": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "timing_authenticated": false,
+    "study_type": "sensitivity",
+    "archive_lag_hours": 24.0,
+    "status": "source_without_receipt_history",
+    "reason": null
+  },
+  "test_seasons": [
+    "2021-22",
+    "2025-26"
+  ],
+  "paired_n": 1900,
+  "denominator": 1900,
+  "coverage_by_season": {
+    "2021-22": [
+      380,
+      380
+    ],
+    "2022-23": [
+      380,
+      380
+    ],
+    "2023-24": [
+      380,
+      380
+    ],
+    "2024-25": [
+      380,
+      380
+    ],
+    "2025-26": [
+      380,
+      380
+    ]
+  },
+  "folds": [
+    {
+      "season": "2021-22",
+      "frozen_at": "2021-08-01T00:00:00.000000Z",
+      "calibration_training_n": 1133,
+      "latest_calibration_result": "2021-05-24T15:00:00.000000Z",
+      "calibration": [
+        0.03274082592312986,
+        0.6315871028724377
+      ],
+      "newcomer_team_seasons": 15,
+      "latest_prior_result": "2021-05-24T15:00:00.000000Z",
+      "newcomer_log_attack_defence": [
+        -0.2978647741657235,
+        -0.10823924136078412
+      ],
+      "predictions_sha256": "703ec014b49bcb8b69be300b8616a1d2aa38ee6e1fc03ac23d587eda419b4214"
+    },
+    {
+      "season": "2022-23",
+      "frozen_at": "2022-08-01T00:00:00.000000Z",
+      "calibration_training_n": 1135,
+      "latest_calibration_result": "2022-05-23T15:00:00.000000Z",
+      "calibration": [
+        0.027774812737303034,
+        0.7742655806719385
+      ],
+      "newcomer_team_seasons": 15,
+      "latest_prior_result": "2022-05-23T15:00:00.000000Z",
+      "newcomer_log_attack_defence": [
+        -0.29950561114212904,
+        -0.13214284389737724
+      ],
+      "predictions_sha256": "8d820d836ca8c77ad5eeed247508ce84bf61019e07117fed0621fd846f0fb5d1"
+    },
+    {
+      "season": "2023-24",
+      "frozen_at": "2023-08-01T00:00:00.000000Z",
+      "calibration_training_n": 1137,
+      "latest_calibration_result": "2023-05-29T15:30:00.000000Z",
+      "calibration": [
+        0.033349830305944746,
+        0.7341894861377655
+      ],
+      "newcomer_team_seasons": 15,
+      "latest_prior_result": "2023-05-29T15:30:00.000000Z",
+      "newcomer_log_attack_defence": [
+        -0.2712132367639841,
+        -0.15265299211803723
+      ],
+      "predictions_sha256": "820dbcfef3d4f5fd5d4f5c04798446c609fe63f538d63fbdf69ec6d049dbfea7"
+    },
+    {
+      "season": "2024-25",
+      "frozen_at": "2024-08-01T00:00:00.000000Z",
+      "calibration_training_n": 1137,
+      "latest_calibration_result": "2024-05-20T15:00:00.000000Z",
+      "calibration": [
+        0.17471641422801093,
+        0.8573946208469313
+      ],
+      "newcomer_team_seasons": 15,
+      "latest_prior_result": "2024-05-20T15:00:00.000000Z",
+      "newcomer_log_attack_defence": [
+        -0.2779853491637179,
+        -0.1827686176871498
+      ],
+      "predictions_sha256": "92d6c7c04624e704e7464ae5725e8c3357967db911b8104b10116b8bef782601"
+    },
+    {
+      "season": "2025-26",
+      "frozen_at": "2025-08-01T00:00:00.000000Z",
+      "calibration_training_n": 1137,
+      "latest_calibration_result": "2025-05-26T15:00:00.000000Z",
+      "calibration": [
+        0.15744254516030515,
+        0.7885489530426968
+      ],
+      "newcomer_team_seasons": 15,
+      "latest_prior_result": "2025-05-26T15:00:00.000000Z",
+      "newcomer_log_attack_defence": [
+        -0.30436026847740877,
+        -0.22926910386483093
+      ],
+      "predictions_sha256": "bd29a473c11903bdde308ffe8b133711bc8e78de009f8eb3408171f456ecb46d"
+    }
+  ],
+  "results": {
+    "totals_calibration": {
+      "all": {
+        "n": 1900,
+        "changed_forecasts": 1895,
+        "changed_rounds": 190,
+        "changed_only_difference_descriptive": 0.0029941496922162667,
+        "base_score": 75.44781323408769,
+        "candidate_score": 75.45079950443862,
+        "interval": {
+          "difference": 0.0029862703509209608,
+          "standard_error": 0.02683385281641764,
+          "lower": -0.057642143390286095,
+          "upper": 0.06361468409212802,
+          "method": "round-cluster-t-v1",
+          "unit": "season_and_official_round",
+          "rounds": 190,
+          "matches": 1900,
+          "degrees_of_freedom": 189,
+          "family_comparisons": 2,
+          "family_confidence": 0.95,
+          "individual_confidence": 0.975,
+          "critical_t": 2.259400249229698
+        },
+        "item_score_differences": {
+          "result": -0.020412543489494877,
+          "total": 0.004824182465729209,
+          "home": -0.002778878558195,
+          "away": 0.030312320985644927
+        },
+        "over_2_5_brier": {
+          "baseline": 0.24346691545111648,
+          "candidate": 0.2434186736264592
+        }
+      },
+      "by_season": {
+        "2021-22": {
+          "n": 380,
+          "changed_forecasts": 379,
+          "changed_rounds": 38,
+          "changed_only_difference_descriptive": 0.018774723341745066,
+          "base_score": 76.21982669793574,
+          "candidate_score": 76.2385520141108,
+          "interval": {
+            "difference": 0.018725316175056263,
+            "standard_error": 0.07185300928533962,
+            "lower": -0.14914601884439002,
+            "upper": 0.18659665119450256,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": -0.03545282785066688,
+            "total": 0.014583406653773235,
+            "home": 0.025839923575070613,
+            "away": 0.06993076232204806
+          },
+          "over_2_5_brier": {
+            "baseline": 0.24405571340939908,
+            "candidate": 0.24390987934286135
+          }
+        },
+        "2022-23": {
+          "n": 380,
+          "changed_forecasts": 379,
+          "changed_rounds": 38,
+          "changed_only_difference_descriptive": 0.015545107812450337,
+          "base_score": 75.41649438009257,
+          "candidate_score": 75.43199857972657,
+          "interval": {
+            "difference": 0.01550419963399652,
+            "standard_error": 0.03570233006018507,
+            "lower": -0.06790772521256695,
+            "upper": 0.09891612448055999,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": 0.008374998492910082,
+            "total": -0.008824601694550942,
+            "home": 0.00013793685886504274,
+            "away": 0.06232846487876083
+          },
+          "over_2_5_brier": {
+            "baseline": 0.24224091352571428,
+            "candidate": 0.2423291595426598
+          }
+        },
+        "2023-24": {
+          "n": 380,
+          "changed_forecasts": 379,
+          "changed_rounds": 38,
+          "changed_only_difference_descriptive": -0.0001635434896647678,
+          "base_score": 76.01889601350852,
+          "candidate_score": 76.01873290039647,
+          "interval": {
+            "difference": -0.00016311311206038682,
+            "standard_error": 0.05527798716371172,
+            "lower": -0.12930995879961385,
+            "upper": 0.1289837325754931,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": -0.011072257734037522,
+            "total": 0.04568327170710149,
+            "home": -0.057329957284508605,
+            "away": 0.022066490863202982
+          },
+          "over_2_5_brier": {
+            "baseline": 0.2373411091280343,
+            "candidate": 0.2368842764109633
+          }
+        },
+        "2024-25": {
+          "n": 380,
+          "changed_forecasts": 379,
+          "changed_rounds": 38,
+          "changed_only_difference_descriptive": -0.04098289786318082,
+          "base_score": 75.05797742598088,
+          "candidate_score": 75.01710237784893,
+          "interval": {
+            "difference": -0.040875048131961925,
+            "standard_error": 0.0623367159315639,
+            "lower": -0.18651331475769573,
+            "upper": 0.10476321849377189,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": -0.0421411448632823,
+            "total": -0.11928126856988262,
+            "home": -0.1022186722767894,
+            "away": 0.10014089318210935
+          },
+          "over_2_5_brier": {
+            "baseline": 0.24336672470039608,
+            "candidate": 0.24455953738609493
+          }
+        },
+        "2025-26": {
+          "n": 380,
+          "changed_forecasts": 379,
+          "changed_rounds": 38,
+          "changed_only_difference_descriptive": 0.021797358659731526,
+          "base_score": 74.52587165292077,
+          "candidate_score": 74.54761165011034,
+          "interval": {
+            "difference": 0.021739997189574336,
+            "standard_error": 0.07027715600022291,
+            "lower": -0.14244964659107096,
+            "upper": 0.18592964097021963,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": -0.02177148549239775,
+            "total": 0.09196010423220488,
+            "home": 0.11967637633638735,
+            "away": -0.10290500631789659
+          },
+          "over_2_5_brier": {
+            "baseline": 0.25033011649203873,
+            "candidate": 0.24941051544971665
+          }
+        }
+      },
+      "conclusion": "no_established_improvement"
+    },
+    "newcomer_prior": {
+      "all": {
+        "n": 1900,
+        "changed_forecasts": 5,
+        "changed_rounds": 5,
+        "changed_only_difference_descriptive": 1.5524532249948861,
+        "base_score": 75.44781323408769,
+        "candidate_score": 75.45189863731137,
+        "interval": {
+          "difference": 0.004085403223670753,
+          "standard_error": 0.014720237891321142,
+          "lower": -0.02917350593670068,
+          "upper": 0.03734431238404219,
+          "method": "round-cluster-t-v1",
+          "unit": "season_and_official_round",
+          "rounds": 190,
+          "matches": 1900,
+          "degrees_of_freedom": 189,
+          "family_comparisons": 2,
+          "family_confidence": 0.95,
+          "individual_confidence": 0.975,
+          "critical_t": 2.259400249229698
+        },
+        "item_score_differences": {
+          "result": 0.0036899173629763513,
+          "total": 0.0034513979964021727,
+          "home": -0.004703809984804938,
+          "away": 0.013904107520109442
+        },
+        "over_2_5_brier": {
+          "baseline": 0.24346691545111648,
+          "candidate": 0.24343240147115247
+        }
+      },
+      "by_season": {
+        "2021-22": {
+          "n": 380,
+          "changed_forecasts": 1,
+          "changed_rounds": 1,
+          "changed_only_difference_descriptive": -15.28668064084755,
+          "base_score": 76.21982669793574,
+          "candidate_score": 76.17959859098616,
+          "interval": {
+            "difference": -0.040228106949598816,
+            "standard_error": 0.04022810694959882,
+            "lower": -0.13421367674134427,
+            "upper": 0.05375746284214662,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": -0.07231364905251031,
+            "total": 0.01873278094807964,
+            "home": -0.08043877230780053,
+            "away": -0.026892787386164043
+          },
+          "over_2_5_brier": {
+            "baseline": 0.24405571340939908,
+            "candidate": 0.24386838559991827
+          }
+        },
+        "2022-23": {
+          "n": 380,
+          "changed_forecasts": 1,
+          "changed_rounds": 1,
+          "changed_only_difference_descriptive": 5.028565433703747,
+          "base_score": 75.41649438009257,
+          "candidate_score": 75.42972744702337,
+          "interval": {
+            "difference": 0.013233066930799335,
+            "standard_error": 0.013233066930799337,
+            "lower": -0.01768355902780503,
+            "upper": 0.0441496928894037,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": 0.013444981442163146,
+            "total": 0.0197099372592454,
+            "home": 0.0031882247514556862,
+            "away": 0.01658912427033307
+          },
+          "over_2_5_brier": {
+            "baseline": 0.24224091352571428,
+            "candidate": 0.24204381415312182
+          }
+        },
+        "2023-24": {
+          "n": 380,
+          "changed_forecasts": 1,
+          "changed_rounds": 1,
+          "changed_only_difference_descriptive": 11.109372852381213,
+          "base_score": 76.01889601350852,
+          "candidate_score": 76.04813120522533,
+          "interval": {
+            "difference": 0.029235191716792668,
+            "standard_error": 0.02923519171679267,
+            "lower": -0.039067454363874494,
+            "upper": 0.09753783779745984,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": 0.04116898753405882,
+            "total": 0.005654658070447065,
+            "home": 0.04653805924033241,
+            "away": 0.02357906202233233
+          },
+          "over_2_5_brier": {
+            "baseline": 0.2373411091280343,
+            "candidate": 0.23728456254732982
+          }
+        },
+        "2024-25": {
+          "n": 380,
+          "changed_forecasts": 1,
+          "changed_rounds": 1,
+          "changed_only_difference_descriptive": 17.09673117337401,
+          "base_score": 75.05797742598088,
+          "candidate_score": 75.10296882380555,
+          "interval": {
+            "difference": 0.04499139782466845,
+            "standard_error": 0.04499139782466847,
+            "lower": -0.060122724636436614,
+            "upper": 0.1501055202857735,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": 0.07708455791677296,
+            "total": -0.018349384767529366,
+            "home": 0.04586482528091401,
+            "away": 0.07536559286851621
+          },
+          "over_2_5_brier": {
+            "baseline": 0.24336672470039608,
+            "candidate": 0.2435502185480714
+          }
+        },
+        "2025-26": {
+          "n": 380,
+          "changed_forecasts": 1,
+          "changed_rounds": 1,
+          "changed_only_difference_descriptive": -10.18572269363699,
+          "base_score": 74.52587165292077,
+          "candidate_score": 74.49906711951645,
+          "interval": {
+            "difference": -0.026804533404307867,
+            "standard_error": 0.026804533404307867,
+            "lower": -0.08942839358649504,
+            "upper": 0.0358193267778793,
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 38,
+            "matches": 380,
+            "degrees_of_freedom": 37,
+            "family_comparisons": 2,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.975,
+            "critical_t": 2.3363159969097853
+          },
+          "item_score_differences": {
+            "result": -0.04093529102560287,
+            "total": -0.008491001528231871,
+            "home": -0.03867138688892627,
+            "away": -0.019120454174470364
+          },
+          "over_2_5_brier": {
+            "baseline": 0.25033011649203873,
+            "candidate": 0.25041502650732106
+          }
+        }
+      },
+      "conclusion": "no_established_improvement"
+    }
+  },
+  "paired_predictions_sha256": "7f15e5fa26b2bd8bdc2e793cbf0a539a0bc9640f1f7237750086c3b28a7303f6",
+  "evidence_grade": "24h_sensitivity",
+  "operational_status": "research_only",
+  "limitations": [
+    "Historical seasons were reviewed before this study. This is a rolling-origin historical comparison. The timing of a sensitivity run is assumed.",
+    "Primary intervals compare two candidate recipes against the same incumbent. Item and per-season summaries are descriptive. No fees, market edge or returns are evaluated."
+  ]
+}

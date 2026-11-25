@@ -361,7 +361,7 @@ class PaperLedgerTests(unittest.TestCase):
                     "known_at": c["rule_received_at"],
                 },
             )
-        with patch.object(L.store, "now_utc", return_value=c["rule_received_at"]):
+        with patch.object(L.store, "now_utc", return_value="2024-07-01T10:00:00.000000Z"):
             pipeline.register_recipe(self.root, "candidate-v", "B2")
             registered = jobs.register_candidate(
                 self.root,
@@ -369,7 +369,7 @@ class PaperLedgerTests(unittest.TestCase):
                 kind="model",
                 version="candidate-v",
                 baseline="B1",
-                window="2024-25/17",
+                window="2024-25/1",
                 hypothesis="test registered model",
                 manifest={"paper_account": "candidate-account"},
             )
@@ -638,7 +638,7 @@ class PaperLedgerTests(unittest.TestCase):
                     kind="model",
                     version="challenger",
                     baseline="B1",
-                    window="2024-25/17",
+                    window="2025-26/1",
                     hypothesis="test a stable version",
                     manifest={"paper_account": "trial"},
                 )

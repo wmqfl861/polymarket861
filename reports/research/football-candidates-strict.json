@@ -1,0 +1,465 @@
+{
+  "reproduce": "pm861 --data-dir RUNTIME experiment football-study INPUT --from-season 2021-22 --to-season 2025-26",
+  "protocol": {
+    "version": "football-candidates-1",
+    "baseline": "B1 including its original B0 fallback",
+    "horizon_minutes": 60,
+    "fold": "freeze both candidates each August 1 at 00:00 UTC; score the following EPL season",
+    "calibration": {
+      "prior_prediction_seasons": 3,
+      "minimum_oof_pairs": 100,
+      "penalty": 8,
+      "target": "full-match over 2.5",
+      "matrix": "rescale mass above/below 2.5, preserving conditional scoreline distribution within each set",
+      "applies": "B1 predictions only"
+    },
+    "newcomer": {
+      "previous_complete_seasons": 5,
+      "prior_games": 8,
+      "minimum_team_seasons": 3,
+      "applies": "original unseen_team fallback only; the previous complete season must identify non-incumbents",
+      "estimator": "attack and defensive strength of previously promoted team-seasons relative to EPL goals per team game"
+    },
+    "inference": "match-weighted difference in four-item score, clustered by season and official round; two candidate primary contrasts, simultaneous 95% t intervals; item contrasts descriptive",
+    "activation": "research_only; prospective registration and new approved production recipe required"
+  },
+  "spec_sha256": "ed19c6c2b23caa953cc46a9c0e1f348ad20d078b4495f425de22cc96a94ac632",
+  "implementation_sha256": {
+    "football_candidates.py": "46ebd89765cac6b1505eb06f58a21736376b73efe068145d687275a733f7d713",
+    "football.py": "a7283a3c9b4ebb2752590eb6388a973f328ea672c50e7c3b5531154154e2908b",
+    "football_model.py": "093e90294315132d2c60826734bb7a12fc329264ca8d4863bb3ad69bd5b2b829",
+    "experiment_statistics.py": "d4c6572570f2522397f430cec84f8b09b1cf76de762e6df35d420cc40749404e"
+  },
+  "input_provenance": {
+    "policy": "upstream-bytes-local-receipt-v1",
+    "snapshot": "b264c350c1f0fa55b8719b6240dfec5a89fb9a33ef6262346f378565cccffe2e",
+    "season_files": [
+      {
+        "season": "2010-11",
+        "sha256": "a94631cc82fd4034d4da5f5594d32cb191942f0b594e3a9cd9dcf29fe7dfa707",
+        "git_blob": "9fe7c43945ed5bb7249ae2488397262d0d72ca88"
+      },
+      {
+        "season": "2011-12",
+        "sha256": "94e29260ec3500ba69e1ffe829576b0c6297cb570ecc223ab13a2fdcae81fb98",
+        "git_blob": "72c0c8ca26ce53bdafb71a3d12ea4e51fe8790a3"
+      },
+      {
+        "season": "2012-13",
+        "sha256": "d41f9131f9dda654bff9067ffd370468b895b5ed4e9691a4b5cad2b2550fbc8b",
+        "git_blob": "b9fba456fccee350f06ced85600229dfe8d895d4"
+      },
+      {
+        "season": "2013-14",
+        "sha256": "821ea8a8a078753993ed1cc9f86fb739ec18824ef07aee1df4e83f6915e29782",
+        "git_blob": "f8f06a0494c657638a6ad055effdf65c33c164c3"
+      },
+      {
+        "season": "2014-15",
+        "sha256": "2f24151bffd3d377810f3d2e85ead0f1b3dfef00153c6ea31f5e9ced63281a4d",
+        "git_blob": "4ac8e36323109731fb60fc3db678a0b358074e12"
+      },
+      {
+        "season": "2015-16",
+        "sha256": "4d8ab70f5d2c29231320be7404310bc1b0fbc6e6be0284e5ee667f581406fead",
+        "git_blob": "d7384b9c162eea51ea0da500b8f6c73a170ee0bd"
+      },
+      {
+        "season": "2016-17",
+        "sha256": "9c8cdb27355678ab81aacbbabc34a08d00b399aacc28ef4b733da4954a344f17",
+        "git_blob": "b09de9d55b17571e6c9c64fefe83522dfc02ce6f"
+      },
+      {
+        "season": "2017-18",
+        "sha256": "b635f2442a94aa91d85f282fc5e8f7f5dc4f0d04e3e30c4472102f5708d7548c",
+        "git_blob": "c0ccb9c85503d1e24482be7c5117f6277c5a0e2f"
+      },
+      {
+        "season": "2018-19",
+        "sha256": "e2224d86f0605a5a1b5b019c845cdecb13aca1d88035686d4159b875250d4730",
+        "git_blob": "334909dfb533959f15a6d2bf08a096adcfa7d21f"
+      },
+      {
+        "season": "2019-20",
+        "sha256": "9e1695f85ce5553f762e809dea357ec0a95838939be89569060a83c4e98a302d",
+        "git_blob": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc"
+      },
+      {
+        "season": "2020-21",
+        "sha256": "21ddf26b48469da530c51ccc4857bf1a534bda3aed08766b55185efb142e9a20",
+        "git_blob": "081509058af75c0c012d64e980dc4fa53720d933"
+      },
+      {
+        "season": "2021-22",
+        "sha256": "fbdfd426fa18fa2f8630b77de87c082734da495ac4668d6d72f29f76b73b9564",
+        "git_blob": "5eadd9d91c71d45634f3969192ad908653681b23"
+      },
+      {
+        "season": "2022-23",
+        "sha256": "8d09f0f9846981626cdfec48903e1f21e7c79aabe6f92535c9e092e8e79b808b",
+        "git_blob": "0b6230e60d8cd7402810a5f515f6762d8b385b74"
+      },
+      {
+        "season": "2023-24",
+        "sha256": "03e13eafbf78dfe00d7e89dd3bf6643986eb6e8fd86c7664aeb8c5bc0bed88d0",
+        "git_blob": "f62b11dfaf06cffd1236c2777caebb880a0cfea1"
+      },
+      {
+        "season": "2024-25",
+        "sha256": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75",
+        "git_blob": "504f2e732fbc3c9caeb98e4382b13b094453b840"
+      },
+      {
+        "season": "2025-26",
+        "sha256": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1",
+        "git_blob": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+      },
+      {
+        "season": "2026-27",
+        "sha256": "bb91f0ab3e8359df163bb9ec98549bfed85e200dd4c32f3bd606b5890d932dd2",
+        "git_blob": "60e281f0fcc51cfca1a901353666a688cf62a8ba"
+      }
+    ],
+    "sidecar_sha256": null,
+    "observed_manifest": null,
+    "source_authenticated": true,
+    "source_revision": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "timing_authenticated": false,
+    "study_type": "strict_coverage",
+    "archive_lag_hours": null,
+    "status": "source_without_receipt_history",
+    "reason": null
+  },
+  "test_seasons": [
+    "2021-22",
+    "2025-26"
+  ],
+  "paired_n": 0,
+  "denominator": 1900,
+  "coverage_by_season": {
+    "2021-22": [
+      0,
+      380
+    ],
+    "2022-23": [
+      0,
+      380
+    ],
+    "2023-24": [
+      0,
+      380
+    ],
+    "2024-25": [
+      0,
+      380
+    ],
+    "2025-26": [
+      0,
+      380
+    ]
+  },
+  "folds": [
+    {
+      "season": "2021-22",
+      "frozen_at": "2021-08-01T00:00:00.000000Z",
+      "calibration_training_n": 0,
+      "latest_calibration_result": null,
+      "calibration": null,
+      "newcomer_team_seasons": 0,
+      "latest_prior_result": null,
+      "newcomer_log_attack_defence": null,
+      "predictions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "season": "2022-23",
+      "frozen_at": "2022-08-01T00:00:00.000000Z",
+      "calibration_training_n": 0,
+      "latest_calibration_result": null,
+      "calibration": null,
+      "newcomer_team_seasons": 0,
+      "latest_prior_result": null,
+      "newcomer_log_attack_defence": null,
+      "predictions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "season": "2023-24",
+      "frozen_at": "2023-08-01T00:00:00.000000Z",
+      "calibration_training_n": 0,
+      "latest_calibration_result": null,
+      "calibration": null,
+      "newcomer_team_seasons": 0,
+      "latest_prior_result": null,
+      "newcomer_log_attack_defence": null,
+      "predictions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "season": "2024-25",
+      "frozen_at": "2024-08-01T00:00:00.000000Z",
+      "calibration_training_n": 0,
+      "latest_calibration_result": null,
+      "calibration": null,
+      "newcomer_team_seasons": 0,
+      "latest_prior_result": null,
+      "newcomer_log_attack_defence": null,
+      "predictions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "season": "2025-26",
+      "frozen_at": "2025-08-01T00:00:00.000000Z",
+      "calibration_training_n": 0,
+      "latest_calibration_result": null,
+      "calibration": null,
+      "newcomer_team_seasons": 0,
+      "latest_prior_result": null,
+      "newcomer_log_attack_defence": null,
+      "predictions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "results": {
+    "totals_calibration": {
+      "all": {
+        "n": 0,
+        "changed_forecasts": 0,
+        "changed_rounds": 0,
+        "changed_only_difference_descriptive": null,
+        "base_score": null,
+        "candidate_score": null,
+        "interval": null,
+        "item_score_differences": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "over_2_5_brier": {
+          "baseline": null,
+          "candidate": null
+        }
+      },
+      "by_season": {
+        "2021-22": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        },
+        "2022-23": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        },
+        "2023-24": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        },
+        "2024-25": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        },
+        "2025-26": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        }
+      },
+      "conclusion": "insufficient_paired_rounds"
+    },
+    "newcomer_prior": {
+      "all": {
+        "n": 0,
+        "changed_forecasts": 0,
+        "changed_rounds": 0,
+        "changed_only_difference_descriptive": null,
+        "base_score": null,
+        "candidate_score": null,
+        "interval": null,
+        "item_score_differences": {
+          "result": null,
+          "total": null,
+          "home": null,
+          "away": null
+        },
+        "over_2_5_brier": {
+          "baseline": null,
+          "candidate": null
+        }
+      },
+      "by_season": {
+        "2021-22": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        },
+        "2022-23": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        },
+        "2023-24": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        },
+        "2024-25": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        },
+        "2025-26": {
+          "n": 0,
+          "changed_forecasts": 0,
+          "changed_rounds": 0,
+          "changed_only_difference_descriptive": null,
+          "base_score": null,
+          "candidate_score": null,
+          "interval": null,
+          "item_score_differences": {
+            "result": null,
+            "total": null,
+            "home": null,
+            "away": null
+          },
+          "over_2_5_brier": {
+            "baseline": null,
+            "candidate": null
+          }
+        }
+      },
+      "conclusion": "insufficient_paired_rounds"
+    }
+  },
+  "paired_predictions_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "evidence_grade": "strict_without_verified_coverage",
+  "operational_status": "research_only",
+  "limitations": [
+    "Historical seasons were reviewed before this study. This is a rolling-origin historical comparison. The timing of a sensitivity run is assumed.",
+    "Primary intervals compare two candidate recipes against the same incumbent. Item and per-season summaries are descriptive. No fees, market edge or returns are evaluated."
+  ]
+}

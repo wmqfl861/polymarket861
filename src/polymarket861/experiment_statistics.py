@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
 import numpy as np
 from scipy.stats import t
+
+from . import store
 
 PROTOCOL = "round-cluster-t-v1"
 
@@ -64,3 +69,17 @@ def signoff(reviewer, reason):
             "a named reviewer and written reason are required to change the active paper policy"
         )
     return {"reviewer": reviewer.strip(), "reason": reason.strip()}
+
+
+def require_unopened_season(season, fixtures, now):
+    """Before the supported EPL season begins, registration is possible with an unpublished schedule."""
+    first_possible = datetime(
+        int(season[:4]), 8, 1, tzinfo=ZoneInfo("Europe/London")
+    ) - timedelta(hours=1)
+    if store.instant(now) < first_possible:
+        return
+    first = [f for f in fixtures if f["round_id"] == 1]
+    if len({f["fixture_id"] for f in first}) != 10:
+        raise ValueError(
+            "the first-round registration deadline cannot be verified without its full schedule"
+        )

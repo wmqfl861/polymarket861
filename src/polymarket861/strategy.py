@@ -10,6 +10,8 @@ from pathlib import Path
 
 import numpy as np
 
+from . import experiment_statistics as stats
+
 from . import ledger as L
 from . import store, strategy_scope
 from .ledger_rules import (
@@ -40,6 +42,7 @@ CREATE TABLE IF NOT EXISTS selection_sheets(trial TEXT NOT NULL,phase TEXT NOT N
 CREATE TABLE IF NOT EXISTS selection_orders(account TEXT NOT NULL,intent_id TEXT NOT NULL,fingerprint TEXT NOT NULL,
  PRIMARY KEY(account,intent_id));
 CREATE TABLE IF NOT EXISTS selection_history_manifests(account TEXT PRIMARY KEY, fingerprint TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS selection_recommendations(trial TEXT PRIMARY KEY, evidence TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS selection_events(id INTEGER PRIMARY KEY,trial TEXT NOT NULL,action TEXT NOT NULL,
  at TEXT NOT NULL,recipe TEXT NOT NULL,fingerprint TEXT NOT NULL);
 """
@@ -141,14 +144,20 @@ def register_trial(
     candidate = recipe(selector)
     season = _season(season)
     amount = number(budget, "fixed fixture budget")
+    with database(data_dir) as db:
+        previous = db.execute(
+            "SELECT spec FROM selection_trials WHERE key=?", (key,)
+        ).fetchone()
+    previous = json.loads(previous[0]) if previous else {}
+    span = previous.get("rounds", 38)
     if (
         amount <= 0
         or amount % UNIT
         or type(first_round) is not int
-        or not 1 <= first_round <= 27
+        or not 1 <= first_round <= 39 - span
     ):
         raise ValueError(
-            "require a positive fixed match budget and a 12-round EPL window"
+            "require a positive fixed match budget and a full 38-round EPL window starting in round one"
         )
     inputs = list(history_inputs)
     fp = L.replay_fingerprint("historical", inputs)
@@ -190,7 +199,7 @@ def register_trial(
         data_dir, "selection-history-inputs", packed(inputs).encode()
     )
     stamp = store.now_utc()
-    schedule = _window(data_dir, season, first_round)
+    schedule = _window(data_dir, season, first_round, span)
     with database(data_dir, True) as db:
         old = db.execute(
             "SELECT spec FROM selection_trials WHERE key=?", (key,)
@@ -204,7 +213,12 @@ def register_trial(
             "budget": fmt(amount),
             "season": season,
             "first_round": first_round,
-            "rounds": 12,
+            "rounds": span,
+            **(
+                {"inference": stats.PROTOCOL, "activation_policy": "named_review"}
+                if not old or "inference" in previous
+                else {}
+            ),
             "source_account": source_account,
             "history_account": history_account,
             "history_manifest": fp,
@@ -221,6 +235,7 @@ def register_trial(
             if digest(json.loads(old[0])) != identity:
                 raise ValueError("registered selection protocol is immutable")
             return _trial(db, key)
+        stats.require_unopened_season(season, schedule, stamp)
         if baseline == candidate:
             raise ValueError("candidate must change an allowed selection decision")
         if any(
@@ -235,14 +250,15 @@ def register_trial(
             p = json.loads(r[0])
             if (
                 p["season"] != season
-                or first_round >= p["first_round"] + 12
-                or p["first_round"] >= first_round + 12
+                or first_round >= p["first_round"] + p["rounds"]
+                or p["first_round"] >= first_round + span
             ):
                 continue
             if any(
                 p[k] != spec[k]
                 for k in (
                     "first_round",
+                    "rounds",
                     "baseline",
                     "history_manifest",
                     "source_account",
@@ -275,11 +291,11 @@ def register_trial(
         return _trial(db, key)
 
 
-def _window(root, season, first):
+def _window(root, season, first, span):
     return [
         f
         for f in store.eligible_fixtures(root)
-        if _season(f["season"]) == season and first <= f["round_id"] < first + 12
+        if _season(f["season"]) == season and first <= f["round_id"] < first + span
     ]
 
 
@@ -518,7 +534,9 @@ def freeze_fixture(data_dir, key, fixture_id):
     cutoff = instant(fixture["kickoff"]) - timedelta(hours=1)
     if (
         _season(fixture["season"]) != spec["season"]
-        or not spec["first_round"] <= fixture["round_id"] < spec["first_round"] + 12
+        or not spec["first_round"]
+        <= fixture["round_id"]
+        < spec["first_round"] + spec["rounds"]
         or not cutoff - timedelta(seconds=30) <= instant(now) <= cutoff
         or instant(trial["registered"]) >= cutoff
     ):
@@ -590,7 +608,15 @@ def execute(data_dir, key):
                 break
             with L.connection(data_dir) as db:
                 intent = json.loads(row["original"])["intent"]
-                book = L.eligible_book(db,data_dir,intent["contract"],target,intent["kickoff"],"second",observed_by=now)
+                book = L.eligible_book(
+                    db,
+                    data_dir,
+                    intent["contract"],
+                    target,
+                    intent["kickoff"],
+                    "second",
+                    observed_by=now,
+                )
             if not book:
                 break
             out = L.evaluate(data_dir, account, row["id"], book)
@@ -1118,9 +1144,22 @@ def _phase(root, trial, phase, history_ops, *, cohort, scope=None):
         if counts["opportunities"]
         else 0
     )
-    interval = _interval(grouped, cohort)
+    if spec.get("inference") == stats.PROTOCOL:
+        out = stats.clustered_t([v for _, v in sorted(grouped.items())], 2 * cohort)
+        interval = (
+            (out.pop("intervals")[0] | out | {"candidates": cohort, "phases": 2})
+            if out
+            else None
+        )
+    else:
+        interval = _interval(grouped, cohort)
     good = (
         counts["paired_fixtures"] >= 100
+        and (
+            phase != "forward"
+            or spec.get("inference") != stats.PROTOCOL
+            or len(grouped) == 38
+        )
         and counts["traded_fixtures"] >= 20
         and joint_coverage >= 0.95
         and compounded_risk
@@ -1166,10 +1205,11 @@ def _interval(grouped, cohort):
 
 
 def _window_closed(root, spec, stamp):
-    fixtures = _window(root, spec["season"], spec["first_round"])
+    fixtures = _window(root, spec["season"], spec["first_round"], spec["rounds"])
     rounds = Counter(f["round_id"] for f in fixtures)
     closed = all(
-        rounds[i] == 10 for i in range(spec["first_round"], spec["first_round"] + 12)
+        rounds[i] == 10
+        for i in range(spec["first_round"], spec["first_round"] + spec["rounds"])
     )
     closed &= all(
         f.get("received_at")
@@ -1257,16 +1297,42 @@ def score(data_dir, key):
         "candidate": spec["candidate"],
         "preregistered_candidates": len(peers),
         "kind": "paper_selector",
+        "activation_policy": "named_review"
+        if spec.get("inference") == stats.PROTOCOL
+        else "frozen_legacy_research",
+        "recommendation": "review_for_approval"
+        if h["qualified"] and f["qualified"] and spec.get("inference") == stats.PROTOCOL
+        else "remain_shadow",
         "real_cash": False,
     }
+    if result["recommendation"] == "review_for_approval":
+        result["recommendation_digest"] = digest(result)
+        with database(data_dir, True) as db:
+            db.execute(
+                "INSERT INTO selection_recommendations VALUES(?,?) ON CONFLICT(trial) DO UPDATE SET evidence=excluded.evidence",
+                (key, result["recommendation_digest"]),
+            )
     store.save_report(data_dir, "strategy", key, result)
     return result
 
 
-def promote(data_dir, key):
+def promote(data_dir, key, *, reviewer=None, reason=None):
+    with database(data_dir) as db:
+        previous = db.execute(
+            "SELECT evidence FROM selection_recommendations WHERE trial=?", (key,)
+        ).fetchone()
     evidence = score(data_dir, key)
+    if evidence["status"] == "promoted":
+        return evidence | {"decision": "already_promoted"}
     if not evidence["qualified"]:
         return evidence | {"decision": "remain_shadow"}
+    if evidence["activation_policy"] != "named_review":
+        return evidence | {"decision": "frozen_legacy_window_research_only"}
+    if reviewer is None and reason is None:
+        return evidence | {"decision": "named_approval_required"}
+    signature = stats.signoff(reviewer, reason)
+    if not previous or previous[0] != evidence["recommendation_digest"]:
+        return evidence | {"decision": "current_recommendation_requires_review"}
     with database(data_dir) as db:
         trial = _trial(db, key)
         peers = [
@@ -1296,6 +1362,7 @@ def promote(data_dir, key):
             raise ValueError(
                 "selection baseline changed or this revealed trial was rolled back"
             )
+        evidence = evidence | {"approval": signature}
         db.execute(
             "INSERT INTO selection_events(trial,action,at,recipe,fingerprint) VALUES(?,?,?,?,?)",
             (key, "promoted", now, packed(spec["candidate"]), digest(evidence)),
@@ -1348,6 +1415,12 @@ def status(data_dir):
                 dict(r)
                 for r in db.execute("SELECT * FROM selection_events ORDER BY at,id")
             ],
+            "approvals": [
+                {"trial": r[0], "approval": json.loads(r[1])["approval"]}
+                for r in db.execute(
+                    "SELECT key,result FROM selection_trials WHERE json_extract(result,'$.approval') IS NOT NULL ORDER BY registered,key"
+                )
+            ],
         }
 
 
@@ -1370,10 +1443,20 @@ def register(subparsers):
     p.add_argument("--first-round", type=int, required=True)
     p.add_argument("--budget", required=True)
     p.set_defaults(func=_register_cli)
-    for name, fn in (("history", history), ("score", score), ("promote", promote)):
+    for name, fn in (("history", history), ("score", score)):
         p = subs.add_parser(name)
         p.add_argument("key")
         p.set_defaults(func=lambda a, f=fn: f(a.data_dir, a.key))
+    p = subs.add_parser(
+        "promote",
+        help="requote the verified trial and activate a paper strategy with named approval",
+    )
+    p.add_argument("key")
+    p.add_argument("--reviewer", required=True)
+    p.add_argument("--reason", required=True)
+    p.set_defaults(
+        func=lambda a: promote(a.data_dir, a.key, reviewer=a.reviewer, reason=a.reason)
+    )
     p = subs.add_parser(
         "execute",
         help="execute both frozen arms and reconcile available exchange settlements",

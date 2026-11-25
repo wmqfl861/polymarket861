@@ -135,7 +135,7 @@ def season_games(year, rounds):
 from polymarket861 import paired_proof
 
 class ResearchTests(TempStore):
-    registered = "2030-08-01T09:00:00.000000Z"
+    registered = "2030-07-01T09:00:00.000000Z"
     judged = "2031-05-25T09:00:00.000000Z"
 
     def register_model(self, key="candidate", **overrides):
@@ -157,7 +157,7 @@ class ResearchTests(TempStore):
         self.register_model("third",version="X3")
         with self.assertRaisesRegex(ValueError,"three"):
             self.register_model("fourth",version="X4")
-        with self.assertRaisesRegex(ValueError,"nonoverlapping"):
+        with self.assertRaisesRegex(ValueError,"38 official rounds"):
             self.register_model("shift",version="Shift",window="2030-31/2")
         with self.assertRaisesRegex(ValueError,"deadline"):
             with patch.object(store,"eligible_fixtures",return_value=season_games(2024,12)):
@@ -180,7 +180,7 @@ class ResearchTests(TempStore):
     @patch.object(paired_proof.PairValidator,"check",new=lambda *_:None)
     def test_real_window_gate_coverage_simultaneous_reveal_and_rollback(self):
         history=season_games(2028,38)+season_games(2029,38)
-        forward=season_games(2030,12)
+        forward=season_games(2030,38)
         schedule=history+forward
         def rows(_,version,*,mode,**kwargs):
             return self.predictions(history if mode=="replay" else forward,version,mode,weak=version=="tie")
@@ -204,9 +204,20 @@ class ResearchTests(TempStore):
                 tie=jobs.evaluate_candidate(self.root,"equal")
                 self.assertEqual(tie["state"],"shadow")
                 good=jobs.evaluate_candidate(self.root,"candidate")
+                self.assertEqual(good["state"],"recommended")
+                self.assertIsNone(jobs.active_version(self.root))
+                with self.assertRaisesRegex(ValueError,"named reviewer"):
+                    jobs.approve_candidate(self.root,"candidate",reviewer=" ",reason="examined both arms")
+                audit["accounts"][0]["mode"]="historical"
+                self.assertEqual(jobs.approve_candidate(self.root,"candidate",reviewer="league analyst",reason="review")["state"],"shadow")
+                self.assertIsNone(jobs.active_version(self.root))
+                audit["accounts"][0]["mode"]="formal"
+                self.assertEqual(jobs.evaluate_candidate(self.root,"candidate")["state"],"recommended")
+                good=jobs.approve_candidate(self.root,"candidate",reviewer="league analyst",reason="checked the registered comparison")
                 self.assertEqual(good["state"],"promoted")
-                self.assertEqual(good["assessment"]["forward"]["paired_count"],120)
-                self.assertAlmostEqual(good["assessment"]["forward"]["bootstrap"]["individual_confidence"],.975)
+                self.assertEqual(good["assessment"]["approved_by"]["reviewer"],"league analyst")
+                self.assertEqual(good["assessment"]["forward"]["paired_count"],380)
+                self.assertAlmostEqual(good["assessment"]["forward"]["inference"]["individual_confidence"],.9975)
                 self.assertEqual(jobs.active_candidate(self.root)["key"],"candidate")
                 self.assertIsNone(jobs.active_version(self.root,at=self.registered))
             with patch.object(store,"now_utc",return_value="2031-05-26T09:00:00.000000Z"):
@@ -221,7 +232,7 @@ class ResearchTests(TempStore):
     @patch.object(paired_proof.PairValidator,"check",new=lambda *_:None)
     def test_both_versions_missing_after_round_end_is_measured_against_schedule(self):
         history=season_games(2028,38)+season_games(2029,38)
-        forward=season_games(2030,12)
+        forward=season_games(2030,38)
         def rows(_,version,*,mode,**kwargs):
             return self.predictions(history if mode=="replay" else forward,version,mode,missing=0 if mode=="replay" else 21)
         with patch.object(store,"eligible_fixtures",return_value=history+forward), patch.object(store,"evaluation_rows",side_effect=rows), \
@@ -229,7 +240,7 @@ class ResearchTests(TempStore):
             self.register_model()
             observed=jobs.evaluate_candidate(self.root,"candidate")
         forward=observed["assessment"]["forward"]
-        self.assertEqual((forward["denominator"],forward["paired_count"]),(120,99))
+        self.assertEqual((forward["denominator"],forward["paired_count"]),(380,359))
         self.assertEqual(observed["state"],"shadow")
         self.assertFalse(observed["assessment"]["revealed"])
 
@@ -276,7 +287,7 @@ class ResearchTests(TempStore):
             self.assertEqual(args.func(args)[field],[])
 
     def test_auto_review_waits_for_postponement_and_deduplicates_labels(self):
-        games=season_games(2030,12)
+        games=season_games(2030,38)
         self.register_model()
         incomplete=[f | {"home_goals":None,"away_goals":None} if f["round_id"]==2 and f["home"]=="H0" else f for f in games]
         with patch.object(store,"now_utc",return_value=self.judged),patch.object(research,"evaluate_candidate",wraps=research.evaluate_candidate) as judge:

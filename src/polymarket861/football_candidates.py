@@ -186,6 +186,10 @@ def _summary(records):
     return {
         "n": len(records),
         "changed_forecasts": sum(int(r[4]) for r in records),
+        "changed_rounds": len({(r[0], r[1]) for r in records if r[4]}),
+        "changed_only_difference_descriptive": mean(
+            [r[3]["score"] - r[2]["score"] for r in records if r[4]]
+        ),
         "base_score": mean([r[2]["score"] for r in records]),
         "candidate_score": mean([r[3]["score"] for r in records]),
         "interval": interval,
@@ -225,6 +229,7 @@ def study(data_dir, root, *, first, last, evidence=None, archive_lag_hours=None)
     expected = Counter()
     trace = hashlib.sha256()
     for year in range(lo - 3, hi + 1):
+        fold_trace = hashlib.sha256()
         fold_start = datetime(year, 8, 1, tzinfo=timezone.utc)
         games = sorted(by_year[year], key=lambda f: (f.kickoff, f.fixture_id))
         is_test = year >= lo
@@ -260,9 +265,8 @@ def study(data_dir, root, *, first, last, evidence=None, archive_lag_hours=None)
                 }
             )
         for f in games:
-            if f.home_goals is None or f.away_goals is None:
-                continue
-            if is_test:
+            settled_label = f.home_goals is not None and f.away_goals is not None
+            if is_test and settled_label:
                 expected[f.season] += 1
             if not acceptable or f.kickoff_precision != "minute":
                 continue
@@ -292,7 +296,8 @@ def study(data_dir, root, *, first, last, evidence=None, archive_lag_hours=None)
                 previous_predictions[year].append(
                     (f, pred["probabilities"]["total_over_2_5"])
                 )
-            if not is_test:
+            # A later withdrawal may remove an evaluation label. It cannot erase this earlier forecast from a training fold.
+            if not is_test or not settled_label:
                 continue
             joined[f.season] += 1
             outcome = (f.home_goals, f.away_goals)
@@ -317,20 +322,22 @@ def study(data_dir, root, *, first, last, evidence=None, archive_lag_hours=None)
                 score = football_model.score_probabilities(probabilities, *outcome)
                 outputs[name].append((f.season, f.round, base, score, mat is not None))
                 candidates.append(probabilities)
-            trace.update(
-                (
-                    store.canonical(
-                        [
-                            f.fixture_id,
-                            store.iso(cut),
-                            ev["input_sha256"],
-                            pred["probabilities"],
-                            candidates,
-                        ]
-                    )
-                    + "\n"
-                ).encode()
-            )
+            event = (
+                store.canonical(
+                    [
+                        f.fixture_id,
+                        store.iso(cut),
+                        ev["input_sha256"],
+                        pred["probabilities"],
+                        candidates,
+                    ]
+                )
+                + "\n"
+            ).encode()
+            trace.update(event)
+            fold_trace.update(event)
+        if is_test:
+            folds[-1]["predictions_sha256"] = fold_trace.hexdigest()
     results = {
         name: {
             "all": _summary(rows),
@@ -341,7 +348,19 @@ def study(data_dir, root, *, first, last, evidence=None, archive_lag_hours=None)
         }
         for name, rows in outputs.items()
     }
+    for record in results.values():
+        interval = record["all"]["interval"]
+        record["conclusion"] = (
+            "insufficient_paired_rounds"
+            if interval is None
+            else "no_established_improvement"
+            if interval["lower"] <= 0
+            else "positive_in_this_historical_protocol"
+        )
     result = {
+        "reproduce": f"pm861 --data-dir RUNTIME experiment football-study INPUT --from-season {first} --to-season {last}"
+        + (" --archive-lag-hours 24" if not strict else "")
+        + (" --evidence EVIDENCE" if evidence else ""),
         "protocol": SPEC,
         "spec_sha256": store.digest(SPEC),
         "implementation_sha256": {

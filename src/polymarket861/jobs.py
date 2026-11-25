@@ -17,6 +17,7 @@ from . import research_workspace, store
 from .jobs_research import (
     active_candidate,
     active_version,
+    approve_candidate,
     evaluate_candidate,
     experiment_status,
     get_candidate,
@@ -30,6 +31,7 @@ from .jobs_research import (
 __all__ = [
     "active_candidate",
     "active_version",
+    "approve_candidate",
     "evaluate_candidate",
     "experiment_status",
     "get_candidate",

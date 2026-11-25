@@ -27,7 +27,7 @@ class StrategyTests(unittest.TestCase):
         self.addCleanup(self.clock.stop)
         store.connect(self.root).close()
 
-    def op(self, n, season, t):
+    def op(self, n, season, t, *, round_number=None):
         base = L.example()
         forward = season == "2026-27"
         fixture = f"epl-h{n}-a{n}-{t.date().isoformat()}"
@@ -62,7 +62,7 @@ class StrategyTests(unittest.TestCase):
         )
         fx = {
             "fixture_id": fixture,
-            "round_id": 1 + n // 10,
+            "round_id": round_number or 1 + n // 10,
             "season": season,
             "home": f"home{n}",
             "away": f"away{n}",
@@ -321,7 +321,7 @@ class StrategyTests(unittest.TestCase):
         ]
         L.replay(self.root, historical, account="archive", source="historical")
         forward_times = [self.t + timedelta(days=n + 1) for n in range(120)]
-        forward = [self.op(n, "2026-27", t) for n, t in enumerate(forward_times)]
+        forward = [self.op(n, "2026-27", t, round_number=1+n%38) for n, t in enumerate(forward_times)]
         with L.connection(self.root, True) as db:
             db.execute(
                 "INSERT INTO trial_activations VALUES(?,?,?,?)",
@@ -344,6 +344,18 @@ class StrategyTests(unittest.TestCase):
         self.assertEqual(h["arms"]["baseline"]["filled"], 100)
         self.assertEqual(h["arms"]["candidate"]["filled"], 0)
 
+        # The remaining 260 fixtures had no qualified market opportunity. Both arms seal their empty pools.
+        empty=[]; decision=self.t+timedelta(hours=12)
+        for rnd in range(1,39):
+            for n in range(10-(4 if rnd<=6 else 3)):
+                fid=f"no-op-{rnd}-{n}"; empty.append(fid)
+                store.register_fixture(self.root,dict(fixture_id=fid,season="2026-27",round_id=rnd,home=f"Home {rnd}.{n}",away=f"Away {rnd}.{n}",kickoff=iso(decision+timedelta(hours=1)),known_at=iso(self.t),source="league",locator=fid))
+        self.t=decision
+        for fid in empty:
+            self.assertEqual(S.freeze_fixture(self.root,"stand-aside",fid)["selected"],{"baseline":0,"candidate":0})
+        self.t=decision+timedelta(hours=3)
+        for fid in empty:
+            store.record_result(self.root,dict(fixture_id=fid,home_goals=0,away_goals=0,published_at=iso(self.t),finalized_at=iso(self.t),received_at=iso(self.t),source="league",locator=fid))
         for n, (op, t) in enumerate(zip(forward, forward_times)):
             self.t = t
             order = op["intent"]
@@ -427,7 +439,11 @@ class StrategyTests(unittest.TestCase):
         for path, raw in lost:
             path.write_bytes(raw)
         self.assertTrue(result["qualified"])
-        self.assertEqual(S.promote(self.root, "stand-aside")["status"], "promoted")
+        self.assertEqual(S.promote(self.root, "stand-aside")["decision"], "named_approval_required")
+        self.assertEqual(S.active(self.root),S.recipe({}))
+        switched=S.promote(self.root, "stand-aside",reviewer="trial steward",reason="reviewed both frozen cohorts")
+        self.assertEqual(switched["status"], "promoted")
+        self.assertEqual(switched["approval"]["reviewer"],"trial steward")
         self.assertEqual(S.active(self.root)["max_orders"], 0)
         S.rollback(self.root, "stand-aside", "test rollback to incumbent")
         self.assertEqual(S.active(self.root), S.recipe({}))

@@ -11,6 +11,7 @@ from pathlib import Path
 
 import numpy as np
 
+from . import experiment_statistics as stats
 from . import paired_proof
 from . import store
 from .football_model import ITEM_KEYS, score_probabilities
@@ -211,15 +212,42 @@ def register_candidate(
             "Supply key, scope, distinct candidate and baseline versions, and a hypothesis"
         )
     season, first = _window(window)
-    span = manifest.get("rounds", 12)
+    # A repeated old registration uses its original protocol and digest, including its 12-round window.
+    with closing(_open(data_dir)) as conn:
+        old_row = conn.execute(
+            "SELECT * FROM research_candidates WHERE key=?", (key,)
+        ).fetchone()
+    prior = _candidate(old_row) if old_row else None
+    manifest = dict(manifest)
+    if not prior or "activation_policy" in prior["manifest"]:
+        manifest.setdefault(
+            "activation_policy",
+            "named_review" if kind == "model" else "auto_independent_reference",
+        )
+        allowed = (
+            {"named_review"}
+            if kind == "model"
+            else {"named_review", "auto_independent_reference"}
+        )
+        if manifest["activation_policy"] not in allowed:
+            raise ValueError("invalid activation policy for this type of experiment")
+    if kind == "model" and (not prior or "inference" in prior["manifest"]):
+        manifest.setdefault("inference", stats.PROTOCOL)
+        if manifest["inference"] != stats.PROTOCOL:
+            raise ValueError(
+                "new model trials require the registered round-cluster t protocol"
+            )
+    span = manifest.get(
+        "rounds", prior["span"] if prior else (38 if kind == "model" else 12)
+    )
     if (
         type(span) is not int
         or span < 2
         or not 1 <= first <= 39 - span
-        or (kind == "model" and span != 12)
+        or (kind == "model" and span != (prior["span"] if prior else 38))
     ):
         raise ValueError(
-            "A model window is 12 official rounds; the declared window must fit the season"
+            "new model windows cover all 38 official rounds from round one; overlapping or shifted windows cannot be registered"
         )
     if kind == "source" and (
         manifest.get("field") != scope
@@ -296,6 +324,8 @@ def register_candidate(
                 raise ValueError("A registered experiment cannot be edited")
             return prior
         now = store.now_utc()
+        if kind == "model":
+            stats.require_unopened_season(season, fixtures, now)
         if fixtures and min(map(_cutoff, fixtures)) <= store.instant(now):
             raise ValueError("The first decision deadline for this window has passed")
         active = conn.execute(
@@ -484,6 +514,19 @@ def _paired_evidence(data_dir, candidate, mode, fixtures, count):
     }
     if len(grouped) < 2:
         return result
+    if candidate["manifest"].get("inference") == stats.PROTOCOL:
+        names = ("overall", *ITEM_KEYS)
+        calculated = stats.clustered_t(
+            [v for _, v in sorted(grouped.items())], count * 2 * len(names)
+        )
+        result["intervals"] = dict(zip(names, calculated.pop("intervals")))
+        result["inference"] = calculated | {
+            "candidates": count,
+            "phases": 2,
+            "endpoints": list(names),
+        }
+        return result
+    # Retain the originally registered interval for old, research-only short windows.
     # Sum/count weighting preserves equal fixture weights when a sampled round has missing pairs.
     sums = np.array([np.sum(v, axis=0) for _, v in sorted(grouped.items())])
     sizes = np.array([len(v) for _, v in sorted(grouped.items())])
@@ -570,7 +613,9 @@ def _model_assessment(data_dir, c, fixtures, schedule, count, as_of):
     forward = _paired_evidence(data_dir, c, "formal", fixtures, count)
     evidence = {"history": replay, "forward": forward}
     if (
-        forward["paired_count"] < 100
+        forward["paired_count"]
+        < (int(0.95 * forward["denominator"]) if c["span"] == 38 else 100)
+        or (c["span"] == 38 and forward["rounds"] != 38)
         or bool(forward["comparison_rejections"])
         or bool(replay["comparison_rejections"])
         or replay["paired_count"] != replay["denominator"]
@@ -711,6 +756,7 @@ def _source_assessment(data_dir, c, fixtures, as_of):
     test, base = summary["by_source"][new], summary["by_source"][old]
     n = summary["denominator"]
     info = {
+        "acceptance_method": "field_reference_quality_contract",
         "comparison": summary,
         "reference_evidence_ids": references,
         "correct_rate_wilson95": _wilson(test["correct"], n) if n else None,
@@ -756,10 +802,28 @@ def _assess(data_dir, c, schedule, count, as_of):
 
 
 def evaluate_candidate(data_dir, key):
+    return _judge(data_dir, key)
+
+
+def approve_candidate(data_dir, key, *, reviewer, reason):
+    signature = stats.signoff(reviewer, reason)
+    previous = get_candidate(data_dir, key)
+    if previous["state"] == "promoted":
+        return previous
+    if previous["state"] != "recommended":
+        raise ValueError(
+            "an independently qualified, recommended experiment must be evaluated before approval"
+        )
+    return _judge(data_dir, key, approval=signature)
+
+
+def _judge(data_dir, key, *, approval=None):
     """A reader names the experiment. Only the independent stores supply scores and labels."""
     with closing(_open(data_dir)) as conn:
         requested = _get(conn, key)
-        if (requested["assessment"] or {}).get("revealed"):
+        if requested["state"] in ("promoted", "rolled_back") or (
+            (requested["assessment"] or {}).get("revealed") and approval is None
+        ):
             return requested
         cohort = [
             _candidate(r)
@@ -789,7 +853,9 @@ def evaluate_candidate(data_dir, key):
     with closing(_open(data_dir)) as conn, conn:
         conn.execute("BEGIN IMMEDIATE")
         current = _get(conn, key)
-        if (current["assessment"] or {}).get("revealed"):
+        if current["state"] in ("promoted", "rolled_back") or (
+            (current["assessment"] or {}).get("revealed") and approval is None
+        ):
             return current
         kind, scope = requested["kind"], requested["scope"]
         active = conn.execute(
@@ -801,23 +867,62 @@ def evaluate_candidate(data_dir, key):
             )
             winner = None
         for c in peers:
+            if c["state"] in ("promoted", "rolled_back"):
+                continue
             decision = decisions[c["key"]] | {
                 "revealed": reveal,
                 "registered_candidates": len(cohort),
                 "protocol": store.PROTOCOL,
             }
-            promoted = winner is not None and c["key"] == winner["key"]
+            selected = winner is not None and c["key"] == winner["key"]
+            switch = c["manifest"].get(
+                "activation_policy",
+                "auto_independent_reference" if kind == "source" else "named_review",
+            )
+            decision["activation_policy"] = switch
+            legacy = kind == "model" and (
+                c["span"] != 38 or c["manifest"].get("inference") != stats.PROTOCOL
+            )
+            if legacy:
+                decision["activation_policy"] = "frozen_legacy_research"
+            decision_id = store.digest(decision)
+            prior_decision = (c["assessment"] or {}).get("recommendation_digest")
+            confirmed = (
+                selected
+                and approval is not None
+                and c["key"] == key
+                and prior_decision == decision_id
+            )
+            promoted = (
+                selected
+                and not legacy
+                and (switch == "auto_independent_reference" or confirmed)
+            )
             if promoted:
                 decision["previous_candidate"] = (
                     active["candidate_key"] if active else None
                 )
+                if confirmed:
+                    decision["approved_by"] = approval
                 conn.execute(
                     "INSERT INTO research_active VALUES(?,?,?,?) ON CONFLICT(kind,scope) DO UPDATE SET "
                     "version=excluded.version,candidate_key=excluded.candidate_key",
                     (kind, scope, c["version"], c["key"]),
                 )
-            state = "promoted" if promoted else "shadow"
-            if not promoted and decision.get("qualified"):
+            recommended = selected and not legacy and not promoted
+            state = (
+                "promoted" if promoted else "recommended" if recommended else "shadow"
+            )
+            if selected and legacy:
+                decision["reason"] = "frozen_legacy_window_research_only"
+            elif recommended:
+                decision["recommendation_digest"] = decision_id
+                decision["reason"] = (
+                    "evidence_changed_review_again"
+                    if approval
+                    else "named_approval_required"
+                )
+            elif not selected and decision.get("qualified"):
                 decision["reason"] = "another_registered_candidate_ranked_higher"
             conn.execute(
                 "UPDATE research_candidates SET state=?,assessment=? WHERE key=?",
@@ -826,10 +931,15 @@ def evaluate_candidate(data_dir, key):
             _event(
                 conn,
                 c["key"],
-                "promoted" if promoted else ("revealed" if reveal else "observed"),
+                "promoted"
+                if promoted
+                else "recommended"
+                if recommended
+                else ("revealed" if reveal else "observed"),
                 {
                     "reason": decision["reason"],
                     "assessment_digest": store.digest(decision),
+                    **({"approval": approval} if confirmed and promoted else {}),
                 },
             )
             store.put_report(conn, "experiment", c["key"], _get(conn, c["key"]))
@@ -1022,6 +1132,20 @@ def register_cli(subparsers):
         )
 
     add.set_defaults(func=create, handler=create)
+    from . import football_candidates
+
+    football_candidates.register(actions)
+    approve = actions.add_parser(
+        "approve", help="recheck evidence and approve a recommended paper experiment"
+    )
+    approve.add_argument("key")
+    approve.add_argument("--reviewer", required=True)
+    approve.add_argument("--reason", required=True)
+    approve.set_defaults(
+        func=lambda a: approve_candidate(
+            a.data_dir, a.key, reviewer=a.reviewer, reason=a.reason
+        )
+    )
     show = actions.add_parser("status")
     show.set_defaults(
         func=lambda a: experiment_status(a.data_dir),
