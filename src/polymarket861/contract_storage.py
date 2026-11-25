@@ -48,12 +48,15 @@ def _migrate(db):
         keys, original = tuple(row)[1:6], row["payload"]
         try:
             contract = json.loads(original)
-        except ValueError:
+            canonical_form = canonical(contract)
+        except (ValueError, TypeError):
             contract = None
         condition = contract.get("condition_id") if isinstance(contract, dict) else None
+        if not isinstance(condition, str):
+            condition = None
         if (
             isinstance(contract, dict) and contract.get("recorded_at") == keys[3]
-            and contract.get("source_sha256") == keys[4] and canonical(contract) == original
+            and contract.get("source_sha256") == keys[4] and canonical_form == original
         ):
             body = canonical(dict(contract, recorded_at=None, source_sha256=None))
             _record(db, keys, condition, 1, body, row[0])

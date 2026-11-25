@@ -1,6 +1,7 @@
 """Physical encodings of immutable evidence; SHA-256 always identifies original bytes."""
 
 import gzip
+import hashlib
 import zlib
 from os import PathLike
 from pathlib import Path
@@ -39,4 +40,7 @@ def decoded(path: Path, payload: bytes) -> bytes:
 
 def read_blob(root: str | PathLike[str], sha: str) -> bytes:
     path = blob_path(root, sha)
-    return decoded(path, path.read_bytes())
+    payload = decoded(path, path.read_bytes())
+    if hashlib.sha256(payload).hexdigest() != sha:
+        raise ValueError(f'archived original SHA-256 mismatch: {sha}')
+    return payload

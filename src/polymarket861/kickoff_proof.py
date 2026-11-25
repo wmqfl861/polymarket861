@@ -97,7 +97,7 @@ def _permission(root, db, when):
         permitted = (
             hashlib.sha256(store.read_blob(root, sha)).hexdigest() == sha
         )
-    except OSError:
+    except (OSError, ValueError):
         permitted = False
     if not permitted:
         raise ValueError("verified free written permission original is missing")
@@ -489,6 +489,10 @@ def resolve(
                 )
             try:
                 raw = store.read_blob(data_dir, r["source_sha256"])
+            except ValueError as exc:
+                if authority != SOURCE:
+                    raise ValueError("independent kickoff original differs from the reviewed release") from exc
+                raise
             except OSError as exc:
                 raise ValueError(
                     "independent kickoff source bytes are unavailable"

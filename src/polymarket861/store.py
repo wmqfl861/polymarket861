@@ -222,8 +222,7 @@ def archive_bytes(
             os.replace(temp, path)
         finally:
             temp.unlink(missing_ok=True)
-    if hashlib.sha256(read_blob(data_dir, sha)).hexdigest() != sha:
-        raise ValueError(f"stored evidence failed hash verification: {sha}")
+    read_blob(data_dir, sha)
     with closing(connect(data_dir)) as db, db:
         db.execute(
             "INSERT OR IGNORE INTO observations VALUES (?,?,?,?,?,?)",
