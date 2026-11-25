@@ -1,14 +1,21 @@
 # 当季英超赛果
 
-`pm861 result-feed season 2026` 检查 2026/27 英超赛果、刷新训练输入并重算受影响轮次。状态页的 `epl-regulation-2026` 报告列出已核实的 90 分钟比分、比赛身份冲突、逾期比赛和收件故障。每次最多轮询三轮，重复运行可继续补查。使用 `--offline` 可从本机保存的原件复核。指定一轮可用 `pm861 result-feed sync 2026 --round 11`。
+`pm861 result-feed season 2026` 按赛季调度赛果、重建训练输入并重新发布受影响的轮报。加 `--offline` 可只重放本机实际收取的原件。`pm861 result-feed sync 2026 --round 11` 定向查看 OpenLigaDB，`pm861 result-feed secondary 2026` 按缓存和限流策略检查独立来源。
 
-| 来源 | 采信规则 |
+| 来源 | 收件、许可与可用范围 |
 |---|---|
-| OpenLigaDB | 两份独立 HTTP 响应至少相隔 30 分钟，比赛 ID、球队顺序、英超赛季、比赛轮次、开球时间和比分均一致。两次响应均须表明比赛结束，明确提供唯一的 `After90Minutes` 结果，且收件晚于开球 90 分钟。缓存命中及单独的变更标记不会增加收件数。已知赛程或独立比分矛盾即隔离。 |
-| OpenFootball | 核实公开数据集的 Git 提交与赛季文件对象。对已登记比赛补齐缺失赛果并交叉核验。GitHub REST 配额用尽时使用同一公开仓库的 Git 接口。已有归档可离线使用。 |
-| 人工批量材料 | 需要原始附件、该附件的 SHA-256、逐场定位、清楚的使用权、赛程身份和明确的 90 分钟状态。修订已有比分或解除隔离还需逐场填写裁决理由。 |
+| OpenLigaDB | 原生完整 HTTP 响应要明确终场、唯一的 `After90Minutes` 比分、主客、轮次、实际开球和赛事 ID。单源确认须两次实际获取，相隔至少 30 分钟，收件时均已开球至少 90 分钟。变更标记和本地缓存不产生第二份凭证。数据库遵循 ODbL 1.0。 |
+| English Wikipedia | 使用 MediaWiki 官方匿名 API，一次请求获取已登记英超 20 家俱乐部当季文章和站点授权，保存原始字节、请求起止 UTC、SHA-256 及每篇文章的永久修订链接。只解析各自 Premier League 段中的联赛比赛框，要求主客、轮次、真实可换算的 GMT/BST 开球、联赛官方比赛链接 ID、比分和该俱乐部的 W/D/L 一致。文章修订本身也须晚于开球 90 分钟。双俱乐部记录属于同一来源。 |
+| OpenFootball | 固定带 Git 修订和对象哈希的公共领域赛季文件。已有比分可交叉核验，空缺位置仍等待其他终场证据。 |
+| 人工材料 | 单场或多场附获准使用的原件、位置及 SHA-256。更正或解除隔离需要逐场裁决理由。 |
 
-新补赛果从本地准入时刻进入训练。更正和撤回保留时序，系统重新生成受影响轮报并在已完成的正式轮次复核到期试验。原始预测及其摘要保留。超过登记开球 24 小时仍没有可用终场的比赛进入 `epl-overdue-results-2026` 告警。未取得比赛时的人员名单、盘口或其他准入证据，仍按各自的规则处理。交易所结算另按合约原件核实。
+OpenLigaDB 在开球后 90 分钟起的 48 小时内优先检查尚无比分的轮次，每 30 分钟最多查询一次该轮的小型变更标记。需要确认稳定终场时才重复获取完整响应。每轮调度最多检查三个轮次，更早的未决场次通常每六小时复查。Wikimedia 在有近期缺口或等待第二份稳定终场时最快每 30 分钟一次，否则有未决结果时每六小时、无近期缺口时每天一次。它将整轮俱乐部合并为一个请求，使用联系地址、`maxlag=5`、共享缓存和重试退避，并遵从服务器的 `Retry-After`。这些是本项目的请求间隔。
+
+`pm861 result-feed freshness 2026` 返回最近轮次已过终场窗口、已有比分和未收件的场数，最早缺失裁决距今的小时数，以及下一轮每队最近两场的缺口和对应比赛 ID。`--at 2026-11-25T10:00:00Z` 可复查当时实际可见的状态。下一轮的阻断数按该场 T-60m 的时间点投射，使用当前截止已经收到的比分。球员信息单列已取到的伤停、牌、出场和阵容凭证及收件时间，空缺记为 `unavailable`。
+
+独立来源的署名为 **English Wikipedia contributors**。输出逐场永久修订链接及来源声明；本项目提取、规范化的 Wikipedia 比分、时刻及对应衍生表以 CC BY-SA 4.0 提供。原样页面文字、球员名单和影像不随仓分发。原件冲突、同一官方 ID 被用于两个已终场对阵、撤回，以及无法核实时区均保留可追溯状态；后补收件按本地收件或裁决时间进入训练。[使用条款](https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · [MediaWiki API 礼节](https://www.mediawiki.org/wiki/API:Etiquette) · [免费接口](https://en.wikipedia.org/w/api.php)
+
+Football-Data.co.uk 的使用条件限制自动下载与 AI 数据训练，open-matchday 对其汇总及下游源有独立限制。这两类来源未接入本管线。[Football-Data.co.uk 使用说明](https://www.football-data.co.uk/contact.php) · [open-matchday 来源与许可](https://github.com/oladeeayo/open-matchday#license-and-attribution) · [FixtureDownload 条款](https://fixturedownload.com/terms)
 
 ## 未来七天的开球时间
 

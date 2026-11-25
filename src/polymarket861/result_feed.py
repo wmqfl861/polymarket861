@@ -211,7 +211,9 @@ def reconcile(root, year):
     return result
 
 
-def sync(root, year, *, round_id=None, confirm=False, require_native=False):
+def sync(
+    root, year, *, round_id=None, confirm=False, require_native=False, recent=False
+):
     from . import result_admission
 
     if not 2000 <= year <= 2100 or (round_id is not None and not 1 <= round_id <= 38):
@@ -246,7 +248,7 @@ def sync(root, year, *, round_id=None, confirm=False, require_native=False):
         old
         and not needs_first_native
         and instant(checked) - instant(old["checked_at"])
-        < (result_admission.INTERVAL if confirm else timedelta(hours=6))
+        < (result_admission.INTERVAL if confirm or recent else timedelta(hours=6))
     ):
         return cached("local_cache")
     # Full-season bootstrap, then small changed-round requests. A full-season
@@ -427,6 +429,21 @@ def register(subparsers):
     cmd = subparsers.add_parser(
         "result-feed", help="候选免费赛果、对账与影子样本"
     ).add_subparsers(required=True)
+    from . import independent_results, result_freshness
+
+    p = cmd.add_parser("secondary", help="获取带署名与修订号的英超俱乐部终场赛果原件")
+    p.add_argument("year", type=int)
+    p.set_defaults(
+        func=lambda a: independent_results.sync(
+            a.data_dir,
+            a.year,
+            eligible_fixtures(a.data_dir, season=f"{a.year}-{(a.year + 1) % 100:02d}"),
+        )
+    )
+    p = cmd.add_parser("freshness", help="查看最近轮次的赛果缺口和下一轮各队的陈旧状态")
+    p.add_argument("year", type=int)
+    p.add_argument("--at", help="只用这个带时区时间之前实际收到并登记的信息")
+    p.set_defaults(func=lambda a: result_freshness.status(a.data_dir, a.year, a.at))
     p = cmd.add_parser("season", help="确认英超90分钟比分、刷新训练输入并发布逐轮评分")
     p.add_argument("year", type=int)
     p.add_argument("--offline", action="store_true")

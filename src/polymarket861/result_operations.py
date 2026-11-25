@@ -155,8 +155,11 @@ def _fallback(root, year):
 def season(root, year, *, offline=False):
     if type(year) is not int or not 2000 <= year <= 2100:
         raise ValueError("invalid EPL season")
+    from . import independent_results, result_freshness
+
     at = store.instant(feed.now_utc())
     wet = []
+    secondary = {"source": independent_results.SOURCE, "status": "offline"}
     fallback = {"source": "openfootball", "status": "offline"}
     if not offline:
         try:
@@ -179,6 +182,7 @@ def season(root, year, *, offline=False):
                 )
             }
             native, _ = admission._raw_rows(root, db, year, store.iso(at))
+        secondary = independent_results.sync(root, year, fixtures, at)
         due = {}
         for f in fixtures:
             age = at - store.instant(f["kickoff"])
@@ -195,18 +199,22 @@ def season(root, year, *, offline=False):
             )
             if f["home_goals"] is not None and not need and age > timedelta(days=28):
                 continue
-            delay = admission.INTERVAL if need else timedelta(hours=6)
+            recent = f["home_goals"] is None and age <= timedelta(hours=48, minutes=90)
+            delay = admission.INTERVAL if need or recent else timedelta(hours=6)
             if last and at - last < delay:
                 continue
+            prior = due.get(rnd, (None, False, False))
             due[rnd] = (
                 last or store.instant("2000-01-01T00:00:00Z"),
-                need or due.get(rnd, (None, False))[1],
+                need or prior[1],
+                recent or prior[2],
             )
-        for rnd, (last, need) in sorted(
-            due.items(), key=lambda item: (item[1][0], -item[0])
+        for rnd, (_, need, recent) in sorted(
+            due.items(),
+            key=lambda item: (not (item[1][1] or item[1][2]), item[1][0], -item[0]),
         )[:3]:
             try:
-                r = feed.sync(root, year, round_id=rnd, confirm=need)
+                r = feed.sync(root, year, round_id=rnd, confirm=need, recent=recent)
                 wet.append({"scope": rnd, "status": r["fetch_status"]})
             except (ValueError, OSError, KeyError, TypeError) as exc:
                 wet.append({"scope": rnd, "status": "unavailable", "error": str(exc)})
@@ -222,6 +230,8 @@ def season(root, year, *, offline=False):
         },
         fetches=wet,
         fallback=fallback,
+        secondary=secondary,
+        freshness=result_freshness.status(root, year),
         rounds=score["rounds"],
         manifest=score["manifest"],
         training=score["training"],
