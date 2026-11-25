@@ -50,5 +50,5 @@ flowchart TD
 
 - 查看前向准入和本机界面，运行 `trial readiness`、`dashboard serve --port 8765`。正式模拟仅在准入满足后按未来时点启用。技术预测、历史试验和研究影子各自报告覆盖。
 - 来源报告保留冲突场次和收件证据。更正后重算受影响的轮报；对有问题的赛果批次可用 `result-feed rollback-batch 批次ID --reason 理由`，保留已有预测和审计记录。
-- 执行 `maintenance tick` 后，`jobs status` 显示轮报、异常和来源发现任务。运行 `jobs run --allow-codex --use-codex-config --project . --history .pm861/openfootball --sample-season 2025-26 --sample-round 1` 使用已配置的本地 Codex；历史目录可由 README 的 `football fetch` 准备。用 `jobs proposals` 查建议、数据指纹及待补条件。模型提议先作固定历史样本回放，正式切换另需整季前向证据和具名审查。
+- 执行 `maintenance tick` 后，`jobs status` 显示轮报、异常和来源发现任务。运行 `jobs run --allow-codex --use-codex-config --project . --history .pm861/openfootball --sample-season 2025-26 --sample-round 1` 使用已配置的本地 Codex；历史目录可由 README 的 `football fetch` 准备。用 `jobs proposals` 查建议、数据指纹及待补条件。本机 Codex 需支持所用权限配置并通过文件与网络隔离实测；失败原因可在 `jobs status` 及该次日志查看。作业只取得选定代码、可披露的已完轮汇总和来源运行指标，测试建议通过候选或补丁提议返回。模型提议先作固定历史样本回放，正式切换另需整季前向证据和具名审查。
 - 用 `backup create 新目录 --compress` 备份，用 `backup verify 备份目录` 和 `backup restore 备份目录 新运行目录` 检查恢复。按需用 `witness manifest --since UTC起点 --until UTC终点` 导出仅含封存摘要的清单；远端见证另需发布和第三方时间回执。
