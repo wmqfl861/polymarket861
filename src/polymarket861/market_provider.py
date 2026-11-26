@@ -20,9 +20,23 @@ DATA = "https://data-api.polymarket.com"
 CLOB = "https://clob.polymarket.com"
 VENUE = "polymarket.com"
 FAMILIES = ("moneyline", "total", "home_total", "away_total")
-FIXTURE = re.compile(
-    r"^(epl-([a-z0-9]+)-([a-z0-9]+)-(\d{4}-\d{2}-\d{2}))(?:-(more-markets))?$"
-)
+# The primaryTagId for Serie A is not its working domestic-games query tag.
+# Fail closed on a changed live association until a new mapping is verified.
+SPORT_MARKETS = {
+    "epl": ("10188", "306"),
+    "lal": ("10193", "780"),
+    "bun": ("10194", "1494"),
+    "sea": ("10203", "101962"),
+    "fl1": ("10195", "102070"),
+}
+# Existing public interfaces deliberately keep an EPL-only default.
+SPORT_FIXTURES = {
+    sport: re.compile(
+        rf"^({sport}-([a-z0-9]+)-([a-z0-9]+)-(\d{{4}}-\d{{2}}-\d{{2}}))(?:-(more-markets))?$"
+    )
+    for sport in SPORT_MARKETS
+}
+FIXTURE = SPORT_FIXTURES["epl"]
 
 
 def moment(value: str | float) -> datetime:
@@ -96,17 +110,17 @@ def teams(event: dict) -> dict:
     }
 
 
-def family(event: dict, market: dict) -> tuple[str | None, str | None, str | None]:
+def family(event: dict, market: dict, *, sport: str = "epl") -> tuple[str | None, str | None, str | None]:
     """Use type AND explicit side/line labels; never infer a team from outcome index zero."""
-    identity = FIXTURE.fullmatch(str(event.get("slug", "")))
+    identity = SPORT_FIXTURES[sport].fullmatch(str(event.get("slug", "")))
     if not identity:
-        return None, None, "not_an_epl_fixture"
+        return None, None, "not_an_epl_fixture" if sport == "epl" else "wrong_sport_fixture"
     slug = market.get("slug", "")
     typ = market.get("sportsMarketType")
     labels = sequence(market.get("outcomes"))
     # Early EPL binaries lack sportsMarketType. Only recover the strict fixture,
     # title, side and question pattern below; periods and props stay unclassified.
-    if typ is None and not identity[5]:
+    if sport == "epl" and typ is None and not identity[5]:
         question = str(market.get("question") or "").lower()
         title = str(market.get("groupItemTitle") or "").lower()
         expected = "will " + title + " win on " + identity[4] + "?"
@@ -171,15 +185,15 @@ def family(event: dict, market: dict) -> tuple[str | None, str | None, str | Non
     return side + "_total" if side else "total", side, None
 
 
-def normalized_markets(event: dict) -> list[dict]:
-    identity = FIXTURE.fullmatch(str(event.get("slug", "")))
+def normalized_markets(event: dict, *, sport: str = "epl") -> list[dict]:
+    identity = SPORT_FIXTURES[sport].fullmatch(str(event.get("slug", "")))
     if not identity:
         return []
     extracted = []
     for market in event.get("markets") or []:
         if not isinstance(market, dict):
             continue
-        kind, side, error = family(event, market)
+        kind, side, error = family(event, market, sport=sport)
         version = market.get("version")
         key = {"v1": "clobTokenIds", "v2": "positionIds"}.get(version)
         ids = sequence(market.get(key)) if key else []

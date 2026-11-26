@@ -1,0 +1,889 @@
+{
+  "evidence": "anonymous Gamma and native CLOB data collected in an isolated local research installation",
+  "utc_window_for_scheduled_kickoff": [
+    "2026-11-27T00:00:00.000000Z",
+    "2026-12-01T00:00:00.000000Z"
+  ],
+  "actual_receipt_window": [
+    "2026-11-26T07:24:50.861331Z",
+    "2026-11-26T07:25:16.971483Z"
+  ],
+  "mode": "one exhaustive listing/book sweep, one scheduled core tick and one same-slot restart before the matchweek",
+  "commands": [
+    "pm861 --data-dir ./research market league-archive --start 2026-11-27T00:00:00Z --end 2026-12-01T00:00:00Z --mode all",
+    "pm861 --data-dir ./research market league-watch --local-catalog --start 2026-11-27T00:00:00Z --end 2026-12-01T00:00:00Z --cycles 1 --workers 4",
+    "Repeat the preceding command immediately in the same slot to check restart idempotency.",
+    "pm861 --data-dir ./research market league-report --start 2026-11-26T00:00:00Z --end 2026-11-27T00:00:00Z"
+  ],
+  "source": {
+    "sports": {
+      "sha256": "1400225ff811fe596b4e3ba10a05ffd219f4716366f14bcbc4c402445dbb49ff",
+      "received_at": "2026-11-26T07:24:50.861331Z",
+      "url": "https://gamma-api.polymarket.com/sports"
+    },
+    "book_method": "POST https://clob.polymarket.com/books",
+    "resolution_method": "GET https://data-api.polymarket.com/v2/tokens?token_id=<original token>",
+    "documented_rate_limits": "https://docs.polymarket.com/api-reference/rate-limits",
+    "terms": "https://polymarket.com/tos",
+    "retention": "Published API documentation and anonymous access establish the available endpoints. Operator permission for ongoing automated retention or data redistribution has not been established here."
+  },
+  "denominator": "All tagged Gamma rows traversed to a short end page. Only domestic sport, series, observed tag and the two correctly ordered domestic teams enter. Official football fixtures require independent reconciliation.",
+  "leagues": {
+    "lal": {
+      "verified_gamma": {
+        "sport": "lal",
+        "series": "10193",
+        "tag": "780",
+        "primary_tag": "780"
+      },
+      "page_walk_complete": true,
+      "page_row_counts": [
+        25,
+        25,
+        11
+      ],
+      "page_receipts": [
+        {
+          "offset": 0,
+          "rows": 25,
+          "sha256": "71c702090677b170a7965e4db4b41f481aaa544504b0d183501429f7202f9d91",
+          "received_at": "2026-11-26T07:24:51.544298Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=780&limit=25&offset=0&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        },
+        {
+          "offset": 25,
+          "rows": 25,
+          "sha256": "6049928b460d22369a0b6ae4a93044a1dde0460062de14d48c500418467f2f76",
+          "received_at": "2026-11-26T07:24:51.907911Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=780&limit=25&offset=25&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        },
+        {
+          "offset": 50,
+          "rows": 11,
+          "sha256": "2791cfa38c90c4e342e9247ee92da602c2fecfa4c69655607e88573405a5b832",
+          "received_at": "2026-11-26T07:24:52.290431Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=780&limit=25&offset=50&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        }
+      ],
+      "ignored_unrelated_rows": {
+        "not_a_domestic_fixture_slug": 41
+      },
+      "main_and_aux_found": 10,
+      "fixtures": [
+        "lal-bet-ray-2026-11-28",
+        "lal-cel-vil-2026-11-29",
+        "lal-dep-bar-2026-11-29",
+        "lal-elc-mad-2026-11-28",
+        "lal-esp-get-2026-11-30",
+        "lal-lev-rrc-2026-11-27",
+        "lal-mala-bil-2026-11-28",
+        "lal-rea-ala-2026-11-28",
+        "lal-rso-sev-2026-11-29",
+        "lal-val-osa-2026-11-29"
+      ],
+      "full_sweep": {
+        "fixtures": 10,
+        "supported_contracts": 240,
+        "requested_tokens": 480,
+        "received_tokens": 480,
+        "fresh_tokens": 480,
+        "two_sided_tokens": 360,
+        "cash50_ask_depth_available": 420
+      },
+      "template_versions_at_capture": {
+        "unreviewed": 240
+      },
+      "template_versions_rechecked_from_original_local_contract_receipts": {
+        "lal-gamma-rules-v1": 240
+      },
+      "one_recheckable_team_total": {
+        "fixture": "lal-bet-ray-2026-11-28",
+        "slot": "home_total.1.5",
+        "main": "https://gamma-api.polymarket.com/events/slug/lal-bet-ray-2026-11-28",
+        "aux": "https://gamma-api.polymarket.com/events/slug/lal-bet-ray-2026-11-28-more-markets",
+        "condition": "0x623654ca8e02ddfa3c155494e5462e7ff7cffd92747f61fae789841d408eaf48",
+        "contracts_received": "2026-11-26T07:24:55.717395Z",
+        "contracts_sha256": "b1045bc6cf988eb5b1d4d9e2f9473ea8a95326ca72f925ae7067f11f39a32175",
+        "rules_sha256": "e404e898342c37999ca3f8c93ca8be49560e3ca44c8df0c502c7d17daf01358f",
+        "fee_params": {
+          "exponent": 1,
+          "rate": 0.05,
+          "rebateRate": 0.15,
+          "takerOnly": true
+        },
+        "native_book_received": "2026-11-26T07:25:00.417322Z",
+        "native_batch_sha256": "af5cade053692482c6f72986387d080344d53cc851a97ac180baf48153266602",
+        "outcomes": {
+          "Over": {
+            "token_id": "40198492277622350436319416828414965660864574512305639820633877361234666149310",
+            "bid_levels": 15,
+            "ask_levels": 21,
+            "ask_depth_for_50_pre_fee": {
+              "levels": 1,
+              "vwap": 0.64,
+              "above_best_ask": 0.0
+            }
+          },
+          "Under": {
+            "token_id": "35962405010423502719381699925028156019262014268910559611599545245977265100093",
+            "bid_levels": 21,
+            "ask_levels": 15,
+            "ask_depth_for_50_pre_fee": {
+              "levels": 2,
+              "vwap": 0.39588282,
+              "above_best_ask": 0.00588282
+            }
+          }
+        }
+      }
+    },
+    "bun": {
+      "verified_gamma": {
+        "sport": "bun",
+        "series": "10194",
+        "tag": "1494",
+        "primary_tag": "1494"
+      },
+      "page_walk_complete": true,
+      "page_row_counts": [
+        25,
+        25,
+        5
+      ],
+      "page_receipts": [
+        {
+          "offset": 0,
+          "rows": 25,
+          "sha256": "f73b4f5376820d934ec3402984b7cc4f1f2821a3560682c6a9b3acf4b50116d5",
+          "received_at": "2026-11-26T07:24:52.727289Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=1494&limit=25&offset=0&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        },
+        {
+          "offset": 25,
+          "rows": 25,
+          "sha256": "a1ef46a9cc9cadf688777d3b03d63decfd553d4a99fe31591790165fdfad7ed9",
+          "received_at": "2026-11-26T07:24:53.078177Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=1494&limit=25&offset=25&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        },
+        {
+          "offset": 50,
+          "rows": 5,
+          "sha256": "d4ea7469098eb4bb228baa7bbfc37ca7464130b26e65c1bc6ad1a019cc8dee63",
+          "received_at": "2026-11-26T07:24:53.512265Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=1494&limit=25&offset=50&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        }
+      ],
+      "ignored_unrelated_rows": {
+        "not_a_domestic_fixture_slug": 37
+      },
+      "main_and_aux_found": 9,
+      "fixtures": [
+        "bun-dor-b04-2026-11-29",
+        "bun-fre-lei-2026-11-29",
+        "bun-hof-aug-2026-11-29",
+        "bun-hsv-bay-2026-11-28",
+        "bun-koe-elv-2026-11-28",
+        "bun-mai-uni-2026-11-28",
+        "bun-scp-s04-2026-11-28",
+        "bun-stu-ein-2026-11-28",
+        "bun-wer-moe-2026-11-27"
+      ],
+      "full_sweep": {
+        "fixtures": 9,
+        "supported_contracts": 216,
+        "requested_tokens": 432,
+        "received_tokens": 432,
+        "fresh_tokens": 432,
+        "two_sided_tokens": 346,
+        "cash50_ask_depth_available": 389
+      },
+      "template_versions_at_capture": {
+        "unreviewed": 216
+      },
+      "template_versions_rechecked_from_original_local_contract_receipts": {
+        "bun-gamma-rules-v1": 216
+      },
+      "one_recheckable_team_total": {
+        "fixture": "bun-dor-b04-2026-11-29",
+        "slot": "home_total.1.5",
+        "main": "https://gamma-api.polymarket.com/events/slug/bun-dor-b04-2026-11-29",
+        "aux": "https://gamma-api.polymarket.com/events/slug/bun-dor-b04-2026-11-29-more-markets",
+        "condition": "0xf63c8a2ead93280842baa96f70624583a434a0e93d66a1240c73ce0da3554094",
+        "contracts_received": "2026-11-26T07:25:04.444937Z",
+        "contracts_sha256": "b0367f4a58c4cc71e6be2277d52a35f35267bc58c150231b9f0fc1a336e4be4e",
+        "rules_sha256": "f3a9e2aa6a16229eed274bcba9f407d15a71ea158bccf44df36c5d01af890b53",
+        "fee_params": {
+          "exponent": 1,
+          "rate": 0.05,
+          "rebateRate": 0.15,
+          "takerOnly": true
+        },
+        "native_book_received": "2026-11-26T07:25:04.672554Z",
+        "native_batch_sha256": "ca1b410b971f96661fb4711f86c6a06129a8c1e9f7bee4742395347ce280e345",
+        "outcomes": {
+          "Over": {
+            "token_id": "60294720948074417694383572620184149566654858934618716985838533089928497912864",
+            "bid_levels": 4,
+            "ask_levels": 11,
+            "ask_depth_for_50_pre_fee": {
+              "levels": 1,
+              "vwap": 0.6,
+              "above_best_ask": 0.0
+            }
+          },
+          "Under": {
+            "token_id": "49423430155622440054991687804383834959095103842354036032402050555052089142630",
+            "bid_levels": 11,
+            "ask_levels": 4,
+            "ask_depth_for_50_pre_fee": {
+              "levels": 1,
+              "vwap": 0.5,
+              "above_best_ask": 0.0
+            }
+          }
+        }
+      }
+    },
+    "sea": {
+      "verified_gamma": {
+        "sport": "sea",
+        "series": "10203",
+        "tag": "101962",
+        "primary_tag": "100618"
+      },
+      "page_walk_complete": true,
+      "page_row_counts": [
+        25,
+        25,
+        11
+      ],
+      "page_receipts": [
+        {
+          "offset": 0,
+          "rows": 25,
+          "sha256": "a06eb0081a1edb29c77d99a79405e74bae4e35f28dd783ea7e9c7c48901b5e71",
+          "received_at": "2026-11-26T07:24:53.826655Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=101962&limit=25&offset=0&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        },
+        {
+          "offset": 25,
+          "rows": 25,
+          "sha256": "5c25586f6e382f9ae22942f03243b9d9515d1a66bbe651119fd040ebf7e1bf25",
+          "received_at": "2026-11-26T07:24:54.200410Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=101962&limit=25&offset=25&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        },
+        {
+          "offset": 50,
+          "rows": 11,
+          "sha256": "6ba8ff97db8fb2c283d238e850f1af585c0f970ab99fbf1e06637d317bf75531",
+          "received_at": "2026-11-26T07:24:54.557422Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=101962&limit=25&offset=50&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        }
+      ],
+      "ignored_unrelated_rows": {
+        "not_a_domestic_fixture_slug": 41
+      },
+      "main_and_aux_found": 10,
+      "fixtures": [
+        "sea-cag-mil-2026-11-30",
+        "sea-com-juv-2026-11-29",
+        "sea-fro-par-2026-11-28",
+        "sea-int-gen-2026-11-28",
+        "sea-lec-ata-2026-11-30",
+        "sea-rom-mon-2026-11-29",
+        "sea-sas-nap-2026-11-29",
+        "sea-tor-laz-2026-11-28",
+        "sea-udi-fio-2026-11-29",
+        "sea-ven-bol-2026-11-27"
+      ],
+      "full_sweep": {
+        "fixtures": 10,
+        "supported_contracts": 240,
+        "requested_tokens": 480,
+        "received_tokens": 480,
+        "fresh_tokens": 480,
+        "two_sided_tokens": 356,
+        "cash50_ask_depth_available": 418
+      },
+      "template_versions_at_capture": {
+        "unreviewed": 240
+      },
+      "template_versions_rechecked_from_original_local_contract_receipts": {
+        "sea-gamma-rules-v1": 240
+      },
+      "one_recheckable_team_total": {
+        "fixture": "sea-cag-mil-2026-11-30",
+        "slot": "home_total.1.5",
+        "main": "https://gamma-api.polymarket.com/events/slug/sea-cag-mil-2026-11-30",
+        "aux": "https://gamma-api.polymarket.com/events/slug/sea-cag-mil-2026-11-30-more-markets",
+        "condition": "0x2a09eb7436035c5bc0b6f9d0338b20086fd240d17b82873dbab9722d5224607c",
+        "contracts_received": "2026-11-26T07:25:08.345087Z",
+        "contracts_sha256": "552cd4c239a51c4af6c79f3183faf7111a56fe4d3b5ecaa64e5e7f5549a08e6a",
+        "rules_sha256": "60093d7bfd9d6a1e449e13efac9ac9d447859bcc65430916a87edaf86a2ab864",
+        "fee_params": {
+          "exponent": 1,
+          "rate": 0.05,
+          "rebateRate": 0.15,
+          "takerOnly": true
+        },
+        "native_book_received": "2026-11-26T07:25:08.547646Z",
+        "native_batch_sha256": "eace21ed18e06e1f082f710ec47bdbb052f17f99feca6df1539cd7f78db1dcfa",
+        "outcomes": {
+          "Over": {
+            "token_id": "18727355077380040207220976752433839719664772168187718029240711709683573548135",
+            "bid_levels": 14,
+            "ask_levels": 15,
+            "ask_depth_for_50_pre_fee": {
+              "levels": 3,
+              "vwap": 0.38676225,
+              "above_best_ask": 0.03676225
+            }
+          },
+          "Under": {
+            "token_id": "81281362371914206393348002735169432026481518779618528362320486456909514871052",
+            "bid_levels": 15,
+            "ask_levels": 14,
+            "ask_depth_for_50_pre_fee": {
+              "levels": 1,
+              "vwap": 0.82,
+              "above_best_ask": 0.0
+            }
+          }
+        }
+      }
+    },
+    "fl1": {
+      "verified_gamma": {
+        "sport": "fl1",
+        "series": "10195",
+        "tag": "102070",
+        "primary_tag": "102070"
+      },
+      "page_walk_complete": true,
+      "page_row_counts": [
+        25,
+        25,
+        5
+      ],
+      "page_receipts": [
+        {
+          "offset": 0,
+          "rows": 25,
+          "sha256": "7d1c5b393b0b6d56359c1c64f9c32d2a6c2011b99c863d3562dfb6cd5e4bef62",
+          "received_at": "2026-11-26T07:24:54.857132Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=102070&limit=25&offset=0&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        },
+        {
+          "offset": 25,
+          "rows": 25,
+          "sha256": "9eb5eae7d3914f6b80a813d50968a725795d0d7c24c3fcb654aa2c6dac4cd9e3",
+          "received_at": "2026-11-26T07:24:55.256435Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=102070&limit=25&offset=25&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        },
+        {
+          "offset": 50,
+          "rows": 5,
+          "sha256": "117924f5a854149cbdb0777af491a6c9a077731a59fc13737ffff78439bfa6e7",
+          "received_at": "2026-11-26T07:24:55.594182Z",
+          "url": "https://gamma-api.polymarket.com/events?tag_id=102070&limit=25&offset=50&order=id&ascending=true&end_date_min=2026-11-27T00%3A00%3A00.000000Z&end_date_max=2026-12-01T00%3A00%3A00.000000Z"
+        }
+      ],
+      "ignored_unrelated_rows": {
+        "not_a_domestic_fixture_slug": 37
+      },
+      "main_and_aux_found": 9,
+      "fixtures": [
+        "fl1-aja-olm-2026-11-29",
+        "fl1-ang-rcl-2026-11-28",
+        "fl1-hac-str-2026-11-28",
+        "fl1-lmf-lil-2026-11-28",
+        "fl1-lyo-asm-2026-11-29",
+        "fl1-ogc-tro-2026-11-28",
+        "fl1-psg-lor-2026-11-28",
+        "fl1-sbr-pfc-2026-11-27",
+        "fl1-tou-ren-2026-11-29"
+      ],
+      "full_sweep": {
+        "fixtures": 9,
+        "supported_contracts": 216,
+        "requested_tokens": 432,
+        "received_tokens": 432,
+        "fresh_tokens": 432,
+        "two_sided_tokens": 306,
+        "cash50_ask_depth_available": 369
+      },
+      "template_versions_at_capture": {
+        "unreviewed": 216
+      },
+      "template_versions_rechecked_from_original_local_contract_receipts": {
+        "fl1-gamma-rules-v1": 216
+      },
+      "one_recheckable_team_total": {
+        "fixture": "fl1-aja-olm-2026-11-29",
+        "slot": "home_total.1.5",
+        "main": "https://gamma-api.polymarket.com/events/slug/fl1-aja-olm-2026-11-29",
+        "aux": "https://gamma-api.polymarket.com/events/slug/fl1-aja-olm-2026-11-29-more-markets",
+        "condition": "0xe26f4e80c6775c49a91f08d3afac5d268c0095306c79752baf2243057aedd22c",
+        "contracts_received": "2026-11-26T07:25:12.746153Z",
+        "contracts_sha256": "0026b297150c767f9e3e2385effa5b94bee5b5ff636deb3f33e52c6835f72dc5",
+        "rules_sha256": "234281eca30a6d9d99a1e43f2b61b9c170474afa4a26f8da97d8fab860cacb89",
+        "fee_params": {
+          "exponent": 1,
+          "rate": 0.05,
+          "rebateRate": 0.15,
+          "takerOnly": true
+        },
+        "native_book_received": "2026-11-26T07:25:13.090708Z",
+        "native_batch_sha256": "1f14938d3957d4560d6d26e23344b0b12e9366d43aef73cf0b8a745cda0d4d8d",
+        "outcomes": {
+          "Over": {
+            "token_id": "69655882771288908244107361448860861571983443624060993530963061760156575244139",
+            "bid_levels": 11,
+            "ask_levels": 14,
+            "ask_depth_for_50_pre_fee": {
+              "levels": 3,
+              "vwap": 0.77682257,
+              "above_best_ask": 0.05682257
+            }
+          },
+          "Under": {
+            "token_id": "15780867111504510674347426285116071506939422877095515703517095099084864056259",
+            "bid_levels": 14,
+            "ask_levels": 11,
+            "ask_depth_for_50_pre_fee": {
+              "levels": 1,
+              "vwap": 0.7,
+              "above_best_ask": 0.0
+            }
+          }
+        }
+      }
+    }
+  },
+  "all_leagues": {
+    "fixtures": 38,
+    "supported_contracts": 912,
+    "requested_tokens": 1824,
+    "received_tokens": 1824,
+    "fresh_tokens": 1824,
+    "two_sided_tokens": 1368,
+    "cash50_ask_depth_available": 1596
+  },
+  "combined_capture_cost": {
+    "time_scope": "full sweep plus one core tick, followed by an immediate same-slot restart",
+    "watch_first_tick": {
+      "complete": 38
+    },
+    "watch_same_slot_restart": {},
+    "observations_by_family": {
+      "lal": {
+        "moneyline": {
+          "expected_token_observations": 120,
+          "received": 120,
+          "fresh": 120,
+          "two_sided": 120,
+          "cash50_available": 120,
+          "levels_for_50": {
+            "p50": 1,
+            "p95": 1,
+            "max": 2
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.0,
+            "p95": -0.0,
+            "max": 0.00641447
+          },
+          "latency_ms": {
+            "p50": 183.53,
+            "p95": 367.95,
+            "max": 4671.69
+          }
+        },
+        "home_total": {
+          "expected_token_observations": 140,
+          "received": 140,
+          "fresh": 140,
+          "two_sided": 100,
+          "cash50_available": 120,
+          "levels_for_50": {
+            "p50": 2,
+            "p95": 4,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.00919081,
+            "p95": 0.122403,
+            "max": 0.43334665
+          },
+          "latency_ms": {
+            "p50": 184.47,
+            "p95": 4671.69,
+            "max": 4671.69
+          }
+        },
+        "total": {
+          "expected_token_observations": 200,
+          "received": 200,
+          "fresh": 200,
+          "two_sided": 166,
+          "cash50_available": 183,
+          "levels_for_50": {
+            "p50": 1,
+            "p95": 3,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.0,
+            "p95": 0.0085192,
+            "max": 0.20763183
+          },
+          "latency_ms": {
+            "p50": 184.47,
+            "p95": 4671.69,
+            "max": 4671.69
+          }
+        },
+        "away_total": {
+          "expected_token_observations": 140,
+          "received": 140,
+          "fresh": 140,
+          "two_sided": 94,
+          "cash50_available": 117,
+          "levels_for_50": {
+            "p50": 2,
+            "p95": 5,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.00916084,
+            "p95": 0.19471893,
+            "max": 0.28149193
+          },
+          "latency_ms": {
+            "p50": 184.47,
+            "p95": 4671.69,
+            "max": 4671.69
+          }
+        }
+      },
+      "bun": {
+        "moneyline": {
+          "expected_token_observations": 108,
+          "received": 108,
+          "fresh": 108,
+          "two_sided": 108,
+          "cash50_available": 108,
+          "levels_for_50": {
+            "p50": 1,
+            "p95": 2,
+            "max": 2
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.0,
+            "p95": 0.00140455,
+            "max": 0.00967685
+          },
+          "latency_ms": {
+            "p50": 189.97,
+            "p95": 4108.52,
+            "max": 4108.52
+          }
+        },
+        "home_total": {
+          "expected_token_observations": 126,
+          "received": 126,
+          "fresh": 126,
+          "two_sided": 94,
+          "cash50_available": 110,
+          "levels_for_50": {
+            "p50": 2,
+            "p95": 4,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.00926074,
+            "p95": 0.31904238,
+            "max": 0.42695326
+          },
+          "latency_ms": {
+            "p50": 310.12,
+            "p95": 4061.1,
+            "max": 4108.52
+          }
+        },
+        "total": {
+          "expected_token_observations": 180,
+          "received": 180,
+          "fresh": 180,
+          "two_sided": 162,
+          "cash50_available": 171,
+          "levels_for_50": {
+            "p50": 1,
+            "p95": 3,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": -0.0,
+            "p95": 0.0095005,
+            "max": 0.05140118
+          },
+          "latency_ms": {
+            "p50": 310.12,
+            "p95": 328.78,
+            "max": 4108.52
+          }
+        },
+        "away_total": {
+          "expected_token_observations": 126,
+          "received": 126,
+          "fresh": 126,
+          "two_sided": 90,
+          "cash50_available": 108,
+          "levels_for_50": {
+            "p50": 2,
+            "p95": 5,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.00925071,
+            "p95": 0.26490496,
+            "max": 0.45258829
+          },
+          "latency_ms": {
+            "p50": 310.12,
+            "p95": 4061.1,
+            "max": 4108.52
+          }
+        }
+      },
+      "sea": {
+        "moneyline": {
+          "expected_token_observations": 120,
+          "received": 120,
+          "fresh": 120,
+          "two_sided": 120,
+          "cash50_available": 120,
+          "levels_for_50": {
+            "p50": 1,
+            "p95": 1,
+            "max": 2
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.0,
+            "p95": 0.0,
+            "max": 0.00904184
+          },
+          "latency_ms": {
+            "p50": 175.82,
+            "p95": 322.67,
+            "max": 327.49
+          }
+        },
+        "home_total": {
+          "expected_token_observations": 140,
+          "received": 140,
+          "fresh": 140,
+          "two_sided": 98,
+          "cash50_available": 119,
+          "levels_for_50": {
+            "p50": 2,
+            "p95": 4,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.00923077,
+            "p95": 0.19930783,
+            "max": 0.26947368
+          },
+          "latency_ms": {
+            "p50": 317.5,
+            "p95": 327.49,
+            "max": 327.49
+          }
+        },
+        "total": {
+          "expected_token_observations": 200,
+          "received": 200,
+          "fresh": 200,
+          "two_sided": 164,
+          "cash50_available": 182,
+          "levels_for_50": {
+            "p50": 1,
+            "p95": 3,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.0,
+            "p95": 0.00678593,
+            "max": 0.06407191
+          },
+          "latency_ms": {
+            "p50": 317.5,
+            "p95": 327.49,
+            "max": 327.49
+          }
+        },
+        "away_total": {
+          "expected_token_observations": 140,
+          "received": 140,
+          "fresh": 140,
+          "two_sided": 94,
+          "cash50_available": 117,
+          "levels_for_50": {
+            "p50": 2,
+            "p95": 4,
+            "max": 5
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.00925075,
+            "p95": 0.12753014,
+            "max": 0.20568513
+          },
+          "latency_ms": {
+            "p50": 317.5,
+            "p95": 327.49,
+            "max": 327.49
+          }
+        }
+      },
+      "fl1": {
+        "moneyline": {
+          "expected_token_observations": 108,
+          "received": 108,
+          "fresh": 108,
+          "two_sided": 108,
+          "cash50_available": 108,
+          "levels_for_50": {
+            "p50": 1,
+            "p95": 2,
+            "max": 2
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.0,
+            "p95": 0.00487901,
+            "max": 0.0079922
+          },
+          "latency_ms": {
+            "p50": 177.4,
+            "p95": 338.78,
+            "max": 338.78
+          }
+        },
+        "home_total": {
+          "expected_token_observations": 126,
+          "received": 126,
+          "fresh": 126,
+          "two_sided": 82,
+          "cash50_available": 104,
+          "levels_for_50": {
+            "p50": 2,
+            "p95": 4,
+            "max": 5
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.00891086,
+            "p95": 0.28454091,
+            "max": 0.37730003
+          },
+          "latency_ms": {
+            "p50": 312.65,
+            "p95": 338.78,
+            "max": 338.78
+          }
+        },
+        "total": {
+          "expected_token_observations": 180,
+          "received": 180,
+          "fresh": 180,
+          "two_sided": 142,
+          "cash50_available": 161,
+          "levels_for_50": {
+            "p50": 1,
+            "p95": 3,
+            "max": 5
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.0,
+            "p95": 0.03575616,
+            "max": 0.14129713
+          },
+          "latency_ms": {
+            "p50": 312.65,
+            "p95": 338.78,
+            "max": 338.78
+          }
+        },
+        "away_total": {
+          "expected_token_observations": 126,
+          "received": 126,
+          "fresh": 126,
+          "two_sided": 82,
+          "cash50_available": 104,
+          "levels_for_50": {
+            "p50": 2,
+            "p95": 5,
+            "max": 6
+          },
+          "vwap_above_best_ask": {
+            "p50": 0.00937063,
+            "p95": 0.30703216,
+            "max": 0.4338793
+          },
+          "latency_ms": {
+            "p50": 312.65,
+            "p95": 338.78,
+            "max": 338.78
+          }
+        }
+      }
+    },
+    "http_requests": [
+      {
+        "operation": "books",
+        "status": "ok",
+        "n": 76
+      },
+      {
+        "operation": "league_catalog",
+        "status": "ok",
+        "n": 12
+      },
+      {
+        "operation": "league_event",
+        "status": "ok",
+        "n": 76
+      },
+      {
+        "operation": "league_sports",
+        "status": "ok",
+        "n": 1
+      }
+    ],
+    "observed_http_status_errors": {
+      "429": 0,
+      "503": 0
+    },
+    "cooldowns_expiring_in_window": {},
+    "raw_unique_bodies": 165,
+    "raw_unique_decoded_bytes": 41858309,
+    "raw_unique_on_disk_bytes": 5098654,
+    "database_bytes_at_report": 33841152
+  },
+  "limitations": [
+    "The book contents and fee schedules describe the UTC receipt instants. A repeated query today will return current values.",
+    "Fresh tokens had a fresh HTTP receipt. The exchange timestamp is captured separately and can predate the request.",
+    "The sample was taken before the weekend. It neither measures an entire weekend of storage nor proves T−24h/T−60m paired books, actual kickoff, closing line, paid fills, payouts or ROI.",
+    "Depth is visible ask-side notional before fees. Nonempty bids and asks and a $50 sell-side cash capacity are separate metrics.",
+    "Only hashes, identifiers and derived measurements are committed. Full bodies and per-token rows were stored in the isolated research directory.",
+    "The initial capture recorded template eligibility at observation time. Later local reinterpretation using the saved original contract and teams is a separate column. Neither status authorizes a trade."
+  ],
+  "serie_a_tag_observation": "Gamma /sports links sea to series 10203 and both tags. The selected domestic main/aux events explicitly returned 101962. The advertised primaryTagId is 100618. No assumption about future tag migrations is used.",
+  "stress_scenario": {
+    "source": "Claude planning scenario, not observed weekend traffic",
+    "fixtures": 48,
+    "tokens_per_game": 48,
+    "captures_per_game": 322,
+    "token_observations_if_all_full_frequency": 741888
+  },
+  "generated_at": "2026-11-26T07:38:51.552941Z"
+}

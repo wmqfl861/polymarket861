@@ -1,0 +1,103 @@
+{
+  "schema": "pm861.settlement-observation.v1",
+  "league": "FL1",
+  "market_id": "2162604",
+  "fixture_slug": "fl1-nan-tou-2026-05-17",
+  "market_slug": "fl1-nan-tou-2026-05-17-total-2pt5",
+  "condition_id": "0xfe50e7696c8622d68a44510368b6e67ca991543fab3bd107130e489e7fb3fe78",
+  "market": "full-match total 2.5",
+  "gamma": {
+    "uma_status": "resolved",
+    "closed": true,
+    "closed_time_as_published": "2026-05-27 23:47:47+00",
+    "outcome_prices": [
+      "0",
+      "1"
+    ]
+  },
+  "clob": {
+    "closed": true,
+    "accepting_orders": false
+  },
+  "verified_terminal_tokens": [
+    {
+      "token_id": "52123023522480331718584494856391123648331240695941741851445641658691215899260",
+      "outcome": "Over",
+      "outcome_index": 0,
+      "opposite_token_id": "20610523687469104469435902795693235867033859123070530395620866948805575526407",
+      "resolved": true,
+      "closed": true,
+      "final_price": 0.0,
+      "condition_id": "0xfe50e7696c8622d68a44510368b6e67ca991543fab3bd107130e489e7fb3fe78",
+      "event_slug": "fl1-nan-tou-2026-05-17-more-markets",
+      "market_slug": "fl1-nan-tou-2026-05-17-total-2pt5"
+    },
+    {
+      "token_id": "20610523687469104469435902795693235867033859123070530395620866948805575526407",
+      "outcome": "Under",
+      "outcome_index": 1,
+      "opposite_token_id": "52123023522480331718584494856391123648331240695941741851445641658691215899260",
+      "resolved": true,
+      "closed": true,
+      "final_price": 1.0,
+      "condition_id": "0xfe50e7696c8622d68a44510368b6e67ca991543fab3bd107130e489e7fb3fe78",
+      "event_slug": "fl1-nan-tou-2026-05-17-more-markets",
+      "market_slug": "fl1-nan-tou-2026-05-17-total-2pt5"
+    }
+  ],
+  "rule": {
+    "utf8_sha256": "3de2730ed1b23bbfeb58d8da726f0cd853eb90fbf0f09d8fd9fbc89671ac5763",
+    "reviewed_profile": "fl1-gamma-rules-v1",
+    "normalized_template_sha256": "6b36e800803509d41f0e2bc597afc10d795639cb8fe5e57cb4febda052736868",
+    "entire_cancellation_no_makeup": "0.5/0.5",
+    "started_but_unfinished": "official published final score",
+    "regulation": "90 minutes plus stoppage time"
+  },
+  "finding": "Gamma, CLOB and both separately requested resolved Data API tokens agree. Over paid 0 and Under paid 1. The conditional 50/50 clause did not determine the observed payout vector. These post-event receipts do not identify the oracle reasoning or when the terminal vector first became public.",
+  "sports_result": {
+    "kind": "LFP disciplinary decision confirming the on-field score at permanent interruption",
+    "date": "2026-05-27",
+    "authority": "LFP",
+    "source": "https://www.lfp.fr/article/commission-de-discipline-les-decisions-du-27-mai-2026",
+    "project_record": "docs/five-leagues-0.5/POLYMARKET.md",
+    "used_as_exchange_payout_evidence": false,
+    "ratified_score_at_interruption": [
+      0,
+      0
+    ]
+  },
+  "receipts": {
+    "gamma": {
+      "source": "https://gamma-api.polymarket.com/markets/2162604",
+      "received_at": "2026-11-26T07:11:31.561418+00:00",
+      "sha256": "c656d03fcf1f39560b09bff6a1d11fdfad69051101d987cbc6819197eb3bcff1",
+      "http_status": 200,
+      "body_encoding": "gzip+base64",
+      "body": "H4sIAAAAAAACA61X2W7jRhZ9n68o6GUexlIXl+KiN9tyIwbScWArGCDpoFEkLyXCJIthFaVWggDzD/OH8yVzqiiJ8pLGPIxhGFLVrbuce+7iP2ZVMVvOfC/yIx7Orma/DaRNpVocfrxlP8jWkGY7vWBrNdRq0MQ+3i7Zw4efmL8QkM9VW1T2wb3Vw7+WJDjFURrlSeT7RZTIMBQeD6IkiyiKc5mmngiDUmZBVng89gJOYZJSXGZBSXEClboeNtBV1t68le3cqGHucz+aczH3Ynw1sp77nbHWe9KqHqz5JzX0OeHZ1phOLz982O/3i7raDOQtctV8gDC1xUoaKzOpW3vpknP8/mwNG9mbVyJcrLlY8nQZRos0FmmQWsmqkZtLY52qD43sn8nMh65WsljoYDHoOUlt5v5CNvJ31cq9dq7UJOHWHPEtunZjteUO7/+PsoJ03lfdMYf3LTNbYkMH2ardsO8tIsxjG9kQy8jsiVo2JVq2xWWir5jOt1QMNRWsVD37JA/Mi5k0LABk7MdP7G69/Nx+btfbSrPRZ7av6pq5xOyIGcU+zx521H+esar8a0sM/mVV6x7oXPXEAgaDjf20UbLWrLKRwIr1fGFt3pcutOPDgjliMEjUpDWuZMuCq/HNX3r2U1tY1y71OWTwplPadAqK39XRSPijOoA3tKaqp5dbqYErzuFXV5OhYsFeac5lm5OFlPC0p/pwBa1my1oFI8+EpDvRb/gu+H/+9W/B33PbcRi6s8FAoZnc+IY6mQPxwtIDoFhlqiyrvAKaZdXi75iQbsjqSoMOTLVsqix0hgu9PZXUa0jUh7OywUCMXIzVSMey6rVhKWfg5GDZoEq83Ay17FlXg2RdPdhQVNehzpipjilf423Xo/j6A5tKn2lX+46hlzFW+mUwgMZUaG65s2evaIcUMGSsp1xt2up3C9xhxFOBtK3FJFPFwXJxFFb9RlrBHi3xO7XHYX9lmf2/vQE9gLfNy4TmiHEjTb69dPEIl8+2iA71UhrqJ6f/DhqpNgdMAOCKSftNU6sHF1veU1FlNSGuTvXGetQA1QyNQMNi1WpDaCvoFsfkaLSKX06FejUVxq+TyI99lZ/k+CjkjQI75KGx3dDjPg/9RRDHSRBy/MS4lbmpdrg1/UAYF7WCB+dvPaHbFtfmbcNFTw4XmEl+6tmGO3TFG0k/WfvB0guXoVhEIhWxa82jhXXVXHZxP2YQDWP8/oNzSLW0ny1L9BV4UcKJobdeHQ/0kDWVgbkv2cENtdQLA34rV34RYAbEURSmaezF5TVfRdF1nKwSL7wTuZ1Iss+3iHdSdiyy4mZUFQke85s7aIzjMOKr5Dq+prssDalM/ZK4iG790r+Ox+FmALqZ8Nr0aujuDTXrytQ2vmkOT1dbvNuq2o31i4F+v3L2iyAshMjKQAQRCUkIJ5cUJLHHiyQgT5QIL5GiTIs89bOsyAIEH3h+6lNYJLnNRSPv3oxSP16fEP7ZzVoJ/j30YNGNUs+nAJQ9cEz6VLXrKn9+QlnMlnzBuXe8xcV4KJylx2nCozYGS8ATomfq/TA0s+Vb8p0n/r1WL4b+5ah/ecctlGjhj7SraE/utT6jjxb7ZN+9Ihcm4mmLGMmlyW5FekVoZXDMcTJbq2fCknSsIOF7fsD9QPh+mHDgG3uJSMIwDRMRBamH2yhMLO4hj1KRhl4cQsLDMhWFXiSSKPV8TyRpihoZq9HnkccF3iUgVurxEH/DQKTcj1MRpQGMJVEMW4lIrfGYi4AHuPJ5EkE0SbgQsRB+FPJ4rGw7W9UZ96LSNqnFSIEbhIhD4SJ2idrL/kS6MS+3CPv9xNg5199ITR+JrATnVzPzzlk+YAg036OgWgx1EMX2k5w629IcufS5zlraPFb6+fX3R3IF4NjvakoWh6nyB7S5qVRfqbZpBk+a7m13SpZh6JrNQTXT867r1W6q1t4hos+E5tOR/PrUWVfcoT59RBUkUDMgZIyBXNb14fHE9VMBtbSSB1dBt9hw7BI65wtww119h1Hx+g44Cnf5T6Ln15ciwsMae+W6l8XY4s/VmCH4awvoe35dv+rqJF2dP7SuQE7njWwHWTtZOS6kL5PzgHnWT23XzipgY4f3+tDZEnM7nQbQNVa82RKt7t2mcJpLwL+z3X9kL7Yzu9SsCEv0ocHQPFsq3BHu3p58I+l86WHQBBx1aHPfl7/dtWNBnLTYtgsdYyno17cl0XQ2AoSjY6Rj8F+szJedLSF8ejou37PlHzP6apdRGwNS07vei7wEx7J5wL410S7D9eNRxBd/QhdSlsn8ecLtaLWFzhf/Rn2iHOyoNFiNdiyRWFwbkANh3WHps1vFyRCWBT3+l7HzZn/+7b8x1tUxSw4AAA=="
+    },
+    "clob": {
+      "source": "https://clob.polymarket.com/markets/0xfe50e7696c8622d68a44510368b6e67ca991543fab3bd107130e489e7fb3fe78",
+      "received_at": "2026-11-26T07:11:36.147941+00:00",
+      "sha256": "d4eae4d04eb6bf7a5598009fd796a2972d3df83f6bd2367fe49ecd95d766fd6b",
+      "http_status": 200,
+      "body_encoding": "gzip+base64",
+      "body": "H4sIAAAAAAACA61Wy47bNhTd9ysIbbqxPdSDengbNG2ApimQyaadQqCkK5sYmVRJaibOYID8Q/+wX9JDyTP2FEnQRQHBkMj7ODw8914/RKRlM1BtbEe2boy5jba9HBytItl6dUfR1tsJX+1gHHVPX9K2e2x2F8YtjV7p3RLJfW2j9upAzsvDGG2jhCf5mgs811xsebnNst+iVXRQWh2mw8nBqU8AIc7LXrW3p1W+4TwGNqM75ZXRtQKiiH/sSXAq8ipvyzxJuryUWSZinuZlk1NetLKqYpGlvWzSpot5EaecsrKiom/SnooSIP6cAPMiZJdmnRBNn4o0JyGpEAhDaVnEvCtTikVf5Mgj+qprq6RpuiaNszSNkyqhrCvbi5CI9/oV+0VqT47duQ27NtNgJkfs9aste3f1gSUbAfuOXGvVeHJ5o5nfE5vG1oCJHftZ7SZiMdvJA7GG/D2RZue4UneXcVfMtXvqpoE61hvL3sojiwsmPUu3nLNf37Ifrrc3+kZf75VjB2lvybN7NQzMkjPDHTFv2E307o7sTcRU//VMDPgapWcH1xpLLGVIeAhvOwNRMBVOgiwB+SbkfNPPRzs5dvD0cmCwGMg5bEnN0tXi81VkH3QXoF3Gm5mBz2icHw0CfzHGQQKPGUHepL0azp576cAr1oFrHMhTt2H/itxK3VKglOBqaTiuENXvmTZIckvraZxNv4Fd8L8//yX4l2CjSiySsmbyCOjPML4RDtWGqgnyACkhmOl71Sqw2SuN3+VCxqkZlIMcmNFsCDqKN4gOIV7EtdSjjmExHJ+DTR5mNJ9RLXLslXWeVZxBk1NQg+nhuZsGadk4QGTjMIWjmHGUO1yVOl35NXxHq5DruICfgsyZM5NtaVbo5RmVe3kYUOMVaqmd84UtusMVMNyYpdbsNLoDiDsufBqIVgdOGtMdgxYXY2N3MhhaVOBP5h6LdhWU/d98IA/wHe7lzObC8UH6dn8J8URXwvY4Heql92TPoL+HjIxuQRMIWDEZvhxpN81nay11Cg0a5xqNDX0U8Y/QJUO1dSgl50l2m9A1Z6pqN0w7dIt+iNda6rU30/qpzcbFeq6sdTL60F9Id3UnPdXKmYtuHBfXnG/nJ3TjIMd61uLcu18axtXZ0FHow67uCPcebdGX+/FwgP0M7jaMF+mo7gkxYs75KvJfXAWnCvcsgyBcvcyn58GjaVdb5c5T6mmhPp1/btfRxbqlue8+b6h2bqd770e3vboazXBcXFGtgwGXLt1Mbk3S+XWykQf5yWh570KBXA0kUSxrkLsZ9S4EO0DV/1s0S/fSdpidD5HFveBFT8MwT76ngReo/Fi70eLW8fkICK4WPDyn6nxmxptbyCja/v6wvC4MiCROUp6kIkmykmNAFXEpyiyrslLkaRVjN8/KMLgynleiyuIig0WMAZpncS7KvIqTWJRVleQcmJ+zzrMBC6jqdkF6r7TG0oLncfUCRsLzmAvkKosMEXmG3ywVFU+KSuRVCoBlXgBfKaoAuOAi5Sm2El7mMC1LLkQhRJJnvHgBYx4EZxzxGUdQ0OMfQXa7QEv0PlSUg+l7gz8pwedHaD0snGZrBGMcyi0D+C6OHr/7BwHrq7AxCQAA"
+    },
+    "data-0": {
+      "source": "https://data-api.polymarket.com/v2/tokens?token_id=52123023522480331718584494856391123648331240695941741851445641658691215899260",
+      "received_at": "2026-11-26T07:18:06.848399Z",
+      "sha256": "633677bc9f3e0d5b8a53d17a1ea85fab286497e99f4ec2b571c90409051093cc",
+      "http_status": 200,
+      "body_encoding": "gzip+base64",
+      "body": "H4sIAAAAAAACA31QO2/bMBD+KwJnyz0+jg+tATI2SzsVhUBLp0AwLboiZQQI8t97rl3EXboQ4N19z3cxxhpF9+Nd1HykpZ9H0QlUUmlQGpUyHrSWTnr0xgTj0eogeWuN57kyYAMGI53hC2kMWiMtehukkuhDUBbETgx5Gec65zs9vE2EQM4GO3ir1Gh9ZKgEbf3BknVDDEGi0VM86MMowUkNZHwgNx30RM4zZ6nrNtRtjan/l37ZUtqJUx63RCx2kf1QJwbkrQ75RP28jPQmOmBbKR8evvcDxrxcaL0izudc5kr9QzUKrATk/N4ZTgmGX6MxgHIBbdBcmreOO/MYriU6QA2aVwq85VPvAdEhKmvAscZKJacLMTXnoZ2Y5oUTndd5YCOwZ1t1rn+CPD81X+NSqTSXsm++5S3lrVDz/NQ1L1++N2qPTHeK65FqX9L2ypApyXaJS1vz1ipQtgVspeNvjalV53pFcAnlU36h136dy1F0U0zlYdDfmT8b/rVRuZV+a/A2pQsttyuDoNH8nfzf0Smv1N4Uivj4+fEbWjqLIJcCAAA="
+    },
+    "data-1": {
+      "source": "https://data-api.polymarket.com/v2/tokens?token_id=20610523687469104469435902795693235867033859123070530395620866948805575526407",
+      "received_at": "2026-11-26T07:18:06.848563Z",
+      "sha256": "85fb8dc82f5b6469cc17ec489014a2ef9fde441feb867db69e51d58484b23f2b",
+      "http_status": 200,
+      "body_encoding": "gzip+base64",
+      "body": "H4sIAAAAAAACA31Qy27bMBD8FYFny10+lg9dA+TYXppTUQi0tAoE06IrUkaAIP/ede0i7qUXApzdmdmZdzHGGkX3413UfKSln0fRCQVWAiptvTM2SDD8Go0BlAtog1YavXWgtccglQYHqEHzSIG3vOo9IDpEZQ04sRNDXsa5zvkuD28TIZCzwQ7eKjVaH41BCWx4sGTdEEOQaPQUD/owSnBSAxkfyE0HPZHzrFnqug11W2Pq/5VftpR24pTHLRGbXWQ/1IkJeatDPlE/LyO9iU7yWSkfHr73Bea8MLZeKedzLnOl/qEbVNfE3IBSxnMF0kmP3hhOjVYHyVNrPOPKgA0YjHSGNyQHtEZaLo4rk+hDUBbYY6WS04VYmgPRTkzzwpHO6zzwJXIPO1Hn+ifJ81PzNS6VSnMp++Z73lLeCjXPT13z7ctLo/bIcqe4Hqn2JW2vTJmSbJe4tDVvrQJlW8BWOv7WmFp1rlcGt1A+7Rd67de5HEU3xVQegP6u/Fnxr43KrfVbhTeULrTctgyCRvMX+f9Fp7xSe3Mo4uPnx2/dXnYUmAIAAA=="
+    }
+  }
+}

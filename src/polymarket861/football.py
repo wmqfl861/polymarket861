@@ -1,4 +1,4 @@
-"""Premier League fixture history, point-in-time forecasts, grading and CLI."""
+"""Domestic football fixture history, point-in-time forecasts, grading and CLI."""
 
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ from zoneinfo import ZoneInfo
 import numpy as np
 
 from .score_bounds import INVALID_SCORE, valid_score
+from . import league_registry
 from .football_model import (
     DECAY_PER_DAY,
     DEFAULT_LINES,
@@ -60,6 +61,7 @@ SOURCE_BLOBS = {
 }
 LONDON = ZoneInfo("Europe/London")
 MODEL_VERSION = "football-dc-1"
+RECEIPT_GRADES = frozenset({"observed", "archived", "archived_upper_bound"})
 SEASON_PATTERN = re.compile(r"^(\d{4})-(\d{2})$")
 REPAIR_2019 = {
     "season": "2019-20",
@@ -103,8 +105,44 @@ def team_key(name):
     return "-".join(p for p in parts if p not in {"afc", "fc"})
 
 
-def fixture_id(season, home, away):
-    return f"epl/{season}/{team_key(home)}/{team_key(away)}"
+@lru_cache(maxsize=8192)
+def _club_key(league, season, name):
+    return team_key(name) if league is None else league_registry.club_key(league, season, name)
+
+
+def fixture_id(season, home, away, *, league=None):
+    return f"{league or 'epl'}/{season}/{_club_key(league, season, home)}/{_club_key(league, season, away)}"
+
+
+def _check_scope(fixtures, league):
+    code = league or "epl"
+    if league is not None:
+        league_registry.profile(league)
+    seen = set()
+    for fixture in fixtures:
+        claimed, sep, _ = fixture.fixture_id.partition("/")
+        if (sep and claimed != code) or (not sep and league is not None):
+            raise ValueError(f"{fixture.fixture_id}: fixture outside selected league {code}")
+        if league is not None and fixture.fixture_id != fixture_id(
+            fixture.season, fixture.home, fixture.away, league=league
+        ):
+            raise ValueError(f"{fixture.fixture_id}: does not match registered domestic fixture identity")
+        if league is not None:
+            if fixture.fixture_id in seen:
+                raise ValueError(f"duplicate fixture key {fixture.fixture_id}")
+            seen.add(fixture.fixture_id)
+            exception = league_registry.fixture_exception(league, fixture.season, fixture.home, fixture.away)
+            if exception and fixture.status != exception.kind and fixture.status != "quarantined":
+                raise ValueError(f"{fixture.fixture_id}: reload history with the selected league protocol")
+            if fixture.status in {"cancelled", "canceled", "awarded", "abandoned", "quarantined", "postponed",
+                                  "void", "suspended", "resumed", "replayed"}:
+                allowed = exception and exception.train_regulation and fixture.status == exception.kind
+                if not fixture.quarantine_reason or (not allowed and fixture.result_versions):
+                    raise ValueError(f"{fixture.fixture_id}: unsafe result or forecast eligibility for fixture status")
+
+
+def _blobs(league):
+    return SOURCE_BLOBS if league is None else league_registry.source_blobs(league)
 
 
 def season_year(value):
@@ -178,14 +216,26 @@ def read_json_rows(path):
                 yield json.loads(line)
 
 
-def _evidence_map(path):
+def _evidence_map(path, league=None):
     grouped = collections.defaultdict(list)
     for obj in read_json_rows(path):
         if not isinstance(obj, dict):
             raise ValueError("evidence records must be objects")
-        fid = obj.get("fixture_id") or fixture_id(
-            obj["season"], obj["home"], obj["away"]
-        )
+        if "league" in obj and obj["league"] != (league or "epl"):
+            raise ValueError("evidence outside selected league")
+        fid = obj.get("fixture_id")
+        if league is not None and fid:
+            parts = str(fid).split("/")
+            if len(parts) != 4 or parts[0] != league:
+                raise ValueError("evidence outside selected league")
+            if (obj.get("season", parts[1]) != parts[1]
+                    or ("home" in obj and _club_key(league, parts[1], obj["home"]) != parts[2])
+                    or ("away" in obj and _club_key(league, parts[1], obj["away"]) != parts[3])):
+                raise ValueError("evidence identity conflicts with supplied fixture_id")
+        if not fid:
+            if league not in (None, "epl") and "league" not in obj:
+                raise ValueError("new league evidence requires league or a scoped fixture_id")
+            fid = fixture_id(obj["season"], obj["home"], obj["away"], league=league)
         grouped[fid].append(obj)
     return grouped
 
@@ -264,13 +314,19 @@ def verify_2019_repair(matches, comparison_csv=None):
     return dict(REPAIR_2019)
 
 
-def _parse_match(season, row, evidence, lag_hours, source_blob):
+def _parse_match(season, row, evidence, lag_hours, source_blob, league=None, *, keep_archive_labels=False):
     home, away = row["team1"], row["team2"]
-    fid = fixture_id(season, home, away)
+    fid = fixture_id(season, home, away, league=league)
+    if league is not None and str(row.get("stage", "regular")).casefold() not in {"regular", "regular season"}:
+        raise ValueError(f"{fid}: outside domestic regular season")
+    if league is not None and isinstance(row.get("score"), dict) and (
+        {"et", "aet", "p", "pen", "pens", "penalties"} & row["score"].keys()
+    ):
+        raise ValueError(f"{fid}: non-regular score phases in domestic league input")
     ld = date.fromisoformat(row["date"])
     # A single documented, source-versioned repair. Never shift July for other seasons.
     if (
-        season == "2019-20"
+        league in (None, "epl") and season == "2019-20"
         and ld.year == 2019
         and ld.month == 7
         and source_blob == SOURCE_BLOBS.get(season)
@@ -278,13 +334,18 @@ def _parse_match(season, row, evidence, lag_hours, source_blob):
         ld = ld.replace(year=2020)
     hh = row.get("time")
     wall = time.fromisoformat(hh) if hh else time(23, 59, 59)
-    kickoff = datetime.combine(ld, wall, LONDON).astimezone(UTC)
-    rnd_match = re.search(r"(\d+)$", str(row["round"]))
-    if not rnd_match or not 1 <= int(rnd_match[1]) <= 38:
-        raise ValueError(f"{fid}: invalid Premier League round")
+    zone = LONDON if league is None else ZoneInfo(league_registry.profile(league).timezone)
+    kickoff = datetime.combine(ld, wall, zone).astimezone(UTC)
+    rnd_match = (re.search(r"(\d+)$", str(row["round"])) if league is None
+                 else re.fullmatch(r"(?:Matchday )?(\d+)", str(row["round"])))
+    max_round = 38 if league is None else league_registry.round_count(league, season)
+    if not rnd_match or not 1 <= int(rnd_match[1]) <= max_round:
+        raise ValueError(f"{fid}: invalid domestic league round")
     rnd = int(rnd_match[1])
     y = season_year(season)
-    if not date(y, 8, 1) <= ld < date(y + 1, 8, 1):
+    start, end = ((date(y, 8, 1), date(y + 1, 8, 1)) if league is None
+                  else league_registry.season_window(league, season))
+    if not start <= ld < end:
         return Fixture(
             fid,
             season,
@@ -294,6 +355,7 @@ def _parse_match(season, row, evidence, lag_hours, source_blob):
             away,
             source_blob=source_blob,
             status="quarantined",
+            quarantine_reason="outside_registered_season" if league is not None else None,
         )
     raw_score = row.get("score")
     if isinstance(raw_score, dict):
@@ -317,6 +379,41 @@ def _parse_match(season, row, evidence, lag_hours, source_blob):
         if final is not None
         else str(row.get("status", "scheduled")).casefold()
     )
+    exception = None
+    reason = None
+    result_anchor = kickoff
+    if league is not None:
+        exception = league_registry.fixture_exception(league, season, home, away)
+        declared = str(row.get("status", "")).strip().casefold()
+        if exception:
+            status = exception.kind
+            reason = f"registered_{status}"
+            completion = exception.completion_date
+            if exception.archive_date != ld.isoformat():
+                status, reason = "quarantined", "date_conflicts_with_registered_exception"
+            if exception.train_regulation and declared not in {"", status, "completed", "finished", "ft"}:
+                status, reason = "quarantined", "status_conflicts_with_registered_exception"
+            if status == "quarantined" or not exception.train_regulation or not completion or final is None:
+                return Fixture(fid, season, rnd, kickoff, home, away, source_blob=source_blob,
+                               status=status, kickoff_precision="minute" if hh else "date",
+                               quarantine_reason=reason)
+            # The archived clock can be the start of the original encounter or the
+            # final segment. Neither clock establishes when a full score was known.
+            last_day = date.fromisoformat(str(completion))
+            day_after = datetime.combine(last_day + timedelta(days=1), time.min, zone).astimezone(UTC)
+            result_anchor = max(kickoff, day_after)
+        elif declared in {"cancelled", "canceled", "awarded", "abandoned", "postponed", "void", "suspended"}:
+            status = "cancelled" if declared == "canceled" else declared
+            return Fixture(fid, season, rnd, kickoff, home, away, source_blob=source_blob,
+                           status=status, kickoff_precision="minute" if hh else "date",
+                           quarantine_reason=f"source_{status}")
+        elif declared and not (
+            (final is None and declared in {"scheduled", "timed"})
+            or (final is not None and declared in {"completed", "finished", "ft"})
+        ):
+            return Fixture(fid, season, rnd, kickoff, home, away, source_blob=source_blob,
+                           status="quarantined", kickoff_precision="minute" if hh else "date",
+                           quarantine_reason=f"unrecognized_or_conflicting_status:{declared}")
     observations = []
     schedules = []
     schedule_grades = {}
@@ -339,11 +436,14 @@ def _parse_match(season, row, evidence, lag_hours, source_blob):
             or "finalized_by" in entry
             or "published_by" in entry
         ):
-            observations.append(_parsed_version(entry, kickoff))
+            version = _parsed_version(entry, kickoff)
+            if exception and version.available < result_anchor:
+                raise ValueError(f"{fid}: result evidence predates verified completion bound")
+            observations.append(version)
     if final is not None and not observations and lag_hours is not None:
         observations.append(
             ResultVersion(
-                kickoff + timedelta(hours=lag_hours),
+                result_anchor + timedelta(hours=lag_hours),
                 final,
                 "lag_assumption",
                 f"openfootball:{source_blob}",
@@ -361,9 +461,10 @@ def _parse_match(season, row, evidence, lag_hours, source_blob):
 
     versions = sorted_unique(observations, lambda x: x.available)
     schedules = sorted_unique(schedules, lambda x: x[0])
-    if versions and versions[-1].grade != "lag_assumption":
+    if not keep_archive_labels and versions and versions[-1].grade != "lag_assumption":
         final = versions[-1].score
-        status = "completed" if final is not None else "pending"
+        if not exception:
+            status = "completed" if final is not None else "pending"
     return Fixture(
         fid,
         season,
@@ -379,10 +480,12 @@ def _parse_match(season, row, evidence, lag_hours, source_blob):
         source_blob,
         status,
         tuple(schedule_grades[t] for t, _ in schedules),
+        reason,
     )
 
 
-def load_fixtures(root: Path, *, evidence_path=None, archive_lag_hours=None):
+def load_fixtures(root: Path, *, evidence_path=None, archive_lag_hours=None, league=None,
+                  keep_archive_labels=False):
     """One season is decoded at a time. Strict mode uses only supplied result observations.
 
     A positive archive_lag_hours explicitly enables a publication-delay sensitivity
@@ -395,10 +498,16 @@ def load_fixtures(root: Path, *, evidence_path=None, archive_lag_hours=None):
             "archive delay study requires a finite lag of at least 3 hours"
         )
     root = Path(root)
-    paths = [root] if root.is_file() else sorted(root.glob("????-??/en.1.json"))
+    archive_code = "en" if league is None else league_registry.profile(league).archive_code
+    filename = f"{archive_code}.1.json"
+    if root.is_file() and root.name != filename and (
+        league is not None or re.fullmatch(r"(?:en|es|de|it|fr)\.1\.json", root.name)
+    ):
+        raise ValueError(f"{league}: expected domestic archive file {filename}")
+    paths = [root] if root.is_file() else sorted(root.glob(f"????-??/{filename}"))
     if not paths:
-        raise ValueError(f"no season/en.1.json files found in {root}")
-    evidence = _evidence_map(evidence_path)
+        raise ValueError(f"no season/{filename} files found in {root}")
+    evidence = _evidence_map(evidence_path, league)
     fixtures = []
     seen = set()
     for file in paths:
@@ -410,17 +519,21 @@ def load_fixtures(root: Path, *, evidence_path=None, archive_lag_hours=None):
         matches = payload["matches"] if isinstance(payload, dict) else payload
         if not isinstance(matches, list):
             raise ValueError(f"{file}: invalid fixture array")
-        if season == "2019-20" and sha == SOURCE_BLOBS[season]:
+        if league is not None:
+            league_registry.validate_members(league, season, {r[k] for r in matches for k in ("team1", "team2")},
+                                             require_complete=sha == _blobs(league).get(season))
+        if league in (None, "epl") and season == "2019-20" and sha == SOURCE_BLOBS[season]:
             verify_2019_repair(matches)
         for row in matches:
-            fid = fixture_id(season, row["team1"], row["team2"])
+            fid = fixture_id(season, row["team1"], row["team2"], league=league)
             if fid in seen:
                 raise ValueError(f"duplicate fixture key {fid}")
-            if team_key(row["team1"]) == team_key(row["team2"]):
+            if _club_key(league, season, row["team1"]) == _club_key(league, season, row["team2"]):
                 raise ValueError(f"same team on both sides: {fid}")
             seen.add(fid)
             fixtures.append(
-                _parse_match(season, row, evidence.get(fid, ()), archive_lag_hours, sha)
+                _parse_match(season, row, evidence.get(fid, ()), archive_lag_hours, sha, league,
+                             keep_archive_labels=keep_archive_labels)
             )
     unknown = evidence.keys() - seen
     if unknown:
@@ -428,27 +541,29 @@ def load_fixtures(root: Path, *, evidence_path=None, archive_lag_hours=None):
     return fixtures
 
 
-def fetch_history(destination, first, last):
-    first_year, last_year = season_year(first), season_year(last)
+def fetch_history(destination, first, last, *, league=None):
+    blobs = _blobs(league)
+    filename = "en.1.json" if league is None else league_registry.profile(league).source_file
+    first_year, last_year = season_year(first or min(blobs)), season_year(last or max(blobs))
     if first_year > last_year:
         raise ValueError("from-season follows to-season")
     result = []
     for year in range(first_year, last_year + 1):
         season = f"{year}-{(year + 1) % 100:02}"
-        if season not in SOURCE_BLOBS:
+        if season not in blobs:
             raise ValueError(f"{season} outside pinned data")
-        target = Path(destination) / season / "en.1.json"
+        target = Path(destination) / season / filename
         if target.exists():
-            if blob_sha(target.read_bytes()) != SOURCE_BLOBS[season]:
+            if blob_sha(target.read_bytes()) != blobs[season]:
                 raise ValueError(f"existing data differs from pinned input: {target}")
         else:
-            address = f"https://raw.githubusercontent.com/openfootball/football.json/{SOURCE_COMMIT}/{season}/en.1.json"
+            address = f"https://raw.githubusercontent.com/openfootball/football.json/{SOURCE_COMMIT}/{season}/{filename}"
             with urlopen(
                 Request(address, headers={"User-Agent": "polymarket861/football"}),
                 timeout=30,
             ) as response:
                 raw = response.read(4_000_001)
-            if blob_sha(raw) != SOURCE_BLOBS[season]:
+            if blob_sha(raw) != blobs[season]:
                 raise ValueError(f"unexpected upstream blob for {season}")
             target.parent.mkdir(parents=True, exist_ok=True)
             with tempfile.NamedTemporaryFile(dir=target.parent, delete=False) as tmp:
@@ -457,6 +572,7 @@ def fetch_history(destination, first, last):
             os.replace(name, target)
         result.append(season)
     return {
+        **({"league": league} if league is not None else {}),
         "repository": "openfootball/football.json",
         "commit": SOURCE_COMMIT,
         "seasons": result,
@@ -476,11 +592,20 @@ class TrainingFit:
 class FootballEngine:
     """As-of index, including result restatements and retractions."""
 
-    def __init__(self, fixtures):
+    def __init__(self, fixtures, *, league=None, allow_archive_schedule=None):
         self.fixtures = list(fixtures)
+        _check_scope(self.fixtures, league)
+        self.league = league
+        self.allow_archive_schedule = (
+            any(v.grade == "lag_assumption" for f in self.fixtures for v in f.result_versions)
+            if allow_archive_schedule is None else allow_archive_schedule
+        )
         self.seasons = collections.defaultdict(list)
         for f in self.fixtures:
             self.seasons[f.season].append(f)
+        self.excluded_awards = collections.Counter(
+            f.season for f in self.fixtures if league is not None and f.status == "awarded"
+        )
         self.indexes = {}
         self.last_fit = {}
         self.by_key = {f.fixture_id: f for f in self.fixtures}
@@ -497,6 +622,8 @@ class FootballEngine:
             events = []
             for f in selected:
                 for version in f.result_versions:
+                    if self.league is not None and not self.allow_archive_schedule and version.grade not in RECEIPT_GRADES:
+                        continue
                     event_start = version.actual_kickoff or f.kickoff
                     if version.available < event_start:
                         raise ValueError("result available before kickoff")
@@ -538,11 +665,17 @@ class FootballEngine:
         if not eligible:
             raise ValueError("no eligible historical results at cutoff")
         count = collections.Counter(r[0].season for r in eligible)
-        complete = {
-            s
-            for s, nn in count.items()
-            if s < season and nn == len(self.seasons[s]) and nn == 380
-        }
+        if self.league is None:
+            complete = {s for s, nn in count.items()
+                        if s < season and nn == len(self.seasons[s]) and nn == 380}
+        else:
+            # Administrative scores are never regulation labels. Missing, withdrawn
+            # or cancelled matches cannot turn an incomplete season into a complete one.
+            complete = {
+                s for s, nn in count.items() if s < season
+                and nn + (self.excluded_awards[s] if self.allow_archive_schedule else 0)
+                == len(self.seasons[s]) == league_registry.fixture_count(self.league, s)
+            }
         reference = (
             [r for r in eligible if r[0].season in complete] if complete else eligible
         )
@@ -551,7 +684,8 @@ class FootballEngine:
             grid[v.score] += 1
         grid /= len(reference)
         records = [
-            (team_key(ff.home), team_key(ff.away), *v.score, (v.actual_kickoff or ff.kickoff).timestamp())
+            (_club_key(self.league, ff.season, ff.home), _club_key(self.league, ff.season, ff.away),
+             *v.score, (v.actual_kickoff or ff.kickoff).timestamp())
             for ff, v, _ in eligible
         ]
         fitted = fit_team_model(records)
@@ -587,15 +721,33 @@ class FootballEngine:
         kickoff, cutoff = utc(kickoff), utc(cutoff)
         if cutoff >= kickoff:
             raise ValueError("cutoff must be before kickoff")
-        hk, ak = team_key(home), team_key(away)
-        if not hk or not ak or hk == ak:
-            raise ValueError("home and away must be different identified teams")
         if season is None:
-            local = kickoff.astimezone(LONDON)
+            zone = LONDON if self.league is None else ZoneInfo(league_registry.profile(self.league).timezone)
+            local = kickoff.astimezone(zone)
             y = local.year if local.month >= 8 else local.year - 1
             season = f"{y}-{(y + 1) % 100:02}"
-        fid = fixture_id(season, home, away)
+            if self.league is not None:
+                matches = [f.season for f in self.fixtures if f.kickoff == kickoff
+                           and f.fixture_id == fixture_id(f.season, home, away, league=self.league)]
+                if len(matches) == 1:
+                    season = matches[0]
+        hk, ak = _club_key(self.league, season, home), _club_key(self.league, season, away)
+        if not hk or not ak or hk == ak:
+            raise ValueError("home and away must be different identified teams")
+        fid = fixture_id(season, home, away, league=self.league)
         target = self.by_key.get(fid)
+        if self.league is not None:
+            if target is None:
+                raise ValueError("fixture is not registered in the selected league and season")
+            if target.quarantine_reason:
+                raise ValueError(EXCLUDED_PREMATCH)
+            if target.kickoff_precision != "minute" and not target.schedule_versions:
+                raise ValueError("kickoff_time_unknown")
+            if not target.schedule_versions:
+                if not self.allow_archive_schedule:
+                    raise ValueError("fixture schedule not known at cutoff")
+                if kickoff != target.kickoff:
+                    raise ValueError(KICKOFF_MISMATCH)
         actual = verified_event_kickoff(target) if target else None
         if actual:
             if cutoff >= actual:
@@ -604,16 +756,23 @@ class FootballEngine:
                 raise ValueError(KICKOFF_MISMATCH)
             if actual != target.kickoff and _known_schedule(target, cutoff) != actual:
                 raise ValueError(UNKNOWN_RECONCILED_KICKOFF)
-        schedule_grade = "supplied_or_final_archive_schedule"
+        schedule_grade = ("supplied_or_final_archive_schedule" if self.league is None
+                          else "final_archive_schedule_assumption")
         if target and target.schedule_versions:
             known = [entry for entry in target.schedule_versions if entry[0] <= cutoff]
             if not known or known[-1][1] != kickoff:
                 raise ValueError("fixture schedule not known at cutoff")
+            if self.league is not None and _late_replacement(known):
+                raise ValueError(UNKNOWN_RECONCILED_KICKOFF)
             schedule_grade = (
                 target.schedule_grades[len(known) - 1]
                 if target.schedule_grades
                 else "observed_schedule"
             )
+            if self.league is not None and not self.allow_archive_schedule and schedule_grade not in {
+                "observed_schedule", "archived_schedule_upper_bound"
+            }:
+                raise ValueError("fixture schedule not known at cutoff")
         training = self.fit(season, cutoff, fid)
         model = training.b1
         rates = None
@@ -635,7 +794,14 @@ class FootballEngine:
         if fallback:
             matrix = training.baseline
         p, totals = probabilities(matrix, lines)
+        evidence = dict(training.evidence, schedule_grade=schedule_grade)
+        if self.league is not None:
+            evidence.update(
+                home_prior_matches=len(training.team_kickoffs.get(hk, ())),
+                away_prior_matches=len(training.team_kickoffs.get(ak, ())),
+            )
         return {
+            **({"league": self.league} if self.league is not None else {}),
             "fixture_id": fid,
             "season": season,
             "round": target.round if target else None,
@@ -651,12 +817,12 @@ class FootballEngine:
             "totals": totals,
             "matrix": matrix.tolist(),
             "tail_bound": tail,
-            "evidence": dict(training.evidence, schedule_grade=schedule_grade),
+            "evidence": evidence,
         }
 
 
-def predict(fixtures, home, away, kickoff, cutoff, *, season=None, lines=DEFAULT_LINES):
-    return FootballEngine(fixtures).forecast(
+def predict(fixtures, home, away, kickoff, cutoff, *, season=None, lines=DEFAULT_LINES, league=None):
+    return FootballEngine(fixtures, league=league).forecast(
         home, away, kickoff, cutoff, season=season, lines=lines
     )
 
@@ -666,6 +832,7 @@ def _average(numbers):
 
 
 MATCH_STARTED = "cutoff is at or after the verified match kickoff"
+EXCLUDED_PREMATCH = "fixture excluded from pre-match opportunities"
 KICKOFF_MISMATCH = "requested kickoff differs from the verified match kickoff"
 UNKNOWN_RECONCILED_KICKOFF = (
     "reconciled kickoff was not known at the historical decision"
@@ -675,6 +842,8 @@ FORECAST_OMISSIONS = frozenset(
         MATCH_STARTED,
         KICKOFF_MISMATCH,
         UNKNOWN_RECONCILED_KICKOFF,
+        EXCLUDED_PREMATCH,
+        "kickoff_time_unknown",
         "fixture schedule not known at cutoff",
         "no eligible historical results at cutoff",
     }
@@ -702,6 +871,13 @@ def _known_schedule(fixture, cutoff):
         ),
         None,
     )
+
+
+def _late_replacement(versions):
+    # Without an independently logged pre-kickoff cancellation, a later archive
+    # update cannot establish that the original fixture never started.
+    return any(new_kick != old_kick and seen >= old_kick
+               for (_, old_kick), (seen, new_kick) in zip(versions, versions[1:]))
 
 
 def history_kickoff(fixture, cutoff):
@@ -744,12 +920,16 @@ def score_round(
     round_number=None,
     cutoff_minutes=60,
     as_of=None,
+    league=None,
+    allow_archive_schedule=False,
 ):
     """Grade one official round on the actual kickoff version. Missing markets never block grading."""
     if cutoff_minutes <= 0:
         raise ValueError("a positive cutoff is required")
     if as_of is not None:
         as_of = utc(as_of)
+    fixtures = list(fixtures)
+    _check_scope(fixtures, league)
     selected = [
         f
         for f in fixtures
@@ -760,10 +940,15 @@ def score_round(
         raise ValueError("select one season and official round")
     if len({f.fixture_id for f in selected}) != len(selected):
         raise ValueError("duplicate fixture in round")
-    if len(selected) > 10:
-        raise ValueError("an EPL round cannot contain more than ten fixtures")
     if selected:
         season, round_number = selected[0].season, selected[0].round
+    if league is not None and season is None:
+        raise ValueError("season required to determine league round size")
+    scheduled = 10 if league is None else league_registry.team_count(league, season) // 2
+    if len(selected) > scheduled:
+        raise ValueError(f"round cannot contain more than {scheduled} fixtures")
+    if league is not None and round_number is not None and not 1 <= round_number <= league_registry.round_count(league, season):
+        raise ValueError("invalid domestic league round")
     by_id = collections.defaultdict(list)
     if isinstance(predictions, dict):
         for fid, pred in predictions.items():
@@ -779,6 +964,7 @@ def score_round(
     baseline_points = []
     completed = 0
     cancelled = 0
+    excluded = 0
     baseline_model_points = []
     for f in sorted(selected, key=lambda f: (f.kickoff, f.fixture_id)):
         if as_of is not None and f.schedule_versions:
@@ -804,7 +990,23 @@ def score_round(
             "kickoff": iso(active_kickoff) if active_kickoff else None,
         }
         rows.append(row)
-        truth = _result_at(f, as_of)
+        if league is not None and f.quarantine_reason:
+            if as_of is not None:
+                row["status"] = "pending"
+            elif f.status in {"cancelled", "canceled", "void"}:
+                row.update(status="cancelled", reason=f.quarantine_reason)
+                cancelled += 1
+            elif f.status in {"awarded", "abandoned", "replayed", "resumed"}:
+                row.update(status="excluded", reason=f.quarantine_reason)
+                excluded += 1
+            else:
+                row.update(status="pending", reason=f.quarantine_reason)
+            continue
+        if league is not None and as_of is not None and not allow_archive_schedule:
+            receipts = [v for v in f.result_versions if v.available <= as_of and v.grade in RECEIPT_GRADES]
+            truth = max(receipts, key=lambda v: v.available).score if receipts else None
+        else:
+            truth = _result_at(f, as_of)
         if truth is None:
             cancelled_now = as_of is None and f.status in {
                 "cancelled",
@@ -821,8 +1023,29 @@ def score_round(
         if actual and (moved or f.schedule_versions) and _known_schedule(f, cutoff) != actual:
             row.update(status="missing", reason=UNKNOWN_RECONCILED_KICKOFF)
             continue
+        if league is not None:
+            if cutoff is None:
+                row.update(status="missing", reason="fixture schedule not known at cutoff")
+                continue
+            observations = [i for i, (seen, _) in enumerate(f.schedule_versions) if seen <= cutoff]
+            if f.schedule_versions:
+                if not observations or _known_schedule(f, cutoff) != active_kickoff:
+                    row.update(status="missing", reason="fixture schedule not known at cutoff")
+                    continue
+                if _late_replacement(f.schedule_versions[:observations[-1] + 1]):
+                    row.update(status="missing", reason=UNKNOWN_RECONCILED_KICKOFF)
+                    continue
+                grade = f.schedule_grades[observations[-1]] if f.schedule_grades else "observed_schedule"
+                known = grade in {"observed_schedule", "archived_schedule_upper_bound"}
+            else:
+                known = False
+            if (not allow_archive_schedule and not known) or (not known and f.kickoff_precision != "minute"):
+                row.update(status="missing", reason="fixture schedule not known at cutoff")
+                continue
         matching = []
         for pred in by_id[f.fixture_id]:
+            if league is not None and not (pred.get("kickoff") and pred.get("cutoff")):
+                continue
             if cutoff is None or (pred.get("cutoff") and utc(pred["cutoff"]) != cutoff):
                 continue
             if pred.get("kickoff") and utc(pred["kickoff"]) != active_kickoff:
@@ -873,14 +1096,15 @@ def score_round(
             item_scores=grade["item_scores"],
         )
     missing = completed - len(points)
-    unknown_schedule = 10 - len(selected)
-    pending = len(selected) - completed - cancelled + unknown_schedule
+    unknown_schedule = scheduled - len(selected)
+    pending = len(selected) - completed - cancelled - excluded + unknown_schedule
     total = math.fsum(points)
     return {
+        **({"league": league, "excluded": excluded} if league is not None else {}),
         "season": season,
         "round": round_number,
         "cutoff_minutes": cutoff_minutes,
-        "scheduled": 10,
+        "scheduled": scheduled,
         "registered": len(selected),
         "unregistered": unknown_schedule,
         "completed": completed,
@@ -1022,6 +1246,8 @@ def backtest(
     archive_lag_hours=None,
     details_sink=None,
     input_provenance=None,
+    league=None,
+    lines=(),
 ):
     """Walk each kickoff frontier. The scorer only sees a match after both forecasts."""
     import platform
@@ -1039,6 +1265,7 @@ def backtest(
         raise ValueError("horizons must be distinct positive integer minutes")
     if not 0 <= bootstrap <= 100000:
         raise ValueError("bootstrap resamples must be between 0 and 100000")
+    lines = sorted({half_line(value) for value in lines})
     from . import historical_inputs
 
     provenance = input_provenance or {
@@ -1047,6 +1274,7 @@ def backtest(
         "timing_authenticated": False,
     }
     fixtures = list(fixtures)
+    _check_scope(fixtures, league)
     if not provenance["timing_authenticated"]:
         fixtures = historical_inputs.label_research_inputs(fixtures)
     selected = [f for f in fixtures if lo <= season_year(f.season) <= hi]
@@ -1059,7 +1287,8 @@ def backtest(
     counts = collections.Counter(f.season for f in finished)
     grades = collections.Counter(v.grade for f in fixtures for v in f.result_versions)
     blobs = {f.season: f.source_blob for f in fixtures}
-    pinned = all(v and SOURCE_BLOBS.get(k) == v for k, v in blobs.items())
+    reference_blobs = _blobs(league)
+    pinned = all(f.source_blob and reference_blobs.get(f.season) == f.source_blob for f in fixtures)
     events = sorted(
         (
             (study_kickoff(f) - timedelta(minutes=h), f.fixture_id, h, f)
@@ -1068,17 +1297,20 @@ def backtest(
         ),
         key=lambda r: r[:3],
     )
-    engine = FootballEngine(fixtures)
+    engine = FootballEngine(fixtures, league=league, allow_archive_schedule=archive_lag_hours is not None)
     results = collections.defaultdict(list)
     omissions = collections.defaultdict(collections.Counter)
     for cutoff, fid, horizon, f in events:
-        if f.kickoff_precision != "minute":
+        if league is not None and f.quarantine_reason:
+            omissions[horizon][f.quarantine_reason] += 1
+            continue
+        if f.kickoff_precision != "minute" and (league is None or verified_event_kickoff(f) is None):
             omissions[horizon]["kickoff_time_unknown"] += 1
             continue
         kickoff = study_kickoff(f)
         try:
             p = engine.forecast(
-                f.home, f.away, kickoff, cutoff, season=f.season, lines=()
+                f.home, f.away, kickoff, cutoff, season=f.season, lines=lines
             )
             b = engine.forecast(
                 f.home,
@@ -1086,7 +1318,7 @@ def backtest(
                 kickoff,
                 cutoff,
                 season=f.season,
-                lines=(),
+                lines=lines,
                 baseline=True,
             )
         except ValueError as exc:
@@ -1099,6 +1331,7 @@ def backtest(
         model = score_probabilities(pp, *observed)
         baseline = score_probabilities(bp, *observed)
         row = {
+            **({"league": league} if league is not None else {}),
             "fixture_id": fid,
             "season": f.season,
             "round": f.round,
@@ -1124,6 +1357,8 @@ def backtest(
             "fallback_reason": p["fallback_reason"],
             "evidence": p["evidence"],
         }
+        if lines:
+            row.update(totals=p["totals"], baseline_totals=b["totals"])
         if details_sink:
             details_sink(row)
         results[horizon].append(row)
@@ -1144,7 +1379,21 @@ def backtest(
                 for s in seasons
             },
         }
+        if lines:
+            additional = {}
+            for field in ("totals", "baseline_totals"):
+                losses = collections.defaultdict(list)
+                for row in rows:
+                    for key, metrics in _per_line(row[field], *row["score"]).items():
+                        losses[key].append(metrics)
+                additional[field] = {
+                    key: {"n": len(items), "brier": _average([i["brier"] for i in items]),
+                          "log_loss": _average([i["log_loss"] for i in items])}
+                    for key, items in losses.items()
+                }
+            stats[f"T-{h}"]["additional_lines"] = additional
     return {
+        **({"league": league} if league is not None else {}),
         "kind": "historical_football_backtest",
         "input_provenance": provenance,
         "model_version": MODEL_VERSION,
@@ -1158,12 +1407,15 @@ def backtest(
             "timing_evidence_status": provenance["status"],
             "result_version_grades": dict(grades),
             "repairs": [dict(REPAIR_2019)]
-            if blobs.get("2019-20") == SOURCE_BLOBS["2019-20"]
+            if league in (None, "epl") and blobs.get("2019-20") == SOURCE_BLOBS["2019-20"]
             else [],
         },
         "protocol": {
-            "time_zone": "Europe/London",
+            "time_zone": "Europe/London" if league is None else league_registry.profile(league).timezone,
             "horizons_minutes": list(horizons),
+            **({"research_goal_lines": lines,
+                "line_source": "operator-specified research thresholds; market listing unverified"}
+               if lines else {}),
             "score": "100*(1-mean(normalized 1X2 Brier, O2.5 Brier, home O1.5 Brier, away O1.5 Brier))",
             "training": "current season to cutoff plus three preceding seasons; retain latest eligible version per fixture",
             "b0": "joint empirical scores of prior complete observed seasons in window; eligible data during warmup",
@@ -1187,6 +1439,18 @@ def backtest(
             "completed": len(finished),
             "unfinished": len(selected) - len(finished),
             "quarantined": sum(f.status == "quarantined" for f in selected),
+            **({
+                "scheduled_by_season": {s: league_registry.fixture_count(league, s) for s in seasons},
+                "registered_by_season": dict(collections.Counter(f.season for f in selected)),
+                "status_counts": dict(collections.Counter(f.status for f in selected)),
+                "excluded_fixtures": [
+                    {"fixture_id": f.fixture_id, "round": f.round, "reason": f.quarantine_reason,
+                     "regulation_result_versions": len(f.result_versions)}
+                    for f in selected if f.quarantine_reason
+                ],
+                "score_unavailable": [f.fixture_id for f in selected
+                                      if f.home_goals is None and not f.quarantine_reason],
+            } if league is not None else {}),
             "start": iso(min(study_kickoff(f) for f in selected)),
             "end": iso(max(study_kickoff(f) for f in selected)),
         },
@@ -1195,7 +1459,9 @@ def backtest(
         "limitations": [
             "The final OpenFootball schedule does not reconstruct earlier schedule announcements or postponements without sidecar observations.",
             "Publication and local receipt are unknown for results marked lag_assumption. Their delay from kickoff is a sensitivity assumption.",
-            "Historical football-score study only; 2025-26 was previously reviewed. No prospective blind result, personnel/news performance, executable prices, fees or ROI is measured.",
+            ("Historical football-score study only; 2025-26 was previously reviewed. No prospective blind result, personnel/news performance, executable prices, fees or ROI is measured."
+             if league in (None, "epl") else
+             "Retrospective domestic score study. News performance, executable prices, fees and ROI require independently timed data."),
         ],
     }
 
@@ -1219,16 +1485,45 @@ def _write_json(path, payload):
 def _cli_load(args):
     from . import historical_inputs
 
+    league = getattr(args, "league", None)
+    if league is not None:
+        sidecar_sha = None
+        with tempfile.TemporaryDirectory(prefix="pm861-domestic-evidence-") as temp:
+            sidecar = None
+            if args.evidence:
+                raw = args.evidence.read_bytes()
+                sidecar_sha = hashlib.sha256(raw).hexdigest()
+                sidecar = Path(temp, "evidence.jsonl")
+                sidecar.write_bytes(raw)
+            fixtures = load_fixtures(
+                args.path, evidence_path=sidecar, archive_lag_hours=args.archive_lag_hours,
+                league=league, keep_archive_labels=True,
+            )
+        blobs = {f.season: f.source_blob for f in fixtures}
+        pins = _blobs(league)
+        pinned = all(pins.get(s) == sha for s, sha in blobs.items())
+        return fixtures, {
+            "status": "research_only",
+            "reason": "league_archive_without_local_timing_receipts",
+            "league": league,
+            "source_authenticated": pinned,
+            "timing_authenticated": False,
+            "source_revision": SOURCE_COMMIT if pinned else None,
+            "archive_lag_hours": args.archive_lag_hours,
+            "sidecar_sha256": sidecar_sha,
+        }
     return historical_inputs.load_for_study(
         args.data_dir, args.path, args.evidence, args.archive_lag_hours
     )
 
 
 def _cli_fetch(args):
+    league = getattr(args, "league", None)
     return fetch_history(
         args.destination or args.data_dir / "openfootball",
         args.from_season,
         args.to_season,
+        league=league,
     )
 
 
@@ -1236,7 +1531,9 @@ def _cli_backtest(args):
     from contextlib import closing
     from . import historical_inputs, store
 
+    league = getattr(args, "league", None)
     fixtures, provenance = _cli_load(args)
+    lines = getattr(args, "lines", ())
     stream = None
     tmp = None
     try:
@@ -1260,6 +1557,8 @@ def _cli_backtest(args):
             archive_lag_hours=args.archive_lag_hours,
             details_sink=sink if stream else None,
             input_provenance=provenance,
+            league=league,
+            lines=lines,
         )
         if stream:
             stream.close()
@@ -1279,17 +1578,24 @@ def _cli_backtest(args):
     ]
     if args.archive_lag_hours is not None:
         parts.append(f"--archive-lag-hours {args.archive_lag_hours:g}")
+    if league is not None:
+        parts.append(f"--league {league}")
+    if lines:
+        parts.append("--lines " + " ".join(map(str, lines)))
     if args.evidence:
         parts.append("--evidence EVIDENCE.jsonl")
     result["reproduce"] = {
-        "input": "For a pinned data run, use football fetch INPUT --from-season FIRST --to-season LAST, using the input blob range above.",
+        "input": "For a pinned data run, use football fetch INPUT "
+        + (f"--league {league} " if league else "")
+        + "--from-season FIRST --to-season LAST, using the input blob range above.",
         "command": " ".join(parts)
         + " --summary-output SUMMARY.json --details MATCHES.jsonl",
         "source_code_sha256": {
             name: hashlib.sha256(
                 Path(__file__).with_name(name).read_bytes()
             ).hexdigest()
-            for name in ("football.py", "football_model.py", "historical_inputs.py")
+            for name in (("football.py", "football_model.py", "historical_inputs.py")
+                         + (("league_registry.py",) if league is not None else ()))
         },
     }
     if args.summary_output:
@@ -1298,18 +1604,20 @@ def _cli_backtest(args):
         json.dumps(result, sort_keys=True, allow_nan=False).encode()
     ).hexdigest()[:16]
     with closing(store.connect(args.data_dir)) as db, db:
-        historical_inputs.record(db, result)
+        if league is None:
+            historical_inputs.record(db, result)
         store.put_report(
-            db, "backtest", f"{args.from_season}_{args.to_season}_{key}", result
+            db, "backtest" if league is None else "league_backtest",
+            f"{league + '_' if league else ''}{args.from_season}_{args.to_season}_{key}", result
         )
     return result
 
 
 def _cli_predict(args):
     from .store import save_report
-
     from . import historical_inputs
 
+    league = getattr(args, "league", None)
     fixtures, provenance = _cli_load(args)
     if not provenance["timing_authenticated"]:
         fixtures = historical_inputs.label_research_inputs(fixtures)
@@ -1319,7 +1627,7 @@ def _cli_predict(args):
         if args.cutoff
         else kickoff - timedelta(minutes=args.cutoff_minutes)
     )
-    p = FootballEngine(fixtures).forecast(
+    p = FootballEngine(fixtures, league=league, allow_archive_schedule=args.archive_lag_hours is not None).forecast(
         args.home,
         args.away,
         kickoff,
@@ -1331,15 +1639,20 @@ def _cli_predict(args):
     p["mode"] = "computed_forecast"
     p["input_provenance"] = provenance
     save_report(
-        args.data_dir, "match", f"{p['fixture_id']}@{p['cutoff']}@{p['model']}", p
+        args.data_dir, "league_match" if league else "match",
+        f"{p['fixture_id']}@{p['cutoff']}@{p['model']}", p
     )
     return p
 
 
 def _cli_round(args):
+    from . import historical_inputs
     from .store import save_report
 
+    league = getattr(args, "league", None)
     fixtures, provenance = _cli_load(args)
+    if league is not None and not provenance["timing_authenticated"]:
+        fixtures = historical_inputs.label_research_inputs(fixtures)
     predictions = read_json_rows(args.predictions)
     payload = score_round(
         fixtures,
@@ -1348,6 +1661,8 @@ def _cli_round(args):
         round_number=args.round,
         cutoff_minutes=args.cutoff_minutes,
         as_of=args.as_of,
+        league=league,
+        allow_archive_schedule=args.archive_lag_hours is not None,
     )
     payload["mode"] = "imported_research"
     payload["input_provenance"] = provenance
@@ -1356,8 +1671,8 @@ def _cli_round(args):
     ).hexdigest()
     save_report(
         args.data_dir,
-        "round",
-        f"{args.season}_{args.round}_T-{args.cutoff_minutes}",
+        "league_round" if league else "round",
+        f"{league + '_' if league else ''}{args.season}_{args.round}_T-{args.cutoff_minutes}",
         payload,
     )
     return payload
@@ -1373,12 +1688,17 @@ def _cli_verify_repair(args):
 
 def register(subparsers):
     base = subparsers.add_parser(
-        "football", help="EPL score distributions, rolling backtests and round scores"
+        "football", help="domestic score distributions, rolling backtests and round scores"
     )
     subs = base.add_subparsers(dest="football_command", required=True)
-    fetch = subs.add_parser("fetch", help="download and verify pinned EPL season files")
+    def add_league(parser):
+        parser.add_argument("--league", choices=tuple(league_registry.PROFILES),
+                            help="use a registered domestic league; omit to reproduce the original EPL protocol")
+
+    fetch = subs.add_parser("fetch", help="download and verify pinned domestic season files")
     fetch.add_argument("destination", type=Path, nargs="?")
-    fetch.add_argument("--from-season", default="2010-11")
+    add_league(fetch)
+    fetch.add_argument("--from-season", help="default: first pinned season for the selected league")
     fetch.add_argument("--to-season", default="2026-27")
     fetch.set_defaults(func=_cli_fetch)
     repair = subs.add_parser(
@@ -1391,10 +1711,11 @@ def register(subparsers):
     repair.set_defaults(func=_cli_verify_repair)
 
     def inputs(p):
+        add_league(p)
         p.add_argument(
             "path",
             type=Path,
-            help="directory with SEASON/en.1.json or one such season file",
+            help="directory with SEASON/<country>.1.json or one matching season file",
         )
         p.add_argument(
             "--evidence",
@@ -1418,6 +1739,8 @@ def register(subparsers):
     )
     bt.add_argument("--bootstrap", type=int, default=2000)
     bt.add_argument("--seed", type=int, default=861)
+    bt.add_argument("--lines", type=float, nargs="+", default=(),
+                    help="optional research thresholds for total, home and away goals")
     bt.add_argument("--summary-output", type=Path)
     bt.add_argument(
         "--details",

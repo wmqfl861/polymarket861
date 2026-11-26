@@ -206,9 +206,10 @@ def _policy(value, db=None):
         return current
     if db is not None:
         rows = db.execute(
-            "SELECT DISTINCT json_extract(recipe,'$.news_probability_policy') FROM model_recipes "
+            "SELECT DISTINCT json_extract(recipe,'$.news_probability_policy') FROM "
+            "(SELECT recipe FROM model_recipes UNION ALL SELECT payload FROM reports WHERE kind=?) "
             "WHERE json_extract(recipe,'$.news_probability_policy[0]')=? OR json_extract(recipe,'$.news_probability_policy[1]')=?",
-            (value, value),
+            (news_study_plan.PAIR_RECIPE_KIND, value, value),
         ).fetchall()
         if len(rows) == 1:
             return tuple(json.loads(rows[0][0]))
@@ -314,15 +315,9 @@ def _both_observed(coverage, fixture, cutoff):
 
 
 def _build(db, seal, cache):
-    key = ("recipe", seal["model_version"], seal["recipe_digest"])
+    key = ("recipe", seal["model_version"], seal["recipe_digest"], seal.get("news_recipe_sha256"))
     if key not in cache:
-        row = db.execute(
-            "SELECT recipe FROM model_recipes WHERE version=?", (seal["model_version"],)
-        ).fetchone()
-        recipe = json.loads(row[0]) if row else None
-        if not recipe or store.digest(recipe) != seal["recipe_digest"]:
-            raise ValueError("missing original model recipe")
-        cache[key] = recipe
+        cache[key] = news_study_plan.sealed_recipe(db, seal)
     recipe = cache[key]
     pair = seal["news_pair"]
     registered_policy = recipe.get(

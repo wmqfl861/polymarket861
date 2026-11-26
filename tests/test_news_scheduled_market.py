@@ -519,12 +519,8 @@ class SlopeAndStudyTests(unittest.TestCase):
             with patch("polymarket861.news.snapshot", return_value=snap), at(stamp):
                 seal = pipeline.make_forecast(root, FID, history)
             with closing(store.connect(root)) as db, db:
-                recipe = json.loads(
-                    db.execute(
-                        "SELECT recipe FROM model_recipes WHERE version=?",
-                        (seal["model_version"],),
-                    ).fetchone()[0]
-                )
+                recipe = plan.sealed_recipe(db, seal)
+                del seal["news_recipe_sha256"], recipe["recipe_format"]
                 del recipe["news_study_plan_sha256"]
                 recipe["news_probability_policy"] = list(plan.PREVIOUS_POLICY)
                 seal["news_pair"]["protocol"], seal["news_pair"]["policy_sha256"] = (

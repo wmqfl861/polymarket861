@@ -7,7 +7,7 @@ from contextlib import closing
 from datetime import timedelta
 from urllib.parse import urlencode
 
-from . import dbscope, football, news_sources, result_freshness, store
+from . import dbscope, football, news_scope, news_sources, result_freshness, store
 from .score_bounds import valid_score
 
 SOURCE = "touchline-epl-player-usage"
@@ -141,7 +141,8 @@ def club_games(db, root, season, team, at):
 
     club = football.team_key(team)
     schedule = [dict(r) | {"season": season}
-                for r in db.execute(result_freshness._AS_OF.format(times="result_event_times"), {"season": season, "at": at})]
+                for r in db.execute(result_freshness._AS_OF.format(times="result_event_times"), {"season": season, "at": at})
+                if news_scope.competition(r) == "epl"]
     unique = result_pairings.unique_fixtures(schedule)
     fixtures = [g for g in schedule if club in (football.team_key(g["home"]), football.team_key(g["away"]))
                 and (g["kickoff"] < at or g["hold_reason"] == "cross_source_score_conflict")]
@@ -206,6 +207,8 @@ def refresh(root, team, season, *, getter=None):
     """Capture actual starts/minutes. A preview, roster prediction or injury count supplies none."""
     clock = store.instant(store.now_utc())
     at, club = store.iso(clock), football.team_key(team)
+    if news_scope.wire_coverage(team, season, at=at) is None:
+        return {"state": "unavailable", "reason": "source_not_covered"}
     owner = uuid.uuid4().hex
     with closing(_connection(root)) as db, db:
         db.execute("BEGIN IMMEDIATE")

@@ -1,0 +1,418 @@
+{
+  "study": "five-league-synthetic-capital-stress-v1",
+  "evidence": "All fixtures, paired books, fees, token originals and settlement times are synthetic. No production balances, real orders, executable-return claim or formal approval.",
+  "scenario_sha256": "db28ddcff67e1e35f5941c3088278e015b43871ddd393ee4b2ff0ca964fe392f",
+  "target_fixtures": 48,
+  "carry_in_fixtures": 24,
+  "assumptions": {
+    "delay_days_after_assumed_finish": 11,
+    "assumed_minutes_to_finish": 120,
+    "prior_round_days_before_focus": 7,
+    "synthetic_payout_per_share": "0.50",
+    "pending_tokens": 5,
+    "fee_model": "4% symmetric cash, exponent 1, rounded to cents per price level; synthetic.",
+    "carry_in": "Prior-round fills debit each bucket through the same engine. No initial credit or manual balance adjustment."
+  },
+  "weekend_before_redemption": {
+    "schema": "five-league-paper-risk-v1",
+    "evidence_mode": "synthetic",
+    "as_of": "2030-01-13T21:00:00.000000Z",
+    "execution_basis": "Research replay of supplied sizes and paired asks; no live orders or return qualification.",
+    "limits": {
+      "initial_cash": "10000",
+      "bucket_per_league": "2000",
+      "cost_per_intent": "50",
+      "fixture_unredeemed_cost_upper_bound": "150",
+      "cross_bucket_transfers": false
+    },
+    "allocation": "Full size or skip. Each fill consumes both books. At equal times, terminal receipts precede fills, then operator-supplied rank and ID order fills. Cash fees increase the debit; share fees reduce redeemable shares.",
+    "risk_basis": "Sum of open entry cash costs conservatively bounds possible net loss for nonnegative payouts. Offsetting positions can have lower actual worst loss.",
+    "leagues": {
+      "epl": {
+        "registered_fixtures": 16,
+        "outcomes": {
+          "filled": 40,
+          "skipped_cash": 11,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 4,
+          "skipped_intent_limit": 10
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 6,
+            "outcomes": {
+              "filled": 18
+            }
+          },
+          "stress_round": {
+            "fixtures": 10,
+            "outcomes": {
+              "filled": 22,
+              "skipped_cash": 11,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 4,
+              "skipped_intent_limit": 10
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "0.000000",
+        "minimum_cash": "0.000000",
+        "buy_cash_including_fees": "2000.000000",
+        "cash_from_redemptions": "0.000000",
+        "unredeemed_cost": "2000.000000",
+        "peak_unredeemed_cost": "2000.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      },
+      "lal": {
+        "registered_fixtures": 15,
+        "outcomes": {
+          "filled": 40,
+          "skipped_cash": 7,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 5,
+          "skipped_intent_limit": 10
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 5,
+            "outcomes": {
+              "filled": 15
+            }
+          },
+          "stress_round": {
+            "fixtures": 10,
+            "outcomes": {
+              "filled": 25,
+              "skipped_cash": 7,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 5,
+              "skipped_intent_limit": 10
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "0.000000",
+        "minimum_cash": "0.000000",
+        "buy_cash_including_fees": "2000.000000",
+        "cash_from_redemptions": "0.000000",
+        "unredeemed_cost": "2000.000000",
+        "peak_unredeemed_cost": "2000.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      },
+      "bun": {
+        "registered_fixtures": 14,
+        "outcomes": {
+          "filled": 40,
+          "skipped_cash": 3,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 5,
+          "skipped_intent_limit": 9
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 5,
+            "outcomes": {
+              "filled": 15
+            }
+          },
+          "stress_round": {
+            "fixtures": 9,
+            "outcomes": {
+              "filled": 25,
+              "skipped_cash": 3,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 5,
+              "skipped_intent_limit": 9
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "0.000000",
+        "minimum_cash": "0.000000",
+        "buy_cash_including_fees": "2000.000000",
+        "cash_from_redemptions": "0.000000",
+        "unredeemed_cost": "2000.000000",
+        "peak_unredeemed_cost": "2000.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      },
+      "sea": {
+        "registered_fixtures": 14,
+        "outcomes": {
+          "filled": 40,
+          "skipped_cash": 3,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 6,
+          "skipped_intent_limit": 10
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 4,
+            "outcomes": {
+              "filled": 12
+            }
+          },
+          "stress_round": {
+            "fixtures": 10,
+            "outcomes": {
+              "filled": 28,
+              "skipped_cash": 3,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 6,
+              "skipped_intent_limit": 10
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "0.000000",
+        "minimum_cash": "0.000000",
+        "buy_cash_including_fees": "2000.000000",
+        "cash_from_redemptions": "0.000000",
+        "unredeemed_cost": "2000.000000",
+        "peak_unredeemed_cost": "2000.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      },
+      "fl1": {
+        "registered_fixtures": 13,
+        "outcomes": {
+          "filled": 39,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 6,
+          "skipped_intent_limit": 9
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 4,
+            "outcomes": {
+              "filled": 12
+            }
+          },
+          "stress_round": {
+            "fixtures": 9,
+            "outcomes": {
+              "filled": 27,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 6,
+              "skipped_intent_limit": 9
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "50.000000",
+        "minimum_cash": "50.000000",
+        "buy_cash_including_fees": "1950.000000",
+        "cash_from_redemptions": "0.000000",
+        "unredeemed_cost": "1950.000000",
+        "peak_unredeemed_cost": "1950.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      }
+    },
+    "total_available_cash": "50.000000",
+    "total_unredeemed_cost": "9950.000000",
+    "redemption_events": {}
+  },
+  "after_delayed_receipts": {
+    "schema": "five-league-paper-risk-v1",
+    "evidence_mode": "synthetic",
+    "as_of": null,
+    "execution_basis": "Research replay of supplied sizes and paired asks; no live orders or return qualification.",
+    "limits": {
+      "initial_cash": "10000",
+      "bucket_per_league": "2000",
+      "cost_per_intent": "50",
+      "fixture_unredeemed_cost_upper_bound": "150",
+      "cross_bucket_transfers": false
+    },
+    "allocation": "Full size or skip. Each fill consumes both books. At equal times, terminal receipts precede fills, then operator-supplied rank and ID order fills. Cash fees increase the debit; share fees reduce redeemable shares.",
+    "risk_basis": "Sum of open entry cash costs conservatively bounds possible net loss for nonnegative payouts. Offsetting positions can have lower actual worst loss.",
+    "leagues": {
+      "epl": {
+        "registered_fixtures": 16,
+        "outcomes": {
+          "filled": 40,
+          "skipped_cash": 11,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 4,
+          "skipped_intent_limit": 10
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 6,
+            "outcomes": {
+              "filled": 18
+            }
+          },
+          "stress_round": {
+            "fixtures": 10,
+            "outcomes": {
+              "filled": 22,
+              "skipped_cash": 11,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 4,
+              "skipped_intent_limit": 10
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "1950.000000",
+        "minimum_cash": "0.000000",
+        "buy_cash_including_fees": "2000.000000",
+        "cash_from_redemptions": "1950.000000",
+        "unredeemed_cost": "50.000000",
+        "peak_unredeemed_cost": "2000.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      },
+      "lal": {
+        "registered_fixtures": 15,
+        "outcomes": {
+          "filled": 40,
+          "skipped_cash": 7,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 5,
+          "skipped_intent_limit": 10
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 5,
+            "outcomes": {
+              "filled": 15
+            }
+          },
+          "stress_round": {
+            "fixtures": 10,
+            "outcomes": {
+              "filled": 25,
+              "skipped_cash": 7,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 5,
+              "skipped_intent_limit": 10
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "1950.000000",
+        "minimum_cash": "0.000000",
+        "buy_cash_including_fees": "2000.000000",
+        "cash_from_redemptions": "1950.000000",
+        "unredeemed_cost": "50.000000",
+        "peak_unredeemed_cost": "2000.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      },
+      "bun": {
+        "registered_fixtures": 14,
+        "outcomes": {
+          "filled": 40,
+          "skipped_cash": 3,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 5,
+          "skipped_intent_limit": 9
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 5,
+            "outcomes": {
+              "filled": 15
+            }
+          },
+          "stress_round": {
+            "fixtures": 9,
+            "outcomes": {
+              "filled": 25,
+              "skipped_cash": 3,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 5,
+              "skipped_intent_limit": 9
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "1950.000000",
+        "minimum_cash": "0.000000",
+        "buy_cash_including_fees": "2000.000000",
+        "cash_from_redemptions": "1950.000000",
+        "unredeemed_cost": "50.000000",
+        "peak_unredeemed_cost": "2000.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      },
+      "sea": {
+        "registered_fixtures": 14,
+        "outcomes": {
+          "filled": 40,
+          "skipped_cash": 3,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 6,
+          "skipped_intent_limit": 10
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 4,
+            "outcomes": {
+              "filled": 12
+            }
+          },
+          "stress_round": {
+            "fixtures": 10,
+            "outcomes": {
+              "filled": 28,
+              "skipped_cash": 3,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 6,
+              "skipped_intent_limit": 10
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "1950.000000",
+        "minimum_cash": "0.000000",
+        "buy_cash_including_fees": "2000.000000",
+        "cash_from_redemptions": "1950.000000",
+        "unredeemed_cost": "50.000000",
+        "peak_unredeemed_cost": "2000.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      },
+      "fl1": {
+        "registered_fixtures": 13,
+        "outcomes": {
+          "filled": 39,
+          "skipped_depth": 3,
+          "skipped_fixture_limit": 6,
+          "skipped_intent_limit": 9
+        },
+        "cohorts": {
+          "prior_round": {
+            "fixtures": 4,
+            "outcomes": {
+              "filled": 12
+            }
+          },
+          "stress_round": {
+            "fixtures": 9,
+            "outcomes": {
+              "filled": 27,
+              "skipped_depth": 3,
+              "skipped_fixture_limit": 6,
+              "skipped_intent_limit": 9
+            }
+          }
+        },
+        "opening_cash": "2000",
+        "available_cash": "1950.000000",
+        "minimum_cash": "50.000000",
+        "buy_cash_including_fees": "1950.000000",
+        "cash_from_redemptions": "1900.000000",
+        "unredeemed_cost": "50.000000",
+        "peak_unredeemed_cost": "1950.000000",
+        "max_fixture_loss_upper_bound": "150.000000"
+      }
+    },
+    "total_available_cash": "9750.000000",
+    "total_unredeemed_cost": "250.000000",
+    "redemption_events": {
+      "positions_redeemed": 194,
+      "terminal_original": 307,
+      "venue_still_pending": 5
+    }
+  },
+  "reproduce": "pm861 paper-risk stress --write-input scenario.json --output capital-stress.json",
+  "replay_input": "pm861 paper-risk replay scenario.json --details"
+}

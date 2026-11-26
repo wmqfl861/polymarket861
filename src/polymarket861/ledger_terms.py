@@ -1,4 +1,4 @@
-"""Derive executable EPL contract terms from an authenticated, dated Gamma response."""
+"""Derive contract terms only from reviewed, archived settlement wording."""
 
 import hashlib
 import re
@@ -91,6 +91,92 @@ _REVIEW = {
         "deadline",
     ),
 }
+# The complete cancellation and official-result wording on Ligue 1 market 2162604.
+# Each additional sport needs its own reviewed rule suffixes and scoped header.
+_LIGUE1_TOTAL = "6b36e800803509d41f0e2bc597afc10d795639cb8fe5e57cb4febda052736868"
+_REVIEW_BY_SPORT = {
+    "epl": _REVIEW,
+    "lal": {
+        "40e4b95e1b0be17f609451fc3325cbc859efc6e277337b0ce9938a91933559ca": (
+            "win",
+            "deadline",
+        ),
+        "f52ba47662c29fc16609fb8db200da56939b39adce47a3aeb62d0192d66b893a": (
+            "draw",
+            "deadline",
+        ),
+        "ad8049cd40b593700c0f75271626027348f72451ef70995cf7308851557e55d1": (
+            "total",
+            "deadline",
+        ),
+        "7994de9a02cfd451db735e80891162b81fea055c9db41a3b3304a13836e131f4": (
+            "team_total",
+            "deadline",
+        ),
+    },
+    "bun": {
+        "2e344f26721b9e63f3d50f28e2e830e051e938bfbde552cad3bb687a9666f4b7": (
+            "win",
+            "deadline",
+        ),
+        "0d182ec058439730c243dfbd34a4add9b650e2e99643f3849b75eb72d453c4ea": (
+            "draw",
+            "deadline",
+        ),
+        "4edbac715d33ed52894883f92ac4a5d1bad6a78e16dc2072e4f98750aec81f7f": (
+            "total",
+            "deadline",
+        ),
+        "df61bf803c6b757bd1ec188d17cefd665a776acf587c6ce4669007b3d03d842f": (
+            "team_total",
+            "deadline",
+        ),
+    },
+    "sea": {
+        "e3cb052a7c23bfbba1f2b252212b47909d05175337d8703b39b2c80f601524e5": (
+            "win",
+            "deadline",
+        ),
+        "905d4d81f8d9f601c04202e08d10e68af3a72279982de1e9a888ece08f043936": (
+            "draw",
+            "deadline",
+        ),
+        "1f679535b007582adb0a295c6a8cb69c1314e92b0cd1adc61c3c53bdd79c8a9b": (
+            "total",
+            "deadline",
+        ),
+        "f2f0c80ff86cb2060ea3f3557a6839c7a2f5093fb4efdf68a8e45a60b8fb18f3": (
+            "team_total",
+            "deadline",
+        ),
+    },
+    "fl1": {
+        _LIGUE1_TOTAL: ("total", "legacy"),
+        "710219238fe2eab7f90414e08b939a5c7e3fed778551df015a6bf047be5b8c2b": (
+            "win",
+            "deadline",
+        ),
+        "a716f7af53e8d6dd83eafbfcea46060fb7b965156b1237b4e15a2988d427bdc5": (
+            "draw",
+            "deadline",
+        ),
+        "d2f69c5892afde84249f90fdc7dce82dd5790392c9027995d53d1da3cf56a6ee": (
+            "total",
+            "deadline",
+        ),
+        "8155744c98ac24e3f6015c77d760825335d5ee3c767f515c89154ae05f42ffdb": (
+            "team_total",
+            "deadline",
+        ),
+    },
+}
+_LEAGUE_HEADERS = {
+    "epl": "premier league",
+    "bun": "bundesliga",
+    "fl1": "ligue 1",
+    "lal": "la liga",
+    "sea": "serie a",
+}
 _WEEK = r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)"
 _MONTH = r"(?:january|february|march|april|may|june|july|august|september|october|november|december)"
 _DAY = _MONTH + r" [0-9]{1,2}"
@@ -114,8 +200,13 @@ def _subject(market, rule):
     home, away = (_norm(roster[s]["name"]) for s in ("home", "away"))
     if not home or not away or home == away:
         raise ValueError("contract text has ambiguous participants")
+    sport = str(market.get("fixture", "epl")).split("-", 1)[0]
+    if sport not in _LEAGUE_HEADERS:
+        raise ValueError("unreviewed settlement league")
     header = (
-        "in the upcoming premier league game between "
+        "in the upcoming "
+        + _LEAGUE_HEADERS[sport]
+        + " game between "
         + re.escape(home + " and " + away)
         + ", "
     )
@@ -176,7 +267,8 @@ def _interpret(market, token_side):
     kind, suffix = _subject(market, _norm(raw))
     deadlines = _DEADLINE.findall(suffix)
     digest = hashlib.sha256(_DEADLINE.sub("{deadline}", suffix).encode()).hexdigest()
-    reviewed = _REVIEW.get(digest)
+    sport = str(market.get("fixture", "epl")).split("-", 1)[0]
+    reviewed = _REVIEW_BY_SPORT.get(sport, {}).get(digest)
     if not reviewed or kind != reviewed[0]:
         raise ValueError(
             "unreviewed exception, resolution source or settlement wording"
@@ -228,11 +320,32 @@ def _interpret(market, token_side):
             fallback = "0.5" if total else "pending"
             special.update(no_result=fallback, no_acceptable_data_24h=fallback)
     return special, {
-        "version": "epl-gamma-rules-v1",
+        "version": sport + "-gamma-rules-v1",
         "template_sha256": digest,
         "deadline_utc": deadline,
         "no_data_hours": 24 if regime != "legacy" else None,
     }
+
+
+def rule_profile(market):
+    """Identify a complete rule template from the original, without granting trading status."""
+    tokens = market.get("tokens") or []
+    labels = {"yes", "no"} if market.get("family") == "moneyline" else {"over", "under"}
+    if (
+        market.get("mapping_error")
+        or len(tokens) != 2
+        or not all(
+            isinstance(t, dict)
+            and str(t.get("token_id", "")).isdigit()
+            and isinstance(t.get("outcome"), str)
+            for t in tokens
+        )
+        or len({str(t["token_id"]) for t in tokens}) != 2
+        or {t["outcome"].casefold() for t in tokens} != labels
+    ):
+        raise ValueError("incomplete or ambiguous original outcome tokens")
+    _, profile = _interpret(market, tokens[0]["outcome"].casefold())
+    return profile
 
 
 def _fee(market, data_dir=None, at=None):

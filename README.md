@@ -1,12 +1,12 @@
 # polymarket861
 
-英超赛前概率预测与 Polymarket 国际站模拟账本。系统在同一份比分分布上给出胜平负、全场进球大小、主队进球大小和客队进球大小。默认在开球前 24 小时、60 分钟分别封存预测。模拟买入使用买方实际能取得的卖盘、深度和费用，持有至合约兑付。
+男子英超、西甲、德甲、意甲、法甲的赛前概率研究与 Polymarket 国际站模拟账本。系统在同一份比分分布上给出胜平负、全场进球大小、主队进球大小和客队进球大小。默认在开球前 24 小时、60 分钟分别封存预测。模拟买入使用买方实际能取得的卖盘、深度和费用，持有至合约兑付。
 
-**当前版本为 0.4.2。** 赛季服务持续采集球队消息，本地文本分类器按当时的球队名单识别球员。球员情况变化会触发独立的赛前预测更新。每场主预测同时按固定时点保存使用新闻与不使用新闻的概率，可以在中文看板查看原句、更新历史、两组概率以及赛后分差。首次运行会建立自己的 SQLite 数据库。建设期模拟、历史回放和正式前向模拟分别记录。程序使用 Python 3.11 及以上版本和只读数据接口。
+**当前开发版本为 0.5.0a1。** 五大联赛可使用固定比分档案回测、逐轮评分和只读盘口研究。现有英超赛季服务持续采集球队消息，本地文本分类器按当时的球队名单识别球员。球员情况变化会触发独立的赛前预测更新。每场主预测同时按固定时点保存使用新闻与不使用新闻的概率，可以在中文看板查看原句、更新历史、两组概率以及赛后分差。首次运行会建立自己的 SQLite 数据库。建设期模拟、历史回放和正式前向模拟分别记录。程序使用 Python 3.11 及以上版本和只读数据接口。
 
 [0.4.2 审核交接与实测](docs/CLAUDE-REVIEW-RESPONSE-0.4.2.md) · [独立复审](docs/INDEPENDENT-REVIEW-0.4.2.md) · [全新安装与保留旧库](docs/UPGRADE-0.3-TO-0.4.2.md) · [系统蓝图 1.6](docs/polymarket861-EPL-v1.md) · [开发计划及验收口径](docs/polymarket861-EPL-development-plan.md) · [比赛日操作手册](docs/MATCHDAY.md) · [球队新闻与评测](docs/TEAM-NEWS.md)
 
-[五大联赛 0.5 规划与 Claude 审核入口](docs/five-leagues-0.5/README.md)（待审提案，含逐国数据源、盘口调查、模型改动与开发工单）。
+[五大联赛实施计划](docs/five-leagues-0.5/IMPLEMENTATION-PLAN.md) · [本批使用方法、实测与后续工作](docs/five-leagues-0.5/DEVELOPMENT-HANDOFF.md) · [逐国数据源与原始调研](docs/five-leagues-0.5/README.md)
 
 默认来源包括 Touchline Wire 的公开接口与英语维基百科的俱乐部赛季修订。[Tactical Data by Touchline Wire](https://touchlinewire.com/) · [Touchline Wire 开发说明](https://touchlinewire.com/docs#attribution) · [英语维基百科贡献者，CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 

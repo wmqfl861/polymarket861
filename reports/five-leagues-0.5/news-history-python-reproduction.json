@@ -1,0 +1,54 @@
+{
+  "reference_commit": "8125d579106dad51c694a97fdf6adf342e58adbb",
+  "reference_source_tree": "2dfa1be3645e9191493b33832051f511ea902e83",
+  "reference_scripts_tree": "cc9b82c645364421373cace6851d8561a50db1f6",
+  "report": "reports/news-history-0.4.2.json",
+  "numeric_runtime": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+  },
+  "runs": [
+    {
+      "python": "3.11.18",
+      "reference_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "reproduced_sha256": "f27e742ae127cdcc7e3669a4c22dce50c4c9f230592cf3931c1fbd2c439e9c5d",
+      "byte_identical": false,
+      "absolute_tolerance": 2e-14,
+      "leaf_values": 1760,
+      "differing_float_values": 8,
+      "largest_absolute_float_difference": 1.4210854715202004e-14,
+      "differing_paths": [
+        "/matches/club/6/score_without_news",
+        "/matches/club/6/score_with_news",
+        "/matches/club/10/score_without_news",
+        "/matches/club/10/score_with_news",
+        "/matches/club_and_selected_biographies/6/score_without_news",
+        "/matches/club_and_selected_biographies/6/score_with_news",
+        "/matches/club_and_selected_biographies/10/score_without_news",
+        "/matches/club_and_selected_biographies/10/score_with_news"
+      ]
+    },
+    {
+      "python": "3.12.14",
+      "reference_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "reproduced_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "byte_identical": true,
+      "absolute_tolerance": 2e-14,
+      "leaf_values": 1760,
+      "differing_float_values": 0,
+      "largest_absolute_float_difference": 0.0,
+      "differing_paths": []
+    },
+    {
+      "python": "3.13.5",
+      "reference_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "reproduced_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "byte_identical": true,
+      "absolute_tolerance": 2e-14,
+      "leaf_values": 1760,
+      "differing_float_values": 0,
+      "largest_absolute_float_difference": 0.0,
+      "differing_paths": []
+    }
+  ]
+}

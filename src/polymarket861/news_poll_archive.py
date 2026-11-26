@@ -155,6 +155,49 @@ def _verified_members(db, wire, proof, check):
     return len(rows) == len(states) and dict(rows) == states
 
 
+def wire_coverage_received(db, root, check, detail, scope, config):
+    """Bind both current and legacy observations to the actual scoped upstream receipt."""
+    from . import news_minutes, news_sources
+
+    try:
+        if news_sources.validate_source(config)["id"] != news_sources.WIRE:
+            return False
+    except (KeyError, TypeError, ValueError):
+        return False
+    observed, provider = detail.get("source_observed_at"), detail.get("provider_state_as_of")
+    if not (check and observed and provider and scope["valid_from"] <= provider <= observed <= check["checked_at"]
+            and provider < scope["valid_until"] and detail.get("response_hash_basis") == "upstream_response_bytes"
+            and detail.get("coverage_evidence", scope) == scope and
+            db.execute("SELECT 1 FROM sqlite_master WHERE name='news_wire_polls'").fetchone()):
+        return False
+    wires = history(db, "news_wire_polls")
+    for wire in db.execute(f"""SELECT * FROM {wires} WHERE team_key=? AND season=? AND observed_at=?
+            AND provider_at=? AND recorded_at<=? AND (fixture_id=? OR fixture_id IS NULL)""",
+            (check["team_key"], check["season"], observed, provider, check["checked_at"], check["fixture_id"])):
+        try:
+            proof = receipt(db, wire["receipt"])
+            if "coverage_evidence" not in proof:
+                # Old zero-row responses carry no club identity. Require a named,
+                # league-scoped directory already received on this installation.
+                if not db.execute("SELECT 1 FROM sqlite_master WHERE name='news_usage_history'").fetchone():
+                    continue
+                prior = news_minutes.latest(db, scope["season"], scope["club"], observed)
+                if not (prior and prior["provider_as_of"] <= observed and prior["received_at"] <= observed
+                        and news_minutes.verified_players(root, prior, config["team"], scope["season"])):
+                    continue
+            if (proof["source"] == scope["source"] and proof["team"] == scope["club"]
+                    and proof["season"] == scope["season"] and proof["hash_basis"] == "upstream_response_bytes"
+                    and proof["request_url"] == config.get("url") and proof["observed_at"] == observed
+                    and proof["requested_at"] <= proof["received_at"] <= observed
+                    and provider <= proof["received_at"] and proof["provider_state_as_of"] == provider
+                    and proof["response_sha256"] == detail.get("response_sha256")
+                    and proof.get("coverage_evidence", scope) == scope and _verified_members(db, wire, proof, check)):
+                return True
+        except (KeyError, OSError, TypeError, ValueError):
+            continue
+    return False
+
+
 def verified_check(db, check, detail):
     """Require the folded check's own physical observation before declaring it fresh."""
     if not check:

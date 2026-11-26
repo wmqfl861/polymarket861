@@ -1,4 +1,4 @@
-"""Reconcile a held token against native on-chain status and an independent regulation result."""
+"""Reconcile paper positions with archived exchange payouts and frozen entry rules."""
 
 import json
 from collections import Counter
@@ -45,49 +45,76 @@ def _regulation(root, fixture):
 
 def _records(root, token):
     with closing(market_archive.database(root)) as db:
-        rows = db.execute(
-            "SELECT sha,received_at FROM ma_requests WHERE operation='resolution' AND selector=? AND status='ok' "
-            "AND received_at<=? ORDER BY received_at",
-            (token, store.now_utc()),
-        ).fetchall()
-        items = []
-        for r in rows:
-            reply, _, _, _ = archive_proof.original_receipt(
-                db, root, r["sha"], r["received_at"], {"resolution"}
-            )
-            body = json.loads(reply.body)
-            res = [v for v in body.get("data", []) if str(v.get("token_id")) == token]
-            if not res:
-                continue
-            if (
-                len(res) != 1
-                or type(res[0].get("resolved")) != bool
-                or (res[0]["resolved"] != (res[0].get("final_price") is not None))
-            ):
-                raise ValueError("unrecognized official token resolution")
-            native = res[0]
-            amount = unit(native["final_price"]) if native["resolved"] else None
-            items.append(
-                {
-                    "condition_id": native["condition_id"],
-                    "token_id": token,
-                    "resolution_id": r["sha"],
-                    "source": reply.url,
-                    "source_sha256": r["sha"],
-                    "resolved_at": reply.received_at,
-                    "status": "resolved" if native["resolved"] else "pending",
-                    "payout": fmt(amount) if amount is not None else None,
-                    "row": native,
-                }
-            )
+        return _records_from_db(db, root, token)
+
+
+def _records_from_db(db, root, token):
+    rows = db.execute(
+        "SELECT sha,received_at FROM ma_requests WHERE operation='resolution' AND selector=? AND status='ok' "
+        "AND received_at<=? ORDER BY received_at",
+        (token, store.now_utc()),
+    ).fetchall()
+    items = []
+    for r in rows:
+        reply, _, selector, _ = archive_proof.original_receipt(
+            db, root, r["sha"], r["received_at"], {"resolution"}
+        )
+        if selector != token:
+            raise ValueError("resolution request selector differs from token")
+        body = json.loads(reply.body)
+        res = [v for v in body.get("data", []) if str(v.get("token_id")) == token]
+        if not res:
+            raise ValueError("official token absent from its resolution response")
+        if (
+            len(res) != 1
+            or type(res[0].get("resolved")) != bool
+            or (res[0]["resolved"] != (res[0].get("final_price") is not None))
+        ):
+            raise ValueError("unrecognized official token resolution")
+        native = res[0]
+        amount = unit(native["final_price"]) if native["resolved"] else None
+        items.append(
+            {
+                "condition_id": native["condition_id"],
+                "token_id": token,
+                "resolution_id": r["sha"],
+                "source": reply.url,
+                "source_sha256": r["sha"],
+                "resolved_at": reply.received_at,
+                "status": "resolved" if native["resolved"] else "pending",
+                "payout": fmt(amount) if amount is not None else None,
+                "row": native,
+            }
+        )
     terminal = [i for i in items if i["status"] == "resolved"]
     if terminal:
+        identity = (
+            "token_id",
+            "outcome",
+            "outcome_index",
+            "opposite_token_id",
+            "market_slug",
+            "event_slug",
+            "closed",
+        )
         if (
             items[-1]["status"] != "resolved"
             or len({(v["condition_id"], number(v["payout"])) for v in terminal}) != 1
+            or any(
+                len({t["row"][k] for t in terminal if t["row"].get(k) is not None}) > 1
+                for k in identity
+            )
         ):
-            raise ValueError("conflicting official token payouts")
-        return terminal[0]
+            raise ValueError("conflicting official token payouts or identities")
+        # Older versions returned a sparse status. A fuller native receipt may
+        # complete missing identifiers; a later incomplete response cannot qualify.
+        if all(terminal[-1]["row"].get(k) is not None for k in identity):
+            return next(
+                t
+                for t in terminal
+                if all(t["row"].get(k) is not None for k in identity)
+            )
+        return terminal[-1]
     return items[-1] if items else None
 
 
@@ -141,7 +168,7 @@ def _positions(root, account, limit, now):
         # immediately reopens the audit. Otherwise posted cash is rechecked once a day.
         audit_due = """
           AND (q.checked_at IS NULL OR q.checked_at<=:daily OR EXISTS (
-            SELECT 1 FROM ma_requests r WHERE r.operation='resolution' AND r.selector=b.token
+            SELECT 1 FROM ma_requests r WHERE r.operation='resolution' AND r.selector IN (b.token,json_extract(q.details,'$.opposite_token_id'))
               AND r.status='ok' AND r.received_at>q.checked_at AND r.received_at<=:now
           ) OR EXISTS (
             SELECT 1 FROM result_versions r WHERE r.fixture_id=b.fixture
@@ -184,7 +211,7 @@ def _positions(root, account, limit, now):
         return opened[:slots] + posted[: limit - slots]
 
 
-def _match(root, position, official, score):
+def _held(position):
     mode = position["mode"]
     plan = json.loads(position["plan"])
     out = json.loads(position["result"])
@@ -198,6 +225,166 @@ def _match(root, position, official, score):
         or position["fixture"] != intent["match_id"]
     ):
         raise ValueError("position differs from its held token or fixture")
+    seal = instant(plan["sealed_at"] if mode == "research_shadow" else out["sealed_at"])
+    return intent, seal
+
+
+def _entry_market(db, root, intent, seal, mode):
+    c = intent["contract"]
+    market = archive_proof.original_market(db, root, c["condition_id"], seal)
+    if mode == "research_shadow":
+        derived = shadow_market.terms(
+            db, root, c["condition_id"], c["token_id"], seal, intent["match_id"]
+        )
+        if digest(derived) != digest(c):
+            raise ValueError("research contract no longer verifies")
+    else:
+        ledger._attest_contract(db, root, c, seal, instant(intent["kickoff"]))
+    opportunity.verified_fixture(root, market["fixture"], intent["match_id"], seal)
+    return market
+
+
+def _verify_token(market, official, token_id):
+    tokens = market["tokens"]
+    if len(tokens) != 2 or len({t["token_id"] for t in tokens}) != 2:
+        raise ValueError("entry market has no unambiguous pair of outcome tokens")
+    matching = [i for i, t in enumerate(tokens) if t["token_id"] == token_id]
+    if len(matching) != 1:
+        raise ValueError("resolution token absent from original contract")
+    index = matching[0]
+    native = official["row"]
+    if (
+        official["status"] != "resolved"
+        or native.get("resolved") is not True
+        or native.get("closed") is not True
+        or str(native.get("token_id")) != token_id
+        or native.get("condition_id") != market["condition_id"]
+        or native.get("market_slug") != market["slug"]
+        or native.get("event_slug")
+        not in (market["fixture"], market["fixture"] + "-more-markets")
+        or native.get("outcome") != tokens[index]["outcome"]
+        or type(native.get("outcome_index")) is not int
+        or native["outcome_index"] != index
+        or native.get("opposite_token_id") != tokens[1 - index]["token_id"]
+    ):
+        raise ValueError("official token, outcome, fixture or market identity mismatch")
+    return tokens[1 - index]["token_id"]
+
+
+def _split_event(root, db, intent, seal, mode, official, opposite):
+    """A witnessed exchange redemption records no inference about the football result."""
+    c = intent["contract"]
+    market = _entry_market(db, root, intent, seal, mode)
+    other_id = _verify_token(market, official, c["token_id"])
+    if not opposite or opposite["status"] != "resolved":
+        raise ValueError("both terminal token payout receipts are required for a split")
+    _verify_token(market, opposite, other_id)
+    if any(number(r["payout"]) != number("0.5") for r in (official, opposite)):
+        raise ValueError("terminal payout vector is not the supported equal split")
+    if not any(v == "0.5" for v in c["special"].values()):
+        raise ValueError(
+            "frozen entry rules have no reviewed equal-split payout clause"
+        )
+    if min(instant(r["resolved_at"]) for r in (official, opposite)) < seal:
+        raise ValueError("terminal exchange receipt predates the entry seal")
+    receipts = {r["token_id"]: r for r in (official, opposite)}
+    witness = [
+        {
+            "token_id": t["token_id"],
+            "outcome": t["outcome"],
+            "outcome_index": i,
+            "payout": receipts[t["token_id"]]["payout"],
+            "source": receipts[t["token_id"]]["source"],
+            "source_sha256": receipts[t["token_id"]]["source_sha256"],
+            "received_at": receipts[t["token_id"]]["resolved_at"],
+        }
+        for i, t in enumerate(market["tokens"])
+    ]
+    return {k: v for k, v in official.items() if k != "row"} | {
+        "scenario": "exchange_split",
+        "score": None,
+        "regulation_receipt": None,
+        "resolved_at": iso(
+            max(instant(r["resolved_at"]) for r in (official, opposite))
+        ),
+        "exchange_observed_at": official["resolved_at"],
+        "payout_vector": witness,
+        "opposite_token_id": other_id,
+        "rule_sha256": c["rule_sha256"],
+        "rule_profile": c["rule_profile"],
+        "rule_source_sha256": c["rule_source_sha256"],
+        "rule_received_at": c["rule_received_at"],
+    }
+
+
+def attest_ledger_split(db, root, account, event):
+    """Repeat both native proofs and entry contracts inside the cash transaction."""
+    condition, token = event["condition_id"], event["token_id"]
+    rows = db.execute(
+        "SELECT i.original plan,i.result,i.fingerprint,i.token,i.condition_id,i.fixture, "
+        "'formal' mode FROM paper_intents i WHERE account=? AND condition_id=? AND token=? "
+        "AND status IN ('filled','frozen','settled')",
+        (account, condition, token),
+    ).fetchall()
+    if not rows:
+        raise ValueError("missing held position for split payout")
+    held = _records_from_db(db, root, token)
+    if not held:
+        raise ValueError("held token has no terminal receipt")
+    other = _records_from_db(db, root, str(held["row"].get("opposite_token_id")))
+    expected = None
+    for row in rows:
+        intent, seal = _held(row)
+        derived = _split_event(root, db, intent, seal, "formal", held, other)
+        fill_at = json.loads(row["result"]).get("filled_at")
+        if fill_at and any(
+            instant(t["received_at"]) < instant(fill_at)
+            for t in derived["payout_vector"]
+        ):
+            raise ValueError("terminal token predates the held fill")
+        if expected is not None and expected != derived:
+            raise ValueError("the positions have different sealed settlement terms")
+        expected = derived
+        if event["scenario"] == "exchange_split":
+            agrees = expected == event
+        else:
+            # Original operators specify the scenario and supply capture_resolution().
+            # Derive the canonical exchange-only event afresh, never infer that the
+            # football match was canceled from an operator's label.
+            agrees = (
+                scenario_payout(
+                    intent["contract"], event["scenario"], event.get("score")
+                )
+                == number("0.5")
+                and all(
+                    event.get(k) == held[k]
+                    for k in (
+                        "condition_id",
+                        "token_id",
+                        "resolution_id",
+                        "source",
+                        "source_sha256",
+                        "status",
+                    )
+                )
+                and number(event["payout"]) == number(held["payout"])
+                and instant(event["resolved_at"]) == instant(held["resolved_at"])
+                and all(
+                    v == expected[k]
+                    for k, v in event.items()
+                    if k in expected and k not in {"scenario", "payout", "resolved_at"}
+                )
+            )
+        if not agrees:
+            raise ValueError(
+                "split event differs from original exchange vector or entry rules"
+            )
+    return expected
+
+
+def _match(root, position, official, score):
+    intent, seal = _held(position)
+    c = intent["contract"]
     if (
         score.get("fixture_id") != intent["match_id"]
         or score.get("status") != "final"
@@ -219,36 +406,9 @@ def _match(root, position, official, score):
         or scenario_payout(c, "normal", goals) != value
     ):
         raise ValueError("special payout or conflict with verified regulation score")
-    seal = instant(plan["sealed_at"] if mode == "research_shadow" else out["sealed_at"])
     with closing(store.connect(root)) as db:
-        market = archive_proof.original_market(db, root, c["condition_id"], seal)
-        if mode == "research_shadow":
-            if digest(
-                shadow_market.terms(
-                    db, root, c["condition_id"], c["token_id"], seal, intent["match_id"]
-                )
-            ) != digest(c):
-                raise ValueError("research contract no longer verifies")
-        else:
-            ledger._attest_contract(db, root, c, seal, instant(intent["kickoff"]))
-    native = official["row"]
-    tok = [
-        (i, x) for i, x in enumerate(market["tokens"]) if x["token_id"] == c["token_id"]
-    ]
-    if (
-        len(tok) != 1
-        or native.get("condition_id") != c["condition_id"]
-        or native.get("market_slug") != market["slug"]
-        or native.get("event_slug")
-        not in (market["fixture"], market["fixture"] + "-more-markets")
-        or native.get("closed") is not True
-        or native.get("outcome") != tok[0][1]["outcome"]
-        or native.get("outcome_index") != tok[0][0]
-        or native.get("opposite_token_id")
-        != market["tokens"][1 - tok[0][0]]["token_id"]
-    ):
-        raise ValueError("official token, outcome, fixture or market identity mismatch")
-    opportunity.verified_fixture(root, market["fixture"], intent["match_id"], seal)
+        market = _entry_market(db, root, intent, seal, position["mode"])
+    _verify_token(market, official, c["token_id"])
     return {k: v for k, v in official.items() if k != "row"} | {
         "scenario": "normal",
         "score": goals,
@@ -263,14 +423,34 @@ def _credit_shadow(root, pos, event):
     with shadow.db_for(root) as db:
         db.execute("BEGIN IMMEDIATE")
         row = db.execute(
-            "SELECT status,result FROM research_shadow_orders WHERE account=? AND id=?",
+            "SELECT status,result,plan,plan_sha AS fingerprint,token,condition_id,fixture, "
+            "'research_shadow' AS mode FROM research_shadow_orders WHERE account=? AND id=?",
             (pos["account"], pos["id"]),
         ).fetchone()
+        scenario = event.get("scenario", "normal")
+        if number(event["payout"]) not in (0, 1) and scenario != "exchange_split":
+            raise ValueError("non-binary payout requires both original token receipts")
+        if scenario == "exchange_split":
+            intent, seal = _held(row)
+            held = _records_from_db(db, root, row["token"])
+            other = _records_from_db(db, root, event["opposite_token_id"])
+            if (
+                not held
+                or _split_event(root, db, intent, seal, "research_shadow", held, other)
+                != event
+            ):
+                raise ValueError("split evidence changed before the shadow settlement")
         out = json.loads(row["result"])
+        if scenario == "exchange_split" and any(
+            instant(t["received_at"]) < instant(out["filled_at"])
+            for t in event["payout_vector"]
+        ):
+            raise ValueError("terminal token predates the held fill")
         if row["status"] == "settled":
             if (
                 number(out["payout"]) != number(event["payout"])
                 or out["score"] != event["score"]
+                or out.get("resolution_scenario", "normal") != scenario
             ):
                 raise ValueError(
                     "posted shadow settlement conflicts; preserve booked cash for review"
@@ -297,6 +477,9 @@ def _credit_shadow(root, pos, event):
             resolution_sha256=event["source_sha256"],
             regulation_receipt=event["regulation_receipt"],
         )
+        out["resolution_scenario"] = scenario
+        if scenario == "exchange_split":
+            out["settlement_evidence"] = event
         db.execute(
             "UPDATE research_shadow_accounts SET cash=? WHERE account=?",
             (fmt(cash + proceeds), pos["account"]),
@@ -345,70 +528,89 @@ def sync(data_dir, *, account=None, limit=50, cached_only=False):
     audit_tokens = {p["token"] for p in rows if p["status"] == "settled"}
     cache = {}
     scores = {}
+
+    def lookup(token, audit=False):
+        key = (token, audit or token in audit_tokens)
+        if key not in cache:
+            try:
+                cache[key] = token_status(
+                    data_dir, token, cached_only=cached_only, recheck_terminal=key[1]
+                )
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                cache[key] = exc
+        item = cache[key]
+        if isinstance(item, Exception):
+            raise item
+        return item
+
     for p in rows:
-        state = "pending"
-        why = None
-        detail = {}
+        state, why, detail = "pending", None, {}
         try:
-            token = p["token"]
             fixture = p["fixture"]
-            if token not in cache:
-                try:
-                    cache[token] = token_status(
-                        data_dir,
-                        token,
-                        cached_only=cached_only,
-                        recheck_terminal=token in audit_tokens,
-                    )
-                except (OSError, ValueError, KeyError, TypeError) as exc:
-                    cache[token] = exc
-            official = cache[token]
-            if isinstance(official, Exception):
-                raise official
+            official = lookup(p["token"])
+            event = None
+            already = p["status"] == "settled"
             if not official or official["status"] != "resolved":
                 why = "waiting for official token payout"
             elif number(official["payout"]) not in (0, 1):
-                state = "manual_review"
-                why = "non-binary payout requires special-contract review"
-                detail = {"resolution_sha256": official["source_sha256"]}
+                if number(official["payout"]) != number("0.5"):
+                    raise ValueError("unsupported non-binary exchange payout")
+                intent, seal = _held(p)
+                with closing(store.connect(data_dir)) as db:
+                    market = _entry_market(db, data_dir, intent, seal, p["mode"])
+                    other = _verify_token(market, official, p["token"])
+                detail.update(
+                    opposite_token_id=other, resolution_sha256=official["source_sha256"]
+                )
+                opposite = lookup(other, audit=already)
+                with closing(store.connect(data_dir)) as db:
+                    event = _split_event(
+                        data_dir, db, intent, seal, p["mode"], official, opposite
+                    )
             else:
                 if fixture not in scores:
                     scores[fixture] = _regulation(data_dir, fixture)
-                score = scores[fixture]
-                if not score:
+                if scores[fixture]:
+                    event = _match(data_dir, p, official, scores[fixture])
+                else:
                     state = "manual_review"
                     why = "terminal token has no independently verified normal regulation score"
+            if event:
+                if p["mode"] == "research_shadow":
+                    _credit_shadow(data_dir, p, event)
+                elif already:
+                    old = json.loads(p["result"])
+                    with closing(store.connect(data_dir)) as db:
+                        posted = db.execute(
+                            "SELECT payload FROM paper_resolutions WHERE account=? AND condition_id=? AND token=? AND terminal=1",
+                            (p["account"], p["condition_id"], p["token"]),
+                        ).fetchone()
+                    if (
+                        not posted
+                        or old.get("resolution_scenario") != event["scenario"]
+                        or json.loads(posted[0]).get("score") != event["score"]
+                        or number(old["payout"]) != number(event["payout"])
+                    ):
+                        raise ValueError(
+                            "posted official settlement differs from confirmed score, scenario, or payout"
+                        )
                 else:
-                    event = _match(data_dir, p, official, score)
-                    already = p["status"] == "settled"
-                    if p["mode"] == "research_shadow":
-                        _credit_shadow(data_dir, p, event)
-                    elif already:
-                        old = json.loads(p["result"])
-                        with closing(store.connect(data_dir)) as db:
-                            posted = db.execute(
-                                "SELECT payload FROM paper_resolutions WHERE account=? AND condition_id=? AND token=? AND terminal=1",
-                                (p["account"], p["condition_id"], p["token"]),
-                            ).fetchone()
-                        if (
-                            not posted
-                            or old.get("resolution_scenario") != "normal"
-                            or json.loads(posted[0]).get("score") != event["score"]
-                            or number(old["payout"]) != number(event["payout"])
-                        ):
-                            raise ValueError(
-                                "posted official settlement differs from confirmed score, scenario, or payout"
-                            )
-                    else:
-                        ledger.settle(data_dir, p["account"], event)
-                    state = "settled"
-                    detail = {
-                        "payout": event["payout"],
-                        "score": event["score"],
-                        "resolution_sha256": event["source_sha256"],
-                        "regulation_proof": event["regulation_receipt"],
-                        "already_posted": already,
-                    }
+                    ledger.settle(data_dir, p["account"], event)
+                state = "settled"
+                detail.update(
+                    payout=event["payout"],
+                    score=event["score"],
+                    scenario=event["scenario"],
+                    resolution_sha256=event["source_sha256"],
+                    regulation_proof=event["regulation_receipt"],
+                    already_posted=already,
+                )
+                if event["scenario"] == "exchange_split":
+                    detail.update(
+                        payout_vector=event["payout_vector"],
+                        rule_sha256=event["rule_sha256"],
+                        rule_profile=event["rule_profile"],
+                    )
         except (OSError, TimeoutError) as exc:
             state = "pending"
             why = str(exc)

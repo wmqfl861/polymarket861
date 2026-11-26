@@ -39,7 +39,7 @@ def comparison(root, historical_format):
             "INSERT INTO probability_studies VALUES(?,?,?)",
             (new, store.digest(study.BENCHMARK), sha),
         )
-    with patch.object(study, "measure"):
+    with patch.object(study, "measure"), patch.object(study, "require_reference_python"):
         current = study.release_report(root, None)
     if historical_format == "current":
         return current
@@ -125,7 +125,7 @@ class LegacyPhysicalIdentity(unittest.TestCase):
                     )
                     self.assertIsNone(sign(commit)["legacy_reference"])
 
-    def test_model_and_selector_follow_every_executable_module(self):
+    def test_release_provenance_covers_all_modules_and_selector_retains_its_own_scope(self):
         essential = {
             "datasets.py",
             "runner.py",
@@ -140,13 +140,14 @@ class LegacyPhysicalIdentity(unittest.TestCase):
             "football_model.py",
         }
         actual = pipeline._build_recipe("B1", OLD["lines"])
-        self.assertLessEqual(essential, actual["algorithm_source"].keys())
+        self.assertLessEqual(essential, study.release_provenance()["package_files"].keys())
         self.assertFalse(
             {"operations.py", "dashboard.py"} & actual["algorithm_source"].keys()
         )
         complete = study.decision_implementation()
         self.assertEqual(strategy.implementation_digest(), store.digest(complete))
-        self.assertEqual(actual["algorithm_source"], complete["algorithm_source"])
+        self.assertIn("ledger.py", complete["algorithm_source"])
+        self.assertNotIn("ledger.py", actual["algorithm_source"])
         with (
             tempfile.TemporaryDirectory() as tmp,
             patch.object(study, "PACKAGE_ROOT", Path(tmp)),
@@ -154,16 +155,17 @@ class LegacyPhysicalIdentity(unittest.TestCase):
             root = Path(tmp)
             for name in essential:
                 (root / name).write_text("first\n")
-            model = lambda: store.digest(pipeline._build_recipe("B1", OLD["lines"]))
+            release = lambda: store.digest(study.release_provenance())
             for name in sorted(essential | {"future_provider.py"}):
-                prior = (model(), strategy.implementation_digest())
+                prior = (release(), strategy.implementation_digest())
                 (root / name).write_text("updated collection or decision\n")
-                self.assertNotEqual(model(), prior[0], name)
+                self.assertNotEqual(release(), prior[0], name)
                 self.assertNotEqual(strategy.implementation_digest(), prior[1], name)
-            unchanged = model(), strategy.implementation_digest()
+            unchanged = strategy.implementation_digest()
             for cosmetic in ("dashboard.py", "operations.py"):
                 (root / cosmetic).write_text("updated presentation or backup code")
-                self.assertEqual((model(), strategy.implementation_digest()), unchanged)
+                self.assertIn(cosmetic, study.release_provenance()["package_files"])
+                self.assertEqual(strategy.implementation_digest(), unchanged)
             self.assertIn(
                 "future_provider.py",
                 study.decision_implementation()["algorithm_source"],

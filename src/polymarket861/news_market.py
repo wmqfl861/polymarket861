@@ -427,6 +427,15 @@ def regression(rows, field="market_close", *, fixed_effects=False):
                     home["close"] - base,
                 )
             )
+    return price_gap_slope(points, fixed_effects=fixed_effects,
+                           family=news_study_plan.PLAN["family_comparisons"],
+                           no_pairs_status="no_matched_home_win_pairs")
+
+
+def price_gap_slope(points, *, fixed_effects=False, family, no_pairs_status):
+    """Round-clustered price-gap inference over points admitted by the caller's declaration."""
+    if type(family) is not int or family < 1:
+        raise ValueError("the declared family must have at least one comparison")
     rounds = {r for r, _, _, _ in points}
     method = "within_era_fixed_effects" if fixed_effects else "through_origin"
     result = {
@@ -441,7 +450,7 @@ def regression(rows, field="market_close", *, fixed_effects=False):
         "interval": None,
     }
     if not points:
-        return result | {"status": "no_matched_home_win_pairs"}
+        return result | {"status": no_pairs_status}
     eras = {era for _, era, _, _ in points}
     if len(eras) > 1 and not fixed_effects:
         return result | {"status": "multiple_probability_eras"}
@@ -485,7 +494,6 @@ def regression(rows, field="market_close", *, fixed_effects=False):
     se = math.sqrt(g / (g - 1) * (n - 1) / (n - p) * meat) / xx
     if se <= 1e-15 * max(1.0, abs(slope)):
         return result | {"status": "no_estimable_cluster_variance"}
-    family = news_study_plan.PLAN["family_comparisons"]
     critical = float(student.ppf(1 - 0.025 / family, g - 1))
     return result | {
         "status": "estimated",
@@ -654,3 +662,292 @@ def summary(rows, capability=None, mode=None, *, field="market_close"):
             },
         )
     return report
+
+
+def _schedule_pair_at_book(db, root, fixture, version, received, scheduled):
+    from . import opportunity, schedule_consensus
+
+    admitted = schedule_consensus._registration(db, fixture["fixture_id"], version)
+    proof = schedule_consensus.attest(root, db, admitted, received)
+    schedule_consensus._check_latest(root, db, admitted, proof, received)
+    clubs = tuple(opportunity._club(fixture[k]) for k in ("home", "away"))
+    ol = schedule_consensus._round(
+        root, db, int(admitted["season"][:4]), admitted["round_id"], received
+    ).get(clubs)
+    slug = proof["gamma"]["slug"]
+    _, row = comparisons._event(db, root, slug, received)
+    gamma_clubs, gamma = schedule_consensus._gamma(root, db, row, received)
+    if (
+        not ol
+        or gamma_clubs != clubs
+        or ol.get("match_id") != proof["openligadb"]["match_id"]
+    ):
+        raise ValueError("schedule_sources_disagree_on_fixture")
+    receipts = {}
+    for source, info in (("openligadb", ol), ("gamma", gamma)):
+        if info["kickoff"] != fixture["kickoff"] or not scheduled - timedelta(
+            hours=24
+        ) <= store.instant(info["received_at"]) <= store.instant(received):
+            raise ValueError("schedule_sources_outside_24h_or_disagree")
+        receipts[source] = {
+            "sha256": info["sha256"],
+            "received_at": info["received_at"],
+        }
+    return slug, receipts
+
+
+def _retrospective_clock(db, root, fixture, scheduled, cutoff):
+    from . import result_admission
+
+    now = store.now_utc()
+    if store.instant(now) <= scheduled:
+        raise ValueError("awaiting_postmatch_clock_check")
+    proof = None
+    try:
+        proof = kickoff_proof.resolve(
+            root, fixture["fixture_id"], scheduled, cutoff, db=db, prospective=True
+        )
+    except kickoff_proof.MissingKickoffProof:
+        pass
+    if proof and store.instant(proof["actual_kickoff"]) < scheduled:
+        raise ValueError("early_actual_kickoff_observed")
+    revised = db.execute(
+        "SELECT 1 FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
+        "WHERE f.fixture_id=? AND f.version>? AND f.known_at<=? AND s.recorded_at<=? "
+        "AND (f.kickoff!=? OR f.home!=? OR f.away!=?) LIMIT 1",
+        (
+            fixture["fixture_id"],
+            fixture["version"],
+            now,
+            now,
+            fixture["kickoff"],
+            fixture["home"],
+            fixture["away"],
+        ),
+    ).fetchone()
+    if revised:
+        raise ValueError("retrospective_fixture_revision")
+    for table, field, blocked in (
+        ("epl_schedule_holds", "reason", lambda reason: bool(reason)),
+        ("epl_schedule_reviews", "action", lambda action: action == "withdrawn"),
+    ):
+        if db.execute("SELECT 1 FROM sqlite_master WHERE name=?", (table,)).fetchone():
+            latest = db.execute(
+                f"SELECT {field} FROM {table} WHERE fixture=? AND version=? AND at<=? ORDER BY at DESC LIMIT 1",
+                (fixture["fixture_id"], fixture["version"], now),
+            ).fetchone()
+            if latest and blocked(latest[0]):
+                raise ValueError("retrospective_schedule_under_review")
+    # A passed wall clock alone does not establish that the match took place.
+    finals = result_admission.verified_season_regulation(
+        root, db, fixture["season"], [fixture["fixture_id"]], at=now
+    )
+    final = finals.get(fixture["fixture_id"])
+    if final and store.instant(final["kickoff"]) < scheduled:
+        raise ValueError("result_source_reports_early_kickoff")
+    if (
+        not final
+        or final.get("status") != "final"
+        or final.get("period") != "regulation"
+        or final.get("registry_kickoff", fixture["kickoff"]) != fixture["kickoff"]
+        or store.instant(final["confirmed_at"]) < scheduled
+    ):
+        raise ValueError("awaiting_verified_postmatch_result")
+    return {
+        "checked_at": now,
+        "result_confirmed_at": final["confirmed_at"],
+        "result_proof": final["proof"],
+        "actual_kickoff_proof": proof["proof_id"] if proof else None,
+    }
+
+
+def _schedule_only_frame(db, root, fixture, cutoff, scheduled):
+    version = _scheduled_revision(db, fixture, cutoff, scheduled)
+    if version != fixture["version"]:
+        raise ValueError("retrospective_fixture_revision")
+    retrospective = _retrospective_clock(db, root, fixture, scheduled, cutoff)
+    slug, _ = comparisons._catalog(db, root, fixture, store.iso(cutoff), True)
+    # A correction published after kickoff can still invalidate a weak clock.
+    rows = db.execute(
+        "SELECT slug,sha,received_at,kickoff FROM ma_events WHERE slug IN (?,?) "
+        "AND received_at BETWEEN ? AND ? ORDER BY received_at",
+        (slug, slug + "-more-markets", store.iso(cutoff), retrospective["checked_at"]),
+    )
+    for row in rows:
+        original = archive_proof._event_capture(
+            db, root, row["sha"], row["received_at"], row["slug"]
+        )
+        native_start = store.instant(original["startTime"])
+        if native_start != store.instant(row["kickoff"]) or native_start != scheduled:
+            raise ValueError("retrospective_exchange_schedule_revision")
+    # Reject even a known early start after the chosen book, and corrupt state history.
+    state = _first_disqualifying_state(
+        db, root, slug, scheduled - timedelta(microseconds=1)
+    )
+    if state:
+        raise ValueError(state[1])
+    stamps = db.execute(
+        "SELECT DISTINCT received_at FROM ma_requests WHERE operation='books' AND selector=? "
+        "AND status='ok' AND received_at BETWEEN ? AND ? ORDER BY received_at DESC",
+        (
+            slug,
+            store.iso(scheduled - timedelta(seconds=120)),
+            store.iso(scheduled - timedelta(seconds=10)),
+        ),
+    ).fetchall()
+    missing = dict.fromkeys(comparisons.ITEMS, "no_book_in_120_to_10_second_window")
+    used, prices = {}, {}
+    for (stamp,) in stamps:
+        try:
+            source_slug, confirmations = _schedule_pair_at_book(
+                db, root, fixture, version, stamp, scheduled
+            )
+            if source_slug != slug:
+                raise ValueError("different_fixture_in_schedule_and_book")
+            data = comparisons.frame(
+                db,
+                root,
+                fixture,
+                cutoff,
+                store.instant(stamp),
+                scheduled,
+                prospective=True,
+                as_of_book=True,
+                schedule_reference=stamp,
+            )
+            if data["received_at"] != stamp:
+                raise ValueError("book_receipt_time_differs_from_research_reference")
+        except (DatabaseError, OSError, KeyError, TypeError, ValueError) as exc:
+            for family in missing:
+                missing[family] = str(exc)
+            continue
+        for family in tuple(missing):
+            if family not in data["items"]:
+                missing[family] = data["missing"].get(
+                    family, "unverified_market_family"
+                )
+                continue
+            group = data["items"][family]
+            prices[family] = _reference(family, group)
+            used[family] = {
+                "received_at": stamp,
+                "batch": data["batch"],
+                "schedule_sources": confirmations,
+                "contracts": _contracts(group),
+            }
+            del missing[family]
+        if not missing:
+            break
+    return {
+        "scheduled_kickoff": fixture["kickoff"],
+        "schedule_version": version,
+        "postmatch_check": retrospective,
+        "family_receipts": used,
+        "prices": prices,
+        "missing": missing,
+    }
+
+
+def close_reference(root, fixture_id):
+    """Measure available clock evidence by family; no ledger/trial/CLV path consumes this report."""
+    from contextlib import closing
+
+    def tier(name, read):
+        try:
+            data = read()
+        except (DatabaseError, OSError, KeyError, TypeError, ValueError) as exc:
+            data = {
+                "family_receipts": {},
+                "missing": dict.fromkeys(comparisons.ITEMS, str(exc)),
+            }
+        return {
+            "basis": name,
+            "qualified_families": len(data["family_receipts"]),
+            **data,
+        }
+
+    with closing(store.connect(root)) as db:
+        db.execute("BEGIN")
+        now = store.now_utc()
+        f = db.execute(
+            "SELECT f.*,s.recorded_at,s.precision FROM fixture_versions f JOIN schedule_receipts s "
+            "USING(fixture_id,version) WHERE f.fixture_id=? AND f.known_at<=? AND s.recorded_at<=? "
+            "ORDER BY f.known_at DESC LIMIT 1",
+            (fixture_id, now, now),
+        ).fetchone()
+        if f:
+            scheduled = store.instant(f["kickoff"])
+            cut = scheduled - timedelta(hours=1)
+
+        def evaluate_tier(which):
+            if not f:
+                raise ValueError("missing_verified_fixture_registration")
+            if store.instant(now) < scheduled:
+                raise ValueError("awaiting_scheduled_kickoff")
+            if which == "two_source_schedule":
+                return _schedule_only_frame(db, root, f, cut, scheduled)
+            if which == "actual_first_whistle":
+                proof = kickoff_proof.resolve(
+                    root, fixture_id, scheduled, cut, db=db, prospective=True
+                )
+                end = store.instant(proof["actual_kickoff"])
+                frame = comparisons._closing_frame(db, root, f, cut, end, True, True)
+                witness = {
+                    "kickoff_proof": proof["proof_id"],
+                    "actual_kickoff": proof["actual_kickoff"],
+                }
+            else:
+                version = _scheduled_revision(db, f, cut, scheduled)
+
+                def eligible_state(slug, received):
+                    problem = _first_disqualifying_state(db, root, slug, scheduled)
+                    if problem and problem[0] <= received:
+                        raise ValueError(problem[1])
+                    return _state_at_book(db, root, f, slug, received)
+
+                frame = comparisons._closing_frame(
+                    db,
+                    root,
+                    f,
+                    cut,
+                    scheduled,
+                    False,
+                    True,
+                    validate_state=eligible_state,
+                )
+                witness = {
+                    "schedule_version": version,
+                    "scheduled_kickoff": f["kickoff"],
+                }
+            return witness | {
+                "family_receipts": frame["family_receipts"],
+                "missing": frame["missing"],
+                "prices": {
+                    fam: _reference(fam, rows) for fam, rows in frame["items"].items()
+                },
+            }
+
+        return {
+            "fixture_id": fixture_id,
+            "as_of": now,
+            "metric": "closing_price_evidence_by_family",
+            "research_only": True,
+            "eligible_for_formal_clv": False,
+            "eligible_for_promotion": False,
+            "tiers": {
+                key: tier(key, lambda: evaluate_tier(key))
+                for key in (
+                    "actual_first_whistle",
+                    "explicit_exchange_pregame",
+                    "two_source_schedule",
+                )
+            },
+        }
+
+
+def register(subparsers):
+    cmd = subparsers.add_parser(
+        "close-reference", help="按玩法分列首哨、交易所赛前状态和双源赛程研究参照"
+    )
+    cmd.add_argument("--fixture", required=True, help="本地登记的比赛 ID")
+    cmd.set_defaults(func=lambda args: close_reference(args.data_dir, args.fixture))

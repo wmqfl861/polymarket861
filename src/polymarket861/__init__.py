@@ -1,3 +1,3 @@
-"""Premier League probability forecasts and paper-market research."""
+"""Pre-match football forecasts and the Polymarket research ledger."""
 
-__version__ = "0.4.2"
+__version__ = "0.5.0a1"

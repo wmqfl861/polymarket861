@@ -35,7 +35,9 @@ def release(root, at=None):
 
 def _release(root, at):
     at = store.iso(at or store.now_utc())
-    installed = store.digest(pipeline._build_recipe("B1", (0.5, 1.5, 2.5, 3.5)))
+    execution = model_study.release_provenance()
+    with model_study.build_sources(execution):
+        installed = store.digest(pipeline._build_recipe("B1", (0.5, 1.5, 2.5, 3.5)))
     with closing(model_study._db(root)) as db:
         db.execute("BEGIN")
         active = store.builtin_model_at(db, at)
@@ -53,6 +55,9 @@ def _release(root, at):
             "active_version": active,
             "active_recipe_sha256": active_digest,
             "installed_recipe_sha256": installed,
+            "installed_release_provenance_sha256": store.digest(execution),
+            "reference_python": model_study.REFERENCE_PYTHON,
+            "running_python": execution["python"],
             "approval": dict(signed) if signed else None,
         }
         if active_digest == installed:

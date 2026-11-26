@@ -12,6 +12,7 @@ POLICY = {
     "required_team_starts_per_match": 11,
     "maximum_goalkeeper_starts_per_match": 1,
     "minimum_team_start_coverage": 0.90,
+    "maximum_extra_team_starts": 1,
     "directory_max_age_days": 7,
     "lineup_basis": "share of prior completed EPL matches with a confirmed start",
     "lineup_lookback_matches": 8,
@@ -44,60 +45,72 @@ def _resolve(values, names):
     return next(iter(matches)) if len(matches) == 1 else None
 
 
-def directory_players(db, root, fixture, team, cutoff, games=None):
+def directory_players(db, root, fixture, team, cutoff, games=None, *, diagnostics=None):
     """Reopen the as-of native directory; key rows only by unique publisher ID."""
     at, club = store.iso(cutoff), football.team_key(team)
     if not db.execute("SELECT 1 FROM sqlite_master WHERE name='news_usage_history'").fetchone():
         return {}, "no_received_player_directory"
     limit = store.iso(store.instant(at) - timedelta(days=POLICY["directory_max_age_days"]))
     rows = db.execute("SELECT * FROM news_usage_history WHERE season=? AND club=? AND known_at<=? "
-                      "AND received_at<=? AND provider_as_of<=? AND provider_as_of>=? ORDER BY known_at DESC",
+                      "AND received_at<=? AND provider_as_of<=? AND provider_as_of>=? ORDER BY known_at DESC,provider_as_of DESC,original_sha256",
                       (fixture["season"], club, at, at, at, limit))
     if games is None:
         games = news_minutes.club_games(db, root, fixture["season"], team, at)
     rejected = None
     for row in rows:
-        players, reason = _reconciled_directory(root, row, fixture, team, games)
+        counts = {}
+        players, reason = _reconciled_directory(root, row, fixture, team, games, counts)
         if players:
             if rejected:
                 for player in players.values():
                     player.update(directory_fallback_reason="newer_directory_does_not_reconcile",
                                   rejected_directory_sha256=rejected["original_sha256"],
-                                  rejected_provider_as_of=rejected["provider_as_of"])
+                                  rejected_provider_as_of=rejected["provider_as_of"],
+                                  rejected_directory=rejected)
             return players, None
-        if reason != "team_appearances_do_not_reconcile":
+        if reason not in ("team_appearances_do_not_reconcile", "prior_results_incomplete_at_directory_snapshot"):
             return {}, reason
         if rejected is None:
-            rejected = row
+            rejected = {"reason": reason, "original_sha256": row["original_sha256"],
+                        "provider_as_of": row["provider_as_of"], **counts}
     if rejected:
-        return {}, "team_appearances_do_not_reconcile"
+        if diagnostics is not None:
+            diagnostics["rejected_directory"] = rejected
+        return {}, rejected["reason"]
     old = news_minutes.latest(db, fixture["season"], club, at)
     return {}, "stale_player_directory" if old else "no_received_player_directory"
 
 
-def appearance_totals(players, played):
+def appearance_totals(players, played, diagnostics=None):
     """Bound the club's EPL usage, including transparent losses from departed players."""
     if not 1 <= played <= 38:
         return None
     starts = sum(p["starts"] for p in players)
     required = POLICY["required_team_starts_per_match"] * played
     keepers = sum(p["starts"] for p in players if p["position"] == "GK")
-    if (not required * POLICY["minimum_team_start_coverage"] <= starts <= required
+    totals = {"team_starts": starts, "expected_team_starts": required, "goalkeeper_starts": keepers,
+              "start_coverage": starts / required, "extra_starts": max(0, starts - required)}
+    if diagnostics is not None:
+        diagnostics.update(totals)
+    if (not required * POLICY["minimum_team_start_coverage"] <= starts <= required + POLICY["maximum_extra_team_starts"]
             or keepers > POLICY["maximum_goalkeeper_starts_per_match"] * played
-            or required - starts < played - keepers
+            or (starts <= required and required - starts < played - keepers)
+            or (starts > required and keepers != played)
             or any(p["starts"] > played or p.get("appearances", 0) > played or p["minutes"] > 90 * played for p in players)
             or sum(p["minutes"] for p in players) > 11 * 90 * played):
         return None
-    return {"team_starts": starts, "expected_team_starts": required,
-            "goalkeeper_starts": keepers, "start_coverage": starts / required}
+    return totals
 
 
-def _reconciled_directory(root, row, fixture, team, games):
+def _reconciled_directory(root, row, fixture, team, games, counts):
     stamp = row["provider_as_of"]
     # An older directory is a valid historical share for the matches it covers.
     # A new or corrected prior final must actually have been known by its timestamp.
     scope = [g for g in games if g["fixture_id"] != fixture["fixture_id"] and g["kickoff"] < stamp]
     played = len(scope)
+    counts.update(scheduled_matches=played,
+                  completed_at_provider_time=sum(bool(g["completed"] and g["received"] and g["received"] <= stamp)
+                                                 for g in scope))
     if (not POLICY["minimum_matches"] <= played <= 38
             or any(not g["completed"] or not g["received"] or g["received"] > stamp for g in scope)):
         return {}, "prior_results_incomplete_at_directory_snapshot"
@@ -105,7 +118,7 @@ def _reconciled_directory(root, row, fixture, team, games):
         players = news_minutes.verified_players(root, row, team, fixture["season"])
     except (KeyError, ValueError, TypeError, OSError):
         return {}, "invalid_player_directory_proof"
-    totals = appearance_totals(players, played)
+    totals = appearance_totals(players, played, counts)
     if totals is None:
         return {}, "team_appearances_do_not_reconcile"
     common = {
@@ -121,8 +134,8 @@ def _reconciled_directory(root, row, fixture, team, games):
             | {"provider_player_id": p["id"]} for p in players}, None
 
 
-def _directory(db, root, fixture, team, cutoff, games, players):
-    rows, reason = directory_players(db, root, fixture, team, cutoff, games)
+def _directory(db, root, fixture, team, cutoff, games, players, diagnostics):
+    rows, reason = directory_players(db, root, fixture, team, cutoff, games, diagnostics=diagnostics)
     if not rows:
         return {}, reason
     ordinary = [p for p in players.values() if p.get("identity_basis") != "touchline_directory_id"]
@@ -238,11 +251,12 @@ def player_history(db, fixture, cutoff, squads, data_dir):
             continue
         games = [g for g in news_minutes.club_games(db, data_dir, fixture["season"], team, at)
                  if g["fixture_id"] != fixture["fixture_id"]]
-        directory, reason = _directory(db, data_dir, fixture, team, at, games, players)
+        diagnostics = {}
+        directory, reason = _directory(db, data_dir, fixture, team, at, games, players, diagnostics)
         lineups = _lineups(db, fixture, team, at, games, players, tables) if players.keys() - directory.keys() else {}
         for ident in players:
             weight = directory.get(ident) or lineups.get(ident) or {
-                "basis": "neutral", "reason": reason, "matches": 0,
+                "basis": "neutral", "reason": reason, "matches": 0, **diagnostics,
             }
             result[ident] = dict(weight, team=team, season=fixture["season"], player_id=ident)
     return result

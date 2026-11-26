@@ -8,7 +8,7 @@ from dataclasses import replace
 from datetime import timedelta
 from pathlib import Path
 
-from . import dbscope, evidence, football, paired_proof
+from . import dbscope, evidence, football, paired_proof, recipe_identity
 from .round_history import publish_round, ready_for_experiment_review, register_history
 from .store import (
     PROTOCOL,
@@ -40,27 +40,58 @@ def _build_recipe(family, lines):
         for x in lines
     ):
         raise ValueError("select half-goal lines between 0.5 and 19.5")
+    from . import model_study
+
+    physical = model_study.probability_implementation()
+    recipe = {
+        "recipe_format": "football-probability-v2",
+        "reference_python": model_study.REFERENCE_PYTHON,
+        "family": family,
+        "algorithm_source": recipe_identity.primary_sources(model_study.PACKAGE_ROOT, physical["algorithm_source"], family),
+        "numeric_runtime": physical["numeric_runtime"],
+        "lines": sorted(set(map(float, lines)) | {1.5, 2.5}),
+    }
+    return _study_recipe(recipe, physical) if family == "B3" else recipe
+
+
+def _study_recipe(primary, physical=None):
+    """B3 uses news directly. B0/B1/B2 retain a separately identified comparison arm."""
+    if "news_probability_source" in primary:
+        return primary
     from . import model_study, news_era_replay, news_model, news_study_plan
 
-    physical = model_study.decision_implementation()
-    probability = news_study_plan.probability_sources(model_study.PACKAGE_ROOT, physical["algorithm_source"])
-    return {
-        "family": family,
-        **physical,
-        "news_probability_source": probability,
+    physical = physical or model_study.probability_implementation()
+    files = physical["algorithm_source"]
+    sources = news_study_plan.probability_sources(model_study.PACKAGE_ROOT, files)
+    return primary | {
+        "news_probability_source": sources,
         "news_frozen_feature_source": news_era_replay.feature_sources(
-            model_study.PACKAGE_ROOT, probability, physical["algorithm_source"]
+            model_study.PACKAGE_ROOT, sources, files, primary["algorithm_source"]
         ),
         "news_probability_policy": [news_model.PROTOCOL, news_model.POLICY_SHA256],
         "news_study_plan_sha256": news_study_plan.PLAN_SHA256,
-        "lines": sorted(set(map(float, lines)) | {1.5, 2.5}),
     }
+
+
+def _retain_manifest(db, kind, sha, manifest):
+    body = canonical(manifest)
+    db.execute(
+        "INSERT OR IGNORE INTO reports(kind,key,updated_at,payload) VALUES (?,?,?,?)",
+        (kind, sha, now_utc(), body),
+    )
+    if db.execute("SELECT payload FROM reports WHERE kind=? AND key=?", (kind, sha)).fetchone()[0] != body:
+        raise ValueError("stored release manifest differs from its content identity")
 
 
 def register_recipe(data_dir, version, family, *, lines=(0.5, 1.5, 2.5, 3.5)):
     if not isinstance(version, str) or not version.strip():
         raise ValueError("model version must have a name")
-    recipe = _build_recipe(family, lines)
+    from . import model_study
+
+    release = model_study.release_provenance()
+    release_sha = digest(release)
+    with model_study.build_sources(release):
+        recipe = _build_recipe(family, lines)
     with closing(connect(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         old = db.execute(
@@ -75,7 +106,8 @@ def register_recipe(data_dir, version, family, *, lines=(0.5, 1.5, 2.5, 3.5)):
                 "INSERT INTO model_recipes VALUES (?,?,?)",
                 (version, canonical(recipe), now_utc()),
             )
-    return {"version": version, "recipe": recipe, "recipe_digest": digest(recipe)}
+        _retain_manifest(db, "release-provenance", release_sha, release)
+    return {"version": version, "recipe": recipe, "recipe_digest": digest(recipe), "release_provenance_sha256": release_sha}
 
 
 def prepare_builtin(data_dir):
@@ -504,6 +536,21 @@ def make_forecast(
             else "两队正式首发未全部及时确认"
         )
     )
+    companion = None
+    if news_pair is not None:
+        from . import model_study
+
+        # Bind the auxiliary arm to the same installation as the primary model.
+        with closing(connect(data_dir)) as db:
+            retained = db.execute(
+                "SELECT payload FROM reports WHERE kind='release-provenance' AND key=?",
+                (selected["release_provenance_sha256"],),
+            ).fetchone()
+        release = json.loads(retained[0]) if retained else None
+        if not release or digest(release) != selected["release_provenance_sha256"]:
+            raise ValueError("missing or damaged release provenance")
+        with model_study.build_sources(release):
+            companion = _study_recipe(recipe)
     # The DB clock below is sampled after model computation, before append in an immediate transaction.
     with closing(connect(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
@@ -548,6 +595,7 @@ def make_forecast(
             "model_version": version,
             "model_engine": football.MODEL_VERSION,
             "recipe_digest": selected["recipe_digest"],
+            "release_provenance_sha256": selected["release_provenance_sha256"],
             "input_manifest_sha256": snapshot_digest,
             "purpose": purpose,
             "decision": {"state": state, "reason": reason},
@@ -557,11 +605,17 @@ def make_forecast(
             "time_witness": "local_only",
         }
         if news_pair is not None:
+            from .news_study_plan import PAIR_RECIPE_KIND
+
+            if companion != recipe:
+                companion_sha = digest(companion)
+                _retain_manifest(db, PAIR_RECIPE_KIND, companion_sha, companion)
+                payload["news_recipe_sha256"] = companion_sha
             payload["news_pair"] = news_pair
             if not replay and purpose == "main" and horizon in HORIZONS:
                 from .news_study_plan import declaration
 
-                payload["news_study"] = declaration(recipe, news_pair, context["player_news"])
+                payload["news_study"] = declaration(companion, news_pair, context["player_news"])
         seal = digest(payload)
         db.execute(
             "INSERT INTO forecast_seals VALUES (?,?,?,?,?,?,?,?,?,?)",

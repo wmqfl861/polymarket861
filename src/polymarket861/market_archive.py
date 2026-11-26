@@ -263,8 +263,8 @@ def _fetch(
             time.sleep(pause)
 
 
-def _ingest(db, event, reply, sha):
-    match = FIXTURE.fullmatch(str(event.get("slug", "")))
+def _ingest(db, event, reply, sha, *, sport=None):
+    match = provider.SPORT_FIXTURES[sport or "epl"].fullmatch(str(event.get("slug", "")))
     if not match:
         return False
     db.execute(
@@ -288,7 +288,12 @@ def _ingest(db, event, reply, sha):
             event.get("ended") if type(event.get("ended")) is bool else None,
         ),
     )
-    for contract in provider.normalized_markets(event):
+    for contract in provider.normalized_markets(event, sport=sport or "epl"):
+        if sport is not None:
+            contract["event_teams"] = [
+                {key: team.get(key) for key in ("id", "league", "ordering", "name", "abbreviation")}
+                for team in provider.teams(event).values()
+            ]
         contract_storage.record(db, match[1], event["slug"], reply.received_at, sha, contract)
     return True
 
@@ -1155,6 +1160,9 @@ def register(subparsers):
         "market", help="archive free public international Polymarket data"
     )
     cmd = market.add_subparsers(dest="market_command", required=True)
+    from . import big5_market
+
+    big5_market.register(cmd)
     p = cmd.add_parser(
         "reindex", help="reprocess stored mappings, preserving previous derived values"
     )

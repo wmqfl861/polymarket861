@@ -1,0 +1,1691 @@
+{
+  "registry": "openfootball-five-v1",
+  "commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+  "license": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/LICENSE.md",
+  "first_season": "2018-19",
+  "last_season": "2025-26",
+  "verified_files": 40,
+  "regular_rows": 14386,
+  "verification": "Git blob bytes, season membership, unique oriented home/away pairs and full regular rounds",
+  "result_clock": "Archive final scores are retrospective. Normal eligibility here is technical reconstruction only. Resumed/replayed scores may train only after the verified completion date and configured lag. The archive alone supplies no contemporary receipt or actual first-whistle evidence.",
+  "exception_scope": "All source statuses plus independently documented unmarked fixture exceptions in this register. An unmarked row is not independent proof that an interruption never occurred.",
+  "alias_audit": {
+    "epl": {
+      "explicit_source_alias_pairs": 0,
+      "clubs_split_in_2018_19_to_2024_25_without_aliases": 0
+    },
+    "lal": {
+      "explicit_source_alias_pairs": 10,
+      "clubs_split_in_2018_19_to_2024_25_without_aliases": 9
+    },
+    "bun": {
+      "explicit_source_alias_pairs": 6,
+      "clubs_split_in_2018_19_to_2024_25_without_aliases": 4
+    },
+    "sea": {
+      "explicit_source_alias_pairs": 6,
+      "clubs_split_in_2018_19_to_2024_25_without_aliases": 6
+    },
+    "fl1": {
+      "explicit_source_alias_pairs": 5,
+      "clubs_split_in_2018_19_to_2024_25_without_aliases": 4
+    }
+  },
+  "dispositions": {
+    "ordinary_scored": 14253,
+    "regulation_label_after_verified_completion_date_only": 7,
+    "missing_or_invalid_regulation_score": 20,
+    "quarantined_exception": 106
+  },
+  "files": [
+    {
+      "league": "epl",
+      "season": "2018-19",
+      "path": "2018-19/en.1.json",
+      "git_blob_sha1": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+      "sha256": "e2224d86f0605a5a1b5b019c845cdecb13aca1d88035686d4159b875250d4730",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2018-19/en.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2018-08-10",
+        "2019-05-12"
+      ],
+      "source_clock_zone": "Europe/London",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "epl",
+      "season": "2019-20",
+      "path": "2019-20/en.1.json",
+      "git_blob_sha1": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+      "sha256": "9e1695f85ce5553f762e809dea357ec0a95838939be89569060a83c4e98a302d",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2019-20/en.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2019-08-09",
+        "2020-07-26"
+      ],
+      "source_clock_zone": "Europe/London",
+      "time_precision": {
+        "minute": 380,
+        "pinned_epl_july_year_correction": 66
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "epl",
+      "season": "2020-21",
+      "path": "2020-21/en.1.json",
+      "git_blob_sha1": "081509058af75c0c012d64e980dc4fa53720d933",
+      "sha256": "21ddf26b48469da530c51ccc4857bf1a534bda3aed08766b55185efb142e9a20",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2020-21/en.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2020-09-12",
+        "2021-05-23"
+      ],
+      "source_clock_zone": "Europe/London",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "epl",
+      "season": "2021-22",
+      "path": "2021-22/en.1.json",
+      "git_blob_sha1": "5eadd9d91c71d45634f3969192ad908653681b23",
+      "sha256": "fbdfd426fa18fa2f8630b77de87c082734da495ac4668d6d72f29f76b73b9564",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2021-22/en.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2021-08-13",
+        "2022-05-22"
+      ],
+      "source_clock_zone": "Europe/London",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "epl",
+      "season": "2022-23",
+      "path": "2022-23/en.1.json",
+      "git_blob_sha1": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+      "sha256": "8d09f0f9846981626cdfec48903e1f21e7c79aabe6f92535c9e092e8e79b808b",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2022-23/en.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2022-08-05",
+        "2023-05-28"
+      ],
+      "source_clock_zone": "Europe/London",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "epl",
+      "season": "2023-24",
+      "path": "2023-24/en.1.json",
+      "git_blob_sha1": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+      "sha256": "03e13eafbf78dfe00d7e89dd3bf6643986eb6e8fd86c7664aeb8c5bc0bed88d0",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2023-24/en.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2023-08-11",
+        "2024-05-19"
+      ],
+      "source_clock_zone": "Europe/London",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "replayed": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 379,
+        "regulation_label_after_verified_completion_date_only": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 17,
+          "home": "AFC Bournemouth",
+          "away": "Luton Town FC",
+          "source_status": null,
+          "source_score": [
+            4,
+            3
+          ],
+          "kind": "replayed",
+          "archive_date": "2024-03-13",
+          "first_played_on": "2023-12-16",
+          "completion_date": "2024-03-13",
+          "sources": [
+            "https://www.premierleague.com/en/news/3830154",
+            "https://www.premierleague.com/en/news/3885238",
+            "https://www.premierleague.com/en/news/3930809"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": true
+        }
+      ]
+    },
+    {
+      "league": "epl",
+      "season": "2024-25",
+      "path": "2024-25/en.1.json",
+      "git_blob_sha1": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+      "sha256": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2024-25/en.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2024-08-16",
+        "2025-05-25"
+      ],
+      "source_clock_zone": "Europe/London",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "epl",
+      "season": "2025-26",
+      "path": "2025-26/en.1.json",
+      "git_blob_sha1": "41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "sha256": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/en.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2025-08-15",
+        "2026-05-24"
+      ],
+      "source_clock_zone": "Europe/London",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 353,
+        "array": 27
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "lal",
+      "season": "2018-19",
+      "path": "2018-19/es.1.json",
+      "git_blob_sha1": "16fc0602a202a7757e1cb3dbfa47008d0aaa27af",
+      "sha256": "7b10a3922e9ba8a9d85d2828e07438a02d0ea5f675be6a14406921e91f605716",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2018-19/es.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2018-08-17",
+        "2019-05-19"
+      ],
+      "source_clock_zone": "Europe/Madrid",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "lal",
+      "season": "2019-20",
+      "path": "2019-20/es.1.json",
+      "git_blob_sha1": "64307d5017689bbe5e099e2f1162a05a56bc47c5",
+      "sha256": "8ade2e46a80a646159af590cb6bcca6a3739a6eebc168a4902aabeb0d1ce6c0d",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2019-20/es.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2019-08-16",
+        "2020-07-19"
+      ],
+      "source_clock_zone": "Europe/Madrid",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "lal",
+      "season": "2020-21",
+      "path": "2020-21/es.1.json",
+      "git_blob_sha1": "a75987a794ded50077d54d934a0bd951938becea",
+      "sha256": "817a41df564a1790147e97fc417922f6e9354b142b2baf6d376d809da2bd24b6",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2020-21/es.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2020-09-12",
+        "2021-05-23"
+      ],
+      "source_clock_zone": "Europe/Madrid",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "lal",
+      "season": "2021-22",
+      "path": "2021-22/es.1.json",
+      "git_blob_sha1": "0fc4da4c0d441eb9e1068b0dcd13495c54150882",
+      "sha256": "7beb67dd49d7132bf9f7baea540342439b97ed4a7b21ffb90d3231a402c54d02",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2021-22/es.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2021-08-13",
+        "2022-05-22"
+      ],
+      "source_clock_zone": "Europe/Madrid",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "lal",
+      "season": "2022-23",
+      "path": "2022-23/es.1.json",
+      "git_blob_sha1": "f777848f48f8ec0528cc0ec67c6c05bba0bca961",
+      "sha256": "0204c66c919c2cd5cc3d1ba26be4f68592e4e173843162a9e6755182ccf83778",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2022-23/es.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2022-08-12",
+        "2023-06-04"
+      ],
+      "source_clock_zone": "Europe/Madrid",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "lal",
+      "season": "2023-24",
+      "path": "2023-24/es.1.json",
+      "git_blob_sha1": "a9d391f61af872bb9f456951d2f71f10d9e10704",
+      "sha256": "e4c1e1a958f224ba3c815c898982ab495b9577315cc58ee7a5e7b532960f738b",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2023-24/es.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2023-08-11",
+        "2024-05-26"
+      ],
+      "source_clock_zone": "Europe/Madrid",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "resumed": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 379,
+        "regulation_label_after_verified_completion_date_only": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 16,
+          "home": "Granada CF",
+          "away": "Athletic Club",
+          "source_status": null,
+          "source_score": [
+            1,
+            1
+          ],
+          "kind": "resumed",
+          "archive_date": "2023-12-11",
+          "first_played_on": "2023-12-10",
+          "completion_date": "2023-12-11",
+          "sources": [
+            "https://www.athletic-club.eus/en/news/2023/12/10/athletic-club-vs-granada-cf-will-resume-on-monday-at-21-00-cet/",
+            "https://rfef.es/es/noticias/el-granada-athletic-se-reanudara-este-lunes-las-21-horas",
+            "https://www.athletic-club.eus/en/teams/athletic-club/2023-24/matches/1_8394/"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": true
+        }
+      ]
+    },
+    {
+      "league": "lal",
+      "season": "2024-25",
+      "path": "2024-25/es.1.json",
+      "git_blob_sha1": "ba4e9bc10b172d6413a92aeba0c04eb70961cd05",
+      "sha256": "da5bfa1b3634e1039d9e71aec50bdc847f8761189e3de235a4e730e0dc64ca38",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2024-25/es.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2024-08-15",
+        "2025-05-25"
+      ],
+      "source_clock_zone": "Europe/Madrid",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {
+        "38": 10
+      },
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 370,
+        "missing_or_invalid_regulation_score": 10
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "lal",
+      "season": "2025-26",
+      "path": "2025-26/es.1.json",
+      "git_blob_sha1": "ca95ceb8861f8f1ae876eb066e71148ff773425b",
+      "sha256": "b40397d8e62c640138548d57a1a9f76150549213d2a07fcbbb90ed0eabc6ccea",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/es.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2025-08-15",
+        "2026-05-24"
+      ],
+      "source_clock_zone": "Europe/Madrid",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 365,
+        "array": 15
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "bun",
+      "season": "2018-19",
+      "path": "2018-19/de.1.json",
+      "git_blob_sha1": "1d54f5ab4e9aa24e9b1f92b9cfaaec03f54cc54a",
+      "sha256": "82cdafdead39129669dbae0368c294ca6372291ed095813157661c263793fac4",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2018-19/de.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2018-08-24",
+        "2019-05-18"
+      ],
+      "source_clock_zone": "Europe/Berlin",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 306
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 306
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "bun",
+      "season": "2019-20",
+      "path": "2019-20/de.1.json",
+      "git_blob_sha1": "d47c58202cbcd4eff7e8898a5b426c80be567b02",
+      "sha256": "76c7f65ef443681515b081e325a38cf0e8b6953b665bbcac20fdf328248e7206",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2019-20/de.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2019-08-16",
+        "2020-06-27"
+      ],
+      "source_clock_zone": "Europe/Berlin",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 306
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 306
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "bun",
+      "season": "2020-21",
+      "path": "2020-21/de.1.json",
+      "git_blob_sha1": "39b187140dd0fe025e029d82dc40b5e59266678d",
+      "sha256": "74a709c3f800064f26c4d44ec92af9bcd32c6b94ec00ace7cc5b684e8c3c8e74",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2020-21/de.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2020-09-18",
+        "2021-05-22"
+      ],
+      "source_clock_zone": "Europe/Berlin",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 306
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 306
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "bun",
+      "season": "2021-22",
+      "path": "2021-22/de.1.json",
+      "git_blob_sha1": "716c7bddd678bcac2cfc0988108a4196b1edda8e",
+      "sha256": "f1b9901cffb6b073f389e730213b5f8efe6a9a73b2f86058794f2d0f1dcc54dc",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2021-22/de.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2021-08-13",
+        "2022-05-14"
+      ],
+      "source_clock_zone": "Europe/Berlin",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 306
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "awarded": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 305,
+        "quarantined_exception": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 27,
+          "home": "VfL Bochum 1848",
+          "away": "Borussia Mönchengladbach",
+          "source_status": null,
+          "source_score": [
+            0,
+            2
+          ],
+          "kind": "awarded",
+          "archive_date": "2022-03-18",
+          "first_played_on": "2022-03-18",
+          "completion_date": null,
+          "sources": [
+            "https://www.dfb.de/fileadmin/_dfbdam/257416-220324_VfL_Bochum.pdf"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": false
+        }
+      ]
+    },
+    {
+      "league": "bun",
+      "season": "2022-23",
+      "path": "2022-23/de.1.json",
+      "git_blob_sha1": "7fc779362c4d775bc7cea2fa3b79ce1941bbc796",
+      "sha256": "b0c052dc75836dfc6b0d3781d35b828851db7377c9f6ccb39643dbbe1964f3bd",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2022-23/de.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2022-08-05",
+        "2023-05-27"
+      ],
+      "source_clock_zone": "Europe/Berlin",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 306
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 306
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "bun",
+      "season": "2023-24",
+      "path": "2023-24/de.1.json",
+      "git_blob_sha1": "2c41078e751d914f24bfe7e55c5567cea70a4aee",
+      "sha256": "d104edde48a5e254545eac3d3ed379a09801e1ebcef5c6480e28bc36fcfa202d",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2023-24/de.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2023-08-18",
+        "2024-05-18"
+      ],
+      "source_clock_zone": "Europe/Berlin",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 306
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 306
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "bun",
+      "season": "2024-25",
+      "path": "2024-25/de.1.json",
+      "git_blob_sha1": "9921b1d8485429913ff6d161500beb519d8b0e51",
+      "sha256": "f473d6595e6c29ebedc08b09177aed6a6b2ff0fa8378b82f51dea469139f44c3",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2024-25/de.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2024-08-23",
+        "2025-05-17"
+      ],
+      "source_clock_zone": "Europe/Berlin",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 305,
+        "awarded": 1
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "awarded": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 305,
+        "quarantined_exception": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 14,
+          "home": "1. FC Union Berlin",
+          "away": "VfL Bochum 1848",
+          "source_status": "awarded",
+          "source_score": [
+            0,
+            2
+          ],
+          "kind": "awarded",
+          "archive_date": "2024-12-14",
+          "first_played_on": "2024-12-14",
+          "completion_date": null,
+          "sources": [
+            "https://www.dfb.de/news/dfb-sportgericht-wertet-bundesligaspiel-in-berlin-fuer-bochum"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": false
+        }
+      ]
+    },
+    {
+      "league": "bun",
+      "season": "2025-26",
+      "path": "2025-26/de.1.json",
+      "git_blob_sha1": "320994ff4b376c0aa7abe7929f9b9740cfc0eff5",
+      "sha256": "17d0999db6281e6365823acdbce41a4f01dd469eac63e1f897e4e47c02906672",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/de.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2025-08-22",
+        "2026-05-16"
+      ],
+      "source_clock_zone": "Europe/Berlin",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 294,
+        "array": 12
+      },
+      "raw_status": {
+        "unmarked": 306
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 306
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "sea",
+      "season": "2018-19",
+      "path": "2018-19/it.1.json",
+      "git_blob_sha1": "b064ae0c6aa7bc5cc6b1732934a5549bb858e565",
+      "sha256": "b8efba80e794bd3ce5805bf802ac98e0ca9938545e6800b5a8844529b43060d3",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2018-19/it.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2018-08-18",
+        "2019-05-26"
+      ],
+      "source_clock_zone": "Europe/Rome",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "sea",
+      "season": "2019-20",
+      "path": "2019-20/it.1.json",
+      "git_blob_sha1": "5858e492e536affca47beb6182dea468b5ac7aff",
+      "sha256": "cb3a8dfd4152a0d1dfa0638b25623a963fda47a35910ecb114517d2e20c4a8e2",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2019-20/it.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2019-08-24",
+        "2020-08-02"
+      ],
+      "source_clock_zone": "Europe/Rome",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "sea",
+      "season": "2020-21",
+      "path": "2020-21/it.1.json",
+      "git_blob_sha1": "f2bdbfb26bca5a438763be3d4b3c2c21ff770822",
+      "sha256": "0e00abb3f9d03675c4bdde14b3bde34fed5713727282f82ed095b49e60fbcfea",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2020-21/it.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2020-09-19",
+        "2021-05-23"
+      ],
+      "source_clock_zone": "Europe/Rome",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 379,
+        "awarded": 1
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "awarded": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 379,
+        "quarantined_exception": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 1,
+          "home": "Hellas Verona FC",
+          "away": "AS Roma",
+          "source_status": "awarded",
+          "source_score": [
+            3,
+            0
+          ],
+          "kind": "awarded",
+          "archive_date": "2020-09-19",
+          "first_played_on": "2020-09-19",
+          "completion_date": null,
+          "sources": [
+            "https://www.asroma.com/en/news/59098/verona-0-0-roma-season-starts-with-a-draw",
+            "https://www.asroma.com/en/news/59181/roma-to-appeal-against-decision-on-verona-result"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": false
+        }
+      ]
+    },
+    {
+      "league": "sea",
+      "season": "2021-22",
+      "path": "2021-22/it.1.json",
+      "git_blob_sha1": "c214cde31d8186600e41c190f4cd29526d64bc14",
+      "sha256": "a3e94b23cac768e4191e99312f4d48471c4000c5c2fe766b0325cee935754061",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2021-22/it.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2021-08-21",
+        "2022-05-22"
+      ],
+      "source_clock_zone": "Europe/Rome",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "sea",
+      "season": "2022-23",
+      "path": "2022-23/it.1.json",
+      "git_blob_sha1": "b9bec73a92557da814c959b7c4f12bb501c20c7a",
+      "sha256": "d775fdd375af6998233fbfcd5b33d176cb9d016a981682626c5ce2f95b0c2f88",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2022-23/it.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2022-08-13",
+        "2023-06-04"
+      ],
+      "source_clock_zone": "Europe/Rome",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "sea",
+      "season": "2023-24",
+      "path": "2023-24/it.1.json",
+      "git_blob_sha1": "674079696d1298ce45abab6a1f8953d0675b995f",
+      "sha256": "47734fc8d2ec34c5529ca814c97d1c86ecddc4a2c8095506d9b12f29cb283308",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2023-24/it.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2023-08-19",
+        "2024-06-02"
+      ],
+      "source_clock_zone": "Europe/Rome",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "resumed": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 379,
+        "regulation_label_after_verified_completion_date_only": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 32,
+          "home": "Udinese Calcio",
+          "away": "AS Roma",
+          "source_status": null,
+          "source_score": [
+            1,
+            2
+          ],
+          "kind": "resumed",
+          "archive_date": "2024-04-25",
+          "first_played_on": "2024-04-14",
+          "completion_date": "2024-04-25",
+          "sources": [
+            "https://www.udinese.it/news/squad/date-confirmed-for-resumption-of-udinese-v-roma",
+            "https://www.asroma.com/en/news/71049/gallery-late-goal-seals-all-three-points"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": true
+        }
+      ]
+    },
+    {
+      "league": "sea",
+      "season": "2024-25",
+      "path": "2024-25/it.1.json",
+      "git_blob_sha1": "5c1cb89a7b676eee1db06d79b65773220b599e96",
+      "sha256": "7d9bb936de3ccaeec54d57371512a58a5eeb21277e7d5f0882911a834d22b659",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2024-25/it.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2024-08-17",
+        "2025-05-25"
+      ],
+      "source_clock_zone": "Europe/Rome",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {
+        "38": 10
+      },
+      "special_by_kind": {
+        "resumed": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 369,
+        "regulation_label_after_verified_completion_date_only": 1,
+        "missing_or_invalid_regulation_score": 10
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 14,
+          "home": "ACF Fiorentina",
+          "away": "FC Internazionale Milano",
+          "source_status": null,
+          "source_score": [
+            3,
+            0
+          ],
+          "kind": "resumed",
+          "archive_date": "2025-02-06",
+          "first_played_on": "2024-12-01",
+          "completion_date": "2025-02-06",
+          "sources": [
+            "https://www.inter.it/en/news/rescheduled-continuation-fiorentina-inter-6-february-2025",
+            "https://www.inter.it/en/news/continuation-fiorentina-inter-serie-a-24-25"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": true
+        }
+      ]
+    },
+    {
+      "league": "sea",
+      "season": "2025-26",
+      "path": "2025-26/it.1.json",
+      "git_blob_sha1": "00c57db6aa94737d6f965a67d1b89de58fcf3746",
+      "sha256": "28f7773dea86345aeb0cbb4aff2f90231033f7ed855219e70fdd1cf45d4d7e7f",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/it.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2025-08-23",
+        "2026-05-24"
+      ],
+      "source_clock_zone": "Europe/Rome",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "array": 36,
+        "object": 344
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "fl1",
+      "season": "2018-19",
+      "path": "2018-19/fr.1.json",
+      "git_blob_sha1": "35d23884ffc7468eafd832e54e7c2958decf0633",
+      "sha256": "5add69e52b80732444cf8243a64dcf831e5ea267ee588d0b6996275a70eedd14",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2018-19/fr.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2018-08-10",
+        "2019-05-24"
+      ],
+      "source_clock_zone": "Europe/Paris",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "fl1",
+      "season": "2019-20",
+      "path": "2019-20/fr.1.json",
+      "git_blob_sha1": "bdf6dde0982880d1c51bb28e4340f325f84e8e09",
+      "sha256": "0c42a7b9ab70c7bd7003bcc7085f3896c95e19965941be2d04976e7bba440205",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2019-20/fr.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2019-08-09",
+        "2020-05-23"
+      ],
+      "source_clock_zone": "Europe/Paris",
+      "time_precision": {
+        "minute": 279,
+        "date_only": 101
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 279,
+        "cancelled": 101
+      },
+      "missing_or_invalid_scores_by_round": {
+        "28": 1,
+        "29": 10,
+        "30": 10,
+        "31": 10,
+        "32": 10,
+        "33": 10,
+        "34": 10,
+        "35": 10,
+        "36": 10,
+        "37": 10,
+        "38": 10
+      },
+      "special_by_kind": {
+        "cancelled": 101
+      },
+      "dispositions": {
+        "ordinary_scored": 279,
+        "quarantined_exception": 101
+      },
+      "exceptions_besides_season_cancellations": [],
+      "season_cancellations_ruling": "https://www.conseil-etat.fr/fr/arianeweb/CE/decision/2020-10-23/440810"
+    },
+    {
+      "league": "fl1",
+      "season": "2020-21",
+      "path": "2020-21/fr.1.json",
+      "git_blob_sha1": "f7fecceedcfc367bc252caf2de2bab0fd7fc95f4",
+      "sha256": "27eceef1ea5b9b3b601074c3bfbb6a80f7e969d73d513f9dba104b688003c4e2",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2020-21/fr.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2020-08-21",
+        "2021-05-23"
+      ],
+      "source_clock_zone": "Europe/Paris",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "fl1",
+      "season": "2021-22",
+      "path": "2021-22/fr.1.json",
+      "git_blob_sha1": "eff96e594a2651be60e09555a5f70aacf2be4716",
+      "sha256": "8abb493061d32faaf413c403b440c043723d9743a9e69d6472bf5410e2d4e039",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2021-22/fr.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2021-08-06",
+        "2022-05-21"
+      ],
+      "source_clock_zone": "Europe/Paris",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "replayed": 2
+      },
+      "dispositions": {
+        "ordinary_scored": 378,
+        "regulation_label_after_verified_completion_date_only": 2
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 3,
+          "home": "OGC Nice",
+          "away": "Olympique Marseille",
+          "source_status": null,
+          "source_score": [
+            1,
+            1
+          ],
+          "kind": "replayed",
+          "archive_date": "2021-10-27",
+          "first_played_on": "2021-08-22",
+          "completion_date": "2021-10-27",
+          "sources": [
+            "https://www.ogcnice.com/en/article/119352/nice-marseille-to-be-played-in-troyes.html",
+            "https://www.ogcnice.com/en/resume/119587/a-derby-without-a-winner-1-1.html"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": true
+        },
+        {
+          "round": 14,
+          "home": "Olympique Lyonnais",
+          "away": "Olympique Marseille",
+          "source_status": null,
+          "source_score": [
+            2,
+            1
+          ],
+          "kind": "replayed",
+          "archive_date": "2022-02-01",
+          "first_played_on": "2021-11-21",
+          "completion_date": "2022-02-01",
+          "sources": [
+            "https://www.lfp.fr/article/commission-de-discipline-les-decisions-du-8-decembre-2021",
+            "https://www.lfp.fr/article/olympique-lyonnais-olympique-de-marseille-reprogramme-le-1er-ou-le-10-fevrier-2022"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": true
+        }
+      ]
+    },
+    {
+      "league": "fl1",
+      "season": "2022-23",
+      "path": "2022-23/fr.1.json",
+      "git_blob_sha1": "5fae7b79a038f09f1ae982143cdd02dc111eb9f5",
+      "sha256": "6301ac1ba1fa0f5b72345759711beac3b3be3c989725cc1c6ef9307ffef692c7",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2022-23/fr.1.json",
+      "team_count": 20,
+      "rounds": 38,
+      "regular_rows": 380,
+      "ordered_pairs": 380,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2022-08-05",
+        "2023-06-03"
+      ],
+      "source_clock_zone": "Europe/Paris",
+      "time_precision": {
+        "minute": 380
+      },
+      "raw_score_shape": {
+        "object": 380
+      },
+      "raw_status": {
+        "unmarked": 380
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {},
+      "dispositions": {
+        "ordinary_scored": 380
+      },
+      "exceptions_besides_season_cancellations": []
+    },
+    {
+      "league": "fl1",
+      "season": "2023-24",
+      "path": "2023-24/fr.1.json",
+      "git_blob_sha1": "a5c5c479bd14c4581931219a41687d9938e4dc1e",
+      "sha256": "fa328cecf4c12232ac77a5d477059eebe16b68b3712ec87800b89efda8ddfb70",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2023-24/fr.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2023-08-11",
+        "2024-05-19"
+      ],
+      "source_clock_zone": "Europe/Paris",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 306
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "replayed": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 305,
+        "regulation_label_after_verified_completion_date_only": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 8,
+          "home": "Montpellier HSC",
+          "away": "Clermont Foot 63",
+          "source_status": null,
+          "source_score": [
+            1,
+            1
+          ],
+          "kind": "replayed",
+          "archive_date": "2023-11-29",
+          "first_played_on": "2023-10-08",
+          "completion_date": "2023-11-29",
+          "sources": [
+            "https://www.lfp.fr/article/commission-de-discipline-les-decisions-du-25-octobre-2023",
+            "https://www.lfp.fr/article/montpellier-herault-sc-clermont-foot-63-reprogramme-j8",
+            "https://www.clermontfoot.com/le-clermont-foot-63-decroche-un-point-important-a-montpellier"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": true
+        }
+      ]
+    },
+    {
+      "league": "fl1",
+      "season": "2024-25",
+      "path": "2024-25/fr.1.json",
+      "git_blob_sha1": "8bc6ec90c62fa423386ec60473cfa6236419a636",
+      "sha256": "90e9974afe6597452622387ad218f6b0011a5f91f1b426f05152f5b9c105e355",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2024-25/fr.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2024-08-16",
+        "2025-05-17"
+      ],
+      "source_clock_zone": "Europe/Paris",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 306
+      },
+      "raw_status": {
+        "unmarked": 305,
+        "awarded": 1
+      },
+      "missing_or_invalid_scores_by_round": {},
+      "special_by_kind": {
+        "awarded": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 305,
+        "quarantined_exception": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 26,
+          "home": "Montpellier HSC",
+          "away": "AS Saint-Étienne",
+          "source_status": "awarded",
+          "source_score": [
+            0,
+            2
+          ],
+          "kind": "awarded",
+          "archive_date": "2025-03-16",
+          "first_played_on": "2025-03-16",
+          "completion_date": null,
+          "sources": [
+            "https://www.lfp.fr/article/commission-de-discipline-les-decisions-du-2-avril-2025"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": false
+        }
+      ]
+    },
+    {
+      "league": "fl1",
+      "season": "2025-26",
+      "path": "2025-26/fr.1.json",
+      "git_blob_sha1": "b6eec1251b125725d32efe85c8a969b68765d26a",
+      "sha256": "3e9403445dd96f4bb7f740de22d4ea7e3ea7d640777a12eab621ae4d4dbf3bc7",
+      "source_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/fr.1.json",
+      "team_count": 18,
+      "rounds": 34,
+      "regular_rows": 306,
+      "ordered_pairs": 306,
+      "non_regular_stages": {},
+      "source_dates_after_pinned_repairs": [
+        "2025-08-15",
+        "2026-05-17"
+      ],
+      "source_clock_zone": "Europe/Paris",
+      "time_precision": {
+        "minute": 306
+      },
+      "raw_score_shape": {
+        "object": 282,
+        "array": 23,
+        "absent": 1
+      },
+      "raw_status": {
+        "unmarked": 305,
+        "canceled": 1
+      },
+      "missing_or_invalid_scores_by_round": {
+        "34": 1
+      },
+      "special_by_kind": {
+        "abandoned": 1
+      },
+      "dispositions": {
+        "ordinary_scored": 305,
+        "quarantined_exception": 1
+      },
+      "exceptions_besides_season_cancellations": [
+        {
+          "round": 34,
+          "home": "FC Nantes",
+          "away": "Toulouse FC",
+          "source_status": "canceled",
+          "source_score": null,
+          "kind": "abandoned",
+          "archive_date": "2026-05-17",
+          "first_played_on": "2026-05-17",
+          "completion_date": null,
+          "sources": [
+            "https://www.lfp.fr/article/commission-de-discipline-les-decisions-du-27-mai-2026"
+          ],
+          "first_kickoff_utc": null,
+          "predict_prematch": false,
+          "train_regulation": false
+        }
+      ]
+    }
+  ]
+}

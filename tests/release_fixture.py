@@ -41,7 +41,7 @@ def compared(root):
                     "INSERT OR IGNORE INTO probability_studies VALUES(?,?,?)",
                     (digest, store.digest(sample), sha),
                 )
-        with patch.object(model_study, "measure"):
+        with patch.object(model_study, "measure"), patch.object(model_study, "require_reference_python"):
             report = model_study.release_report(root, None)
         yield report
 

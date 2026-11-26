@@ -20,6 +20,7 @@ def public_claim(item):
         "availability": item.get("availability"), "evidence_status": item.get("status"),
         "source": item.get("origin"), "source_url": item.get("url"),
         "last_observation_receipt": item.get("last_seen_receipt"),
+        **{k: item[k] for k in ("suspension_competition", "injury_onset_basis") if k in item},
         "source_chance_of_playing_percent": chance,
         "source_absence_probability": (1.0 - chance / 100) if type(chance) is int and 0 <= chance <= 100 else None,
         "absence_weight": item.get("absence_weight"), "duration_from": item.get("duration_from"),

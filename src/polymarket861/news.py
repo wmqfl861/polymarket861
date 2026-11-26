@@ -13,7 +13,7 @@ from datetime import date, timedelta
 from time import monotonic
 from urllib.parse import urlsplit
 
-from . import dbscope, news_poll_archive, store
+from . import dbscope, news_poll_archive, news_scope, store
 from .football import team_key
 from .news_retention import retention
 from .news_scope import competition_target, injury_headline
@@ -194,9 +194,11 @@ def _schedule(db, at, season=None):
     return [dict(row) for row in rows]
 
 
-def _timetables(fixtures):
+def _timetables(fixtures, league="epl"):
     teams = defaultdict(list)
     for game in fixtures:
+        if news_scope.competition(game) != league:
+            continue
         for side in ("home", "away"):
             teams[game["season"], team_key(game[side])].append(game)
     return teams
@@ -227,6 +229,12 @@ def _claim(data_dir, limit, days, only_team, season, force, defaults, settings_i
             )
             for config in (*defaults(name, year), *registered.get(club, ())):
                 ident = config["id"]
+                league = news_scope.competition(target)
+                if (ident == "touchline-availability" and
+                        not news_scope.wire_coverage(name, year, league, at)):
+                    continue
+                if ident == "wikipedia-season-news" and league != "epl":
+                    continue
                 # The configured stream is local, and may never impersonate the default publisher.
                 key = (year, club, ident)
                 serialized = store.canonical(config)
@@ -431,6 +439,11 @@ def _poll_proof(root, task, response, local_start, received, stage_feed):
             raise ValueError("missing original wire response receipt")
         proof["provider_state_as_of"] = store.iso(response["provider_state_as_of"])
         proof["wire_projection_sha256"] = store.digest(_wire_projection(response))
+        scope = news_scope.wire_coverage(task["team"], task["season"], news_scope.competition(task["target"]),
+                                         proof["provider_state_as_of"])
+        if not scope or response.get("coverage_evidence") != scope:
+            raise ValueError("source_not_covered: availability receipt lacks verified club and competition scope")
+        proof["coverage_evidence"] = scope
     ident = store.digest(proof)
     with _db(root, write=True) as db:
         if not _owns(db, task):
@@ -1461,6 +1474,7 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
                 issues.append("publisher returned contradictory content for a single revision")
             if wire:
                 detail["provider_state_as_of"] = result["provider_state_as_of"]
+                detail["coverage_evidence"] = proof["coverage_evidence"]
                 _collect_wire(root, task, result, received, proof_id, detail)
             elif not stage_feed:
                 for item in articles:
@@ -1491,6 +1505,7 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
                 "response_sha256",
                 "response_hash_basis",
                 "provider_state_as_of",
+                "coverage_evidence",
                 "rejected_items",
                 "provider_counts",
                 "provider_pending",
@@ -1620,7 +1635,7 @@ def sync(
         team,
         season,
         force,
-        defaults or news_sources.default_sources,
+        defaults or news_sources.active_sources,
         store.digest(settings),
         schedule_consensus.eligible_news(schedules),
     )
@@ -1741,7 +1756,7 @@ def _empty_snapshot(fixture_id, at, reason, fixture=None):
     }
 
 
-def _side_coverage(db, game, side, at, games):
+def _side_coverage(db, root, game, side, at, games):
     club = team_key(game[side])
     checks = news_poll_archive.history(db, "news_checks")
     rows = db.execute(
@@ -1772,6 +1787,20 @@ def _side_coverage(db, game, side, at, games):
         elif observed and any(next((g["fixture_id"] for g in games if g["kickoff"] > stamp), None) != game["fixture_id"]
                               for stamp in {freshness, observed}):
             state = "different_next_fixture"
+        coverage_evidence = None
+        if row["source"] == "touchline-availability" and state in ("ok", "degraded", "partial"):
+            scope = news_scope.wire_coverage(game[side], game["season"], news_scope.competition(game),
+                                             raw.get("provider_state_as_of") or at)
+            if scope is None:
+                state = "source_not_covered"
+            elif not news_poll_archive.wire_coverage_received(db, root, check, raw, scope, json.loads(row["config"])):
+                state = "unverified_wire_coverage"
+            else:
+                coverage_evidence = scope
+        if row["source"] == "wikipedia-season-news" and news_scope.competition(game) != "epl":
+            state = "source_not_covered"
+        if news_scope.competition(game) != "epl" and state in ("ok", "degraded", "partial"):
+            state = "league_news_not_validated"
         counts = raw.get("provider_counts") or {}
         eligible = (
             state in ("ok", "degraded")
@@ -1788,6 +1817,7 @@ def _side_coverage(db, game, side, at, games):
                 "source_observed_at": observed,
                 "provider_state_as_of": raw.get("provider_state_as_of"),
                 "availability_observed": eligible,
+                **({"coverage_evidence": coverage_evidence} if coverage_evidence else {}),
                 "study_eligible": eligible or (state == "partial" and raw.get("identity_only_partial") is True),
                 "unresolved_players": raw.get("unresolved_players", raw.get("unmatched_players", 0)),
                 "provider_identity_reviews": raw.get("provider_identity_reviews", []),
@@ -1824,8 +1854,9 @@ def _current_claims(facts, cutoff):
         topic = "transfer" if fact["event"] == "transfer" else "availability"
         # An outdated standing feed is still auditable. It can neither clear a
         # separate club's fresh report nor tag it as disputed.
-        isolated = (fact.get("source") == news_model.POLICY["wire_source"] and
-                    not news_model.usable_wire_observation(fact, cut))
+        isolated = (not news_scope.suspension_applies(fact, news_scope.competition(fact))
+                    or (fact.get("source") == news_model.POLICY["wire_source"]
+                        and not news_model.usable_wire_observation(fact, cut)))
         by_player[(team_key(fact["team"]), fact["player_id"], topic, fact["id"] if isolated else "")].append(fact)
     result = []
     for group, player_facts in sorted(by_player.items()):
@@ -1959,10 +1990,10 @@ def snapshot(data_dir, fixture_id, cutoff):
             # Reconstruct the schedule and evidence that were in fact known
             # before the observed or advertised kickoff, using one DB snapshot.
             at = _plus(latest, -timedelta(microseconds=1))
-        timetables = _timetables(_schedule(db, at, game["season"]))
+        timetables = _timetables(_schedule(db, at, game["season"]), news_scope.competition(game))
         club_games = {team_key(game[side]): timetables[game["season"], team_key(game[side])]
                       for side in ("home", "away")}
-        coverage = {side: _side_coverage(db, game, side, at, club_games[team_key(game[side])])
+        coverage = {side: _side_coverage(db, data_dir, game, side, at, club_games[team_key(game[side])])
                     for side in ("home", "away")}
         if "news_analysis_runs" in tables:
             # 0.4.0 persisted a count for candidates it discarded under the old
@@ -2101,8 +2132,15 @@ def snapshot(data_dir, fixture_id, cutoff):
             continue
         club = team_key(fact["team"])
         wire = {}
+        if fact["source"] == "touchline-availability" and raw.get("time_basis") != "provider_snapshot":
+            continue
         if raw.get("time_basis") == "provider_snapshot":
+            if not news_scope.wire_coverage(fact["team"], game["season"], news_scope.competition(game),
+                                            raw["observed_state_as_of"]):
+                continue
+            fields = raw.get("source_fields") or {}
             wire = {
+                **{k: fields[k] for k in ("suspension_competition", "injury_started_at", "injury_date") if k in fields},
                 "first_seen_at": fact["received_at"],
                 "last_seen_at": fact["received_at"],
                 "last_seen_state_as_of": raw["observed_state_as_of"],
@@ -2141,13 +2179,13 @@ def snapshot(data_dir, fixture_id, cutoff):
     # the source-only claimant still has a plausible unresolved roster alias.
     active_names = {(team_key(f["team"]), f["player_id"]) for f in facts
                     if f["event"] in ("injury", "suspension", "return", "availability")
-                    and f["status"] in ("reported", "confirmed")}
+                    and news_scope.suspension_applies(f, news_scope.competition(game)) and f["status"] in ("reported", "confirmed")}
     distinct = []
     for fact in facts:
         club = team_key(fact["team"])
         person = eligible[club][fact["player_id"]]
         overlaps = [pid for pid in person.get("possible_roster_ids", ()) if (club, pid) in active_names]
-        if overlaps:
+        if overlaps and news_scope.suspension_applies(fact, news_scope.competition(game)):
             side = next(s for s in coverage.values() if team_key(s["team"]) == club)
             side["roster"]["excluded_claims"] += 1
             side["roster"].setdefault("possible_duplicate_claims", []).append(
@@ -2366,7 +2404,7 @@ def sources(data_dir, team=None, season=None):
     return {
         "example_team": club,
         "season": season_id,
-        "default": news_sources.default_sources(club, season_id),
+        "default": news_sources.active_sources(club, season_id),
         "registered": listed,
     }
 
@@ -2439,6 +2477,9 @@ def register(subparsers):
     commands = subparsers.add_parser(
         "news", help="球队消息、球员核验和赛前配对研究"
     ).add_subparsers(required=True)
+    from . import news_admission
+
+    news_admission.add_commands(commands)
     run = commands.add_parser("sync", help="轮换采集未来赛程的球队消息")
     run.add_argument("--limit", type=int, default=4)
     run.add_argument("--workers", type=int, default=2)

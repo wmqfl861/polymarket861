@@ -196,7 +196,19 @@ def _batch(db, root, slug, target, kickoff, before=None):
     return row, reply, native
 
 
-def _quote(db, data, m, outcome, batch, target, kickoff, actual, as_of_book=False):
+def _quote(
+    db,
+    data,
+    m,
+    outcome,
+    batch,
+    target,
+    kickoff,
+    actual,
+    as_of_book=False,
+    *,
+    schedule_reference=None,
+):
     row, reply, native = batch
     (token,) = [t["token_id"] for t in m["tokens"] if t["outcome"].lower() == outcome]
     raw = native.get(token)
@@ -262,6 +274,19 @@ def _quote(db, data, m, outcome, batch, target, kickoff, actual, as_of_book=Fals
         < kickoff
     ):
         book = book | {"pregame": True}
+    if schedule_reference is not None and book["pregame"] is None:
+        # The research frame has corroborated the schedule at this exact receipt.
+        # No modified book is stored or supplied to a formal mark or execution.
+        if not (
+            schedule_reference == reply.received_at
+            and timedelta(seconds=10)
+            <= kickoff - store.instant(reply.received_at)
+            <= timedelta(seconds=120)
+            and as_of_book
+            and not actual
+        ):
+            raise ValueError("invalid_schedule_reference_window")
+        book = book | {"pregame": True}
     special, profile = ledger_terms._interpret(observed, outcome)
     terms = {
         "condition_id": m["condition_id"],
@@ -302,6 +327,7 @@ def frame(
     before=None,
     prospective=False,
     as_of_book=False,
+    schedule_reference=None,
 ):
     result = {
         "target": store.iso(target),
@@ -341,6 +367,7 @@ def frame(
                         kickoff,
                         actual,
                         as_of_book,
+                        schedule_reference=schedule_reference,
                     )
                     for side in sides
                 ]

@@ -1,12 +1,10 @@
 """Prospective, descriptive paired-news study and its probability-era identity."""
 
-import ast
-import hashlib
+import json
 import re
 from datetime import timedelta
-from functools import lru_cache
 
-from . import store
+from . import recipe_identity, store
 
 FIRST_SEASON = 2026
 ORIGINAL_PLAN = {
@@ -121,7 +119,7 @@ _SYMBOLS = {
     "evidence_sources.py": ("name_key", "source_at", "granted", "required", "utc", "dump"),
     "jobs_research.py": ("_pointer",),
     "blob_storage.py": ("read_blob",),
-    "news_poll_archive.py": ("SCHEMA", "history", "verified_check", "_sample", "_fold"),
+    "news_poll_archive.py": ("SCHEMA", "history", "verified_check", "wire_coverage_received", "_sample", "_fold"),
     "result_freshness.py": ("_AS_OF",),
     # A club's completed-match denominator is itself an input to the frozen
     # player-usage weights. Include provider identity, regulation score bounds
@@ -138,57 +136,24 @@ _SYMBOLS = {
 _STORAGE_ONLY = {"news.py": {"_db"}, "news_roster.py": {"_connection"}, "news_minutes.py": {"_connection"}}
 
 
-@lru_cache(maxsize=128)
 def _symbol_digest(path, physical_sha, roots):
-    raw = path.read_bytes()
-    if hashlib.sha256(raw).hexdigest() != physical_sha:
-        raise ValueError("news probability source changed while registering the recipe")
-    definitions = {}
-    for node in ast.parse(raw).body:
-        if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
-            definitions[node.name] = node
-        elif isinstance(node, ast.Assign):
-            definitions.update(
-                {n.id: node for n in node.targets if isinstance(n, ast.Name)}
-            )
-        elif isinstance(node, (ast.Import, ast.ImportFrom)):
-            prefix = (
-                "." * node.level + (node.module or "")
-                if isinstance(node, ast.ImportFrom)
-                else ""
-            )
-            definitions.update(
-                {n.asname or n.name: (prefix, n.name) for n in node.names}
-            )
-    selected = {}
-    pending = set(roots)
-    storage_only = _STORAGE_ONLY.get(path.name, ())
-    while pending:
-        name = pending.pop()
-        if name in selected:
-            continue
-        node = definitions.get(name)
-        if node is None:
-            selected[name] = None
-            continue
-        if isinstance(node, tuple):
-            selected[name] = node
-            continue
-        selected[name] = ast.dump(node, include_attributes=False)
-        pending.update(
-            n.id
-            for n in ast.walk(node)
-            if isinstance(n, ast.Name)
-            and n.id in definitions
-            and n.id not in storage_only
-        )
-    return store.digest(selected)
+    return recipe_identity.symbols_digest(
+        path, physical_sha, roots, tuple(sorted(_STORAGE_ONLY.get(path.name, ())))
+    )
 
 
 def probability_sources(root, files):
     """Stored alongside, and independently of, the complete physical-release manifest."""
     complete = (set(_MODEL_FILES) | _SYMBOLS.keys()) <= files.keys()
-    sources = {name: files[name] for name in _MODEL_FILES if name in files}
+    sources = {}
+    for name in _MODEL_FILES:
+        if name in files:
+            try:
+                sources[name] = recipe_identity.module_digest(root / name, files[name])
+            except SyntaxError:
+                if complete:
+                    raise
+                sources[name] = files[name]
     for name, names in _SYMBOLS.items():
         if name in files:
             try:
@@ -200,6 +165,30 @@ def probability_sources(root, files):
                 # Preserve their physical digest. No era replay can be certified.
                 sources[name] = files[name]
     return sources
+
+
+PAIR_RECIPE_KIND = "paired-news-recipe"
+
+
+def sealed_recipe(db, seal):
+    row = db.execute(
+        "SELECT recipe FROM model_recipes WHERE version=?", (seal["model_version"],)
+    ).fetchone()
+    primary = json.loads(row[0]) if row else None
+    if not primary or store.digest(primary) != seal["recipe_digest"]:
+        raise ValueError("missing original model recipe")
+    companion = seal.get("news_recipe_sha256")
+    if companion is None:
+        if primary.get("recipe_format") and "news_probability_source" not in primary:
+            raise ValueError("missing original paired news recipe")
+        return primary
+    row = db.execute(
+        "SELECT payload FROM reports WHERE kind=? AND key=?", (PAIR_RECIPE_KIND, companion)
+    ).fetchone()
+    recipe = json.loads(row[0]) if row else None
+    if not recipe or store.digest(recipe) != companion or any(recipe.get(k) != v for k, v in primary.items()):
+        raise ValueError("missing or inconsistent original paired news recipe")
+    return recipe
 
 
 def extractor_identity(snapshot):
@@ -252,6 +241,7 @@ def era(recipe, pair, extractor):
     return store.digest(
         {
             "probability_source": recipe["news_probability_source"],
+            **({"primary_sources": recipe["algorithm_source"]} if recipe.get("recipe_format") else {}),
             **({"frozen_feature_source": recipe["news_frozen_feature_source"]} if "news_frozen_feature_source" in recipe else {}),
             "numeric_runtime": recipe["numeric_runtime"],
             "lines": recipe["lines"],

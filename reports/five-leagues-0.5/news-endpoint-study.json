@@ -1,0 +1,200 @@
+{
+  "scope": "Protocol publication and empty-runtime CLI output. No live forward samples claimed.",
+  "plan": {
+    "version": "epl-news-home-and-full-over-v1",
+    "eligible_seasons": [
+      "2026-27",
+      "2027-28"
+    ],
+    "ends_at_exclusive": "2028-07-01T00:00:00.000000Z",
+    "enrollment": "One immutable registration per runtime, one prospective mode. Start is at or after actual local registration. Attach only on insertion of a qualifying new native main seal; never backfill.",
+    "population": "EPL primary seals using the named native declaration and timely study-qualified news for both clubs. Include zero news changes. Only the first bound probability era is eligible, selected by capture order without reference to news movement, outcomes, coverage or available books. Capture starts at the real local clock immediately following enrollment.",
+    "native_pair_declaration_sha256": "bd084455a380733a8361b6db880fa042842a14937fea2eb42d9e0028f4a2aa16",
+    "horizons": [
+      "T-24h",
+      "T-60m"
+    ],
+    "endpoints": [
+      "home_win",
+      "full_over_2_5"
+    ],
+    "closing_clocks": [
+      "market_close",
+      "scheduled_market_close"
+    ],
+    "admission": "Reverify native B1/news probabilities and contemporaneous source originals. For each endpoint require the same contracts, rules and matched decision and close books. Actual first-whistle and scheduled explicitly pregame closes have separate strata.",
+    "estimand": "Through-origin slope of (close minus B1) on (with-news minus B1) per endpoint, horizon and clock. One fixture per cell, compared within the initial bound probability era. No pooled eras.",
+    "reference": "Normalized three-way home-win midpoint; Over midpoint for the regulation full-match 2.5-goal contract after both sides pass the native checks.",
+    "interval": "Two-sided Bonferroni round-cluster CR1/Student intervals with G-1 degrees of freedom. Only rounds with movement above 1e-12 contribute to slope information. Missing independent rounds or residual variance leaves the interval undefined.",
+    "score_guardrail": "At each horizon the verified regulation four-component score delta (with-news minus B1) has a match-weighted round-cluster interval; upper simultaneous bound below zero flags deterioration.",
+    "family_comparisons": 10,
+    "family_confidence": 0.95,
+    "zero_move_tolerance": 1e-12,
+    "reporting": "Before the fixed end, publish only collection coverage and reasons. Reveal the ten registered estimates together after the fixed end using evidence received before the end. Descriptive research; no automatic promotion or trading."
+  },
+  "plan_sha256": "a3af7b72cf2d8bdfe901742d567f7a39416d7ed04e54a641ac63b64709fcf55d",
+  "empty_runtime": {
+    "version": "epl-news-home-and-full-over-v1",
+    "plan_sha256": "a3af7b72cf2d8bdfe901742d567f7a39416d7ed04e54a641ac63b64709fcf55d",
+    "registration": null,
+    "state": "not_registered",
+    "bound_seals": 0,
+    "initial_bound_probability_era": null,
+    "family_comparisons": 10,
+    "horizons": {
+      "T-24h": {
+        "past_scheduled_windows": 0,
+        "qualified_news_pairs": 0,
+        "exclusions": {},
+        "clocks": {
+          "market_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "through_origin",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs"
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "through_origin",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs"
+            }
+          },
+          "scheduled_market_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "through_origin",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs"
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "through_origin",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs"
+            }
+          }
+        },
+        "score_guardrail": {
+          "pairs": 0,
+          "status": "no_verified_scored_pairs",
+          "interval": null
+        }
+      },
+      "T-60m": {
+        "past_scheduled_windows": 0,
+        "qualified_news_pairs": 0,
+        "exclusions": {},
+        "clocks": {
+          "market_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "through_origin",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs"
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "through_origin",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs"
+            }
+          },
+          "scheduled_market_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "through_origin",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs"
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "through_origin",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs"
+            }
+          }
+        },
+        "score_guardrail": {
+          "pairs": 0,
+          "status": "no_verified_scored_pairs",
+          "interval": null
+        }
+      }
+    },
+    "automatic_promotion": false
+  }
+}

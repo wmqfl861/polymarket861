@@ -32,7 +32,11 @@ pm861 --data-dir "$STATE" experiment evaluate league-frequency-2026
 
 ## 内置版本换代
 
-生产预测绑定家族、大小球线、参与运行和判定的 Python 文件的逐文件 SHA-256，以及 NumPy 和 SciPy 版本。选单试验同时登记规则参数和同一份实施清单。这份清单覆盖收集器更新训练数据、调度器选取首发时点、盘口匹配球队、统计分组和账本资格等间接依赖，也涵盖日后新增的执行模块。纯展示的 `dashboard.py`、备份与恢复的 `operations.py`、仅代理到实际处理程序的 CLI 入口、包版本标记、文档和静态页面资源在清单之外。只改这些文件时，已批准的模型和选单指纹仍相同。概率预测另封存当时实际使用的输入清单、证据帧和训练摘要。五季比较会给出实际概率是否变化。
+0.5 的英超正式配方绑定模型家族、大小球线、NumPy/SciPy 版本、参考解释器 CPython 3.12，以及计算概率、选取赛前输入和决定封存资格的源码定义。定义摘要使用跨解释器稳定的语法字段与本模块依赖。改衰减率、历史输入范围或封存时点会产生新身份。其他联赛的独立适配器和界面变化沿用已批准的 B1。策略选单保留自己的执行清单。
+
+每份新封存用 `release_provenance_sha256` 引用实际解释器版本、数值依赖、全部 Python 文件和包内资源的内容摘要。运行 `pm861 --data-dir "$STATE" forecast release-provenance SHA256` 可核验原记录，省略摘要可查看当前安装。B1 主预测与同场的新闻研究副本分别登记。新闻处理、球员权重或 B3 参数改动会产生独立新闻身份，封存的 `news_recipe_sha256` 保留实际研究配方。历史封存使用原版本记录。
+
+正式五季基准及对照命令使用 CPython 3.12 和 `constraints/research.txt`。持续集成在 CPython 3.11、3.12、3.13 比较四个家族及各自新闻副本的配方摘要。正式回放的数值由 3.12 记录。跨版本的浮点研究应核对数值及预先声明的容差。旧库更换配方前先用其原安装和原解释器保存基准，再用新安装的 CPython 3.12 对照及具名批准。
 
 1. 更换版本前运行 `pm861 --data-dir "$STATE" forecast release-baseline "$HISTORY"`，冻结正在使用的内置实现的五季逐场输出。0.2.0 旧库可使用随包提供的标准版本基准。旧配方只记录两个算法文件，无法单凭旧库识别本地实际的训练装配代码。若采用随包基准，负责人须核实上一个安装包的提交，并在第 3 步加上 `--legacy-reference 432e0afe485230bd7caa46eb0d1d68b26f01db25`。如实际安装的是随后只增加审核文档的提交 `8993f15cfcc61042aedc5e885bb82217488ecb33`，应填其完整编号。系统保存负责人实际签署的编号。自定义旧实现须先提供其真实冻结基准。
 2. 安装新包后运行 `pm861 --data-dir "$STATE" forecast release-compare "$HISTORY"`。五季为 2021/22 至 2025/26，含 1,900 场、190 个官方轮。报告给出两个实现摘要、同一批原始文件与截止规则、综合与分项分差、训练视图及全盘口输出变化数。资料不足时，旧预测可用 `forecast get PREDICTION_SHA256` 独立取回，新默认预测等待有效版本。
@@ -40,3 +44,22 @@ pm861 --data-dir "$STATE" experiment evaluate league-frequency-2026
 4. 独立复核者可在空目录运行 `pm861 --data-dir "$VERIFY_STATE" forecast release-compare "$HISTORY" --reference-0.2.0`，对照随包的旧版基准。0.2.0 的正式发布提交是 `432e0af`，随包基准在 `8993f15` 审核检出上生成。两者的 `src`、`constraints`、`deploy` 与 `pyproject.toml` 有相同的 Git 对象。可使用发布提交的 `src` 作为 `PYTHONPATH`，运行当前仓库的 `scripts/reproduce_probability_baseline.py "$HISTORY" regenerated.json.gz`，即可独立还原逐场输出。`forecast release-report REPORT_SHA256` 可按摘要取回原对照及签署详情。历史记录若没有单独保存确认的安装提交，查询时保留空值。
 
 0.2.0 与此次发布的 B1 在五季样本上得分均为 75.447813，1,900 场中改变了六项核心概率或任一已配置大小球线的场次为 0。历史的球队新闻和首发缺乏可验证的逐场档案，当季输入处理更改的实际表现需要后续前向样本。这次发布比较用于复核，用户本机的版本决定仍需负责人签署。[五季版本对照](../reports/research/release-probability-comparison-0.3.0.json)
+
+## 0.5 复核命令
+
+用三个解释器分别安装 `constraints/research.txt` 锁定的依赖和同一份源码，然后核对整个包、四个概率家族、实际新闻来源及冻结特征的身份。[三解释器配方核对](../reports/five-leagues-0.5/recipe-interpreters.json)
+
+```sh
+python3.11 scripts/check_recipe_identity.py > recipe-3.11.json
+python3.12 scripts/check_recipe_identity.py > recipe-3.12.json
+python3.13 scripts/check_recipe_identity.py > recipe-3.13.json
+python3.12 scripts/check_recipe_identity.py --compare recipe-3.11.json recipe-3.12.json recipe-3.13.json
+```
+
+0.5 参考环境在八份固定历史原件上训练及滚动评估，目标赛季为 2021/22 至 2025/26。与随包 0.2.0 基准、再与原安装实测的 0.4.2 英超基准分别比较。两次各覆盖 1,900 场、190 轮，训练身份和逐场概率均有 0 场变化，两侧均分 75.4478132341。保留旧库的实例运行完对照时状态为 `approval_required`。 [随包基准对照](../reports/five-leagues-0.5/release-reference-0.2.json) · [原安装基准对照](../reports/five-leagues-0.5/release-comparison-0.4.2.json) · [实测源码及解释器](../reports/five-leagues-0.5/release-provenance.json)
+
+0.4.2 的新闻历史重建使用发布提交 `8125d57` 的源码、脚本和原始输入运行。切换到该检出并运行 `PYTHONPATH=src python scripts/reproduce_news_history.py "$HISTORY" --output /tmp/history-rerun.json`。在当前仓库运行以下命令核对历史报告。CPython 3.12、3.13 逐字节一致。3.11 的 1,760 个叶值中有 8 个浮点末位不同，最大绝对差为 1.4210854715202004e-14。此报告采用绝对容差 2e-14，所有标识、整数、布尔值及结构均须相同。逐场封存和成对概率重放仍按原有精确校验。[三解释器历史重算](../reports/five-leagues-0.5/news-history-python-reproduction.json)
+
+```sh
+python scripts/compare_news_reproduction.py reports/news-history-0.4.2.json /tmp/history-rerun.json
+```

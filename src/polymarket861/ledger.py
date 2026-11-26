@@ -1203,6 +1203,27 @@ def settle(data_dir, account, settlement):
             raise ValueError("resolution from the future")
         if final and acc["mode"] in ("formal", "historical"):
             _attest_resolution(db, data_dir, settlement, amount)
+        if final and (
+            state == "exchange_split"
+            or (acc["mode"] in ("formal", "historical") and amount not in (0, 1))
+        ):
+            from .settlement import attest_ledger_split
+
+            # A byte-identical pre-upgrade receipt is already booked; repeating
+            # it cannot release cash. New fractional credits require both tokens.
+            if (
+                state != "exchange_split"
+                and db.execute(
+                    "SELECT 1 FROM paper_resolutions WHERE account=? AND condition_id=? "
+                    "AND token=? AND event_id=? AND terminal=1 AND payload=?",
+                    (account, *ids, doc),
+                ).fetchone()
+            ):
+                return dict(settlement)
+            settlement = attest_ledger_split(db, data_dir, account, settlement)
+            state = settlement["scenario"]
+            event_time = instant(settlement["resolved_at"])
+            doc = packed(settlement)
         if acc["mode"] == "formal":
             from urllib.parse import urlparse
 
@@ -1250,7 +1271,11 @@ def settle(data_dir, account, settlement):
             if event_time < instant(obj.get("filled_at") or obj["decision_at"]):
                 raise ValueError("resolution predates intent or fill")
             if final:
-                expected = scenario_payout(contract, state, settlement.get("score"))
+                expected = (
+                    amount
+                    if state == "exchange_split"
+                    else scenario_payout(contract, state, settlement.get("score"))
+                )
                 if expected is None or expected != amount:
                     raise ValueError(
                         "exchange payout conflicts with archived contract rule; investigate before credit"

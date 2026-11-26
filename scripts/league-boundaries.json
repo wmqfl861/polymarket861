@@ -1,0 +1,535 @@
+{
+  "archive_proof.py": [
+    "raise ValueError(\"Gamma capture does not identify a unique matching EPL event\")"
+  ],
+  "datasets.py": [
+    "_atomic(root / season / \"en.1.json\", raw)",
+    "_get(BASE + f\"/contents/{season}/en.1.json?ref=\" + quote(revision))",
+    "address = f\"{revision}:{season}/en.1.json\"",
+    "captured = Path(scratch) / season / \"en.1.json\"",
+    "for p in root.glob(\"????-??/en.1.json\")",
+    "path = root / season / \"en.1.json\"",
+    "raise ValueError(\"expected an OpenFootball folder with SEASON/en.1.json\")",
+    "raise ValueError(\"invalid EPL season interval\")",
+    "url = f\"https://raw.githubusercontent.com/openfootball/football.json/{revision}/{season}/en.1.json\""
+  ],
+  "experiment_statistics.py": [
+    "\"\"\"Before the supported EPL season begins, registration is possible with an unpublished schedule.\"\"\"",
+    "if len({f[\"fixture_id\"] for f in first}) != 10:",
+    "int(season[:4]), 8, 1, tzinfo=ZoneInfo(\"Europe/London\")"
+  ],
+  "football.py": [
+    "\"time_zone\": \"Europe/London\" if league is None else league_registry.profile(league).timezone,",
+    "LONDON = ZoneInfo(\"Europe/London\")",
+    "code = league or \"epl\"",
+    "filename = \"en.1.json\" if league is None else league_registry.profile(league).source_file",
+    "help=\"use a registered domestic league; omit to reproduce the original EPL protocol\")",
+    "if \"league\" in obj and obj[\"league\"] != (league or \"epl\"):",
+    "if league in (None, \"epl\") and blobs.get(\"2019-20\") == SOURCE_BLOBS[\"2019-20\"]",
+    "if league in (None, \"epl\") and season == \"2019-20\" and sha == SOURCE_BLOBS[season]:",
+    "if league in (None, \"epl\") else",
+    "if league not in (None, \"epl\") and \"league\" not in obj:",
+    "if r[\"season\"] != \"2019\" or r[\"league\"] != \"Barclays Premier League\":",
+    "if s < season and nn == len(self.seasons[s]) and nn == 380}",
+    "league in (None, \"epl\") and season == \"2019-20\"",
+    "max_round = 38 if league is None else league_registry.round_count(league, season)",
+    "repair.add_argument(\"path\", type=Path, help=\"the pinned 2019-20/en.1.json\")",
+    "return f\"{league or 'epl'}/{season}/{_club_key(league, season, home)}/{_club_key(league, season, away)}\"",
+    "zone = LONDON if league is None else ZoneInfo(league_registry.profile(league).timezone)",
+    "zone = LONDON if self.league is None else ZoneInfo(league_registry.profile(self.league).timezone)"
+  ],
+  "football_candidates.py": [
+    "\"\"\"Walk-forward EPL research on coherent totals calibration and a first-appearance prior.\"\"\"",
+    "\"estimator\": \"attack and defensive strength of previously promoted team-seasons relative to EPL goals per team game\",",
+    "\"fold\": \"freeze both candidates each August 1 at 00:00 UTC; score the following EPL season\",",
+    "avg = total / (380 * 2)",
+    "if len(fixtures) != 380:",
+    "if len(table) != 20 or any(r[2] != 38 for r in table.values()):"
+  ],
+  "football_model.py": [
+    "\"\"\"Distribution of regulation-time EPL scores; no network or database access.\"\"\""
+  ],
+  "forward_window.py": [
+    "\"\" not in names and len(names) == len(set(names)) == 20",
+    "\"\"\"Preregister a fixed sequence of official EPL rounds, including unpublished rounds.\"\"\"",
+    "PROTOCOL = \"consecutive-official-epl-rounds-v1\"",
+    "advance, index = divmod(offset, 38)",
+    "if not 1 <= first <= 38 or not 1 <= span <= 38:",
+    "int(season[:4]), 8, 1, tzinfo=ZoneInfo(\"Europe/London\")",
+    "raise ValueError(\"an EPL window must name 1–38 consecutive official rounds\")"
+  ],
+  "historical_inputs.py": [
+    "\"\"\"Authenticate a historical run against input bytes and the first local receipt of an upstream EPL object.\"\"\"",
+    "# Locally archived EPL snapshots attest an upper bound, never an invented exact publication time."
+  ],
+  "independent_results.py": [
+    "\"\"\"Revision-attributed English Wikipedia match reports for the English Premier League.\"\"\"",
+    "\"INSERT INTO epl_wiki_receipts VALUES(?,?,?,?,?,?)\",",
+    "\"INSERT OR REPLACE INTO epl_wiki_checks VALUES(?,?,?,?)\",",
+    "\"SELECT * FROM epl_wiki_checks WHERE year=?\", (year,)",
+    "\"SELECT 1 FROM sqlite_master WHERE name='epl_wiki_receipts'\"",
+    "\"SELECT received FROM epl_wiki_receipts WHERE year=? ORDER BY received DESC LIMIT 1\",",
+    "\"UPDATE epl_wiki_checks SET next_check=?, status=? WHERE year=? AND attempted=?\",",
+    "# Read only the club's Premier League section. Cup and friendly scores have different",
+    "CREATE TABLE IF NOT EXISTS epl_wiki_checks(",
+    "CREATE TABLE IF NOT EXISTS epl_wiki_receipts(",
+    "SOURCE = \"wikipedia-en-epl\"",
+    "_SECTION = re.compile(r\"^(={2,5})[ \\t]*Premier League[ \\t]*\\1[ \\t]*$\", re.M | re.I)",
+    "f\"epl/{year}-{(year + 1) % 100:02d}/{home}/{away}\",",
+    "hour=int(clock[1]), minute=int(clock[2]), tzinfo=ZoneInfo(\"Europe/London\")",
+    "if len(participants) != 20:",
+    "if len(titles) != 20:",
+    "len(set(titles)) != 20",
+    "match_id = \"premierleague:\" + report[1] if report else None",
+    "r\"https?://(?:www\\.)?premierleague\\.com/(?:en/)?match/([1-9]\\d*)(?:[/?#][^\\s\\[\\]]*)?\",",
+    "raise ValueError(\"a complete English Premier League club roster is required\")",
+    "sql = \"\"\"SELECT r.*,o.metadata FROM epl_wiki_receipts r LEFT JOIN observations o"
+  ],
+  "input_manifest.py": [
+    "([path] if path and path.is_file() else sorted(path.glob(\"????-??/en.1.json\")))",
+    "_install(folder / item[\"season\"] / \"en.1.json\", raw)",
+    "if {p.parent.name for p in src.glob(\"????-??/en.1.json\")} != seasons:"
+  ],
+  "jobs_research.py": [
+    "\"Experiments on the same target require identical or nonoverlapping windows and a common baseline/track (38 official rounds for models)\"",
+    "\"new model windows require 38 official rounds and a valid starting round\"",
+    "\"rounds\", prior[\"span\"] if prior else (38 if kind == \"model\" else 12)",
+    "< (int(0.95 * forward[\"denominator\"]) if c[\"span\"] == 38 else 100)",
+    "c[\"span\"] != 38 or c[\"manifest\"].get(\"inference\") != stats.PROTOCOL",
+    "current = active_version(data_dir, \"model\", \"epl\", default=\"B1\", at=at)",
+    "def active_candidate(data_dir, kind=\"model\", scope=\"epl\", *, at=None):",
+    "def active_version(data_dir, kind=\"model\", scope=\"epl\", default=None, *, at=None):",
+    "if _closed(season_games, 1, 38, as_of):",
+    "if incumbent is None and (kind, scope) == (\"model\", \"epl\"):",
+    "if incumbent is None and (kind, scope) == (\"model\", \"epl\"):",
+    "if scope != \"epl\":",
+    "if type(round_id) is not int or not 1 <= round_id <= 38:",
+    "if version is None and (kind, scope, default) == (\"model\", \"epl\", \"B1\"):",
+    "or (c[\"span\"] == 38 and forward[\"rounds\"] != 38)",
+    "or (kind == \"model\" and span != (prior[\"span\"] if prior else 38))",
+    "or not 1 <= first <= (38 if kind == \"model\" else 39 - span)",
+    "raise ValueError(\"This model registry scores EPL fixtures\")",
+    "raise ValueError(\"Use an EPL season such as 2026-27\")",
+    "raise ValueError(\"round_id must be an official EPL round\")",
+    "return (kind, scope, candidate) == (\"model\", \"epl\", None) and (",
+    "return not version or _is_builtin(conn, \"model\", \"epl\", version, candidate)",
+    "scope = scope or (\"epl\" if kind == \"model\" else manifest.get(\"field\"))",
+    "season_games = _window_fixtures(schedule, season, 1, 38)",
+    "version, candidate = _pointer(conn, \"model\", \"epl\", at)"
+  ],
+  "kickoff_proof.py": [
+    "\"\"\"Proven first-half event times for a particular EPL fixture and schedule revision.\"\"\"",
+    "BASE = \"https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/summary?event=\"",
+    "SOURCE = \"espn-epl-first-half-wallclock\"",
+    "raise ValueError(\"unsupported independent EPL event response\") from exc",
+    "{\"url\": url, \"method\": \"GET\", \"parser\": \"espn-epl-summary-v1\"}"
+  ],
+  "league_catalog.py": [
+    "audit.add_argument(\"history\", type=Path, help=\"包含 YYYY-YY/de.1.json 等文件的根目录\")",
+    "if league == \"epl\" and season == \"2019-20\" and (day.year, day.month) == (2019, 7):"
+  ],
+  "league_registry.py": [
+    "\"epl\": {},",
+    "\"https://www.premierleague.com/en/media/publications\",",
+    "\"https://www.premierleague.com/en/news/3830154\",",
+    "\"https://www.premierleague.com/en/news/3885238\",",
+    "\"https://www.premierleague.com/en/news/3930809\")),",
+    "(\"epl\", \"2023-24\", \"AFC Bournemouth\", \"Luton Town FC\", \"replayed\", \"2024-03-13\", \"2023-12-16\", \"2024-03-13\", (",
+    "LeagueProfile(\"bun\", \"de\", \"Bundesliga\", \"Europe/Berlin\", 60,",
+    "LeagueProfile(\"epl\", \"en\", \"Premier League\", \"Europe/London\", 75,",
+    "LeagueProfile(\"fl1\", \"fr\", \"Ligue 1\", \"Europe/Paris\", 75,",
+    "LeagueProfile(\"lal\", \"es\", \"LaLiga\", \"Europe/Madrid\", 75,",
+    "LeagueProfile(\"sea\", \"it\", \"Serie A\", \"Europe/Rome\", 60,"
+  ],
+  "league_source_rights.py": [
+    "\"epl\": (\"Premier League\", \"https://www.premierleague.com/en/terms-and-conditions\"),",
+    "\"touchline\": {",
+    "\"url\": \"https://touchlinewire.com/docs\", \"terms\": [\"https://touchlinewire.com/docs#attribution\", \"https://touchlinewire.com/terms.html\"],",
+    "LANG = {\"epl\": \"en\", \"lal\": \"es\", \"bun\": \"de\", \"sea\": \"it\", \"fl1\": \"fr\"}",
+    "fields[\"player_availability\"].append(\"touchline\")",
+    "fields[\"rumours\"].append(\"touchline\")",
+    "if league == \"epl\":",
+    "if league == \"epl\":",
+    "row[\"touchline_directory\"] = {k: proof[k] for k in (\"membership_sha256\", \"valid_from\", \"valid_until\", \"membership_url\")}"
+  ],
+  "league_study.py": [
+    "\"prior_disclosure\": \"EPL holdout outcomes and five-league descriptive aggregates were public.\","
+  ],
+  "ledger.py": [
+    "\"candidate registration does not bind this EPL account and model version\"",
+    "\"only the active EPL model at the decision cutoff can enter the main account\"",
+    "or c[\"scope\"] != \"epl\""
+  ],
+  "ledger_terms.py": [
+    "\"epl\": \"premier league\",",
+    "\"epl\": _REVIEW,",
+    "sport = str(market.get(\"fixture\", \"epl\")).split(\"-\", 1)[0]",
+    "sport = str(market.get(\"fixture\", \"epl\")).split(\"-\", 1)[0]"
+  ],
+  "maintenance.py": [
+    "if report.get(\"expected\", 0) != 10 or report.get(\"completed\") != 10:"
+  ],
+  "market_archive.py": [
+    "\"\"\"Count archived fixture slugs and mapped full-time listings by EPL season.\"\"\"",
+    "\"SELECT sha FROM ma_requests WHERE operation='sports' AND selector='epl' \"",
+    "\"catalog\", help=\"walk official EPL directory for a season starting in YEAR\"",
+    "\"denominator\": \"Archived EPL main/auxiliary fixture slugs. Event listings do not prove pregame buying depth.\",",
+    "\"denominator\": \"events matching the dated catalog query, not all EPL fixtures\",",
+    "\"discover\", help=\"record a main EPL fixture and its more-markets event\"",
+    "\"supply a main EPL fixture slug such as epl-not-che-2026-11-27\"",
+    "for contract in provider.normalized_markets(event, sport=sport or \"epl\"):",
+    "league = next((x for x in sports if x.get(\"sport\") == \"epl\"), {})",
+    "match = provider.SPORT_FIXTURES[sport or \"epl\"].fullmatch(str(event.get(\"slug\", \"\")))",
+    "raise ValueError(\"EPL league tag not found\")",
+    "raise ValueError(\"a main EPL slug is required\")",
+    "raise ValueError(\"coverage requires main EPL fixture slugs\")",
+    "raise ValueError(\"invalid EPL exchange event slug\")",
+    "sports, _, _ = _fetch(root, \"sports\", \"epl\", GAMMA + \"/sports\")"
+  ],
+  "market_provider.py": [
+    "\"epl\": (\"10188\", \"306\"),",
+    "# Early EPL binaries lack sportsMarketType. Only recover the strict fixture,",
+    "# Existing public interfaces deliberately keep an EPL-only default.",
+    "FIXTURE = SPORT_FIXTURES[\"epl\"]",
+    "def family(event: dict, market: dict, *, sport: str = \"epl\") -> tuple[str | None, str | None, str | None]:",
+    "def normalized_markets(event: dict, *, sport: str = \"epl\") -> list[dict]:",
+    "if sport == \"epl\" and typ is None and not identity[5]:",
+    "return None, None, \"not_an_epl_fixture\" if sport == \"epl\" else \"wrong_sport_fixture\""
+  ],
+  "model_study.py": [
+    "if n != 380 * len(candidate[\"seasons\"]) or any(",
+    "if not forward_window.complete(rows, forward_window.rounds(name, 1, 38)) or any(",
+    "len(g) != 10 for g in groups.values()",
+    "path = Path(root) / name / \"en.1.json\""
+  ],
+  "news.py": [
+    "\"epl-team-news\",",
+    "CASE s.source WHEN 'touchline-availability' THEN 'availability'",
+    "RESEARCH_SOURCE = \"epl-team-news\"",
+    "WHEN 'touchline-rumours' THEN 'rumours' WHEN 'wikipedia-season-news' THEN 'wiki'",
+    "WHERE a.source='touchline-availability' AND a.seq IN (SELECT value FROM json_each(?))\"\"\",",
+    "and row[\"source\"] != \"touchline-rumours\"",
+    "def _timetables(fixtures, league=\"epl\"):",
+    "identity and player.get(\"identity_basis\") == \"touchline_directory_id\" else {}),",
+    "if \"wire_observations\" in response and task[\"source\"] == \"touchline-availability\":",
+    "if (ident == \"touchline-availability\" and",
+    "if (src[\"id\"] == \"touchline-availability\" and src[\"status\"] == \"partial\" and",
+    "if fact[\"source\"] == \"touchline-availability\" and raw.get(\"time_basis\") != \"provider_snapshot\":",
+    "if ident == \"wikipedia-season-news\" and league != \"epl\":",
+    "if item[\"identity_basis\"] == \"touchline_directory_id\":",
+    "if news_scope.competition(game) != \"epl\" and state in (\"ok\", \"degraded\", \"partial\"):",
+    "if provider_identity and provider_identity[\"identity_basis\"] == \"touchline_directory_id\":",
+    "if row[\"source\"] == \"touchline-availability\" and state in (\"ok\", \"degraded\", \"partial\"):",
+    "if row[\"source\"] == \"wikipedia-season-news\" and news_scope.competition(game) != \"epl\":",
+    "if src[\"id\"] == \"touchline-availability\"), None)",
+    "if task[\"source\"] != \"touchline-rumours\" or before > received:",
+    "kick = store.instant(game[\"kickoff\"]).astimezone(ZoneInfo(\"Europe/London\"))",
+    "r\"\\b(?:premier league|premiership|epl|(?:upcoming|coming|rest of the|remainder of the) season|\"",
+    "source.get(\"kind\") != \"touchline\"",
+    "store.archive_bytes(root, \"epl-news-rejected\", raw, observed_at=received,",
+    "store.put_report(db, \"news-coverage\", \"epl-teams\", _status_db(db))",
+    "structured = task[\"source\"] == news_sources.WIRE and task[\"config\"].get(\"kind\") == \"touchline\""
+  ],
+  "news_accumulation.py": [
+    "\"expected\": 380 * len(seasons),"
+  ],
+  "news_admission.py": [
+    "LANGUAGES = {\"epl\": \"en\", \"lal\": \"es\", \"bun\": \"de\", \"sea\": \"it\", \"fl1\": \"fr\"}"
+  ],
+  "news_ai_benchmark.py": [
+    "(\"official\", \"An update from the club confirms Mikkel Dahl is suspended for the Premier League game.\", [(\"dahl\", \"suspension\", \"confirmed\", \"out\")]),",
+    "if corpus[\"protocol\"] != \"epl-official-club-prose-excerpts-v1\":"
+  ],
+  "news_endpoint_study.py": [
+    "\"\"\"Prospective EPL news price-gap study; opt-in registration never retrofits existing seals.\"\"\"",
+    "\"population\": \"EPL primary seals using the named native declaration and timely study-qualified news for both clubs. Include zero news changes. Only the first bound probability era is eligible, selected by capture order without reference to news movement, outcomes, coverage or available books. Capture starts at the real local clock immediately following enrollment.\",",
+    "\"version\": \"epl-news-home-and-full-over-v1\", \"eligible_seasons\": SEASONS, \"ends_at_exclusive\": END,",
+    "AND NEW.fixture_id GLOB ('epl/' || json_extract(NEW.data_json,'$.season') || '/*')",
+    "if f[\"fixture_id\"].startswith(f\"epl/{season}/\")]",
+    "raise ValueError(\"EPL endpoint study capture trigger missing or changed\")",
+    "raise ValueError(\"Invalid stored EPL endpoint study declaration\")"
+  ],
+  "news_evaluation.py": [
+    "361  # Same 95% coverage floor as the 38-round probability research protocol.",
+    "and completed == expected == 380",
+    "and len(clusters) == 38",
+    "expected = max(10 if rnd else 380, len(records))",
+    "if rnd is not None and (type(rnd) is not int or not 1 <= rnd <= 38):",
+    "len(clubs) == 20",
+    "len(group) == 10 and len({c for pair in group for c in pair}) == 20",
+    "raise ValueError(\"select an official EPL round from 1 through 38\")"
+  ],
+  "news_events.py": [
+    "\"'rf_native_requests','epl_wiki_receipts')\"",
+    "\"SELECT max(rowid) FROM epl_wiki_receipts WHERE year=? AND received<=?\", (year, at)).fetchone()[0]",
+    "PROTOCOL = \"epl-news-event-v1\"",
+    "if \"epl_wiki_receipts\" in tables:"
+  ],
+  "news_importance.py": [
+    "\"\"\"Bound the club's EPL usage, including transparent losses from departed players.\"\"\"",
+    "\"\"\"Point-in-time EPL minutes/starts for the research news arm.\"\"\"",
+    "\"basis\": \"epl_season_minutes_and_starts\", \"matches\": played, \"known_at\": row[\"known_at\"],",
+    "\"directory_basis\": \"mean of minutes/(90*completed EPL matches) and starts/completed EPL matches\",",
+    "\"lineup_basis\": \"share of prior completed EPL matches with a confirmed start\",",
+    "direct = f\"touchline:epl:{provider_id}\"",
+    "if (not POLICY[\"minimum_matches\"] <= played <= 38",
+    "if basis == \"epl_season_minutes_and_starts\":",
+    "if member.get(\"identity_basis\") == \"touchline_directory_id\" and member.get(\"provider_player_id\") == provider_id:",
+    "if not 1 <= played <= 38:",
+    "joined = (member.get(\"identity_basis\") == \"touchline_id_to_roster\" and",
+    "or type(matches) is not int or not POLICY[\"minimum_matches\"] <= matches <= 38",
+    "ordinary = [p for p in players.values() if p.get(\"identity_basis\") != \"touchline_directory_id\"]"
+  ],
+  "news_market.py": [
+    "\"SELECT 1 FROM sqlite_master WHERE name='epl_schedule_holds'\"",
+    "\"SELECT 1 FROM sqlite_master WHERE name='epl_schedule_reviews'\"",
+    "\"SELECT action FROM epl_schedule_reviews WHERE fixture=? AND version=? AND at<? ORDER BY at DESC LIMIT 1\",",
+    "\"SELECT reason FROM epl_schedule_holds WHERE fixture=? AND version=? AND at<? ORDER BY at DESC LIMIT 1\",",
+    "(\"epl_schedule_holds\", \"reason\", lambda reason: bool(reason)),",
+    "(\"epl_schedule_reviews\", \"action\", lambda action: action == \"withdrawn\"),",
+    "action = \"A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals.\""
+  ],
+  "news_minutes.py": [
+    "\"\"\"Locally received, season-to-date EPL appearances from the public player directory.\"\"\"",
+    "ATTRIBUTION = \"Tactical Data by Touchline Wire (https://touchlinewire.com). Normalized factual fields.\"",
+    "SOURCE = \"touchline-epl-player-usage\"",
+    "if (not isinstance(row, dict) or row.get(\"league\") != \"epl\" or",
+    "if news_scope.competition(r) == \"epl\"]",
+    "if type(appearances) is not int or not starts <= appearances <= 38 or (appearances == 0 and minutes):",
+    "raise ValueError(\"incomplete EPL player directory\")",
+    "type(minutes) is not int or not 0 <= minutes <= 38 * 90 or",
+    "type(starts) is not int or not 0 <= starts <= 38 or"
+  ],
+  "news_model.py": [
+    "\"wire_source\": \"touchline-availability\",",
+    "PROTOCOL = \"epl-player-news-paired-v3\"",
+    "if history.get(\"basis\") == \"epl_season_minutes_and_starts\":",
+    "if news_scope.competition(baseline) != \"epl\":"
+  ],
+  "news_retention.py": [
+    "EXCEPT SELECT sha256 FROM observations WHERE source<>'epl-team-news'",
+    "WHERE a.source='touchline-availability' AND a.recorded_at<=?",
+    "coalesce(sum((SELECT max(o.size) FROM observations o WHERE o.source='epl-team-news'"
+  ],
+  "news_roster.py": [
+    "if page.get(\"missing\") and page.get(\"ns\") == 10:",
+    "if page.get(\"missing\") or page.get(\"ns\") != 10 or len(revs) != 1:",
+    "raise ValueError(\"expected a club name from an EPL fixture\")"
+  ],
+  "news_scope.py": [
+    "\"\"\"The pre-multileague store also allowed operator-assigned opaque EPL fixture IDs.\"\"\"",
+    "\"competition\": \"epl\",",
+    "\"epl\": (\"epl\", \"premier league\", \"english premier league\"),",
+    "\"membership_url\": \"https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627\",",
+    "\"provider_scope_url\": \"https://touchlinewire.com/docs\",",
+    "\"source\": \"touchline-availability\",",
+    "# The Premier League's dated fixture release identifies all 20 competing clubs.",
+    "and _DECISION.search(target) and re.search(r\"\\b(?:premier league|premiership|epl)\\b\", target, re.I))",
+    "def wire_coverage(team, season, league=\"epl\", at=None):",
+    "if row.get(\"source\") == \"touchline-availability\" or row.get(\"time_basis\") == \"provider_snapshot\":",
+    "r\"\\b(?:premier league|premiership|epl|against|versus|vs\\.?|match|game|fixture|clash|\"",
+    "return (None if named and prefix and named != prefix else named or prefix or \"epl\")"
+  ],
+  "news_sources.py": [
+    "\"attribution\": \"Tactical Data by Touchline Wire (https://touchlinewire.com). Normalized factual fields.\",",
+    "**shared, \"kind\": \"touchline\", \"origin\": \"touchlinewire.com\",",
+    "RUMOURS = \"touchline-rumours\"",
+    "WIRE = \"touchline-availability\"",
+    "WIRE_HOST = \"https://touchlinewire.com\"",
+    "WIRE_MODEL = \"touchline-availability-fields-v2\"",
+    "def active_sources(team, season, league=\"epl\", at=None):",
+    "def poll(source, team, season, cursor=None, *, getter=None, league=\"epl\"):",
+    "if league != \"epl\" or (season == news_scope.WIRE_MEMBERSHIP[\"season\"] and not scope):"
+  ],
+  "news_study_plan.py": [
+    "\"epl-player-news-paired-v1\",",
+    "\"epl-player-news-paired-v2\",",
+    "\"version\": \"epl-news-observed-pairs-v1\",",
+    "\"version\": \"epl-news-observed-pairs-v2\",",
+    "return (source.get(\"id\") == \"touchline-availability\" and source.get(\"status\") == \"partial\""
+  ],
+  "news_wire_identity.py": [
+    "\"\"\"Exclude positively conflicting EPL memberships known by this cutoff.\"\"\"",
+    "# The same validation of original, club, EPL season and played-game",
+    "and current[\"identity_basis\"] == \"touchline_directory_id\"",
+    "and evidence[\"identity_basis\"] == \"touchline_directory_id\"",
+    "else \"touchline_directory_id\",",
+    "else \"touchline_id_to_roster\"",
+    "external = f\"touchline:epl:{number}\"",
+    "if row[\"zero_appearances\"] and row[\"identity_basis\"] == \"touchline_directory_id\":",
+    "or row[\"identity_basis\"] == \"touchline_id_to_roster\""
+  ],
+  "opportunity.py": [
+    "raise ValueError(\"a main EPL event slug is required\")",
+    "raise ValueError(\"supply the main EPL exchange fixture slug\")"
+  ],
+  "paired_proof.py": [
+    "# The trusted manifest attests the actual EPL Git blobs. Also check the",
+    "# been checked. A local fixture import cannot certify an upstream EPL corpus.",
+    "if p.name != \"en.1.json\":",
+    "if sorted(p.parent.name for p in root.glob(\"????-??/en.1.json\")) != [",
+    "input_manifest._install(base / \"sources\" / f[\"season\"] / \"en.1.json\", raw)",
+    "len(group) != 380",
+    "or len(names) != 20",
+    "or len({f.fixture_id for f in group}) != 380",
+    "paths = [root] if root.is_file() else sorted(root.glob(\"????-??/en.1.json\"))",
+    "raise ValueError(\"expected an EPL season/en.1.json\")"
+  ],
+  "pipeline.py": [
+    "\"epl\",",
+    "data_dir, \"model\", \"epl\", default=\"B1\", at=iso(min(deadline, arrival))"
+  ],
+  "qualification.py": [
+    "and final == 10",
+    "and len(group) == 10",
+    "if any(row.get(\"n\") != 380 for row in horizon[\"by_season\"].values()):",
+    "len(clubs) == 20",
+    "raise ValueError(\"give at least one finished EPL event slug\")",
+    "raise ValueError(\"market study needs a registered EPL fixture scope\")"
+  ],
+  "research_workspace.py": [
+    "baseline = jobs_research.active_version(data_dir, \"model\", \"epl\", default=\"B1\")",
+    "files = sorted(history.glob(\"????-??/en.1.json\"))",
+    "if not 1 <= rnd <= 38:",
+    "or len(items) != 10",
+    "or len({f[\"fixture_id\"] for f in items}) != 10",
+    "or not 1 <= rnd <= 38",
+    "or values[\"missing\"] != 10 - values[\"count\"]",
+    "raise ValueError(\"sample round must be between 1 and 38\")",
+    "v[\"count\"] != 10 or v[\"expected\"] != 10 or v[\"score\"] is None"
+  ],
+  "result_admission.py": [
+    "base = f\"{feed.BASE}/getmatchdata/pl/{year}\"",
+    "f\"epl-overdue-results-{year}\",",
+    "f\"epl-result-conflicts-{year}\",",
+    "if not 1 <= rnd <= 38:",
+    "store.put_report(db, \"source\", f\"epl-regulation-{year}\", report)",
+    "target = Path(tmp) / season / \"en.1.json\""
+  ],
+  "result_feed.py": [
+    "\"\"\"Licensed EPL match results, independent regulation confirmation and research sidecars.\"\"\"",
+    "# refetch after bootstrap is deliberately not an automatic poll of 380 matches.",
+    "f\"openligadb-epl-{year}-score-conflicts\",",
+    "if not 2000 <= year <= 2100 or (round_id is not None and not 1 <= round_id <= 38):",
+    "if year == 2026 and match.get(\"leagueId\") != 5996:",
+    "or match.get(\"leagueShortcut\") != \"pl\"",
+    "or not 1 <= rnd <= 38",
+    "raise ValueError(\"duplicate/invalid EPL fixture identity\")",
+    "raise ValueError(\"empty EPL feed\")",
+    "raise ValueError(\"empty EPL feed\")",
+    "raise ValueError(\"invalid EPL season or round\")",
+    "raise ValueError(\"missing EPL team identity\")",
+    "raise ValueError(\"unexpected EPL league id for 2026\")",
+    "save_report(root, \"source\", f\"openligadb-epl-{year}\", result)",
+    "url = f\"{BASE}/getmatchdata/pl/{year}\" + (f\"/{round_id}\" if round_id else \"\")"
+  ],
+  "result_operations.py": [
+    "raise ValueError(\"invalid EPL season\")",
+    "store.save_report(root, \"source\", f\"epl-regulation-{year}\", report)"
+  ],
+  "result_pairings.py": [
+    "\"\"\"As-of evidence for linking a regulation final to its registered EPL fixture.\"\"\"",
+    "# A published ID must remain associated with one ordered EPL pair and round."
+  ],
+  "result_training_review.py": [
+    "raise ValueError(\"unknown registered EPL fixture\")"
+  ],
+  "round_history.py": [
+    "if type(round_id) is not int or not 1 <= round_id <= 38:",
+    "if type(round_id) is not int or not 1 <= round_id <= 38:",
+    "raise ValueError(\"unknown EPL round\")",
+    "raise ValueError(\"unknown EPL round\")",
+    "raise ValueError(\"unknown EPL round; register its schedule first\")"
+  ],
+  "runner.py": [
+    "\"\"\"Dispatch live EPL forecasts into their real decision windows from a local timer.\"\"\"",
+    "data_dir, \"model\", \"epl\", default=\"B1\", at=at",
+    "jobs.active_version(data_dir, \"model\", \"epl\", default=\"B1\", at=observed)"
+  ],
+  "schedule_consensus.py": [
+    "\"(SELECT h.reason FROM epl_schedule_holds h WHERE h.fixture=p.fixture AND h.version=p.version ORDER BY h.at DESC LIMIT 1) IS NULL \"",
+    "\"INSERT INTO epl_schedule_proofs VALUES(?,?,?,?)\",",
+    "\"INSERT INTO epl_schedule_reviews VALUES(?,?,?,?,?,?,?)\",",
+    "\"INSERT INTO epl_schedule_reviews VALUES(?,?,?,?,?,?,?)\",",
+    "\"INSERT OR IGNORE INTO epl_schedule_competitions VALUES(?,?,?)\",",
+    "\"INSERT OR IGNORE INTO epl_schedule_proofs VALUES(?,?,?,?)\",",
+    "\"INSERT OR IGNORE INTO epl_schedule_result_receipts \"",
+    "\"INSERT OR REPLACE INTO epl_schedule_holds VALUES(?,?,?,?)\",",
+    "\"JOIN epl_schedule_proofs p ON p.fixture=r.fixture_id AND s.kickoff=json_extract(p.proof,'$.kickoff') \"",
+    "\"SELECT * FROM epl_schedule_competitions WHERE year=? AND received<=?\",",
+    "\"SELECT * FROM epl_schedule_proofs WHERE fixture=? AND version=? \"",
+    "\"SELECT * FROM epl_schedule_reviews WHERE fixture=? AND version=? AND at<=? ORDER BY at DESC LIMIT 1\",",
+    "\"SELECT 1 FROM epl_schedule_competitions WHERE year=?\", (year,)",
+    "\"SELECT 1 FROM epl_schedule_proofs WHERE fixture=? AND version=?\",",
+    "\"SELECT 1 FROM sqlite_master WHERE name='epl_schedule_holds'\"",
+    "\"SELECT 1 FROM sqlite_master WHERE name='epl_schedule_proofs'\"",
+    "\"SELECT p.*,f.kickoff,f.locator,f.known_at FROM epl_schedule_proofs p JOIN fixture_versions f \"",
+    "\"SELECT payload FROM reports WHERE kind='incident' AND key LIKE 'epl-schedule-review-%'\"",
+    "\"SELECT reason FROM epl_schedule_holds WHERE fixture=? AND version=? AND at<=? ORDER BY at DESC LIMIT 1\",",
+    "\"SELECT reason FROM epl_schedule_holds WHERE fixture=? AND version=? AND at<=? ORDER BY at DESC LIMIT 1\",",
+    "\"expected_in_round\": 10 if round_id is not None else None,",
+    "\"unconfirmed bulk placeholder kickoff for this EPL round\"",
+    "(SELECT max(rowid) FROM epl_schedule_proofs), (SELECT count(*) FROM epl_schedule_proofs),",
+    "(SELECT max(rowid) FROM epl_schedule_reviews), (SELECT max(rowid) FROM epl_schedule_holds),",
+    "(f\"epl-schedule-review-{year}\",),",
+    "CREATE TABLE IF NOT EXISTS epl_schedule_competitions(",
+    "CREATE TABLE IF NOT EXISTS epl_schedule_holds(",
+    "CREATE TABLE IF NOT EXISTS epl_schedule_proofs(",
+    "CREATE TABLE IF NOT EXISTS epl_schedule_result_receipts(",
+    "CREATE TABLE IF NOT EXISTS epl_schedule_reviews(",
+    "KNOWN_EPL = {2026: 5996}",
+    "complete = round_registered == 10 if round_id is not None else True",
+    "f\"epl-schedule-review-{year}\",",
+    "for r in db.execute(\"SELECT * FROM epl_schedule_result_receipts\")",
+    "for r in db.execute(\"SELECT fixture,version FROM epl_schedule_proofs\")",
+    "if r.get(\"leagueShortcut\") == \"pl\"",
+    "if year in KNOWN_EPL:",
+    "if year in KNOWN_EPL:",
+    "or not {\"soccer\", \"premier-league\"} <= tags",
+    "raise ValueError(\"Gamma lacks unique ordered EPL participants\")",
+    "raise ValueError(\"incorrect registered OpenLigaDB EPL season\")",
+    "raise ValueError(\"ineligible Gamma EPL identity or game state\")",
+    "raise ValueError(\"not a main EPL exchange event\")",
+    "raise ValueError(\"proposed kickoff is outside the registered EPL season\")",
+    "raise ValueError(\"unregistered EPL fixture\")",
+    "raise ValueError(\"unverified or ambiguous OpenLigaDB EPL competition\")",
+    "return KNOWN_EPL[year]",
+    "return f\"Premier League {year}/{year + 1}\"",
+    "store.put_report(db, \"source\", \"epl-upcoming-schedules-\" + str(year), report)",
+    "url = f\"{result_feed.BASE}/getmatchdata/pl/{year}/{rnd}\""
+  ],
+  "season.py": [
+    "\"\"\"One durable EPL matchday coordinator for collection, forecasts and paper accounts.\"\"\"",
+    "root, \"epl-week\", start, end, pages=30, page_size=50",
+    "store.put_report(db, \"news-coverage\", \"epl-teams\", coverage)"
+  ],
+  "season_health.py": [
+    "f\"{len(fixtures)} overdue EPL results: \" + \", \".join(fixtures[:12]),",
+    "yield \"degraded\", \"EPL result reconciliation is degraded\"",
+    "yield \"quarantined\", f\"{len(result['quarantined'])} quarantined EPL results\""
+  ],
+  "season_readiness.py": [
+    "\"schema\": \"epl-season-readiness-v1\",",
+    "if not 2000 <= year <= 2100 or round_id is not None and not 1 <= round_id <= 38:",
+    "raise ValueError(\"select an EPL season year and a matchweek from 1 through 38\")"
+  ],
+  "shadow.py": [
+    "if not key[0] or type(key[1]) != int or not 1 <= key[1] <= 38:"
+  ],
+  "store.py": [
+    "PROTOCOL = \"epl-v1.1\"",
+    "if isinstance(rnd, bool) or not isinstance(rnd, int) or not 1 <= rnd <= 38:",
+    "raise ValueError(\"EPL round_id must be an integer from 1 to 38\")"
+  ],
+  "strategy.py": [
+    "\"require a positive fixed match budget and a valid starting EPL round\"",
+    "or len(grouped) == 38",
+    "or not 1 <= first_round <= 38",
+    "raise ValueError(\"expected EPL season in YYYY-YY form\")",
+    "span = previous.get(\"rounds\", 38)"
+  ],
+  "trial_evidence.py": [
+    "by_season[s].get(\"eligible_completed\") != 380 for s in seasons",
+    "expected = 380 * len(seasons)"
+  ]
+}

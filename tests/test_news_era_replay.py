@@ -30,7 +30,7 @@ class EraReplayTests(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.root, self.history = Path(tmp.name) / "app", Path(tmp.name) / "history"
-        self.current = pipeline._build_recipe("B1", (0.5, 1.5, 2.5, 3.5))
+        self.current = pipeline._study_recipe(pipeline._build_recipe("B1", (0.5, 1.5, 2.5, 3.5)))
         self.previous = deepcopy(self.current)
         # Represent an incidental numerical packaging change. Both executions
         # actually run the real team model, news model, and all configured lines.
@@ -153,8 +153,8 @@ class EraReplayTests(unittest.TestCase):
             patch.object(model_study, "PACKAGE_ROOT", Path(tmp)),
         ):
             (Path(tmp) / "runner.py").write_text("a = 1\n")
-            reduced = pipeline._build_recipe("B1", self.current["lines"])
-        self.assertIn("runner.py", reduced["algorithm_source"])
+            reduced = pipeline._study_recipe(pipeline._build_recipe("B1", self.current["lines"]))
+        self.assertNotIn("runner.py", reduced["algorithm_source"])
         self.assertIsNone(reduced["news_frozen_feature_source"])
         original = self.seal(0, self.previous)
         source_era = original["news_study"]["era_sha256"]
@@ -244,8 +244,8 @@ class EraReplayTests(unittest.TestCase):
                         self.assertEqual(original.count(before), 1)
                         path.write_text(original.replace(before, after))
                         try:
-                            candidate = pipeline._build_recipe(
-                                "B1", self.current["lines"]
+                            candidate = pipeline._study_recipe(
+                                pipeline._build_recipe("B1", self.current["lines"])
                             )
                             spec = importlib.util.spec_from_file_location(
                                 f"polymarket861._changed_{name}", path

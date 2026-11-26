@@ -426,14 +426,14 @@ class EraTests(unittest.TestCase):
     def test_narrow_probability_source_and_runtime_while_physical_gate_stays_whole(
         self,
     ):
-        recipe = pipeline._build_recipe("B1", (1.5, 2.5))
+        recipe = pipeline._study_recipe(pipeline._build_recipe("B1", (1.5, 2.5)))
         pair = {
             "protocol": news_model.PROTOCOL,
             "availability_basis": news_model.LOCAL,
             "policy_sha256": news_model.POLICY_SHA256,
         }
         expected = plan.era(recipe, pair, "a" * 64)
-        self.assertIn("ledger.py", recipe["algorithm_source"])
+        self.assertNotIn("ledger.py", recipe["algorithm_source"])
         self.assertNotIn("ledger.py", recipe["news_probability_source"])
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -457,9 +457,9 @@ class EraTests(unittest.TestCase):
                 identity(definition), identity(definition.replace("RATE=2", "RATE=3"))
             )
         changed = deepcopy(recipe)
-        changed["algorithm_source"]["ledger.py"] = "b" * 64
+        changed["algorithm_source"]["input_manifest.py"] = "b" * 64
         self.assertNotEqual(store.digest(changed), store.digest(recipe))
-        self.assertEqual(plan.era(changed, pair, "a" * 64), expected)
+        self.assertNotEqual(plan.era(changed, pair, "a" * 64), expected)
         for new_recipe, candidate, extractor in (
             (recipe | {"lines": [2.5]}, pair, "a" * 64),
             (recipe | {"numeric_runtime": {"scipy": "other"}}, pair, "a" * 64),
@@ -536,12 +536,8 @@ class EraTests(unittest.TestCase):
                 raw["news_pair"]["protocol"], raw["news_pair"]["policy_sha256"] = (
                     plan.LEGACY_POLICY
                 )
-                recipe = json.loads(
-                    db.execute(
-                        "SELECT recipe FROM model_recipes WHERE version=?",
-                        (raw["model_version"],),
-                    ).fetchone()[0]
-                )
+                recipe = plan.sealed_recipe(db, raw)
+                del raw["news_recipe_sha256"], recipe["recipe_format"]
                 del recipe["news_probability_policy"], recipe["news_probability_source"]
                 raw["recipe_digest"] = store.digest(recipe)
                 db.execute(

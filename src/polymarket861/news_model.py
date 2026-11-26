@@ -8,7 +8,7 @@ from datetime import timedelta
 import math
 import re
 
-from . import football, football_model, news_importance, store
+from . import football, football_model, news_importance, news_scope, store
 from .news import COVERAGE_AGE
 
 PROTOCOL = "epl-player-news-paired-v3"
@@ -36,7 +36,7 @@ POLICY = {
     "wire_absence_probability": "reported.out * (1 - chance_of_playing / 100)",
     "wire_max_age_hours": COVERAGE_AGE / timedelta(hours=1),
     "duration": {
-        "basis": "fraction of team training-match weight from before the first observed absence",
+        "basis": "fraction of team training-match weight preceding the verified native injury onset or first observed absence",
         "decay_per_day": football_model.DECAY_PER_DAY,
         "cohort": "exact eligible B1 matches for this club; a match counts as exposed only after observed onset",
         "unavailable": "retain full duration factor and label unavailable training exposure",
@@ -126,6 +126,17 @@ def _timing(row, cutoff, basis, pub, received, training_kickoffs=None):
         if chance is not None and (type(chance) is not int or not 0 <= chance <= 100):
             return details, "invalid_playing_probability"
         details["chance_of_playing"] = chance
+        if row.get("event") == "injury":
+            # Only this edition's first publication and local receipt can disclose a
+            # retrospective medical date. Neither moves the eligibility clock.
+            if row.get("injury_started_at") is not None:
+                onset = store.instant(row["injury_started_at"])
+                if onset > pub:
+                    return details, "invalid_native_injury_onset"
+                details["injury_onset_basis"] = "provider_injury_started_at"
+            elif row.get("injury_date") is not None:
+                onset = news_scope.injury_date_upper_bound(row["injury_date"], pub)
+                details["injury_onset_basis"] = "provider_injury_date_upper_bound"
     elif cutoff - pub > timedelta(days=POLICY["max_publication_age_days"]):
         return details, "publication_outside_window"
     details["duration_from"] = store.iso(onset)
@@ -197,6 +208,15 @@ def _inspect(row, cutoff, clubs, basis, baseline, training_kickoffs=None):
     if not side:
         return item, "different_team"
     item["side"] = side
+    if row.get("source") == POLICY["wire_source"]:
+        if not _wire(row):
+            return item, "missing_local_wire_observation"
+        year = cutoff.year - (cutoff.month < 7)
+        season = baseline.get("season") or row.get("season") or f"{year}-{(year + 1) % 100:02}"
+        if not news_scope.wire_coverage(row["team"], season, news_scope.competition(baseline), cutoff):
+            return item, "source_not_covered"
+    if news_scope.competition(baseline) != "epl":
+        return item, "league_news_not_validated"
     try:
         pub = store.instant(row["published_at"])
         effective = store.instant(row.get("effective_at") or row["published_at"])
@@ -249,6 +269,11 @@ def _inspect(row, cutoff, clubs, basis, baseline, training_kickoffs=None):
         return item, "invalid_claim_clocks"
     if item["event"] not in {"injury", "suspension", "availability", "return"}:
         return item, "unsupported_event"
+    if not news_scope.suspension_applies(row, news_scope.competition(baseline)):
+        item["suspension_competition"] = row.get("suspension_competition")
+        return item, "suspension_competition_unverified"
+    if item["event"] == "suspension":
+        item["suspension_competition"] = row.get("suspension_competition") or news_scope.competition(baseline)
     if row.get("retracted") or item["status"] in {"retracted", "withdrawn"}:
         return item, "retracted"
     if (
@@ -317,8 +342,8 @@ def _supported_absence(absences):
     )
     if episode["duration_from"] < item["duration_from"]:
         item.update({k: episode[k] for k in ("duration_from", "duration_multiplier", "duration_basis",
-                    "team_training_matches", "matches_in_episode", "weight_before_episode", "weight_during_episode")
-                     if k in episode})
+                    "team_training_matches", "matches_in_episode", "weight_before_episode", "weight_during_episode",
+                    "injury_onset_basis") if k in episode})
         item["duration_evidence_id"] = episode["id"]
     return item
 

@@ -1,0 +1,40 @@
+{
+  "reference_python": "3.12",
+  "interpreters": [
+    "3.11.18",
+    "3.12.14",
+    "3.13.5"
+  ],
+  "numeric_runtime": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+  },
+  "package_files_sha256": "748ea3f2cb69dbfaad14344e3d78e0a3688f173c587107b7d06214fe126c2b28",
+  "recipes": {
+    "B0": {
+      "primary": "79c7c5b8bb8d9acc6dcfe60267dcdb2cf7d03688c6169971d84867a9d856aeb5",
+      "paired": "02f189d11805f2fa01fba3993d3f96e959dcaa4a46660a8e1df9506b55337dfc",
+      "probability_source": "c3a861626102073721a1ed465674de5a94e2b7eafb82ec76b727c696906ef8c3",
+      "frozen_feature_source": "3ea1ec529e5e9367709ebe4479e9177bda63fb55494465f46a2bd19770750fe9"
+    },
+    "B1": {
+      "primary": "b1c98afbdd688bcad7c1f5ab7cfc08e36817d76ae762f08bd0068234ec5f7c98",
+      "paired": "25bcd4bde811bf965d952b0c7b61b13c4e46ae91035985c9946498bcc33e70be",
+      "probability_source": "c3a861626102073721a1ed465674de5a94e2b7eafb82ec76b727c696906ef8c3",
+      "frozen_feature_source": "3ea1ec529e5e9367709ebe4479e9177bda63fb55494465f46a2bd19770750fe9"
+    },
+    "B2": {
+      "primary": "88201c18dac629bb43222ddc5bb32715bf39ba71efe857fbe15d8bf36bef805c",
+      "paired": "67047c8d9936b1d7739fe72b9f26b4b5a73ac74df7ad0013e79215b3072cca99",
+      "probability_source": "c3a861626102073721a1ed465674de5a94e2b7eafb82ec76b727c696906ef8c3",
+      "frozen_feature_source": "3ea1ec529e5e9367709ebe4479e9177bda63fb55494465f46a2bd19770750fe9"
+    },
+    "B3": {
+      "primary": "0d1076d090a6bf9fa5367cacf9d60e3e8f9a7f989f64a7873a90e4958b2d3ea4",
+      "paired": "0d1076d090a6bf9fa5367cacf9d60e3e8f9a7f989f64a7873a90e4958b2d3ea4",
+      "probability_source": "c3a861626102073721a1ed465674de5a94e2b7eafb82ec76b727c696906ef8c3",
+      "frozen_feature_source": "3ea1ec529e5e9367709ebe4479e9177bda63fb55494465f46a2bd19770750fe9"
+    }
+  },
+  "parts_that_differ_between_interpreters": []
+}

@@ -3,8 +3,11 @@
 import gzip
 import hashlib
 import json
+import platform
+import sys
 from collections import defaultdict
-from contextlib import closing
+from contextlib import closing, contextmanager
+from contextvars import ContextVar
 from functools import lru_cache
 from datetime import timedelta
 from pathlib import Path
@@ -29,6 +32,9 @@ LEGACY_BENCHMARK = "72f5f905fe8fe014bcef0016e9a810f2a1d925a3b86c3c00eeb9ae22a0dd
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS probability_studies (
  recipe TEXT NOT NULL, sample TEXT NOT NULL, sha256 TEXT NOT NULL, PRIMARY KEY(recipe,sample));
+CREATE TABLE IF NOT EXISTS probability_study_executions (
+ recipe TEXT NOT NULL, sample TEXT NOT NULL, study TEXT NOT NULL, provenance TEXT NOT NULL,
+ PRIMARY KEY(recipe,sample,study,provenance));
 CREATE TABLE IF NOT EXISTS model_release_comparisons (
  digest TEXT PRIMARY KEY, body TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS model_release_decisions (
@@ -53,22 +59,85 @@ def _file_sha(path, identity):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def decision_implementation():
-    """Version operational Python modules and numerical dependencies used in decision evidence."""
+def _inventory(paths):
+    result = {}
+    for path in paths:
+        st = path.stat()
+        identity = (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
+        result[path.relative_to(PACKAGE_ROOT).as_posix()] = _file_sha(path, identity)
+    return result
+
+
+def numeric_runtime():
     import numpy
     import scipy
 
-    sources = {}
-    for path in sorted(PACKAGE_ROOT.rglob("*.py")):
-        name = path.relative_to(PACKAGE_ROOT).as_posix()
-        if name in NON_DECISION_MODULES:
-            continue
-        st = path.stat()
-        identity = (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
-        sources[name] = _file_sha(path, identity)
+    return {"numpy": numpy.__version__, "scipy": scipy.__version__}
+
+
+REFERENCE_PYTHON = "3.12"
+_BUILD_PROVENANCE = ContextVar("forecast_build_provenance", default=None)
+
+
+def release_provenance():
+    """Audit every shipped Python module and package asset, including presentation."""
+    paths = list(PACKAGE_ROOT.rglob("*.py"))
+    paths.extend(p for p in (PACKAGE_ROOT / "assets").rglob("*") if p.is_file())
     return {
-        "algorithm_source": sources,
-        "numeric_runtime": {"numpy": numpy.__version__, "scipy": scipy.__version__},
+        "format": 1,
+        "package_files": _inventory(paths),
+        "python": {
+            "implementation": platform.python_implementation(),
+            "version": platform.python_version(),
+            "compiler": platform.python_compiler(),
+        },
+        "platform": {"os": sys.platform, "machine": platform.machine(), "byteorder": sys.byteorder},
+        "numeric_runtime": numeric_runtime(),
+    }
+
+
+@contextmanager
+def build_sources(release):
+    token = _BUILD_PROVENANCE.set(release)
+    try:
+        yield
+    finally:
+        _BUILD_PROVENANCE.reset(token)
+
+
+def probability_implementation():
+    retained = _BUILD_PROVENANCE.get()
+    if retained is None:
+        return decision_implementation()
+    return {"algorithm_source": retained["package_files"], "numeric_runtime": retained["numeric_runtime"]}
+
+
+def inspect_provenance(data_dir, sha=None):
+    if sha is None:
+        body = release_provenance()
+    else:
+        with closing(store.connect(data_dir)) as db:
+            row = db.execute(
+                "SELECT payload FROM reports WHERE kind='release-provenance' AND key=?", (sha,)
+            ).fetchone()
+        body = json.loads(row[0]) if row else None
+        if not body or store.digest(body) != sha:
+            raise ValueError("unknown or damaged release provenance")
+    return {"release_provenance_sha256": store.digest(body), **body}
+
+
+def require_reference_python():
+    version = platform.python_version_tuple()
+    if platform.python_implementation() != "CPython" or ".".join(version[:2]) != REFERENCE_PYTHON:
+        raise ValueError("formal release baselines and comparisons require CPython " + REFERENCE_PYTHON)
+
+
+def decision_implementation():
+    """Preserve the strategy selector's physical decision-module identity."""
+    sources = _inventory(PACKAGE_ROOT.rglob("*.py"))
+    return {
+        "algorithm_source": {k: v for k, v in sources.items() if k not in NON_DECISION_MODULES},
+        "numeric_runtime": numeric_runtime(),
     }
 
 
@@ -173,8 +242,13 @@ def measure(data_dir, version, root, seasons):
             raise ValueError(
                 "the same recipe and fixed sample produced different predictions"
             )
+        db.execute(
+            "INSERT OR IGNORE INTO probability_study_executions VALUES (?,?,?,?)",
+            (doc["recipe"], store.digest(seasons), sha, registered["release_provenance_sha256"]),
+        )
     return {
         "version": version,
+        "release_provenance_sha256": registered["release_provenance_sha256"],
         "recipe": doc["recipe"],
         "study_sha256": sha,
         "method": METHOD,
@@ -334,6 +408,7 @@ def _release_versions(data_dir):
 def release_report(data_dir, root, *, benchmark_only=False):
     from . import pipeline
 
+    require_reference_python()
     if benchmark_only:
         before, old_sha = "B1", LEGACY_RECIPE
         new_sha = store.digest(pipeline._build_recipe("B1", (0.5, 1.5, 2.5, 3.5)))
@@ -363,8 +438,23 @@ def release_report(data_dir, root, *, benchmark_only=False):
                 "local_previous_pipeline_independently_known": False,
             }
         )
+        if local:
+            predecessor["recorded_executions"] = [
+                row[0] for row in db.execute(
+                    "SELECT e.provenance FROM probability_study_executions e JOIN probability_studies s "
+                    "ON (s.recipe,s.sample,s.sha256)=(e.recipe,e.sample,e.study) "
+                    "WHERE e.recipe=? AND e.sample=? ORDER BY e.provenance",
+                    (old_sha, store.digest(BENCHMARK)),
+                )
+            ]
         report = {
             "from_version": before,
+            "candidate_execution": {
+                "reference_python": REFERENCE_PYTHON,
+                "release_provenance_sha256": registered["release_provenance_sha256"],
+                "python": platform.python_version(),
+                "numeric_runtime": numeric_runtime(),
+            },
             "baseline_identity": predecessor,
             "to_version": after,
             "comparison": compare(*arms, 1, allow_training_change=True),
@@ -500,6 +590,11 @@ def approve_release(data_dir, report_sha, reviewer, reason, *, legacy_reference=
 
 
 def register(forecasts):
+    provenance = forecasts.add_parser(
+        "release-provenance", help="show the running installation or verify a seal's retained release provenance"
+    )
+    provenance.add_argument("sha", nargs="?")
+    provenance.set_defaults(func=lambda a: inspect_provenance(a.data_dir, a.sha))
     base = forecasts.add_parser(
         "release-baseline",
         help="retain the executable incumbent on the fixed five-season probability benchmark before an upgrade",
@@ -509,6 +604,7 @@ def register(forecasts):
     def old(a):
         from . import pipeline
 
+        require_reference_python()
         return measure(
             a.data_dir, pipeline.prepare_builtin(a.data_dir), a.root, BENCHMARK
         )

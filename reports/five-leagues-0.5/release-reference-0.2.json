@@ -1,0 +1,111 @@
+{
+  "from_version": "B1",
+  "candidate_execution": {
+    "reference_python": "3.12",
+    "release_provenance_sha256": "485a6ad238c1f251bd1b5083e441b8c6f80347641b65fc9fe2fa3f5f98895ae3",
+    "python": "3.12.14",
+    "numeric_runtime": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0"
+    }
+  },
+  "baseline_identity": {
+    "source": "reproduced_tagged_predecessor",
+    "reference_commit": "432e0afe485230bd7caa46eb0d1d68b26f01db25",
+    "benchmark_checkout": "8993f15cfcc61042aedc5e885bb82217488ecb33",
+    "identical_execution_git_objects": {
+      "src": "9ac7efa8f5a176d41225ba8d6ae627c50d19d575",
+      "pyproject.toml": "6ccb6c35bb23f2991841937595afd2c819adf4f5",
+      "constraints": "33a340b07b5bf16fb9b12c393ad3b19b6348ab94",
+      "deploy": "e60bd9a39a37cb553dfc94ec1797c0087bedeff7"
+    },
+    "reference_pipeline_sha256": "46d04d6080969e467a6752121fc946c2f61dac668698c3454b906416dbee0449",
+    "legacy_recipe_files": [
+      "football.py",
+      "football_model.py"
+    ],
+    "local_previous_pipeline_independently_known": false
+  },
+  "to_version": "B1@b1c98afbdd688bcad7c1f5ab7cfc08e36817d76ae762f08bd0068234ec5f7c98",
+  "comparison": {
+    "method": "T60-final-schedule-result-lag24h-v1",
+    "history_quality": "24h_lag_sensitivity_final_archive_schedule",
+    "historical_context": "no_archived_news_or_lineups",
+    "formal_eligibility": false,
+    "candidate_recipe": "b1c98afbdd688bcad7c1f5ab7cfc08e36817d76ae762f08bd0068234ec5f7c98",
+    "baseline_recipe": "7594c08a37d847a7c40f256974e2817ffe9c9d7eb8cf720b47a5b7f61dcbb29f",
+    "candidate_sha256": "a32138576a7a1e34cafcb99e9bc58bd314f8a185a4170e792f4a78c05d98dd45",
+    "baseline_sha256": "739e5379e83993e27d87356281cffb49d01b2663145911ca9a4101e75a14db99",
+    "input_blobs": {
+      "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+      "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+      "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+      "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+      "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+      "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+      "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+      "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+    },
+    "seasons": [
+      "2021-22",
+      "2022-23",
+      "2023-24",
+      "2024-25",
+      "2025-26"
+    ],
+    "denominator": 1900,
+    "paired_count": 1900,
+    "rounds": 190,
+    "changed_predictions": 0,
+    "changed_training_views": 0,
+    "candidate_score": 75.44781323408776,
+    "baseline_score": 75.44781323408776,
+    "candidate_count": 1900,
+    "baseline_count": 1900,
+    "comparison_rejections": {},
+    "inference": {
+      "method": "round-cluster-t-v1",
+      "unit": "season_and_official_round",
+      "rounds": 190,
+      "matches": 1900,
+      "degrees_of_freedom": 189,
+      "family_comparisons": 10,
+      "family_confidence": 0.95,
+      "individual_confidence": 0.995,
+      "critical_t": 2.8403659628523235
+    },
+    "intervals": {
+      "overall": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "result": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "total": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "home": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "away": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      }
+    }
+  },
+  "report_sha256": "f6a160b0a00ce40eb32bb418d3946003b3429a992d51cddbc31819cddda45450"
+}

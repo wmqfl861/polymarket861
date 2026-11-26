@@ -1,0 +1,1358 @@
+{
+  "rights_review_date": "2026-11-26",
+  "season": "2026-27",
+  "stage": "regular",
+  "team_count": 96,
+  "field_order": [
+    "identity",
+    "schedule_and_result",
+    "roster",
+    "player_availability",
+    "rumours",
+    "disciplinary_order",
+    "confirmed_matchday_squad_and_xi",
+    "team_article_fulltext",
+    "off_field_orders"
+  ],
+  "sources": {
+    "clausefoot": {
+      "publisher": "Clause Foot",
+      "fields": [
+        "discovery_headline",
+        "original_link"
+      ],
+      "allowed": [
+        "poll_rss_for_titles",
+        "display_title_with_credit_and_original_link"
+      ],
+      "rights": "Published RSS title-link terms",
+      "url": "https://clausefoot.com/flux-rss/",
+      "terms": [
+        "https://clausefoot.com/flux-rss/"
+      ],
+      "conditions": "No validated per-team coverage, durable article archive or full-text training grant. Check publisher conditions and attribute."
+    },
+    "gdelt": {
+      "publisher": "GDELT Project",
+      "fields": [
+        "index_metadata",
+        "publisher_link"
+      ],
+      "allowed": [
+        "discover_sources",
+        "attribute_and_link"
+      ],
+      "rights": "GDELT indexed metadata",
+      "url": "https://api.gdeltproject.org/api/v2/doc/doc",
+      "terms": [
+        "https://www.gdeltproject.org/about.html"
+      ],
+      "conditions": "Discovery only. Recheck the article publisher before any automated article reuse."
+    },
+    "interno": {
+      "publisher": "Ministero dell'Interno",
+      "fields": [
+        "stadium_access_order"
+      ],
+      "allowed": [
+        "retrieve_eligible_public_notices",
+        "retain_eligible_text_with_attribution",
+        "extract_scope"
+      ],
+      "rights": "CC BY 4.0 for own content, subject to exceptions",
+      "url": "https://www.interno.gov.it/it/notizie",
+      "terms": [
+        "https://www.interno.gov.it/it/note-legali"
+      ],
+      "conditions": "Verify the dated notice's rights, fixture, geographic scope and exceptions. Exclude third-party material. The default is a candidate source, not a per-club article grant."
+    },
+    "openfootball": {
+      "publisher": "OpenFootball",
+      "fields": [
+        "regular_fixture",
+        "retrospective_regulation_score"
+      ],
+      "allowed": [
+        "fetch_pinned_version",
+        "retain",
+        "model_admitted_scores",
+        "redistribute"
+      ],
+      "rights": "CC0 1.0",
+      "url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361",
+      "terms": [
+        "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/LICENSE.md"
+      ],
+      "conditions": "Check ordered teams, stage, status and date. Mirrors and upstream TXT have shared lineage."
+    },
+    "openligadb-bl1": {
+      "publisher": "OpenLigaDB community",
+      "fields": [
+        "fixture_candidate",
+        "score_candidate"
+      ],
+      "allowed": [
+        "api_with_shared_cache",
+        "retain",
+        "research_with_attribution"
+      ],
+      "rights": "ODbL 1.0 data and separate API use terms",
+      "url": "https://api.openligadb.de/getmatchdata/bl1/2026",
+      "terms": [
+        "https://www.openligadb.de/en/license",
+        "https://www.openligadb.de/en/terms-of-use"
+      ],
+      "conditions": "Respect API policy and ODbL attribution/share-alike terms on derivative databases. Match ID, field and original source lineage require verification."
+    },
+    "touchline": {
+      "publisher": "Touchline Wire",
+      "fields": [
+        "reported_availability",
+        "labelled_rumour"
+      ],
+      "allowed": [
+        "free_eligible_project_api",
+        "retain_attributed_fields",
+        "extract",
+        "model_eligible_facts"
+      ],
+      "rights": "Free for personal, hobbyist, academic and open-source projects under the provider's conditions",
+      "url": "https://touchlinewire.com/docs",
+      "terms": [
+        "https://touchlinewire.com/docs#attribution",
+        "https://touchlinewire.com/terms.html"
+      ],
+      "conditions": "Credit and link Tactical Data by Touchline Wire. Confirm use scope and endpoint membership. Scope alone cannot attest any club's latest report, absence, or a confirmed starting XI."
+    },
+    "wikidata": {
+      "publisher": "Wikidata contributors",
+      "fields": [
+        "entity_id",
+        "alias",
+        "qualified_club_membership"
+      ],
+      "allowed": [
+        "fetch_structured_main_namespace",
+        "retain",
+        "identity_resolution",
+        "redistribute"
+      ],
+      "rights": "CC0 1.0 for structured main-namespace data",
+      "url": "https://www.wikidata.org/w/api.php",
+      "terms": [
+        "https://www.wikidata.org/wiki/Wikidata:Licensing"
+      ],
+      "conditions": "Inspect competition, qualifiers, dates, subject identity and origin per statement."
+    },
+    "wikipedia": {
+      "publisher": "Wikipedia contributors",
+      "fields": [
+        "season_roster_candidate",
+        "reported_team_news_candidate",
+        "result_candidate"
+      ],
+      "allowed": [
+        "retrieve_licensed_revisions",
+        "retain_with_attribution",
+        "extract_eligible_facts"
+      ],
+      "rights": "Normally CC BY-SA 4.0 for eligible page text",
+      "url": "https://www.mediawiki.org/wiki/API:Revisions",
+      "terms": [
+        "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+        "https://www.mediawiki.org/wiki/Wikimedia_APIs/Content_reuse"
+      ],
+      "conditions": "Record every particular page/revision, authors, licence, edits and template dependencies. Linked articles, images and third-party quotations require their own grant. An encyclopedia roster cannot establish a matchday XI."
+    }
+  },
+  "league_rights": {
+    "epl": {
+      "fields_to_candidate_sources": {
+        "identity": [
+          "wikidata",
+          "openfootball"
+        ],
+        "schedule_and_result": [
+          "openfootball",
+          "wikipedia"
+        ],
+        "roster": [
+          "wikipedia",
+          "wikidata"
+        ],
+        "player_availability": [
+          "touchline"
+        ],
+        "rumours": [
+          "touchline"
+        ],
+        "disciplinary_order": [],
+        "confirmed_matchday_squad_and_xi": [],
+        "team_article_fulltext": [],
+        "off_field_orders": []
+      },
+      "metadata_discovery_only": [
+        "gdelt"
+      ],
+      "local_language": "en",
+      "uncovered_fields": [
+        "disciplinary_order",
+        "confirmed_matchday_squad_and_xi",
+        "team_article_fulltext",
+        "off_field_orders"
+      ],
+      "manual_fallback": {
+        "publisher": "Premier League",
+        "terms": "https://www.premierleague.com/en/terms-and-conditions",
+        "use": "Verify the specific club or authority's dated notice manually. Club sites have independent terms; no automated full-text grant in this register."
+      }
+    },
+    "lal": {
+      "fields_to_candidate_sources": {
+        "identity": [
+          "wikidata",
+          "openfootball"
+        ],
+        "schedule_and_result": [
+          "openfootball",
+          "wikipedia"
+        ],
+        "roster": [
+          "wikipedia",
+          "wikidata"
+        ],
+        "player_availability": [],
+        "rumours": [],
+        "disciplinary_order": [],
+        "confirmed_matchday_squad_and_xi": [],
+        "team_article_fulltext": [],
+        "off_field_orders": []
+      },
+      "metadata_discovery_only": [
+        "gdelt"
+      ],
+      "local_language": "es",
+      "uncovered_fields": [
+        "player_availability",
+        "rumours",
+        "disciplinary_order",
+        "confirmed_matchday_squad_and_xi",
+        "team_article_fulltext",
+        "off_field_orders"
+      ],
+      "manual_fallback": {
+        "publisher": "LaLiga",
+        "terms": "https://www.laliga.com/en-ES/legal/legal-web",
+        "use": "Verify the specific club or authority's dated notice manually. Club sites have independent terms; no automated full-text grant in this register."
+      }
+    },
+    "bun": {
+      "fields_to_candidate_sources": {
+        "identity": [
+          "wikidata",
+          "openfootball"
+        ],
+        "schedule_and_result": [
+          "openfootball",
+          "wikipedia",
+          "openligadb-bl1"
+        ],
+        "roster": [
+          "wikipedia",
+          "wikidata"
+        ],
+        "player_availability": [],
+        "rumours": [],
+        "disciplinary_order": [],
+        "confirmed_matchday_squad_and_xi": [],
+        "team_article_fulltext": [],
+        "off_field_orders": []
+      },
+      "metadata_discovery_only": [
+        "gdelt"
+      ],
+      "local_language": "de",
+      "uncovered_fields": [
+        "player_availability",
+        "rumours",
+        "disciplinary_order",
+        "confirmed_matchday_squad_and_xi",
+        "team_article_fulltext",
+        "off_field_orders"
+      ],
+      "manual_fallback": {
+        "publisher": "DFL",
+        "terms": "https://www.bundesliga.com/en/bundesliga/info/imprint",
+        "use": "Verify the specific club or authority's dated notice manually. Club sites have independent terms; no automated full-text grant in this register."
+      }
+    },
+    "sea": {
+      "fields_to_candidate_sources": {
+        "identity": [
+          "wikidata",
+          "openfootball"
+        ],
+        "schedule_and_result": [
+          "openfootball",
+          "wikipedia"
+        ],
+        "roster": [
+          "wikipedia",
+          "wikidata"
+        ],
+        "player_availability": [],
+        "rumours": [],
+        "disciplinary_order": [],
+        "confirmed_matchday_squad_and_xi": [],
+        "team_article_fulltext": [],
+        "off_field_orders": [
+          "interno"
+        ]
+      },
+      "metadata_discovery_only": [
+        "gdelt"
+      ],
+      "local_language": "it",
+      "uncovered_fields": [
+        "player_availability",
+        "rumours",
+        "disciplinary_order",
+        "confirmed_matchday_squad_and_xi",
+        "team_article_fulltext"
+      ],
+      "manual_fallback": {
+        "publisher": "Lega Serie A",
+        "terms": "https://www.legaseriea.it/terms-and-conditions",
+        "use": "Verify the specific club or authority's dated notice manually. Club sites have independent terms; no automated full-text grant in this register."
+      }
+    },
+    "fl1": {
+      "fields_to_candidate_sources": {
+        "identity": [
+          "wikidata",
+          "openfootball"
+        ],
+        "schedule_and_result": [
+          "openfootball",
+          "wikipedia"
+        ],
+        "roster": [
+          "wikipedia",
+          "wikidata"
+        ],
+        "player_availability": [],
+        "rumours": [],
+        "disciplinary_order": [],
+        "confirmed_matchday_squad_and_xi": [],
+        "team_article_fulltext": [],
+        "off_field_orders": []
+      },
+      "metadata_discovery_only": [
+        "gdelt",
+        "clausefoot"
+      ],
+      "local_language": "fr",
+      "uncovered_fields": [
+        "player_availability",
+        "rumours",
+        "disciplinary_order",
+        "confirmed_matchday_squad_and_xi",
+        "team_article_fulltext",
+        "off_field_orders"
+      ],
+      "manual_fallback": {
+        "publisher": "LFP",
+        "terms": "https://ligue1.com/fr/legal/cgu",
+        "use": "Verify the specific club or authority's dated notice manually. Club sites have independent terms; no automated full-text grant in this register."
+      }
+    }
+  },
+  "clubs": [
+    {
+      "league": "epl",
+      "club_id": "epl/bournemouth",
+      "club": "AFC Bournemouth",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/arsenal",
+      "club": "Arsenal FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/aston-villa",
+      "club": "Aston Villa FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/brentford",
+      "club": "Brentford FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/brighton-hove-albion",
+      "club": "Brighton & Hove Albion FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/chelsea",
+      "club": "Chelsea FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/coventry-city",
+      "club": "Coventry City FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/crystal-palace",
+      "club": "Crystal Palace FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/everton",
+      "club": "Everton FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/fulham",
+      "club": "Fulham FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/hull-city",
+      "club": "Hull City AFC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/ipswich-town",
+      "club": "Ipswich Town FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/leeds-united",
+      "club": "Leeds United FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/liverpool",
+      "club": "Liverpool FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/manchester-city",
+      "club": "Manchester City FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/manchester-united",
+      "club": "Manchester United FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/newcastle-united",
+      "club": "Newcastle United FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/nottingham-forest",
+      "club": "Nottingham Forest FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/sunderland",
+      "club": "Sunderland AFC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "epl",
+      "club_id": "epl/tottenham-hotspur",
+      "club": "Tottenham Hotspur FC",
+      "rights_profile": "epl",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/en.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts",
+      "touchline_directory": {
+        "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+        "valid_from": "2026-07-01T00:00:00.000000Z",
+        "valid_until": "2027-07-01T00:00:00.000000Z",
+        "membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627"
+      }
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/athletic-club",
+      "club": "Athletic Club",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/ca-osasuna",
+      "club": "CA Osasuna",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/club-atletico-de-madrid",
+      "club": "Club Atlético de Madrid",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/deportivo-alaves",
+      "club": "Deportivo Alavés",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/elche-cf",
+      "club": "Elche CF",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/barcelona",
+      "club": "FC Barcelona",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/getafe-cf",
+      "club": "Getafe CF",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/levante-ud",
+      "club": "Levante UD",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/malaga-cf",
+      "club": "Málaga CF",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/rc-celta-de-vigo",
+      "club": "RC Celta de Vigo",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/rc-deportivo-la-coruna",
+      "club": "RC Deportivo La Coruña",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/rcd-espanyol-de-barcelona",
+      "club": "RCD Espanyol de Barcelona",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/rayo-vallecano-de-madrid",
+      "club": "Rayo Vallecano de Madrid",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/real-betis-balompie",
+      "club": "Real Betis Balompié",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/real-madrid-cf",
+      "club": "Real Madrid CF",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/real-racing-club-de-santander",
+      "club": "Real Racing Club de Santander",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/real-sociedad-de-futbol",
+      "club": "Real Sociedad de Fútbol",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/sevilla",
+      "club": "Sevilla FC",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/valencia-cf",
+      "club": "Valencia CF",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "lal",
+      "club_id": "lal/villarreal-cf",
+      "club": "Villarreal CF",
+      "rights_profile": "lal",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/es.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/1-koln",
+      "club": "1. FC Köln",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/1-union-berlin",
+      "club": "1. FC Union Berlin",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/1-fsv-mainz-05",
+      "club": "1. FSV Mainz 05",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/bayer-04-leverkusen",
+      "club": "Bayer 04 Leverkusen",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/borussia-dortmund",
+      "club": "Borussia Dortmund",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/borussia-monchengladbach",
+      "club": "Borussia Mönchengladbach",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/eintracht-frankfurt",
+      "club": "Eintracht Frankfurt",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/augsburg",
+      "club": "FC Augsburg",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/bayern-munchen",
+      "club": "FC Bayern München",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/schalke-04",
+      "club": "FC Schalke 04",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/hamburger-sv",
+      "club": "Hamburger SV",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/rb-leipzig",
+      "club": "RB Leipzig",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/sc-freiburg",
+      "club": "SC Freiburg",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/sc-paderborn-07",
+      "club": "SC Paderborn 07",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/sv-07-elversberg",
+      "club": "SV 07 Elversberg",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/sv-werder-bremen",
+      "club": "SV Werder Bremen",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/tsg-1899-hoffenheim",
+      "club": "TSG 1899 Hoffenheim",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "bun",
+      "club_id": "bun/vfb-stuttgart",
+      "club": "VfB Stuttgart",
+      "rights_profile": "bun",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/de.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/ac-milan",
+      "club": "AC Milan",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/ac-monza",
+      "club": "AC Monza",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/acf-fiorentina",
+      "club": "ACF Fiorentina",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/as-roma",
+      "club": "AS Roma",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/atalanta-bc",
+      "club": "Atalanta BC",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/bologna-1909",
+      "club": "Bologna FC 1909",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/cagliari-calcio",
+      "club": "Cagliari Calcio",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/como-1907",
+      "club": "Como 1907",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/internazionale-milano",
+      "club": "FC Internazionale Milano",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/frosinone-calcio",
+      "club": "Frosinone Calcio",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/genoa-cfc",
+      "club": "Genoa CFC",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/juventus",
+      "club": "Juventus FC",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/parma-calcio-1913",
+      "club": "Parma Calcio 1913",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/ss-lazio",
+      "club": "SS Lazio",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/ssc-napoli",
+      "club": "SSC Napoli",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/torino",
+      "club": "Torino FC",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/us-lecce",
+      "club": "US Lecce",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/us-sassuolo-calcio",
+      "club": "US Sassuolo Calcio",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/udinese-calcio",
+      "club": "Udinese Calcio",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "sea",
+      "club_id": "sea/venezia",
+      "club": "Venezia FC",
+      "rights_profile": "sea",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/it.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/aj-auxerre",
+      "club": "AJ Auxerre",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/as-monaco",
+      "club": "AS Monaco FC",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/angers-sco",
+      "club": "Angers SCO",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/es-troyes-ac",
+      "club": "ES Troyes AC",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/lorient",
+      "club": "FC Lorient",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/le-havre-ac",
+      "club": "Le Havre AC",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/le-mans",
+      "club": "Le Mans FC",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/lille-osc",
+      "club": "Lille OSC",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/ogc-nice",
+      "club": "OGC Nice",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/olympique-lyonnais",
+      "club": "Olympique Lyonnais",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/olympique-de-marseille",
+      "club": "Olympique de Marseille",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/paris",
+      "club": "Paris FC",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/paris-saint-germain",
+      "club": "Paris Saint-Germain FC",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/rc-strasbourg-alsace",
+      "club": "RC Strasbourg Alsace",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/racing-club-de-lens",
+      "club": "Racing Club de Lens",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/stade-brestois-29",
+      "club": "Stade Brestois 29",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/stade-rennais-1901",
+      "club": "Stade Rennais FC 1901",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    },
+    {
+      "league": "fl1",
+      "club_id": "fl1/toulouse",
+      "club": "Toulouse FC",
+      "rights_profile": "fl1",
+      "membership_proof": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/2026-27/fr.1.json",
+      "last_valid_team_receipt_utc": null,
+      "window_field_coverage": "requires_actual_receipts"
+    }
+  ],
+  "health_scope": "Static membership/permissions inventory. A null live receipt asks operators to inspect their own collector; it cannot be used to infer health, absence, roster completeness or timely match coverage.",
+  "source_review_trigger": "Re-check these permissions, coverage and terms after an upstream policy/field change or at season rollover. Only admitted local collectors supply live status."
+}

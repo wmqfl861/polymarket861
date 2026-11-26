@@ -15,12 +15,15 @@ def main(argv=None):
         dashboard,
         datasets,
         evidence,
+        five_league_budget,
         football,
         jobs,
+        league_catalog,
         ledger,
         maintenance,
         market_archive,
         news,
+        news_market,
         operations,
         opportunity,
         pipeline,
@@ -33,7 +36,7 @@ def main(argv=None):
     )
 
     parser = argparse.ArgumentParser(
-        prog="pm861", description="英超赛前预测、逐轮评分与 Polymarket 模拟账本"
+        prog="pm861", description="五大联赛赛前预测研究、逐轮评分与 Polymarket 模拟账本"
     )
     parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument(
@@ -45,8 +48,11 @@ def main(argv=None):
     commands = parser.add_subparsers(dest="command", required=True)
     for module in (
         datasets,
+        league_catalog,
+        news_market,
         maintenance,
         market_archive,
+        five_league_budget,
         football,
         evidence,
         news,

@@ -1,6 +1,5 @@
 """Bit-exact comparisons on complete, finite inventories of sealed news pairs."""
 
-import ast
 import hashlib
 import json
 import math
@@ -11,7 +10,7 @@ from contextlib import closing
 from functools import lru_cache
 from pathlib import Path
 
-from . import football, input_manifest, news_study_plan, store
+from . import football, input_manifest, news_study_plan, recipe_identity, store
 
 METHOD = "sealed-news-arms-binary64-v1"
 KIND = "news-era-replay"
@@ -33,15 +32,7 @@ _MIXED_FEATURES = {
 }
 
 
-@lru_cache(maxsize=128)
-def _feature_ast(path, physical):
-    raw = path.read_bytes()
-    if hashlib.sha256(raw).hexdigest() != physical:
-        raise ValueError("news feature code changed while registering its recipe")
-    return store.digest(ast.dump(ast.parse(raw), include_attributes=False))
-
-
-def feature_sources(root, sources, physical):
+def feature_sources(root, sources, physical, input_sources=None):
     """Exclude comments in feature modules; keep the semantic selectors of mixed modules."""
     required = set(news_study_plan._MODEL_FILES) | set(news_study_plan._SYMBOLS)
     if required.difference(sources) or (required | _MIXED_FEATURES.keys()).difference(
@@ -51,12 +42,15 @@ def feature_sources(root, sources, physical):
         # An explicit null preserves that provenance without attesting completeness.
         return None
     selected = {
-        name: _feature_ast(root / name, value)
+        name: recipe_identity.module_digest(root / name, physical[name])
         if name in news_study_plan._MODEL_FILES
         else value
         for name, value in sources.items()
         if name not in _REPLAYED
     }
+    for name, value in (input_sources or {}).items():
+        if name not in _REPLAYED:
+            selected["input:" + name] = value
     for name, roots in _MIXED_FEATURES.items():
         selected[name] = news_study_plan._symbol_digest(
             root / name, physical[name], roots
@@ -84,6 +78,7 @@ def _same_features(original, candidate):
 
     return original_features(original) == original_features(candidate) and all(
         name in original["algorithm_source"]
+        and name in candidate["algorithm_source"]
         and original["algorithm_source"][name] == candidate["algorithm_source"][name]
         for name in _MIXED_FEATURES
     )
@@ -155,13 +150,7 @@ def _ids(items):
 
 
 def _recipe(db, payload):
-    row = db.execute(
-        "SELECT recipe FROM model_recipes WHERE version=?", (payload["model_version"],)
-    ).fetchone()
-    recipe = json.loads(row[0]) if row else None
-    if not recipe or store.digest(recipe) != payload["recipe_digest"]:
-        raise ValueError("missing_or_damaged_original_recipe")
-    return recipe
+    return news_study_plan.sealed_recipe(db, payload)
 
 
 def _projection(pair, lines):
@@ -316,7 +305,7 @@ def _run(root, db, scope, source, pairs):
         return report | {"status": "no_sealed_source_pairs"}
     first = source_pairs[0][2]
     recipe = _recipe(db, first)
-    candidate = pipeline._build_recipe(recipe["family"], recipe["lines"])
+    candidate = pipeline._study_recipe(pipeline._build_recipe(recipe["family"], recipe["lines"]))
     report["candidate_recipe_sha256"] = store.digest(candidate)
     if not candidate.get("news_frozen_feature_source") or (
         "news_frozen_feature_source" in recipe
@@ -467,7 +456,7 @@ def compare(root, source, season, horizon="T-60m", mode="technical"):
                     recipe = _recipe(db, current[0][2])
                     if (
                         store.digest(
-                            pipeline._build_recipe(recipe["family"], recipe["lines"])
+                            pipeline._study_recipe(pipeline._build_recipe(recipe["family"], recipe["lines"]))
                         )
                         != report["candidate_recipe_sha256"]
                     ):

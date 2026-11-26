@@ -78,9 +78,7 @@ class ResearchWorkspaceTests(unittest.TestCase):
 
     def test_only_known_evidence_and_reviewable_patch(self):
         name = "src/polymarket861/football.py"
-        updated = self.source.replace(
-            "Premier League fixture history", "EPL fixture history", 1
-        )
+        updated = self.source + "\n# Document this research-only example patch.\n"
         diff = "".join(
             difflib.unified_diff(
                 self.source.splitlines(keepends=True),

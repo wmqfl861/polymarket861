@@ -1,0 +1,191 @@
+{
+  "scope": "Five-league news evidence, 2026-27. Source observations, historical seals, and offline regression cases are labelled separately.",
+  "as_of_utc": "2026-11-26T07:27:10.000000Z",
+  "coverage_register": {
+    "competition": "epl",
+    "season": "2026-27",
+    "source": "touchline-availability",
+    "named_member_clubs": 20,
+    "official_opening_round": [
+      [
+        "Arsenal",
+        "Coventry City"
+      ],
+      [
+        "Hull City",
+        "Manchester United"
+      ],
+      [
+        "Everton",
+        "Crystal Palace"
+      ],
+      [
+        "Ipswich Town",
+        "Sunderland"
+      ],
+      [
+        "Nottingham Forest",
+        "Leeds United"
+      ],
+      [
+        "Brentford",
+        "Tottenham Hotspur"
+      ],
+      [
+        "Brighton & Hove Albion",
+        "Aston Villa"
+      ],
+      [
+        "Manchester City",
+        "AFC Bournemouth"
+      ],
+      [
+        "Newcastle United",
+        "Liverpool"
+      ],
+      [
+        "Fulham",
+        "Chelsea"
+      ]
+    ],
+    "official_membership_url": "https://www.premierleague.com/en/news/4675508/premier-league-fixture-schedulereleased-for-season-202627",
+    "provider_scope_url": "https://touchlinewire.com/docs",
+    "membership_sha256": "c98b68b6056a64c6a5225ed2e32d8f12fa8052c2792792ce5f86ab51973dc282",
+    "publication_day_utc": "2026-06-19",
+    "valid_from": "2026-07-01T00:00:00.000000Z",
+    "valid_until_exclusive": "2027-07-01T00:00:00.000000Z",
+    "prior_receipted_native_player_directories": 20,
+    "prior_receipt_register": "reports/news-operations-0.4.1.json#usage_captures",
+    "applies_to_season": true
+  },
+  "claude_probe": {
+    "type": "offline synthetic provider responses",
+    "command": "python -I docs/review-evidence/code-review-0.4.2-2026-11-26/probe_empty_wire_reply.py --src src",
+    "clubs": [
+      {
+        "club": "Arsenal",
+        "status": "ok",
+        "player_rows": 0
+      },
+      {
+        "club": "FC Bayern München",
+        "status": "rejected",
+        "reason": "source_not_covered: Touchline Wire has no domestic season membership for this club"
+      },
+      {
+        "club": "Paris Saint-Germain FC",
+        "status": "rejected",
+        "reason": "source_not_covered: Touchline Wire has no domestic season membership for this club"
+      },
+      {
+        "club": "Venezia FC",
+        "status": "rejected",
+        "reason": "source_not_covered: Touchline Wire has no domestic season membership for this club"
+      },
+      {
+        "club": "Levante UD",
+        "status": "rejected",
+        "reason": "source_not_covered: Touchline Wire has no domestic season membership for this club"
+      }
+    ]
+  },
+  "frozen_0_4_2": {
+    "source": "reports/news-early-seals-0.4.2.json",
+    "sha256": "46a998f5c8f33449b364d37d19e82e7fed45fd12a806408422b0b89e6c24e9f2",
+    "technical_early_fixtures": 10,
+    "applied_weights": 90,
+    "suspensions": [
+      {
+        "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+        "player": "Costinha",
+        "club": "Brighton & Hove Albion FC",
+        "declared_target": null,
+        "classification_under_new_rule": "scope_unverified"
+      },
+      {
+        "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+        "player": "Jean-Philippe Mateta",
+        "club": "Crystal Palace FC",
+        "declared_target": null,
+        "classification_under_new_rule": "scope_unverified"
+      },
+      {
+        "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+        "player": "Yeremy Pino",
+        "club": "Crystal Palace FC",
+        "declared_target": null,
+        "classification_under_new_rule": "scope_unverified"
+      },
+      {
+        "fixture_id": "epl/2026-27/everton/liverpool",
+        "player": "James Tarkowski",
+        "club": "Everton FC",
+        "declared_target": null,
+        "classification_under_new_rule": "scope_unverified"
+      },
+      {
+        "fixture_id": "epl/2026-27/manchester-united/brentford",
+        "player": "Igor Thiago",
+        "club": "Brentford FC",
+        "declared_target": null,
+        "classification_under_new_rule": "scope_unverified"
+      },
+      {
+        "fixture_id": "epl/2026-27/manchester-united/brentford",
+        "player": "Leny Yoro",
+        "club": "Manchester United FC",
+        "declared_target": null,
+        "classification_under_new_rule": "scope_unverified"
+      }
+    ],
+    "directory_total_neutral_weights_by_club": {
+      "Manchester City FC": 1,
+      "Nottingham Forest FC": 4
+    },
+    "historical_directory_totals": "Not exported in those neutral rows. Future fallback records include observed/expected starts when available."
+  },
+  "frozen_release_simulation": {
+    "reproduce_with_commit": "8125d57",
+    "command": "PYTHONPATH=src python scripts/reproduce_news_market_study.py reports/news-early-seals-0.4.2.json",
+    "input_sha256": "46a998f5c8f33449b364d37d19e82e7fed45fd12a806408422b0b89e6c24e9f2",
+    "report": "reports/news-market-study-0.4.2.json",
+    "report_sha256": "38b347a39e8d06e66323e63e49839e973de6ae58e2a23461eadebb8495fdc22e",
+    "replications_per_cell": 2000,
+    "seed": 861,
+    "synthetic_gap_sd_pp": 5,
+    "assumed_slope": 0.5,
+    "positive_lower_bound_by_matches": {
+      "270": 0.058,
+      "380": 0.0755,
+      "760": 0.1795
+    }
+  },
+  "regressions": "PYTHONPATH=src:tests python -m unittest test_news_competition_scope",
+  "limits": [
+    "Historical seals remain under their recorded policy. No rescore or new historical player claim.",
+    "No new live overseas team-news or blind multilingual acceptance dataset is represented.",
+    "Native injury-start and sanction-target fields are optional. Date-only medical fields use a conservative UTC upper bound; no duration from late, narrative or estimated dates.",
+    "The simulation assumes hypothetical closes and measures power, not realized news lift or profit."
+  ],
+  "admission_audit": {
+    "commands": [
+      "pm861 news admission-register --plan PLAN",
+      "pm861 news admission-audit --registration SHA --reviews REVIEWS --evidence-dir DIR"
+    ],
+    "regressions": "PYTHONPATH=src:tests python -m unittest test_news_admission",
+    "source_provisional_min": {
+      "complete_rounds": 2,
+      "matured_matches": 20,
+      "timely_valid_fraction": 0.95
+    },
+    "source_confirmed_recent_matches": 100,
+    "timely_valid_required": 91,
+    "semantic_check_required": true,
+    "raw_response_bytes_verified": true,
+    "fixed_confirmed_absence_clusters_per_language": 84,
+    "max_errors": 3,
+    "wilson_two_sided_95_lower_min": 0.9,
+    "observed_real_blind_sets_in_this_report": 0,
+    "automatic_model_or_source_promotion": false
+  }
+}

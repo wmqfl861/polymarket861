@@ -560,6 +560,36 @@ class PaperLedgerTests(unittest.TestCase):
         )
         with patch.object(market_provider, "get", return_value=captured):
             official = L.capture_resolution(self.root, token)
+        # An old, sparse status alone cannot release new cash. Re-read both
+        # token identities and terminal prices, then use the same operator entry point.
+        with self.assertRaises(ValueError):
+            L.settle(self.root, "f", dict(official, scenario="canceled"))
+        from datetime import timedelta
+
+        stamp = L.store.iso(L.store.instant(fake["resolved_at"]) + timedelta(seconds=1))
+        for index, (token_id, other, label) in enumerate(
+            ((token, "72", "Over"), ("72", token, "Under"))
+        ):
+            value = {
+                "condition_id": condition,
+                "token_id": token_id,
+                "resolved": True,
+                "closed": True,
+                "final_price": 0.5,
+                "outcome_index": index,
+                "opposite_token_id": other,
+                "outcome": label,
+                "market_slug": intent["match_id"] + "-total-2pt5",
+                "event_slug": intent["match_id"],
+            }
+            url = "https://data-api.polymarket.com/v2/tokens?token_id=" + token_id
+            reply = market_provider.Reply(
+                json.dumps({"data": [value]}).encode(), stamp, stamp, {}, url
+            )
+            with patch.object(market_provider, "get", return_value=reply):
+                verified = L.capture_resolution(self.root, token_id)
+            if token_id == token:
+                official = verified
         L.settle(self.root, "f", dict(official, scenario="canceled"))
         self.assertEqual(D(L.ledger_report(self.root, "f")["cash"]), D("10000.8"))
         self.assertTrue(

@@ -20,7 +20,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 from urllib.robotparser import RobotFileParser
 from xml.etree import ElementTree as ET
 
-from . import football, independent_results, store
+from . import football, independent_results, news_scope, store
 from .market_provider import Reply
 
 WIKI = "wikipedia-season-news"
@@ -75,6 +75,7 @@ def _public_url(value):
 
 
 def default_sources(team, season):
+    """Canonical endpoint descriptors, including old subscription identities for verification."""
     year = football.season_year(season)
     key = football.team_key(team)
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", key) or len(team) > 100:
@@ -101,6 +102,13 @@ def default_sources(team, season):
          "attribution": "English Wikipedia contributors, CC BY-SA 4.0. Excerpted and stripped of markup.",
          "page_title": title},
     ]
+
+
+def active_sources(team, season, league="epl", at=None):
+    scope = news_scope.wire_coverage(team, season, league, at)
+    if league != "epl" or (season == news_scope.WIRE_MEMBERSHIP["season"] and not scope):
+        return []
+    return [source for source in default_sources(team, season) if source["id"] == WIKI or scope]
 
 
 def validate_source(source):
@@ -612,7 +620,8 @@ def _wire_header(raw, received, cursor):
 
 
 WIRE_FIELDS = ("player_id", "display_name", "name", "team", "status", "category", "chance_of_playing")
-WIRE_MODEL = "touchline-availability-fields-v1"
+WIRE_CONTEXT_FIELDS = ("suspension_competition", "injury_started_at", "injury_date")
+WIRE_MODEL = "touchline-availability-fields-v2"
 
 
 def wire_labels(fields):
@@ -635,7 +644,9 @@ def wire_labels(fields):
 
 def wire_fingerprint(fields):
     # A missing optional percentage and an explicit null express the same state.
-    return store.digest([fields.get(k) for k in WIRE_FIELDS])
+    values = [fields.get(k) for k in WIRE_FIELDS]
+    context = {k: fields[k] for k in WIRE_CONTEXT_FIELDS if k in fields}
+    return store.digest([*values, context] if context else values)
 
 
 def wire_claim(original, aliases):
@@ -670,6 +681,26 @@ def _wire_row(source, scope, row, snapshot):
     if any(k in fields and fields[k] is not None and not _wire_person(fields[k])
            for k in ("display_name", "name")):
         raise ValueError("unrecognised Touchline Wire player name")
+    # Only a native field explicitly naming the *ban's* target or *this injury's*
+    # onset is admissible. A generic league, last-updated date or news prose is not.
+    if fields.get("category") == "suspension" and row.get("suspension_competition") is not None:
+        competition = row["suspension_competition"]
+        if not isinstance(competition, str) or not re.fullmatch(r"[\w .-]{1,80}", competition):
+            raise ValueError("invalid suspension competition")
+        fields["suspension_competition"] = competition.strip()
+    if fields.get("category") == "injury" and row.get("injury_started_at") is not None:
+        onset = row["injury_started_at"]
+        if not isinstance(onset, str) or not re.fullmatch(
+                r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,6})?)?(?:Z|[+-]\d{2}:\d{2})", onset):
+            raise ValueError("injury onset requires a timestamp with a time zone")
+        if store.instant(onset) > store.instant(snapshot):
+            raise ValueError("injury onset after provider snapshot")
+        fields["injury_started_at"] = store.iso(onset)
+    elif fields.get("category") == "injury" and row.get("injury_date") is not None:
+        # Keep the publisher's date as-is so a repeated snapshot of the same
+        # report preserves its fingerprint even when the first day is incomplete.
+        news_scope.injury_date_upper_bound(row["injury_date"], store.instant(snapshot))
+        fields["injury_date"] = row["injury_date"]
     _, availability = wire_labels(fields)
     status, chance = fields["status"], fields.get("chance_of_playing")
     phrase = {"suspended": "is reported suspended", "doubtful": "is doubtful",
@@ -709,6 +740,9 @@ def _wire_availability(source, raw, received, cursor):
     now = store.instant(snapshot)
     if football.season_year(source["season"]) != now.year - (now.month < 7):
         raise ValueError("current availability snapshot belongs to a different season")
+    coverage = news_scope.wire_coverage(source["team"], source["season"], at=snapshot)
+    if not coverage:
+        raise ValueError("source_not_covered: no domestic season club membership for Touchline Wire")
     # A positive foreign club means the provider returned a different population.
     if any(isinstance(row, dict) and isinstance(row.get("team"), str) and row["team"].strip()
            and not _wire_club(source, row["team"]) for row in rows):
@@ -757,6 +791,7 @@ def _wire_availability(source, raw, received, cursor):
                                       updated_at=snapshot, time_basis="provider_snapshot"))
     return documents, {"snapshot": snapshot, "states": active, "players": sorted(map(int, ids)),
                        "blocked": sorted(blocked), "complete": not rejected}, {
+        "coverage_evidence": coverage,
         "player_rows": len(rows), "invalid_entries": len(rejected), "wire_rejections": rejected,
         "wire_observations": observations, "provider_state_as_of": snapshot, "revision_conflicts": conflicts}
 
@@ -858,7 +893,7 @@ def _wire_rumours(source, raw, received, cursor):
         "blocked": sorted(blocked)}, {"upstream_rumours": len(rows), "revision_conflicts": conflicts}
 
 
-def poll(source, team, season, cursor=None, *, getter=None):
+def poll(source, team, season, cursor=None, *, getter=None, league="epl"):
     """Fetch one bounded, explicitly scoped source. A failed read never advances the cursor."""
     source = validate_source(source)
     if football.team_key(team) != football.team_key(source["team"]) or source.get("season", season) != season:
@@ -868,6 +903,8 @@ def poll(source, team, season, cursor=None, *, getter=None):
     binding = store.digest([source["id"], source["url"], football.team_key(team), season])
     if cursor and cursor.get("binding") != binding:
         raise ValueError("news cursor belongs to another feed subscription")
+    if source["id"] in (WIRE, RUMOURS) and not news_scope.wire_coverage(team, season, league):
+        raise ValueError("source_not_covered: Touchline Wire has no domestic season membership for this club")
     url = source["url"]
     answer = (getter or _get)(url)
     if answer.url != url or not isinstance(answer.body, bytes) or len(answer.body) > MAX_BYTES:
