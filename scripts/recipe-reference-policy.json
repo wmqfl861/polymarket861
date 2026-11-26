@@ -123,6 +123,12 @@
       "football.load_fixtures"
     ]
   },
+  "market_provider.fresh_observation": {
+    "reason": "Only five-league paper entry opts into require_fresh on each parent event receipt. The EPL kickoff reader calls this archive path with its default False and applies schedule_consensus.MAX_AGE to the original receipt. Changes to that call, the default and the branch remain signed.",
+    "callers": [
+      "archive_proof._event_with_operation"
+    ]
+  },
   "model_study.build_sources": {
     "reason": "Binds the captured physical release manifest to the scope in which the primary recipe is independently verified.",
     "callers": [

@@ -156,6 +156,24 @@ class ProspectiveSchedule(unittest.TestCase):
                 "SELECT count(*) FROM fixture_versions WHERE fixture_id=?", (FID,)
             ).fetchone()[0]
 
+    def test_parent_http_age_rule_is_opt_in_for_paper_entry(self):
+        slug = self.gamma()
+        with (
+            closing(store.connect(self.root)) as db,
+            patch.object(market_provider, "fresh_observation", return_value=False) as fresh,
+        ):
+            row = db.execute("SELECT * FROM ma_events WHERE slug=?", (slug,)).fetchone()
+            _, proof = sc._gamma(self.root, db, row, self.time)
+            self.assertEqual(proof["kickoff"], store.iso(NEW))
+            fresh.assert_not_called()
+            with self.assertRaisesRegex(ValueError, "stale Gamma archive"):
+                sc._gamma(self.root, db, row, self.time + sc.MAX_AGE + timedelta(seconds=1))
+            with self.assertRaisesRegex(ValueError, "fresh HTTP observation"):
+                sc.archive_proof._event_capture(
+                    db, self.root, row["sha"], row["received_at"], slug, require_fresh=True
+                )
+            fresh.assert_called_once()
+
     def test_updates_once_and_preserves_prior_time_and_seal(self):
         self.ol()
         slug = self.gamma()
