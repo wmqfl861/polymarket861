@@ -1,0 +1,765 @@
+{
+  "release": "0.5.0a3",
+  "comparison": "0.5.0a2",
+  "method": "Synthetic native Gamma and CLOB, isolated SQLite archives, the real watcher and weekly report. Amounts are counts of observations. No real matches or trades are represented.",
+  "probes": [
+    "docs/review-evidence/code-review-0.5.0a2-2026-11-26/probe_big5_catalog_age.py",
+    "docs/review-evidence/code-review-0.5.0a2-2026-11-26/probe_big5_catalog_retry.py",
+    "tests/test_big5_catalog_recovery.py"
+  ],
+  "units": "Each claims/book_batches array orders T-60m decision then execution. Claims count acquired slot leases including blocked metadata. Book batches count native CLOB batch requests logged inside that window. Each fixed window requires 12 core outcomes. These fixtures also offer one optional line, hence a completed CLOB batch contains 14 tokens.",
+  "catalog_age": [
+    {
+      "mode": "known fixture only",
+      "age_minutes_at_T_minus_60": 2,
+      "before": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "mode": "known fixture only",
+      "age_minutes_at_T_minus_60": 9.5,
+      "before": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "mode": "known fixture only",
+      "age_minutes_at_T_minus_60": 10,
+      "before": {
+        "complete_of_2": 1,
+        "pair_of_1": 0,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          0
+        ],
+        "recorded_failure_reasons": [
+          "validated catalogue receipt older than ten minutes"
+        ]
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "refresh_triggers": [
+          "validated catalogue receipt older than ten minutes"
+        ]
+      }
+    },
+    {
+      "mode": "known fixture only",
+      "age_minutes_at_T_minus_60": 12,
+      "before": {
+        "complete_of_2": 0,
+        "pair_of_1": 0,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          0,
+          0
+        ],
+        "recorded_failure_reasons": [
+          "validated catalogue receipt older than ten minutes"
+        ]
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "refresh_triggers": [
+          "validated catalogue receipt older than ten minutes"
+        ]
+      }
+    },
+    {
+      "mode": "known fixture only",
+      "age_minutes_at_T_minus_60": 30,
+      "before": {
+        "complete_of_2": 0,
+        "pair_of_1": 0,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          0,
+          0
+        ],
+        "recorded_failure_reasons": [
+          "validated catalogue receipt older than ten minutes"
+        ]
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "refresh_triggers": [
+          "validated catalogue receipt older than ten minutes"
+        ]
+      }
+    },
+    {
+      "mode": "Gamma offline, CLOB available",
+      "age_minutes_at_T_minus_60": 4,
+      "before": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "mode": "Gamma offline, CLOB available",
+      "age_minutes_at_T_minus_60": 9.5,
+      "before": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "mode": "Gamma offline, CLOB available",
+      "age_minutes_at_T_minus_60": 12,
+      "before": {
+        "complete_of_2": 0,
+        "pair_of_1": 0,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          0,
+          0
+        ],
+        "recorded_failure_reasons": [
+          "validated catalogue receipt older than ten minutes"
+        ]
+      },
+      "after": {
+        "complete_of_2": 0,
+        "pair_of_1": 0,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          0,
+          0
+        ],
+        "recorded_failure_reasons": [
+          "simulated Gamma outage"
+        ],
+        "refresh_triggers": [
+          "validated catalogue receipt older than ten minutes"
+        ]
+      }
+    }
+  ],
+  "outage_and_recovery": [
+    {
+      "start_seconds_relative_to_target": -640,
+      "Gamma_outage_seconds": [],
+      "before": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "start_seconds_relative_to_target": -640,
+      "Gamma_outage_seconds": [
+        [
+          -345,
+          -335
+        ]
+      ],
+      "before": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 300
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 30
+      }
+    },
+    {
+      "start_seconds_relative_to_target": -640,
+      "Gamma_outage_seconds": [
+        [
+          -345,
+          -335
+        ],
+        [
+          -45,
+          -35
+        ]
+      ],
+      "before": {
+        "complete_of_2": 1,
+        "pair_of_1": 0,
+        "claims": [
+          3,
+          1
+        ],
+        "book_batches": [
+          0,
+          1
+        ],
+        "recorded_failure_reasons": [
+          "validated catalogue receipt older than ten minutes"
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 300
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 30
+      }
+    },
+    {
+      "start_seconds_relative_to_target": -640,
+      "Gamma_outage_seconds": [
+        [
+          -345,
+          -35
+        ]
+      ],
+      "before": {
+        "complete_of_2": 1,
+        "pair_of_1": 0,
+        "claims": [
+          3,
+          1
+        ],
+        "book_batches": [
+          0,
+          1
+        ],
+        "recorded_failure_reasons": [
+          "validated catalogue receipt older than ten minutes"
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 300
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "refresh_triggers": [
+          "validated catalogue receipt older than ten minutes"
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 30
+      }
+    },
+    {
+      "start_seconds_relative_to_target": -900,
+      "Gamma_outage_seconds": [
+        [
+          -605,
+          -295
+        ]
+      ],
+      "before": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 300
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          1,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 30
+      }
+    },
+    {
+      "start_seconds_relative_to_target": -900,
+      "Gamma_outage_seconds": [
+        [
+          -605,
+          -5
+        ]
+      ],
+      "before": {
+        "complete_of_2": 1,
+        "pair_of_1": 0,
+        "claims": [
+          3,
+          1
+        ],
+        "book_batches": [
+          0,
+          1
+        ],
+        "recorded_failure_reasons": [
+          "validated catalogue receipt older than ten minutes"
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 300
+      },
+      "after": {
+        "complete_of_2": 2,
+        "pair_of_1": 1,
+        "claims": [
+          11,
+          1
+        ],
+        "book_batches": [
+          1,
+          1
+        ],
+        "recorded_failure_reasons": [
+          "simulated Gamma failure"
+        ],
+        "refresh_triggers": [
+          "validated catalogue receipt older than ten minutes"
+        ],
+        "first_failed_full_catalog_to_retry_seconds": 30
+      }
+    }
+  ],
+  "historical_a2_archive_reopened_with_a3": {
+    "counts": {
+      "fixed_windows_due": 2,
+      "fixed_windows_complete": 0,
+      "t1_pairs_due": 1,
+      "t1_pairs_complete": 0
+    },
+    "gaps": [
+      {
+        "phase": "t1_decision",
+        "required_core_tokens": 12,
+        "attempts": 1,
+        "reasons": [
+          "sea-one-two-2030-01-12: validated catalogue receipt older than ten minutes",
+          "sea-one-two-2030-01-12-more-markets: validated catalogue receipt older than ten minutes",
+          "unverified main event or observed live/ended"
+        ]
+      },
+      {
+        "phase": "t1_execution",
+        "required_core_tokens": 12,
+        "attempts": 1,
+        "reasons": [
+          "sea-one-two-2030-01-12: validated catalogue receipt older than ten minutes",
+          "sea-one-two-2030-01-12-more-markets: validated catalogue receipt older than ten minutes",
+          "unverified main event or observed live/ended"
+        ]
+      }
+    ]
+  },
+  "decision_quota_control": {
+    "decision_leases": 7,
+    "Gamma_failures_with_no_CLOB_request": 4,
+    "actual_CLOB_requests_seconds_relative_to_target": [
+      -16,
+      -14,
+      -12
+    ],
+    "received_core_tokens": 0,
+    "required_core_tokens": 12,
+    "execution": [
+      "no capture attempt recorded"
+    ]
+  },
+  "native_cutoff_controls": [
+    {
+      "clock_case": "T-1/receive_after_0.999999s",
+      "windows_of_2": 2,
+      "pairs_of_1": 1,
+      "decision_execution_reasons": []
+    },
+    {
+      "clock_case": "T-1/receive_after_1.0s",
+      "windows_of_2": 0,
+      "pairs_of_1": 0,
+      "decision_execution_reasons": [
+        [
+          "14 native CLOB token books arrived late at 2030-01-12T13:00:00.000000Z (exclusive cutoff 2030-01-12T13:00:00.000000Z)"
+        ],
+        [
+          "14 native CLOB token books arrived late at 2030-01-12T13:00:10.000000Z (exclusive cutoff 2030-01-12T13:00:10.000000Z)"
+        ]
+      ]
+    },
+    {
+      "clock_case": "T-1/receive_after_1.000001s",
+      "windows_of_2": 0,
+      "pairs_of_1": 0,
+      "decision_execution_reasons": [
+        [
+          "14 native CLOB token books arrived late at 2030-01-12T13:00:00.000001Z (exclusive cutoff 2030-01-12T13:00:00.000000Z)"
+        ],
+        [
+          "14 native CLOB token books arrived late at 2030-01-12T13:00:10.000001Z (exclusive cutoff 2030-01-12T13:00:10.000000Z)"
+        ]
+      ]
+    },
+    {
+      "clock_case": "T-24/receive_after_0.999999s",
+      "windows_of_2": 2,
+      "pairs_of_1": 1,
+      "decision_execution_reasons": []
+    },
+    {
+      "clock_case": "T-24/receive_after_1.0s",
+      "windows_of_2": 0,
+      "pairs_of_1": 0,
+      "decision_execution_reasons": [
+        [
+          "14 native CLOB token books arrived late at 2030-01-11T14:00:00.000000Z (exclusive cutoff 2030-01-11T14:00:00.000000Z)"
+        ],
+        [
+          "14 native CLOB token books arrived late at 2030-01-11T14:00:10.000000Z (exclusive cutoff 2030-01-11T14:00:10.000000Z)"
+        ]
+      ]
+    },
+    {
+      "clock_case": "T-24/receive_after_1.000001s",
+      "windows_of_2": 0,
+      "pairs_of_1": 0,
+      "decision_execution_reasons": [
+        [
+          "14 native CLOB token books arrived late at 2030-01-11T14:00:00.000001Z (exclusive cutoff 2030-01-11T14:00:00.000000Z)"
+        ],
+        [
+          "14 native CLOB token books arrived late at 2030-01-11T14:00:10.000001Z (exclusive cutoff 2030-01-11T14:00:10.000000Z)"
+        ]
+      ]
+    }
+  ],
+  "native_late_receipts_reopened_from_four_a2_archives": [
+    {
+      "hours": 1,
+      "latency": 1.0,
+      "fixed_due": 2,
+      "completed": 0,
+      "legs": [
+        {
+          "phase": "t1_decision",
+          "late_books": 14,
+          "cutoff": "2030-01-12T13:00:00.000000Z",
+          "received_at": "2030-01-12T13:00:00.000000Z",
+          "late_us": 0
+        },
+        {
+          "phase": "t1_execution",
+          "late_books": 14,
+          "cutoff": "2030-01-12T13:00:10.000000Z",
+          "received_at": "2030-01-12T13:00:10.000000Z",
+          "late_us": 0
+        }
+      ]
+    },
+    {
+      "hours": 1,
+      "latency": 1.000001,
+      "fixed_due": 2,
+      "completed": 0,
+      "legs": [
+        {
+          "phase": "t1_decision",
+          "late_books": 14,
+          "cutoff": "2030-01-12T13:00:00.000000Z",
+          "received_at": "2030-01-12T13:00:00.000001Z",
+          "late_us": 1
+        },
+        {
+          "phase": "t1_execution",
+          "late_books": 14,
+          "cutoff": "2030-01-12T13:00:10.000000Z",
+          "received_at": "2030-01-12T13:00:10.000001Z",
+          "late_us": 1
+        }
+      ]
+    },
+    {
+      "hours": 24,
+      "latency": 1.0,
+      "fixed_due": 2,
+      "completed": 0,
+      "legs": [
+        {
+          "phase": "t24_decision",
+          "late_books": 14,
+          "cutoff": "2030-01-11T14:00:00.000000Z",
+          "received_at": "2030-01-11T14:00:00.000000Z",
+          "late_us": 0
+        },
+        {
+          "phase": "t24_execution",
+          "late_books": 14,
+          "cutoff": "2030-01-11T14:00:10.000000Z",
+          "received_at": "2030-01-11T14:00:10.000000Z",
+          "late_us": 0
+        }
+      ]
+    },
+    {
+      "hours": 24,
+      "latency": 1.000001,
+      "fixed_due": 2,
+      "completed": 0,
+      "legs": [
+        {
+          "phase": "t24_decision",
+          "late_books": 14,
+          "cutoff": "2030-01-11T14:00:00.000000Z",
+          "received_at": "2030-01-11T14:00:00.000001Z",
+          "late_us": 1
+        },
+        {
+          "phase": "t24_execution",
+          "late_books": 14,
+          "cutoff": "2030-01-11T14:00:10.000000Z",
+          "received_at": "2030-01-11T14:00:10.000001Z",
+          "late_us": 1
+        }
+      ]
+    }
+  ],
+  "dynamic_pagination_controls": {
+    "static": "A /sports dictionary with HTTP Age 586 seconds is a valid identity lookup.",
+    "dynamic": "Every /events page including the empty terminal page needs a verifiable fresh HTTP receipt. A stale page can supply a candidate for direct verification but never renews the league-wide clock.",
+    "cases": {
+      "None": {
+        "complete": true,
+        "healthy": true,
+        "state": "fresh",
+        "previous_success_at": null,
+        "last_success_at": "2030-01-12T12:59:40.000000Z",
+        "failed_offsets": []
+      },
+      "static": {
+        "complete": true,
+        "healthy": true,
+        "state": "fresh",
+        "previous_success_at": null,
+        "last_success_at": "2030-01-12T12:59:40.000000Z",
+        "failed_offsets": []
+      },
+      "0": {
+        "complete": false,
+        "healthy": false,
+        "state": "missing",
+        "previous_success_at": null,
+        "last_success_at": null,
+        "failed_offsets": [
+          0
+        ]
+      },
+      "1": {
+        "complete": false,
+        "healthy": false,
+        "state": "missing",
+        "previous_success_at": null,
+        "last_success_at": null,
+        "failed_offsets": [
+          1
+        ]
+      },
+      "2": {
+        "complete": false,
+        "healthy": false,
+        "state": "missing",
+        "previous_success_at": null,
+        "last_success_at": null,
+        "failed_offsets": [
+          2
+        ]
+      },
+      "all_dynamic": {
+        "complete": false,
+        "healthy": false,
+        "state": "missing",
+        "previous_success_at": null,
+        "last_success_at": null,
+        "failed_offsets": [
+          0,
+          1,
+          2
+        ]
+      },
+      "previous_success_then_old_middle": {
+        "complete": false,
+        "healthy": false,
+        "state": "stale",
+        "previous_success_at": "2030-01-12T12:48:00.000000Z",
+        "last_success_at": "2030-01-12T12:48:00.000000Z",
+        "failed_offsets": [
+          1
+        ]
+      }
+    }
+  }
+}

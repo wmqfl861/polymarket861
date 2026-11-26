@@ -14,6 +14,7 @@ from . import experiment_statistics, news_accumulation, news_evaluation, news_ma
 ENDPOINTS = {"home_win": ("home_win", "result"), "full_over_2_5": ("total_over_2_5", "total")}
 CLOCKS = ("market_close", "scheduled_market_close")
 HORIZONS = {"T-24h": timedelta(hours=24), "T-60m": timedelta(minutes=60)}
+COMPETITION = "epl"
 SEASONS = ("2026-27", "2027-28")
 END = "2028-07-01T00:00:00.000000Z"
 FAMILY = len(HORIZONS) * (len(CLOCKS) * len(ENDPOINTS) + 1)
@@ -56,7 +57,7 @@ BEGIN
  SELECT NEW.digest,d.digest,{_CLOCK_SQL},json_extract(NEW.data_json,'$.news_study.era_sha256')
  FROM news_endpoint_declarations d
  WHERE d.version='{version}' AND {modes}
- AND NEW.fixture_id GLOB ('epl/' || json_extract(NEW.data_json,'$.season') || '/*')
+ AND NEW.fixture_id GLOB ('{COMPETITION}/' || json_extract(NEW.data_json,'$.season') || '/*')
  AND json_extract(NEW.data_json,'$.season') IN ('2026-27','2027-28')
  AND json_extract(NEW.data_json,'$.purpose')='main'
  AND json_extract(NEW.data_json,'$.news_study.plan_sha256')='{news_study_plan.PLAN_SHA256}'
@@ -239,7 +240,7 @@ def report(data_dir):
         reasons = defaultdict(Counter)
         for season in SEASONS:
             fixtures = [f for f in store.eligible_fixture_rows(db, season=season)
-                        if f["fixture_id"].startswith(f"epl/{season}/")]
+                        if f["fixture_id"].startswith(f"{COMPETITION}/{season}/")]
             for horizon, lead in HORIZONS.items():
                 scheduled = [f for f in fixtures if registration["starts_at"] <= store.iso(store.instant(f["kickoff"]) - lead)
                              <= as_of and f["kickoff"] < END]
@@ -286,7 +287,11 @@ def _command(args):
     if action == "plan":
         if version == "v1":
             return {"plan": PLAN, "plan_sha256": PLAN_SHA}
-        return news_endpoint_v2.proposal()
+        return news_endpoint_v2.published_proposal()
+    if action == "preflight":
+        from . import news_endpoint_preflight
+
+        return news_endpoint_preflight.preflight(args.data_dir, limit=args.limit)
     if action == "report":
         return report(args.data_dir) if version == "v1" else news_endpoint_v2.report(args.data_dir)
     if version == "v1":
@@ -300,6 +305,10 @@ def register(commands):
     command = commands.add_parser("news-endpoints", help="登记英超主胜与全场大 2.5 的前瞻新闻收盘研究")
     sub = command.add_subparsers(dest="news_endpoint_action", required=True)
     plan = sub.add_parser("plan", help="查看冻结终点、收盘口径与事前功效")
+    check = sub.add_parser("preflight", help="只读核对本机来源、固定窗新闻封存和 v2 登记策略")
+    check.add_argument("--version", choices=("v2",), default="v2")
+    check.add_argument("--limit", type=int, default=20, help="核查最近的固定窗首封数（1–200，默认 20）")
+    check.set_defaults(func=_command)
     registration = sub.add_parser("register", help="登记本机前瞻开始时间，之后自动绑定新封存")
     registration.add_argument("--starts-at", help="带 UTC 偏移的未来时刻，默认从登记时起")
     registration.add_argument("--mode", choices=("both", "technical", "formal"),

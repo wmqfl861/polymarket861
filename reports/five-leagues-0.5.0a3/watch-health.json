@@ -1,0 +1,606 @@
+{
+  "release": "0.5.0a3",
+  "recorded_at_utc": "2026-11-26T15:49:58.992965Z",
+  "runtime": "CPython 3.12.14 on Linux",
+  "baseline_code_revision": "63350473ecb62d288301b90d2f59349280f26052",
+  "claude_review_revision": "05ac9d86677b6c9b211c6f7b47915b0605dd4471",
+  "single_league_method": {
+    "fixture": "docs/review-evidence/code-review-0.5.0a2-2026-11-26/probe_watch_service_heartbeat.py",
+    "processes": "Started separate --role service and --role check processes from the original reviewer probe on fresh temporary databases for each case. The collector ran the real continuous CLI, SQLite and scheduling loop. The probe substitutes Gamma replies. No NOTIFY_SOCKET was configured for these process-level runs.",
+    "signals": "Sent SIGINT, SIGTERM or SIGKILL after observing an advancing scheduler tick. Background case inherited SIG_IGN for SIGINT before Python started. If a process survived two seconds, SIGTERM ended it.",
+    "before_0.5.0a2": {
+      "gamma_ok_sigint": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": 130,
+        "watchdog_after_wait": {
+          "exit": 1,
+          "state": "stopped",
+          "healthy": false
+        }
+      },
+      "gamma_down_sigint": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": 130,
+        "watchdog_after_wait": {
+          "exit": 1,
+          "state": "stopped",
+          "healthy": false
+        }
+      },
+      "gamma_ok_background_sigint": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true
+        },
+        "survived_signal_after_two_seconds": true,
+        "process_exit": -15,
+        "watchdog_after_wait": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true
+        }
+      },
+      "gamma_ok_sigterm": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": -15,
+        "watchdog_after_wait": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true
+        }
+      },
+      "gamma_ok_sigkill": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": -9,
+        "watchdog_after_wait": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true
+        }
+      }
+    },
+    "after_0.5.0a3": {
+      "gamma_ok_sigint": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true,
+          "scheduler_alive": true,
+          "catalog_state": "fresh",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": "2026-11-26T15:44:41.654984Z",
+              "age_seconds": 0.905076,
+              "state": "fresh"
+            }
+          }
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": 130,
+        "watchdog_after_wait": {
+          "exit": 1,
+          "state": "stopped",
+          "healthy": false,
+          "scheduler_alive": false,
+          "catalog_state": "fresh",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": "2026-11-26T15:44:41.654984Z",
+              "age_seconds": 2.149241,
+              "state": "fresh"
+            }
+          }
+        }
+      },
+      "gamma_down_sigint": {
+        "watchdog_during": {
+          "exit": 1,
+          "state": "running",
+          "healthy": false,
+          "scheduler_alive": true,
+          "catalog_state": "missing",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": null,
+              "age_seconds": null,
+              "state": "missing"
+            }
+          }
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": 130,
+        "watchdog_after_wait": {
+          "exit": 1,
+          "state": "stopped",
+          "healthy": false,
+          "scheduler_alive": false,
+          "catalog_state": "missing",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": null,
+              "age_seconds": null,
+              "state": "missing"
+            }
+          }
+        }
+      },
+      "gamma_ok_background_sigint": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true,
+          "scheduler_alive": true,
+          "catalog_state": "fresh",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": "2026-11-26T15:44:47.517441Z",
+              "age_seconds": 0.919563,
+              "state": "fresh"
+            }
+          }
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": 130,
+        "watchdog_after_wait": {
+          "exit": 1,
+          "state": "stopped",
+          "healthy": false,
+          "scheduler_alive": false,
+          "catalog_state": "fresh",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": "2026-11-26T15:44:47.517441Z",
+              "age_seconds": 1.928553,
+              "state": "fresh"
+            }
+          }
+        }
+      },
+      "gamma_ok_sigterm": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true,
+          "scheduler_alive": true,
+          "catalog_state": "fresh",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": "2026-11-26T15:44:50.430953Z",
+              "age_seconds": 0.932406,
+              "state": "fresh"
+            }
+          }
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": 130,
+        "watchdog_after_wait": {
+          "exit": 1,
+          "state": "stopped",
+          "healthy": false,
+          "scheduler_alive": false,
+          "catalog_state": "fresh",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": "2026-11-26T15:44:50.430953Z",
+              "age_seconds": 1.981217,
+              "state": "fresh"
+            }
+          }
+        }
+      },
+      "gamma_ok_sigkill": {
+        "watchdog_during": {
+          "exit": 0,
+          "state": "running",
+          "healthy": true,
+          "scheduler_alive": true,
+          "catalog_state": "fresh",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": "2026-11-26T15:44:53.324117Z",
+              "age_seconds": 0.979486,
+              "state": "fresh"
+            }
+          }
+        },
+        "survived_signal_after_two_seconds": false,
+        "process_exit": -9,
+        "watchdog_after_wait": {
+          "exit": 1,
+          "state": "exited",
+          "healthy": false,
+          "scheduler_alive": false,
+          "catalog_state": "fresh",
+          "catalog_by_league": {
+            "sea": {
+              "last_success_at": "2026-11-26T15:44:53.324117Z",
+              "age_seconds": 1.870561,
+              "state": "fresh"
+            }
+          }
+        }
+      }
+    }
+  },
+  "four_league_method": {
+    "fixture": ".github/fixtures/watch-service/sitecustomize.py",
+    "collector": "pm861 market league-watch --cycles 0 --interval 1 --start 2030-01-12T00:00:00Z --end 2030-01-14T00:00:00Z",
+    "query": "Separate pm861 market league-watchdog processes targeted the same temporary directory and window. Overrides use --league sea for another_scope and --max-catalog-age 1 for the stale-data check. All other checks used default ages.",
+    "protocol": "The fixture raises OSError while the offline marker exists. Removing it permits four validated league feeds with real receipt clocks and empty event pages. The same collector remained running through outage recovery. A second collector shared its scope, exited on SIGTERM (130), and the original remained healthy. After SIGKILL of the original, a replacement sampled into the same directory and exited on SIGINT (130).",
+    "trace": {
+      "offline_first_tick": {
+        "cli_exit": 1,
+        "observed_at": "2026-11-26T15:47:34.576188Z",
+        "healthy": false,
+        "scheduler_alive": true,
+        "state": "running",
+        "run_id": "cd94a0c918c44e4a9c76bec7159044fb",
+        "ticks": 1,
+        "catalog_state": "missing",
+        "catalog_healthy": false,
+        "catalog_by_league": {
+          "bun": {
+            "last_success_at": null,
+            "age_seconds": null,
+            "state": "missing"
+          },
+          "fl1": {
+            "last_success_at": null,
+            "age_seconds": null,
+            "state": "missing"
+          },
+          "lal": {
+            "last_success_at": null,
+            "age_seconds": null,
+            "state": "missing"
+          },
+          "sea": {
+            "last_success_at": null,
+            "age_seconds": null,
+            "state": "missing"
+          }
+        },
+        "catalog_complete_by_league": {
+          "bun": false,
+          "fl1": false,
+          "lal": false,
+          "sea": false
+        }
+      },
+      "another_scope": {
+        "cli_exit": 1,
+        "observed_at": "2026-11-26T15:47:35.570296Z",
+        "healthy": false,
+        "scheduler_alive": false,
+        "state": "missing",
+        "run_id": null,
+        "ticks": 0,
+        "catalog_state": "missing",
+        "catalog_healthy": false,
+        "catalog_by_league": {
+          "sea": {
+            "last_success_at": null,
+            "age_seconds": null,
+            "state": "missing"
+          }
+        },
+        "catalog_complete_by_league": null
+      },
+      "recovered_without_restart": {
+        "cli_exit": 0,
+        "observed_at": "2026-11-26T15:48:05.506930Z",
+        "healthy": true,
+        "scheduler_alive": true,
+        "state": "running",
+        "run_id": "cd94a0c918c44e4a9c76bec7159044fb",
+        "ticks": 32,
+        "catalog_state": "fresh",
+        "catalog_healthy": true,
+        "catalog_by_league": {
+          "bun": {
+            "last_success_at": "2026-11-26T15:48:03.573563Z",
+            "age_seconds": 1.933367,
+            "state": "fresh"
+          },
+          "fl1": {
+            "last_success_at": "2026-11-26T15:48:03.578257Z",
+            "age_seconds": 1.928673,
+            "state": "fresh"
+          },
+          "lal": {
+            "last_success_at": "2026-11-26T15:48:03.570889Z",
+            "age_seconds": 1.936041,
+            "state": "fresh"
+          },
+          "sea": {
+            "last_success_at": "2026-11-26T15:48:03.575943Z",
+            "age_seconds": 1.930987,
+            "state": "fresh"
+          }
+        },
+        "catalog_complete_by_league": {
+          "bun": true,
+          "fl1": true,
+          "lal": true,
+          "sea": true
+        }
+      },
+      "running_with_stale_catalog_limit_one_second": {
+        "cli_exit": 1,
+        "observed_at": "2026-11-26T15:48:06.369343Z",
+        "healthy": false,
+        "scheduler_alive": true,
+        "state": "running",
+        "run_id": "cd94a0c918c44e4a9c76bec7159044fb",
+        "ticks": 32,
+        "catalog_state": "stale",
+        "catalog_healthy": false,
+        "catalog_by_league": {
+          "bun": {
+            "last_success_at": "2026-11-26T15:48:03.573563Z",
+            "age_seconds": 2.79578,
+            "state": "stale"
+          },
+          "fl1": {
+            "last_success_at": "2026-11-26T15:48:03.578257Z",
+            "age_seconds": 2.791086,
+            "state": "stale"
+          },
+          "lal": {
+            "last_success_at": "2026-11-26T15:48:03.570889Z",
+            "age_seconds": 2.798454,
+            "state": "stale"
+          },
+          "sea": {
+            "last_success_at": "2026-11-26T15:48:03.575943Z",
+            "age_seconds": 2.7934,
+            "state": "stale"
+          }
+        },
+        "catalog_complete_by_league": {
+          "bun": true,
+          "fl1": true,
+          "lal": true,
+          "sea": true
+        }
+      },
+      "second_live_collector": {
+        "cli_exit": 0,
+        "observed_at": "2026-11-26T15:48:08.981603Z",
+        "healthy": true,
+        "scheduler_alive": true,
+        "state": "running",
+        "run_id": "2a130795ea05475e8ae0cba7f1029597",
+        "ticks": 1,
+        "catalog_state": "fresh",
+        "catalog_healthy": true,
+        "catalog_by_league": {
+          "bun": {
+            "last_success_at": "2026-11-26T15:48:08.002407Z",
+            "age_seconds": 0.979196,
+            "state": "fresh"
+          },
+          "fl1": {
+            "last_success_at": "2026-11-26T15:48:08.006463Z",
+            "age_seconds": 0.97514,
+            "state": "fresh"
+          },
+          "lal": {
+            "last_success_at": "2026-11-26T15:48:08.000390Z",
+            "age_seconds": 0.981213,
+            "state": "fresh"
+          },
+          "sea": {
+            "last_success_at": "2026-11-26T15:48:08.004581Z",
+            "age_seconds": 0.977022,
+            "state": "fresh"
+          }
+        },
+        "catalog_complete_by_league": {
+          "bun": true,
+          "fl1": true,
+          "lal": true,
+          "sea": true
+        }
+      },
+      "live_peer_after_other_stopped": {
+        "cli_exit": 0,
+        "observed_at": "2026-11-26T15:48:09.948810Z",
+        "healthy": true,
+        "scheduler_alive": true,
+        "state": "running",
+        "run_id": "cd94a0c918c44e4a9c76bec7159044fb",
+        "ticks": 32,
+        "catalog_state": "fresh",
+        "catalog_healthy": true,
+        "catalog_by_league": {
+          "bun": {
+            "last_success_at": "2026-11-26T15:48:08.002407Z",
+            "age_seconds": 1.946403,
+            "state": "fresh"
+          },
+          "fl1": {
+            "last_success_at": "2026-11-26T15:48:08.006463Z",
+            "age_seconds": 1.942347,
+            "state": "fresh"
+          },
+          "lal": {
+            "last_success_at": "2026-11-26T15:48:08.000390Z",
+            "age_seconds": 1.94842,
+            "state": "fresh"
+          },
+          "sea": {
+            "last_success_at": "2026-11-26T15:48:08.004581Z",
+            "age_seconds": 1.944229,
+            "state": "fresh"
+          }
+        },
+        "catalog_complete_by_league": {
+          "bun": true,
+          "fl1": true,
+          "lal": true,
+          "sea": true
+        }
+      },
+      "after_last_process_killed": {
+        "cli_exit": 1,
+        "observed_at": "2026-11-26T15:48:10.818642Z",
+        "healthy": false,
+        "scheduler_alive": false,
+        "state": "stopped",
+        "run_id": "2a130795ea05475e8ae0cba7f1029597",
+        "ticks": 1,
+        "catalog_state": "fresh",
+        "catalog_healthy": true,
+        "catalog_by_league": {
+          "bun": {
+            "last_success_at": "2026-11-26T15:48:08.002407Z",
+            "age_seconds": 2.816235,
+            "state": "fresh"
+          },
+          "fl1": {
+            "last_success_at": "2026-11-26T15:48:08.006463Z",
+            "age_seconds": 2.812179,
+            "state": "fresh"
+          },
+          "lal": {
+            "last_success_at": "2026-11-26T15:48:08.000390Z",
+            "age_seconds": 2.818252,
+            "state": "fresh"
+          },
+          "sea": {
+            "last_success_at": "2026-11-26T15:48:08.004581Z",
+            "age_seconds": 2.814061,
+            "state": "fresh"
+          }
+        },
+        "catalog_complete_by_league": {
+          "bun": true,
+          "fl1": true,
+          "lal": true,
+          "sea": true
+        }
+      },
+      "restarted_after_kill": {
+        "cli_exit": 0,
+        "observed_at": "2026-11-26T15:48:11.716502Z",
+        "healthy": true,
+        "scheduler_alive": true,
+        "state": "running",
+        "run_id": "d44a4a2cd3be4370958f900b9d0d887b",
+        "ticks": 1,
+        "catalog_state": "fresh",
+        "catalog_healthy": true,
+        "catalog_by_league": {
+          "bun": {
+            "last_success_at": "2026-11-26T15:48:11.695930Z",
+            "age_seconds": 0.020572,
+            "state": "fresh"
+          },
+          "fl1": {
+            "last_success_at": "2026-11-26T15:48:11.699925Z",
+            "age_seconds": 0.016577,
+            "state": "fresh"
+          },
+          "lal": {
+            "last_success_at": "2026-11-26T15:48:11.693981Z",
+            "age_seconds": 0.022521,
+            "state": "fresh"
+          },
+          "sea": {
+            "last_success_at": "2026-11-26T15:48:11.697922Z",
+            "age_seconds": 0.01858,
+            "state": "fresh"
+          }
+        },
+        "catalog_complete_by_league": {
+          "bun": true,
+          "fl1": true,
+          "lal": true,
+          "sea": true
+        }
+      },
+      "after_restart_and_graceful_stop": {
+        "cli_exit": 1,
+        "observed_at": "2026-11-26T15:48:12.882778Z",
+        "healthy": false,
+        "scheduler_alive": false,
+        "state": "stopped",
+        "run_id": "d44a4a2cd3be4370958f900b9d0d887b",
+        "ticks": 1,
+        "catalog_state": "fresh",
+        "catalog_healthy": true,
+        "catalog_by_league": {
+          "bun": {
+            "last_success_at": "2026-11-26T15:48:11.695930Z",
+            "age_seconds": 1.186848,
+            "state": "fresh"
+          },
+          "fl1": {
+            "last_success_at": "2026-11-26T15:48:11.699925Z",
+            "age_seconds": 1.182853,
+            "state": "fresh"
+          },
+          "lal": {
+            "last_success_at": "2026-11-26T15:48:11.693981Z",
+            "age_seconds": 1.188797,
+            "state": "fresh"
+          },
+          "sea": {
+            "last_success_at": "2026-11-26T15:48:11.697922Z",
+            "age_seconds": 1.184856,
+            "state": "fresh"
+          }
+        },
+        "catalog_complete_by_league": {
+          "bun": true,
+          "fl1": true,
+          "lal": true,
+          "sea": true
+        }
+      }
+    }
+  },
+  "epl_stop": {
+    "entrypoint": "pm861 season run --repeat",
+    "outbound_sockets": "disabled fixture",
+    "completed_real_coordinator_tick": true,
+    "stop_signal": "SIGINT",
+    "exit_code": 130
+  },
+  "unit_files": {
+    "static_verifier": "systemd-analyze 257 verify",
+    "scope": "All six shipped service and timer units. Only the installation-specific absolute ExecStart path was replaced by the local venv pm861 path.",
+    "exit_code": 0
+  },
+  "local_test": {
+    "command": "python -m unittest discover -s tests -p test_market_watch_health.py -v",
+    "tests_run": 9,
+    "passed": 8,
+    "skipped": 1,
+    "skipped_test": "test_notify_reports_readiness_only_after_first_tick",
+    "datagram_probe": "The host rejected AF_UNIX SOCK_DGRAM socket creation with EPERM on both unmodified Claude probe runs (before and after). The mocked transport test passed READY, WATCHDOG and STOPPING payload/address checks. The host has no systemd user manager. A real systemd restart, timer journal, or service notification delivery is outside these local observations.",
+    "service_acceptance_job": ".github/scripts/verify-watch-deployment.sh (Ubuntu Actions systemd-deploy job; its run result is separate)."
+  }
+}

@@ -1,0 +1,310 @@
+{
+  "scope": "Independent price-taking simulations. Cash and payouts in controlled cases are hypothetical.",
+  "claude_probe": {
+    "file": "docs/review-evidence/code-review-0.5.0a2-2026-11-26/probe_paper_entry_fee_switch.py",
+    "baseline": {
+      "package_version": "0.5.0a2",
+      "reviewed_fee_policies": 0,
+      "entries_filled": {
+        "fee_switch_off": {
+          "default_tier": 4,
+          "research_tier": 8,
+          "of": 8
+        },
+        "fee_switch_on": {
+          "default_tier": 0,
+          "research_tier": 0,
+          "of": 8
+        }
+      }
+    },
+    "candidate": {
+      "package_version": "0.5.0a3",
+      "reviewed_fee_policies": 0,
+      "entries_filled": {
+        "fee_switch_off": {
+          "default_tier": 4,
+          "research_tier": 8,
+          "of": 8
+        },
+        "fee_switch_on": {
+          "default_tier": 0,
+          "research_tier": 8,
+          "of": 8
+        }
+      }
+    }
+  },
+  "controlled_native_collectors_and_cli": {
+    "epl": {
+      "default_outcomes": {
+        "skipped_unverified_entry": 1
+      },
+      "research_outcome": "filled",
+      "entry_basis": "scheduled_with_incomplete_flags",
+      "fee_basis": "research_assumption",
+      "gross_shares": "100",
+      "net_shares": "97.500000",
+      "buy_cash": "50.000000",
+      "at_risk_before_redemption": "50.000000",
+      "net_credited": "97.500000",
+      "closing_cash": "2047.500000",
+      "settled_paper_pnl": "47.500000",
+      "venue_orders": 0,
+      "venue_realized_pnl": null
+    },
+    "lal": {
+      "default_outcomes": {
+        "skipped_unverified_entry": 1
+      },
+      "research_outcome": "filled",
+      "entry_basis": "scheduled_with_incomplete_flags",
+      "fee_basis": "research_assumption",
+      "gross_shares": "100",
+      "net_shares": "97.500000",
+      "buy_cash": "50.000000",
+      "at_risk_before_redemption": "50.000000",
+      "net_credited": "97.500000",
+      "closing_cash": "2047.500000",
+      "settled_paper_pnl": "47.500000",
+      "venue_orders": 0,
+      "venue_realized_pnl": null
+    },
+    "bun": {
+      "default_outcomes": {
+        "skipped_unverified_entry": 1
+      },
+      "research_outcome": "filled",
+      "entry_basis": "scheduled_with_incomplete_flags",
+      "fee_basis": "research_assumption",
+      "gross_shares": "100",
+      "net_shares": "97.500000",
+      "buy_cash": "50.000000",
+      "at_risk_before_redemption": "50.000000",
+      "net_credited": "97.500000",
+      "closing_cash": "2047.500000",
+      "settled_paper_pnl": "47.500000",
+      "venue_orders": 0,
+      "venue_realized_pnl": null
+    },
+    "sea": {
+      "default_outcomes": {
+        "skipped_unverified_entry": 1
+      },
+      "research_outcome": "filled",
+      "entry_basis": "scheduled_with_incomplete_flags",
+      "fee_basis": "research_assumption",
+      "gross_shares": "100",
+      "net_shares": "97.500000",
+      "buy_cash": "50.000000",
+      "at_risk_before_redemption": "50.000000",
+      "net_credited": "97.500000",
+      "closing_cash": "2047.500000",
+      "settled_paper_pnl": "47.500000",
+      "venue_orders": 0,
+      "venue_realized_pnl": null
+    },
+    "fl1": {
+      "default_outcomes": {
+        "skipped_unverified_entry": 1
+      },
+      "research_outcome": "filled",
+      "entry_basis": "scheduled_with_incomplete_flags",
+      "fee_basis": "research_assumption",
+      "gross_shares": "100",
+      "net_shares": "97.500000",
+      "buy_cash": "50.000000",
+      "at_risk_before_redemption": "50.000000",
+      "net_credited": "97.500000",
+      "closing_cash": "2047.500000",
+      "settled_paper_pnl": "47.500000",
+      "venue_orders": 0,
+      "venue_realized_pnl": null
+    }
+  },
+  "retained_real_captures": [
+    {
+      "dataset": "pm861-v05-market-archive-final",
+      "leagues": {
+        "lal": {
+          "verified_mapped_markets": 240,
+          "fees_enabled_true": 240,
+          "strict gap: fee-enabled market lacks one reviewed effective charging asset and rounding policy": 480,
+          "research terms: research_assumption": 480
+        },
+        "bun": {
+          "verified_mapped_markets": 216,
+          "fees_enabled_true": 216,
+          "strict gap: fee-enabled market lacks one reviewed effective charging asset and rounding policy": 432,
+          "research terms: research_assumption": 432
+        },
+        "sea": {
+          "verified_mapped_markets": 240,
+          "fees_enabled_true": 240,
+          "strict gap: fee-enabled market lacks one reviewed effective charging asset and rounding policy": 480,
+          "research terms: research_assumption": 480
+        },
+        "fl1": {
+          "verified_mapped_markets": 216,
+          "fees_enabled_true": 216,
+          "strict gap: fee-enabled market lacks one reviewed effective charging asset and rounding policy": 432,
+          "research terms: research_assumption": 432
+        }
+      },
+      "raw_fee_profiles": [
+        {
+          "schedule": {
+            "exponent": 1,
+            "rate": 0.05,
+            "rebateRate": 0.15,
+            "takerOnly": true
+          },
+          "markets": 912
+        }
+      ],
+      "book_receipts": 2280,
+      "distinct_book_tokens": 1824,
+      "repeat_receipts_for_token": 456,
+      "shortest_repeat_gap_seconds": 138.90025,
+      "adjacent_repeat_gaps_5_to_40_seconds": 0,
+      "market_seconds_delay": [
+        1
+      ],
+      "draw_examples": {
+        "lal": {
+          "fixture": "lal-bet-ray-2026-11-28",
+          "condition_id": "0xd30dd11226bdcfc00cbcb74d7f043c2875c03101ac7dadbd1756704f93305a9a",
+          "as_of": "2026-11-26T07:24:51.544298Z",
+          "source_sha256": "71c702090677b170a7965e4db4b41f481aaa544504b0d183501429f7202f9d91",
+          "fee_basis": "research_assumption",
+          "order_books_checked": 0,
+          "token_id": "40737794135718738995218597723705116712908391765361283146555222983315005286967",
+          "fee_version": "40d2acf9e610805b9dfa2798001d1edf59b5aa67b134c957dcaae26799168f78"
+        },
+        "bun": {
+          "fixture": "bun-hsv-bay-2026-11-28",
+          "condition_id": "0xc5d593bbdbf9844486fc810bc8ad8bc836ea32bfac96799d83860025dda34e67",
+          "as_of": "2026-11-26T07:24:52.727289Z",
+          "source_sha256": "f73b4f5376820d934ec3402984b7cc4f1f2821a3560682c6a9b3acf4b50116d5",
+          "fee_basis": "research_assumption",
+          "order_books_checked": 0,
+          "token_id": "68308770025189482845473182028585075856544074280405103529462025858376230425857",
+          "fee_version": "40d2acf9e610805b9dfa2798001d1edf59b5aa67b134c957dcaae26799168f78"
+        },
+        "sea": {
+          "fixture": "sea-fro-par-2026-11-28",
+          "condition_id": "0x058afc69f5bf8dbb465b0444f0f6417217dcc4783c2158948b9b03acb0109731",
+          "as_of": "2026-11-26T07:24:53.826655Z",
+          "source_sha256": "a06eb0081a1edb29c77d99a79405e74bae4e35f28dd783ea7e9c7c48901b5e71",
+          "fee_basis": "research_assumption",
+          "order_books_checked": 0,
+          "token_id": "72662341520067741236425971599468079574501214637023236613198383272074567037323",
+          "fee_version": "40d2acf9e610805b9dfa2798001d1edf59b5aa67b134c957dcaae26799168f78"
+        },
+        "fl1": {
+          "fixture": "fl1-ang-rcl-2026-11-28",
+          "condition_id": "0xe6f20a187ad9c6d198121d6f1a7ee7d951bd7ad592476326c48fc236a67f299a",
+          "as_of": "2026-11-26T07:24:54.857132Z",
+          "source_sha256": "7d1c5b393b0b6d56359c1c64f9c32d2a6c2011b99c863d3562dfb6cd5e4bef62",
+          "fee_basis": "research_assumption",
+          "order_books_checked": 0,
+          "token_id": "49027993242397288607793437105472219951006931884588363603073719263500789601473",
+          "fee_version": "40d2acf9e610805b9dfa2798001d1edf59b5aa67b134c957dcaae26799168f78"
+        }
+      }
+    },
+    {
+      "dataset": "live",
+      "leagues": {
+        "lal": {
+          "verified_mapped_markets": 240,
+          "fees_enabled_true": 240,
+          "strict gap: fee-enabled market lacks one reviewed effective charging asset and rounding policy": 480,
+          "research terms: research_assumption": 480
+        },
+        "bun": {
+          "verified_mapped_markets": 216,
+          "fees_enabled_true": 216,
+          "strict gap: fee-enabled market lacks one reviewed effective charging asset and rounding policy": 432,
+          "research terms: research_assumption": 432
+        },
+        "sea": {
+          "verified_mapped_markets": 240,
+          "fees_enabled_true": 240,
+          "strict gap: fee-enabled market lacks one reviewed effective charging asset and rounding policy": 480,
+          "research terms: research_assumption": 480
+        },
+        "fl1": {
+          "verified_mapped_markets": 216,
+          "fees_enabled_true": 216,
+          "strict gap: fee-enabled market lacks one reviewed effective charging asset and rounding policy": 432,
+          "research terms: research_assumption": 432
+        }
+      },
+      "raw_fee_profiles": [
+        {
+          "schedule": {
+            "exponent": 1,
+            "rate": 0.05,
+            "rebateRate": 0.15,
+            "takerOnly": true
+          },
+          "markets": 912
+        }
+      ],
+      "book_receipts": 48,
+      "distinct_book_tokens": 48,
+      "repeat_receipts_for_token": 0,
+      "shortest_repeat_gap_seconds": null,
+      "adjacent_repeat_gaps_5_to_40_seconds": 0,
+      "market_seconds_delay": [
+        1
+      ],
+      "draw_examples": {
+        "lal": {
+          "fixture": "lal-bet-ray-2026-11-28",
+          "condition_id": "0xd30dd11226bdcfc00cbcb74d7f043c2875c03101ac7dadbd1756704f93305a9a",
+          "as_of": "2026-11-26T11:36:55.184107Z",
+          "source_sha256": "f25e96cb0db8fbb922413f77466f93211d7b0291f1b8d1c183ae9c7e0217e3ce",
+          "fee_basis": "research_assumption",
+          "order_books_checked": 0,
+          "token_id": "40737794135718738995218597723705116712908391765361283146555222983315005286967",
+          "fee_version": "40d2acf9e610805b9dfa2798001d1edf59b5aa67b134c957dcaae26799168f78"
+        },
+        "bun": {
+          "fixture": "bun-hsv-bay-2026-11-28",
+          "condition_id": "0xc5d593bbdbf9844486fc810bc8ad8bc836ea32bfac96799d83860025dda34e67",
+          "as_of": "2026-11-26T11:36:56.101433Z",
+          "source_sha256": "50c55c0e7c6f5d97159957255dcbe451a5fec834ab132ef6dc40851cc61d645f",
+          "fee_basis": "research_assumption",
+          "order_books_checked": 0,
+          "token_id": "68308770025189482845473182028585075856544074280405103529462025858376230425857",
+          "fee_version": "40d2acf9e610805b9dfa2798001d1edf59b5aa67b134c957dcaae26799168f78"
+        },
+        "sea": {
+          "fixture": "sea-fro-par-2026-11-28",
+          "condition_id": "0x058afc69f5bf8dbb465b0444f0f6417217dcc4783c2158948b9b03acb0109731",
+          "as_of": "2026-11-26T11:36:56.962076Z",
+          "source_sha256": "b21bd6cbd4aa9ecfd62044df15578ce7237e3eebecd959dcb152d9739b178ea8",
+          "fee_basis": "research_assumption",
+          "order_books_checked": 0,
+          "token_id": "72662341520067741236425971599468079574501214637023236613198383272074567037323",
+          "fee_version": "40d2acf9e610805b9dfa2798001d1edf59b5aa67b134c957dcaae26799168f78"
+        },
+        "fl1": {
+          "fixture": "fl1-ang-rcl-2026-11-28",
+          "condition_id": "0xe6f20a187ad9c6d198121d6f1a7ee7d951bd7ad592476326c48fc236a67f299a",
+          "as_of": "2026-11-26T11:36:57.952855Z",
+          "source_sha256": "8e4722371b88db4eac490a2ed731eac49c87011d877c7fadbd57dd401d422c26",
+          "fee_basis": "research_assumption",
+          "order_books_checked": 0,
+          "token_id": "49027993242397288607793437105472219951006931884588363603073719263500789601473",
+          "fee_version": "40d2acf9e610805b9dfa2798001d1edf59b5aa67b134c957dcaae26799168f78"
+        }
+      }
+    }
+  ],
+  "reviewed_fee_policies_in_release": 0,
+  "original_stress_file_sha256": "b750f9339b2ab8c4e118d4f73d5642b5ea6b44880b8bc27b7d78ec39a7345ed6",
+  "regenerated_stress_file_sha256": "b750f9339b2ab8c4e118d4f73d5642b5ea6b44880b8bc27b7d78ec39a7345ed6"
+}

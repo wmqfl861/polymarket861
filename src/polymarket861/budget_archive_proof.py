@@ -11,6 +11,7 @@ from . import (
     big5_market,
     budget_schedule,
     dbscope,
+    fee_registry,
     league_registry,
     ledger_rules as rules,
     ledger_terms,
@@ -58,7 +59,57 @@ def football_archive(source):
     yield None
 
 
-def verify_contract(data_dir, condition, as_of):
+def _paper_fee(root, market, at):
+    # In this opt-in account, an expired, unmatched, ambiguous or unavailable
+    # registered policy must fail its usual checks at each individual receipt.
+    if market.get("fees_enabled") is not True or any(
+        p.protocol == market["protocol"] and market["family"] in p.families
+        for p in fee_registry.REVIEWED
+    ):
+        return ledger_terms._fee(market, root, at)
+    if (
+        market["venue"] != "polymarket.com" or market["protocol"] not in {"v1", "v2"}
+        or rules.instant(market["recorded_at"]) > rules.instant(at)
+    ):
+        raise ValueError("paper fee estimate requires a timely international Gamma original")
+    return shadow_market._fee(root, market, at)
+
+
+def _scheduled_book_fee(contract, market, *, data_dir, at):
+    if contract["fee_schedule"].get("research_assumption") is not True:
+        return ledger_terms.verify_book_terms(contract, market, data_dir=data_dir, at=at)
+    observed = _paper_fee(data_dir, market, at)
+    if (
+        market["rule_sha256"] != contract["rule_sha256"]
+        or market["seconds_delay"] != contract["seconds_delay"]
+        or observed["version"] != contract["fee_schedule"]["version"]
+    ):
+        raise ValueError("paper fee estimate or frozen rule changed at book capture")
+
+
+def _terms(root, market, token, at, *, scheduled):
+    if not scheduled:
+        return ledger_terms.from_original(root, market, token, at)
+    return ledger_terms._terms_with_fee(root, market, token, at, None, _paper_fee(root, market, at))
+
+
+def _fee_basis(fee):
+    if not fee["enabled"]:
+        return "gamma_fees_disabled"
+    if fee.get("research_assumption") is True:
+        return "research_assumption"
+    return "authoritative"
+
+
+def _intent_terms(terms):
+    return {
+        "condition_id": terms["condition_id"], "token_id": terms["token_id"],
+        "selection": {k: terms[k] for k in ("family", "selection", "team", "line", "side") if k in terms},
+        "rule_sha256": terms["rule_sha256"], "fee": terms["fee_schedule"],
+    }
+
+
+def verify_contract(data_dir, condition, as_of, *, token=None, scheduled=False):
     """Independently inspect a retained Gamma contract even if no timely CLOB pair exists."""
     at = rules.iso(rules.instant(as_of))
     with read_archive(data_dir) as source:
@@ -71,7 +122,7 @@ def verify_contract(data_dir, condition, as_of):
             db, root, market["source_sha256"], market["recorded_at"], market["event_slug"]
         )
         _, main, _, kickoff, home, away, event_id = big5_market._identity(native, league)
-        return {
+        result = {
             "scope": "archived_gamma_contract", "as_of": at, "league": league,
             "fixture": main, "event_slug": market["event_slug"], "event_id": event_id,
             "kickoff": kickoff, "home_club_id": home, "away_club_id": away,
@@ -79,6 +130,11 @@ def verify_contract(data_dir, condition, as_of):
             "source_sha256": market["source_sha256"], "received_at": market["recorded_at"],
             "order_books_checked": 0,
         }
+        if token is not None:
+            terms = _terms(root, market, token, at, scheduled=scheduled)
+            result["intent_terms"] = _intent_terms(terms)
+            result["fee_basis"] = _fee_basis(terms["fee_schedule"])
+        return result
 
 
 def _gamma_identity(source, market, fixture, kickoff):
@@ -113,17 +169,9 @@ def entry(source, op, candidates, *, scheduled=False, as_of=None, football=None)
     decision, kickoff = rules.instant(op["decision_at"]), rules.instant(op["kickoff"])
     market = archive_proof.original_market(db, root, condition, decision)
     _gamma_identity(source, market, op["fixture_id"], kickoff)
-    terms = ledger_terms.from_original(root, market, token, decision)
-    selection = {
-        k: terms[k]
-        for k in ("family", "selection", "team", "line", "side")
-        if k in terms
-    }
-    if (
-        op.get("selection") != selection
-        or op.get("rule_sha256") != terms["rule_sha256"]
-        or op.get("fee") != terms["fee_schedule"]
-    ):
+    terms = _terms(root, market, token, decision, scheduled=scheduled)
+    canonical = _intent_terms(terms)
+    if rules.digest({k: op.get(k) for k in canonical}) != rules.digest(canonical):
         raise ValueError(
             "entry outcome, direction, rules or fee differ from the verified contract"
         )
@@ -133,12 +181,10 @@ def entry(source, op, candidates, *, scheduled=False, as_of=None, football=None)
         ("first", "second"), (decision, target), candidates
     ):
         if scheduled:
-            # Borrow only the shadow clock interpretation. These five cash buckets
-            # still require the full frozen, authoritative fee as at each book.
             seen_by = at + timedelta(seconds=5) if stage == "second" else at
             verified = shadow_market.book(
                 db, root, terms, at, kickoff, stage,
-                seen_by=seen_by, fee_check=ledger_terms.verify_book_terms,
+                seen_by=seen_by, fee_check=_scheduled_book_fee,
             )
         else:
             verified = archive_proof.eligible_book(db, root, terms, at, kickoff, stage)
@@ -196,8 +242,16 @@ def entry(source, op, candidates, *, scheduled=False, as_of=None, football=None)
         "entry_terms": terms,
         "decision_at": rules.iso(decision),
         "budget_fixture_id": op["fixture_id"],
+        "fee_evidence": {
+            "basis": _fee_basis(terms["fee_schedule"]),
+            "schedule": terms["fee_schedule"],
+            "decision_gamma_sha256": market["source_sha256"],
+            "book_gamma": [{"source_sha256": b["contract_source_sha256"],
+                            "received_at": b["contract_recorded_at"]} for b in snapshots],
+        },
     }
-    timeline = budget_schedule.entry_parents(source, market, snapshots)
+    timeline, native_fees = budget_schedule.entry_parents(source, market, snapshots, as_of=as_of)
+    result["fee_evidence"]["native_gamma_fields"] = native_fees
     if scheduled:
         result["entry_evidence"] = budget_schedule.attest(
             source, op["fixture_id"], market, kickoff, snapshots, timeline, as_of, football
@@ -267,7 +321,8 @@ def redemption(source, market, event, kickoff):
     if event["fixture_id"] != market["budget_fixture_id"]:
         raise ValueError("redemption fixture differs from sealed entry")
     _gamma_identity(source, original, event["fixture_id"], kickoff)
-    terms = ledger_terms.from_original(root, original, event["token_id"], decision)
+    terms = _terms(root, original, event["token_id"], decision,
+                   scheduled=frozen["fee_schedule"].get("research_assumption") is True)
     if terms != frozen or original["rule_sha256"] != market["rule_sha256"]:
         raise ValueError("redemption rules or terms no longer match the frozen outcome")
     if amount == rules.D("0.5"):

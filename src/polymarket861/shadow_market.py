@@ -3,8 +3,8 @@
 import json
 from datetime import timedelta
 
-from . import archive_proof, dbscope, jobs, ledger_terms, store
-from .ledger_rules import check_book, digest, fmt, instant, iso, number, unit
+from . import archive_proof, dbscope, fee_registry, jobs, ledger_terms, store
+from .ledger_rules import check_book, digest, fmt, instant, iso
 
 
 def _fee(root, market, at):
@@ -13,20 +13,9 @@ def _fee(root, market, at):
     except ValueError:
         # This model is admissible only for a research balance. Fees-disabled contradictions stay gaps.
         s = market.get("fee_schedule")
-        if (
-            market.get("fees_enabled") is not True
-            or not isinstance(s, dict)
-            or s.get("takerOnly") is not True
-        ):
+        if market.get("fees_enabled") is not True:
             raise ValueError("no interpretable archived Gamma taker fee schedule")
-        if set(s) - {"takerOnly", "rate", "exponent", "rebateRate"}:
-            raise ValueError("unknown feeSchedule properties")
-        rate = unit(s.get("rate"))
-        exponent = number(s.get("exponent"))
-        if rate <= 0 or exponent not in (1, 2) or isinstance(s.get("exponent"), bool):
-            raise ValueError("unrecognized Gamma fee rate or exponent")
-        if "rebateRate" in s:
-            unit(s["rebateRate"])
+        rate, exponent = fee_registry.gamma_taker_parameters(s)
         profile = {
             "policy": "research-gamma-shares-cent-ceiling-v1",
             "protocol": market["protocol"],

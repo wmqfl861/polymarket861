@@ -15,7 +15,7 @@ from http.client import HTTPException
 from urllib.error import URLError
 from urllib.parse import urlsplit
 
-from . import contract_storage, dbscope
+from . import contract_storage, dbscope, market_watch_failures
 from . import market_provider as provider
 from .market_provider import (
     CLOB,
@@ -263,6 +263,30 @@ def _fetch(
             time.sleep(pause)
 
 
+def research_fetch(root, op, selector, url, params=None, *, attempts=3):
+    """Retry upstream research reads while preserving the original failure of the local archive."""
+    if attempts < 1:
+        raise ValueError("research fetch requires at least one attempt")
+    for attempt in range(attempts):
+        try:
+            # One attempt uses the same raw receipts, status handling and persistent host cooldowns.
+            return _fetch(root, op, selector, url, params, attempts=1)
+        except (OSError, HTTPException) as exc:
+            status = getattr(exc, "code", None)
+            if (
+                not market_watch_failures.recoverable(exc)
+                or isinstance(exc, DeferredFetch)
+                or status not in (None, 408, 425, 500, 502, 503, 504)
+                or attempt + 1 == attempts
+            ):
+                raise
+            pause = random.uniform(0.04, 0.14) * (2**attempt)
+            stop = _DEADLINE.get()
+            if stop and (moment(stop) - moment(now_utc())).total_seconds() <= pause:
+                raise DeferredFetch("capture deadline elapsed during transient read", code=status) from exc
+            time.sleep(pause)
+
+
 def _ingest(db, event, reply, sha, *, sport=None):
     match = provider.SPORT_FIXTURES[sport or "epl"].fullmatch(str(event.get("slug", "")))
     if not match:
@@ -425,12 +449,13 @@ def contracts(root, fixture, *, as_of=None):
         return [json.loads(row["payload"]) for row in rows]
 
 
-def snapshot_book(root, contract, token):
+def snapshot_book(root, contract, token, *, fetch=None):
     if contract["mapping_error"] or token not in {
         x["token_id"] for x in contract["tokens"]
     }:
         raise ValueError("unverified mapping for requested token")
-    raw, reply, sha = _fetch(root, "book", token, CLOB + "/book", {"token_id": token})
+    read = fetch or _fetch
+    raw, reply, sha = read(root, "book", token, CLOB + "/book", {"token_id": token})
     return _record_book(root, contract, token, raw, reply, sha)
 
 
@@ -553,6 +578,10 @@ def capture_execution(
     )
 
 
+class CatalogChanged(ValueError):
+    """The contracts selected for this fixture were revised before dispatch."""
+
+
 def capture(
     root,
     fixture,
@@ -562,6 +591,7 @@ def capture(
     discovery=None,
     deadline=None,
     native_only=False,
+    fetch=None,
 ):
     saved = _DEADLINE.set(deadline)
     try:
@@ -573,12 +603,13 @@ def capture(
             discovery=discovery,
             deadline=deadline,
             native_only=native_only,
+            fetch=fetch,
         )
     finally:
         _DEADLINE.reset(saved)
 
 
-def _capture(root, fixture, *, tokens, workers, discovery, deadline, native_only):
+def _capture(root, fixture, *, tokens, workers, discovery, deadline, native_only, fetch=None):
     from concurrent.futures import ThreadPoolExecutor
 
     if not 1 <= workers <= 10:
@@ -599,13 +630,28 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline, native_only
         if (requested is None or t["token_id"] in requested)
         and m["market_open"] is not False
     }
+    kickoff = discovered.get("expected_kickoff")
+    if kickoff and (
+        fixture_times(root, fixture) != [kickoff]
+        or set(targets) != requested
+        or any(
+            m["game_times"] != [kickoff]
+            or (m["recorded_at"], m["source_sha256"]) != discovered["bindings"][m["event_slug"]]
+            for m in targets.values()
+        )
+    ):
+        raise CatalogChanged("catalogue changed before book request")
 
     def one(pair):
         token, market = pair
         saved = _DEADLINE.set(deadline)
         try:
-            return book_summary(snapshot_book(root, market, token))
+            if fetch is None:
+                return book_summary(snapshot_book(root, market, token))
+            return book_summary(snapshot_book(root, market, token, fetch=fetch))
         except (ValueError, OSError, URLError) as exc:
+            if fetch is not None and not market_watch_failures.recoverable(exc):
+                raise
             return {"token_id": token, "error": str(exc)}
         finally:
             _DEADLINE.reset(saved)
@@ -615,7 +661,8 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline, native_only
     retry_at = None
     if (native_only or len(targets) > 1) and 1 <= len(targets) <= 500:
         try:
-            rows, reply, sha = _fetch(
+            read = fetch or _fetch
+            rows, reply, sha = read(
                 root,
                 "books",
                 fixture,
@@ -674,6 +721,8 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline, native_only
                     invalid,
                 )
         except (ValueError, OSError, URLError) as exc:
+            if fetch is not None and not market_watch_failures.recoverable(exc):
+                raise
             batch_error = str(exc)
             retry_at = getattr(exc, "retry_at", None)
             if retry_at or native_only:

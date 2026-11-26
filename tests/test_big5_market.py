@@ -618,8 +618,11 @@ class TestDomesticMarket(unittest.TestCase):
                     phase="test",
                     refresh=mode == "event",
                 )
-            t = r["contracts"]["moneyline.home"]["tokens"]["Yes"]
-            self.assertIs(t["pregame"], None if stale else True)
+            if stale:
+                self.assertEqual(r["requested_tokens"], 0)
+                self.assertTrue(any("unverifiable" in gap["error"] for gap in r["event_gaps"]))
+            else:
+                self.assertIs(r["contracts"]["moneyline.home"]["tokens"]["Yes"]["pregame"], True)
 
     def test_legacy_schedule_recovered_from_each_original_and_missing_original_stays_unknown(
         self,

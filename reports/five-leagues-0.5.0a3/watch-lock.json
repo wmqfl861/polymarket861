@@ -1,0 +1,740 @@
+{
+  "review_item": "U0-1",
+  "baseline_commit": "05ac9d86677b6c9b211c6f7b47915b0605dd4471",
+  "candidate_version": "0.5.0a3",
+  "python": "3.12.14",
+  "sqlite": "3.53.1",
+  "probe": {
+    "path": "docs/review-evidence/code-review-0.5.0a2-2026-11-26/probe_big5_refresh_overlap.py",
+    "sha256": "ad8db1d04156b6884e083a04ddbad9e7fc623692bc87008a6941274f72182068",
+    "command": "python -I <probe> --src <checkout>/src <empty-directory>",
+    "environment": "Fresh local SQLite WAL databases, a real ThreadPoolExecutor and mocked public Gamma/CLOB replies for 10 simultaneous fixtures. The collector and slot claims run normally. The probe waits for pending work before advancing the simulated UTC clock.",
+    "clock": "The original --minutes value sets the starting time and the number of scheduler ticks. The clock advances by the sleep actually requested. The revised watch can request a 30-second sleep while discovery is outstanding. Compare durable receipt spans and recorded jobs at the same arguments; the separate fixed-minute control compares equal sampling times."
+  },
+  "default_original_driver_10_runs": {
+    "args": [
+      "--fixtures",
+      "10",
+      "--minutes",
+      "150",
+      "--runs",
+      "10",
+      "--latency",
+      "none"
+    ],
+    "before": {
+      "package_version": "0.5.0a2",
+      "runs": 10,
+      "watch_exits": 10,
+      "background_refresh_attempts": 19,
+      "sampling_jobs_finished": 401,
+      "reported_job_states": {},
+      "ma_request_receipt_span_seconds_per_run": [
+        300,
+        600,
+        600,
+        900,
+        300,
+        600,
+        900,
+        300,
+        900,
+        300
+      ],
+      "errors": [
+        "sqlite3.OperationalError: database is locked"
+      ],
+      "driver_stdout_sha256": "e3fd8bfdd5a93daf73633ea52a445935c6d7e1714e065d966c7614ae9bcfad15",
+      "driver_stdout": {
+        "package_version": "0.5.0a2",
+        "python": "3.12.14",
+        "fixtures": 10,
+        "simulated_minutes_per_run": 150,
+        "upstream_latency": "none",
+        "runs": 10,
+        "runs_in_which_watch_raised": 10,
+        "background_refreshes_attempted": 19,
+        "share_of_background_refreshes_that_ended_the_loop": 0.5263,
+        "errors": [
+          "sqlite3.OperationalError: database is locked"
+        ],
+        "raised_in": [
+          "big5_market.py:catalog > big5_market.py:_catalog_one > big5_market.py:_record > market_archive.py:_ingest"
+        ],
+        "per_run": [
+          {
+            "run": 0,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 154
+            },
+            "catalogue_refreshes_finished": 1,
+            "sampling_jobs_finished": 23,
+            "wall_seconds": 0.7
+          },
+          {
+            "run": 1,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 149
+            },
+            "catalogue_refreshes_finished": 2,
+            "sampling_jobs_finished": 42,
+            "wall_seconds": 0.9
+          },
+          {
+            "run": 2,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 149
+            },
+            "catalogue_refreshes_finished": 2,
+            "sampling_jobs_finished": 42,
+            "wall_seconds": 1.0
+          },
+          {
+            "run": 3,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 144
+            },
+            "catalogue_refreshes_finished": 3,
+            "sampling_jobs_finished": 61,
+            "wall_seconds": 1.3
+          },
+          {
+            "run": 4,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 154
+            },
+            "catalogue_refreshes_finished": 1,
+            "sampling_jobs_finished": 23,
+            "wall_seconds": 0.5
+          },
+          {
+            "run": 5,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 149
+            },
+            "catalogue_refreshes_finished": 2,
+            "sampling_jobs_finished": 42,
+            "wall_seconds": 1.1
+          },
+          {
+            "run": 6,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 144
+            },
+            "catalogue_refreshes_finished": 3,
+            "sampling_jobs_finished": 61,
+            "wall_seconds": 1.1
+          },
+          {
+            "run": 7,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 154
+            },
+            "catalogue_refreshes_finished": 1,
+            "sampling_jobs_finished": 23,
+            "wall_seconds": 0.6
+          },
+          {
+            "run": 8,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 144
+            },
+            "catalogue_refreshes_finished": 3,
+            "sampling_jobs_finished": 61,
+            "wall_seconds": 1.0
+          },
+          {
+            "run": 9,
+            "raised": {
+              "type": "sqlite3.OperationalError",
+              "message": "database is locked",
+              "raised_in": [
+                "big5_market.py:catalog",
+                "big5_market.py:_catalog_one",
+                "big5_market.py:_record",
+                "market_archive.py:_ingest"
+              ],
+              "minutes_before_kickoff": 154
+            },
+            "catalogue_refreshes_finished": 1,
+            "sampling_jobs_finished": 23,
+            "wall_seconds": 0.5
+          }
+        ]
+      }
+    },
+    "after": {
+      "package_version": "0.5.0a3",
+      "runs": 10,
+      "watch_exits": 0,
+      "background_refresh_attempts": 250,
+      "sampling_jobs_finished": 5750,
+      "reported_job_states": {
+        "complete": 5750
+      },
+      "ma_request_receipt_span_seconds_per_run": [
+        7500,
+        7500,
+        7500,
+        7500,
+        7500,
+        7500,
+        7500,
+        7500,
+        7500,
+        7500
+      ],
+      "errors": [],
+      "driver_stdout_sha256": "ba2d0e12c711b8880adc525f9afa45af9c210912d1f304ba8de9912f69ebb2d4",
+      "driver_stdout": {
+        "package_version": "0.5.0a3",
+        "python": "3.12.14",
+        "fixtures": 10,
+        "simulated_minutes_per_run": 150,
+        "upstream_latency": "none",
+        "runs": 10,
+        "runs_in_which_watch_raised": 0,
+        "background_refreshes_attempted": 250,
+        "share_of_background_refreshes_that_ended_the_loop": 0.0,
+        "errors": [],
+        "raised_in": [],
+        "per_run": [
+          {
+            "run": 0,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 11.5
+          },
+          {
+            "run": 1,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 10.6
+          },
+          {
+            "run": 2,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 10.4
+          },
+          {
+            "run": 3,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 11.2
+          },
+          {
+            "run": 4,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 10.5
+          },
+          {
+            "run": 5,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 10.2
+          },
+          {
+            "run": 6,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 10.5
+          },
+          {
+            "run": 7,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 11.4
+          },
+          {
+            "run": 8,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 10.3
+          },
+          {
+            "run": 9,
+            "raised": null,
+            "job_states": {
+              "complete": 575
+            },
+            "catalogue_refreshes_finished": 26,
+            "sampling_jobs_finished": 575,
+            "wall_seconds": 11.5
+          }
+        ]
+      }
+    }
+  },
+  "physical_delay_control": {
+    "args": [
+      "--fixtures",
+      "10",
+      "--minutes",
+      "65",
+      "--runs",
+      "2",
+      "--latency",
+      "real"
+    ],
+    "delay_seconds": "Synthetic wall-clock wait in the real worker threads: 0.05–0.30 for metadata, 0.05–0.40 for books.",
+    "before": {
+      "package_version": "0.5.0a2",
+      "runs": 2,
+      "watch_exits": 0,
+      "background_refresh_attempts": 24,
+      "sampling_jobs_finished": 502,
+      "reported_job_states": {
+        "complete": 502
+      },
+      "ma_request_receipt_span_seconds_per_run": [
+        3840,
+        3840
+      ],
+      "errors": []
+    },
+    "after": {
+      "package_version": "0.5.0a3",
+      "runs": 2,
+      "watch_exits": 0,
+      "background_refresh_attempts": 20,
+      "sampling_jobs_finished": 498,
+      "reported_job_states": {
+        "complete": 498
+      },
+      "ma_request_receipt_span_seconds_per_run": [
+        3270,
+        3270
+      ],
+      "errors": []
+    }
+  },
+  "restart_control": {
+    "args": [
+      "--fixtures",
+      "10",
+      "--minutes",
+      "65",
+      "--runs",
+      "2",
+      "--restart"
+    ],
+    "method": "The unchanged driver catches lock exits and invokes watch again with the same database after five simulated seconds.",
+    "before": {
+      "package_version": "0.5.0a2",
+      "runs": 2,
+      "watch_exits": 2,
+      "background_refresh_attempts": 22,
+      "sampling_jobs_finished": 510,
+      "reported_job_states": {},
+      "ma_request_receipt_span_seconds_per_run": [
+        3865,
+        3865
+      ],
+      "errors": [
+        "sqlite3.OperationalError: database is locked"
+      ],
+      "restarts": 10,
+      "sampling_slots": {
+        "complete": 510
+      }
+    },
+    "after": {
+      "package_version": "0.5.0a3",
+      "runs": 2,
+      "watch_exits": 0,
+      "background_refresh_attempts": 20,
+      "sampling_jobs_finished": 498,
+      "reported_job_states": {
+        "complete": 498
+      },
+      "ma_request_receipt_span_seconds_per_run": [
+        3270,
+        3270
+      ],
+      "errors": [],
+      "restarts": 0,
+      "sampling_slots": {
+        "complete": 498
+      }
+    }
+  },
+  "equal_minute_control": {
+    "args": [
+      "--fixtures",
+      "10",
+      "--minutes",
+      "150",
+      "--runs",
+      "1"
+    ],
+    "single_driver_change": "Replace sim.now += timedelta(seconds=seconds) with sim.now += timedelta(seconds=60). Each completed tick uses the same minute grid as the baseline; all collector, input, and SQLite code stays identical.",
+    "before": {
+      "package_version": "0.5.0a2",
+      "runs": 1,
+      "watch_exits": 1,
+      "background_refresh_attempts": 3,
+      "sampling_jobs_finished": 61,
+      "reported_job_states": {},
+      "ma_request_receipt_span_seconds_per_run": [
+        900
+      ],
+      "errors": [
+        "sqlite3.OperationalError: database is locked"
+      ]
+    },
+    "after": {
+      "package_version": "0.5.0a3",
+      "runs": 1,
+      "watch_exits": 0,
+      "background_refresh_attempts": 29,
+      "sampling_jobs_finished": 574,
+      "reported_job_states": {
+        "complete": 574
+      },
+      "ma_request_receipt_span_seconds_per_run": [
+        8940
+      ],
+      "errors": []
+    }
+  },
+  "deterministic_regression": {
+    "test": "tests/test_big5_watch_concurrency.py::Big5WatchConcurrency::test_reader_with_concurrent_writer_commits_entire_catalog_page",
+    "command": "PYTHONPATH=<checkout>/src:<candidate>/tests python -m unittest test_big5_watch_concurrency.Big5WatchConcurrency.test_reader_with_concurrent_writer_commits_entire_catalog_page",
+    "method": "Two real SQLite connections and a thread barrier force a concurrent commit. With a deferred savepoint the catalogue has already read its old snapshot. With a writer reservation it waits until the concurrent transaction commits and then reads and inserts both events.",
+    "before": "sqlite3.OperationalError: database is locked at market_archive._ingest",
+    "after": "Page complete; main and auxiliary persisted together. A distinct injected parser failure on event two rolls back the page and reports zero committed fixtures."
+  },
+  "worker_failure_checks": {
+    "test_module": "tests/test_big5_watch_concurrency.py",
+    "interpreters_passed": [
+      "3.11",
+      "3.12",
+      "3.13"
+    ],
+    "tests_per_interpreter": 8,
+    "scope": "Real overlapping background catalogue and 12-token CLOB book retrieval, failed sample and independent fixture success, retryable slot, failed claim without a slot, discovery failure during startup and final future collection, cancelled futures, corrupt database, ENOSPC, KeyboardInterrupt and SystemExit.",
+    "diagnostics": "pm861 market league-report --start <UTC> --end <UTC> includes collector_task_failures.count and the latest 100 records during its half-open receipt window. Case-specific reasons and fixture/window or leagues are persisted in five-league-market/watch-health.sqlite3."
+  },
+  "transaction": "Acquire BEGIN IMMEDIATE after each catalogue page or direct event HTTP reply, before checking existing identities and saving market contracts. Each event retains its savepoint; publish fixture discoveries only after the outer page commit succeeds.",
+  "deep_storage_regression": {
+    "regression_suite": "tests/test_big5_storage_failures.py",
+    "reproduce": "PYTHONPATH=src:tests python -m unittest -v test_big5_storage_failures",
+    "provenance": "Independent review injected real OSError at market_archive.archive_bytes after a successful HTTP response. Before refers to the first alpha3 candidate, which still retried metadata failures three times and returned a partial book slot. After refers to the separate research fetch policy and native-original read fixes.",
+    "original_probe_before_after": [
+      {
+        "errno": 28,
+        "operation": "league_sports",
+        "before_propagated": false,
+        "before_injections": 3,
+        "before_return": "DeferredFetch",
+        "after_propagated": true,
+        "after_injections": 1,
+        "after_exception": "OSError",
+        "after_errno": 28
+      },
+      {
+        "errno": 28,
+        "operation": "league_catalog",
+        "before_propagated": false,
+        "before_injections": 3,
+        "before_return": "DeferredFetch",
+        "after_propagated": true,
+        "after_injections": 1,
+        "after_exception": "OSError",
+        "after_errno": 28
+      },
+      {
+        "errno": 28,
+        "operation": "books",
+        "before_propagated": false,
+        "before_injections": 1,
+        "before_return": {
+          "partial": 1
+        },
+        "after_propagated": true,
+        "after_injections": 1,
+        "after_exception": "OSError",
+        "after_errno": 28
+      },
+      {
+        "errno": 5,
+        "operation": "league_sports",
+        "before_propagated": false,
+        "before_injections": 3,
+        "before_return": "DeferredFetch",
+        "after_propagated": true,
+        "after_injections": 1,
+        "after_exception": "OSError",
+        "after_errno": 5
+      },
+      {
+        "errno": 5,
+        "operation": "league_catalog",
+        "before_propagated": false,
+        "before_injections": 3,
+        "before_return": "DeferredFetch",
+        "after_propagated": true,
+        "after_injections": 1,
+        "after_exception": "OSError",
+        "after_errno": 5
+      },
+      {
+        "errno": 5,
+        "operation": "books",
+        "before_propagated": false,
+        "before_injections": 1,
+        "before_return": {
+          "partial": 1
+        },
+        "after_propagated": true,
+        "after_injections": 1,
+        "after_exception": "OSError",
+        "after_errno": 5
+      }
+    ],
+    "real_cli_processes": [
+      {
+        "errno": 28,
+        "operation": "league_sports",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 28] archive fault in real CLI process"
+      },
+      {
+        "errno": 28,
+        "operation": "league_catalog",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 28] archive fault in real CLI process"
+      },
+      {
+        "errno": 28,
+        "operation": "books",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 28] archive fault in real CLI process"
+      },
+      {
+        "errno": 28,
+        "operation": "league_event",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 28] archive fault in real CLI process"
+      },
+      {
+        "errno": 28,
+        "operation": "resolution",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 28] archive fault in real CLI process"
+      },
+      {
+        "errno": 5,
+        "operation": "league_sports",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 5] archive fault in real CLI process"
+      },
+      {
+        "errno": 5,
+        "operation": "league_catalog",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 5] archive fault in real CLI process"
+      },
+      {
+        "errno": 5,
+        "operation": "books",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 5] archive fault in real CLI process"
+      },
+      {
+        "errno": 5,
+        "operation": "league_event",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 5] archive fault in real CLI process"
+      },
+      {
+        "errno": 5,
+        "operation": "resolution",
+        "process_exit": 2,
+        "stderr": "pm861: [Errno 5] archive fault in real CLI process"
+      }
+    ],
+    "tests_each_cpython_3_11_3_12_3_13": 5,
+    "filesystem_reads": "The fixed-window witness reopens native bytes through dbscope.verified_bytes. ENOENT for one individual original yields an incomplete slot. EIO/EACCES propagate. A real invalid SQLite file produces SQLITE_NOTADB.",
+    "network_controls": "For 401, 403, 404 and 429 via HTTPError, discover returns incomplete and an affected native book stays partial; no process exit. When a short HTTP deadline precludes another attempt, an injected upstream connection reset defers the request. The same deadline preserves an injected fatal local OSError.",
+    "receipt_paths": "Gamma league_sports, league_catalog and direct league_event; CLOB books; Data API resolution. Each research transport attempt reuses the shared public request, evidence and host cooldown handling. The enclosing research retry loop checks storage before retrying a transient upstream problem.",
+    "same_formal_recipes_by_cpython": {
+      "3.11.18": [
+        "B0",
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "3.12.14": [
+        "B0",
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "3.13.5": [
+        "B0",
+        "B1",
+        "B2",
+        "B3"
+      ]
+    },
+    "recipe_fields_compared": [
+      "primary",
+      "paired",
+      "probability_source",
+      "frozen_feature_source"
+    ],
+    "formal_reference_audit": {
+      "scope": "primary football probability and input admission; B3 news is signed separately",
+      "reviewed_edges_by_family": {
+        "B0": 60,
+        "B1": 60,
+        "B2": 59,
+        "B3": 60
+      },
+      "unreviewed": [],
+      "obsolete": []
+    },
+    "related_passing_suites_python_3_12": {
+      "big5": 59,
+      "market_archive": 9,
+      "scheduled_budget": 11,
+      "ledger_and_settlement": 30
+    },
+    "original_concurrency_probe_after_deep_fix": {
+      "package_version": "0.5.0a3",
+      "python": "3.12.14",
+      "fixtures": 10,
+      "simulated_minutes_per_run": 150,
+      "upstream_latency": "none",
+      "runs": 1,
+      "runs_in_which_watch_raised": 0,
+      "background_refreshes_attempted": 25,
+      "share_of_background_refreshes_that_ended_the_loop": 0.0,
+      "errors": [],
+      "raised_in": [],
+      "per_run": [
+        {
+          "run": 0,
+          "raised": null,
+          "job_states": {
+            "complete": 575
+          },
+          "catalogue_refreshes_finished": 26,
+          "sampling_jobs_finished": 575,
+          "wall_seconds": 12.5
+        }
+      ]
+    }
+  }
+}

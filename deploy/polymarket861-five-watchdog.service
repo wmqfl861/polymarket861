@@ -1,5 +1,5 @@
 [Unit]
-Description=Check the continuous market collector heartbeat for the configured fixture window
+Description=Check the collector heartbeat and league catalog receipts for the configured fixture window
 
 [Service]
 Type=oneshot

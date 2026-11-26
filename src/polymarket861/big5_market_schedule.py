@@ -2,11 +2,12 @@
 
 import hashlib
 import json
+import re
 from datetime import timedelta
 from itertools import groupby
 
 from . import market_provider as provider
-from .store import canonical, iso, read_blob
+from .store import canonical, instant, iso, read_blob
 
 
 SCHEMA = """
@@ -41,6 +42,7 @@ def delays(event):
 _STARTED = {
     "live",
     "in progress",
+    "inprogress",
     "in play",
     "inplay",
     "playing",
@@ -64,36 +66,92 @@ _STARTED = {
     "final",
     "finished",
     "completed",
+    "break",
+    "penaltyshootout",
+    "penalty shootout",
+    "ft ot",
+    "ft nr",
+    "vft",
 }
-_STOPPED = {"cancelled", "canceled", "postponed", "abandoned", "suspended", "void"}
+_STOPPED = {"cancelled", "canceled", "postponed", "abandoned", "suspended", "void", "awarded", "sus", "pst", "canc"}
 _PLANNED = {"scheduled", "not started", "ns", "pre", "pregame", "pre game", "upcoming"}
+_BLANK = {"", "-", "--", "–", "—", "-:-", "- -", "n/a"}
 
 
 def _status(value):
     return " ".join(str(value).casefold().replace("-", " ").replace("_", " ").split())
 
 
-def has_started(event):
+def finished_at(event, received_at):
+    """Only an absolute finish time that had elapsed when Gamma reported it is evidence."""
+    value = event.get("finishedTimestamp")
+    if not isinstance(value, str) or received_at is None:
+        return None
+    try:
+        stamp = instant(value.strip())
+        if stamp.year > 1970 and stamp <= instant(received_at):
+            return stamp
+    except (ValueError, TypeError, OverflowError):
+        pass
+    return None
+
+
+def _field(value):
+    return "" if value is None else str(value).strip().casefold()
+
+
+def _scoreboard(event, received_at):
+    """A positive sporting signal prevails even when another field is blank or malformed."""
+    if finished_at(event, received_at) is not None:
+        return "started"
+    unknown = _field(event.get("finishedTimestamp")) not in _BLANK
+    period = _field(event.get("period"))
+    if _status(period) in _STARTED:
+        return "started"
+    if period not in _BLANK and _status(period) not in _PLANNED | {"0"} | _STOPPED:
+        unknown = True
+    elapsed = _field(event.get("elapsed"))
+    if elapsed not in _BLANK:
+        # Soccer minute, added time, or a minute:second clock. Punctuation alone is never play.
+        clock = re.fullmatch(r"([0-9]{1,3})(?:\s*\+\s*([0-9]{1,2}))?(?::([0-5][0-9]))?['′’]?", elapsed)
+        if clock is None:
+            unknown = True
+        elif any(int(x) for x in clock.groups() if x):
+            return "started"
+    score = _field(event.get("score"))
+    if score not in _BLANK:
+        goals = re.fullmatch(r"([0-9]{1,2})\s*[-–—:]\s*([0-9]{1,2})", score)
+        if goals is None:
+            unknown = True
+        elif any(int(n) for n in goals.groups()):
+            return "started"
+    return "unclassified" if unknown else "neutral"
+
+
+def has_started(event, received_at=None):
     return (
         event.get("live") is True
         or event.get("ended") is True
         or any(_status(event.get(k)) in _STARTED for k in ("gameStatus", "status"))
+        or _scoreboard(event, received_at) == "started"
     )
 
 
-def stopped(event):
+def stopped(event, received_at=None):
     return (
-        has_started(event)
+        has_started(event, received_at)
         or event.get("cancelled") is True
         or event.get("canceled") is True
-        or any(_status(event.get(k)) in _STOPPED for k in ("gameStatus", "status"))
+        or any(_status(event.get(k)) in _STOPPED for k in ("gameStatus", "status", "period"))
     )
 
 
-def pregame_flags(event):
-    """Interpret native Gamma fields independently of the receipt's clock and contract."""
-    if stopped(event):
+def pregame_flags(event, received_at=None):
+    """Interpret original Gamma state at its own receipt time."""
+    if stopped(event, received_at):
         return "not_pregame"
+    if _scoreboard(event, received_at) == "unclassified":
+        return "unclassified"
     if any(
         event.get(k) is not None and type(event[k]) is not bool
         for k in (
@@ -126,11 +184,11 @@ def pregame_flags(event):
 
 
 def _record_play(db, fixture, slug, received, sha, event, *, indexed_started=False):
-    if indexed_started or event is not None and has_started(event):
+    if indexed_started or event is not None and has_started(event, received):
         state = "started"
     elif event is None:
         state = "unverified"
-    elif pregame_flags(event) == "unclassified":
+    elif pregame_flags(event, received) == "unclassified":
         state = "unclassified_at_receipt"
     else:
         return
@@ -221,7 +279,7 @@ def recover(root, db, validate):
             originals = {}
             try:
                 originals = _original_events(root, sha)
-            except (OSError, TypeError, ValueError):
+            except (FileNotFoundError, TypeError, ValueError):
                 pass
             for r in rows:
                 event = originals.get(r["slug"])
@@ -256,7 +314,7 @@ def recover(root, db, validate):
                     r["received_at"],
                     sha,
                     delays(event),
-                    stopped(event),
+                    stopped(event, r["received_at"]),
                     "recovered_original",
                     event=event,
                 )
@@ -280,14 +338,13 @@ def recover(root, db, validate):
 
 
 def recover_play(root, db, validate):
-    """Index prior observations once, including text statuses ignored by older collectors."""
-    if db.execute("SELECT 1 FROM big5_schedule_recovery WHERE version=2").fetchone():
+    """Upgrade earlier flag-only indexes from each original's own receipt time."""
+    complete = "SELECT COUNT(*)=2 FROM big5_schedule_recovery WHERE version IN (2,3)"
+    if db.execute(complete).fetchone()[0]:
         return
     with db:
         db.execute("BEGIN IMMEDIATE")
-        if db.execute(
-            "SELECT 1 FROM big5_schedule_recovery WHERE version=2"
-        ).fetchone():
+        if db.execute(complete).fetchone()[0]:
             return
         known = db.execute(
             "SELECT h.*,s.live,s.ended FROM big5_schedule_receipts h LEFT JOIN ma_event_states s "
@@ -296,7 +353,7 @@ def recover_play(root, db, validate):
         for sha, rows in groupby(known, key=lambda r: r["sha"]):
             try:
                 originals = _original_events(root, sha)
-            except (OSError, TypeError, ValueError):
+            except (FileNotFoundError, TypeError, ValueError):
                 originals = {}
             for r in rows:
                 native = originals.get(r["slug"])
@@ -330,7 +387,7 @@ def recover_play(root, db, validate):
                     expected_selector=r["selector"],
                 )
                 event = json.loads(reply.body)
-                fields = validate(event, r["sport"], history=db)
+                fields = validate(event, r["sport"], history=db, received_at=r["received_at"])
                 if (fields[0], fields[1], *fields[4:7]) != tuple(
                     r[k]
                     for k in ("selector", "fixture", "home_id", "away_id", "event_id")
@@ -346,9 +403,9 @@ def recover_play(root, db, validate):
                     "conflicting_aux_schedule",
                     event=event,
                 )
-            except (OSError, KeyError, TypeError, ValueError):
+            except (FileNotFoundError, KeyError, TypeError, ValueError):
                 continue
-        db.execute("INSERT INTO big5_schedule_recovery VALUES(2)")
+        db.execute("INSERT OR IGNORE INTO big5_schedule_recovery VALUES(2),(3)")
 
 
 def bindings(contracts):
@@ -523,7 +580,74 @@ def _pair_state(db, fixture, decision, executions):
     return combined_state(grades)
 
 
-def count_windows(root, db, counts, start, end, now):
+def _fixed_gap(root, db, slots, league, fixture, epoch, phase, first, end, required):
+    from .big5_market_receipts import late_book_receipts
+
+    slot = slots.get(phase + "@" + first)
+    attempts, reasons, refresh_triggers = [], {}, {}
+
+    def add_reasons(report):
+        for key, destination in (("refresh_trigger", refresh_triggers), ("event_gaps", reasons)):
+            for gap in report.get(key, []):
+                if gap.get("error"):
+                    reason = gap["error"]
+                    if gap.get("slug"):
+                        reason = gap["slug"] + ": " + reason
+                    destination[reason] = None
+        for key in ("batch_error", "error"):
+            if report.get(key):
+                reasons[str(report[key])] = None
+        for group in report.get("contracts", {}).values():
+            for token in group.get("tokens", {}).values():
+                if token.get("error"):
+                    reasons[str(token["error"])] = None
+
+    for row in db.execute(
+        "SELECT started,finished,report FROM big5_runs WHERE fixture=? AND phase=? "
+        "AND started>=? AND started<? ORDER BY started,id",
+        (fixture, phase, max(first, epoch["since"]), min(end, epoch["until"] or end)),
+    ):
+        report = json.loads(row["report"])
+        if report.get("claimed_kickoff", epoch["kick"]) != epoch["kick"]:
+            continue
+        add_reasons(report)
+        if report.get("core_missing") and report.get("requested_tokens"):
+            reasons["missing core contracts: " + ", ".join(report["core_missing"])] = None
+        attempt = {
+            "started": row["started"], "finished": row["finished"],
+            "requested_tokens": report.get("requested_tokens"),
+            "received_tokens": report.get("received_tokens"),
+        }
+        late = late_book_receipts(db, root, fixture, report, (first, end))
+        if late:
+            attempt["late_book_receipts"] = late
+            for item in late:
+                reasons[item["reason"]] = None
+        attempts.append(attempt)
+    if slot and slot["report"]:
+        summary = json.loads(slot["report"])
+        if summary.get("late_book_receipts") and summary.get("error") == "; ".join(
+            item["reason"] for item in summary["late_book_receipts"]
+        ):
+            # Re-derive deadline diagnoses above from the native response when reopening a slot.
+            summary.pop("error")
+        add_reasons(summary)
+    if not reasons:
+        reason = "no capture attempt recorded"
+        if attempts:
+            reason = "native receipts did not verify a complete fixed window"
+        elif slot:
+            reason = "claimed window has no finished capture record"
+        reasons[reason] = None
+    return {
+        "league": league, "fixture": fixture, "kickoff": epoch["kick"], "phase": phase,
+        "window": [first, end], "required_core_tokens": required,
+        "attempts": attempts, "reasons": list(reasons), "refresh_triggers": list(refresh_triggers),
+    }
+
+
+def count_windows(root, db, counts, start, end, now, required_core_tokens):
+    gaps = []
     scope = db.execute(
         "SELECT * FROM big5_schedule_receipts WHERE received<? "
         "ORDER BY fixture,received,slug,sha",
@@ -576,6 +700,11 @@ def count_windows(root, db, counts, start, end, now):
                     c = counts[league]
                     c["fixed_windows_due"] += 1
                     _count_state(c, "fixed_windows", decision.get("exchange_state"))
+                    if not decision:
+                        gaps.append(_fixed_gap(
+                            root, db, slots, league, fixture, epoch, f"t{hours}_decision",
+                            iso(instant - timedelta(seconds=25)), decision_end, required_core_tokens,
+                        ))
                 executions = {}
                 latest_expiry = None
                 for i, (begin, waits) in enumerate(epoch["waits"]):
@@ -610,6 +739,11 @@ def count_windows(root, db, counts, start, end, now):
                             c = counts[league]
                             c["fixed_windows_due"] += 1
                             _count_state(c, "fixed_windows", item.get("exchange_state"))
+                            if not item:
+                                gaps.append(_fixed_gap(
+                                    root, db, slots, league, fixture, epoch, f"t{hours}_{role}",
+                                    iso(opens), expires, required_core_tokens,
+                                ))
                 if has_decision and latest_expiry and due(latest_expiry):
                     c = counts[league]
                     c[f"t{hours}_pairs_due"] += 1
@@ -632,3 +766,4 @@ def count_windows(root, db, counts, start, end, now):
                     c["closing_slots_complete"] += bool(
                         _slot_receipt(slots, "closing@" + iso(first), epoch)
                     )
+    return gaps

@@ -544,6 +544,9 @@ def _records(db, fixtures, horizon, mode, policy=None, *, as_of=None, reopen_new
             except (TypeError, ValueError):
                 found[(row["fixture_id"], row["kickoff"])].append((row, {}))
                 continue
+            if not isinstance(payload, dict):
+                found[(row["fixture_id"], row["kickoff"])].append((row, {}))
+                continue
             if (
                 payload.get("purpose") == "main"
                 or payload.get("purpose") is None

@@ -1629,14 +1629,15 @@ def _attest_contract(db, data_dir, c, at, kickoff):
     attest(db, data_dir, c, at, kickoff)
 
 
-def capture_resolution(data_dir, token):
+def capture_resolution(data_dir, token, *, fetch=None):
     """Read the public settled status of one token; book cash only in settle()."""
     from .market_archive import _fetch
 
     if not str(token).isdigit():
         raise ValueError("token id must be a decimal exchange token id")
     url = "https://data-api.polymarket.com/v2/tokens"
-    raw, reply, sha = _fetch(
+    read = fetch or _fetch
+    raw, reply, sha = read(
         data_dir, "resolution", str(token), url, {"token_id": str(token)}
     )
     r = market_provider.resolution_row(raw, str(token))

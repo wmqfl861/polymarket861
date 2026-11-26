@@ -27,7 +27,7 @@ from polymarket861 import (
 )
 
 
-def domestic_entry(data_dir, league, *, explicit=False):
+def domestic_entry(data_dir, league, *, explicit=False, fee_schedule=None, asks=None):
     root = big5_market.research_root(data_dir)
     main, aux = native(league=league), native(True, league=league)
     totals = json.loads(
@@ -55,7 +55,10 @@ def domestic_entry(data_dir, league, *, explicit=False):
     market.update(
         description=rules, feesEnabled=False, orderMinSize=1, orderPriceMinTickSize=0.01
     )
-    del market["feeSchedule"]
+    if fee_schedule is None:
+        del market["feeSchedule"]
+    else:
+        market.update(feesEnabled=True, feeSchedule=fee_schedule)
     main["markets"] = [market]
     aux["markets"] = []
     for ev in (main, aux):
@@ -78,7 +81,16 @@ def domestic_entry(data_dir, league, *, explicit=False):
     observed = market_archive.contracts(root, main["slug"], as_of=decision)[0]
     token = observed["tokens"][0]["token_id"]
     condition = observed["condition_id"]
-    terms = ledger_terms.contract_at(root, condition, token, decision)
+    if fee_schedule is None:
+        terms = ledger_terms.contract_at(root, condition, token, decision)
+        intent_terms = {
+            "rule_sha256": terms["rule_sha256"], "fee": terms["fee_schedule"],
+            "selection": {k: terms[k] for k in ("family", "selection", "team", "line", "side") if k in terms},
+        }
+    else:
+        intent_terms = budget_archive_proof.verify_contract(
+            root, condition, decision, token=token, scheduled=True
+        )["intent_terms"]
     fixture = league + "/2029-30/21/22"
     books = []
     for ident, delta in (("a", -1), ("b", 5)):
@@ -89,7 +101,7 @@ def domestic_entry(data_dir, league, *, explicit=False):
             "market": condition,
             "timestamp": str(int(clock.timestamp() * 1000)),
             "bids": [{"price": "0.49", "size": "200"}],
-            "asks": [{"price": "0.50", "size": "200"}],
+            "asks": asks[ident] if asks else [{"price": "0.50", "size": "200"}],
             "tick_size": "0.01",
             "min_order_size": "1",
         }
@@ -119,13 +131,7 @@ def domestic_entry(data_dir, league, *, explicit=False):
         "execution_book": "b",
         "shares": "100",
         "limit_price": "0.50",
-        "rule_sha256": terms["rule_sha256"],
-        "selection": {
-            k: terms[k]
-            for k in ("family", "selection", "team", "line", "side")
-            if k in terms
-        },
-        "fee": terms["fee_schedule"],
+        **intent_terms,
     }
     return {
         "schema": five_league_budget.SCHEMA,
@@ -193,6 +199,8 @@ class DomesticArchive(unittest.TestCase):
                 self.assertEqual(
                     report["decisions"][0]["entry_evidence"]["basis"], BASIS
                 )
+                self.assertEqual(report["decisions"][0]["fee_evidence"]["basis"], "gamma_fees_disabled")
+                self.assertIn("gamma_fees_disabled", report["leagues"][code]["settled_paper_pnl_by_fee_basis"])
                 intent = doc["intents"][0]
                 gamma = command(
                     "verify-contract",

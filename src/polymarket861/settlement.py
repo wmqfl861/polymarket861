@@ -149,7 +149,7 @@ def _records_from_db(db, root, token, *, market=None):
     return items[-1] if items else None
 
 
-def token_status(root, token, *, cached_only=False, recheck_terminal=False):
+def token_status(root, token, *, cached_only=False, recheck_terminal=False, fetch=None):
     token = str(token)
     if not token.isdigit():
         raise ValueError("numeric ERC-1155 token required")
@@ -172,7 +172,10 @@ def token_status(root, token, *, cached_only=False, recheck_terminal=False):
             days=1
         )
     if refresh:
-        ledger.capture_resolution(root, token)
+        if fetch is None:
+            ledger.capture_resolution(root, token)
+        else:
+            ledger.capture_resolution(root, token, fetch=fetch)
         item = _records(root, token)
     return item
 

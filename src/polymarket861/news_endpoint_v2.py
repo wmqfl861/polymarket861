@@ -24,6 +24,9 @@ MODES = ("technical", "formal")
 CLOCKS = (*v1.CLOCKS, "dual_schedule_close")
 FAMILY = len(v1.HORIZONS) * (len(CLOCKS) * len(v1.ENDPOINTS) + 1)
 MODE = "technical+formal"
+# Published in 0.5.0a2, including the exact 108-cell power table. A different
+# scientific contract must obtain its own version, registration and bindings.
+PUBLISHED_PLAN_SHA256 = "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61"
 BINDINGS = """CREATE TABLE IF NOT EXISTS news_endpoint_v2_bindings(
  capture_order INTEGER PRIMARY KEY, seal TEXT NOT NULL UNIQUE REFERENCES forecast_seals(digest),
  declaration TEXT NOT NULL REFERENCES news_endpoint_declarations(digest), bound_at TEXT NOT NULL,
@@ -74,34 +77,57 @@ def _policy():
     return {"protocol": news_model.PROTOCOL, "sha256": news_model.POLICY_SHA256}
 
 
+def published_proposal(stored_sha="not_checked"):
+    proposed = proposal()
+    current = proposed["plan_sha256"]
+    if current != PUBLISHED_PLAN_SHA256:
+        raise ValueError(
+            f"Installed v2 plan drift: stored={stored_sha} current={current}; "
+            f"published={PUBLISHED_PLAN_SHA256}. Restore the published v2 implementation."
+        )
+    return proposed
+
+
 def _registration(db):
     row = db.execute(
         "SELECT * FROM news_endpoint_declarations WHERE version=?", (v1.V2_VERSION,)
     ).fetchone()
     if not row:
         return None
-    manifest = json.loads(row["manifest"])
-    # The scientific design is immutable. Its artifact is stored in the
-    # registration, so an operator can still inspect the original assumptions.
-    proposed = proposal()
+    try:
+        manifest = json.loads(row["manifest"])
+    except (ValueError, TypeError) as exc:
+        raise ValueError(f"Corrupt v2 registration JSON: stored={row['digest']}") from exc
+    actual = store.digest(manifest)
+    if actual != row["digest"] or not isinstance(manifest, dict):
+        raise ValueError(f"Corrupt v2 registration: stored={row['digest']} recomputed={actual}")
+    stored = manifest.get("plan_sha256")
+    actual_plan = store.digest(manifest.get("plan"))
+    if stored != actual_plan:
+        raise ValueError(f"Corrupt stored v2 plan: stored={stored} recomputed={actual_plan}")
+    if stored != PUBLISHED_PLAN_SHA256:
+        raise ValueError(
+            f"Unsupported stored v2 plan: stored={stored} current={proposal()['plan_sha256']}; "
+            f"published={PUBLISHED_PLAN_SHA256}"
+        )
+    published_proposal(stored)
     registered_policy = manifest.get("news_policy") or {}
     if (
-        store.digest(manifest) != row["digest"]
-        or manifest.get("version") != v1.V2_VERSION
-        or manifest.get("plan_sha256") != proposed["plan_sha256"]
-        or store.digest(manifest.get("plan")) != proposed["plan_sha256"]
+        manifest.get("version") != v1.V2_VERSION
         or manifest.get("ends_at") != v1.END
         or any(
             manifest.get(key) != row[key] for key in ("mode", "starts_at", "ends_at")
         )
         or manifest["mode"] != MODE
+        or not isinstance(manifest.get("registered_at"), str)
         or not manifest["registered_at"] <= manifest["starts_at"] < v1.END
+        or not isinstance(registered_policy, dict)
         or not isinstance(registered_policy.get("protocol"), str)
         or not registered_policy["protocol"]
         or not isinstance(registered_policy.get("sha256"), str)
         or not re.fullmatch(r"[a-f0-9]{64}", registered_policy["sha256"])
     ):
-        raise ValueError("Invalid stored v2 endpoint study declaration")
+        raise ValueError("Corrupt v2 registration fields or indexed declaration columns")
     trigger = db.execute(
         "SELECT sql FROM sqlite_master WHERE type='trigger' AND name=?", (TRIGGER_NAME,)
     ).fetchone()
@@ -127,7 +153,7 @@ def enroll(data_dir, *, starts_at=None):
             raise ValueError(
                 "Start must be at or after registration and before 2028-07-01 UTC"
             )
-        manifest = proposal() | {
+        manifest = published_proposal("unregistered") | {
             "version": v1.V2_VERSION,
             "registered_at": registered,
             "starts_at": start,
@@ -248,7 +274,7 @@ def _summary(
         "version": v1.V2_VERSION,
         "plan_sha256": registration["plan_sha256"]
         if registration
-        else proposal()["plan_sha256"],
+        else published_proposal("unregistered")["plan_sha256"],
         "registration": registration,
         "state": "not_registered"
         if registration is None
@@ -336,7 +362,7 @@ def _cohort(db, registration, as_of, *, reveal):
         fixtures = [
             f
             for f in store.eligible_fixture_rows(db, season=season)
-            if f["fixture_id"].startswith(f"epl/{season}/")
+            if f["fixture_id"].startswith(f"{v1.COMPETITION}/{season}/")
         ]
         for horizon, lead in v1.HORIZONS.items():
             scheduled = [

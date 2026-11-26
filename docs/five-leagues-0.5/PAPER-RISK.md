@@ -58,7 +58,29 @@ pm861 --data-dir /srv/pm861 paper-risk verify-contract \
 
 该次复验返回赛事 `bun-wer-moe-2026-11-27`、双方球队 ID 和源文件 SHA-256 `f8174ded2ec9ebc0f1f0cdf64fd0c75aa6981d36b290b4c7805cf8809a681c57`。相同旧目录的西甲、意甲、法甲合约也通过核对。输出 `order_books_checked: 0` 说明该命令仅核查 Gamma 合约。判断一个固定时窗是否收齐由 `market league-report` 的分层收件结果给出，判断某次模拟入场则需要 `paper-risk replay` 的两份及时订单簿。
 
-2026 年 11 月 26 日的独立核查在两次真实采集的数据库中各复核了 912 份受支持合约，每库 912 份均设有 `feesEnabled=true`。当前已审核的费率登记表为空，缺少收费资产、计费合并方式、精度、舍入与生效期等完整权威资料。这批实际盘口在默认回放和排期研究回放中都无法据此模拟成交。五国受控回归使用有原件可验的免手续费条款；其中每国的 50 模拟美元成交仅用于验证流程。[费用登记表](../../src/polymarket861/fee_registry.py) · [受控五国回放](../../tests/test_budget_domestic_archive.py)
+### 收费盘口的费用、持仓和收益
+
+用 `verify-contract` 输出中的 `tokens` 选择结果代币。指定同一 `--as-of` 和入场档后，`intent_terms` 会给出该决策时点的代币、选择方向、规则哈希与完整费用字段，可直接并入对应意图。回放会从原件再次核对这些字段。
+
+```sh
+pm861 --data-dir /srv/pm861 paper-risk verify-contract "$CONDITION_ID" \
+  --as-of "$DECISION_UTC" --token-id "$TOKEN_ID" \
+  --entry-basis scheduled_with_incomplete_flags
+```
+
+| 逐笔费用依据 | 适用条件 | 资金处理 |
+|---|---|---|
+| `gamma_fees_disabled` | Gamma 明确给出 `feesEnabled=false` 且没有非空费表。 | 买入成本为盘口名义金额。 |
+| `authoritative` | 费表、合约协议、玩法和生效时间匹配唯一已审政策，两腿均能复验当时已留存的权威原件。 | 按该政策扣现金或扣份额。 |
+| `research_assumption` | 显式使用排期研究档，收费开关为真，当前协议和玩法尚无登记政策。Gamma 提供可解释的 taker 费表，决策和执行间的原件一致。 | 按下述研究约定扣买入份额，兑付与收益仅用于模拟。 |
+
+已有登记政策但证据缺失、过期、歧义或费率不匹配时，该笔跳过。缺少费用开关或参数、未知字段、执行前改费再改回也会跳过。赛前标记齐全与否单列在 `entry_evidence`。即使两腿都明确赛前，使用估算手续费的交易仍归入 `research_assumption`。默认 `explicit_pregame` 处理收费盘口时只采用经核实的登记政策。[费用登记表](../../src/polymarket861/fee_registry.py)
+
+研究档沿用英超影子账户已有约定。在两本盘口可共同执行的每个价格 `p` 上，取该档成交份额 `q`，计算现金等值 `q × rate × (p × (1 − p))^exponent`，向上取整到 0.01，再除以 `p`，向上取整到 0.000001 份，从买到的份额中扣除。允许指数 1 或 2，只收 taker，返佣按零计算。举例，100 份以 0.50 买入、费率 0.05、指数 1，需支付 50，扣 2.5 份，持有 97.5 份。互补终态核实后，赢方兑付 97.5，净收益为 47.5。缺少任一边的终态时，50 继续占用。
+
+加 `--details` 后，`decisions[].fee_evidence` 列出费表版本及两份订单簿所绑定的 Gamma 来源，`fill.levels` 给出逐档现金或份额扣费，`fill.net_shares` 为可兑份额。每国的 `settled_paper_pnl_by_fee_basis` 按已有成交的费用依据分列持仓成本、已兑金额和已兑头寸净收益。全部为纸面结果，`venue_realized_pnl` 保持为空。[收费、深度、兑付与费用凭证的集成测试](../../tests/test_budget_research_fees.py)
+
+2026 年 11 月 26 日的两次真实四国采集，每库各 912 份受支持合约均开启手续费，原件给出费率 0.05、指数 1、仅收 taker、返佣参数 0.15。本版在每库分别从 Gamma 恢复了 1,824 个代币的研究条款。默认档当日有据可用的收费条款为 0。第一库 2,280 份订单簿中，同代币重复收件的最短间隔约 139 秒。第二库的 48 份订单簿各属不同代币。两库都没有可重放该买入时窗的两份簿。五国的收费买入至兑付另以原生格式的受控行情验算。[两版对照、真实档案和五国模拟结算](../../reports/five-leagues-0.5.0a3/paper-fee-verification.json) · [复核脚本和输入路径示例](../../reports/five-leagues-0.5.0a3/verify-paper-fees.py)
 
 本机回放的开盘及成交路径有一项覆盖采集器、原件、费用、两次盘口和互补终态的集成测试，使用受控行情输入。另以仓库保存的真实南特–图卢兹双方 Data API 原件重验最终兑付，Under 为 1。该真实样本支持终态判断，赛前模拟成交还需同场的合约、费用和两份及时盘口。[双边原件](../../reports/five-leagues-0.5/settlement-observation.json) · [集成与反例测试](../../tests/test_capital_native_proof.py)
 

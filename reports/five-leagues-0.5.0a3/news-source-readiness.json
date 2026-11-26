@@ -1,0 +1,455 @@
+{
+  "scope": "Isolated live source and raw-retention audit, EPL matchweek 12 of 2026/27. Data copies came from an earlier validation of the 380-fixture OpenFootball schedule. Registration in this scratch deployment served only to exercise the prospective raw-capture path. Operator DB unavailable.",
+  "audit_date_utc": "2026-11-26",
+  "credit": [
+    "Tactical Data by Touchline Wire (https://touchlinewire.com). Normalized counts and factual identifiers.",
+    "English Wikipedia contributors, CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Revision links below. Counts are computed from the API representation."
+  ],
+  "publisher_links": {
+    "touchline_use": "https://touchlinewire.com/docs#attribution",
+    "touchline_terms": "https://touchlinewire.com/terms.html",
+    "touchline_openapi": "https://touchlinewire.com/api/v1/openapi.json",
+    "openapi_license_scope": "https://spec.openapis.org/oas/v3.0.3.html#license-object",
+    "wikimedia_reuse": "https://www.mediawiki.org/wiki/Wikimedia_APIs/Content_reuse",
+    "wikimedia_terms": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use/en#7._Licensing_of_Content",
+    "wikipedia_text_license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "epl_injuries": "https://www.premierleague.com/en/latest-player-injuries/",
+    "epl_website_terms": "https://www.premierleague.com/en/terms-and-conditions",
+    "guardian_terms": "https://www.theguardian.com/open-platform/terms-and-conditions",
+    "wikinews_closure": "https://meta.wikimedia.org/wiki/Wikinews",
+    "injury_wire_data_access": "https://injurywire.com/data/"
+  },
+  "source_terms_decision": {
+    "touchline-availability": "Normalized factual fields with attribution. No documented grant located covering private archival of every full response. Full response retention disabled.",
+    "touchline-rumours": "Same decision. The terms also identify curated third-party headlines and links.",
+    "wikipedia-season-news": "Eligible for text retention when the response itself declares the expected CC BY-SA 4.0 licence and identity. No linked articles or media are fetched for this news source."
+  },
+  "independent_global_touchline_observation": {
+    "url": "https://touchlinewire.com/api/v1/injuries",
+    "received_at": "2026-11-26T15:38:55.940180Z",
+    "response_sha256": "56c8b8b24502b5cba2566410d99777d41b0095ac88579c97df1d52404950f1cc",
+    "bytes": 50165,
+    "license_returned": "Free for personal, academic, and open-source use with attribution",
+    "count_reported": 92,
+    "count_observed": 92,
+    "by_category": {
+      "injury": 84,
+      "suspension": 6,
+      "illness": 1,
+      "ineligible": 1
+    },
+    "suspensions_with_suspension_competition": 0,
+    "injuries_with_injury_started_at_or_injury_date": 0,
+    "received_field_names": [
+      "category",
+      "chance_of_playing",
+      "display_name",
+      "expected_return",
+      "gemini_intel",
+      "gemini_vetted",
+      "last5_start_share",
+      "minutes",
+      "name",
+      "news",
+      "player_id",
+      "position",
+      "projected_deputy",
+      "red_cards",
+      "starts",
+      "status",
+      "status_code",
+      "team",
+      "team_id",
+      "team_short",
+      "web_name",
+      "yellow_cards"
+    ],
+    "full_response_retained": false,
+    "openapi_observation": {
+      "url": "https://touchlinewire.com/api/v1/openapi.json",
+      "received_at": "2026-11-26T15:39:01.276206Z",
+      "response_sha256": "7a2f8fe9c9c031f3bb96e128fac4b4e6572eb923db4350b8b6e0cd7543b614f0",
+      "license": {
+        "name": "MIT with Attribution",
+        "url": "https://touchlinewire.com/docs"
+      },
+      "injuries_200_schema_declared": false,
+      "rumours_200_schema_declared": false
+    }
+  },
+  "initial_cli_collection": {
+    "season": "2026-27",
+    "matchweek": 12,
+    "fixtures": 10,
+    "clubs": 20,
+    "requested_by": [
+      "season run --workers 2",
+      "news sync --season 2026-27 --limit 60 --workers 3"
+    ],
+    "sources": {
+      "touchline-availability": {
+        "initial_native_receipts": 20,
+        "initial_check_states_by_club": {
+          "ok": 14,
+          "partial": 6
+        },
+        "initial_v2_originals_reopened": 0,
+        "initial_snapshot_facts": 83
+      },
+      "touchline-rumours": {
+        "initial_native_receipts": 20,
+        "initial_check_states_by_club": {
+          "ok": 20
+        },
+        "initial_v2_originals_reopened": 0,
+        "initial_snapshot_facts": 17
+      },
+      "wikipedia-season-news": {
+        "initial_native_receipts": 20,
+        "initial_check_states_by_club": {
+          "ok": 20
+        },
+        "initial_v2_originals_reopened": 20,
+        "initial_snapshot_facts": 0
+      }
+    },
+    "fixture_snapshot_read_interval": [
+      "2026-11-26T15:43:41.503026Z",
+      "2026-11-26T15:43:46.303160Z"
+    ],
+    "news_facts_total": 100,
+    "distinct_resolved_player_ids": 97,
+    "facts_by_status": {
+      "reported": 83,
+      "rumour": 17
+    },
+    "facts_by_event": {
+      "injury": 78,
+      "transfer": 17,
+      "suspension": 5
+    },
+    "fixtures_with_touchline_facts": 10,
+    "by_fixture": [
+      {
+        "fixture": "epl/2026-27/arsenal/manchester-city",
+        "touchline_availability_facts": 4,
+        "touchline_rumour_facts": 3,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/brighton-hove-albion/newcastle-united",
+        "touchline_availability_facts": 7,
+        "touchline_rumour_facts": 3,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/crystal-palace/hull-city",
+        "touchline_availability_facts": 14,
+        "touchline_rumour_facts": 0,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/everton/liverpool",
+        "touchline_availability_facts": 8,
+        "touchline_rumour_facts": 2,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/fulham/bournemouth",
+        "touchline_availability_facts": 6,
+        "touchline_rumour_facts": 4,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/ipswich-town/aston-villa",
+        "touchline_availability_facts": 4,
+        "touchline_rumour_facts": 0,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/leeds-united/coventry-city",
+        "touchline_availability_facts": 7,
+        "touchline_rumour_facts": 2,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/manchester-united/brentford",
+        "touchline_availability_facts": 15,
+        "touchline_rumour_facts": 1,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/nottingham-forest/chelsea",
+        "touchline_availability_facts": 9,
+        "touchline_rumour_facts": 1,
+        "wikipedia_facts": 0
+      },
+      {
+        "fixture": "epl/2026-27/sunderland/tottenham-hotspur",
+        "touchline_availability_facts": 9,
+        "touchline_rumour_facts": 1,
+        "wikipedia_facts": 0
+      }
+    ]
+  },
+  "english_wikipedia_source_responses": {
+    "independent_direct_adapter_checks": 20,
+    "clubs_returning_configured_license": 20,
+    "native_initial_receipts_with_matching_independent_response_sha256": 20,
+    "clubs_with_narrative_candidates": 2,
+    "narrative_candidate_paragraphs": 4,
+    "candidate_paragraphs_with_dates_all_within_7_days_of_revision": 0,
+    "new_articles_first_observations": 0,
+    "frozen_a2_and_candidate_parser_projections_identical_for_all_20_licensed_responses": true,
+    "clubs": [
+      {
+        "club": "Arsenal FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387895794",
+        "publisher_revision_at": "2026-11-25T22:32:44Z",
+        "received_at": "2026-11-26T15:42:03.141481Z",
+        "response_sha256": "16426084c3a247dbceab46483efbb1726a27139e5ef7e7a68e2658e02651ebe9",
+        "v2_reopened_receipt": "dd994a448e9ea586aa7b2528224faa59166a90922789b08233aa2967e1c1803e",
+        "narrative_candidate_paragraphs": 1
+      },
+      {
+        "club": "Aston Villa FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387915786",
+        "publisher_revision_at": "2026-11-26T00:29:50Z",
+        "received_at": "2026-11-26T15:40:35.817351Z",
+        "response_sha256": "d3017729be7eba00b6539f7ba18d7c97ecc3aa794de35eebea2eeca87e6f0ba7",
+        "v2_reopened_receipt": "826f58390a008e5a662969464f3be88094d33219dab76d394fc91c286e7e3754",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "AFC Bournemouth",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387421265",
+        "publisher_revision_at": "2026-11-23T21:53:22Z",
+        "received_at": "2026-11-26T15:41:14.426239Z",
+        "response_sha256": "dff73f7f4b340595f50551ec5b2d2ce3b19e21ec55fd2e36fca2c9d2b924ea36",
+        "v2_reopened_receipt": "fcd0f4bbdba44a6e18dd49d1b11ccc883108cc9d1c250526f21ea9e59a15f746",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Brentford FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387832405",
+        "publisher_revision_at": "2026-11-25T17:41:52Z",
+        "received_at": "2026-11-26T15:40:13.280051Z",
+        "response_sha256": "ab6ec6596698aa3cd128a16831c29ead3ee3908edfc3e4a7744ffe19088cf445",
+        "v2_reopened_receipt": "4a4b0aefcf4907d39dd8ee7af892e86319a13286edfddde19247ae3e5ca77368",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Brighton & Hove Albion FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387204566",
+        "publisher_revision_at": "2026-11-23T00:58:52Z",
+        "received_at": "2026-11-26T15:41:19.067909Z",
+        "response_sha256": "713aae91e7572103308f48ed76430b63b6e736fe68b76e9f7dde19e307827bf8",
+        "v2_reopened_receipt": "09188e12d67f661687faa6b6fe21d56447b585d5e96a301b86a15155d0d87095",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Chelsea FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387565886",
+        "publisher_revision_at": "2026-11-24T15:44:09Z",
+        "received_at": "2026-11-26T15:39:46.368159Z",
+        "response_sha256": "b3904cdc3fa292bf5a71325adc35cce4a11f713a2f98b1c46eb4e83676f79e6c",
+        "v2_reopened_receipt": "d44c205ca50ec4a8414b09ad89550644165f6cf6b36b90b68eb317c4ad7831f4",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Coventry City FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387565005",
+        "publisher_revision_at": "2026-11-24T15:38:39Z",
+        "received_at": "2026-11-26T15:40:13.288312Z",
+        "response_sha256": "efbf272910f66983acc34e002c653b40cf9d8333ad517c147c52d466eeccce34",
+        "v2_reopened_receipt": "6e0d74e956dcf79efc84c4a804760686a971d94bfdbdff87d0d3c46eee66d66b",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Crystal Palace FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387564624",
+        "publisher_revision_at": "2026-11-24T15:36:17Z",
+        "received_at": "2026-11-26T15:41:19.071631Z",
+        "response_sha256": "e877bceccdc509629226310ea5779fbdd9e426ef893707d1c748e5969dc1d593",
+        "v2_reopened_receipt": "4275d3da0f8d9654633d5090e47fe4ddc35c9f93a88ecd8e245cabad698f5058",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Everton FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387437018",
+        "publisher_revision_at": "2026-11-23T23:08:34Z",
+        "received_at": "2026-11-26T15:40:56.023728Z",
+        "response_sha256": "b89b476cce9e9c600c77a55203d11493ccec64808b216f9133fdbbce8f8602ec",
+        "v2_reopened_receipt": "629f1b75ea9ca9c29d3e3d1ed6fda56bf0db75708740a610e019eaf6501bc456",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Fulham FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387928627",
+        "publisher_revision_at": "2026-11-26T01:46:51Z",
+        "received_at": "2026-11-26T15:41:39.619824Z",
+        "response_sha256": "c6df2bfcaf3ff22aee3fe571d3f676717671d2b7a5034a5057f1b33edf67aeff",
+        "v2_reopened_receipt": "44f46be9643aa3f869ceefefb65c0eab2d25a9d13f01bcb6a0c1ae6af4afa35d",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Hull City AFC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387567036",
+        "publisher_revision_at": "2026-11-24T15:51:25Z",
+        "received_at": "2026-11-26T15:41:39.583889Z",
+        "response_sha256": "6bc13acf5bddcaf727c716fc41c80d5309fef386bd6ebfe553b721a55a051dd5",
+        "v2_reopened_receipt": "af014f75ee7fdc75527eabe07f63b47b79a242eb21ee014dbf706f7ebd74637a",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Ipswich Town FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387450071",
+        "publisher_revision_at": "2026-11-24T00:23:09Z",
+        "received_at": "2026-11-26T15:40:52.636846Z",
+        "response_sha256": "b932b43c464ba919af1ddfa0e917b988c24c579eb0000ef6781ed78648afa542",
+        "v2_reopened_receipt": "9f27b195b600fbc70af4babbe091cc0425051583a248e8ec21286bf2a4d6ba9a",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Leeds United FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387566091",
+        "publisher_revision_at": "2026-11-24T15:45:28Z",
+        "received_at": "2026-11-26T15:40:30.065359Z",
+        "response_sha256": "dd75e3961a160b1a922a4412845ae2bc504f2c71bfbd6464f247eecc405b5194",
+        "v2_reopened_receipt": "a260b7c28c1df436490bf2f3cb54df92a2b4b7ab5068b21ac79336fad4e56bae",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Liverpool FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387935145",
+        "publisher_revision_at": "2026-11-26T02:19:29Z",
+        "received_at": "2026-11-26T15:40:56.015987Z",
+        "response_sha256": "d8ffdf5edd8d15e7e4821bfd360023d19f3fbab6bf6ccc42b0faebe53f9c2745",
+        "v2_reopened_receipt": "fb5d87734c5408e6216ad38ad37738e7613c7099c8031fa8a286fbf6efecce02",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Manchester City FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387921219",
+        "publisher_revision_at": "2026-11-26T01:02:41Z",
+        "received_at": "2026-11-26T15:42:25.516133Z",
+        "response_sha256": "fb016a57120e1064163391ac4e1e92e24c1063ff32412bb9ae16f2dcc117ae04",
+        "v2_reopened_receipt": "caae6013729abd49d29d54e4aaa77f71b1de30e5ccd001029c2cb0ab92824b8f",
+        "narrative_candidate_paragraphs": 3
+      },
+      {
+        "club": "Manchester United FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387998312",
+        "publisher_revision_at": "2026-11-26T07:52:19Z",
+        "received_at": "2026-11-26T15:40:35.815992Z",
+        "response_sha256": "d8d565886940deadd6b7c2ba0352e5bf1f1d5f039993640e90ceaf7a3a5f961f",
+        "v2_reopened_receipt": "1f419e2f75dd7242325e64b08f5b791b656e55c4e35ad616d48c81d1401e160e",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Newcastle United FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387554184",
+        "publisher_revision_at": "2026-11-24T14:15:04Z",
+        "received_at": "2026-11-26T15:41:39.623313Z",
+        "response_sha256": "6fb0f012fe3363d84133b0853507b44137b7c4838bbea40fbe1f2c0bce97fe43",
+        "v2_reopened_receipt": "786b301c491e40258a1b9495911e75d26c329da71859b8e9537f2df4004797a9",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Nottingham Forest FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387562432",
+        "publisher_revision_at": "2026-11-24T15:20:52Z",
+        "received_at": "2026-11-26T15:40:05.541436Z",
+        "response_sha256": "b448e556ab5cda49fc4cd2885cad45c09b1d365a975815ded34bcb71ba9a8854",
+        "v2_reopened_receipt": "24865d611cfdb894bf45904d5d987af32a9de603e40f5730c7270c221de65362",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Sunderland AFC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387929635",
+        "publisher_revision_at": "2026-11-26T01:51:59Z",
+        "received_at": "2026-11-26T15:42:03.207901Z",
+        "response_sha256": "33de4a73e3be7ab534c6e8b19ee387ce870d296c68a99dd2360d23fdc0d3a1af",
+        "v2_reopened_receipt": "93382501956487022194d3b3dce39de1bdaaa4b6f3b4716b46563e0eea8eaf46",
+        "narrative_candidate_paragraphs": 0
+      },
+      {
+        "club": "Tottenham Hotspur FC",
+        "permanent_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1387835659",
+        "publisher_revision_at": "2026-11-25T17:58:03Z",
+        "received_at": "2026-11-26T15:42:03.187823Z",
+        "response_sha256": "e6fa08dc3cfdf78fb844f676769d01a9313df7fa8e411793861cb0c09d3c8b12",
+        "v2_reopened_receipt": "a082b7383ebfa0a176a6364a1eb232b40de4455c3125d2f49fde31a354c99643",
+        "narrative_candidate_paragraphs": 0
+      }
+    ]
+  },
+  "second_cli_collection": {
+    "fixture": "epl/2026-27/nottingham-forest/chelsea",
+    "kickoff": "2026-11-27T20:00:00.000000Z",
+    "snapshot_at": "2026-11-26T15:45:57.310667Z",
+    "team_polls": [
+      {
+        "role": "home",
+        "club": "Nottingham Forest FC",
+        "received_at": "2026-11-26T15:45:36.007138Z",
+        "response_sha256": "b448e556ab5cda49fc4cd2885cad45c09b1d365a975815ded34bcb71ba9a8854",
+        "v2_reopened_receipt": "5df3f53929da6109a50f5cf805c724f273f983b3de53f74560fc19f1d44fa9b7",
+        "new_wikipedia_articles": 0,
+        "native_wiki_coverage_verified": true,
+        "native_roster_verified": true
+      },
+      {
+        "role": "away",
+        "club": "Chelsea FC",
+        "received_at": "2026-11-26T15:45:13.175952Z",
+        "response_sha256": "b3904cdc3fa292bf5a71325adc35cce4a11f713a2f98b1c46eb4e83676f79e6c",
+        "v2_reopened_receipt": "6afdbbfdece75bfca82f996739431bccc604f4bdb7442d12087013f4c12ab8c7",
+        "new_wikipedia_articles": 0,
+        "native_wiki_coverage_verified": true,
+        "native_roster_verified": true
+      }
+    ],
+    "snapshot_facts": 10,
+    "fact_sources": {
+      "touchline-availability": 9,
+      "touchline-rumours": 1
+    },
+    "distinct_fact_evidence_ids": 10,
+    "fact_native_reopen_errors": {
+      "missing private retained response": 10
+    },
+    "complete_news_snapshot_originals_verified": false,
+    "player_identity_example": {
+      "team": "Chelsea FC",
+      "player_id": "enwiki:57778547",
+      "player_name": "Reece James",
+      "roster_revision_url": "https://en.wikipedia.org/w/index.php?oldid=1373200900",
+      "injury_status_as_reported_then": "reported",
+      "source": "touchline-availability",
+      "received_at": "2026-11-26T15:39:27.036973Z",
+      "source_url": "https://touchlinewire.com/api/v1/injuries?club=chelsea"
+    },
+    "scope": "Fresh news facts preview. No fixed-horizon prediction was created. Receiving two valid open empty updates does not supply missing Touchline originals."
+  },
+  "prospective_study": {
+    "plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+    "installed_policy": {
+      "protocol": "epl-player-news-paired-v3",
+      "sha256": "461ddec6ef376781c14c44b4b839cc1700637da903163d11e3b9760a7595f387"
+    },
+    "scratch_registered_at": "2026-11-26T15:37:24.565691Z",
+    "preflight_at": "2026-11-26T15:43:39.486940Z",
+    "preflight_windows_checked": 0,
+    "bound_seals_as_of_initial_report": 0,
+    "registration_recommendation": "Defer operator enrollment pending suitable local source coverage and an explicit decision to preserve the registered policy for the study. Historical or lab receipts cannot be backfilled into an operator registration.",
+    "previous_early_technical_reference": {
+      "file": "reports/five-leagues-0.5.0a2/news-source-retention-coverage.json",
+      "seals": 10,
+      "seals_with_applied_touchline": 10,
+      "applied_facts_by_origin": {
+        "touchlinewire.com": 90
+      }
+    }
+  }
+}

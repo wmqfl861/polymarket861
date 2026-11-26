@@ -1,0 +1,486 @@
+{
+  "scope": "Local files and controlled copies only. No deployment was enrolled. The generated football/news examples use offline synthetic publisher replies and capture clocks through the native ingestion and forecast paths. They are not collected research pairs.",
+  "plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+  "installed_news_policy": {
+    "protocol": "epl-player-news-paired-v3",
+    "sha256": "461ddec6ef376781c14c44b4b839cc1700637da903163d11e3b9760a7595f387"
+  },
+  "fixed_end_exclusive": "2028-07-01T00:00:00.000000Z",
+  "missing_directory": {
+    "decision": "insufficient_local_evidence",
+    "registration": {
+      "state": "not_registered"
+    },
+    "fixed_windows_total": 0,
+    "fixed_windows_checked": 0,
+    "news_evidence_counts": {
+      "expected_ineligible": 0,
+      "unknown": 0,
+      "bound_news_originals_verified": 0
+    },
+    "future_eligible_windows": null,
+    "exists_after": false,
+    "actual_local_sources": 0,
+    "bundled_adapter_retention": {
+      "touchline-availability": "not_retainable",
+      "touchline-rumours": "not_retainable",
+      "wikipedia-season-news": "retainable"
+    }
+  },
+  "published_a2_registration": {
+    "input": "v2 certificate made by unmodified 0.5.0a2 using Claude's probe_v2_registration.sh on a previously approved scratch runtime",
+    "registration_sha256": "f2cb36b2342235b7e4323b6671fccf0bc5e9a14de21b79d4a7ac0fe9eaf02f85",
+    "unchanged_envelope": true,
+    "a2_report_sha256": "527581f9ee5cba20cab5f86b32aff11fa9ac1ccfc74a2d5d9d492df38944df92",
+    "current_report_sha256": "527581f9ee5cba20cab5f86b32aff11fa9ac1ccfc74a2d5d9d492df38944df92",
+    "report_identical_bytes": true,
+    "preflight": {
+      "decision": "existing_registration",
+      "registration": {
+        "state": "registered",
+        "registration_sha256": "f2cb36b2342235b7e4323b6671fccf0bc5e9a14de21b79d4a7ac0fe9eaf02f85",
+        "starts_at": "2026-11-26T15:35:29.296242Z",
+        "ends_at": "2028-07-01T00:00:00.000000Z",
+        "news_policy": {
+          "protocol": "epl-player-news-paired-v3",
+          "sha256": "461ddec6ef376781c14c44b4b839cc1700637da903163d11e3b9760a7595f387"
+        },
+        "matches_installed_news_policy": true
+      },
+      "fixed_windows_total": 0,
+      "fixed_windows_checked": 0,
+      "news_evidence_counts": {
+        "expected_ineligible": 0,
+        "unknown": 0,
+        "bound_news_originals_verified": 0
+      },
+      "future_eligible_windows": null
+    }
+  },
+  "comma_mutation": {
+    "before": {
+      "exit": 2,
+      "error": "pm861: Invalid stored v2 endpoint study declaration"
+    },
+    "after": {
+      "exit": 2,
+      "error": "pm861: Installed v2 plan drift: stored=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61 current=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7; published=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61. Restore the published v2 implementation."
+    },
+    "restore_state": "prospective_collection"
+  },
+  "unsupported_and_corrupt_distinguished": {
+    "tampered_record": {
+      "exit": 2,
+      "error": "pm861: Corrupt v2 registration: stored=f2cb36b2342235b7e4323b6671fccf0bc5e9a14de21b79d4a7ac0fe9eaf02f85 recomputed=68215373735219285cd2662f0da4af4c742ffaeb5a37092d2f81dcc94c491a69"
+    },
+    "self_consistent_unknown_contract": {
+      "exit": 2,
+      "error": "pm861: Unsupported stored v2 plan: stored=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7 current=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61; published=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61"
+    }
+  },
+  "controlled_native_source_checks": {
+    "open_feeds_before_registration": {
+      "decision": "review_local_evidence_and_policy_freeze",
+      "registration": {
+        "state": "not_registered"
+      },
+      "fixed_windows_total": 1,
+      "fixed_windows_checked": 1,
+      "news_evidence_counts": {
+        "expected_ineligible": 0,
+        "unknown": 1,
+        "bound_news_originals_verified": 0
+      },
+      "future_eligible_windows": null,
+      "selected_window": {
+        "fixture_id": "epl/2026-27/arsenal/chelsea",
+        "horizon": "T-60m",
+        "v2_binding": false,
+        "known_blockers": [],
+        "timely_two_team_coverage": true,
+        "news_evidence": "unknown",
+        "applied_claims": 1,
+        "facts_by_source": [
+          {
+            "source": "chelsea-bulletins",
+            "raw_response_policy": "retainable",
+            "v2_original": "no_v2_binding"
+          },
+          {
+            "source": "arsenal-bulletins",
+            "raw_response_policy": "retainable",
+            "v2_original": "no_v2_binding"
+          }
+        ],
+        "coverage_by_side": {
+          "home": [
+            {
+              "source": "arsenal-bulletins",
+              "raw_response_policy": "retainable",
+              "v2_original": "no_v2_binding"
+            }
+          ],
+          "away": [
+            {
+              "source": "chelsea-bulletins",
+              "raw_response_policy": "retainable",
+              "v2_original": "no_v2_binding"
+            }
+          ]
+        }
+      }
+    },
+    "restricted_fact": {
+      "decision": "review_observed_blockers_before_registration",
+      "registration": {
+        "state": "not_registered"
+      },
+      "fixed_windows_total": 1,
+      "fixed_windows_checked": 1,
+      "news_evidence_counts": {
+        "expected_ineligible": 1,
+        "unknown": 0,
+        "bound_news_originals_verified": 0
+      },
+      "future_eligible_windows": null,
+      "selected_window": {
+        "fixture_id": "epl/2026-27/arsenal/chelsea",
+        "horizon": "T-60m",
+        "v2_binding": false,
+        "known_blockers": [
+          "required_source_does_not_retain_originals"
+        ],
+        "timely_two_team_coverage": true,
+        "news_evidence": "expected_ineligible",
+        "applied_claims": 1,
+        "facts_by_source": [
+          {
+            "source": "chelsea-bulletins",
+            "raw_response_policy": "retainable",
+            "v2_original": "no_v2_binding"
+          },
+          {
+            "source": "private-bulletins",
+            "raw_response_policy": "not_retainable",
+            "v2_original": "no_v2_binding"
+          }
+        ],
+        "coverage_by_side": {
+          "home": [
+            {
+              "source": "private-bulletins",
+              "raw_response_policy": "not_retainable",
+              "v2_original": "no_v2_binding"
+            }
+          ],
+          "away": [
+            {
+              "source": "chelsea-bulletins",
+              "raw_response_policy": "retainable",
+              "v2_original": "no_v2_binding"
+            }
+          ]
+        }
+      }
+    },
+    "registered_open_feeds": {
+      "decision": "existing_registration",
+      "registration": {
+        "state": "registered",
+        "registration_sha256": "9551554435a45ac640dc4b85281e7e91a519abe35a198e23406c0e362f3e792a",
+        "starts_at": "2026-08-01T10:00:00.000000Z",
+        "ends_at": "2028-07-01T00:00:00.000000Z",
+        "news_policy": {
+          "protocol": "epl-player-news-paired-v3",
+          "sha256": "461ddec6ef376781c14c44b4b839cc1700637da903163d11e3b9760a7595f387"
+        },
+        "matches_installed_news_policy": true
+      },
+      "fixed_windows_total": 1,
+      "fixed_windows_checked": 1,
+      "news_evidence_counts": {
+        "expected_ineligible": 0,
+        "unknown": 0,
+        "bound_news_originals_verified": 1
+      },
+      "future_eligible_windows": null,
+      "selected_window": {
+        "fixture_id": "epl/2026-27/arsenal/chelsea",
+        "horizon": "T-60m",
+        "v2_binding": true,
+        "known_blockers": [],
+        "timely_two_team_coverage": true,
+        "news_evidence": "bound_news_originals_verified",
+        "applied_claims": 1,
+        "facts_by_source": [
+          {
+            "source": "chelsea-bulletins",
+            "raw_response_policy": "retainable",
+            "v2_original": "verified"
+          },
+          {
+            "source": "arsenal-bulletins",
+            "raw_response_policy": "retainable",
+            "v2_original": "verified"
+          }
+        ],
+        "coverage_by_side": {
+          "home": [
+            {
+              "source": "arsenal-bulletins",
+              "raw_response_policy": "retainable",
+              "v2_original": "verified"
+            }
+          ],
+          "away": [
+            {
+              "source": "chelsea-bulletins",
+              "raw_response_policy": "retainable",
+              "v2_original": "verified"
+            }
+          ]
+        }
+      }
+    },
+    "removed_home_v2_receipts_retained_v1": {
+      "decision": "existing_registration",
+      "registration": {
+        "state": "registered",
+        "registration_sha256": "9551554435a45ac640dc4b85281e7e91a519abe35a198e23406c0e362f3e792a",
+        "starts_at": "2026-08-01T10:00:00.000000Z",
+        "ends_at": "2028-07-01T00:00:00.000000Z",
+        "news_policy": {
+          "protocol": "epl-player-news-paired-v3",
+          "sha256": "461ddec6ef376781c14c44b4b839cc1700637da903163d11e3b9760a7595f387"
+        },
+        "matches_installed_news_policy": true
+      },
+      "fixed_windows_total": 1,
+      "fixed_windows_checked": 1,
+      "news_evidence_counts": {
+        "expected_ineligible": 1,
+        "unknown": 0,
+        "bound_news_originals_verified": 0
+      },
+      "future_eligible_windows": null,
+      "selected_window": {
+        "fixture_id": "epl/2026-27/arsenal/chelsea",
+        "horizon": "T-60m",
+        "v2_binding": true,
+        "known_blockers": [
+          "missing_or_invalid_v2_original"
+        ],
+        "timely_two_team_coverage": true,
+        "news_evidence": "expected_ineligible",
+        "applied_claims": 1,
+        "facts_by_source": [
+          {
+            "source": "chelsea-bulletins",
+            "raw_response_policy": "retainable",
+            "v2_original": "verified"
+          },
+          {
+            "source": "arsenal-bulletins",
+            "raw_response_policy": "retainable",
+            "v2_original": "missing_or_invalid"
+          }
+        ],
+        "coverage_by_side": {
+          "home": [
+            {
+              "source": "arsenal-bulletins",
+              "raw_response_policy": "retainable",
+              "v2_original": "missing_or_invalid"
+            }
+          ],
+          "away": [
+            {
+              "source": "chelsea-bulletins",
+              "raw_response_policy": "retainable",
+              "v2_original": "verified"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "reproduce": [
+    "PYTHONPATH=src:tests OPENBLAS_NUM_THREADS=1 python -m unittest -v test_news_endpoint_preflight test_news_endpoints_v2 test_news_endpoint_study test_news_endpoints_public_flow",
+    "sh docs/review-evidence/code-review-0.5.0a2-2026-11-26/probe_v2_registration.sh REPO PYTHON SCRATCH APPROVED_A2_SCRATCH_RUNTIME",
+    "pm861 --data-dir DATA leagues news-endpoints preflight --version v2"
+  ],
+  "independent_first_binding": {
+    "initial": {
+      "captures": [
+        {
+          "capture_order": 1,
+          "seal": "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6"
+        },
+        {
+          "capture_order": 2,
+          "seal": "ddbb278f2b6e89c6ba15a19ff6452043c5840262fb0cb2f5d643b289a7b9c5e8"
+        }
+      ],
+      "before": {
+        "fixed_windows_total": 1,
+        "fixed_windows_checked": 1,
+        "news_evidence_counts": {
+          "expected_ineligible": 0,
+          "unknown": 0,
+          "bound_news_originals_verified": 1
+        },
+        "winner": [
+          [
+            "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6",
+            "bound_news_originals_verified"
+          ]
+        ]
+      },
+      "first_loses_purpose": {
+        "fixed_windows_total": 1,
+        "fixed_windows_checked": 1,
+        "news_evidence_counts": {
+          "expected_ineligible": 0,
+          "unknown": 0,
+          "bound_news_originals_verified": 1
+        },
+        "winner": [
+          [
+            "ddbb278f2b6e89c6ba15a19ff6452043c5840262fb0cb2f5d643b289a7b9c5e8",
+            "bound_news_originals_verified"
+          ]
+        ]
+      },
+      "registered_report": {
+        "past_scheduled_windows": 1,
+        "qualified_news_pairs": 0,
+        "duplicate_bindings_ignored": 1,
+        "strata": [
+          {
+            "mode": "technical",
+            "era": "1d9a0f0a400d032282451b5be6032e88047808d9e595f82440e9d0aaa6b1be99",
+            "selected": 1,
+            "qualified": 0,
+            "excluded": 1,
+            "exclusions": {
+              "invalid_seal_identity": 1
+            }
+          }
+        ],
+        "exclusions": {
+          "invalid_seal_identity": 1
+        }
+      }
+    },
+    "corrected": {
+      "captures": [
+        {
+          "capture_order": 1,
+          "seal": "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6"
+        },
+        {
+          "capture_order": 2,
+          "seal": "ddbb278f2b6e89c6ba15a19ff6452043c5840262fb0cb2f5d643b289a7b9c5e8"
+        }
+      ],
+      "before": {
+        "fixed_windows_total": 1,
+        "fixed_windows_checked": 1,
+        "news_evidence_counts": {
+          "expected_ineligible": 0,
+          "unknown": 0,
+          "bound_news_originals_verified": 1
+        },
+        "winner": [
+          [
+            "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6",
+            "bound_news_originals_verified"
+          ]
+        ]
+      },
+      "first_loses_purpose": {
+        "fixed_windows_total": 1,
+        "fixed_windows_checked": 1,
+        "news_evidence_counts": {
+          "expected_ineligible": 0,
+          "unknown": 1,
+          "bound_news_originals_verified": 0
+        },
+        "winner": [
+          [
+            "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6",
+            "unknown"
+          ]
+        ]
+      },
+      "registered_report": {
+        "past_scheduled_windows": 1,
+        "qualified_news_pairs": 0,
+        "duplicate_bindings_ignored": 1,
+        "strata": [
+          {
+            "mode": "technical",
+            "era": "1d9a0f0a400d032282451b5be6032e88047808d9e595f82440e9d0aaa6b1be99",
+            "selected": 1,
+            "qualified": 0,
+            "excluded": 1,
+            "exclusions": {
+              "invalid_seal_identity": 1
+            }
+          }
+        ],
+        "exclusions": {
+          "invalid_seal_identity": 1
+        }
+      }
+    }
+  },
+  "independent_zero_item_source_needed": {
+    "news_evidence": "expected_ineligible",
+    "applied_facts": [
+      {
+        "id": "8ac563a4b42db2f8e163838f7b61d5ec8a10583f09d266da7ab5e2a47c8f9cdc",
+        "evidence_ids": [
+          "8ac563a4b42db2f8e163838f7b61d5ec8a10583f09d266da7ab5e2a47c8f9cdc"
+        ]
+      }
+    ],
+    "facts": [
+      {
+        "id": "3d69262211a248e0cd88a59243fb07a2d689500148530120014b012c2c312fb7",
+        "source": "chelsea-bulletins",
+        "raw_response_policy": "retainable",
+        "v2_original": "verified"
+      },
+      {
+        "id": "8ac563a4b42db2f8e163838f7b61d5ec8a10583f09d266da7ab5e2a47c8f9cdc",
+        "source": "arsenal-bulletins",
+        "raw_response_policy": "retainable",
+        "v2_original": "verified"
+      }
+    ],
+    "home": {
+      "team": "Arsenal FC",
+      "sources": [
+        {
+          "source": "arsenal-bulletins",
+          "raw_response_policy": "retainable",
+          "v2_original": "verified"
+        },
+        {
+          "source": "private-empty",
+          "raw_response_policy": "not_retainable",
+          "v2_original": "missing_or_invalid"
+        }
+      ],
+      "roster_original": "verified"
+    },
+    "known_blockers": [
+      "required_source_does_not_retain_originals",
+      "missing_or_invalid_v2_original"
+    ],
+    "official_exclusions": {
+      "missing_or_invalid_news_dependency_original": 1
+    }
+  }
+}

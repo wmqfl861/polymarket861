@@ -8,7 +8,7 @@ from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 from . import dbscope, market_provider, store
-from .ledger_rules import ROUNDINGS, UNIT, number
+from .ledger_rules import ROUNDINGS, UNIT, number, unit
 
 
 @dataclass(frozen=True)
@@ -224,6 +224,20 @@ def _proof(db, root, doc, version, at):
     raise ValueError("independently captured fee documents unavailable at cutoff")
 
 
+def gamma_taker_parameters(schedule):
+    """Validate the complete published fee object before applying any charging convention."""
+    if not isinstance(schedule, dict) or schedule.get("takerOnly") is not True:
+        raise ValueError("fee-enabled Gamma rate, exponent and taker scope are unverified")
+    if set(schedule) - {"takerOnly", "rate", "exponent", "rebateRate"}:
+        raise ValueError("unknown feeSchedule properties")
+    rate, exponent = unit(schedule.get("rate")), number(schedule.get("exponent"))
+    if rate <= 0 or exponent not in (1, 2):
+        raise ValueError("unrecognized Gamma fee rate or exponent")
+    if "rebateRate" in schedule:
+        unit(schedule["rebateRate"])
+    return rate, int(exponent)
+
+
 def resolve(data_dir, market, at):
     observation, cutoff = store.instant(market["recorded_at"]), store.instant(at)
     if (
@@ -232,12 +246,7 @@ def resolve(data_dir, market, at):
         or observation > cutoff
     ):
         raise ValueError("fee authority needs a timely international Gamma quote")
-    schedule = market.get("fee_schedule")
-    if not isinstance(schedule, dict) or schedule.get("takerOnly") is not True:
-        raise ValueError(
-            "fee-enabled Gamma rate, exponent and taker scope are unverified"
-        )
-    rate, exponent = number(schedule.get("rate")), number(schedule.get("exponent"))
+    rate, exponent = gamma_taker_parameters(market.get("fee_schedule"))
     matches = [
         p
         for p in REVIEWED

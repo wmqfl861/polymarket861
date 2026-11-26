@@ -47,8 +47,8 @@ def _event(db, root, slug, sha, received, league):
     if len(selected) != 1:
         raise ValueError("native Gamma receipt does not uniquely identify this event")
     event = selected[0]
-    identity = _identity(event, league, history=db)
-    state = schedule.pregame_flags(event)
+    identity = _identity(event, league, history=db, received_at=received)
+    state = schedule.pregame_flags(event, received)
     if not provider.fresh_observation(reply) and state != "not_pregame":
         state = "unclassified"
     markets = provider.normalized_markets(event, sport=league, project_teams=True)
@@ -132,14 +132,49 @@ def _state_at_receipt(db, root, selected, events, slug, received):
     return state
 
 
-def _book_batch(db, root, fixture, sha, received):
+def _book_batch(db, root, fixture, sha, received, *, require_fresh=True):
     reply, _, _, meta = archive_proof.original_receipt(
         db, root, sha, received, {"books"}, expected_selector=fixture
     )
     requested = meta.get("request_token_ids")
-    if not isinstance(requested, list) or not provider.fresh_observation(reply):
+    if not isinstance(requested, list) or (require_fresh and not provider.fresh_observation(reply)):
         raise ValueError("missing native CLOB request or stale HTTP response")
     return reply, execution_books.native_rows(json.loads(reply.body), requested)
+
+
+def late_book_receipts(db, root, fixture, report, window):
+    """Attribute missed deadlines to actual book replies, including in older archives."""
+    if report.get("fixture") != fixture or report.get("capture_window") not in (window, list(window)):
+        return []
+    deadline = window[1]
+    candidates = {}
+    for group in report.get("contracts", {}).values():
+        for token in group.get("tokens", {}).values():
+            received, sha = token.get("received_at"), token.get("source_sha256")
+            if received and received >= deadline and sha and token.get("id"):
+                candidates.setdefault((received, sha), {})[token["id"]] = group.get("condition")
+    late = []
+    for (received, sha), conditions in sorted(candidates.items()):
+        try:
+            # The HTTP arrival time is observable even if the depth itself was stale.
+            reply, native = _book_batch(db, root, fixture, sha, received, require_fresh=False)
+            if not max(window[0], report["started"]) <= reply.requested_at <= received:
+                continue
+            count = sum(
+                token in native and native[token].get("market") == condition
+                for token, condition in conditions.items()
+            )
+            micros = (provider.moment(received) - provider.moment(deadline)) // timedelta(microseconds=1)
+            if count:
+                late.append({
+                    "received_tokens": count, "requested_at": reply.requested_at, "received_at": received,
+                    "cutoff_exclusive": deadline, "late_by_microseconds": micros, "source_sha256": sha,
+                    "reason": f"{count} native CLOB token books arrived late at {received} "
+                              f"(exclusive cutoff {deadline})",
+                })
+        except (KeyError, TypeError, ValueError, FileNotFoundError):
+            continue
+    return late
 
 
 def witness(db, root, report, fixture, kickoff, window):
@@ -255,6 +290,6 @@ def witness(db, root, report, fixture, kickoff, window):
         TypeError,
         ValueError,
         ArithmeticError,
-        OSError,
+        FileNotFoundError,
     ):
         return {}

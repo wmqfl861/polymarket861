@@ -115,7 +115,8 @@ class ReviewedFeesTests(unittest.TestCase):
                 ledger_terms.verify_book_terms(
                     c, self.market, data_dir=self.root, at=self.expiry
                 )
-            for different in [{"rate": 0.04}, {"exponent": 2}, {"takerOnly": False}]:
+            for different in [{"rate": 0.04}, {"exponent": 2}, {"takerOnly": False},
+                              {"additionalCashPerShare": 0.03}, {"rebateRate": -1}, {"rebateRate": True}]:
                 native = self.market | {
                     "fee_schedule": self.market["fee_schedule"] | different
                 }

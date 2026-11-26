@@ -308,7 +308,7 @@ def fresh_observation(reply: Reply) -> bool:
             and abs((received - server).total_seconds()) <= 30
             and (0 <= (received - moment(reply.requested_at)).total_seconds() <= 30)
         )
-    except (KeyError, TypeError, ValueError):
+    except (AttributeError, KeyError, OverflowError, TypeError, ValueError):
         return False
 
 

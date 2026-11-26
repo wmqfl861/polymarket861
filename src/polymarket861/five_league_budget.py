@@ -30,13 +30,15 @@ def register(commands):
     custom.add_argument("input", type=Path)
     custom.add_argument("--as-of", help="截止时刻，带 UTC 偏移")
     custom.add_argument("--details", action="store_true", help="包含逐意图的模拟决定")
-    custom.add_argument(
-        "--entry-basis", choices=("explicit_pregame", "scheduled_with_incomplete_flags"),
-        default="explicit_pregame", help="本机入场凭据，排期研究档另核两次盘口及赛程原件",
-    )
     contract = sub.add_parser("verify-contract", help="离线核对某份 Gamma 原件及其球队映射")
     contract.add_argument("condition", help="Polymarket condition ID")
     contract.add_argument("--as-of", required=True, help="截止时刻，带 UTC 偏移")
+    contract.add_argument("--token-id", help="从该合约原件导出指定代币的意图字段和费用口径")
+    for parser in (custom, contract):
+        parser.add_argument(
+            "--entry-basis", choices=("explicit_pregame", "scheduled_with_incomplete_flags"),
+            default="explicit_pregame", help="排期研究档可使用带标记的 Gamma 费用估算",
+        )
     for parser in (demo, custom, contract):
         parser.add_argument("--output", type=Path)
         parser.set_defaults(func=_cli)
@@ -49,7 +51,10 @@ def _cli(args):
             _write_json(args.write_input, document)
         result = stress_report(document)
     elif args.risk_command == "verify-contract":
-        result = budget_archive_proof.verify_contract(args.data_dir, args.condition, args.as_of)
+        result = budget_archive_proof.verify_contract(
+            args.data_dir, args.condition, args.as_of, token=args.token_id,
+            scheduled=args.entry_basis == "scheduled_with_incomplete_flags",
+        )
     else:
         document = json.loads(args.input.read_bytes())
         result = replay(document, as_of=args.as_of, data_dir=args.data_dir, details=args.details,
@@ -226,6 +231,7 @@ def _replay(document, mode, source, as_of, details, scheduled, football=None):
     decisions = []
     counts = {code: Counter() for code in CODES}
     basis_counts = {code: {} for code in CODES}
+    fee_accounts = {code: {} for code in CODES}
     observed_fixtures = {code: set() for code in CODES}
     cohorts = {code: {} for code in CODES}
     receipt_counts = Counter()
@@ -263,6 +269,11 @@ def _replay(document, mode, source, as_of, details, scheduled, football=None):
                 proceeds[code] += credit
                 encumbered[code] -= pos["spent"]
                 exposure[fixture] -= pos["spent"]
+                if mode == "local_receipts":
+                    account = fee_accounts[code][pos["fee_basis"]]
+                    account["redeemed_positions"] += 1
+                    account["redeemed_cost"] += pos["spent"]
+                    account["cash_from_redemptions"] += credit
             continue
 
         cohort = op.get("cohort", "custom")
@@ -276,8 +287,6 @@ def _replay(document, mode, source, as_of, details, scheduled, football=None):
             return [(p, q) for p, q in sorted(depth[source].items()) if q > 0]
         paired = rules.pair_depth(levels(first), levels(second), rules.unit(op["limit_price"]))
         requested = rules.number(op["shares"])
-        fill = rules.price_fill(paired, requested, op["fee"])
-        cost = fill["spent"]
         entry_market = None
         if mode == "local_receipts":
             try:
@@ -293,7 +302,13 @@ def _replay(document, mode, source, as_of, details, scheduled, football=None):
             except (ValueError, TypeError, KeyError, OSError, sqlite3.Error) as exc:
                 entry_market = None
                 proof_gaps[str(exc)] += 1
-        if mode == "local_receipts" and entry_market is None:
+        fee_evidence = (entry_market or {}).get("fee_evidence")
+        fill = None
+        if mode == "synthetic" or fee_evidence is not None:
+            fee = fee_evidence["schedule"] if fee_evidence else op["fee"]
+            fill = rules.price_fill(paired, requested, fee)
+        cost = fill["spent"] if fill else rules.ZERO
+        if fill is None:
             outcome = "skipped_unverified_entry"
         elif fill["gross"] < requested:
             outcome = "skipped_depth"
@@ -320,7 +335,16 @@ def _replay(document, mode, source, as_of, details, scheduled, football=None):
             peak[code] = max(peak[code], encumbered[code])
             exposure[fixture] += cost
             fixture_peak[code] = max(fixture_peak[code], exposure[fixture])
-            positions.setdefault(token, []).append({"net": fill["net"], "spent": cost})
+            position = {"net": fill["net"], "spent": cost}
+            if fee_evidence:
+                basis = fee_evidence["basis"]
+                position["fee_basis"] = basis
+                account = fee_accounts[code].setdefault(basis, Counter())
+                account["filled_positions"] += 1
+                account["buy_cash"] += cost
+                account["fee_cash_equivalent"] += fill["fees"]
+                account["fee_shares"] += fill["gross"] - fill["net"]
+            positions.setdefault(token, []).append(position)
         counts[code][outcome] += 1
         seen["outcomes"][outcome] += 1
         evidence = (entry_market or {}).get("entry_evidence")
@@ -330,6 +354,13 @@ def _replay(document, mode, source, as_of, details, scheduled, football=None):
         if details:
             decisions.append({"id": key, "league": code, "fixture_id": fixture, "at": rules.iso(when),
                               "outcome": outcome, "cost_including_cash_fees": rules.fmt(cost) if outcome == "filled" else None})
+            if mode == "local_receipts":
+                decisions[-1]["fee_evidence"] = fee_evidence
+                if outcome == "filled":
+                    decisions[-1]["fill"] = {
+                        "gross_shares": rules.fmt(fill["gross"]), "net_shares": rules.fmt(fill["net"]),
+                        "fee_cash_equivalent": rules.fmt(fill["fees"]), "levels": fill["levels"],
+                    }
             if scheduled:
                 decisions[-1]["entry_evidence"] = evidence
 
@@ -350,6 +381,17 @@ def _replay(document, mode, source, as_of, details, scheduled, football=None):
             "peak_unredeemed_cost": rules.fmt(peak[code]),
             "max_fixture_loss_upper_bound": rules.fmt(fixture_peak[code]),
         }
+        if mode == "local_receipts":
+            summary[code]["settled_paper_pnl_by_fee_basis"] = {
+                basis: {
+                    "filled_positions": a["filled_positions"], "redeemed_positions": a["redeemed_positions"],
+                    "buy_cash": rules.fmt(a["buy_cash"]), "fee_cash_equivalent": rules.fmt(a["fee_cash_equivalent"]),
+                    "fee_shares": rules.fmt(a["fee_shares"]),
+                    "unredeemed_cost": rules.fmt(a["buy_cash"] - a["redeemed_cost"]),
+                    "cash_from_redemptions": rules.fmt(a["cash_from_redemptions"]),
+                    "settled_paper_pnl": rules.fmt(a["cash_from_redemptions"] - a["redeemed_cost"]),
+                } for basis, a in sorted(fee_accounts[code].items())
+            }
     result = {
         "schema": SCHEMA, "evidence_mode": mode, "as_of": rules.iso(stop) if stop else None,
         "execution_basis": ("Synthetic scenario; operator-specified prices, fees and hypothetical fills."
@@ -366,7 +408,18 @@ def _replay(document, mode, source, as_of, details, scheduled, football=None):
     }
     if details:
         result["decisions"] = decisions
+    if mode == "local_receipts":
+        result["venue_realized_pnl"] = None
+        result["fee_accounting"] = (
+            "Settled paper P&L is reported by fee evidence. research_assumption uses an estimated buy fee "
+            "and is ineligible for formal accounts. Open costs are excluded from settled P&L."
+        )
     if scheduled:
+        result["execution_basis"] = (
+            "Paper fills require two timely CLOB originals, uninterrupted Gamma schedule evidence, "
+            "frozen token and rules, and consistent native fee terms. An unregistered charging convention "
+            "can be estimated only for this research tier. Both terminal token originals must support redemption."
+        )
         result["entry_policy"] = {
             "selected": "scheduled_with_incomplete_flags", "research_only": True,
             "eligible_for_formal_accounts": False,

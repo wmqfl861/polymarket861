@@ -337,7 +337,7 @@ class TestDomesticReceiptGrades(unittest.TestCase):
         self.assertEqual(counts["t1_pairs_due"], 1)
         self.assertEqual(counts["t1_pairs_complete"], 0)
 
-    def test_right_window_boundary_excluded_and_stale_gamma_is_unclassified(self):
+    def test_right_window_boundary_excluded_and_stale_gamma_requires_fresh_events(self):
         def stale(url, reply, raw):
             headers = (
                 {**reply.headers, "age": "31"}
@@ -371,8 +371,42 @@ class TestDomesticReceiptGrades(unittest.TestCase):
         counts = self._counts()
         self.assertEqual(counts["fixed_windows_due"], 2)
         self.assertEqual(counts["fixed_windows_complete"], 1)
-        self.assertEqual(counts["fixed_windows_unclassified"], 1)
+        self.assertEqual(counts["fixed_windows_explicit_pregame"], 1)
+        self.assertEqual(counts["fixed_windows_unclassified"], 0)
         self.assertEqual(counts["t1_pairs_complete"], 0)
+
+    def test_archived_weak_gamma_receipt_cannot_be_promoted_by_later_fresh_catalog(self):
+        # Recreate an older fixed run at the native collection layer. Its Gamma flags
+        # were explicit but stale, even though its CLOB reply was fresh and timely.
+        first = CUTOFF - timedelta(seconds=25)
+        sample_at = CUTOFF - timedelta(seconds=10)
+        window = (store.iso(first), store.iso(CUTOFF))
+        name = "t1_decision@" + window[0]
+        kick = store.iso(CUTOFF + timedelta(hours=1))
+        self._leg(-30, STRONG, STRONG, watch=False)
+
+        def archived_transport(url, params=None, **kwargs):
+            reply = fixture.gamma(url, params, **kwargs)
+            if "/events/slug/" in url:
+                return provider.Reply(reply.body, reply.requested_at, reply.received_at,
+                                      {**reply.headers, "age": "31"}, reply.url)
+            return reply
+
+        with ExitStack() as stack:
+            root = big5.research_root(self.base)
+            for module in (store, big5, archive, fixture):
+                stack.enter_context(patch.object(module, "now_utc", return_value=store.iso(sample_at)))
+            stack.enter_context(patch.object(provider, "get", side_effect=archived_transport))
+            attempt = big5._claim(root, fixture.BASE, kick, name, CUTOFF, sample_at)
+            run = big5._sample(root, fixture.BASE, phase="t1_decision", all_lines=True,
+                               refresh=True, deadline=window[1], window=window)
+            self.assertEqual(run["received_tokens"], 14)
+            big5._finish(root, fixture.BASE, kick, name, attempt, True, window[1], {"state": "complete"})
+        self._leg(6, STRONG, STRONG)
+        counts = self._counts()
+        self.assertEqual(counts["fixed_windows_complete"], 2)
+        self.assertEqual(counts["fixed_windows_unclassified"], 1)
+        self.assertEqual(counts["t1_pairs_unclassified"], 1)
 
     def test_metadata_received_during_native_book_changes_its_grade(self):
         def slow(url, reply, raw):

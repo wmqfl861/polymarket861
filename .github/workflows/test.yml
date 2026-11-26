@@ -54,3 +54,21 @@ jobs:
           pattern: recipe-*
           merge-multiple: true
       - run: python scripts/check_recipe_identity.py --compare recipe-*.json
+  systemd-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: constraints/research.txt
+      - run: bash .github/scripts/verify-watch-deployment.sh
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: installed-wheel-and-service-checks
+          path: |
+            ${{ runner.temp }}/watch-dist/*.whl
+            ${{ runner.temp }}/watch-*.json

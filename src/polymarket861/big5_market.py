@@ -15,7 +15,7 @@ from . import big5_market_receipts as receipts
 from . import big5_market_schedule as schedule
 from . import market_archive as archive
 from . import market_provider as provider
-from . import market_watch_health
+from . import market_watch_failures, market_watch_health
 from .store import canonical, iso, now_utc
 
 MARKETS = provider.SPORT_MARKETS
@@ -46,6 +46,14 @@ CREATE INDEX IF NOT EXISTS big5_run_time ON big5_runs(finished,sport);
 CREATE INDEX IF NOT EXISTS big5_fixed_runs ON big5_runs(fixture,phase,started);
 CREATE TABLE IF NOT EXISTS big5_last_dispatch(
  fixture TEXT NOT NULL, phase TEXT NOT NULL, started TEXT NOT NULL, PRIMARY KEY(fixture,phase));
+CREATE TABLE IF NOT EXISTS big5_catalog_deferrals(
+ fixture TEXT NOT NULL,kickoff TEXT NOT NULL,slot TEXT NOT NULL,attempt INTEGER NOT NULL,
+ finished TEXT NOT NULL,PRIMARY KEY(fixture,kickoff,slot,attempt));
+CREATE INDEX IF NOT EXISTS big5_catalog_deferral_time ON big5_catalog_deferrals(fixture,finished);
+CREATE TABLE IF NOT EXISTS big5_catalog_http(
+ slug TEXT PRIMARY KEY,fixture TEXT NOT NULL,sport TEXT NOT NULL,kickoff TEXT NOT NULL,
+ received TEXT NOT NULL,sha TEXT NOT NULL,fresh INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS big5_catalog_http_fixture ON big5_catalog_http(fixture);
 """
 
 
@@ -86,7 +94,7 @@ def _sports_row(sports, league):
     }
 
 
-def _identity(event, league, *, history=None):
+def _identity(event, league, *, history=None, received_at=None):
     """Require three independent Gamma fields and both domestic team identities."""
     if not isinstance(event, dict):
         raise ValueError("invalid_event")
@@ -126,7 +134,7 @@ def _identity(event, league, *, history=None):
     if ids[0] == ids[1]:
         raise ValueError("identical_team_ids")
     published = event.get("startTime")
-    if not published and history is not None and schedule.stopped(event):
+    if not published and history is not None and schedule.stopped(event, received_at):
         prior = history.execute(
             "SELECT kickoff FROM big5_events WHERE slug=? AND event_id=? AND home_id=? AND away_id=?",
             (event["slug"], str(event["id"]), *ids),
@@ -138,6 +146,16 @@ def _identity(event, league, *, history=None):
     except (KeyError, TypeError, ValueError) as exc:
         raise ValueError("missing_scheduled_kickoff") from exc
     return (event["slug"], match[1], league, kickoff, *ids, str(event["id"]))
+
+
+def _http_check(db, identity, reply, sha, fresh):
+    db.execute(
+        "INSERT INTO big5_catalog_http VALUES(?,?,?,?,?,?,?) ON CONFLICT(slug) DO UPDATE SET "
+        "kickoff=excluded.kickoff,received=excluded.received,sha=excluded.sha,fresh=excluded.fresh "
+        "WHERE (excluded.received,excluded.fresh,excluded.sha)>="
+        "(big5_catalog_http.received,big5_catalog_http.fresh,big5_catalog_http.sha)",
+        (*identity[:4], reply.received_at, sha, int(fresh)),
+    )
 
 
 def _record(db, event, identity, reply, sha):
@@ -153,6 +171,7 @@ def _record(db, event, identity, reply, sha):
     ):
         raise ValueError("unidentifiable contract in domestic event")
     archive._ingest(db, event, reply, sha, sport=identity[2])
+    _http_check(db, identity, reply, sha, provider.fresh_observation(reply))
     delays = schedule.delays(event)
     schedule.record(
         db,
@@ -160,7 +179,7 @@ def _record(db, event, identity, reply, sha):
         reply.received_at,
         sha,
         delays,
-        schedule.stopped(event),
+        schedule.stopped(event, reply.received_at),
         "validated_receipt",
         event=event,
     )
@@ -181,7 +200,8 @@ def _record(db, event, identity, reply, sha):
 
 def _error(exc):
     return {
-        "error": str(exc),
+        "error": str(exc) or type(exc).__name__,
+        "error_type": type(exc).__name__,
         "retry_at": getattr(exc, "retry_at", None),
         "http_status": getattr(exc, "code", None) or getattr(exc, "http_status", None),
     }
@@ -209,6 +229,7 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
         "gaps": [],
     }
     domestic, rejected, seen = defaultdict(set), Counter(), set()
+    first_stale_offset = None
     for _ in range(pages):
         params = {
             "tag_id": identity["tag"],
@@ -220,11 +241,12 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
             "end_date_max": end,
         }
         try:
-            events, reply, sha = archive._fetch(
+            events, reply, sha = archive.research_fetch(
                 root, "league_catalog", league, provider.GAMMA + "/events", params
             )
             if not isinstance(events, list):
                 raise ValueError("catalog response must be a list")
+            fresh = provider.fresh_observation(reply)
             report["pages"].append(
                 {
                     "offset": offset,
@@ -232,9 +254,22 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
                     "sha256": sha,
                     "received_at": reply.received_at,
                     "url": reply.url,
+                    "http_fresh": fresh,
                 }
             )
+            if not fresh:
+                if first_stale_offset is None:
+                    first_stale_offset = offset
+                report["gaps"].append({
+                    "error": "stale or unverifiable Gamma catalogue page HTTP receipt",
+                    "offset": offset, "sha256": sha, "http_date": reply.headers.get("date"),
+                    "age": reply.headers.get("age"), "requested_at": reply.requested_at,
+                    "received_at": reply.received_at,
+                })
+            page_fixtures = []
             with closing(_db(root)) as db, db:
+                # Reserve the writer after HTTP, before a savepoint can pin a stale WAL snapshot.
+                db.execute("BEGIN IMMEDIATE")
                 for event in events:
                     event_id = (
                         str(event.get("id", "")) if isinstance(event, dict) else ""
@@ -244,7 +279,7 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
                         continue
                     seen.add(event_id)
                     try:
-                        fields = _identity(event, league, history=db)
+                        fields = _identity(event, league, history=db, received_at=reply.received_at)
                         in_window = start <= fields[3] < end
                         if (
                             not in_window
@@ -253,6 +288,11 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
                             ).fetchone()
                         ):
                             raise ValueError("scheduled_kickoff_outside_window")
+                        if not fresh:
+                            # An old page can suggest a native slug for direct verification. It cannot
+                            # move the trusted schedule, bind contracts, or establish an obligation.
+                            _http_check(db, fields, reply, sha, False)
+                            continue
                         # An invalid market must not leave a half-ingested event.
                         db.execute("SAVEPOINT league_event")
                         try:
@@ -263,27 +303,33 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
                         finally:
                             db.execute("RELEASE league_event")
                         if in_window:
-                            domestic[fields[1]].add(fields[0])
+                            page_fixtures.append((fields[1], fields[0]))
                         else:
                             rejected["known_fixture_moved_outside_window"] += 1
                     except (TypeError, ValueError, KeyError) as exc:
                         rejected[str(exc)] += 1
+            for fixture, slug in page_fixtures:
+                domestic[fixture].add(slug)
             offset += len(events)
             report["next_offset"] = offset
             if len(events) < page_size:
                 report["reached_end"] = True
-                if not rejected["repeated_event_id"]:
-                    report["page_walk_complete"] = initial_offset == 0
-                    report["next_offset"] = None
-                else:
+                if rejected["repeated_event_id"]:
                     report["gaps"].append(
                         {
                             "error": "overlapping pages; repeat discovery from initial offset"
                         }
                     )
                     report["next_offset"] = 0
+                elif first_stale_offset is not None:
+                    report["next_offset"] = first_stale_offset
+                else:
+                    report["page_walk_complete"] = initial_offset == 0
+                    report["next_offset"] = None
                 break
-        except (ValueError, OSError) as exc:
+        except Exception as exc:
+            if not market_watch_failures.recoverable(exc):
+                raise
             report["gaps"].append(_error(exc))
             break
     report["fixtures"] = sorted(
@@ -311,7 +357,7 @@ def catalog(data_dir, leagues, start, end, *, pages=10, page_size=25, offset=0):
         "denominator": "Gamma domestic events in the query window; independent schedule reconciliation is separate",
     }
     try:
-        sports, reply, sha = archive._fetch(
+        sports, reply, sha = archive.research_fetch(
             root, "league_sports", "big5", provider.GAMMA + "/sports"
         )
         if not isinstance(sports, list):
@@ -321,7 +367,9 @@ def catalog(data_dir, leagues, start, end, *, pages=10, page_size=25, offset=0):
             "received_at": reply.received_at,
             "url": reply.url,
         }
-    except (ValueError, OSError) as exc:
+    except Exception as exc:
+        if not market_watch_failures.recoverable(exc):
+            raise
         result["leagues"] = {
             s: {
                 "gaps": [_error(exc)],
@@ -337,7 +385,9 @@ def catalog(data_dir, leagues, start, end, *, pages=10, page_size=25, offset=0):
             result["leagues"][sport] = _catalog_one(
                 root, sport, start, end, pages, page_size, offset, sports
             )
-        except (ValueError, OSError) as exc:
+        except Exception as exc:
+            if not market_watch_failures.recoverable(exc):
+                raise
             result["leagues"][sport] = {
                 "gaps": [_error(exc)],
                 "page_walk_complete": False,
@@ -347,18 +397,23 @@ def catalog(data_dir, leagues, start, end, *, pages=10, page_size=25, offset=0):
     return result
 
 
-def _refresh(root, main):
+def _refresh(root, main, *, fresh_required=False):
     """Refresh both public event receipts; never reuse stale contracts after a failed read."""
     league = main.split("-", 1)[0]
-    events, gaps = [], []
+    events, gaps, bindings = [], [], {}
     pair = None
     for slug in (main, main + "-more-markets"):
         try:
-            event, reply, sha = archive._fetch(
-                root, "league_event", slug, provider.GAMMA + "/events/slug/" + slug
+            event, reply, sha = archive.research_fetch(
+                root, "league_event", slug, provider.GAMMA + "/events/slug/" + slug,
+                attempts=1 if fresh_required else 3,
             )
+            if fresh_required and not provider.fresh_observation(reply):
+                raise ValueError("fresh Gamma event HTTP receipt unavailable")
             with closing(_db(root)) as db, db:
-                identity = _identity(event, league, history=db)
+                # The concurrent catalogue and direct refresh use the same identity history.
+                db.execute("BEGIN IMMEDIATE")
+                identity = _identity(event, league, history=db, received_at=reply.received_at)
                 if identity[0] != slug:
                     raise ValueError("unexpected event slug")
                 if pair is not None and pair != identity[3:6]:
@@ -389,11 +444,14 @@ def _refresh(root, main):
                 _record(db, event, identity, reply, sha)
             pair = identity[3:6]
             events.append(slug)
+            bindings[slug] = (reply.received_at, sha)
         except (ValueError, TypeError, KeyError, OSError) as exc:
+            if not market_watch_failures.recoverable(exc):
+                raise
             gaps.append({"slug": slug, **_error(exc)})
             if slug == main:
                 break
-    return {"events": events, "gaps": gaps}
+    return {"events": events, "gaps": gaps, "bindings": bindings}
 
 
 def _selection(contracts, all_lines, *, include_closed=False):
@@ -561,6 +619,70 @@ def _record_run(root, report, started):
     return report
 
 
+def _legacy_http_fresh(root, db, event):
+    # Archives made before per-page HTTP checks may still contain the original headers.
+    from .archive_proof import original_receipt
+
+    for operation, selector in (("league_catalog", event["sport"]), ("league_event", event["slug"])):
+        try:
+            reply, _, _, _ = original_receipt(
+                db, root, event["sha"], event["receipt"], {operation}, expected_selector=selector
+            )
+            return provider.fresh_observation(reply)
+        except (KeyError, TypeError, ValueError, FileNotFoundError):
+            continue
+    return False
+
+
+def _cached_sources(root, fixture, started):
+    stale_before = iso(provider.moment(started) - timedelta(minutes=10))
+    unverified = "stale or unverifiable Gamma event HTTP receipt; direct refresh required"
+    with closing(_db(root)) as db:
+        events = db.execute(
+            "SELECT * FROM big5_events WHERE fixture=? ORDER BY slug", (fixture,)
+        ).fetchall()
+        blocked = db.execute(
+            "SELECT max(finished) FROM big5_catalog_deferrals WHERE fixture=?", (fixture,)
+        ).fetchone()[0]
+        checks = {
+            r["slug"]: r for r in db.execute("SELECT * FROM big5_catalog_http WHERE fixture=?", (fixture,))
+        }
+        untrusted = {slug for slug, check in checks.items() if not check["fresh"]}
+        for event in events:
+            slug = event["slug"]
+            if not stale_before <= event["receipt"] <= started or slug in untrusted:
+                continue
+            check = checks.get(slug)
+            if check and (check["received"], check["sha"]) == (event["receipt"], event["sha"]):
+                continue
+            if not _legacy_http_fresh(root, db, event):
+                untrusted.add(slug)
+    sources = {"events": [], "gaps": [], "bindings": {}}
+    for slug in sorted(untrusted - {event["slug"] for event in events}):
+        sources["gaps"].append({"slug": slug, "error": unverified})
+    if not events or events[0]["slug"] != fixture:
+        sources["gaps"].append({"slug": fixture, "error": "no validated main event"})
+        return sources
+    main = events[0]
+    for event in events:
+        if event["receipt"] < stale_before:
+            reason = "validated catalogue receipt older than ten minutes"
+        elif event["receipt"] > started:
+            reason = "catalogue receipt is after the sampling clock"
+        elif event["slug"] in untrusted:
+            reason = unverified
+        elif blocked and event["receipt"] <= blocked:
+            reason = "no newer verified receipt after failed fixture refresh"
+        elif any(event[k] != main[k] for k in ("kickoff", "home_id", "away_id")):
+            reason = "sibling identity mismatch"
+        else:
+            sources["events"].append(event["slug"])
+            sources["bindings"][event["slug"]] = (event["receipt"], event["sha"])
+            continue
+        sources["gaps"].append({"slug": event["slug"], "error": reason})
+    return sources
+
+
 def _sample(
     root,
     fixture,
@@ -569,6 +691,7 @@ def _sample(
     phase,
     workers=3,
     refresh=True,
+    expected_kickoff=None,
     deadline=None,
     window=None,
 ):
@@ -587,42 +710,20 @@ def _sample(
         "fresh_tokens": 0,
         "contracts": {},
     }
-    if refresh:
+    if expected_kickoff:
+        report["claimed_kickoff"] = expected_kickoff
+    sources = None if refresh else _cached_sources(root, fixture, started)
+    focused = bool(expected_kickoff and sources and sources["gaps"])
+    if refresh or focused:
+        if focused:
+            report["refresh_trigger"] = sources["gaps"]
         timer = archive._DEADLINE.set(deadline)
         try:
-            sources = _refresh(root, fixture)
+            sources = _refresh(root, fixture, fresh_required=focused)
         finally:
             archive._DEADLINE.reset(timer)
-    else:
-        # Only identities accepted into the isolated catalog can reach the book collector.
-        with closing(_db(root)) as db:
-            events = [
-                dict(r)
-                for r in db.execute(
-                    "SELECT * FROM big5_events WHERE fixture=? ORDER BY slug",
-                    (fixture,),
-                )
-            ]
-        sources = {"events": [], "gaps": []}
-        if events and events[0]["slug"] == fixture:
-            main = events[0]
-            stale_before = iso(provider.moment(started) - timedelta(minutes=10))
-            for event in events:
-                if event["receipt"] < stale_before:
-                    sources["gaps"].append(
-                        {
-                            "slug": event["slug"],
-                            "error": "validated catalogue receipt older than ten minutes",
-                        }
-                    )
-                elif all(
-                    event[k] == main[k] for k in ("kickoff", "home_id", "away_id")
-                ):
-                    sources["events"].append(event["slug"])
-                else:
-                    sources["gaps"].append(
-                        {"slug": event["slug"], "error": "sibling identity mismatch"}
-                    )
+        if focused:
+            report["fixture_refresh_finished"] = now_utc()
     report["event_gaps"] = sources["gaps"]
     contracts = [
         c
@@ -638,28 +739,59 @@ def _sample(
             "WHERE e.fixture=? AND s.stopped=1 LIMIT 1",
             (fixture,),
         ).fetchone()
-    if (
-        fixture not in sources["events"]
-        or stopped
-        or archive.market_state(root, fixture)
-    ):
-        report["error"] = "unverified main event or observed live/ended"
-    elif len(archive.fixture_times(root, fixture)) != 1:
+    times = archive.fixture_times(root, fixture)
+    if focused and sources["gaps"]:
+        report["catalog_deferred"] = True
+        report["error"] = "fixture catalogue refresh failed: " + "; ".join(
+            gap["slug"] + ": " + gap["error"] for gap in sources["gaps"]
+        )
+        report["retry_at"] = max(
+            (g["retry_at"] for g in sources["gaps"] if g.get("retry_at")), default=None
+        )
+    elif fixture not in sources["events"]:
+        report["error"] = "no validated main event"
+    elif stopped or archive.market_state(root, fixture):
+        report["error"] = "exchange event observed live or ended"
+    elif expected_kickoff and times != [expected_kickoff]:
+        report["error"] = "verified schedule differs from claimed kickoff"
+        report["catalog_deferred"] = True
+    elif len(times) != 1:
         report["error"] = "ambiguous scheduled start"
+    elif expected_kickoff and any(
+        (c["recorded_at"], c["source_sha256"]) != sources["bindings"][c["event_slug"]]
+        for c in contracts
+    ):
+        report["error"] = "catalogue changed while selecting contracts"
+        report["catalog_deferred"] = True
+    elif deadline and now_utc() >= deadline:
+        report["error"] = "capture deadline elapsed before book request"
+        report["catalog_deferred"] = focused
+        if focused and report["fixture_refresh_finished"] >= deadline:
+            report["error"] += (
+                f": fixture catalogue refresh completed at {report['fixture_refresh_finished']} "
+                f"(exclusive cutoff {deadline})"
+            )
     elif not selected:
         report["error"] = "no eligible open contracts"
     else:
         tokens = [t["token_id"] for c in selected.values() for t in c["tokens"]]
         report["requested_tokens"] = len(tokens)
-        result = archive.capture(
-            root,
-            fixture,
-            tokens=tokens,
-            workers=workers,
-            discovery=sources,
-            deadline=deadline,
-            native_only=bool(deadline),
-        )
+        if expected_kickoff:
+            sources["expected_kickoff"] = expected_kickoff
+        try:
+            result = archive.capture(
+                root,
+                fixture,
+                tokens=tokens,
+                workers=workers,
+                discovery=sources,
+                deadline=deadline,
+                native_only=bool(deadline),
+                fetch=archive.research_fetch,
+            )
+        except archive.CatalogChanged as exc:
+            report.update(error=str(exc), catalog_deferred=True, requested_tokens=0)
+            return _record_run(root, report, started)
         report.update(
             {
                 k: result[k]
@@ -760,20 +892,28 @@ def _slot(kickoff, now, delays=(5,)):
     return "periodic", first, end, False
 
 
+def _slot_attempt(db, key, now):
+    row = db.execute(
+        "SELECT success,expires,attempts,(SELECT count(*) FROM big5_catalog_deferrals d "
+        "WHERE (d.fixture,d.kickoff,d.slot)=(s.fixture,s.kickoff,s.slot)) deferred "
+        "FROM big5_slots s WHERE fixture=? AND kickoff=? AND slot=?",
+        key,
+    ).fetchone()
+    if not row:
+        return 1
+    if row["success"] or row["expires"] > iso(now) or row["attempts"] - row["deferred"] >= 3:
+        return None
+    return row["attempts"] + 1
+
+
 def _claim(root, fixture, kickoff, name, end, now):
     with closing(_db(root)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         lease = iso(min(end, now + timedelta(seconds=90)))
         key = (fixture, kickoff, name)
-        found = db.execute(
-            "SELECT success,expires,attempts FROM big5_slots WHERE fixture=? AND kickoff=? AND slot=?",
-            key,
-        ).fetchone()
-        if found and (
-            found["success"] or found["expires"] > iso(now) or found["attempts"] >= 3
-        ):
+        attempt = _slot_attempt(db, key, now)
+        if attempt is None:
             return None
-        attempt = found["attempts"] + 1 if found else 1
         db.execute(
             "INSERT INTO big5_slots VALUES(?,?,?,?,?,0,NULL) ON CONFLICT(fixture,kickoff,slot) DO UPDATE "
             "SET expires=excluded.expires,attempts=excluded.attempts",
@@ -789,11 +929,17 @@ def _claim(root, fixture, kickoff, name, end, now):
 
 def _finish(root, fixture, kickoff, name, attempt, ok, retry_time, details):
     with closing(_db(root)) as db, db:
-        db.execute(
+        key = (fixture, kickoff, name, attempt)
+        updated = db.execute(
             "UPDATE big5_slots SET success=?,expires=?,report=? "
             "WHERE fixture=? AND kickoff=? AND slot=? AND attempts=?",
-            (int(ok), retry_time, canonical(details), fixture, kickoff, name, attempt),
+            (int(ok), retry_time, canonical(details), *key),
         )
+        if updated.rowcount and details.get("catalog_deferred"):
+            db.execute(
+                "INSERT OR IGNORE INTO big5_catalog_deferrals VALUES(?,?,?,?,?)",
+                (*key, now_utc()),
+            )
 
 
 def terminal(data_dir, fixture):
@@ -846,7 +992,7 @@ def terminal(data_dir, fixture):
         for t in c["tokens"]:
             try:
                 row = settlement.token_status(
-                    root, t["token_id"], recheck_terminal=True
+                    root, t["token_id"], recheck_terminal=True, fetch=archive.research_fetch
                 )
                 if not row:
                     raise ValueError("missing official token receipt")
@@ -862,6 +1008,8 @@ def terminal(data_dir, fixture):
                     vector.append(provider.number(row["payout"]))
                 entry["tokens"][t["outcome"]] = details
             except (ValueError, OSError, KeyError, TypeError) as exc:
+                if not market_watch_failures.recoverable(exc):
+                    raise
                 entry["tokens"][t["outcome"]] = {"id": t["token_id"], **_error(exc)}
         if (
             len(vector) == 2
@@ -898,6 +1046,7 @@ def _job(data_dir, event, job, workers):
     retry_after = None
     fixed = phase.startswith(("t1_", "t24_"))
     witness = {}
+    late_books = []
     # Stop network work before the lease can be reclaimed by a second process.
     deadline = iso(min(end, now + timedelta(seconds=85)))
     try:
@@ -909,7 +1058,6 @@ def _job(data_dir, event, job, workers):
                 archive._DEADLINE.reset(timer)
             ok = report["terminal_complete"]
         else:
-            # Catalog/metadata refresh runs separately; read freshly validated snapshots at the narrow windows.
             report = _sample(
                 root,
                 fixture,
@@ -917,6 +1065,7 @@ def _job(data_dir, event, job, workers):
                 phase=phase,
                 workers=workers,
                 refresh=phase == "closing" and now >= provider.moment(kickoff),
+                expected_kickoff=kickoff,
                 deadline=deadline,
                 window=(iso(first), iso(end)),
             )
@@ -928,6 +1077,10 @@ def _job(data_dir, event, job, workers):
                     witness = receipts.witness(
                         db, root, report, fixture, kickoff, (iso(first), iso(end))
                     )
+                    if not witness:
+                        late_books = receipts.late_book_receipts(
+                            db, root, fixture, report, (iso(first), iso(end))
+                        )
                 ok = bool(witness)
             else:
                 ok = (
@@ -945,12 +1098,22 @@ def _job(data_dir, event, job, workers):
             "expected": report.get("requested_tokens"),
             "error": report.get("error"),
         }
+        for key in ("catalog_deferred", "refresh_trigger", "event_gaps", "batch_error"):
+            if report.get(key):
+                details[key] = report[key]
         if fixed:
+            details["required_core_tokens"] = len(CORE) * 2
+            if late_books:
+                details["late_book_receipts"] = late_books
+                if not details["error"]:
+                    details["error"] = "; ".join(item["reason"] for item in late_books)
             details.update(witness)
         elif ok and phase != "terminal":
             details["first_receipt"] = min(v["received_at"] for v in report_tokens)
             details["finished"] = max(v["received_at"] for v in report_tokens)
-    except (ValueError, OSError, KeyError, TypeError) as exc:
+    except Exception as exc:
+        if not market_watch_failures.recoverable(exc):
+            raise
         ok = False
         retry_after = getattr(exc, "retry_at", None)
         details = {"state": "failed", **_error(exc)}
@@ -963,14 +1126,95 @@ def _job(data_dir, event, job, workers):
     return {"fixture": fixture, "phase": phase, **details}
 
 
+def _catalog_completed(data_dir, start, end, result):
+    result["completed_at"] = now_utc()
+    errors = {
+        sport: report["gaps"]
+        for sport, report in result["leagues"].items()
+        if report.get("gaps")
+    }
+    if errors:
+        market_watch_failures.record(
+            research_root(data_dir),
+            result["completed_at"],
+            "catalog",
+            {"window": [start, end]},
+            {"gaps_by_league": errors},
+        )
+    return result
+
+
+def _failed_catalog(data_dir, leagues, start, end, exc):
+    return _catalog_completed(
+        data_dir,
+        start,
+        end,
+        {
+            "window": [start, end],
+            "initial_offset": 0,
+            "leagues": {
+                sport: {
+                    "page_walk_complete": False,
+                    "next_offset": 0,
+                    "fixtures": [],
+                    "gaps": [_error(exc)],
+                }
+                for sport in leagues
+            },
+        },
+    )
+
+
+def _watch_catalog(data_dir, leagues, start, end, *, pages, page_size):
+    try:
+        result = catalog(
+            data_dir, leagues, start, end, pages=pages, page_size=page_size
+        )
+    except Exception as exc:
+        if not market_watch_failures.recoverable(exc):
+            raise
+        return _failed_catalog(data_dir, leagues, start, end, exc)
+    return _catalog_completed(data_dir, start, end, result)
+
+
+def _watch_result(task, data_dir, leagues, start, end, work):
+    try:
+        result = task.result()
+    except Exception as exc:
+        if not market_watch_failures.recoverable(exc):
+            raise
+        if work is None:
+            return _failed_catalog(data_dir, leagues, start, end, exc)
+        # Includes failure to claim/finalize. Never overwrite another worker's lease.
+        event, job = work
+        result = {
+            "fixture": event["fixture"],
+            "phase": job[0],
+            "state": "failed",
+            **_error(exc),
+        }
+    if work is not None and result["state"] == "failed":
+        event, job = work
+        market_watch_failures.record(
+            research_root(data_dir),
+            now_utc(),
+            "sample",
+            {"kickoff": event["kickoff"], "window": [iso(job[1]), iso(job[2])]},
+            result,
+        )
+    return result
+
+
 def _ranked_jobs(root, leagues, start, end, now):
     slots = []
     with closing(_db(root)) as db:
         rows = list(
             db.execute(
-                "SELECT * FROM big5_events WHERE slug=fixture AND kickoff>=? "
-                "AND kickoff<? ORDER BY kickoff,fixture",
-                (start, end),
+                "SELECT fixture,sport,kickoff FROM big5_events WHERE slug=fixture AND kickoff>=? AND kickoff<? "
+                "UNION ALL SELECT h.fixture,h.sport,h.kickoff FROM big5_catalog_http h "
+                "WHERE h.slug=h.fixture AND h.fresh=0 AND h.kickoff>=? AND h.kickoff<? "
+                "AND NOT EXISTS(SELECT 1 FROM big5_events e WHERE e.slug=h.slug) ORDER BY kickoff,fixture",
+                (start, end, start, end),
             )
         )
         playing = {
@@ -1028,16 +1272,7 @@ def _ranked_jobs(root, leagues, start, end, now):
             if options:
                 phase, first, last, _ = options
                 name = phase + "@" + iso(first)
-                prior = db.execute(
-                    "SELECT success,attempts,expires FROM big5_slots WHERE fixture=? AND kickoff=? "
-                    "AND slot=?",
-                    (event["fixture"], event["kickoff"], name),
-                ).fetchone()
-                if prior and (
-                    prior["success"]
-                    or prior["attempts"] >= 3
-                    or prior["expires"] > iso(now)
-                ):
+                if _slot_attempt(db, (event["fixture"], event["kickoff"], name), now) is None:
                     continue
                 score = 2 if phase == "terminal" else 1 if phase == "periodic" else 0
                 slots.append((score, last, event, options))
@@ -1050,6 +1285,15 @@ def _ranked_jobs(root, leagues, start, end, now):
             r[2]["fixture"],
         ),
     )
+
+
+def _next_catalog(result, selected):
+    complete = all(
+        result["leagues"].get(sport, {}).get("page_walk_complete") is True
+        and not result["leagues"][sport].get("gaps")
+        for sport in selected
+    )
+    return provider.moment(result["completed_at"]) + timedelta(seconds=300 if complete else 30)
 
 
 def watch(
@@ -1068,6 +1312,8 @@ def watch(
     selected, start, end = _args(leagues, start, end)
     if cycles < 0 or not 1 <= workers <= 8 or not 1 <= interval <= 60:
         raise ValueError("cycles >= 0, workers 1..8 and interval 1..60 required")
+    if discover and not (1 <= pages <= 10000 and 1 <= page_size <= 100):
+        raise ValueError("invalid catalogue pagination")
     root = research_root(data_dir)
     discovery, next_catalog, count = None, None, 0
     states = Counter()
@@ -1081,16 +1327,27 @@ def watch(
         ThreadPoolExecutor(max_workers=workers) as pool,
     ):
         while cycles == 0 or count < cycles:
+            for task in list(pending):
+                if task.done():
+                    key, work = pending.pop(task)
+                    active.discard(key)
+                    result = _watch_result(task, data_dir, selected, start, end, work)
+                    if key == "catalog":
+                        discovery = result
+                        next_catalog = _next_catalog(discovery, selected)
+                    else:
+                        states[result["state"]] += 1
             now = provider.moment(now_utc())
-            if discover and (next_catalog is None or now >= next_catalog):
+            if discover and "catalog" not in active and (next_catalog is None or now >= next_catalog):
                 # Startup discovery establishes the initial cohort. Later refreshes run in the pool.
                 if discovery is None:
-                    discovery = catalog(
+                    discovery = _watch_catalog(
                         data_dir, selected, start, end, pages=pages, page_size=page_size
                     )
-                elif "catalog" not in active:
+                    next_catalog = _next_catalog(discovery, selected)
+                else:
                     task = pool.submit(
-                        catalog,
+                        _watch_catalog,
                         data_dir,
                         selected,
                         start,
@@ -1098,21 +1355,8 @@ def watch(
                         pages=pages,
                         page_size=page_size,
                     )
-                    pending[task] = "catalog"
+                    pending[task] = ("catalog", None)
                     active.add("catalog")
-                complete = all(
-                    v["page_walk_complete"] for v in discovery["leagues"].values()
-                )
-                next_catalog = now + timedelta(seconds=300 if complete else 30)
-            for task in list(pending):
-                if task.done():
-                    key = pending.pop(task)
-                    active.discard(key)
-                    if key == "catalog":
-                        discovery = task.result()
-                    else:
-                        result = task.result()
-                        states[result["state"]] += 1
             jobs = _ranked_jobs(root, selected, start, end, provider.moment(now_utc()))
             for _, _, event, job in jobs:
                 key = event["fixture"]
@@ -1121,14 +1365,22 @@ def watch(
                 if key not in active:
                     task = pool.submit(_job, data_dir, event, job, 1)
                     active.add(key)
-                    pending[task] = key
+                    pending[task] = (key, (event, job))
             count += 1
             if heartbeat is not None:
                 heartbeat(count, discovery)
             if cycles == 0 or count < cycles:
-                time.sleep(interval)
-        for task, key in pending.items():
-            result = task.result()
+                wait = interval
+                if discover:
+                    if "catalog" in active:
+                        # Observe a completion before even the shortest retry cadence.
+                        wait = min(wait, 30)
+                    else:
+                        remaining = (next_catalog - provider.moment(now_utc())).total_seconds()
+                        wait = min(wait, max(0, remaining))
+                time.sleep(wait)
+        for task, (key, work) in pending.items():
+            result = _watch_result(task, data_dir, selected, start, end, work)
             if key == "catalog":
                 discovery = result
             else:
@@ -1164,7 +1416,7 @@ def weekly_report(data_dir, start, end):
     now = now_utc()
     stats, target_counts = {}, defaultdict(Counter)
     with closing(_db(root)) as db:
-        schedule.count_windows(root, db, target_counts, start, end, now)
+        fixed_gaps = schedule.count_windows(root, db, target_counts, start, end, now, len(CORE) * 2)
         history_origins = {
             r[0]: r[1]
             for r in db.execute(
@@ -1296,6 +1548,7 @@ def weekly_report(data_dir, start, end):
         "Schedule-only requires a known unchanged schedule before kickoff without contradictory flags. "
         "Receipt completeness does not authorize an entry, CLV or return.",
         "catalogue_exchange_flags": catalogue_flags,
+        "fixed_window_gaps": fixed_gaps,
         "generated_at": now,
         "by_league": dict(target_counts),
         "by_league_family": {
@@ -1304,6 +1557,7 @@ def weekly_report(data_dir, start, end):
             if s in target_counts
         },
         "http_requests": requests,
+        "collector_task_failures": market_watch_failures.in_window(root, start, end),
         "observed_http_status_errors": error_codes,
         "cooldowns_expiring_in_window": failures,
         "raw_unique_bodies": len(blobs),
@@ -1331,6 +1585,22 @@ def _window_args(parser):
     )
     parser.add_argument("--pages", type=int, default=10)
     parser.add_argument("--page-size", type=int, default=25)
+
+
+def _watch_command(args):
+    with market_watch_health.stop_signals(args.cycles == 0):
+        return watch(
+            args.data_dir,
+            args.league,
+            args.start,
+            args.end,
+            cycles=args.cycles,
+            interval=args.interval,
+            workers=args.workers,
+            discover=not args.local_catalog,
+            pages=args.pages,
+            page_size=args.page_size,
+        )
 
 
 def register(commands):
@@ -1374,25 +1644,12 @@ def register(commands):
     p.add_argument(
         "--local-catalog",
         action="store_true",
-        help="consume only the existing isolated catalog",
+        help="skip league-wide discovery; revalidate stale known fixtures before sampling",
     )
-    p.set_defaults(
-        func=lambda a: watch(
-            a.data_dir,
-            a.league,
-            a.start,
-            a.end,
-            cycles=a.cycles,
-            interval=a.interval,
-            workers=a.workers,
-            discover=not a.local_catalog,
-            pages=a.pages,
-            page_size=a.page_size,
-        )
-    )
+    p.set_defaults(func=_watch_command)
     p = commands.add_parser(
         "league-watchdog",
-        help="check the heartbeat for the requested continuous watch scope",
+        help="check the scheduler heartbeat and each selected league's catalog age",
     )
     p.add_argument("--league", action="append", choices=MARKETS)
     p.add_argument("--start", required=True)
@@ -1402,6 +1659,12 @@ def register(commands):
         type=int,
         default=180,
         help="maximum seconds since an advancing scheduler tick",
+    )
+    p.add_argument(
+        "--max-catalog-age",
+        type=int,
+        default=600,
+        help="maximum seconds since each league's last successful catalog receipt (default: 600)",
     )
     p.add_argument(
         "--local-catalog",
@@ -1414,6 +1677,7 @@ def register(commands):
             *_args(a.league, a.start, a.end),
             discover=not a.local_catalog,
             max_age=a.max_age,
+            max_catalog_age=a.max_catalog_age,
         ),
         result_exit_code=lambda result: 0 if result["healthy"] else 1,
     )

@@ -1,5 +1,5 @@
 [Unit]
-Description=Report a missing or stalled research market collector
+Description=Check the research collector heartbeat and catalog freshness every minute
 
 [Timer]
 OnStartupSec=3min

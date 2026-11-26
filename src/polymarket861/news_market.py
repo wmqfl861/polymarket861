@@ -158,7 +158,7 @@ def _scheduled_revision(db, fixture, cutoff, close):
     return versions[0]
 
 
-def _history_states(body, operation, selectors, slugs):
+def _history_states(body, operation, selectors, slugs, received_at):
     events = json.loads(body)
     if operation == "event":
         if not isinstance(events, dict) or {events.get("slug")} != selectors:
@@ -173,14 +173,14 @@ def _history_states(body, operation, selectors, slugs):
         key = event["slug"]
         if key not in slugs:
             continue
-        state = big5_market_schedule.pregame_flags(event)
+        state = big5_market_schedule.pregame_flags(event, received_at)
         if key in states or state == "unclassified":
             raise ValueError("ambiguous Gamma event state")
         reason = None
         if state == "not_pregame":
             reason = (
                 "exchange_start_or_end_observed"
-                if big5_market_schedule.has_started(event)
+                if big5_market_schedule.has_started(event, received_at)
                 else "exchange_schedule_interrupted"
             )
         # Historical indexes stored only these two booleans. Recheck them
@@ -248,7 +248,7 @@ def _first_disqualifying_state(db, root, slug, close):
                 # An orphan catalogue containing exclusively different slugs
                 # cannot contribute evidence about this fixture.
                 if not _history_states(
-                    archive_proof._body(root, sha), "catalog", set(), slugs
+                    archive_proof._body(root, sha), "catalog", set(), slugs, stamp
                 ):
                     continue
             if unlogged or len(requests) != 1:
@@ -259,7 +259,7 @@ def _first_disqualifying_state(db, root, slug, close):
             direct = {r["selector"] for r in receipts if r["kind"] == "event"}
             if operation == "event" and direct != {selector}:
                 return unknown
-            native = _history_states(reply.body, operation, direct, slugs)
+            native = _history_states(reply.body, operation, direct, slugs, stamp)
         except (ValueError, OSError, KeyError, TypeError):
             return unknown
         for _, _, reason in native.values():
@@ -284,7 +284,7 @@ def _state_at_book(db, root, fixture, slug, received):
     ):
         raise ValueError("stale_exchange_pregame_state")
     if (
-        big5_market_schedule.pregame_flags(event) != "explicit_pregame"
+        big5_market_schedule.pregame_flags(event, row["received_at"]) != "explicit_pregame"
         or event.get("closed") is True
         or event.get("archived") is True
     ):
