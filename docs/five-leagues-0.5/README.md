@@ -13,7 +13,7 @@
 | 球队与新闻 | `leagues sources`、`leagues health`、`leagues news-endpoints` | 逐队登记权利与收件。独立记录新语种盲评、消息时点、停赛适用赛事、原始伤停日期和有无新闻的分差。 |
 | 盘口与结算 | `market league-archive`、`market league-watch`、`close-reference`、`paper-risk` | 正式开球与研究排期参照分层。旧英超资金留在原协议；五国新策略另开 10,000 总预算，按国各预留 2,000，按合约终态结算。 |
 
-首次研究结果、每阶段的软件能力与外部证据见[开发交接](DEVELOPMENT-HANDOFF.md)。下列为原调查与送审材料。
+首次研究结果、每阶段的软件能力与外部证据见[开发交接](DEVELOPMENT-HANDOFF.md)。独立复审记录了历史与盘口复现结果、各轮候选退回的原因和修复后的复验。[0.5 独立审核](INDEPENDENT-REVIEW.md)
 
 ## 给审核者的阅读顺序
 

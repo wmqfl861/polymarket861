@@ -1,0 +1,142 @@
+{
+  "study": "five-league-capital-frozen-contract-v1",
+  "basis": "Controlled native-format collector integration. Dates and purchases are test fixtures. No observed trade or earned return.",
+  "method": "Reconstruct the pre-match domestic fixture, both CLOB books, selection, fee and frozen rule. A genuine empty resolution response precedes the two terminal receipts in every case. At payment, rederive the entire original contract from its entry-time SHA and use the same equal-split clause requirement as the formal paper ledger.",
+  "source_test": "tests/test_capital_native_proof.py",
+  "reproduce_checks": "PYTHONPATH=src:tests python -m unittest test_capital_native_proof.NativeCapital.test_frozen_rule_decides_split_after_verified_purchases_and_originals",
+  "cases": [
+    {
+      "selection": {
+        "family": "result",
+        "selection": "home",
+        "side": "yes"
+      },
+      "rule_sha256": "c7fefe4a1cf6d323721cb7e598354001ce29e77437f18fc008d202105aa8d5dd",
+      "offered_terminal_pair": [
+        "0.5",
+        "0.5"
+      ],
+      "paper_buy_cash": "50.000000",
+      "cash_from_redemptions": "0.000000",
+      "unredeemed_cost": "50.000000",
+      "available_cash": "1950.000000",
+      "proof_gaps": {
+        "frozen entry rules have no reviewed equal-split payout clause": 1
+      }
+    },
+    {
+      "selection": {
+        "family": "result",
+        "selection": "home",
+        "side": "yes"
+      },
+      "rule_sha256": "c7fefe4a1cf6d323721cb7e598354001ce29e77437f18fc008d202105aa8d5dd",
+      "offered_terminal_pair": [
+        "1",
+        "0"
+      ],
+      "paper_buy_cash": "50.000000",
+      "cash_from_redemptions": "100.000000",
+      "unredeemed_cost": "0.000000",
+      "available_cash": "2050.000000",
+      "proof_gaps": {}
+    },
+    {
+      "selection": {
+        "family": "total",
+        "line": "2.5",
+        "side": "over"
+      },
+      "rule_sha256": "eb3cc09ab032e20070ac5169cca9d27f068aea5c50caef0103b01275e65a6d4f",
+      "offered_terminal_pair": [
+        "0.5",
+        "0.5"
+      ],
+      "paper_buy_cash": "50.000000",
+      "cash_from_redemptions": "50.000000",
+      "unredeemed_cost": "0.000000",
+      "available_cash": "2000.000000",
+      "proof_gaps": {}
+    },
+    {
+      "selection": {
+        "family": "team_total",
+        "team": "home",
+        "line": "1.5",
+        "side": "over"
+      },
+      "rule_sha256": "bb77f68abbc9b35b902d10225a6b6106bfc3b09f638b3f0a0bf65a0a49c59ea5",
+      "offered_terminal_pair": [
+        "0.5",
+        "0.5"
+      ],
+      "paper_buy_cash": "50.000000",
+      "cash_from_redemptions": "50.000000",
+      "unredeemed_cost": "0.000000",
+      "available_cash": "2000.000000",
+      "proof_gaps": {}
+    }
+  ],
+  "receipt_history_verification": {
+    "basis": "Controlled native captures. Each outcome token is queried in its own authenticated collector request. Equal bytes at the same UTC time remain bound to their respective selectors.",
+    "reproduce_checks": "PYTHONPATH=src:tests python -m unittest test_capital_history_identity test_capital_native_proof",
+    "early_cases": {
+      "valid_sparse_both": "credited_once",
+      "valid_full_pending_both": "credited_once",
+      "valid_empty_distinct_times": "credited_once",
+      "empty_same_hash_time_held_first": "credited_once",
+      "empty_same_hash_time_opposite_first": "credited_once",
+      "held_wrong_condition": "held_for_review",
+      "held_wrong_opposite": "held_for_review",
+      "held_wrong_index": "held_for_review",
+      "held_wrong_outcome": "held_for_review",
+      "held_wrong_event": "held_for_review",
+      "held_wrong_market": "held_for_review",
+      "held_wrong_then_matching_pending_condition": "held_for_review",
+      "held_matching_then_wrong_pending_condition": "held_for_review",
+      "opposite_wrong_condition": "held_for_review",
+      "opposite_wrong_opposite": "held_for_review",
+      "opposite_wrong_index": "held_for_review",
+      "opposite_wrong_outcome": "held_for_review",
+      "opposite_wrong_event": "held_for_review",
+      "opposite_wrong_market": "held_for_review",
+      "opposite_wrong_then_matching_pending_condition": "held_for_review",
+      "opposite_matching_then_wrong_pending_condition": "held_for_review"
+    },
+    "later_as_of_frontiers": {
+      "conflicting_opposite": {
+        "before_entry_redemption": "held_for_review",
+        "at_original_pair": "credited_once",
+        "after_late_original": "held_for_review",
+        "latest": "held_for_review"
+      },
+      "empty": {
+        "before_entry_redemption": "held_for_review",
+        "at_original_pair": "credited_once",
+        "after_late_original": "held_for_review",
+        "latest": "held_for_review"
+      },
+      "condition": {
+        "before_entry_redemption": "held_for_review",
+        "at_original_pair": "credited_once",
+        "after_late_original": "held_for_review",
+        "latest": "held_for_review"
+      }
+    },
+    "expected_mismatches": 0,
+    "requested_controls": {
+      "distinct_empty": {
+        "cash_from_redemptions": "50.000000",
+        "unredeemed_cost": "0.000000"
+      },
+      "simultaneous_empty": {
+        "cash_from_redemptions": "50.000000",
+        "unredeemed_cost": "0.000000"
+      },
+      "wrong_pending_condition": {
+        "cash_from_redemptions": "0.000000",
+        "unredeemed_cost": "50.000000"
+      }
+    }
+  }
+}

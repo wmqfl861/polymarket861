@@ -1,7 +1,7 @@
 {
   "study": "five-league-synthetic-capital-stress-v1",
   "evidence": "All fixtures, paired books, fees, token originals and settlement times are synthetic. No production balances, real orders, executable-return claim or formal approval.",
-  "scenario_sha256": "db28ddcff67e1e35f5941c3088278e015b43871ddd393ee4b2ff0ca964fe392f",
+  "scenario_sha256": "400243d5e6dd0b8e90784b1930f2e2fe80e64940ca41dd2e99c1cc0490a50aff",
   "target_fixtures": 48,
   "carry_in_fixtures": 24,
   "assumptions": {
@@ -17,7 +17,9 @@
     "schema": "five-league-paper-risk-v1",
     "evidence_mode": "synthetic",
     "as_of": "2030-01-13T21:00:00.000000Z",
-    "execution_basis": "Research replay of supplied sizes and paired asks; no live orders or return qualification.",
+    "execution_basis": "Synthetic scenario; operator-specified prices, fees and hypothetical fills.",
+    "verified_orders_at_venue": 0,
+    "proof_gaps": {},
     "limits": {
       "initial_cash": "10000",
       "bucket_per_league": "2000",
@@ -215,7 +217,9 @@
     "schema": "five-league-paper-risk-v1",
     "evidence_mode": "synthetic",
     "as_of": null,
-    "execution_basis": "Research replay of supplied sizes and paired asks; no live orders or return qualification.",
+    "execution_basis": "Synthetic scenario; operator-specified prices, fees and hypothetical fills.",
+    "verified_orders_at_venue": 0,
+    "proof_gaps": {},
     "limits": {
       "initial_cash": "10000",
       "bucket_per_league": "2000",

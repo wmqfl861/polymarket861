@@ -1,0 +1,94 @@
+{
+  "scope": "Independent local reproduction of deliverables at this source and test tree. Statistical model evaluation, prospective news efficacy, executable returns and target deployment approval are separate.",
+  "tested_source_tree": "0bb1720dda24b7300f8283b96a6e0ca0c9fdc0c6",
+  "tested_tests_tree": "5126e77d3bdd42dd2cdd9f51258aaca03c91e3de",
+  "platform": "Linux x86_64; CPython, NumPy 2.3.5, SciPy 1.17.0; BLAS single-threaded",
+  "test_command": "PYTHONPATH=src OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PM861_TEST_CHROMIUM=/absolute/path/to/chromium python -m unittest discover -s tests -v",
+  "browser": "Chromium headless shell 158, Playwright 1.62.0. Browser cases included on all three interpreters.",
+  "unittest": {
+    "3.11.18": {
+      "collected": 572,
+      "passed": 572,
+      "skipped": 0,
+      "seconds": 202.736
+    },
+    "3.12.14": {
+      "collected": 572,
+      "passed": 572,
+      "skipped": 0,
+      "seconds": 191.428
+    },
+    "3.13.5": {
+      "collected": 572,
+      "passed": 572,
+      "skipped": 0,
+      "seconds": 205.847
+    }
+  },
+  "quality_checks": {
+    "ruff src tests scripts": "passed",
+    "mypy --strict --follow-imports=silent src/polymarket861/{blob_storage,score_bounds,experiment_statistics}.py": "passed",
+    "python scripts/check_league_boundaries.py": "passed",
+    "git diff --check": "passed"
+  },
+  "wheel": {
+    "version": "0.5.0a1",
+    "separate_install": "verified membership asset, full 96-club catalog and 48-fixture risk stress through the CLI",
+    "reference_package_files_sha256": "fc91b13fbea1b925c75a680f832351e49049bc1894c292ce780afcf0f0d448a8"
+  },
+  "source_inputs": {
+    "OpenFootball_verification_commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "frozen_study_files": 40,
+    "real_cli_fetch_seasons_tested": [
+      "epl/2025-26",
+      "lal/2025-26",
+      "bun/2025-26",
+      "sea/2025-26",
+      "fl1/2025-26"
+    ],
+    "independent_claude_history_and_market_counts_equal": true,
+    "independent_claude_model_probe_equal_except_interpreter_metadata": true
+  },
+  "five_league_study": {
+    "command": "pm861 leagues baseline-study HIST --workers 3 --output replay.json",
+    "matches_original_bytes": true,
+    "sha256": "5cf85a3b42bda1fcc864dc7ea92746717336ca79a320f289abae5613886f3d44"
+  },
+  "round_smoke": {
+    "season": "2025-26",
+    "league": "bun",
+    "round": 1,
+    "scheduled": 9,
+    "scored": 9,
+    "requested_extra_line": "4.5 goals, full/home/away"
+  },
+  "independent_review": {
+    "model": "gpt-6.2-astra",
+    "reasoning_effort": "max",
+    "signed_scope": "0.5.0a1 research release",
+    "independent_full_suite": {
+      "python": "3.12.14",
+      "passed": 572,
+      "elapsed_seconds": 187.551,
+      "browser_included": true
+    },
+    "package_files_verified_against_git": 99,
+    "market_capital_specialist": {
+      "local_cash_controls": "matched",
+      "initial_receipt_cases": 21,
+      "as_of_frontiers": 12,
+      "formal_and_shadow_scenarios": 30,
+      "automatic_and_manual_settlement": "matched",
+      "raw_archived_bodies": 165,
+      "observed_venues_fixtures": 38,
+      "verified_contracts": 912,
+      "stress_cash": "matched",
+      "automated_tests_passed": 66,
+      "prior_diagnostic_case_passed": true
+    }
+  },
+  "documentation_links": {
+    "local_documents_checked": 14,
+    "broken_internal_links": 0
+  }
+}

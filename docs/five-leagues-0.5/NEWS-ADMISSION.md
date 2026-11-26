@@ -1,6 +1,6 @@
 # 新闻来源与确认缺阵的准入审计
 
-0.5 研究版继续把英超 B1 作为正式足球基线。球队伤停来源的覆盖、球员所受处罚适用的赛事、语言模型精确率和赛果预测的改善各有独立证据。本文的命令计算前两种统计检验的样本资格与结果，生产启用仍由治理流程决定。[本轮实证](../../reports/five-leagues-0.5/news-audit.json) · [逐俱乐部来源权利](../../reports/five-leagues-0.5/club-source-rights.json)
+0.5 研究版继续把英超 B1 作为正式足球基线。球队伤停来源的覆盖、球员所受处罚适用的赛事、语言模型精确率和赛果预测的改善各有独立证据。本文的命令复算来源字段的及时有效率，以及各语言独立盲标的确认缺阵精确率。生产启用仍由治理流程决定。[本轮实证](../../reports/five-leagues-0.5/news-audit.json) · [逐俱乐部来源权利](../../reports/five-leagues-0.5/club-source-rights.json)
 
 ## 当季空表、停赛与伤病起点
 
@@ -27,7 +27,7 @@ pm861 --data-dir ./data news admission-audit --registration "$PLAN_SHA" --review
 
 ## 固定每种语言的 84 个确认缺阵
 
-相同登记入口支持 `kind=confirmed_absence`。计划声明 `league`、`season`、`language`（en、es、de、it、fr）、`opens_at`、`model_sha256`、全部 `training_clusters`、依次为两名独立标注员和一名裁定者的 `reviewers`，以及 84 个不同事件簇组成的 `samples`。每簇提供 `id` 和 `confirmed_prediction_sha256`。该预测原件记录 `kind=system_confirmed_absence`、相同事件簇与模型语言范围，以及早于登记或同时的 `predicted_at`。登记时用 `--evidence-dir` 提供这些原件，程序核对其字节摘要。已用于训练或在本机另次试验中已揭盲的簇不能复用。
+相同登记入口支持 `kind=confirmed_absence`。计划声明 `league`、`season`、`language`（en、es、de、it、fr）、`opens_at`、`model_sha256`、全部 `training_clusters`、依次为两名独立标注员和一名裁定者的 `reviewers`，以及 84 个不同事件簇组成的 `samples`。每簇提供 `id` 和 `confirmed_prediction_sha256`。该预测原件记录 `kind=system_confirmed_absence`、相同事件簇与模型语言范围，以及早于登记或同时的 `predicted_at`。登记时用 `--evidence-dir` 提供这些原件，程序核对其字节摘要。登记成功时，本机在同一事务内预留全部事件簇。相同语言、赛季和模型只有一个登记，换评审人、改开窗时间或并发提交都不能另选结果。事件簇及预测原件也不可在本机另一项已登记试验中重复使用。旧试验如已有交叠，保留原始记录，两项均须更换独立留出集才能给出新的合格结论。跨实例合并试验前，审核者应先对齐各实例的登记和已见样本。
 
 每份判读原件含 `kind=confirmed_absence`、同一登记、语言、模型、联赛、赛季、事件簇 `id` 和 `reviewed_at`。`labels` 的两个键是登记时两位标注员的身份，取值为布尔值，表示该系统确认缺阵是否正确。意见不一致时原件还需 `adjudicator` 与布尔值 `adjudicated`。首次提交的簇级判读在本机封存，可重复复算；更换已封存原件会报错。收齐前只报进度。固定的 84 个全部审完，至多错 3 个且 Wilson 双侧 95% 区间下界 ≥0.90，才通过本项精确率检验。
 

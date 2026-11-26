@@ -1,6 +1,5 @@
 {
   "scope": "Five-league news evidence, 2026-27. Source observations, historical seals, and offline regression cases are labelled separately.",
-  "as_of_utc": "2026-11-26T07:27:10.000000Z",
   "coverage_register": {
     "competition": "epl",
     "season": "2026-27",
@@ -186,6 +185,15 @@
     "max_errors": 3,
     "wilson_two_sided_95_lower_min": 0.9,
     "observed_real_blind_sets_in_this_report": 0,
-    "automatic_model_or_source_promotion": false
+    "automatic_model_or_source_promotion": false,
+    "reservation": "Within one runtime, the original registration reserves all 84 cluster identifiers and prediction digests before unblinding; the same language, season and model can reserve one cohort.",
+    "previous_overlaps": "Conflicting earlier local registrations retain their records and neither yields a precision verdict."
+  },
+  "synthetic_provider_as_of_utc": "2026-11-26T07:27:10.000000Z",
+  "verified_date_utc": "2026-11-26",
+  "test_results": {
+    "suite": "PYTHONPATH=src:tests python -m unittest test_news_competition_scope test_news_admission test_news_sources test_news_wire_states test_news_importance test_news_poll_archive test_news_wire_identity test_news_weight_events test_news_ingest test_news_model test_news_weight_audit",
+    "passed": 101,
+    "failures": 0
   }
 }

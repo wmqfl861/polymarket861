@@ -6,7 +6,7 @@
 
 [0.4.2 审核交接与实测](docs/CLAUDE-REVIEW-RESPONSE-0.4.2.md) · [独立复审](docs/INDEPENDENT-REVIEW-0.4.2.md) · [全新安装与保留旧库](docs/UPGRADE-0.3-TO-0.4.2.md) · [系统蓝图 1.6](docs/polymarket861-EPL-v1.md) · [开发计划及验收口径](docs/polymarket861-EPL-development-plan.md) · [比赛日操作手册](docs/MATCHDAY.md) · [球队新闻与评测](docs/TEAM-NEWS.md)
 
-[五大联赛实施计划](docs/five-leagues-0.5/IMPLEMENTATION-PLAN.md) · [本批使用方法、实测与后续工作](docs/five-leagues-0.5/DEVELOPMENT-HANDOFF.md) · [逐国数据源与原始调研](docs/five-leagues-0.5/README.md)
+[五大联赛实施计划](docs/five-leagues-0.5/IMPLEMENTATION-PLAN.md) · [本批使用方法、实测与后续工作](docs/five-leagues-0.5/DEVELOPMENT-HANDOFF.md) · [0.5 独立审核及反例复验](docs/five-leagues-0.5/INDEPENDENT-REVIEW.md) · [逐国数据源与原始调研](docs/five-leagues-0.5/README.md)
 
 默认来源包括 Touchline Wire 的公开接口与英语维基百科的俱乐部赛季修订。[Tactical Data by Touchline Wire](https://touchlinewire.com/) · [Touchline Wire 开发说明](https://touchlinewire.com/docs#attribution) · [英语维基百科贡献者，CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 

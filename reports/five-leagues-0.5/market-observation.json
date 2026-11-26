@@ -875,7 +875,8 @@
     "The sample was taken before the weekend. It neither measures an entire weekend of storage nor proves T−24h/T−60m paired books, actual kickoff, closing line, paid fills, payouts or ROI.",
     "Depth is visible ask-side notional before fees. Nonempty bids and asks and a $50 sell-side cash capacity are separate metrics.",
     "Only hashes, identifiers and derived measurements are committed. Full bodies and per-token rows were stored in the isolated research directory.",
-    "The initial capture recorded template eligibility at observation time. Later local reinterpretation using the saved original contract and teams is a separate column. Neither status authorizes a trade."
+    "The initial capture recorded template eligibility at observation time. Later local reinterpretation using the saved original contract and teams is a separate column. Neither status authorizes a trade.",
+    "Window attribution: HTTP requests and original observations use their receipt times; token, freshness and depth summaries use the collection run completion time. Reconcile boundary-spanning batches separately."
   ],
   "serie_a_tag_observation": "Gamma /sports links sea to series 10203 and both tags. The selected domestic main/aux events explicitly returned 101962. The advertised primaryTagId is 100618. No assumption about future tag migrations is used.",
   "stress_scenario": {
@@ -885,5 +886,44 @@
     "captures_per_game": 322,
     "token_observations_if_all_full_frequency": 741888
   },
-  "generated_at": "2026-11-26T07:38:51.552941Z"
+  "generated_at": "2026-11-26T07:38:51.552941Z",
+  "collector_regression_replay": {
+    "basis": "Offline deterministic Gamma and CLOB fixture replays accompanying the independent review. Live sampling figures above are unchanged.",
+    "reproduce": "PYTHONPATH=src:tests python -m unittest test_big5_market",
+    "window_lineage": "An already-received schedule kept both due T−24 observations and the single due pair after the following day’s reschedule. Cancellation before the old window, or discovery only after its expiry, gives no retroactive obligation.",
+    "legacy_recovery": "Old Gamma originals with their original hashes and local receipt times can reconstruct the historical schedule. Unverifiable timestamps or originals are reported as unknown.",
+    "pairs": {
+      "stable_id_control": {
+        "decision_tokens": 14,
+        "execution_tokens": 14,
+        "common_token_ids": 14,
+        "expected_pairs": 1,
+        "matched_contract_pairs": 1
+      },
+      "relabeled_contracts": {
+        "decision_tokens": 14,
+        "execution_tokens": 14,
+        "common_token_ids": 0,
+        "expected_pairs": 1,
+        "matched_contract_pairs": 0
+      }
+    },
+    "simultaneous_closing_windows": {
+      "workers": 1,
+      "scheduler_interval_seconds": 12,
+      "dispatches_by_league": {
+        "bun": 3,
+        "sea": 3
+      },
+      "dispatch_order": [
+        "bun",
+        "sea",
+        "bun",
+        "sea",
+        "bun",
+        "sea"
+      ]
+    },
+    "delayed_state_proof": "Both league_event and league_catalog supported an explicitly fresh pregame state at scheduled kickoff plus three seconds. Stale HTTP evidence remained unknown."
+  }
 }

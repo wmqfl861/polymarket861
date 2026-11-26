@@ -13,4 +13,6 @@ Claude 对 0.4.2 的扫描在 83 个模块中找到 54 个含赛事标识、来�
 | `result_feed.py`、`independent_results.py`、`result_operations.py`、`result_pairings.py`、`result_admission.py`、`result_training_review.py`、`schedule_consensus.py` | 既有线上赛果通道的赛事映射、两源独立性与冲突裁决属于英超生产流程。新增联赛先核对固定来源和特殊场，再对新增线上来源做按字段资格验收。要以相同队名、改期、行政和漏比分测试错配与信息泄漏。 |
 | `store.py`、`pipeline.py`、`season.py`、`season_readiness.py`、`season_health.py`、`runner.py`、`maintenance.py`、`jobs_research.py`、`round_history.py` | 英超实时季服务、已冻结轮次及本地 Codex 工单按旧协议继续运行。五国历史轮报、市场值守先独立使用。下一阶段给实时赛程、重算、更正、看板和工单补联赛键、逐国分母与故障恢复。 |
 
+本批新增的 `news_endpoint_originals.py` 属于已登记的英超新闻试验。它用专属来源名将有留存许可的响应绑定到英超比赛、赛季和收件时刻，按原配置离线解析，并从名单修订和身份原件重建当时可识别的球员。其比赛 ID 边界和归档来源名都进入本次源码检查。原有 `news_sources.poll` 默认使用英超注册来源，`news_study_plan` 给会改变封存事实的采集适配、实际投递和时点单独签名。只读留存是否成功影响该前瞻研究的资格。其他联赛各自登记语言、来源和试验窗口。[新闻试验的覆盖和缺件](NEWS-ENDPOINT-STUDY.md)
+
 任一 PR 可运行 `python scripts/check_league_boundaries.py`。检查包含预审登记过的来源、路由、时区与赛制行；移动到另一模块或增加一处同样的命中也会显示。需要新增合法的适配器时，先查具体命中、补归属及回归，再更新 `scripts/league-boundaries.json`。该清单按源行记录，全文匹配只是审查线索，新的语义仍须代码审查。[检查程序](../../scripts/check_league_boundaries.py)

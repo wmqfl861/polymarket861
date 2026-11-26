@@ -2,7 +2,7 @@
   "from_version": "B1",
   "candidate_execution": {
     "reference_python": "3.12",
-    "release_provenance_sha256": "485a6ad238c1f251bd1b5083e441b8c6f80347641b65fc9fe2fa3f5f98895ae3",
+    "release_provenance_sha256": "01d89fbe9a3699666b0b283673a29eac9041d2a58806eb04a20bb7b06f05cbe0",
     "python": "3.12.14",
     "numeric_runtime": {
       "numpy": "2.3.5",
@@ -13,15 +13,15 @@
     "source": "measured_on_incumbent",
     "recorded_executions": []
   },
-  "to_version": "B1@b1c98afbdd688bcad7c1f5ab7cfc08e36817d76ae762f08bd0068234ec5f7c98",
+  "to_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
   "comparison": {
     "method": "T60-final-schedule-result-lag24h-v1",
     "history_quality": "24h_lag_sensitivity_final_archive_schedule",
     "historical_context": "no_archived_news_or_lineups",
     "formal_eligibility": false,
-    "candidate_recipe": "b1c98afbdd688bcad7c1f5ab7cfc08e36817d76ae762f08bd0068234ec5f7c98",
+    "candidate_recipe": "826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
     "baseline_recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
-    "candidate_sha256": "a32138576a7a1e34cafcb99e9bc58bd314f8a185a4170e792f4a78c05d98dd45",
+    "candidate_sha256": "17a5fc74226e6c2759be396d6ae1d95214d98b87776a3a4dc22f3661f65e8137",
     "baseline_sha256": "4b075cddf2e8104b723dcda9c696b87fef4bb4faf0e098e724e1321d70144522",
     "input_blobs": {
       "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
@@ -94,5 +94,5 @@
       }
     }
   },
-  "report_sha256": "493f22df700eab8b9b08da34b34b5fc0ac5fe54493b99660b7a46451f96b436a"
+  "report_sha256": "700ef99b5e82aeac620ac2e9840277ca6c94975bf648bec30d40f61c9470a460"
 }
