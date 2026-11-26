@@ -1,0 +1,182 @@
+{
+  "scope": "Independent fact check and training-only native-adjudication exercise in an isolated copy of the observed store. Other QA and deployment databases are separate.",
+  "fixture": "epl/2026-27/bournemouth/brentford",
+  "independently_checked_public_sources": {
+    "league": "https://www.premierleague.com/en/match/2645225/bournemouth-vs-brentford/highlights",
+    "away_club": "https://www.brentfordfc.com/en/matches/mens/bournemouth-v-brentford-premier-league-20260912",
+    "press": "https://www.theguardian.com/football/premierleague/results/2026/Sep/12"
+  },
+  "reviewed_score": [
+    2,
+    2
+  ],
+  "source_rights": "Only the raw CC BY-SA source already collected by the normal result pipeline is supplied to the import. The league/club/press pages supplied independent public score checks only.",
+  "attribution": "English Wikipedia contributors, CC BY-SA 4.0; OpenLigaDB, ODbL 1.0; public-domain OpenFootball.",
+  "as_of": "2026-11-26T03:42:26.720059Z",
+  "review": {
+    "season": "2026-27",
+    "round": 4,
+    "reviewer": "Codex independent result cross-check (isolated training copy)",
+    "rights": "permission",
+    "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "attribution": "English Wikipedia contributors",
+    "source": "Two CC BY-SA English Wikipedia club-season revisions; match 2645225.",
+    "evidence_file": "wikipedia-original.json",
+    "evidence_sha256": "3ae46accc77d8124064599163fe2390991bb69264e96f9dbe0c4cb40abd5633a",
+    "articles": [
+      {
+        "title": "2026–27 AFC Bournemouth season",
+        "revision": 1387421265,
+        "published_at": "2026-11-23T21:53:22Z",
+        "url": "https://en.wikipedia.org/w/index.php?oldid=1387421265"
+      },
+      {
+        "title": "2026–27 Brentford F.C. season",
+        "revision": 1387832405,
+        "published_at": "2026-11-25T17:41:52Z",
+        "url": "https://en.wikipedia.org/w/index.php?oldid=1387832405"
+      }
+    ],
+    "matches": [
+      {
+        "home": "AFC Bournemouth",
+        "away": "Brentford FC",
+        "kickoff": "2026-09-12T14:00:00.000000Z",
+        "period": "regulation",
+        "status": "final",
+        "home_goals": 2,
+        "away_goals": 2,
+        "locator": "English Wikipedia 2026–27 Bournemouth and Brentford club-season Premier League round four match 2645225; revision IDs 1387421265, 1387832405",
+        "decision_reason": "The two licensed club-season revisions and fixed OpenFootball result agree on 2–2. Independently checked the league and away club match pages and the Guardian dated results. The archived OpenLigaDB 2–1 remains visible. This selection is training-only in this isolated copy.",
+        "training_dispute": {
+          "scope": "training_only",
+          "fixture_id": "epl/2026-27/bournemouth/brentford",
+          "openfootball_score": [
+            2,
+            2
+          ],
+          "reports": [
+            {
+              "provider": "openligadb",
+              "match_id": 86558,
+              "round": 4,
+              "kickoff": "2026-09-12T14:00:00.000000Z",
+              "score": [
+                2,
+                1
+              ],
+              "status": "final",
+              "sha256": "b8b95a74468c081c2b9c6779b8c0aeb05d5c4c4d191c456b610bb2a9441a73b1",
+              "received": "2026-11-25T10:30:40.709753Z"
+            },
+            {
+              "provider": "wikipedia-en-epl",
+              "match_id": "premierleague:2645225",
+              "round": 4,
+              "kickoff": "2026-09-12T14:00:00.000000Z",
+              "score": [
+                2,
+                2
+              ],
+              "status": "final",
+              "sha256": "3ae46accc77d8124064599163fe2390991bb69264e96f9dbe0c4cb40abd5633a",
+              "received": "2026-11-26T03:33:16.450960Z"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "before": {
+    "home_goals": null,
+    "away_goals": null,
+    "result_disposition": "cross_source_score_conflict",
+    "result_source": "openfootball",
+    "received_at": "2026-11-25T10:31:02.467500Z"
+  },
+  "after_offline_reconcile": {
+    "home_goals": 2,
+    "away_goals": 2,
+    "result_disposition": "licensed_manual_review",
+    "result_source": "manual-regulation",
+    "received_at": "2026-11-26T03:42:25.819483Z"
+  },
+  "batch": {
+    "batch_id": "3affaef2de96620ad950ed05068916b0672171aa7d505cdd404f048aa5561013",
+    "scope": "selected_matches",
+    "season": "2026-27",
+    "round": 4,
+    "at": "2026-11-26T03:42:25.819483Z",
+    "evidence_sha256": "3ae46accc77d8124064599163fe2390991bb69264e96f9dbe0c4cb40abd5633a",
+    "rights": "permission",
+    "source": "Two CC BY-SA English Wikipedia club-season revisions; match 2645225.",
+    "reviewer": "Codex independent result cross-check (isolated training copy)",
+    "items": [
+      {
+        "fixture": "epl/2026-27/bournemouth/brentford",
+        "kickoff": "2026-09-12T14:00:00.000000Z",
+        "actual_kickoff": "2026-09-12T14:00:00.000000Z",
+        "score": [
+          2,
+          2
+        ],
+        "previous": {
+          "fixture_id": "epl/2026-27/bournemouth/brentford",
+          "version": 1,
+          "home_goals": 2,
+          "away_goals": 2,
+          "finalized_at": "2026-11-25T10:31:02.467500Z",
+          "published_at": "2026-11-25T10:31:02.467500Z",
+          "received_at": "2026-11-25T10:31:02.467500Z",
+          "recorded_at": "2026-11-25T10:31:02.686059Z",
+          "source": "openfootball",
+          "locator": "https://api.github.com/repos/openfootball/football.json/git/blobs/60e281f0fcc51cfca1a901353666a688cf62a8ba",
+          "actual_kickoff": null
+        },
+        "state": {
+          "fixture_id": "epl/2026-27/bournemouth/brentford",
+          "kickoff": "2026-09-12T14:00:00.000000Z",
+          "at": "2026-11-25T10:31:04.193563Z",
+          "held": 1,
+          "reason": "cross_source_score_conflict"
+        },
+        "version": 2,
+        "reason": "The two licensed club-season revisions and fixed OpenFootball result agree on 2–2. Independently checked the league and away club match pages and the Guardian dated results. The archived OpenLigaDB 2–1 remains visible. This selection is training-only in this isolated copy.",
+        "training_dispute_sha256": "82b7fbb60816aa25653369e2d23601d069b11c5776d5e1ecb416e5aeabcee9a2"
+      }
+    ],
+    "status": "applied",
+    "maintenance": {
+      "rounds": [
+        {
+          "season": "2026-27",
+          "round": 4,
+          "reports": [
+            {
+              "status": "incomplete",
+              "mode": "technical",
+              "completed": 10,
+              "expected": 10,
+              "model_version": "B1",
+              "version": null,
+              "horizon": "T-60m"
+            }
+          ],
+          "experiment_reviews": {
+            "season": "2026-27",
+            "round_id": 4,
+            "windows": []
+          }
+        }
+      ],
+      "manifest": "01c8742b32b6b518455f95dfea0ce0c208be9a0d82daea3e7e5f5ca7c433f15c",
+      "training": "refreshed"
+    }
+  },
+  "training_match_counts": [
+    1249,
+    1250
+  ],
+  "settlement_eligibility": "training-only scope",
+  "verified_regulation_at_review_cutoff": null
+}

@@ -1,0 +1,136 @@
+{
+  "scope": "Local regression and wheel installation on the frozen release implementation.",
+  "implementation_commit": "034afefda5eeb0015d5b24c17f430995f87504eb",
+  "release_tree": "c0d47369c769a34ad939be7be3adc51e767b6acd",
+  "source_tree": "2dfa1be3645e9191493b33832051f511ea902e83",
+  "package_tree": "769a0918ba8d90f5be6cecc5e88749d017619899",
+  "tests_tree": "51616bcfa9afd51854ebd33adc05e24c0f83e478",
+  "scripts_tree": "cc9b82c645364421373cace6851d8561a50db1f6",
+  "system": "Debian GNU/Linux 13 (trixie) x86_64",
+  "test_command": "python -m unittest discover -s tests -v",
+  "test_environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "PYTHONPATH": "src",
+    "PM861_TEST_CHROMIUM": "absolute path to the verified Debian Chromium headless shell"
+  },
+  "unit_and_browser": {
+    "3.11": {
+      "interpreter": "3.11.18",
+      "package": "0.4.2",
+      "dependencies": {
+        "httpx": "0.28.1",
+        "numpy": "2.3.5",
+        "scipy": "1.17.0",
+        "playwright": "1.62.0"
+      },
+      "tests": 476,
+      "passed": 476,
+      "skipped": 0,
+      "seconds": 129.397,
+      "browser_tests": [
+        "test_cross_season_news_report_distinguishes_measured_and_missing_price_pairs",
+        "test_decision_scope_filters_links_and_mobile_layout",
+        "test_news_market_panel_explains_source_proof_and_quote_counts_in_chinese",
+        "test_licensed_bulletin_to_sealed_markets_verified_result_and_round"
+      ]
+    },
+    "3.12": {
+      "interpreter": "3.12.14",
+      "package": "0.4.2",
+      "dependencies": {
+        "httpx": "0.28.1",
+        "numpy": "2.3.5",
+        "scipy": "1.17.0",
+        "playwright": "1.62.0"
+      },
+      "tests": 476,
+      "passed": 476,
+      "skipped": 0,
+      "seconds": 121.473,
+      "browser_tests": [
+        "test_cross_season_news_report_distinguishes_measured_and_missing_price_pairs",
+        "test_decision_scope_filters_links_and_mobile_layout",
+        "test_news_market_panel_explains_source_proof_and_quote_counts_in_chinese",
+        "test_licensed_bulletin_to_sealed_markets_verified_result_and_round"
+      ]
+    },
+    "3.13": {
+      "interpreter": "3.13.5",
+      "package": "0.4.2",
+      "dependencies": {
+        "httpx": "0.28.1",
+        "numpy": "2.3.5",
+        "scipy": "1.17.0",
+        "playwright": "1.62.0"
+      },
+      "tests": 476,
+      "passed": 476,
+      "skipped": 0,
+      "seconds": 134.742,
+      "browser_tests": [
+        "test_cross_season_news_report_distinguishes_measured_and_missing_price_pairs",
+        "test_decision_scope_filters_links_and_mobile_layout",
+        "test_news_market_panel_explains_source_proof_and_quote_counts_in_chinese",
+        "test_licensed_bulletin_to_sealed_markets_verified_result_and_round"
+      ]
+    }
+  },
+  "static_checks": {
+    "ruff": {
+      "command": "ruff check src tests scripts",
+      "exit_code": 0,
+      "tool_version": "ruff 0.17.6"
+    },
+    "mypy": {
+      "command": "mypy --strict --follow-imports=silent src/polymarket861/blob_storage.py src/polymarket861/score_bounds.py src/polymarket861/experiment_statistics.py",
+      "exit_code": 0,
+      "tool_version": "mypy 1.18.2 (compiled: yes)"
+    },
+    "javascript": {
+      "command": "node --check src/polymarket861/assets/dashboard.js",
+      "exit_code": 0,
+      "tool_version": "v24.22.3"
+    },
+    "git_whitespace": {
+      "command": "git show --format= --check HEAD",
+      "exit_code": 0
+    },
+    "chromium": "Chromium 156.0.8078.108"
+  },
+  "wheel": {
+    "name": "polymarket861",
+    "version": "0.4.2",
+    "entry_points": [
+      "pm861",
+      "polymarket861"
+    ],
+    "filename": "polymarket861-0.4.2-py3-none-any.whl",
+    "sha256": "76a7b1d67a9de52dcfe2b84436618c6553624f118dc78b7741d1a360ed486558",
+    "build_command": "python -m pip wheel --no-index --no-deps --no-build-isolation .",
+    "install_command": "python -m pip install --no-index --no-deps --no-compile <wheel>",
+    "build_tools": {
+      "pip": "26.2.2",
+      "setuptools": "84.2.1",
+      "wheel": "0.48.0"
+    },
+    "source_date_epoch": 1795665679,
+    "source_files_verified_byte_for_byte": 86,
+    "method": "Compared git object bytes against each wheel member and the installed files. Both package manifests exactly matched the tracked file set.",
+    "installed_entry_points": {
+      "version": {
+        "pm861": "0.4.2",
+        "polymarket861": "0.4.2"
+      },
+      "help_succeeded": [
+        "pm861",
+        "polymarket861"
+      ]
+    }
+  },
+  "limitations": [
+    "These tests use isolated fixtures and archives. Production state and prospective predictive performance require separate evidence.",
+    "The build and installation checks cover Debian Linux x86_64 with the constrained research dependencies.",
+    "Local browser tests used Debian's Chromium headless shell with the constrained Playwright library."
+  ]
+}

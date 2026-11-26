@@ -1,0 +1,953 @@
+{
+  "scope": "Pre-release field exercise on an isolated copy of a local coordinator. Each free HTTP poll and each technical early forecast uses its real clock. Neither the owner deployment nor any fixed-window seal or execution is represented.",
+  "source_credit": "Tactical Data by Touchline Wire (https://touchlinewire.com/ and https://touchlinewire.com/docs#attribution); English Wikipedia contributors, CC BY-SA 4.0; OpenLigaDB (ODbL), OpenFootball (public domain), Polymarket Gamma (public archive).",
+  "application_src_git_tree": "2dfa1be3645e9191493b33832051f511ea902e83",
+  "season": "2026-27",
+  "round": 12,
+  "early_export_as_of": "2026-11-26T04:04:09.448486Z",
+  "prior_0.4.1_collection": {
+    "state": "partial",
+    "eligible_streams": 60,
+    "due_streams": 60,
+    "attempted": 60,
+    "succeeded": 54,
+    "pending_streams": 0,
+    "pending_entries": 0,
+    "failures": 6,
+    "articles_added": 145,
+    "claims_added": 98
+  },
+  "prior_0.4.1_event_weight_counts": {
+    "as_of": "2026-11-26T03:39:07.717452Z",
+    "forecasts": 10,
+    "applied_claims": 83,
+    "weights_with_basis": 83,
+    "unrecorded_basis": 0,
+    "by_basis": {
+      "epl_season_minutes_and_starts": 45,
+      "neutral": 38
+    },
+    "fallback_claims": 38,
+    "fallback_share": 0.4578313253012048,
+    "fallback_reasons": {
+      "no_unique_player_directory_identity": 1,
+      "prior_results_incomplete_at_directory_snapshot": 16,
+      "team_appearances_do_not_reconcile": 21
+    },
+    "alert_threshold": 0.4,
+    "alert": true
+  },
+  "candidate_collection": {
+    "state": "partial",
+    "eligible_streams": 60,
+    "due_streams": 60,
+    "attempted": 60,
+    "succeeded": 54,
+    "pending_streams": 0,
+    "pending_entries": 0,
+    "failures": 6,
+    "articles_added": 0,
+    "claims_added": 90
+  },
+  "candidate_new_events": {
+    "state": "ok",
+    "eligible": 10,
+    "due": 10,
+    "attempted": 10,
+    "published": 9,
+    "unchanged": 1,
+    "deferred": 0
+  },
+  "candidate_technical_early": {
+    "fixtures": 10,
+    "both_teams_observed": 6,
+    "both_teams_study_qualified": 9,
+    "changed_fixtures": 10,
+    "applied_claims": 90,
+    "receipts": [
+      {
+        "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+        "seal": "bf003d04e3b702fe91f2e81fda45d807d53536e8f8dba669fd2996ee461720c8",
+        "actual_input_cutoff": "2026-11-26T04:04:06.488251Z",
+        "sealed_at": "2026-11-26T04:04:06.883746Z",
+        "both_teams_observed": false,
+        "both_teams_study_qualified": true,
+        "applied": 10,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+        "seal": "ae1dd177e39b788af4ed101d587581acad8fc70ad3f9f4c8d8191682a7e6c586",
+        "actual_input_cutoff": "2026-11-26T04:04:06.897265Z",
+        "sealed_at": "2026-11-26T04:04:07.079450Z",
+        "both_teams_observed": false,
+        "both_teams_study_qualified": true,
+        "applied": 8,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/manchester-united/brentford",
+        "seal": "188c2f212053cbcec6d055a48f29dcc9ecb69dfe470e51fe960fe4354728091f",
+        "actual_input_cutoff": "2026-11-26T04:04:07.091635Z",
+        "sealed_at": "2026-11-26T04:04:07.271474Z",
+        "both_teams_observed": true,
+        "both_teams_study_qualified": true,
+        "applied": 15,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+        "seal": "c1631114af9cd78e43bd92d9345367a71ea67c0546d2fa33e3890f001f4531dd",
+        "actual_input_cutoff": "2026-11-26T04:04:07.324540Z",
+        "sealed_at": "2026-11-26T04:04:07.535985Z",
+        "both_teams_observed": true,
+        "both_teams_study_qualified": true,
+        "applied": 4,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/everton/liverpool",
+        "seal": "8a1eddba24c21ca31b4c90718b932b04424f5286a4e612f2bd82ed5e44b7afdf",
+        "actual_input_cutoff": "2026-11-26T04:04:07.595094Z",
+        "sealed_at": "2026-11-26T04:04:07.790577Z",
+        "both_teams_observed": true,
+        "both_teams_study_qualified": true,
+        "applied": 8,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+        "seal": "e4da080479b34a775c0b12f2b95130ae0b2de5869e124cc784a6ab34da556bae",
+        "actual_input_cutoff": "2026-11-26T04:04:07.841754Z",
+        "sealed_at": "2026-11-26T04:04:08.276486Z",
+        "both_teams_observed": false,
+        "both_teams_study_qualified": true,
+        "applied": 10,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+        "seal": "3ea8d2bf9a305193de4f996ac920075e613c4f0d9fcf0c6fdcf1f242001c5a90",
+        "actual_input_cutoff": "2026-11-26T04:04:08.334045Z",
+        "sealed_at": "2026-11-26T04:04:08.582956Z",
+        "both_teams_observed": true,
+        "both_teams_study_qualified": true,
+        "applied": 14,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/fulham/bournemouth",
+        "seal": "cd79ac9f693c229dd9651015455d46cd67fd0a3c536e404f1f11c6e64f72c0fa",
+        "actual_input_cutoff": "2026-11-26T04:04:08.638472Z",
+        "sealed_at": "2026-11-26T04:04:08.855713Z",
+        "both_teams_observed": true,
+        "both_teams_study_qualified": true,
+        "applied": 6,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+        "seal": "632085e8c68dac4c933a514d6ced7f4cc36373f1ff740d4f45c579aa3ca35422",
+        "actual_input_cutoff": "2026-11-26T04:04:08.906335Z",
+        "sealed_at": "2026-11-26T04:04:09.172430Z",
+        "both_teams_observed": false,
+        "both_teams_study_qualified": false,
+        "applied": 11,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      },
+      {
+        "fixture_id": "epl/2026-27/arsenal/manchester-city",
+        "seal": "4946415ff1f56b4d73f9f9114d6e08164de22542669ee1eb0c33da6eed09986e",
+        "actual_input_cutoff": "2026-11-26T04:04:09.226074Z",
+        "sealed_at": "2026-11-26T04:04:09.443058Z",
+        "both_teams_observed": true,
+        "both_teams_study_qualified": true,
+        "applied": 4,
+        "changed": true,
+        "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      }
+    ]
+  },
+  "latest_per_fixture_player_weights": {
+    "as_of": "2026-11-26T04:04:09.450261Z",
+    "forecasts": 10,
+    "applied_claims": 90,
+    "weights_with_basis": 90,
+    "unrecorded_basis": 0,
+    "by_basis": {
+      "epl_season_minutes_and_starts": 84,
+      "neutral": 6
+    },
+    "fallback_claims": 6,
+    "fallback_share": 0.06666666666666667,
+    "fallback_reasons": {
+      "no_unique_player_directory_identity": 1,
+      "team_appearances_do_not_reconcile": 5
+    },
+    "alert_threshold": 0.4,
+    "alert": false
+  },
+  "fixed_horizon_accumulation": {
+    "T-24h": {
+      "plan_sha256": "bd084455a380733a8361b6db880fa042842a14937fea2eb42d9e0028f4a2aa16",
+      "plan": {
+        "first_season": "2026-27",
+        "stopping": "all eligible fixtures from the first season through the requested season, including partial seasons",
+        "market_decision": "native batch up to 30 seconds before the sealed input cutoff",
+        "reference": "three compatible normalized Yes midpoints for 1X2, Over midpoint with both directions checked for totals",
+        "coverage_age_hours": 6,
+        "direction": "news minus baseline versus close minus baseline; market drift uses close minus decision midpoint",
+        "direction_absolute_tolerance": 1e-12,
+        "unit": "one observation per fixture and endpoint, clustered by season and official round",
+        "family_confidence": 0.95,
+        "authority": "descriptive repeated looks, no activation, accuracy verdict, CLV, or return inference",
+        "version": "epl-news-observed-pairs-v2",
+        "population": "unique prospective primary seals with timely qualified coverage for both clubs; full coverage reported separately",
+        "strata": [
+          "mode",
+          "decision horizon",
+          "probability era",
+          "verified actual or scheduled pregame clock"
+        ],
+        "market_close": "same native contract, token, rules and two-sided books; last qualified receipt in the final 30 seconds strictly before its clock and after sealing",
+        "clock_tiers": {
+          "market_close": "independently verified first-half kickoff",
+          "scheduled_market_close": "frozen scheduled kickoff with unchanged local schedule, original fresh explicitly pregame exchange state at the closing book and no previously observed start/end"
+        },
+        "scheduled_state_max_age_seconds": 30,
+        "primary_market_estimand": "home win; through-origin slope of (close minus B1) on (news minus B1), per tier",
+        "secondary_market_estimand": "absolute distance gain in percentage points and its direction",
+        "score": "with-news minus no-news four-component score on verified regulation results; upper simultaneous bound below zero flags deterioration",
+        "guardrail": "descriptive only; no minimum positive gain or automatic promotion",
+        "interval": "round-clustered slope sandwich CR1 uses G/(G-1)*(N-1)/(N-P) and Student G-1. G counts season-rounds and N pairs with absolute slope predictor above direction_absolute_tolerance after within-era centering for an approved pooled fit. P is one slope plus the informative era intercepts for a pooled fit. Fewer than two informative rounds, N<=P or zero residual variance leaves the interval unavailable. The outcome guardrail uses all scored rounds.",
+        "family_comparisons": 6,
+        "geometry": "all qualified pairs including zero news moves retained; a zero move provides no slope information"
+      },
+      "first_season": "2026-27",
+      "through_season": "2026-27",
+      "horizon": "T-24h",
+      "mode": "technical",
+      "status": "descriptive_only",
+      "scheduled": 380,
+      "expected": 380,
+      "scheduled_by_season": {
+        "2026-27": 380
+      },
+      "eligible_seals": 0,
+      "exclusions": {
+        "no_primary_seal": 380
+      },
+      "previous_plans": {},
+      "market_close": {
+        "status": "actual_kickoff_source_unavailable",
+        "clock_basis": "independently_verified_first_half_wallclock",
+        "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals.",
+        "scheduled_clock_eligible": false,
+        "eligible_seals": 0,
+        "verified_actual_kickoffs": 0,
+        "paired_fixtures": 0,
+        "home_win_pairs": 0,
+        "exclusions": {},
+        "source_capability": {
+          "status": "no_reviewed_free_source",
+          "reviewed_open_f24_release_keys": [],
+          "reviewed_espn_grants": 0,
+          "current_espn_capture": "no_reviewed_free_grant",
+          "local_permission_reason": null,
+          "admission_commands": [],
+          "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals."
+        },
+        "home_win_regression": {
+          "method": "through_origin",
+          "predictor": "with_news_minus_B1",
+          "response": "close_minus_B1",
+          "pairs": 0,
+          "informative_pairs": 0,
+          "rounds": 0,
+          "informative_rounds": 0,
+          "slope": null,
+          "interval": null,
+          "status": "no_matched_home_win_pairs"
+        },
+        "unit": "matched fixture per endpoint",
+        "primary_endpoint": "home_win",
+        "endpoints": {
+          "home_win": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "draw": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "away_win": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "total_over_2_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "home_over_1_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "away_over_1_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          }
+        },
+        "missing_family_reasons": {}
+      },
+      "scheduled_market_close": {
+        "status": "no_eligible_news_seals",
+        "clock_basis": "scheduled_kickoff_with_native_pregame_event",
+        "scheduled_clock_eligible": true,
+        "eligible_seals": 0,
+        "paired_fixtures": 0,
+        "home_win_pairs": 0,
+        "exclusions": {},
+        "home_win_regression": {
+          "method": "through_origin",
+          "predictor": "with_news_minus_B1",
+          "response": "close_minus_B1",
+          "pairs": 0,
+          "informative_pairs": 0,
+          "rounds": 0,
+          "informative_rounds": 0,
+          "slope": null,
+          "interval": null,
+          "status": "no_matched_home_win_pairs"
+        },
+        "unit": "matched fixture per endpoint",
+        "primary_endpoint": "home_win",
+        "endpoints": {
+          "home_win": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "draw": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "away_win": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "total_over_2_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "home_over_1_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "away_over_1_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          }
+        },
+        "missing_family_reasons": {}
+      },
+      "eras": {},
+      "era_equivalence": {
+        "method": "sealed-news-arms-binary64-v1",
+        "scope": {
+          "first_season": "2026-27",
+          "through_season": "2026-27",
+          "horizon": "T-24h",
+          "mode": "technical",
+          "plan_sha256": "bd084455a380733a8361b6db880fa042842a14937fea2eb42d9e0028f4a2aa16"
+        },
+        "comparisons": [],
+        "scope_note": "Each comparison covers only its complete recorded seal inventory. Overlapping comparisons are separate estimates."
+      }
+    },
+    "T-60m": {
+      "plan_sha256": "bd084455a380733a8361b6db880fa042842a14937fea2eb42d9e0028f4a2aa16",
+      "plan": {
+        "first_season": "2026-27",
+        "stopping": "all eligible fixtures from the first season through the requested season, including partial seasons",
+        "market_decision": "native batch up to 30 seconds before the sealed input cutoff",
+        "reference": "three compatible normalized Yes midpoints for 1X2, Over midpoint with both directions checked for totals",
+        "coverage_age_hours": 6,
+        "direction": "news minus baseline versus close minus baseline; market drift uses close minus decision midpoint",
+        "direction_absolute_tolerance": 1e-12,
+        "unit": "one observation per fixture and endpoint, clustered by season and official round",
+        "family_confidence": 0.95,
+        "authority": "descriptive repeated looks, no activation, accuracy verdict, CLV, or return inference",
+        "version": "epl-news-observed-pairs-v2",
+        "population": "unique prospective primary seals with timely qualified coverage for both clubs; full coverage reported separately",
+        "strata": [
+          "mode",
+          "decision horizon",
+          "probability era",
+          "verified actual or scheduled pregame clock"
+        ],
+        "market_close": "same native contract, token, rules and two-sided books; last qualified receipt in the final 30 seconds strictly before its clock and after sealing",
+        "clock_tiers": {
+          "market_close": "independently verified first-half kickoff",
+          "scheduled_market_close": "frozen scheduled kickoff with unchanged local schedule, original fresh explicitly pregame exchange state at the closing book and no previously observed start/end"
+        },
+        "scheduled_state_max_age_seconds": 30,
+        "primary_market_estimand": "home win; through-origin slope of (close minus B1) on (news minus B1), per tier",
+        "secondary_market_estimand": "absolute distance gain in percentage points and its direction",
+        "score": "with-news minus no-news four-component score on verified regulation results; upper simultaneous bound below zero flags deterioration",
+        "guardrail": "descriptive only; no minimum positive gain or automatic promotion",
+        "interval": "round-clustered slope sandwich CR1 uses G/(G-1)*(N-1)/(N-P) and Student G-1. G counts season-rounds and N pairs with absolute slope predictor above direction_absolute_tolerance after within-era centering for an approved pooled fit. P is one slope plus the informative era intercepts for a pooled fit. Fewer than two informative rounds, N<=P or zero residual variance leaves the interval unavailable. The outcome guardrail uses all scored rounds.",
+        "family_comparisons": 6,
+        "geometry": "all qualified pairs including zero news moves retained; a zero move provides no slope information"
+      },
+      "first_season": "2026-27",
+      "through_season": "2026-27",
+      "horizon": "T-60m",
+      "mode": "technical",
+      "status": "descriptive_only",
+      "scheduled": 380,
+      "expected": 380,
+      "scheduled_by_season": {
+        "2026-27": 380
+      },
+      "eligible_seals": 0,
+      "exclusions": {
+        "no_primary_seal": 380
+      },
+      "previous_plans": {},
+      "market_close": {
+        "status": "actual_kickoff_source_unavailable",
+        "clock_basis": "independently_verified_first_half_wallclock",
+        "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals.",
+        "scheduled_clock_eligible": false,
+        "eligible_seals": 0,
+        "verified_actual_kickoffs": 0,
+        "paired_fixtures": 0,
+        "home_win_pairs": 0,
+        "exclusions": {},
+        "source_capability": {
+          "status": "no_reviewed_free_source",
+          "reviewed_open_f24_release_keys": [],
+          "reviewed_espn_grants": 0,
+          "current_espn_capture": "no_reviewed_free_grant",
+          "local_permission_reason": null,
+          "admission_commands": [],
+          "action": "A reviewed source release must pin a freely licensed EPL F24 export and its licence, or authenticate a free written ESPN grant for retrieving and retaining first-half event originals."
+        },
+        "home_win_regression": {
+          "method": "through_origin",
+          "predictor": "with_news_minus_B1",
+          "response": "close_minus_B1",
+          "pairs": 0,
+          "informative_pairs": 0,
+          "rounds": 0,
+          "informative_rounds": 0,
+          "slope": null,
+          "interval": null,
+          "status": "no_matched_home_win_pairs"
+        },
+        "unit": "matched fixture per endpoint",
+        "primary_endpoint": "home_win",
+        "endpoints": {
+          "home_win": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "draw": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "away_win": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "total_over_2_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "home_over_1_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "away_over_1_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          }
+        },
+        "missing_family_reasons": {}
+      },
+      "scheduled_market_close": {
+        "status": "no_eligible_news_seals",
+        "clock_basis": "scheduled_kickoff_with_native_pregame_event",
+        "scheduled_clock_eligible": true,
+        "eligible_seals": 0,
+        "paired_fixtures": 0,
+        "home_win_pairs": 0,
+        "exclusions": {},
+        "home_win_regression": {
+          "method": "through_origin",
+          "predictor": "with_news_minus_B1",
+          "response": "close_minus_B1",
+          "pairs": 0,
+          "informative_pairs": 0,
+          "rounds": 0,
+          "informative_rounds": 0,
+          "slope": null,
+          "interval": null,
+          "status": "no_matched_home_win_pairs"
+        },
+        "unit": "matched fixture per endpoint",
+        "primary_endpoint": "home_win",
+        "endpoints": {
+          "home_win": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "draw": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "away_win": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "total_over_2_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "home_over_1_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          },
+          "away_over_1_5": {
+            "pairs": 0,
+            "toward": 0,
+            "away": 0,
+            "unchanged": 0,
+            "at_reference": 0,
+            "toward_fraction": null,
+            "market_drift_agreement": {
+              "agree": 0,
+              "oppose": 0,
+              "unchanged_news": 0,
+              "flat_market": 0
+            },
+            "mean_abs_news_move_pp": null,
+            "mean_abs_base_close_gap_pp": null,
+            "mean_distance_gain_pp": null
+          }
+        },
+        "missing_family_reasons": {}
+      },
+      "eras": {},
+      "era_equivalence": {
+        "method": "sealed-news-arms-binary64-v1",
+        "scope": {
+          "first_season": "2026-27",
+          "through_season": "2026-27",
+          "horizon": "T-60m",
+          "mode": "technical",
+          "plan_sha256": "bd084455a380733a8361b6db880fa042842a14937fea2eb42d9e0028f4a2aa16"
+        },
+        "comparisons": [],
+        "scope_note": "Each comparison covers only its complete recorded seal inventory. Overlapping comparisons are separate estimates."
+      }
+    }
+  },
+  "season_readiness": {
+    "as_of": "2026-11-26T04:04:02.119277Z",
+    "state": "ready",
+    "checks": {
+      "reported_round_schedule_confirmed": true,
+      "release_executable": true,
+      "training_inputs_available": true,
+      "latest_due_results_received": true,
+      "next_round_teams_fresh": true
+    },
+    "next_registered_window": {
+      "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+      "horizon": "T-24h",
+      "opens": "2026-11-26T19:55:00.000000Z",
+      "cutoff": "2026-11-26T20:00:00.000000Z",
+      "window_open": false,
+      "fixed_b1_block_reason": null
+    },
+    "coordinator": {
+      "state": "stale",
+      "last_local_heartbeat": "2026-11-25T10:31:55.627014Z",
+      "age_seconds": 63126.492263,
+      "fresh_limit_seconds": 90
+    },
+    "source_schedule_confirmed": 10,
+    "fixed_scheduling_blockers": [],
+    "training_matches": 1249,
+    "season_matches_by_round": {
+      "1": 10,
+      "2": 10,
+      "3": 10,
+      "4": 9,
+      "5": 10,
+      "6": 10,
+      "7": 10,
+      "8": 10,
+      "9": 10,
+      "10": 10,
+      "11": 10
+    }
+  },
+  "early_probability_export": {
+    "file": "news-early-seals-0.4.2.json",
+    "file_sha256": "46a998f5c8f33449b364d37d19e82e7fed45fd12a806408422b0b89e6c24e9f2",
+    "package_independent_grid_and_weight_verification": {
+      "absolute_tolerance": 1e-12,
+      "technical_early_seals": {
+        "arms": 20,
+        "distinct_fixtures": 10,
+        "empirical_arms_without_rates": 0,
+        "max_absolute_error": 3.3306690738754696e-16,
+        "policy_receipt_counts": {
+          "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b": 10
+        },
+        "probability_values": 600,
+        "probability_values_compared_to_stored_vectors": 600,
+        "recipe_receipt_counts": {
+          "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85": 10
+        },
+        "records": 10,
+        "replayed_arms": 20
+      }
+    },
+    "external_claude_grid_recalculation": {
+      "records": 10,
+      "stored_values_compared": 600,
+      "max_abs_difference": 2.0040913373264857e-13,
+      "mean_abs_home_win_move_pp": 0.574,
+      "max_abs_home_win_move_pp": 1.02,
+      "mean_abs_over25_move_pp": 0.419,
+      "applied_claims_total": 90,
+      "policy_sha256": [
+        "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+      ],
+      "recipe_sha256": [
+        "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85"
+      ]
+    }
+  },
+  "field_outcome": "Before the first fixed decision window. Forward result scores, returns and true market closing performance have no observations in this exercise."
+}

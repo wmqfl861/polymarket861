@@ -1,0 +1,58 @@
+{
+  "scope": "Controlled expected-goal experiment using Claude's seed and schedule. Coefficients approximate B1 training exposure; this does not measure player value or predictive gain on real matches.",
+  "seed": 861,
+  "training_matches": 1250,
+  "team_matches": 125,
+  "decay_per_day": 0.002,
+  "news_policy": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b",
+  "rows": [
+    {
+      "absence_days": 7,
+      "matches_in_episode": 1,
+      "unabsorbed_fraction_from_refit": 0.981404,
+      "research_duration_multiplier": 0.97906
+    },
+    {
+      "absence_days": 14,
+      "matches_in_episode": 2,
+      "unabsorbed_fraction_from_refit": 0.960418,
+      "research_duration_multiplier": 0.958411
+    },
+    {
+      "absence_days": 28,
+      "matches_in_episode": 4,
+      "unabsorbed_fraction_from_refit": 0.934594,
+      "research_duration_multiplier": 0.917971
+    },
+    {
+      "absence_days": 42,
+      "matches_in_episode": 6,
+      "unabsorbed_fraction_from_refit": 0.894807,
+      "research_duration_multiplier": 0.878647
+    },
+    {
+      "absence_days": 63,
+      "matches_in_episode": 9,
+      "unabsorbed_fraction_from_refit": 0.85211,
+      "research_duration_multiplier": 0.821688
+    },
+    {
+      "absence_days": 91,
+      "matches_in_episode": 11,
+      "unabsorbed_fraction_from_refit": 0.816824,
+      "research_duration_multiplier": 0.785023
+    },
+    {
+      "absence_days": 182,
+      "matches_in_episode": 14,
+      "unabsorbed_fraction_from_refit": 0.766431,
+      "research_duration_multiplier": 0.740127
+    },
+    {
+      "absence_days": 364,
+      "matches_in_episode": 40,
+      "unabsorbed_fraction_from_refit": 0.508145,
+      "research_duration_multiplier": 0.420786
+    }
+  ]
+}

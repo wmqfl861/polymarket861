@@ -1,0 +1,360 @@
+{
+  "schema": "epl-news-installed-upgrade-v1",
+  "target": "0.4.2",
+  "target_source_tree": "2dfa1be3645e9191493b33832051f511ea902e83",
+  "scope": "Two separate restored QA databases with retained match observations. Old baselines were recomputed with the incumbent binaries. Only local technical/early previews were made. The five-season fixture results are a 24-hour-lag sensitivity comparison without historical news. Named approvals in this report apply only to these restored QA copies.",
+  "owner_deployment_inspected": false,
+  "owner_approvals": 0,
+  "runs": [
+    {
+      "incumbent": "0.3.0",
+      "incumbent_src_git_tree": "d9e0ab2fc0ba8e1d01402e365c56cd0852baeafa",
+      "started_at_utc": "2026-11-26T04:02:01.209183Z",
+      "finished_at_utc": "2026-11-26T04:02:44.776498Z",
+      "old_baseline": {
+        "version": "B1",
+        "recipe": "20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
+        "study_sha256": "c20c703cbbada00acbe9d57d573693df296358e4a337b160e6229ac823a837db",
+        "method": "T60-final-schedule-result-lag24h-v1",
+        "matches": 1900,
+        "seasons": [
+          "2021-22",
+          "2022-23",
+          "2023-24",
+          "2024-25",
+          "2025-26"
+        ]
+      },
+      "backup_and_restore": {
+        "ok": true,
+        "files": 177,
+        "created_at": "2026-11-26T04:02:05.038198Z",
+        "old_forecast_reopened": true
+      },
+      "before_release": {
+        "active_version": "B1",
+        "active_recipe_sha256": "20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
+        "installed_recipe_sha256": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "approval": null,
+        "state": "approval_required",
+        "ready": false,
+        "baseline_sha256": "c20c703cbbada00acbe9d57d573693df296358e4a337b160e6229ac823a837db",
+        "comparison_sha256": null,
+        "reason": "New built-in seals require a named release approval before the first window. Run forecast release-compare HISTORY with the installed build. Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON.",
+        "actions": [
+          "Run forecast release-compare HISTORY with the installed build.",
+          "Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON."
+        ]
+      },
+      "new_fixture_before_approval": {
+        "exit_code": 2,
+        "diagnostic": "pm861: a changed builtin requires forecast release-compare and named release-approve"
+      },
+      "comparison": {
+        "from_version": "B1",
+        "baseline_identity": {
+          "source": "measured_on_incumbent"
+        },
+        "to_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "comparison": {
+          "method": "T60-final-schedule-result-lag24h-v1",
+          "history_quality": "24h_lag_sensitivity_final_archive_schedule",
+          "historical_context": "no_archived_news_or_lineups",
+          "formal_eligibility": false,
+          "candidate_recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+          "baseline_recipe": "20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
+          "candidate_sha256": "4b075cddf2e8104b723dcda9c696b87fef4bb4faf0e098e724e1321d70144522",
+          "baseline_sha256": "d77684bf2905da3a17183704327a59feff46d8cf66ca22c70228c327db2153fa",
+          "input_blobs": {
+            "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+            "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+            "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+            "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+            "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+            "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+            "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+            "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+          },
+          "seasons": [
+            "2021-22",
+            "2022-23",
+            "2023-24",
+            "2024-25",
+            "2025-26"
+          ],
+          "denominator": 1900,
+          "paired_count": 1900,
+          "rounds": 190,
+          "changed_predictions": 0,
+          "changed_training_views": 0,
+          "candidate_score": 75.44781323408776,
+          "baseline_score": 75.44781323408776,
+          "candidate_count": 1900,
+          "baseline_count": 1900,
+          "comparison_rejections": {},
+          "inference": {
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 190,
+            "matches": 1900,
+            "degrees_of_freedom": 189,
+            "family_comparisons": 10,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.995,
+            "critical_t": 2.8403659628523235
+          },
+          "intervals": {
+            "overall": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            },
+            "result": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            },
+            "total": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            },
+            "home": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            },
+            "away": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            }
+          }
+        },
+        "report_sha256": "d0f044eef0ea54b771e40815707e19f7843974674b16612046421c988849645f"
+      },
+      "approval_on_test_copy_only": {
+        "version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "effective_at": "2026-11-26T04:02:37.202925Z",
+        "comparison": "d0f044eef0ea54b771e40815707e19f7843974674b16612046421c988849645f",
+        "legacy_reference": null,
+        "reviewer": "Codex release verification (isolated database)",
+        "reason": "Independent 0.3.0 upgrade rehearsal on a restored QA backup; verified five-season report and immutable original."
+      },
+      "after_release": {
+        "active_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "active_recipe_sha256": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "installed_recipe_sha256": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "approval": {
+          "effective_at": "2026-11-26T04:02:37.202925Z",
+          "comparison": "d0f044eef0ea54b771e40815707e19f7843974674b16612046421c988849645f",
+          "reviewer": "Codex release verification (isolated database)",
+          "reason": "Independent 0.3.0 upgrade rehearsal on a restored QA backup; verified five-season report and immutable original."
+        },
+        "state": "ready",
+        "ready": true
+      },
+      "new_forecast": {
+        "fixture_id": "epl/2026-27/arsenal/manchester-city",
+        "model_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "mode": "technical",
+        "horizon": "early",
+        "sealed_at": "2026-11-26T04:02:43.181769Z",
+        "recipe_digest": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "digest": "14fa2054043acec7e2b2287d06e96ce92f3109e0917a108529d3c8af39cfed41"
+      },
+      "preserved_incumbent": {
+        "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+        "sealed_at": "2026-11-26T03:43:24.732157Z",
+        "recipe_digest": "20552f02acab5238357b8856410e90d02e0a9a94e1712acbec52c7899fe53afb",
+        "original_bytes": 11625,
+        "sha256_before_backup": "3b61266aee2af47139750eb83d3ab5b3aa5ba1d9d3f80c267442b6f9ba252720",
+        "sha256_after_restore": "3b61266aee2af47139750eb83d3ab5b3aa5ba1d9d3f80c267442b6f9ba252720",
+        "sha256_after_upgrade": "3b61266aee2af47139750eb83d3ab5b3aa5ba1d9d3f80c267442b6f9ba252720",
+        "original_bytes_equal": true,
+        "forecast_get_before_and_after_equal": true
+      },
+      "new_forecasts_written_to_input_copy": 0
+    },
+    {
+      "incumbent": "0.4.1",
+      "incumbent_src_git_tree": "ec0aa361a0c65900de3438e461cd956027967299",
+      "started_at_utc": "2026-11-26T04:02:01.222426Z",
+      "finished_at_utc": "2026-11-26T04:02:45.364091Z",
+      "old_baseline": {
+        "version": "B1",
+        "recipe": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+        "study_sha256": "b7ac7aa4257e6a7c82901e3a39ad98ec56cb6b8245d8fd77b3f2a4402e9d17ae",
+        "method": "T60-final-schedule-result-lag24h-v1",
+        "matches": 1900,
+        "seasons": [
+          "2021-22",
+          "2022-23",
+          "2023-24",
+          "2024-25",
+          "2025-26"
+        ]
+      },
+      "backup_and_restore": {
+        "ok": true,
+        "files": 397,
+        "created_at": "2026-11-26T04:02:05.318784Z",
+        "old_forecast_reopened": true
+      },
+      "before_release": {
+        "active_version": "B1",
+        "active_recipe_sha256": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+        "installed_recipe_sha256": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "approval": null,
+        "state": "approval_required",
+        "ready": false,
+        "baseline_sha256": "b7ac7aa4257e6a7c82901e3a39ad98ec56cb6b8245d8fd77b3f2a4402e9d17ae",
+        "comparison_sha256": null,
+        "reason": "New built-in seals require a named release approval before the first window. Run forecast release-compare HISTORY with the installed build. Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON.",
+        "actions": [
+          "Run forecast release-compare HISTORY with the installed build.",
+          "Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON."
+        ]
+      },
+      "new_fixture_before_approval": {
+        "exit_code": 2,
+        "diagnostic": "pm861: a changed builtin requires forecast release-compare and named release-approve"
+      },
+      "comparison": {
+        "from_version": "B1",
+        "baseline_identity": {
+          "source": "measured_on_incumbent"
+        },
+        "to_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "comparison": {
+          "method": "T60-final-schedule-result-lag24h-v1",
+          "history_quality": "24h_lag_sensitivity_final_archive_schedule",
+          "historical_context": "no_archived_news_or_lineups",
+          "formal_eligibility": false,
+          "candidate_recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+          "baseline_recipe": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+          "candidate_sha256": "4b075cddf2e8104b723dcda9c696b87fef4bb4faf0e098e724e1321d70144522",
+          "baseline_sha256": "fb118777197fe837ba17c45a3feee875df42b8e225e34da7dea1dbc50a23e7ee",
+          "input_blobs": {
+            "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+            "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+            "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+            "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+            "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+            "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+            "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+            "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+          },
+          "seasons": [
+            "2021-22",
+            "2022-23",
+            "2023-24",
+            "2024-25",
+            "2025-26"
+          ],
+          "denominator": 1900,
+          "paired_count": 1900,
+          "rounds": 190,
+          "changed_predictions": 0,
+          "changed_training_views": 0,
+          "candidate_score": 75.44781323408776,
+          "baseline_score": 75.44781323408776,
+          "candidate_count": 1900,
+          "baseline_count": 1900,
+          "comparison_rejections": {},
+          "inference": {
+            "method": "round-cluster-t-v1",
+            "unit": "season_and_official_round",
+            "rounds": 190,
+            "matches": 1900,
+            "degrees_of_freedom": 189,
+            "family_comparisons": 10,
+            "family_confidence": 0.95,
+            "individual_confidence": 0.995,
+            "critical_t": 2.8403659628523235
+          },
+          "intervals": {
+            "overall": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            },
+            "result": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            },
+            "total": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            },
+            "home": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            },
+            "away": {
+              "difference": 0.0,
+              "standard_error": 0.0,
+              "lower": 0.0,
+              "upper": 0.0
+            }
+          }
+        },
+        "report_sha256": "0d19e16870554e279a86e6078260641323bb6b112055901a41cf9ba8c4be4acb"
+      },
+      "approval_on_test_copy_only": {
+        "version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "effective_at": "2026-11-26T04:02:37.613267Z",
+        "comparison": "0d19e16870554e279a86e6078260641323bb6b112055901a41cf9ba8c4be4acb",
+        "legacy_reference": null,
+        "reviewer": "Codex release verification (isolated database)",
+        "reason": "Independent 0.4.1 upgrade rehearsal on a restored QA backup; verified five-season report and immutable original."
+      },
+      "after_release": {
+        "active_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "active_recipe_sha256": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "installed_recipe_sha256": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "approval": {
+          "effective_at": "2026-11-26T04:02:37.613267Z",
+          "comparison": "0d19e16870554e279a86e6078260641323bb6b112055901a41cf9ba8c4be4acb",
+          "reviewer": "Codex release verification (isolated database)",
+          "reason": "Independent 0.4.1 upgrade rehearsal on a restored QA backup; verified five-season report and immutable original."
+        },
+        "state": "ready",
+        "ready": true
+      },
+      "new_forecast": {
+        "fixture_id": "epl/2026-27/arsenal/manchester-city",
+        "model_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "mode": "technical",
+        "horizon": "early",
+        "sealed_at": "2026-11-26T04:02:43.639930Z",
+        "recipe_digest": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "digest": "58867da400bdb8bb8cf11818cf3f0e7ea4c54ac5cd1fe61473a4bd1d5bee8d76"
+      },
+      "preserved_incumbent": {
+        "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+        "sealed_at": "2026-11-26T03:38:52.089495Z",
+        "recipe_digest": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+        "original_bytes": 68366,
+        "sha256_before_backup": "4fade59e68e0d75a22549cb3b4e56cb5a08449984b9f12c0003307d0662a1201",
+        "sha256_after_restore": "4fade59e68e0d75a22549cb3b4e56cb5a08449984b9f12c0003307d0662a1201",
+        "sha256_after_upgrade": "4fade59e68e0d75a22549cb3b4e56cb5a08449984b9f12c0003307d0662a1201",
+        "original_bytes_equal": true,
+        "forecast_get_before_and_after_equal": true
+      },
+      "new_forecasts_written_to_input_copy": 0
+    }
+  ]
+}

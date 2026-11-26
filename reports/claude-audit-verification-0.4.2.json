@@ -1,0 +1,1279 @@
+{
+  "release": "0.4.2",
+  "reviewed_release_commit": "ea58105149a9d733fe8d8c5ffd8512de7cf2e952",
+  "original_audit_commit": "ea6627a837a99470f6c70a6292f9b58587f4ebaf",
+  "original_audit": "docs/polymarket861-EPL-code-review-0.4.1.md",
+  "candidate_git_trees": {
+    "src": "2dfa1be3645e9191493b33832051f511ea902e83",
+    "tests": "51616bcfa9afd51854ebd33adc05e24c0f83e478",
+    "verify": "git rev-parse HEAD:src HEAD:tests"
+  },
+  "findings_covered": [
+    "R1-1",
+    "R1-2",
+    "R1-3",
+    "R1-5",
+    "R2-2",
+    "R2-3",
+    "R3-1"
+  ],
+  "scope": "Point-in-time engineering checks and retrospective eligibility on archived responses. No prospective forecast, settled score, P&L or forecast-quality gain was measured by these probes.",
+  "controlled": {
+    "R1-1_and_R1-2_player_weights": {
+      "reproduction": [
+        "directory"
+      ],
+      "data": "Synthetic club, players, directory and results. The second part invokes normal native-vs-secondary result reconciliation with controlled payloads.",
+      "denominators": {
+        "directory_scenarios": 4,
+        "weighted_news_players": 3,
+        "players_inspected_at_each_fixed_horizon_or_after_hold": 4,
+        "keeper_timeline": "0 through 168 hours after same-score reconfirmation, every 12 hours"
+      },
+      "incumbent": {
+        "initial_players": {
+          "Morgan Smith": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 3,
+            "minutes": 260,
+            "importance_multiplier": 0.9861,
+            "absence_weight": 0.45
+          },
+          "River Stone": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 0,
+            "minutes": 10,
+            "importance_multiplier": 0.2639,
+            "absence_weight": 0.45
+          },
+          "Taylor Lake": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 0,
+            "minutes": 0,
+            "importance_multiplier": 0.25,
+            "absence_weight": 0.45
+          }
+        },
+        "after_same_score_reconfirmation": {
+          "Morgan Smith": {
+            "basis": "neutral",
+            "reason": "prior_results_incomplete_at_directory_snapshot",
+            "starts": null,
+            "minutes": null,
+            "importance_multiplier": 1.0,
+            "absence_weight": 0.45
+          },
+          "River Stone": {
+            "basis": "neutral",
+            "reason": "prior_results_incomplete_at_directory_snapshot",
+            "starts": null,
+            "minutes": null,
+            "importance_multiplier": 1.0,
+            "absence_weight": 0.45
+          },
+          "Taylor Lake": {
+            "basis": "neutral",
+            "reason": "prior_results_incomplete_at_directory_snapshot",
+            "starts": null,
+            "minutes": null,
+            "importance_multiplier": 1.0,
+            "absence_weight": 0.45
+          }
+        },
+        "away_log_goal_shift_before_and_after": [
+          0.03037,
+          0.06075
+        ],
+        "eligible_group_counts_at_fixed_horizons": {
+          "T-24h": {
+            "neutral": 4
+          },
+          "T-60m": {
+            "neutral": 4
+          }
+        },
+        "eligible_keeper_checkpoints": 3,
+        "total_keeper_checkpoints": 15,
+        "hours_to_first_eligible_checkpoint": 144,
+        "held_score": {
+          "after_hold": {
+            "neutral": 4
+          },
+          "after_new_directory": {
+            "neutral": 4
+          }
+        },
+        "departed_starter": {
+          "listed_players": 12,
+          "recorded_starts": 30,
+          "expected_starts": 33,
+          "eligible_group_counts": {
+            "neutral": 4
+          }
+        },
+        "fallback_multiplier": 1.0
+      },
+      "candidate": {
+        "initial_players": {
+          "Morgan Smith": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 3,
+            "minutes": 260,
+            "importance_multiplier": 0.9861,
+            "absence_weight": 0.45
+          },
+          "River Stone": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 0,
+            "minutes": 10,
+            "importance_multiplier": 0.2639,
+            "absence_weight": 0.45
+          },
+          "Taylor Lake": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 0,
+            "minutes": 0,
+            "importance_multiplier": 0.25,
+            "absence_weight": 0.45
+          }
+        },
+        "after_same_score_reconfirmation": {
+          "Morgan Smith": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 3,
+            "minutes": 260,
+            "importance_multiplier": 0.9861,
+            "absence_weight": 0.45
+          },
+          "River Stone": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 0,
+            "minutes": 10,
+            "importance_multiplier": 0.2639,
+            "absence_weight": 0.45
+          },
+          "Taylor Lake": {
+            "basis": "epl_season_minutes_and_starts",
+            "reason": null,
+            "starts": 0,
+            "minutes": 0,
+            "importance_multiplier": 0.25,
+            "absence_weight": 0.45
+          }
+        },
+        "away_log_goal_shift_before_and_after": [
+          0.03037,
+          0.03037
+        ],
+        "eligible_group_counts_at_fixed_horizons": {
+          "T-24h": {
+            "epl_season_minutes_and_starts": 4
+          },
+          "T-60m": {
+            "epl_season_minutes_and_starts": 4
+          }
+        },
+        "eligible_keeper_checkpoints": 15,
+        "total_keeper_checkpoints": 15,
+        "hours_to_first_eligible_checkpoint": 0,
+        "held_score": {
+          "after_hold": {
+            "epl_season_minutes_and_starts": 4
+          },
+          "after_new_directory": {
+            "epl_season_minutes_and_starts": 4
+          }
+        },
+        "departed_starter": {
+          "listed_players": 12,
+          "recorded_starts": 30,
+          "expected_starts": 33,
+          "eligible_group_counts": {
+            "epl_season_minutes_and_starts": 4
+          }
+        },
+        "fallback_multiplier": 0.55
+      },
+      "independent_reconciliation_control": {
+        "before_primary_final": {
+          "at": "2026-08-23T12:32:00.000000Z",
+          "coverage": {
+            "repeated_independent_final": 1
+          },
+          "versions": [
+            {
+              "version": 1,
+              "home_goals": 2,
+              "away_goals": 1,
+              "received_at": "2026-08-23T12:32:00.000000Z",
+              "source": "verified-result-pairing"
+            }
+          ],
+          "received_used_by_importance": "2026-08-23T12:32:00.000000Z"
+        },
+        "after_primary_final": {
+          "at": "2026-08-24T09:17:00.000000Z",
+          "coverage": {
+            "two_providers": 1
+          },
+          "versions": [
+            {
+              "version": 1,
+              "home_goals": 2,
+              "away_goals": 1,
+              "received_at": "2026-08-23T12:32:00.000000Z",
+              "source": "verified-result-pairing"
+            },
+            {
+              "version": 2,
+              "home_goals": 2,
+              "away_goals": 1,
+              "received_at": "2026-08-24T08:32:00.000000Z",
+              "source": "verified-result-pairing"
+            }
+          ],
+          "received_used_by_importance": "2026-08-24T08:32:00.000000Z"
+        }
+      },
+      "full_candidate_probe_output": "reports/news-player-directory-0.4.2.json"
+    },
+    "R1-5_fixed_schedule": {
+      "reproduction": [
+        "schedule",
+        "schedule_preflight"
+      ],
+      "data": "Controlled bulk-placeholder fixture. Both independent sources initially attest the identical kickoff. Each scenario uses a separate run, 25 hours later, with the specified fresh responses.",
+      "incumbent": {
+        "raw_probe_sha256": "7319ae7b1aa2e9fd14baa8d4907c08a0d3604c75657d2c0be8722391f8fad0c2",
+        "sealed_scenarios": 1,
+        "total_scenarios": 4,
+        "by_refresh": [
+          {
+            "sources": [],
+            "fixed_seals": []
+          },
+          {
+            "sources": [
+              "openligadb"
+            ],
+            "fixed_seals": []
+          },
+          {
+            "sources": [
+              "gamma"
+            ],
+            "fixed_seals": []
+          },
+          {
+            "sources": [
+              "gamma",
+              "openligadb"
+            ],
+            "fixed_seals": [
+              "T-24h"
+            ]
+          }
+        ]
+      },
+      "candidate": {
+        "raw_probe_sha256": "935e5ace588bdd9e5fbb24a23c2dbb1b3ef6c135eeedd024352ad951dd314028",
+        "sealed_scenarios": 4,
+        "total_scenarios": 4,
+        "by_refresh": [
+          {
+            "sources": [],
+            "fixed_seals": [
+              "T-24h"
+            ]
+          },
+          {
+            "sources": [
+              "openligadb"
+            ],
+            "fixed_seals": [
+              "T-24h"
+            ]
+          },
+          {
+            "sources": [
+              "gamma"
+            ],
+            "fixed_seals": [
+              "T-24h"
+            ]
+          },
+          {
+            "sources": [
+              "gamma",
+              "openligadb"
+            ],
+            "fixed_seals": [
+              "T-24h"
+            ]
+          }
+        ]
+      },
+      "early_warning": {
+        "fixture_id": "epl/2026-27/northbridge/southbank",
+        "at": "2026-11-27T08:00:00.000000Z",
+        "window_advance_hours": 12,
+        "warnings_before": [
+          {
+            "fixture_id": "epl/2026-27/northbridge/southbank",
+            "kickoff": "2026-11-28T15:00:00.000000Z",
+            "horizon": "T-24h",
+            "opens": "2026-11-27T14:55:00.000000Z",
+            "cutoff": "2026-11-27T15:00:00.000000Z",
+            "readiness_command": "season readiness --year 2026 --round 12",
+            "schedule_reason": "unconfirmed bulk placeholder kickoff for this EPL round"
+          }
+        ],
+        "durable_alerts_for_fixture_after_two_runs_with_restart": 1,
+        "warnings_for_fixture_after_two_source_confirmation": [],
+        "forecast_jobs_at_7h_before_window": 0
+      }
+    },
+    "R2-2_B1_absorption": {
+      "reproduction": [
+        "absorption_old",
+        "absorption_candidate"
+      ],
+      "data": "Synthetic expected goals with a known persistent -0.04 log-attack change for one team. Days on the same seeded schedule are dependent scenarios.",
+      "seed": 861,
+      "league_training_matches": 1250,
+      "target_team_matches": 125,
+      "decay_per_day": 0.002,
+      "scenario_count": 8,
+      "candidate_policy_sha256": "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b",
+      "rows": [
+        {
+          "absence_days": 7,
+          "target_team_matches_during_absence": 1,
+          "B1_unabsorbed_fraction_from_refit": 0.981404,
+          "incumbent_duration_multiplier": 0.75,
+          "candidate_duration_multiplier": 0.97906
+        },
+        {
+          "absence_days": 14,
+          "target_team_matches_during_absence": 2,
+          "B1_unabsorbed_fraction_from_refit": 0.960418,
+          "incumbent_duration_multiplier": 0.5,
+          "candidate_duration_multiplier": 0.958411
+        },
+        {
+          "absence_days": 28,
+          "target_team_matches_during_absence": 4,
+          "B1_unabsorbed_fraction_from_refit": 0.934594,
+          "incumbent_duration_multiplier": 0.25,
+          "candidate_duration_multiplier": 0.917971
+        },
+        {
+          "absence_days": 42,
+          "target_team_matches_during_absence": 6,
+          "B1_unabsorbed_fraction_from_refit": 0.894807,
+          "incumbent_duration_multiplier": 0.0,
+          "candidate_duration_multiplier": 0.878647
+        },
+        {
+          "absence_days": 63,
+          "target_team_matches_during_absence": 9,
+          "B1_unabsorbed_fraction_from_refit": 0.85211,
+          "incumbent_duration_multiplier": 0.0,
+          "candidate_duration_multiplier": 0.821688
+        },
+        {
+          "absence_days": 91,
+          "target_team_matches_during_absence": 11,
+          "B1_unabsorbed_fraction_from_refit": 0.816824,
+          "incumbent_duration_multiplier": 0.0,
+          "candidate_duration_multiplier": 0.785023
+        },
+        {
+          "absence_days": 182,
+          "target_team_matches_during_absence": 14,
+          "B1_unabsorbed_fraction_from_refit": 0.766431,
+          "incumbent_duration_multiplier": 0.0,
+          "candidate_duration_multiplier": 0.740127
+        },
+        {
+          "absence_days": 364,
+          "target_team_matches_during_absence": 40,
+          "B1_unabsorbed_fraction_from_refit": 0.508145,
+          "incumbent_duration_multiplier": 0.0,
+          "candidate_duration_multiplier": 0.420786
+        }
+      ],
+      "full_candidate_probe_output": "reports/news-absorption-0.4.2.json"
+    },
+    "R2-3_probability_era_replay": {
+      "reproduction": [
+        "era_numeric_label",
+        "era_comment",
+        "era_regressions"
+      ],
+      "data": "Fixed-time synthetic EPL seals. One case deliberately changes a runtime label while keeping the interpreter identical. The second changes only a comment in a disposable source copy.",
+      "runtime_label_case": {
+        "method": "sealed-news-arms-binary64-v1",
+        "source_era": "9a853aaebb9b32552b04691624aad3f950eb1b2dbaa2d5f8f43440acd9815918",
+        "target_era": "a18591237204798043f755454c2a58dc2e95392423a6f4a591d8c9ae0422d1c5",
+        "target_recipe_sha256": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+        "initial_inventory_sha256": "7eca5a76ad075b9fbcaf99778ba1ad5dced90ad0cef8fd6f393e9f5a92219f8a",
+        "seals": [
+          {
+            "fixture_id": "epl/2026-27/club-01/club-18",
+            "input_cutoff": "2026-08-12T12:58:00.000000Z",
+            "probability_values": 60,
+            "sealed_binary64_sha256": "84be100a2d5bf0fc9e96cb9d3416cf76ddfef670b440fb0cf56502da3922c173",
+            "replayed_binary64_sha256": "84be100a2d5bf0fc9e96cb9d3416cf76ddfef670b440fb0cf56502da3922c173",
+            "status": "bit_identical"
+          },
+          {
+            "fixture_id": "epl/2026-27/arsenal/chelsea",
+            "input_cutoff": "2026-08-12T12:58:00.000000Z",
+            "probability_values": 60,
+            "sealed_binary64_sha256": "84076ae8b72d08afec494c577d380eec17b4caa98726ae7574082942d8f91014",
+            "replayed_binary64_sha256": "84076ae8b72d08afec494c577d380eec17b4caa98726ae7574082942d8f91014",
+            "status": "bit_identical"
+          }
+        ],
+        "values_compared_initially": 120,
+        "initial": {
+          "native_eras": 2,
+          "status": "bit_identical",
+          "pooled": 2
+        },
+        "after_one_new_seal_before_replay": {
+          "native_eras": 2,
+          "status": "inventory_changed_replay_required",
+          "pooled": null
+        },
+        "native_seal_counts_after_full_replay": {
+          "9a853aaebb9b32552b04691624aad3f950eb1b2dbaa2d5f8f43440acd9815918": 1,
+          "a18591237204798043f755454c2a58dc2e95392423a6f4a591d8c9ae0422d1c5": 2
+        },
+        "after_complete_replay": {
+          "native_eras": 2,
+          "status": "bit_identical",
+          "pooled": 3
+        }
+      },
+      "comment_only_case": {
+        "scope": "Controlled source copy. Only one end-of-file comment was appended to news_ai.py. Two normal fixed-time EPL seals from synthetic matchday were computed; raw archived features and numerical interpreter unchanged.",
+        "old_extractor_file_sha256": "51bc2647444856b3f5135d8ff20453c97f8e9a9f0ca1bf093673602927c718be",
+        "candidate_extractor_file_sha256": "551c95ab63748148bef2ed72ba56b6e2e3b21f8363c347f05cd7e46ccabe2b3b",
+        "prepared_feature_ast_sha256": "7afaa6ecd9cd2cdc411adacf5cafbe8d69ca6c6dc612f3b0b6701f5b2fe3c453",
+        "separate_eras": [
+          "a18591237204798043f755454c2a58dc2e95392423a6f4a591d8c9ae0422d1c5",
+          "cee3e502d7e8b8772063899f46c82760aaafc4c88c156cc2ca567a4a07c886e4"
+        ],
+        "status": "bit_identical",
+        "values_verified": 120,
+        "complete_inventory": "100d88aa1a817ee1aa902d4cf5e61167c3eae2db76628a7db636bfc60c1cb387"
+      }
+    },
+    "R3-1_storage": {
+      "reproduction": [
+        "storage_144",
+        "storage_288",
+        "storage_upgrade",
+        "storage_regressions"
+      ],
+      "data": "One four-player simulated Touchline availability stream sampled every 20 minutes and 1 second. The longer interval includes four article originals becoming eligible as the seven-day window moves.",
+      "spans": [
+        {
+          "total_polls_per_build": 144,
+          "listed_players": 4,
+          "measured_interval": "polls 73..144",
+          "measured_polls_per_build": 72,
+          "measurement": "Change in bytes on disk between checkpoints, divided by the count of later polls. Probes use the normal adapter and collector against controlled responses.",
+          "measured_byte_reduction_percent": 88.0,
+          "incumbent": {
+            "new_original_files": 0,
+            "disk_growth_bytes": 204800,
+            "bytes_per_poll": 2844.4444444444443,
+            "physical_rows_added_by_table": {
+              "news_checks": 72,
+              "news_poll_proofs": 72,
+              "news_wire_polls": 72
+            }
+          },
+          "candidate": {
+            "new_original_files": 0,
+            "disk_growth_bytes": 24576,
+            "bytes_per_poll": 341.3333333333333,
+            "physical_rows_added_by_table": {
+              "news_poll_ticks": 72
+            }
+          }
+        },
+        {
+          "total_polls_per_build": 288,
+          "listed_players": 4,
+          "measured_interval": "polls 145..288",
+          "measured_polls_per_build": 144,
+          "measurement": "Change in bytes on disk between checkpoints, divided by the count of later polls. Probes use the normal adapter and collector against controlled responses.",
+          "measured_byte_reduction_percent": 80.329,
+          "incumbent": {
+            "new_original_files": 4,
+            "disk_growth_bytes": 458910,
+            "bytes_per_poll": 3186.875,
+            "physical_rows_added_by_table": {
+              "news_analysis_runs": 4,
+              "news_article_proofs": 4,
+              "news_articles": 4,
+              "news_checks": 144,
+              "news_claim_runs": 4,
+              "news_claims": 4,
+              "news_extractions": 4,
+              "news_poll_proofs": 144,
+              "news_wire_manifests": 1,
+              "news_wire_polls": 144,
+              "news_wire_states": 4
+            }
+          },
+          "candidate": {
+            "new_original_files": 4,
+            "disk_growth_bytes": 90270,
+            "bytes_per_poll": 626.875,
+            "physical_rows_added_by_table": {
+              "news_analysis_runs": 4,
+              "news_article_proofs": 4,
+              "news_articles": 4,
+              "news_checks": 8,
+              "news_claim_runs": 4,
+              "news_claims": 4,
+              "news_extractions": 4,
+              "news_poll_proofs": 8,
+              "news_poll_runs": 1,
+              "news_poll_ticks": 136,
+              "news_wire_manifests": 1,
+              "news_wire_polls": 8,
+              "news_wire_states": 4
+            }
+          }
+        }
+      ],
+      "damaged_evidence_controls": {
+        "wire_polls_per_scenario": 34,
+        "wire_scenarios": [
+          {
+            "listed_players": 1
+          },
+          {
+            "listed_players": 0
+          }
+        ],
+        "damaged_check_ordinal": 32,
+        "damaged_field": "folded response_sha256",
+        "observed_in_both_scenarios": {
+          "source_status": "invalid_poll_evidence",
+          "team_observed": false,
+          "team_study_qualified": false,
+          "source_observed_at": null
+        },
+        "neighboring_check_ordinals_still_eligible": [
+          31,
+          33,
+          34
+        ],
+        "other_checks": "A self-consistent alternative manifest dropping an injury from the genuine response failed study qualification. An empty bulletin stream with a broken receipt also failed coverage."
+      },
+      "in_place_old_program_archive": {
+        "data": "A real 0.4.1 executable wrote a separate SQLite directory with 48 simulated wire responses. The candidate reopened the same files and ran bounded compaction; no owner runtime was used.",
+        "original_release_commit": "ea58105149a9d733fe8d8c5ffd8512de7cf2e952",
+        "candidate_compactor_file_sha256": "973d382168927c83b74f5e6af68ef3f03bdcd4e66ac361fe125b1fcc5cc0d4aa",
+        "receipts_examined": 48,
+        "point_in_time_snapshots_equal": 48,
+        "original_receipt_payloads_with_verified_sha256": 48,
+        "check_documents_equal": 48,
+        "wire_observations_equal_including_order_times_and_membership": 48,
+        "migration": {
+          "initial": {
+            "pre_upgrade_through_check_id": 48,
+            "examined_through_check_id": 0,
+            "complete": false
+          },
+          "batch_limit": 7,
+          "passes": 7,
+          "examined": 48,
+          "folded": 40,
+          "standalone": 8,
+          "runs": 1,
+          "finished": true
+        }
+      },
+      "limits": "Measurements use one controlled schedule on one filesystem; database page allocation affects bytes per poll. Compaction of pre-existing rows frees SQLite space for reuse without guaranteeing a smaller existing database file."
+    }
+  },
+  "observed_inputs": {
+    "replay_conditions": "Verification copies with actual archived provider responses. Original clocks govern each replay. The archive-dependent commands require possession of the matching stored originals.",
+    "R1-1_and_R1-2_round_12_directory_coverage": {
+      "reproduction": [
+        "directory_observed"
+      ],
+      "cutoff": "2026-11-26T03:45:35.533729Z",
+      "teams": 20,
+      "teams_with_usable_native_usage": 17,
+      "unusable_team_reasons": {
+        "team_appearances_do_not_reconcile": 2,
+        "prior_results_incomplete_at_directory_snapshot": 1
+      },
+      "team_rows": [
+        {
+          "team": "Arsenal FC",
+          "players": 24,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "ba04dae0d5d994c4b1de15b658037e423e60549cd3d938dd539df9ce4e43abf3",
+          "known_at": "2026-11-26T03:35:58.544643Z",
+          "fallback": null
+        },
+        {
+          "team": "Manchester City FC",
+          "players": 0,
+          "reason": "team_appearances_do_not_reconcile",
+          "matches": null,
+          "starts": null,
+          "expected": null,
+          "disputed": null,
+          "origin": null,
+          "known_at": null,
+          "fallback": null
+        },
+        {
+          "team": "Brighton & Hove Albion FC",
+          "players": 32,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "ed4820b9fda35383edc9293facb1e0af0e713d83d13cb30e1f20799c0c3b15da",
+          "known_at": "2026-11-26T03:35:05.969211Z",
+          "fallback": null
+        },
+        {
+          "team": "Newcastle United FC",
+          "players": 30,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "8b962223efcb9f99ac5376c577b6a8de6fd04ecec6d8e95366e5a5e5f0de105c",
+          "known_at": "2026-11-26T03:35:32.874697Z",
+          "fallback": null
+        },
+        {
+          "team": "Crystal Palace FC",
+          "players": 29,
+          "reason": null,
+          "matches": 11,
+          "starts": 120,
+          "expected": 121,
+          "disputed": [],
+          "origin": "80b945b8a5b1846852beedb2e4e4f8724482feb1d2aee2fa1893cc92bbc9b40e",
+          "known_at": "2026-11-26T03:35:33.141658Z",
+          "fallback": null
+        },
+        {
+          "team": "Hull City AFC",
+          "players": 34,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "426682e2c3cf8704be88001bc3906a1502000947f34f0fd417c435403bea528e",
+          "known_at": "2026-11-26T03:35:32.800768Z",
+          "fallback": null
+        },
+        {
+          "team": "Everton FC",
+          "players": 22,
+          "reason": null,
+          "matches": 11,
+          "starts": 119,
+          "expected": 121,
+          "disputed": [],
+          "origin": "b282683b9efad4388c1b09ac91ba5efde0afbbd4068f311ce45aad7595b3e395",
+          "known_at": "2026-11-26T03:35:05.964923Z",
+          "fallback": null
+        },
+        {
+          "team": "Liverpool FC",
+          "players": 31,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "d25ee269932d9bdfc1d5288a4840a64d6c1067115ebd7879670e4cba1df2623d",
+          "known_at": "2026-11-26T03:35:05.983623Z",
+          "fallback": null
+        },
+        {
+          "team": "Fulham FC",
+          "players": 26,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "5f2d7d240754810045bd7403860fb927ebff78a76848ff326dc3a0a0a34c70c3",
+          "known_at": "2026-11-26T03:35:33.164086Z",
+          "fallback": null
+        },
+        {
+          "team": "AFC Bournemouth",
+          "players": 27,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [
+            "epl/2026-27/bournemouth/brentford"
+          ],
+          "origin": "c2ad4282364f7aa454618eb5a8c850d7d824ae8d5417071634d5cfdc5a6a57f7",
+          "known_at": "2026-11-26T03:35:05.845851Z",
+          "fallback": null
+        },
+        {
+          "team": "Ipswich Town FC",
+          "players": 28,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "892d0a89b04bb5d01a29d34c2a3e7d194d8b16dd5d8b66d6b10c9aaeefa1ece9",
+          "known_at": "2026-11-26T03:35:05.982197Z",
+          "fallback": null
+        },
+        {
+          "team": "Aston Villa FC",
+          "players": 29,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "b3182187db98327b2a4a58877f3b0406c8c6e383076042754b5b04e8a3f2c97c",
+          "known_at": "2026-11-26T03:35:05.853041Z",
+          "fallback": null
+        },
+        {
+          "team": "Leeds United FC",
+          "players": 26,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "4f110160943c8a16906550de3d75bf1b2482c27ac917dee29361f6d94c62aff5",
+          "known_at": "2026-11-26T03:34:39.522816Z",
+          "fallback": null
+        },
+        {
+          "team": "Coventry City FC",
+          "players": 30,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "ab06924a8aecfb637f1ead7c959c55f80c50a3595d765ec3c5d10e7e97a7e3cf",
+          "known_at": "2026-11-26T03:34:39.879523Z",
+          "fallback": null
+        },
+        {
+          "team": "Manchester United FC",
+          "players": 30,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [],
+          "origin": "ecbba0a999b2829bae6cfe35b11176712c1db9a698a9b0f281f2224d0d026137",
+          "known_at": "2026-11-26T03:34:39.562993Z",
+          "fallback": null
+        },
+        {
+          "team": "Brentford FC",
+          "players": 29,
+          "reason": null,
+          "matches": 11,
+          "starts": 121,
+          "expected": 121,
+          "disputed": [
+            "epl/2026-27/bournemouth/brentford"
+          ],
+          "origin": "8d0cbc940020911eb15cb1861c2fbe069f64de8447dfb746d57fb6406852ef62",
+          "known_at": "2026-11-26T03:34:39.482037Z",
+          "fallback": null
+        },
+        {
+          "team": "Nottingham Forest FC",
+          "players": 0,
+          "reason": "team_appearances_do_not_reconcile",
+          "matches": null,
+          "starts": null,
+          "expected": null,
+          "disputed": null,
+          "origin": null,
+          "known_at": null,
+          "fallback": null
+        },
+        {
+          "team": "Chelsea FC",
+          "players": 0,
+          "reason": "prior_results_incomplete_at_directory_snapshot",
+          "matches": null,
+          "starts": null,
+          "expected": null,
+          "disputed": null,
+          "origin": null,
+          "known_at": null,
+          "fallback": null
+        },
+        {
+          "team": "Sunderland AFC",
+          "players": 25,
+          "reason": null,
+          "matches": 11,
+          "starts": 120,
+          "expected": 121,
+          "disputed": [],
+          "origin": "9ab822e41ba07b540c39af55c8edbf7ec9e1cc1ecd41b2dfc08ee42a7e73af4c",
+          "known_at": "2026-11-26T03:35:33.183261Z",
+          "fallback": null
+        },
+        {
+          "team": "Tottenham Hotspur FC",
+          "players": 31,
+          "reason": null,
+          "matches": 11,
+          "starts": 119,
+          "expected": 121,
+          "disputed": [],
+          "origin": "e2d5149995a83c37819ef5c6f21859c08646cecbf3d782fe1d7fe18d42fb9697",
+          "known_at": "2026-11-26T03:35:32.883269Z",
+          "fallback": null
+        }
+      ]
+    },
+    "R1-3_round_12_identity": {
+      "reproduction": [
+        "identity_observed",
+        "identity_regressions"
+      ],
+      "cutoff": "2026-11-26T03:35:58.544643Z",
+      "teams": 20,
+      "fixtures": 10,
+      "full_both_at_capture": 6,
+      "would_have_both_qualified": 8,
+      "rows": {
+        "direct_roster": 83,
+        "touchline_id_to_roster": 3,
+        "touchline_directory_id": 3,
+        "unresolved": 1
+      },
+      "accepted_or_unresolved_original_rows_classified": 90,
+      "additional_malformed_or_conflicting_rows": 1,
+      "interpretation": "Both sides must qualify for a fixture. The second fixture count is a retrospective calculation at the original receipt time, not a newly sealed sample. Provider IDs are local to the publisher.",
+      "per_team": [
+        {
+          "team": "Arsenal FC",
+          "fixture_id": "epl/2026-27/arsenal/manchester-city",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 24,
+          "admission_counts": {
+            "direct_roster": 3
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Aston Villa FC",
+          "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 29,
+          "admission_counts": {
+            "direct_roster": 3
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "AFC Bournemouth",
+          "fixture_id": "epl/2026-27/fulham/bournemouth",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 27,
+          "admission_counts": {
+            "direct_roster": 4
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Brentford FC",
+          "fixture_id": "epl/2026-27/manchester-united/brentford",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 29,
+          "admission_counts": {
+            "direct_roster": 7
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Brighton & Hove Albion FC",
+          "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+          "full_check_at_capture": false,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 32,
+          "admission_counts": {
+            "touchline_id_to_roster": 1,
+            "direct_roster": 5,
+            "touchline_directory_id": 1
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Chelsea FC",
+          "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+          "full_check_at_capture": false,
+          "would_qualify_under_new_identity_rule": false,
+          "directory_rows": 0,
+          "admission_counts": {
+            "direct_roster": 5,
+            "unresolved": 1
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Coventry City FC",
+          "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 30,
+          "admission_counts": {
+            "direct_roster": 7
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Crystal Palace FC",
+          "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 29,
+          "admission_counts": {
+            "direct_roster": 6
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Everton FC",
+          "fixture_id": "epl/2026-27/everton/liverpool",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 22,
+          "admission_counts": {
+            "direct_roster": 1
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Fulham FC",
+          "fixture_id": "epl/2026-27/fulham/bournemouth",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 26,
+          "admission_counts": {
+            "direct_roster": 2
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Hull City AFC",
+          "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 34,
+          "admission_counts": {
+            "direct_roster": 8
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Ipswich Town FC",
+          "fixture_id": "epl/2026-27/ipswich-town/aston-villa",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 28,
+          "admission_counts": {
+            "direct_roster": 1
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Leeds United FC",
+          "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+          "full_check_at_capture": false,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 26,
+          "admission_counts": {
+            "touchline_directory_id": 1
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Liverpool FC",
+          "fixture_id": "epl/2026-27/everton/liverpool",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 31,
+          "admission_counts": {
+            "direct_roster": 7
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Manchester City FC",
+          "fixture_id": "epl/2026-27/arsenal/manchester-city",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 0,
+          "admission_counts": {
+            "direct_roster": 1
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Manchester United FC",
+          "fixture_id": "epl/2026-27/manchester-united/brentford",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 30,
+          "admission_counts": {
+            "direct_roster": 8
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Newcastle United FC",
+          "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+          "full_check_at_capture": false,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 30,
+          "admission_counts": {
+            "direct_roster": 2,
+            "touchline_id_to_roster": 1
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Nottingham Forest FC",
+          "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+          "full_check_at_capture": true,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 0,
+          "admission_counts": {
+            "direct_roster": 4
+          },
+          "malformed_or_conflict": 0
+        },
+        {
+          "team": "Sunderland AFC",
+          "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+          "full_check_at_capture": false,
+          "would_qualify_under_new_identity_rule": false,
+          "directory_rows": 25,
+          "admission_counts": {
+            "direct_roster": 4,
+            "touchline_directory_id": 1
+          },
+          "malformed_or_conflict": 1
+        },
+        {
+          "team": "Tottenham Hotspur FC",
+          "fixture_id": "epl/2026-27/sunderland/tottenham-hotspur",
+          "full_check_at_capture": false,
+          "would_qualify_under_new_identity_rule": true,
+          "directory_rows": 31,
+          "admission_counts": {
+            "direct_roster": 5,
+            "touchline_id_to_roster": 1
+          },
+          "malformed_or_conflict": 0
+        }
+      ],
+      "non_direct_rows_with_receipts": [
+        {
+          "team": "Brighton & Hove Albion FC",
+          "provider_id": 119,
+          "public_name": "Costinha",
+          "classification": "touchline_id_to_roster",
+          "directory_sha256": "ed4820b9fda35383edc9293facb1e0af0e713d83d13cb30e1f20799c0c3b15da",
+          "original_sha256": "b22a6e2787934a49dafbb82178bb95bb31f0e72d8f4eca7611fcaccc48c82957"
+        },
+        {
+          "team": "Brighton & Hove Albion FC",
+          "provider_id": 121,
+          "public_name": "Mitoma Kaoru",
+          "classification": "touchline_directory_id",
+          "directory_sha256": "ed4820b9fda35383edc9293facb1e0af0e713d83d13cb30e1f20799c0c3b15da",
+          "original_sha256": "2b96d2b34a885f94206d7c56cce2a1f6e96b8ec54de31a1a96869c7ff701e718"
+        },
+        {
+          "team": "Chelsea FC",
+          "provider_id": 158,
+          "public_name": "Jamie Bynoe-Gittens",
+          "classification": "unresolved",
+          "directory_sha256": null,
+          "original_sha256": "1c1f414fdda0f219f7b90b9a983f50eecb20246060d8c3499e5c092d2ab3a980"
+        },
+        {
+          "team": "Leeds United FC",
+          "provider_id": 349,
+          "public_name": "Mateo Joseph",
+          "classification": "touchline_directory_id",
+          "directory_sha256": "4f110160943c8a16906550de3d75bf1b2482c27ac917dee29361f6d94c62aff5",
+          "original_sha256": "fc7f888aac959b156bdd5f27c59e3cda7028d22551acee35a429c7bc85938624"
+        },
+        {
+          "team": "Newcastle United FC",
+          "provider_id": 458,
+          "public_name": "Joelinton",
+          "classification": "touchline_id_to_roster",
+          "directory_sha256": "8b962223efcb9f99ac5376c577b6a8de6fd04ecec6d8e95366e5a5e5f0de105c",
+          "original_sha256": "bbfa256e94e5d0b3d98e7ef2da67720ac03acf4d5fdab5d93796f59fa12df982"
+        },
+        {
+          "team": "Sunderland AFC",
+          "provider_id": 532,
+          "public_name": "Daniel Ballard",
+          "classification": "touchline_directory_id",
+          "directory_sha256": "9ab822e41ba07b540c39af55c8edbf7ec9e1cc1ecd41b2dfc08ee42a7e73af4c",
+          "original_sha256": "e0d51af2e53c0f6a85f92a26bc13653efd9c26d2ac1742013d958013e1bd6a49"
+        },
+        {
+          "team": "Tottenham Hotspur FC",
+          "provider_id": 403,
+          "public_name": "Sávio",
+          "classification": "touchline_id_to_roster",
+          "directory_sha256": "e2d5149995a83c37819ef5c6f21859c08646cecbf3d782fe1d7fe18d42fb9697",
+          "original_sha256": "76ecff924c908d5be22acceca3d9e7446b71f39e30c4f0fb7ee053c1f5c6fc62"
+        }
+      ]
+    },
+    "R1-5_round_12_schedule_coverage": {
+      "reproduction": [
+        "schedule_observed"
+      ],
+      "as_of": "2026-11-26T03:40:18.777339Z",
+      "fixtures": 10,
+      "fixed_confirmed": 10,
+      "fixed_blocked_fixtures": [],
+      "fresh_news_confirmed": 10,
+      "next_window_on_copy": {
+        "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+        "horizon": "T-24h",
+        "opens": "2026-11-26T19:55:00.000000Z",
+        "cutoff": "2026-11-26T20:00:00.000000Z",
+        "window_open": false,
+        "fixed_b1_block_reason": null
+      }
+    }
+  },
+  "reproduction": {
+    "setup": "From a checkout containing the listed probes, install its declared Python dependencies. To apply the unchanged audit probes to the incumbent, run them in a checkout of original_audit_commit (its src is the reviewed release) and repeat them in the candidate checkout. OLD and CANDIDATE below are the matching checkout roots; ARCHIVE means the exact input snapshot described in observed_inputs. WORK is a fresh, empty directory used only for these probes.",
+    "directory": {
+      "command": "PYTHONPATH=src:tests python docs/review-evidence/code-review-0.4.1-2026-11-26/probe_usage_directory.py",
+      "source_file_sha256": "673c2e0819d0245f3724a388ce23659ef2b28ae06cf9948d6ae033349256baa8"
+    },
+    "schedule": {
+      "command": "PYTHONPATH=src:tests python docs/review-evidence/code-review-0.4.1-2026-11-26/probe_fixed_seal_schedule.py",
+      "source_file_sha256": "183462ee86e53bf121326a5cd68b0f81612417711ea8e3ccf5758ab11c3ac9bd"
+    },
+    "schedule_preflight": {
+      "command": "PYTHONPATH=src:tests python -m unittest test_schedule_confirmation.ConfirmedKickoffTests.test_preflight_reports_before_open_dedupes_after_restart_and_clears_when_confirmed -v"
+    },
+    "schedule_observed": {
+      "command": "python -m polymarket861 --data-dir ARCHIVE season readiness --year 2026 --round 12",
+      "clock": "The ordinary command uses current UTC. The helper reopens the copied archive at the published cutoff to reproduce the historical schedule counts.",
+      "helper": "schedule_observed.py",
+      "historical_command": "PYTHONPATH=CANDIDATE/src python WORK/schedule_observed.py ARCHIVE"
+    },
+    "absorption_old": {
+      "run_in": "incumbent checkout",
+      "command": "PYTHONPATH=src python docs/review-evidence/code-review-0.4.1-2026-11-26/probe_absorption.py",
+      "source_file_sha256": "49737d120ff28026c31845af9fae950d05cc1f6b6d1e67b593de391005c45266"
+    },
+    "absorption_candidate": {
+      "command": "PYTHONPATH=src python scripts/reproduce_news_absorption.py"
+    },
+    "identity_observed": {
+      "helper": "identity_observed.py",
+      "command": "PYTHONPATH=CANDIDATE/src python WORK/identity_observed.py ARCHIVE WORK/identity.json"
+    },
+    "identity_regressions": {
+      "command": "PYTHONPATH=src:tests python -m unittest test_news_wire_identity -v"
+    },
+    "directory_observed": {
+      "helper": "directory_observed.py",
+      "command": "PYTHONPATH=CANDIDATE/src python WORK/directory_observed.py ARCHIVE"
+    },
+    "era_numeric_label": {
+      "helper": "era_numeric_label.py",
+      "command": "python WORK/era_numeric_label.py CANDIDATE WORK/era-numeric.json"
+    },
+    "era_comment": {
+      "helper": "era_comment.py",
+      "command": "python WORK/era_comment.py CANDIDATE WORK/era-comment.json"
+    },
+    "era_regressions": {
+      "command": "PYTHONPATH=src:tests python -m unittest test_news_era_replay -v"
+    },
+    "storage_144": {
+      "command": "PYTHONPATH=src:docs/review-evidence/code-review-0.4.0-2026-11-25 python docs/review-evidence/code-review-0.4.1-2026-11-26/probe_storage.py --listed 4 --polls 144",
+      "source_file_sha256": "a08410c2c9c7e3b598a4258071e74899194a35eb3e10781a5216649cd3ec1599"
+    },
+    "storage_288": {
+      "command": "PYTHONPATH=src:docs/review-evidence/code-review-0.4.0-2026-11-25 python docs/review-evidence/code-review-0.4.1-2026-11-26/probe_storage.py --listed 4 --polls 288",
+      "source_file_sha256": "a08410c2c9c7e3b598a4258071e74899194a35eb3e10781a5216649cd3ec1599"
+    },
+    "storage_upgrade": {
+      "helper": "storage_upgrade.py",
+      "commands_in_order": [
+        "PYTHONPATH=OLD/src:OLD/tests python WORK/storage_upgrade.py old",
+        "PYTHONPATH=CANDIDATE/src:CANDIDATE/tests python WORK/storage_upgrade.py candidate"
+      ],
+      "unit": "48 observations written before changing checkout; every receipt payload and SHA256, raw wire row, check and as-of snapshot are compared after the migration."
+    },
+    "storage_regressions": {
+      "command": "PYTHONPATH=src:tests python -m unittest test_news_poll_archive -v"
+    },
+    "extract_embedded_helpers": "python -c \"import json, pathlib, sys; d=pathlib.Path(sys.argv[1]); d.mkdir(exist_ok=True); j=json.load(open('reports/claude-audit-verification-0.4.2.json')); [(d/name).write_text(src) for name,src in j['reproduction']['embedded_python'].items()]\" WORK",
+    "embedded_python": {
+      "schedule_observed.py": "\"\"\"Recover Round 12 source coverage at the original verification's cutoff.\"\"\"\nimport json\nimport sqlite3\nimport sys\nfrom pathlib import Path\nfrom polymarket861 import schedule_consensus\n\nroot = Path(sys.argv[1]).resolve()\nat = '2026-11-26T03:40:18.777339Z'\nwith sqlite3.connect((root / 'runtime.sqlite3').as_uri() + '?mode=ro', uri=True) as db:\n    db.row_factory = sqlite3.Row\n    state = schedule_consensus.readiness(root, season='2026-27', round_id=12, at=at, _connection=db)\n    fields = ('as_of', 'registered', 'durable_fixed_confirmations', 'fixed_b1_blocked_fixtures', 'fresh_news_confirmed')\n    print(json.dumps({key:state[key] for key in fields}))\n",
+      "directory_observed.py": "\"\"\"Reopen each Round 12 club's archived usage originals at the verification cutoff.\"\"\"\nimport json\nimport sqlite3\nimport sys\nfrom pathlib import Path\nfrom polymarket861 import news_importance, result_freshness\n\nroot = Path(sys.argv[1]).resolve()\nat = \"2026-11-26T03:45:35.533729Z\"\nseason = \"2026-27\"\ndatabase = (root / \"runtime.sqlite3\").as_uri() + \"?mode=ro\"\nwith sqlite3.connect(database, uri=True) as db:\n    db.row_factory = sqlite3.Row\n    db.execute(\"BEGIN\")\n    games = db.execute(result_freshness._AS_OF.format(times=\"result_event_times\"), {\"at\":at,\"season\":season})\n    teams = []\n    for row in games:\n        if row[\"round_id\"] != 12:\n            continue\n        game = dict(row, season=season)\n        for team in (row[\"home\"], row[\"away\"]):\n            players, reason = news_importance.directory_players(db, root, game, team, at)\n            first = next(iter(players.values()), {})\n            teams.append({\"team\":team,\"players\":len(players),\"reason\":reason,\n                          \"matches\":first.get(\"matches\"),\"starts\":first.get(\"team_starts\"),\n                          \"expected\":first.get(\"expected_team_starts\"),\"disputed\":first.get(\"score_disputed_fixtures\"),\n                          \"origin\":first.get(\"original_sha256\"),\"known_at\":first.get(\"known_at\"),\n                          \"fallback\":first.get(\"directory_fallback_reason\")})\nprint(json.dumps({\"cutoff\":at,\"teams\":teams}, ensure_ascii=False))\n",
+      "identity_observed.py": "import json, sqlite3, sys\nfrom collections import Counter\nfrom pathlib import Path\nfrom polymarket861 import news,news_ai,news_sources,news_roster,news_wire_identity,store\nroot=Path(sys.argv[1]).resolve()\ndb=sqlite3.connect(root.joinpath('runtime.sqlite3').as_uri()+'?mode=ro',uri=True)\ndb.row_factory=sqlite3.Row\ndb.execute(\"BEGIN\")\ncut=max(db.execute(\"select max(known_at) from news_usage_history\").fetchone()[0],db.execute(\"select max(checked_at) from news_checks\").fetchone()[0])\nresult={'scope':'Read-only reanalysis at the final original receipt time of the previously collected 20-club pre-match verification copy. No additional acquisition, prediction, or score.',\n        'at_utc':cut,'teams':[]}\ngames={g['fixture_id']:g for g in news._schedule(db,cut,'2026-27')}\nfor check in db.execute(\"SELECT team_key,fixture_id,detail FROM news_checks WHERE source='touchline-availability' ORDER BY team_key\"):\n d=json.loads(check['detail']);game=games[check['fixture_id']];team=d['team']\n roster=news_roster.roster_views(db,[team],game['season'],cut)[check['team_key']]['players']\n directory=news_wire_identity.directory(db,root,game,team,cut,roster)\n aliases=news_ai._roster_index(roster)[1]\n reviewed=[];stats=Counter()\n for rr in db.execute(\"SELECT a.original_sha256 FROM news_wire_polls p JOIN news_wire_manifests m ON m.id=p.articles JOIN json_each(m.articles) j JOIN news_articles a ON a.seq=j.value WHERE p.receipt=(SELECT receipt FROM news_wire_polls WHERE team_key=? AND fixture_id=? ORDER BY observed_at DESC LIMIT 1)\",(check['team_key'],game['fixture_id'])):\n  original=json.loads(store.read_blob(root,rr[0]));first=news_sources.wire_claim(original,aliases)\n  claims,person=news_wire_identity.bind(original,aliases,first,directory)\n  flag=person['identity_basis'] if person else 'direct_roster' if claims else 'unresolved'\n  if not claims and person: flag='verified_zero_appearances'\n  if not first or not claims:\n   reviewed.append({'provider_id':original['provider_player_id'],'public_name':original['source_fields']['display_name'],'classification':flag,'directory_sha256':person and person['original_sha256'],'original_sha256':rr[0]})\n  stats[flag]+=1\n wrong=d.get('rejected_items',0)+d.get('revision_conflicts',0)\n result['teams'].append({'team':team,'fixture_id':game['fixture_id'],'full_check_at_capture':d['state']=='ok','would_qualify_under_new_identity_rule':bool(roster and not stats['unresolved'] and not wrong and (d['state']=='ok' or d['state']=='partial' and d.get('fetch_complete') and not d.get('extraction_pending'))),'source_state':d['state'],'directory_rows':len(directory),'admission_counts':dict(stats),'malformed_or_conflict':wrong,'row_details':reviewed})\ngroups={}\nfor team in result['teams']:\n groups.setdefault(team['fixture_id'],[]).append(team)\nresult['summary']={'teams':len(result['teams']),'fixtures':len(groups),'full_both_at_capture':sum(len(t)==2 and all(x['full_check_at_capture'] for x in t) for t in groups.values()),'would_have_both_qualified':sum(len(t)==2 and all(x['would_qualify_under_new_identity_rule'] for x in t) for t in groups.values()),'rows':dict(sum((Counter(x['admission_counts']) for x in result['teams']),Counter()))}\nPath(sys.argv[2]).write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\\n')\nprint(result['summary'])\nfor x in result['teams']:\n if x['row_details']:print(x['team'],[(z['public_name'],z['classification']) for z in x['row_details']])\n",
+      "storage_upgrade.py": "\"\"\"A controlled wire archive created by the exact old package, then reopened by the candidate.\"\"\"\nimport hashlib\nimport json\nfrom pathlib import Path\nimport shutil\nimport sys\nfrom polymarket861 import news, store\n\nlab = Path(__file__).resolve().parent\nrun = lab / 'storage-upgrade-archive'\ntruth = lab / 'storage-upgrade-old-truth.json'\nmode = sys.argv[1]\nif mode == 'old':\n    from test_news_wire_states import WireStateTests\n    c=WireStateTests(); c.setUp()\n    try:\n        cutoffs=[]\n        for index in range(48):\n            c.run_wire([c.player])\n            cutoffs.append(c.now())\n            c.advance(minutes=20, seconds=index%7)\n        with news._db(c.root) as db:\n            checks = {r[0]:json.loads(r[1]) for r in db.execute(\"SELECT id,detail FROM news_checks\")}\n            proofs = {r[0]:json.loads(r[1]) for r in db.execute(\"SELECT id,payload FROM news_poll_proofs\")}\n            wire = [list(r) for r in db.execute(\"SELECT rowid,* FROM news_wire_polls ORDER BY rowid\")]\n        assert not run.exists()\n        shutil.copytree(c.root,run)\n        truth.write_text(json.dumps({'cutoffs':cutoffs,'checks':checks,'proofs':proofs,'wire':wire}))\n    finally:\n        c.doCleanups()\nelif mode=='candidate':\n    from polymarket861 import news_poll_archive\n    old=json.loads(truth.read_text())\n    before=[news.snapshot(run,'first',when) for when in old['cutoffs']]\n    initial=news.retention(run,days=90)\n    steps=[]\n    candidate_sha=hashlib.sha256(Path(news_poll_archive.__file__).read_bytes()).hexdigest()\n    while not steps or not steps[-1]['complete']:\n        steps.append(news.retention(run,compact=True,limit=7)['pre_upgrade_checks'])\n    after=[news.snapshot(run,'first',when) for when in old['cutoffs']]\n    assert before==after\n    with news._db(run) as db:\n        checks = {str(r[0]):json.loads(r[1]) for r in db.execute(\"SELECT id,detail FROM news_check_history\")}\n        proofs = {r[0]:json.loads(r[1]) for r in db.execute(\"SELECT id,payload FROM news_receipt_history\")}\n        wire = [list(r) for r in db.execute(\"SELECT rowid,* FROM news_wire_history ORDER BY rowid\")]\n        # The view explicitly includes 'rowid' (an ordinary SELECT * on the old table didn't).\n        wire = [[x[0],*x[2:]] for x in wire]\n        assert old['checks']==checks and old['proofs']==proofs and old['wire']==wire\n        assert all(store.digest(proof)==ident==news_poll_archive.receipt(db,ident)['id'] for ident,proof in proofs.items())\n        assert db.execute(\"PRAGMA foreign_key_check\").fetchall()==[]\n        sizes=news_poll_archive.inventory(db)\n    print(json.dumps({'evidence':'Controlled source-shaped responses via ordinary 0.4.1 collector; isolated old-program SQLite directory and receipt comparisons, zero live or owner deployment changes. No disk shrink implied on preallocated SQLite pages.', 'incumbent_release':'ea58105149a9d733fe8d8c5ffd8512de7cf2e952','compactor_source_sha256':candidate_sha,'cutoffs_reproduced':len(before),'exact_checks':len(checks),'verified_individual_receipts':len(proofs),'wire_rows_with_original_order_clocks_and_manifests':len(wire),'migration':{'initial':initial['pre_upgrade_checks'],'batch_limit':7,'passes':len(steps),'examined':sum(x['examined'] for x in steps),'folded':sum(x['folded'] for x in steps),'standalone':sizes['standalone_checks'],'runs':sizes['unchanged_check_runs'],'finished':steps[-1]['complete'] }},indent=2))\nelse:\n    raise ValueError(mode)\n",
+      "era_numeric_label.py": "import json\nimport sys\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nfrom unittest.mock import patch\n\nrepo = Path(sys.argv[1]).resolve()\nsys.path[:0] = [str(repo / 'src'), str(repo / 'tests')]\nfrom polymarket861 import news_era_replay, news_evaluation\nfrom test_news_era_replay import EraReplayTests, SEASON\n\ntest = EraReplayTests()\ntest.setUp()\ntry:\n    source = test.seal(0, test.previous)\n    target = test.seal(1, test.current)\n    era = source['news_study']['era_sha256']\n    first = test.compare(era)\n    assert first['status'] == 'bit_identical'\n    def pool():\n        r = news_evaluation.evaluate_accumulation(test.root, SEASON)\n        c = r['era_equivalence']['comparisons'][0]\n        return {'native_eras': len(r['eras']), 'status': c['status'], 'pooled': c['pooled']['eligible_seals'] if c['pooled'] else None}\n    existing = pool()\n    test.seal(2, test.current)\n    invalidated = pool()\n    updated = test.compare(era)\n    pooled = pool()\n    assert existing['pooled'] == 2 and invalidated['pooled'] is None and pooled['pooled'] == 3\n    result = {'scope':'Controlled synthetic EPL fixture and source archive. Candidate and incumbent use the same real executable for arithmetic; only the incumbent numeric-runtime label was deliberately varied to exercise replay across incidental packaging edits. No live sample or deployment approval.',\n              'method':news_era_replay.METHOD, 'test':'PYTHONPATH=src:tests python -m unittest test_news_era_replay -v',\n              'source_era':era,'target_era':target['news_study']['era_sha256'],\n              'original_inventory': first, 'original_accumulation':existing, 'after_an_additional_primary_seal':invalidated,\n              'revalidated_inventory_count_by_era': updated['inventory_count_by_era'], 'after_full_replay':pooled}\n    Path(sys.argv[2]).write_text(json.dumps(result, ensure_ascii=False, indent=2)+'\\n')\nfinally:\n    test.doCleanups()\n",
+      "era_comment.py": "\"\"\"Check an actual source-only comment edit through two ordinary prospective seals.\"\"\"\n\nimport json\nimport shutil\nimport sys\nimport tempfile\nfrom pathlib import Path\nfrom unittest.mock import patch\n\nrepo = Path(sys.argv[1]).resolve()\nsys.path[:0] = [str(repo / 'src'), str(repo / 'tests')]\nfrom polymarket861 import model_study, news_era_replay, pipeline\nfrom test_news_era_replay import EraReplayTests, SEASON\n\ntest = EraReplayTests()\ntest.setUp()\ntry:\n    with tempfile.TemporaryDirectory() as temp:\n        package = Path(temp) / 'pkg'\n        shutil.copytree(model_study.PACKAGE_ROOT, package, ignore=shutil.ignore_patterns('__pycache__'))\n        with patch.object(model_study, 'PACKAGE_ROOT', package):\n            old = pipeline._build_recipe('B1', (0.5, 1.5, 2.5, 3.5))\n            first = test.seal(0, old)\n            path = package / 'news_ai.py'\n            with path.open('a') as handle:\n                handle.write('\\n# Documentation-only correction for the replay proof.\\n')\n            new = pipeline._build_recipe('B1', (0.5, 1.5, 2.5, 3.5))\n            second = test.seal(1, new)\n            eras = [s['news_study']['era_sha256'] for s in (first, second)]\n            check = news_era_replay.compare(test.root, eras[0], SEASON)\n            assert len(set(eras)) == 2 and check['status'] == 'bit_identical'\n            assert old['news_frozen_feature_source'] == new['news_frozen_feature_source']\n            count = sum(r['probability_values'] for r in check['records'])\n            assert count == 120\n            result = {\n                'scope': 'Controlled source copy. Only one end-of-file comment was appended to news_ai.py. Two normal fixed-time EPL seals from synthetic matchday were computed; raw archived features and numerical interpreter unchanged.',\n                'old_extractor_file_sha256': old['algorithm_source']['news_ai.py'],\n                'candidate_extractor_file_sha256': new['algorithm_source']['news_ai.py'],\n                'prepared_feature_ast_sha256': old['news_frozen_feature_source']['news_ai.py'],\n                'separate_eras': eras, 'status': check['status'], 'values_verified': count,\n                'complete_inventory': check['inventory_sha256'],\n            }\n            Path(sys.argv[2]).write_text(json.dumps(result, indent=2) + '\\n')\nfinally:\n    test.doCleanups()\n"
+    }
+  }
+}
