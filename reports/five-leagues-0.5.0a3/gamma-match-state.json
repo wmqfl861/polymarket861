@@ -1,0 +1,212 @@
+{
+  "scope": "Free international Gamma event originals, plus controlled native-format collection and paper replay.",
+  "official_field_schema": "https://docs.polymarket.com/api-reference/events/list-events",
+  "official_sports_periods_and_status": "https://docs.polymarket.com/market-data/realtime-data",
+  "live_reads": [
+    {
+      "url": "https://gamma-api.polymarket.com/events/slug/fl1-nan-tou-2026-05-17",
+      "received_at": "2026-11-26T15:53:30.336799Z",
+      "raw_sha256": "e12fc47dfbdd3cb4def2c4d326860ab47ea332d2a1667a4d4699781244117757",
+      "fields_present": {
+        "live": true,
+        "ended": false,
+        "period": "SUS",
+        "elapsed": "",
+        "score": "0-0",
+        "startTime": "2026-05-17T19:00:00Z"
+      },
+      "receipt_state": "not_pregame"
+    },
+    {
+      "url": "https://gamma-api.polymarket.com/events/slug/bun-wer-moe-2026-11-27",
+      "received_at": "2026-11-26T15:53:34.299475Z",
+      "raw_sha256": "9a02948eec2cca2e527ab3515b14f8db6279f73b2be735b2f6ac9403b8533ccb",
+      "fields_present": {
+        "startTime": "2026-11-27T19:30:00Z"
+      },
+      "receipt_state": "schedule_only"
+    },
+    {
+      "url": "https://gamma-api.polymarket.com/events/slug/fl1-str-asm-2026-05-17",
+      "received_at": "2026-11-26T15:54:56.696079Z",
+      "raw_sha256": "7a9e142c87eeabcee917eff5cf3b6c2c048e2ec37428794cf24ea1aca6397c0f",
+      "fields_present": {
+        "live": false,
+        "ended": true,
+        "period": "VFT",
+        "elapsed": "",
+        "score": "5-4",
+        "finishedTimestamp": "2026-05-17T21:02:23.582229Z",
+        "startTime": "2026-05-17T19:00:00Z"
+      },
+      "receipt_state": "not_pregame"
+    },
+    {
+      "url": "https://gamma-api.polymarket.com/events/slug/sea-rom-laz-2026-05-17",
+      "received_at": "2026-11-26T15:54:56.719253Z",
+      "raw_sha256": "6e56f7a5573429db4cbfd1a5a0e964b02c518f4289661cd9d075c6def151e2a8",
+      "fields_present": {
+        "live": false,
+        "ended": true,
+        "period": "VFT",
+        "elapsed": "",
+        "score": "2-0",
+        "finishedTimestamp": "2026-05-17T12:02:01.085309Z",
+        "startTime": "2026-05-17T10:00:00Z"
+      },
+      "receipt_state": "not_pregame"
+    }
+  ],
+  "retained_four_league_archives": {
+    "pm861-v05-market-archive-final": {
+      "distinct_event_receipts": 152,
+      "without_sporting_fields": 152,
+      "explicit_flags_both_missing": 152,
+      "contract_fields_across_raw_market_rows": {
+        "feeType": {
+          "sports_fees_v3": 4336
+        },
+        "makerBaseFee": {
+          "1000": 4336
+        },
+        "takerBaseFee": {
+          "1000": 4336
+        }
+      }
+    },
+    "review05a2/live": {
+      "distinct_event_receipts": 84,
+      "without_sporting_fields": 84,
+      "explicit_flags_both_missing": 84,
+      "contract_fields_across_raw_market_rows": {
+        "feeType": {
+          "sports_fees_v3": 2396
+        },
+        "makerBaseFee": {
+          "1000": 2396
+        },
+        "takerBaseFee": {
+          "1000": 2396
+        }
+      }
+    }
+  },
+  "controlled_paper_entry": {
+    "past_finished_explicit": {
+      "initial_candidate_paper_outcome": "filled",
+      "corrected_paper_outcome": "skipped_unverified_entry"
+    },
+    "past_finished_absent": {
+      "initial_candidate_paper_outcome": "filled",
+      "corrected_paper_outcome": "skipped_unverified_entry"
+    },
+    "second_half_explicit": {
+      "initial_candidate_paper_outcome": "filled",
+      "corrected_paper_outcome": "skipped_unverified_entry"
+    },
+    "second_half_absent": {
+      "initial_candidate_paper_outcome": "filled",
+      "corrected_paper_outcome": "skipped_unverified_entry"
+    },
+    "pregame_zero_explicit": {
+      "initial_candidate_paper_outcome": "filled",
+      "corrected_paper_outcome": "filled"
+    },
+    "pregame_zero_absent": {
+      "initial_candidate_paper_outcome": "filled",
+      "corrected_paper_outcome": "filled"
+    },
+    "unknown_period_explicit": {
+      "initial_candidate_paper_outcome": "filled",
+      "corrected_paper_outcome": "skipped_unverified_entry"
+    },
+    "unknown_period_absent": {
+      "initial_candidate_paper_outcome": "filled",
+      "corrected_paper_outcome": "skipped_unverified_entry"
+    }
+  },
+  "controlled_authority_with_charging_document": {
+    "matching_clean": {
+      "initial_candidate_outcome": "filled",
+      "corrected_outcome": "filled"
+    },
+    "unknown_charge": {
+      "initial_candidate_outcome": "filled",
+      "corrected_outcome": "refused_terms"
+    },
+    "nonsensical_rebate": {
+      "initial_candidate_outcome": "filled",
+      "corrected_outcome": "refused_terms"
+    }
+  },
+  "reopening_old_fixed_windows": {
+    "prior_aux_second_half": {
+      "retained_order_book_rows": 28,
+      "before": {
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_not_pregame": 0
+      },
+      "after": {
+        "fixed_windows_not_pregame": 2,
+        "t1_pairs_schedule_only": 0,
+        "t1_pairs_not_pregame": 1
+      },
+      "repeat_reopen_identical": true
+    },
+    "prior_main_finished": {
+      "retained_order_book_rows": 28,
+      "before": {
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_not_pregame": 0
+      },
+      "after": {
+        "fixed_windows_not_pregame": 2,
+        "t1_pairs_schedule_only": 0,
+        "t1_pairs_not_pregame": 1
+      },
+      "repeat_reopen_identical": true
+    },
+    "prior_aux_official_status": {
+      "retained_order_book_rows": 28,
+      "before": {
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_not_pregame": 0
+      },
+      "after": {
+        "fixed_windows_not_pregame": 2,
+        "t1_pairs_schedule_only": 0,
+        "t1_pairs_not_pregame": 1
+      },
+      "repeat_reopen_identical": true
+    },
+    "pregame_zero": {
+      "retained_order_book_rows": 28,
+      "before": {
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_not_pregame": 0
+      },
+      "after": {
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_not_pregame": 0
+      },
+      "repeat_reopen_identical": true
+    }
+  },
+  "test_from_repo_root": "PYTHONPATH=src:tests python -m unittest test_soccer_native_state test_fee_registry test_budget_research_fees",
+  "recipe_comparison": {
+    "B0": true,
+    "B1": true,
+    "B2": true,
+    "B3": true
+  },
+  "observed_boundaries": [
+    "As-of decisions use the actual receipt clock. Raw response hashes refer to the captured public bytes; a later API response can differ.",
+    "Both windows can have complete physical books while their sporting evidence disqualifies a pregame pair.",
+    "The two historical four-league snapshots lack active scoreboards. The separate four dated samples show actual wire fields. The controlled price-taking simulations are paper fills."
+  ]
+}

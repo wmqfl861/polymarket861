@@ -1,0 +1,62 @@
+{
+  "captures": [
+    {
+      "capture_order": 1,
+      "seal": "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6"
+    },
+    {
+      "capture_order": 2,
+      "seal": "ddbb278f2b6e89c6ba15a19ff6452043c5840262fb0cb2f5d643b289a7b9c5e8"
+    }
+  ],
+  "before": {
+    "fixed_windows_total": 1,
+    "fixed_windows_checked": 1,
+    "news_evidence_counts": {
+      "expected_ineligible": 0,
+      "unknown": 0,
+      "bound_news_originals_verified": 1
+    },
+    "winner": [
+      [
+        "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6",
+        "bound_news_originals_verified"
+      ]
+    ]
+  },
+  "first_loses_purpose": {
+    "fixed_windows_total": 1,
+    "fixed_windows_checked": 1,
+    "news_evidence_counts": {
+      "expected_ineligible": 0,
+      "unknown": 0,
+      "bound_news_originals_verified": 1
+    },
+    "winner": [
+      [
+        "ddbb278f2b6e89c6ba15a19ff6452043c5840262fb0cb2f5d643b289a7b9c5e8",
+        "bound_news_originals_verified"
+      ]
+    ]
+  },
+  "registered_report": {
+    "past_scheduled_windows": 1,
+    "qualified_news_pairs": 0,
+    "duplicate_bindings_ignored": 1,
+    "strata": [
+      {
+        "mode": "technical",
+        "era": "1d9a0f0a400d032282451b5be6032e88047808d9e595f82440e9d0aaa6b1be99",
+        "selected": 1,
+        "qualified": 0,
+        "excluded": 1,
+        "exclusions": {
+          "invalid_seal_identity": 1
+        }
+      }
+    ],
+    "exclusions": {
+      "invalid_seal_identity": 1
+    }
+  }
+}

@@ -40,6 +40,8 @@ pm861 --data-dir /srv/pm861 paper-risk replay captured-input.json \
 
 两档都复核每份订单簿绑定的父赛事，以及截至执行时收到的主赛事和附加盘口赛事状态。父赛事已经关闭（`closed=true`）、归档（`archived=true`）或停用（`active=false`）时，即使子盘口显示开放、且两枚赛前标记明确为假，也会跳过。赛后才收到的正常关闭状态保留原赛前买入，双方终态齐备后可按冻结合约兑付。
 
+收件时已经过去的 `finishedTimestamp`、上下半场、半场休息、有效的非零比赛用时或非零比分，都足以否决赛前入场。主赛事或附加赛事曾给出这些信号，随后清空字段或重发 `live=false, ended=false`，两档账户仍会跳过，两个固定窗口也会保留反证。正常赛前的 `NS`、零用时和 0–0 可以继续使用。无法识别的阶段、格式错误或指向未来的完场时间，在那次收件标为无法判定。它们不会在后来修正后被当作已开赛的历史记录。若赛后收到的原件明确记载买入之前已经完场，则从该原件进入档案时起，回放撤销这笔模拟买入。较早的 `--as-of` 仍使用当时证据。[官方赛事字段](https://docs.polymarket.com/api-reference/events/list-events) · [官方阶段与状态](https://docs.polymarket.com/market-data/realtime-data) · [真实样本与原件重建对照](../../reports/five-leagues-0.5.0a3/gamma-match-state.json)
+
 决策和执行各自引用的 Gamma 响应还须通过 HTTP 新鲜度校验。收到响应时的缓存年龄最多 30 秒，服务器时钟与收件时刻最多相差 30 秒，请求耗时最多 30 秒。交易所数分钟前已经新鲜发布、随后保持稳定的赛程可以使用。过期缓存不能提供赛前状态的正面证据，既有明确开赛反证仍然有效。
 
 `decisions[].entry_evidence` 给出决策簿和执行簿各自的证据档、CLOB 原件、绑定的 Gamma 原件和排期收件。两腿中有一腿仅能核实排期，就将整笔归入 `scheduled_with_incomplete_flags`。`entry_policy.outcomes_by_league_and_evidence` 按国和整笔证据档分别列出成交与跳过数。两次回放各自使用独立的初始研究预算。该排期档只用于模拟。五国均复核 Gamma 改期。现有独立首哨解析器只认英超，支持读取市场子目录及其上层部署目录中的足球原件。[原生赛前回放及反证](../../tests/test_budget_scheduled_entry.py) · [五国采集路径与隔离测试](../../tests/test_budget_domestic_archive.py)
@@ -75,6 +77,8 @@ pm861 --data-dir /srv/pm861 paper-risk verify-contract "$CONDITION_ID" \
 | `research_assumption` | 显式使用排期研究档，收费开关为真，当前协议和玩法尚无登记政策。Gamma 提供可解释的 taker 费表，决策和执行间的原件一致。 | 按下述研究约定扣买入份额，兑付与收益仅用于模拟。 |
 
 已有登记政策但证据缺失、过期、歧义或费率不匹配时，该笔跳过。缺少费用开关或参数、未知字段、执行前改费再改回也会跳过。赛前标记齐全与否单列在 `entry_evidence`。即使两腿都明确赛前，使用估算手续费的交易仍归入 `research_assumption`。默认 `explicit_pregame` 处理收费盘口时只采用经核实的登记政策。[费用登记表](../../src/polymarket861/fee_registry.py)
+
+两种收费口径都核对 Gamma 完整的 `feeSchedule`。无法识别的附加收费字段或越界的返佣比例会使该笔跳过。原生合约若另有 `feeType`、`makerBaseFee`、`takerBaseFee`，其原值也随决策收件冻结，回放逐份检查直至执行簿收件。当前采集的 `sports_fees_v3` 以 `feeSchedule.rate` 计算研究估值，两份历史样本中的基础费字段原值 1000 另列在证据中。[收费与比赛状态反例](../../tests/test_soccer_native_state.py)
 
 研究档沿用英超影子账户已有约定。在两本盘口可共同执行的每个价格 `p` 上，取该档成交份额 `q`，计算现金等值 `q × rate × (p × (1 − p))^exponent`，向上取整到 0.01，再除以 `p`，向上取整到 0.000001 份，从买到的份额中扣除。允许指数 1 或 2，只收 taker，返佣按零计算。举例，100 份以 0.50 买入、费率 0.05、指数 1，需支付 50，扣 2.5 份，持有 97.5 份。互补终态核实后，赢方兑付 97.5，净收益为 47.5。缺少任一边的终态时，50 继续占用。
 

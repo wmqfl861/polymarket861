@@ -1,0 +1,26 @@
+{
+  "registered_case_readonly_sql_connections": [
+    {
+      "is_readonly_uri": true,
+      "file": "runtime.sqlite3"
+    },
+    {
+      "is_readonly_uri": true,
+      "file": "runtime.sqlite3"
+    }
+  ],
+  "sqlite_write_authorizations_requested_by_schema": {
+    "temp": 15
+  },
+  "socket_or_DNS_calls": 0,
+  "main_database_bytes_identical": true,
+  "cold_sqlite_wal_before": {
+    "runtime.sqlite3": 8192
+  },
+  "cold_sqlite_wal_after": {
+    "runtime.sqlite3": 8192,
+    "runtime.sqlite3-wal": 0,
+    "runtime.sqlite3-shm": 32768
+  },
+  "cold_main_db_content_identical": true
+}

@@ -1,0 +1,48 @@
+{
+  "news_evidence": "expected_ineligible",
+  "applied_facts": [
+    {
+      "id": "8ac563a4b42db2f8e163838f7b61d5ec8a10583f09d266da7ab5e2a47c8f9cdc",
+      "evidence_ids": [
+        "8ac563a4b42db2f8e163838f7b61d5ec8a10583f09d266da7ab5e2a47c8f9cdc"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "id": "3d69262211a248e0cd88a59243fb07a2d689500148530120014b012c2c312fb7",
+      "source": "chelsea-bulletins",
+      "raw_response_policy": "retainable",
+      "v2_original": "verified"
+    },
+    {
+      "id": "8ac563a4b42db2f8e163838f7b61d5ec8a10583f09d266da7ab5e2a47c8f9cdc",
+      "source": "arsenal-bulletins",
+      "raw_response_policy": "retainable",
+      "v2_original": "verified"
+    }
+  ],
+  "home": {
+    "team": "Arsenal FC",
+    "sources": [
+      {
+        "source": "arsenal-bulletins",
+        "raw_response_policy": "retainable",
+        "v2_original": "verified"
+      },
+      {
+        "source": "private-empty",
+        "raw_response_policy": "not_retainable",
+        "v2_original": "missing_or_invalid"
+      }
+    ],
+    "roster_original": "verified"
+  },
+  "known_blockers": [
+    "required_source_does_not_retain_originals",
+    "missing_or_invalid_v2_original"
+  ],
+  "official_exclusions": {
+    "missing_or_invalid_news_dependency_original": 1
+  }
+}

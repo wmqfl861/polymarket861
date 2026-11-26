@@ -1,0 +1,14 @@
+updated 1
+{
+  "fixed_windows": 1,
+  "unknown_builtin": [
+    {
+      "source": "wikipedia-season-news",
+      "raw_response_policy": "unknown",
+      "season": "2026-27",
+      "team": "Arsenal FC",
+      "type": "recorded_subscription",
+      "registered_at": "2026-08-12T12:25:00.000000Z"
+    }
+  ]
+}

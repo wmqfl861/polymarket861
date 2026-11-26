@@ -1,0 +1,418 @@
+{
+  "installed_package": {
+    "version": "0.5.0a3",
+    "verified_packaged_files": 110,
+    "python": "3.12.14"
+  },
+  "fresh_epl": {
+    "source": "openfootball",
+    "source_revision": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "read_at": "2026-11-26T16:05:18.635882Z",
+    "seasons": [
+      {
+        "season": "2022-23",
+        "fixtures": 380,
+        "scores_observed": 380,
+        "sha256": "8d09f0f9846981626cdfec48903e1f21e7c79aabe6f92535c9e092e8e79b808b"
+      },
+      {
+        "season": "2023-24",
+        "fixtures": 380,
+        "scores_observed": 380,
+        "sha256": "03e13eafbf78dfe00d7e89dd3bf6643986eb6e8fd86c7664aeb8c5bc0bed88d0"
+      },
+      {
+        "season": "2024-25",
+        "fixtures": 380,
+        "scores_observed": 380,
+        "sha256": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75"
+      },
+      {
+        "season": "2025-26",
+        "fixtures": 380,
+        "scores_observed": 380,
+        "sha256": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1"
+      },
+      {
+        "season": "2026-27",
+        "fixtures": 380,
+        "scores_observed": 50,
+        "sha256": "bb91f0ab3e8359df163bb9ec98549bfed85e200dd4c32f3bd606b5890d932dd2"
+      }
+    ],
+    "registered_fixtures": 380,
+    "readiness_checks": {
+      "reported_round_schedule_confirmed": false,
+      "release_executable": true,
+      "training_inputs_available": true,
+      "latest_due_results_received": false,
+      "next_round_teams_fresh": false
+    },
+    "empty_preflight": {
+      "decision": "insufficient_local_evidence",
+      "registration": {
+        "state": "not_registered"
+      },
+      "protocol": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61"
+    },
+    "news_status_returned": true,
+    "technical_round_query_returned": true,
+    "dashboard_html_bytes": 106603
+  },
+  "manual_archive": {
+    "description": "Public Gamma and CLOB. This manual sample was taken outside the fixed trading windows.",
+    "window": [
+      "2026-11-27T00:00:00.000000Z",
+      "2026-12-01T00:00:00.000000Z"
+    ],
+    "leagues": {
+      "lal": {
+        "fixtures": 10,
+        "fixtures_with_both_events": 10,
+        "page_walk_complete": true,
+        "sample": {
+          "fixture": "lal-bet-ray-2026-11-28",
+          "started": "2026-11-26T16:05:32.601973Z",
+          "finished": "2026-11-26T16:05:36.857030Z",
+          "phase": "manual_core",
+          "capture_window": null,
+          "core_expected": 6,
+          "requested_tokens": 12,
+          "received_tokens": 12,
+          "fresh_tokens": 12,
+          "two_sided_tokens": 12
+        },
+        "first_observed_kickoff": {
+          "fixture": "lal-lev-rrc-2026-11-27",
+          "kickoff": "2026-11-27T20:00:00.000000Z"
+        }
+      },
+      "bun": {
+        "fixtures": 9,
+        "fixtures_with_both_events": 9,
+        "page_walk_complete": true,
+        "sample": {
+          "fixture": "bun-dor-b04-2026-11-29",
+          "started": "2026-11-26T16:05:36.862007Z",
+          "finished": "2026-11-26T16:05:37.346139Z",
+          "phase": "manual_core",
+          "capture_window": null,
+          "core_expected": 6,
+          "requested_tokens": 12,
+          "received_tokens": 12,
+          "fresh_tokens": 12,
+          "two_sided_tokens": 12
+        },
+        "first_observed_kickoff": {
+          "fixture": "bun-wer-moe-2026-11-27",
+          "kickoff": "2026-11-27T19:30:00.000000Z"
+        }
+      },
+      "sea": {
+        "fixtures": 10,
+        "fixtures_with_both_events": 10,
+        "page_walk_complete": true,
+        "sample": {
+          "fixture": "sea-cag-mil-2026-11-30",
+          "started": "2026-11-26T16:05:37.350570Z",
+          "finished": "2026-11-26T16:05:37.786280Z",
+          "phase": "manual_core",
+          "capture_window": null,
+          "core_expected": 6,
+          "requested_tokens": 12,
+          "received_tokens": 12,
+          "fresh_tokens": 12,
+          "two_sided_tokens": 12
+        },
+        "first_observed_kickoff": {
+          "fixture": "sea-ven-bol-2026-11-27",
+          "kickoff": "2026-11-27T19:45:00.000000Z"
+        }
+      },
+      "fl1": {
+        "fixtures": 9,
+        "fixtures_with_both_events": 9,
+        "page_walk_complete": true,
+        "sample": {
+          "fixture": "fl1-aja-olm-2026-11-29",
+          "started": "2026-11-26T16:05:37.790622Z",
+          "finished": "2026-11-26T16:05:38.303081Z",
+          "phase": "manual_core",
+          "capture_window": null,
+          "core_expected": 6,
+          "requested_tokens": 12,
+          "received_tokens": 12,
+          "fresh_tokens": 12,
+          "two_sided_tokens": 12
+        },
+        "first_observed_kickoff": {
+          "fixture": "fl1-sbr-pfc-2026-11-27",
+          "kickoff": "2026-11-27T19:45:00.000000Z"
+        }
+      }
+    },
+    "native_receipts": [
+      {
+        "operation": "league_sports",
+        "requested_at": "2026-11-26T16:05:24.893864Z",
+        "received_at": "2026-11-26T16:05:28.757956Z",
+        "status": "ok",
+        "sha256": "ea7dee4f34de0cac1b412019d443b09744216af210e9c7782b1a9352b3277baa",
+        "verified_original_bytes": 157822
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:28.778615Z",
+        "received_at": "2026-11-26T16:05:29.034919Z",
+        "status": "ok",
+        "sha256": "7ba5a123e54065aa1748985f256bcd0bde2961b60a04e8136479c3b40157c07f",
+        "verified_original_bytes": 2654867
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:29.129360Z",
+        "received_at": "2026-11-26T16:05:29.423286Z",
+        "status": "ok",
+        "sha256": "48473e48dc9d553a5c412921db2086d33279e7efcb1e1a247e97855cc175ea66",
+        "verified_original_bytes": 2947018
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:29.534246Z",
+        "received_at": "2026-11-26T16:05:29.742468Z",
+        "status": "ok",
+        "sha256": "33a1d808432467748ab2e44112630d850337ed2121a830d249dec1ce95b51709",
+        "verified_original_bytes": 1308782
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:29.842705Z",
+        "received_at": "2026-11-26T16:05:30.054312Z",
+        "status": "ok",
+        "sha256": "ab19299a4bfb2d5b26f184b042b451fc6a3116b3739b14d3b03767da82e3615f",
+        "verified_original_bytes": 2711455
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:30.198041Z",
+        "received_at": "2026-11-26T16:05:30.466117Z",
+        "status": "ok",
+        "sha256": "89e9e405bd18b657dfef5da8a5a8c6702557ea98751463dfc6b118fdb7aa447d",
+        "verified_original_bytes": 2789907
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:30.550629Z",
+        "received_at": "2026-11-26T16:05:30.751005Z",
+        "status": "ok",
+        "sha256": "8a2e010eb445746d372589b381e57bb8b5dd37bf74da74da79bab09307743b8c",
+        "verified_original_bytes": 907123
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:30.788581Z",
+        "received_at": "2026-11-26T16:05:31.059848Z",
+        "status": "ok",
+        "sha256": "b8a8396460c1443e963528b320f4b4aeef4a031681ce07530a4fb7400060459a",
+        "verified_original_bytes": 2933044
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:31.134638Z",
+        "received_at": "2026-11-26T16:05:31.349928Z",
+        "status": "ok",
+        "sha256": "e48280851cb153039265d72a6cc3361b540e60d42af1e53599b4024e8b9d290b",
+        "verified_original_bytes": 3009379
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:31.432761Z",
+        "received_at": "2026-11-26T16:05:31.621841Z",
+        "status": "ok",
+        "sha256": "9610f61237857084bf1a78399601d2cbd2bb309fd38e374eb33d10ec74a4aa75",
+        "verified_original_bytes": 1463109
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:31.675424Z",
+        "received_at": "2026-11-26T16:05:31.955768Z",
+        "status": "ok",
+        "sha256": "e34aa49af6a3976028c04f31f01977c0091f23bd75289aca66e093410fb2822d",
+        "verified_original_bytes": 2868390
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:32.047657Z",
+        "received_at": "2026-11-26T16:05:32.306692Z",
+        "status": "ok",
+        "sha256": "7e9ff38cf746eb95734ae95a1e548ab0b96eb666e017b4c7443ac35f7b7d8a10",
+        "verified_original_bytes": 2777825
+      },
+      {
+        "operation": "league_catalog",
+        "requested_at": "2026-11-26T16:05:32.410675Z",
+        "received_at": "2026-11-26T16:05:32.584705Z",
+        "status": "ok",
+        "sha256": "d039420a8363987cb36698ee0971576a46af2152c5868fe3deab4be88b047b00",
+        "verified_original_bytes": 461472
+      },
+      {
+        "operation": "league_event",
+        "requested_at": "2026-11-26T16:05:32.603135Z",
+        "received_at": "2026-11-26T16:05:32.659821Z",
+        "status": "ok",
+        "sha256": "a575e63ccd1f2b058b6e6bcfcea2e060320deb54752c90cd4469f0814bce3f2f",
+        "verified_original_bytes": 23125
+      },
+      {
+        "operation": "league_event",
+        "requested_at": "2026-11-26T16:05:32.671927Z",
+        "received_at": "2026-11-26T16:05:32.769213Z",
+        "status": "ok",
+        "sha256": "77945b046fba1cfc5a2aef5bdf61f9f6db1291e311ecdf8f65f4c7b67acaa92e",
+        "verified_original_bytes": 326651
+      },
+      {
+        "operation": "books",
+        "requested_at": "2026-11-26T16:05:32.803503Z",
+        "received_at": "2026-11-26T16:05:36.829960Z",
+        "status": "ok",
+        "sha256": "e7f5d267f753ff47298fda93384dc81e60efc4bc1db89be75bf66273f44cec41",
+        "verified_original_bytes": 23400
+      },
+      {
+        "operation": "league_event",
+        "requested_at": "2026-11-26T16:05:36.865317Z",
+        "received_at": "2026-11-26T16:05:36.920165Z",
+        "status": "ok",
+        "sha256": "1238fff398197551d0c2cba7554d0d02f645291b1f16ea40696a5e659983406f",
+        "verified_original_bytes": 23052
+      },
+      {
+        "operation": "league_event",
+        "requested_at": "2026-11-26T16:05:36.936185Z",
+        "received_at": "2026-11-26T16:05:37.153358Z",
+        "status": "ok",
+        "sha256": "2cb60f5f0b57c113ffdf14df66e31fd2d6e432654818de669d46a07244071d61",
+        "verified_original_bytes": 306503
+      },
+      {
+        "operation": "books",
+        "requested_at": "2026-11-26T16:05:37.181327Z",
+        "received_at": "2026-11-26T16:05:37.325794Z",
+        "status": "ok",
+        "sha256": "73849d0212096187f05bdbd0863ac06cc48aee038cfb179fa4f7940d29439727",
+        "verified_original_bytes": 15076
+      },
+      {
+        "operation": "league_event",
+        "requested_at": "2026-11-26T16:05:37.351906Z",
+        "received_at": "2026-11-26T16:05:37.407481Z",
+        "status": "ok",
+        "sha256": "e587c9f41d8e19c3ef8cfe617ae08646fe32b66f4ab39675612b0f687df83503",
+        "verified_original_bytes": 22356
+      },
+      {
+        "operation": "league_event",
+        "requested_at": "2026-11-26T16:05:37.429912Z",
+        "received_at": "2026-11-26T16:05:37.580575Z",
+        "status": "ok",
+        "sha256": "5d2ef167de60e801f59475b6ad6f37cf310421ebfdbee9950082529764f7795a",
+        "verified_original_bytes": 320800
+      },
+      {
+        "operation": "books",
+        "requested_at": "2026-11-26T16:05:37.617361Z",
+        "received_at": "2026-11-26T16:05:37.764367Z",
+        "status": "ok",
+        "sha256": "9c3cc70c1c8dad15a79c6fd1d95867ac65b2f609609d4f369688163f3bf7b6c2",
+        "verified_original_bytes": 21140
+      },
+      {
+        "operation": "league_event",
+        "requested_at": "2026-11-26T16:05:37.792064Z",
+        "received_at": "2026-11-26T16:05:37.870189Z",
+        "status": "ok",
+        "sha256": "b605085dcc8a69ce0f6a40ec9032068d036de4c5c012266aa34936882d1169fb",
+        "verified_original_bytes": 22728
+      },
+      {
+        "operation": "league_event",
+        "requested_at": "2026-11-26T16:05:37.886054Z",
+        "received_at": "2026-11-26T16:05:38.097356Z",
+        "status": "ok",
+        "sha256": "b2767104db0833afa1875e050077a2bc9ef5cddbd9b61640bf653b542dad8680",
+        "verified_original_bytes": 322036
+      },
+      {
+        "operation": "books",
+        "requested_at": "2026-11-26T16:05:38.141657Z",
+        "received_at": "2026-11-26T16:05:38.284994Z",
+        "status": "ok",
+        "sha256": "3919ad00b754c5514c9f77f126467434108a139fd670b84c972b1c42020bbf84",
+        "verified_original_bytes": 21677
+      }
+    ]
+  },
+  "live_process": {
+    "description": "Installed continuous process on the isolated validation host with public Gamma, real wall clock, no user production data.",
+    "before": {
+      "exit": 1,
+      "state": "missing"
+    },
+    "while_running": {
+      "healthy": true,
+      "scheduler_alive": true,
+      "state": "running",
+      "catalog_state": "fresh",
+      "catalog_by_league": {
+        "bun": {
+          "last_success_at": "2026-11-26T16:05:48.377949Z",
+          "age_seconds": 0.950457,
+          "state": "fresh"
+        },
+        "fl1": {
+          "last_success_at": "2026-11-26T16:05:48.983244Z",
+          "age_seconds": 0.345162,
+          "state": "fresh"
+        },
+        "lal": {
+          "last_success_at": "2026-11-26T16:05:48.054560Z",
+          "age_seconds": 1.273846,
+          "state": "fresh"
+        },
+        "sea": {
+          "last_success_at": "2026-11-26T16:05:48.693176Z",
+          "age_seconds": 0.63523,
+          "state": "fresh"
+        }
+      },
+      "last_heartbeat": "2026-11-26T16:05:49.004730Z"
+    },
+    "SIGTERM_process_exit": 130,
+    "after_stop": {
+      "exit": 1,
+      "healthy": false,
+      "state": "stopped"
+    }
+  },
+  "existing_a2_sandbox": {
+    "prior_seal": "e50249a50d07cb740de3af791b3f645ba3645ad5d3ebab1cd280121e93cd2b4b",
+    "same_seal_json": true,
+    "release": {
+      "state": "ready",
+      "ready": true,
+      "active_recipe_sha256": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+      "installed_recipe_sha256": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261"
+    }
+  },
+  "github_source_install": {
+    "source": "https://github.com/wmqfl861/polymarket861.git",
+    "ref": "release/0.5.0a3",
+    "commit": "5b69aa1922c241d6aad98d59d9bc2d994d525cd8",
+    "tree": "4298e1e24836bc85b5b8bcbcf72ddc45d8c9cdbe",
+    "version": "0.5.0a3",
+    "fresh_preflight": "not_registered",
+    "created_data_directory": false
+  }
+}

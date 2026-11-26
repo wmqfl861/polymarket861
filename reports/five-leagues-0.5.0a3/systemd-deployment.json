@@ -1,0 +1,22 @@
+{
+  "candidate_commit": "5b69aa1922c241d6aad98d59d9bc2d994d525cd8",
+  "tree": "4298e1e24836bc85b5b8bcbcf72ddc45d8c9cdbe",
+  "workflow_run": 45856035161,
+  "job": 140034541405,
+  "job_name": "systemd-deploy",
+  "conclusion": "success",
+  "url": "https://github.com/wmqfl861/polymarket861/actions/runs/45856035161/job/140034541405",
+  "scope": "A real Ubuntu systemd user manager, installed release wheel and delivered units. External Gamma HTTP responses are controlled fixtures; the deployed program, supervisor, timer, signals, SQLite and journal are real. WatchdogSec was 35 seconds in CI and is 3 minutes in the shipped unit.",
+  "asserted": [
+    "Offline Gamma: scheduler READY, independent timer detects missing catalogs and exits nonzero",
+    "After SIGKILL: automatic restart, fresh receipts for all four leagues, watchdog CLI exit 0",
+    "After SIGSTOP: watchdog timeout, second automatic restart, CLI healthy",
+    "Manual stop: service result success and watchdog CLI exit 1 with state stopped"
+  ],
+  "log_excerpt": [
+    "2026-11-26T16:10:19.7886542Z Verified offline READY with failed timer check, four fresh league receipts, crash restart, watchdog restart, and clean stop.",
+    "2026-11-26T16:10:19.7963003Z Nov 26 16:10:11 runnervm3lb7s systemd[1179]: polymarket861-five-watch.service: Watchdog timeout (limit 35s)!",
+    "2026-11-26T16:10:19.7967446Z Nov 26 16:10:11 runnervm3lb7s systemd[1179]: polymarket861-five-watch.service: Failed with result 'watchdog'.",
+    "2026-11-26T16:10:19.7969819Z Nov 26 16:10:16 runnervm3lb7s systemd[1179]: polymarket861-five-watch.service: Scheduled restart job, restart counter is at 2."
+  ]
+}

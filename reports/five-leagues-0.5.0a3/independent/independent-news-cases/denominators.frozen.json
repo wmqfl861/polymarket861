@@ -1,0 +1,53 @@
+{
+  "controlled_pregame": {
+    "news_pairs": 1,
+    "book_pairs": {
+      "market_close": {
+        "home_win": 0,
+        "full_over_2_5": 0
+      },
+      "scheduled_market_close": {
+        "home_win": 0,
+        "full_over_2_5": 0
+      },
+      "dual_schedule_close": {
+        "home_win": 0,
+        "full_over_2_5": 0
+      }
+    },
+    "score_guardrail_pairs": 0
+  },
+  "match_snapshots_facts_by_event": {
+    "injury": 78,
+    "transfer": 17,
+    "suspension": 5
+  },
+  "separate_a2_early_seals": {
+    "counts": [
+      4,
+      10,
+      14,
+      8,
+      6,
+      4,
+      8,
+      15,
+      10,
+      11
+    ],
+    "fixtures": 10,
+    "weighted": 90
+  },
+  "global_aggregate_only": {
+    "rows": 92,
+    "category_counts": {
+      "injury": 84,
+      "suspension": 6,
+      "illness": 1,
+      "ineligible": 1
+    },
+    "suspensions_with_scope": 0,
+    "injuries_with_onset": 0,
+    "full_response_archived": false
+  }
+}

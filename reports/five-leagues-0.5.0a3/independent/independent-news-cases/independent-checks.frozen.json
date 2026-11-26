@@ -1,0 +1,129 @@
+{
+  "new_path": [
+    false,
+    "insufficient_local_evidence",
+    null
+  ],
+  "a2_read_only": {
+    "published_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+    "power_cells": 108,
+    "same_entire_certificate": true,
+    "same_plan": true,
+    "all_existing_application_files_and_main_db_hashes_identical": true,
+    "file_count": 21,
+    "fixed_windows": 0,
+    "bound": 0
+  },
+  "no_retroactive_binding": [
+    {
+      "state": "not_registered",
+      "total": 1,
+      "evidence": [
+        [
+          "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6",
+          "unknown",
+          []
+        ]
+      ],
+      "future_eligible_windows": null
+    },
+    {
+      "state": "registered",
+      "total": 1,
+      "evidence": [
+        [
+          "e22f8c500608f254558ae6237ae85c4a8737a1f5e5a7c9f2b6fbced02d15dfe6",
+          "unknown",
+          []
+        ]
+      ],
+      "future_eligible_windows": null
+    }
+  ],
+  "original_file": {
+    "native_good": "bound_news_originals_verified",
+    "physical_bytes_absent": [
+      "expected_ineligible",
+      [
+        "missing_or_invalid_v2_original"
+      ]
+    ],
+    "sha_mismatch": [
+      "expected_ineligible",
+      [
+        "missing_or_invalid_v2_original"
+      ]
+    ],
+    "restored_original": "bound_news_originals_verified",
+    "data_and_content_hashes_equal_across_preflight": true
+  },
+  "foreign_original": [
+    "expected_ineligible",
+    [
+      "missing_or_invalid_v2_original"
+    ]
+  ],
+  "future_retention": [
+    "expected_ineligible",
+    [
+      "missing_or_invalid_v2_original"
+    ]
+  ],
+  "before_seal_time": {
+    "state": "registered",
+    "total": 0,
+    "evidence": [],
+    "future_eligible_windows": null
+  },
+  "scope": {
+    "present": [
+      [
+        "epl/2027-28/in-2/home",
+        "unknown"
+      ],
+      [
+        "epl/2026-27/in-1/home",
+        "unknown"
+      ]
+    ],
+    "count_at_limit_one": 2,
+    "checked_at_limit_one": 1,
+    "no_future_eligible_count": null
+  },
+  "source_denominators": {
+    "fixtures": 10,
+    "players": 97,
+    "facts_by_source": {
+      "touchline-availability": 83,
+      "touchline-rumours": 17
+    },
+    "polls_by_source_and_distinct_clubs": {
+      "touchline-availability": [
+        20,
+        20
+      ],
+      "touchline-rumours": [
+        20,
+        20
+      ],
+      "wikipedia-season-news": [
+        20,
+        20
+      ]
+    },
+    "reopened_wiki_responses": [
+      20,
+      2
+    ],
+    "wiki_original_sha_matches": 20,
+    "second_match_roster_and_source_verified": [
+      "Nottingham Forest FC",
+      "Chelsea FC"
+    ],
+    "second_match_reopen_errors": {
+      "missing private retained response": 10
+    },
+    "full_snapshot": false,
+    "real_bound": 0
+  }
+}

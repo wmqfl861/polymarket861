@@ -1,0 +1,16 @@
+{
+  "frozen_plan_and_108_cells": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+  "a2_certificate_sha": "f2cb36b2342235b7e4323b6671fccf0bc5e9a14de21b79d4a7ac0fe9eaf02f85",
+  "repeated_enrollment_returns_same_certificate": true,
+  "main_db_equal_after_operations": true,
+  "punctuation_only": "5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7",
+  "installed_drift": {
+    "report": "Installed v2 plan drift: stored=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61 current=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7; published=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61. Restore the published v2 implementation.",
+    "register": "Installed v2 plan drift: stored=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61 current=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7; published=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61. Restore the published v2 implementation.",
+    "preflight": "Installed v2 plan drift: stored=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61 current=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7; published=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61. Restore the published v2 implementation.",
+    "plan": "Installed v2 plan drift: stored=not_checked current=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7; published=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61. Restore the published v2 implementation."
+  },
+  "unsupported_prior_design": "Unsupported stored v2 plan: stored=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7 current=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61; published=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+  "corrupt_plan_with_consistent_envelope": "Corrupt stored v2 plan: stored=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61 recomputed=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7",
+  "corrupt_certificate": "Corrupt v2 registration: stored=ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff recomputed=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+}

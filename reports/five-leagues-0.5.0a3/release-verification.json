@@ -1,0 +1,152 @@
+{
+  "package_version": "0.5.0a3",
+  "reviewed_tree": "4298e1e24836bc85b5b8bcbcf72ddc45d8c9cdbe",
+  "subtrees": {
+    "src": "403a375b25e3da09ef2168584bb677aac5ce8696",
+    "tests": "2bbe651a8d6e5fc238c1b707c2e2c6d98d091019",
+    "scripts": "3d2c25446c05084701ab8ed6155eecf3444f11de",
+    ".github": "c7d81fcaeb0715e426ea10a1ae8267506d3856d9",
+    "deploy": "2157559a8bebdf420e6cd92f63b7d55cad185611"
+  },
+  "local_generated_at_utc": "2026-11-26T16:10:53.653218+00:00",
+  "local_interpreters": {
+    "3.11.18": {
+      "collected": 683,
+      "passed": 682,
+      "skipped": 1,
+      "seconds": 212.638,
+      "skipped_cases": [
+        "test_notify_reports_readiness_only_after_first_tick (test_market_watch_health.WatchHealthTests.test_notify_reports_readiness_only_after_first_tick) ... skipped 'host prohibits Unix datagram sockets'"
+      ]
+    },
+    "3.12.14": {
+      "collected": 683,
+      "passed": 682,
+      "skipped": 1,
+      "seconds": 201.134,
+      "skipped_cases": [
+        "test_notify_reports_readiness_only_after_first_tick (test_market_watch_health.WatchHealthTests.test_notify_reports_readiness_only_after_first_tick) ... skipped 'host prohibits Unix datagram sockets'"
+      ]
+    },
+    "3.13.5": {
+      "collected": 683,
+      "passed": 682,
+      "skipped": 1,
+      "seconds": 208.794,
+      "skipped_cases": [
+        "test_notify_reports_readiness_only_after_first_tick (test_market_watch_health.WatchHealthTests.test_notify_reports_readiness_only_after_first_tick) ... skipped 'host prohibits Unix datagram sockets'"
+      ]
+    }
+  },
+  "local_isolation": "Linux container does not allow AF_UNIX datagrams. Chromium end-to-end tests ran with a real browser.",
+  "local_checks": {
+    "ruff": true,
+    "mypy_strict_modules": [
+      "blob_storage",
+      "score_bounds",
+      "experiment_statistics"
+    ],
+    "league_boundary_check": true,
+    "declared_recipe_exclusion_keys": 30,
+    "reference_audit": {
+      "scope": "primary football probability and input admission; B3 news is signed separately",
+      "reviewed_edges_by_family": {
+        "B0": 60,
+        "B1": 60,
+        "B2": 59,
+        "B3": 60
+      },
+      "unreviewed": [],
+      "obsolete": []
+    },
+    "negative_reference_mutations": [
+      {
+        "exit": 0,
+        "unreviewed": [],
+        "obsolete": []
+      },
+      {
+        "exit": 1,
+        "unreviewed": [
+          "football._club_key -> league_registry.leagues"
+        ],
+        "obsolete": []
+      },
+      {
+        "exit": 1,
+        "unreviewed": [
+          "football._club_key -> league_registry.<dynamic>"
+        ],
+        "obsolete": []
+      },
+      {
+        "exit": 1,
+        "unreviewed": [],
+        "obsolete": [
+          "football._club_key -> league_registry.club_key"
+        ]
+      },
+      {
+        "exit": 0,
+        "unreviewed": [],
+        "obsolete": []
+      }
+    ],
+    "systemd_static_verified_unit_files": 6,
+    "installed_wheel_files_equal_source": 110
+  },
+  "recipes_equal_between_supported_interpreters": {
+    "reference_python": "3.12",
+    "interpreters": [
+      "3.11.18",
+      "3.12.14",
+      "3.13.5"
+    ],
+    "numeric_runtime": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0"
+    },
+    "package_files_sha256": "9e77c6604c3adc40f28988aa26d8d047d460363d5454cb2755c3ef3799652487",
+    "recipes": {
+      "B0": {
+        "primary": "a1dd7c691142f2b1b7e99daae1ed23cc0f4351be964f4465b7f6e9373c750180",
+        "paired": "c1cfbda9e9aa0095b5207f4faf1e0523a8124cd1795cd361f33e93eac5fdb159",
+        "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+        "frozen_feature_source": "fbd0e9880f9e981ef46d10460d242fbdd09715d93dc9b6d66b32a566604422f7"
+      },
+      "B1": {
+        "primary": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+        "paired": "0114ab7a46b2f9be30dff30f2ac5f5b0c866f5db211b3298c9a15aae620661b3",
+        "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+        "frozen_feature_source": "fbd0e9880f9e981ef46d10460d242fbdd09715d93dc9b6d66b32a566604422f7"
+      },
+      "B2": {
+        "primary": "0f46616211fb3d69823083e9366253b64fb0b0f3d16a5eebb890e74dca5bb10a",
+        "paired": "5eb8c8425c0726ab44dae4acbd92af856c7f4507f0e7257f1f08fcecbb368aca",
+        "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+        "frozen_feature_source": "fbd0e9880f9e981ef46d10460d242fbdd09715d93dc9b6d66b32a566604422f7"
+      },
+      "B3": {
+        "primary": "95cb1b65e0b6f8b011390d4fe63a347746dca9418278d3a0e2633dcbee4927a8",
+        "paired": "95cb1b65e0b6f8b011390d4fe63a347746dca9418278d3a0e2633dcbee4927a8",
+        "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+        "frozen_feature_source": "fbd0e9880f9e981ef46d10460d242fbdd09715d93dc9b6d66b32a566604422f7"
+      }
+    },
+    "parts_that_differ_between_interpreters": []
+  },
+  "primary_and_paired_recipes_equal_to_a2": true,
+  "history": {
+    "fixed_archive_files": 40,
+    "scored": 8877,
+    "holdout": 1751,
+    "study_sha256": "b7c5f56daf1fc0c2d3b6e8a5290731818e47458230726441f94d0ec3fcdc15ce",
+    "equal_to_previous_published_report_bytes": true
+  },
+  "installed_process_report_sha256": "5135d5a7339c8d26bce49c5824f37aa1156db9f2a85268ae76060c4767fada5b",
+  "independent_review_report_sha256": {
+    "independent-evidence.md": "fe977e5875d0dcc565350aa3632a7daecfa3f4b2f961e7d224f8011ccf3cba57",
+    "independent-news.md": "29ad6aa94060a55296374931778658477f0775a69610096f8ffe3ddb11f330e5",
+    "independent-overall.md": "c29c6a68489f96c5a2b218e19ca76a963d3445dd181d6e80355e7c889060c128"
+  }
+}
