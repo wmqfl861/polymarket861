@@ -1,0 +1,22 @@
+[Unit]
+Description=Five-league research market collector
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+Environment=PM861_DATA_DIR=%h/.local/share/polymarket861-five/state
+EnvironmentFile=%h/.config/polymarket861-five/window.env
+ExecStart=%h/.local/share/polymarket861-five/venv/bin/pm861 market league-watch --start ${PM861_KICKOFF_START} --end ${PM861_KICKOFF_END} --cycles 0
+Restart=on-failure
+RestartSec=5s
+WatchdogSec=3min
+TimeoutStartSec=5min
+TimeoutStopSec=90s
+KillSignal=SIGINT
+NoNewPrivileges=yes
+UMask=0077
+
+[Install]
+WantedBy=default.target

@@ -175,7 +175,7 @@
     "\"discover\", help=\"record a main EPL fixture and its more-markets event\"",
     "\"supply a main EPL fixture slug such as epl-not-che-2026-11-27\"",
     "accepted = (operation in (\"event\", \"catalog\") and contract[\"fixture\"].startswith(\"epl-\"))",
-    "for contract in provider.normalized_markets(event, sport=sport or \"epl\"):",
+    "for contract in provider.normalized_markets(event, sport=sport or \"epl\", project_teams=sport is not None):",
     "league = next((x for x in sports if x.get(\"sport\") == \"epl\"), {})",
     "match = provider.SPORT_FIXTURES[sport or \"epl\"].fullmatch(str(event.get(\"slug\", \"\")))",
     "raise ValueError(\"EPL league tag not found\")",
@@ -190,7 +190,7 @@
     "# Existing public interfaces deliberately keep an EPL-only default.",
     "FIXTURE = SPORT_FIXTURES[\"epl\"]",
     "def family(event: dict, market: dict, *, sport: str = \"epl\") -> tuple[str | None, str | None, str | None]:",
-    "def normalized_markets(event: dict, *, sport: str = \"epl\") -> list[dict]:",
+    "def normalized_markets(event: dict, *, sport: str = \"epl\", project_teams=False) -> list[dict]:",
     "if sport == \"epl\" and typ is None and not identity[5]:",
     "return None, None, \"not_an_epl_fixture\" if sport == \"epl\" else \"wrong_sport_fixture\""
   ],
@@ -243,14 +243,25 @@
     "BODY_SOURCE = \"epl-endpoint-news-response\"",
     "or not evidence[\"fixture_id\"].startswith(f\"epl/{season}/\")"
   ],
+  "news_endpoint_power.py": [
+    "\"\"\"Frozen design sensitivity shipped with the prospective EPL endpoint declaration.\"\"\""
+  ],
+  "news_endpoint_reference.py": [
+    "\"\"\"Dual-schedule price references for the prospective EPL endpoints protocol v2.\"\"\""
+  ],
   "news_endpoint_study.py": [
     "\"\"\"Prospective EPL news price-gap study; opt-in registration never retrofits existing seals.\"\"\"",
     "\"population\": \"EPL primary seals using the named native declaration and timely study-qualified news for both clubs. Include zero news changes. Only the first bound probability era is eligible, selected by capture order without reference to news movement, outcomes, coverage or available books. Capture starts at the real local clock immediately following enrollment.\",",
     "\"version\": \"epl-news-home-and-full-over-v1\", \"eligible_seasons\": SEASONS, \"ends_at_exclusive\": END,",
     "AND NEW.fixture_id GLOB ('epl/' || json_extract(NEW.data_json,'$.season') || '/*')",
+    "V2_VERSION = \"epl-news-home-and-full-over-v2\"",
     "if f[\"fixture_id\"].startswith(f\"epl/{season}/\")]",
     "raise ValueError(\"EPL endpoint study capture trigger missing or changed\")",
     "raise ValueError(\"Invalid stored EPL endpoint study declaration\")"
+  ],
+  "news_endpoint_v2.py": [
+    "\"population\": \"Prospectively bound native EPL main seals with contemporaneous registered news originals for both clubs. At each fixture, official kickoff and horizon choose the first bound seal across modes in local insertion order, before checking its facts, outcomes or books. No replacement or retrospective binding.\",",
+    "if f[\"fixture_id\"].startswith(f\"epl/{season}/\")"
   ],
   "news_evaluation.py": [
     "361  # Same 95% coverage floor as the 38-round probability research protocol.",
@@ -267,6 +278,9 @@
     "\"SELECT max(rowid) FROM epl_wiki_receipts WHERE year=? AND received<=?\", (year, at)).fetchone()[0]",
     "PROTOCOL = \"epl-news-event-v1\"",
     "if \"epl_wiki_receipts\" in tables:"
+  ],
+  "news_field_coverage.py": [
+    "field_capable = fact.get(\"model_version\") == \"touchline-availability-fields-v2\""
   ],
   "news_importance.py": [
     "\"\"\"Bound the club's EPL usage, including transparent losses from departed players.\"\"\"",

@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+import hashlib
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from . import football, league_registry
+from . import football, league_registry, model_study, store
 from .experiment_statistics import clustered_t
 from .football_model import DECAY_PER_DAY, ITEM_KEYS, MIN_MATCHES, RIDGE
 
@@ -19,6 +20,40 @@ HOLDOUT = "2025-26"
 SOURCE_SEASONS = ("2018-19", "2019-20", "2020-21", *DEVELOPMENT, HOLDOUT)
 ENDPOINTS = ("composite", *ITEM_KEYS)
 FAMILY_SIZE = len(ENDPOINTS) * 2
+REPLAY_FILES = (
+    "league_study.py", "league_registry.py", "football.py", "football_model.py",
+    "historical_inputs.py", "score_bounds.py", "experiment_statistics.py",
+    "assets/league-memberships-v1.json.gz",
+)
+
+
+def research_recipe(manifest):
+    """Identify the installed five-league replay and the club keys it actually uses."""
+    club_keys = {
+        code: {
+            season: {
+                raw: league_registry.club_key(code, season, raw)
+                for raw in league_registry.members(code, season)
+            }
+            for season in seasons
+        }
+        for code, seasons in manifest.items()
+    }
+    recipe = {
+        "format": "five-league-historical-replay-v1",
+        "package_files_sha256": {
+            name: hashlib.sha256((model_study.PACKAGE_ROOT / name).read_bytes()).hexdigest()
+            for name in REPLAY_FILES
+        },
+        "registry_version": league_registry.REGISTRY_VERSION,
+        "effective_club_keys_sha256": {
+            code: store.digest(seasons) for code, seasons in club_keys.items()
+        },
+        "openfootball_commit": football.SOURCE_COMMIT,
+        "verified_source_blobs_sha256": store.digest(manifest),
+        "numeric_runtime": model_study.numeric_runtime(),
+    }
+    return {"sha256": store.digest(recipe), "manifest": recipe}
 
 
 @dataclass(frozen=True)
@@ -203,6 +238,7 @@ def baseline_study(root: Path, *, workers: int = 1):
     }
     return {
         "protocol": "five-league-initial-b1-2026-11-26-v1",
+        "research_recipe": research_recipe(manifest),
         "scope": "retrospective, research-only; unverified local receipts; no news, executions or ROI",
         "inputs": {
             "openfootball_commit": football.SOURCE_COMMIT,

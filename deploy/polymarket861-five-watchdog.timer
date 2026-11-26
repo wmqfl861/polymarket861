@@ -1,0 +1,11 @@
+[Unit]
+Description=Report a missing or stalled research market collector
+
+[Timer]
+OnStartupSec=3min
+OnUnitActiveSec=1min
+AccuracySec=2s
+Unit=polymarket861-five-watchdog.service
+
+[Install]
+WantedBy=timers.target

@@ -556,6 +556,64 @@
     marketClosePanel(p.scheduled_market_close, detail, true);
   }
 
+  function availabilityFields(p, detail) {
+    if (!p) return;
+    const box = panel("停赛赛事范围与受伤日期");
+    const bans = object(p.suspensions), injuries = object(p.injuries);
+    const sample = (n) => n === null || n === undefined ? "未观察" : format(n);
+    const all = p.all_source_suspensions;
+    if (all) {
+      box.append(create("h4", "", "全部新闻来源的停赛"));
+      metrics(box, [
+        ["范围未核实而剔除 / 有处置记录的球员", sample(all.scope_excluded_players) + " / " + sample(all.evaluated_players)],
+        ["有核对依据的比赛 / 应有比赛", format(all.fixtures_with_evidence) + " / " + format(all.expected_fixtures)],
+        ["同人另有停赛主张获采用", sample(all.also_applied_from_another_claim)],
+        ["旧封存无法核对范围规则的场数", format(all.scope_format_unverified_fixtures)],
+      ]);
+      const sources = Object.entries(object(all.by_source));
+      if (sources.length) {
+        const more = create("details", "");
+        more.append(create("summary", "", "逐来源核对停赛处置"));
+        table(more, ["来源", "有核对依据的比赛", "有处置记录的球员", "因范围未核实剔除"],
+          sources.map(([id, r]) => [id, r.fixtures_with_evidence, sample(r.evaluated_players), sample(r.scope_excluded_players)]));
+        const players = array(all.excluded_players);
+        if (players.length) table(more, ["球队", "球员", "来源", "主张可用时间", "预测截止"],
+          players.flatMap(r => array(r.claims).map(c => [r.team, r.player || r.player_id, c.source, time(c.known_at), time(r.input_cutoff)])));
+        more.append(create("p", "note", "总计按同场、同队、同一球员去重。同一球员可能出现在多个来源。"));
+        box.append(more);
+      }
+    }
+    box.append(create("h4", "", "Touchline Wire 伤停字段"));
+    if (p.status === "legacy_fields_unverified") box.append(create("p", "note", "该批旧封存未留存这些审核字段。"));
+    metrics(box, [
+      ["球队采集完整 / 应采队次", format(p.observed_team_fixtures) + " / " + format(p.expected_team_fixtures)],
+      ["部分采集 / 未观察队次", format(p.partial_team_fixtures) + " / " + format(p.unobserved_team_fixtures)],
+      ["本联赛范围未核实而剔除 / 已观察停赛", sample(bans.scope_excluded) + " / " + sample(bans.observed)],
+      ["来源给出受伤时间或日期 / 可核对字段的伤病", sample(injuries.with_native_onset) + " / " + sample(injuries.field_verifiable)],
+    ]);
+    facts(box, [
+      ["因缺赛事名 / 填了其他或无法识别的赛事而剔除", sample(bans.scope_excluded_without_named_competition) + " / " + sample(bans.scope_excluded_with_other_or_unrecognized_competition)],
+      ["因范围未核实而剔除且旧记录缺审核字段", sample(bans.scope_excluded_field_support_unverified)],
+      ["实际计入预测的停赛", sample(bans.applied)],
+      ["受伤时间戳 / 仅日期", sample(injuries.with_injury_started_at) + " / " + sample(injuries.with_injury_date_only)],
+      ["缺少受伤日期 / 旧记录无法核对", sample(injuries.no_native_onset) + " / " + sample(injuries.field_support_unverified)],
+    ]);
+    box.append(create("p", "note", "Touchline Wire 赛前封存。按比赛、球队、球员和事件去重。数字仅涵盖已识别球员。部分采集和缺报的球队仍可能有其他伤停。"));
+    const rows = array(p.players);
+    if (rows.length) {
+      const more = create("details", "");
+      more.append(create("summary", "", "逐名核对封存的伤停和采集时间"));
+      const fields = {suspension_competition: "停赛赛事", injury_started_at: "受伤时间", injury_date: "受伤日期"};
+      table(more, ["球队", "球员", "事件", "来源给出的字段", "预测处理", "最后观测", "预测截止"], rows.map(r =>
+        [r.team, r.player || r.player_id, r.event === "injury" ? "伤病" : "停赛",
+          r.field ? fields[r.field] + " " + r.value : r.field_status === "missing" ? "缺少字段" : "旧记录无法核对",
+          r.decision === "applied" ? "已计入" : r.decision === "suspension_competition_unverified" ? "范围未核实，已剔除" : "未单独计入",
+          time(r.observed_at), time(r.input_cutoff)]));
+      box.append(more);
+    }
+    detail.append(box);
+  }
+
   function newsStudy(p, detail) {
     const box = panel("新闻对比赛预测有帮助吗？");
     metrics(box, [
@@ -594,6 +652,7 @@
 
     if (p.verdict) box.append(create("p", "note", newsLabel(p.verdict)));
     detail.append(box);
+    availabilityFields(p.availability_fields, detail);
     marketClosePanel(p.market_close, detail);
     marketClosePanel(p.scheduled_market_close, detail, true);
   }
@@ -920,6 +979,7 @@
     ]);
     const scored = Object.entries(item);
     if (p.news_study) newsStudy(p.news_study, detail);
+    else availabilityFields(p.news_availability_fields, detail);
     if (scored.length)
       table(
         box,

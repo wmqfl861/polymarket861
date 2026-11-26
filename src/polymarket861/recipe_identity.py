@@ -40,11 +40,10 @@ def module_digest(path, physical):
     return store.digest(_tree(_module(path, physical)))
 
 
-@lru_cache(maxsize=512)
-def symbols_digest(path, physical, roots, ignored=()):
-    """Include decorators, defaults, globals and transitively used local definitions."""
+def bindings(module):
+    """Module bindings used by both recipe construction and its dependency check."""
     definitions = {}
-    for node in _module(path, physical).body:
+    for node in module.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             definitions[node.name] = node
         elif isinstance(node, (ast.Assign, ast.AnnAssign)):
@@ -62,6 +61,11 @@ def symbols_digest(path, physical, roots, ignored=()):
             for name in node.names:
                 binding = name.asname or name.name.split(".")[0]
                 definitions[binding] = [prefix, name.name]
+    return definitions
+
+
+def selected_bindings(definitions, roots, ignored=()):
+    """Reachable local definitions, defaults, annotations, decorators and imports."""
     selected = {}
     pending = set(roots)
     while pending:
@@ -69,18 +73,26 @@ def symbols_digest(path, physical, roots, ignored=()):
         if name in selected:
             continue
         node = definitions.get(name)
-        if not isinstance(node, ast.AST):
-            selected[name] = node
-            continue
-        selected[name] = _tree(node)
-        pending.update(
-            ref.id
-            for ref in ast.walk(node)
-            if isinstance(ref, ast.Name)
-            and ref.id in definitions
-            and ref.id not in ignored
-        )
-    return store.digest(selected)
+        selected[name] = node
+        if isinstance(node, ast.AST):
+            pending.update(
+                ref.id
+                for ref in ast.walk(node)
+                if isinstance(ref, ast.Name)
+                and ref.id in definitions
+                and ref.id not in ignored
+            )
+    return selected
+
+
+@lru_cache(maxsize=512)
+def symbols_digest(path, physical, roots, ignored=()):
+    """Include decorators, defaults, globals and transitively used local definitions."""
+    selected = selected_bindings(bindings(_module(path, physical)), roots, ignored)
+    return store.digest({
+        name: _tree(node) if isinstance(node, ast.AST) else node
+        for name, node in selected.items()
+    })
 
 
 # Entry points that compute probabilities, admit/cut off inputs or freeze
@@ -88,7 +100,7 @@ def symbols_digest(path, physical, roots, ignored=()):
 # retain their complete physical identity in release provenance.
 _PRIMARY = {
     "football_model.py": ("fit_team_model", "_goals_matrix", "probabilities"),
-    "football.py": ("FootballEngine", "load_fixtures", "history_kickoff"),
+    "football.py": ("FootballEngine", "load_fixtures", "history_kickoff", "SOURCE_COMMIT", "apply_context"),
     "score_bounds.py": ("valid_score", "INVALID_SCORE"),
     "pipeline.py": ("make_forecast",),
     # The DB and archive are bridges between processes: both the upstream
@@ -102,12 +114,14 @@ _PRIMARY = {
         "frozen_manifest",
         "live_frame",
         "make_proof",
+        "check_replay_cache",
     ),
     "evidence.py": (
         "as_of_context",
         "import_evidence",
         "open_incident",
         "resolve_incident",
+        "link_lineage_db",
     ),
     "evidence_sources.py": (
         "register_source",
@@ -116,7 +130,11 @@ _PRIMARY = {
         "granted",
         "required",
         "utc",
+        "digest",
     ),
+    # These imports route the forecast to its model selector. Sign the re-export
+    # as well as the destination, so rerouting to another signed helper is visible.
+    "jobs.py": ("active_version", "model_for_decision"),
     "jobs_research.py": ("active_version", "model_for_decision", "_pointer"),
     "schedule_consensus.py": (
         "sync",
@@ -124,7 +142,7 @@ _PRIMARY = {
         "require_fixed",
         "result_links",
     ),
-    "result_pairings.py": ("decision", "unique_fixtures"),
+    "result_pairings.py": ("decision", "unique_fixtures", "signature", "SOURCE"),
     "result_admission.py": ("reconcile", "review_pairing", "_raw_rows", "_pair"),
     "result_feed.py": ("sync", "_fixture_rows"),
     "result_operations.py": ("manual", "rollback", "_fallback"),
@@ -134,12 +152,13 @@ _PRIMARY = {
     # Consensus re-reads native Gamma receipts for the kickoff itself. Include
     # their receipt times and identities, independently of price/strategy code.
     "market_archive.py": ("_fetch_once", "observe_event", "catalog_window"),
-    "market_provider.py": ("get", "FIXTURE", "normalized_markets"),
+    "market_provider.py": ("get", "FIXTURE", "GAMMA", "normalized_markets"),
     "market_http.py": ("read",),
     "ledger_terms.py": ("_interpret",),
-    "blob_storage.py": ("read_blob",),
+    "ledger_rules.py": ("instant", "number"),
+    "blob_storage.py": ("read_blob", "decoded"),
     "archive_proof.py": ("original_receipt", "_body", "_event_capture"),
-    "dbscope.py": ("verified_bytes", "recheck_originals"),
+    "dbscope.py": ("verified_bytes", "recheck_originals", "bind", "for_connection", "reading", "checked"),
     "store.py": (
         "archive_bytes",
         "register_fixture",
@@ -147,6 +166,8 @@ _PRIMARY = {
         "record_result",
         "record_result_db",
         "eligible_fixture_rows",
+        "eligible_fixtures",
+        "builtin_model_at",
         "fixture_at",
         "ensure_unfinished_at",
         "require_formal",
@@ -179,13 +200,18 @@ _INFRASTRUCTURE = {
 }
 
 
-def primary_sources(root, physical, family):
-    selected = {}
+def primary_roots(family):
     for name, roots in _PRIMARY.items():
-        if name not in physical:
-            continue
         if family == "B2" and name == "football_model.py":
             roots += ("apply_context",)
+        yield name, roots
+
+
+def primary_sources(root, physical, family):
+    selected = {}
+    for name, roots in primary_roots(family):
+        if name not in physical:
+            continue
         try:
             selected[name] = symbols_digest(
                 root / name, physical[name], roots, _INFRASTRUCTURE.get(name, ())

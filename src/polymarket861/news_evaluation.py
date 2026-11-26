@@ -15,6 +15,7 @@ from . import (
     experiment_statistics,
     football,
     historical_inputs,
+    news_field_coverage,
     news_market,
     news_model,
     news_study_plan,
@@ -375,7 +376,8 @@ def _line_metrics(pair, home, away):
     return scores
 
 
-def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy=None, *, as_of=None, reopen_news=False):
+def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy=None, *, as_of=None,
+               reopen_news=False, include_schedule_reference=False):
     goals = (fixture["home_goals"], fixture["away_goals"])
     if mode == "replay":
         # Strict replay authenticates its archived season and label in _proof_issue.
@@ -487,6 +489,13 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy
                 "reason": "requires_scheduled_proxy_declaration"
             }
 
+        if include_schedule_reference and study_status == "declared":
+            from . import news_endpoint_reference
+
+            record["dual_schedule_close"] = news_endpoint_reference.observe(
+                db, root, fixture, entry, pair, as_of=as_of
+            )
+
         if not record["completed"]:
             return record | {
                 "reason": "awaiting_verified_score",
@@ -514,7 +523,8 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy
         return record | {"sealed": False, "reason": "invalid_seal_or_archived_evidence"}
 
 
-def _records(db, fixtures, horizon, mode, policy=None, *, as_of=None, reopen_news=False, eligible_seals=None):
+def _records(db, fixtures, horizon, mode, policy=None, *, as_of=None, reopen_news=False,
+             eligible_seals=None, include_schedule_reference=False):
     ids = [f["fixture_id"] for f in fixtures]
     found = defaultdict(list)
     if ids:
@@ -556,7 +566,8 @@ def _records(db, fixtures, horizon, mode, policy=None, *, as_of=None, reopen_new
         matches = found.get((f["fixture_id"], f["kickoff"]), [])
         if len(matches) == 1:
             yield _score_one(f, *matches[0], None, db, cache, mode, outcome, policy,
-                             as_of=as_of, reopen_news=reopen_news)
+                             as_of=as_of, reopen_news=reopen_news,
+                             include_schedule_reference=include_schedule_reference)
         else:
             reason = "ambiguous_primary_seal" if matches else "no_primary_seal"
             yield _score_one(f, None, None, reason, db, cache, mode, outcome)
@@ -748,7 +759,7 @@ def round_summary(
     ]
     selected = _policy(policy, db)
     rows = list(_records(db, fixtures, horizon, mode, selected))
-    return _summary(
+    result = _summary(
         rows,
         season,
         round_id,
@@ -757,6 +768,9 @@ def round_summary(
         selected,
         news_market.source_capability(db),
     )
+    if mode != "replay":
+        result["availability_fields"] = news_field_coverage.summarize(db, rows, result["expected"])
+    return result
 
 
 def _evaluate(data_dir, season, rnd, horizon, mode, policy):
@@ -780,6 +794,8 @@ def _evaluate(data_dir, season, rnd, horizon, mode, policy):
                 selected,
                 news_market.source_capability(db),
             )
+            if mode != "replay":
+                result["availability_fields"] = news_field_coverage.summarize(db, rows, result["expected"], details=False)
             groups = defaultdict(list)
             for row in rows:
                 groups[row["round_id"]].append(row)

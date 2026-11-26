@@ -4,17 +4,19 @@
 import argparse
 import json
 import re
-import runpy
 from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-AUDIT = (
-    ROOT
-    / "docs/review-evidence/code-review-0.4.2-2026-11-26/scan_league_assumptions.py"
-)
 BASELINE = ROOT / "scripts/league-boundaries.json"
-PATTERNS = tuple(runpy.run_path(str(AUDIT))["CLASSES"].values()) + (
+PATTERNS = (
+    re.compile(r"(\bepl\b|\bepl[_/-]|[\"'/_-]epl\b|KNOWN_EPL|Premier League|premier-league|premierleague|\bEPL\b)"),
+    re.compile(r'(en\.1\.json|eng\.1/|getmatchdata/pl/|leagueShortcut"\) != "pl"|== "pl"|\b5996\b|touchline)'),
+    re.compile(r"Europe/London|\bLONDON\b"),
+    re.compile(
+        r"(\b380\b|\b361\b|(?<![\w.])38(?![\w.])|(?<![\w.])39(?![\w.]) - span|"
+        r"(!=|==) ?20\b|(!=|==) ?10\b|expected_in_round|10 if rnd|10 - values)"
+    ),
     re.compile(r"\b(?:Europe/(?:Madrid|Berlin|Rome|Paris)|(?:es|de|it|fr)\.1\.json)\b"),
     re.compile(r"\b(?:306|291)\b|(?:!=|==)\s*18\b|range\(1,\s*35\)"),
 )

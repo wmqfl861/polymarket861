@@ -32,6 +32,7 @@ PLAN = {
     "reporting": "Before the fixed end, publish only collection coverage and reasons. Reveal the ten registered estimates together after the fixed end using evidence received before the end. Descriptive research; no automatic promotion or trading.",
 }
 PLAN_SHA = store.digest(PLAN)
+V2_VERSION = "epl-news-home-and-full-over-v2"
 
 _DECLARATIONS = """CREATE TABLE IF NOT EXISTS news_endpoint_declarations(
  version TEXT PRIMARY KEY, digest TEXT NOT NULL UNIQUE, manifest TEXT NOT NULL,
@@ -44,13 +45,17 @@ _BINDINGS = """CREATE TABLE IF NOT EXISTS news_endpoint_bindings(
 # forecast transaction, even for concurrent writers, and cannot attach a pre-existing seal.
 # Native seal/proof validation is repeated at analysis time; a SQL pointer alone is insufficient.
 _CLOCK_SQL = "(strftime('%Y-%m-%dT%H:%M:%f','now') || '000Z')"
-_TRIGGER = f"""CREATE TRIGGER news_endpoint_bind_on_insert AFTER INSERT ON forecast_seals
+
+
+def capture_trigger(name, table, version, modes):
+    """Build the synchronous native capture trigger for one immutable protocol."""
+    return f"""CREATE TRIGGER {name} AFTER INSERT ON forecast_seals
 WHEN NEW.protocol='{store.PROTOCOL}' AND NEW.horizon IN ('T-24h','T-60m') AND json_valid(NEW.data_json)
 BEGIN
- INSERT INTO news_endpoint_bindings(seal,declaration,bound_at,probability_era)
+ INSERT INTO {table}(seal,declaration,bound_at,probability_era)
  SELECT NEW.digest,d.digest,{_CLOCK_SQL},json_extract(NEW.data_json,'$.news_study.era_sha256')
  FROM news_endpoint_declarations d
- WHERE d.version='{PLAN["version"]}' AND d.mode=NEW.mode
+ WHERE d.version='{version}' AND {modes}
  AND NEW.fixture_id GLOB ('epl/' || json_extract(NEW.data_json,'$.season') || '/*')
  AND json_extract(NEW.data_json,'$.season') IN ('2026-27','2027-28')
  AND json_extract(NEW.data_json,'$.purpose')='main'
@@ -62,6 +67,10 @@ BEGIN
  AND julianday(NEW.sealed_at)<=julianday('now') AND {_CLOCK_SQL}<=NEW.cutoff
  AND NEW.cutoff<NEW.kickoff AND NEW.kickoff<d.ends_at;
 END"""
+
+
+_TRIGGER = capture_trigger("news_endpoint_bind_on_insert", "news_endpoint_bindings",
+                           PLAN["version"], "d.mode=NEW.mode")
 
 
 def _trigger_ok(db):
@@ -112,7 +121,7 @@ def enroll(data_dir, *, starts_at=None, mode="technical"):
         return {**manifest, "registration_sha256": digest}
 
 
-def _cell(rows, field, endpoint, reveal):
+def _cell(rows, field, endpoint, reveal, *, family_size=FAMILY, stratified=False):
     native_key, family = ENDPOINTS[endpoint]
     points = []
     missing = Counter()
@@ -121,7 +130,8 @@ def _cell(rows, field, endpoint, reveal):
         value = observation.get("endpoints", {}).get(native_key)
         if value:
             base = value["no_news"]
-            points.append(((row["season"], row["round_id"]), row["implementation"],
+            stratum = (row["mode"], row["implementation"]) if stratified else row["implementation"]
+            points.append(((row["season"], row["round_id"]), stratum,
                            value["with_news"] - base, value["close"] - base))
         else:
             reasons = (observation.get("missing") or {}).get(family)
@@ -132,12 +142,13 @@ def _cell(rows, field, endpoint, reveal):
             missing[reason] += 1
     result = {"eligible_news_pairs": len(rows), "matched_books": len(points), "missing": dict(missing)}
     if reveal or not points:
-        fit = news_market.price_gap_slope(points, family=FAMILY, no_pairs_status="no_matched_endpoint_pairs")
+        fit = news_market.price_gap_slope(points, fixed_effects=stratified, family=family_size,
+                                          no_pairs_status="no_matched_endpoint_pairs")
         return {**result, **fit}
     return {**result, "status": "sealed_until_fixed_end", "slope": None, "interval": None}
 
 
-def _guardrail(rows, reveal):
+def _guardrail(rows, reveal, *, family_size=FAMILY):
     groups = defaultdict(list)
     for row in rows:
         if row.get("scored"):
@@ -146,7 +157,7 @@ def _guardrail(rows, reveal):
     n = sum(map(len, groups.values()))
     if not n or not reveal:
         return {"pairs": n, "status": "sealed_until_fixed_end" if n else "no_verified_scored_pairs", "interval": None}
-    ci = experiment_statistics.clustered_t(groups.values(), FAMILY)
+    ci = experiment_statistics.clustered_t(groups.values(), family_size)
     interval = None if ci is None else {k: v for k, v in ci.items() if k != "intervals"} | ci["intervals"][0]
     return {"pairs": n, "interval": interval, **news_accumulation.guardrail({"interval": interval})}
 
@@ -213,6 +224,10 @@ def report(data_dir):
         reveal = now >= END
         as_of = min(now, store.iso(store.instant(END) - timedelta(microseconds=1)))
         _scope_fixture_history(db, as_of)
+        from . import news_endpoint_originals
+
+        news_endpoint_originals.scope_originals(db, news_endpoint_originals.V1_ORIGINALS,
+                                               registration["registration_sha256"])
         binding_rows = db.execute("""SELECT b.seal,b.bound_at,b.probability_era,s.fixture_id,s.horizon,s.kickoff
                     FROM news_endpoint_bindings b JOIN forecast_seals s ON s.digest=b.seal
                     WHERE b.declaration=? AND b.bound_at<=? ORDER BY b.capture_order""",
@@ -249,14 +264,48 @@ def report(data_dir):
         return _summary(registration, accepted, due, reasons, reveal=reveal, era=era, bound=len(bindings))
 
 
+def _default_report_version(data_dir):
+    path = Path(data_dir).expanduser() / "runtime.sqlite3"
+    if path.is_file():
+        with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True)) as db:
+            if db.execute("SELECT 1 FROM sqlite_master WHERE name='news_endpoint_declarations'").fetchone():
+                versions = {r[0] for r in db.execute("SELECT version FROM news_endpoint_declarations")}
+                if PLAN["version"] in versions and V2_VERSION not in versions:
+                    return "v1"
+    return "v2"
+
+
+def _command(args):
+    action = args.news_endpoint_action
+    version = args.version
+    mode = getattr(args, "mode", None)
+    if version is None and (action == "report" or mode in ("technical", "formal")):
+        version = _default_report_version(args.data_dir)
+    from . import news_endpoint_v2
+
+    if action == "plan":
+        if version == "v1":
+            return {"plan": PLAN, "plan_sha256": PLAN_SHA}
+        return news_endpoint_v2.proposal()
+    if action == "report":
+        return report(args.data_dir) if version == "v1" else news_endpoint_v2.report(args.data_dir)
+    if version == "v1":
+        return enroll(args.data_dir, starts_at=args.starts_at, mode=mode or "technical")
+    if mode not in (None, "both"):
+        raise ValueError("v2 prospectively enrolls both technical and formal modes; use --version v1 for the single-mode protocol")
+    return news_endpoint_v2.enroll(args.data_dir, starts_at=args.starts_at)
+
+
 def register(commands):
     command = commands.add_parser("news-endpoints", help="登记英超主胜与全场大 2.5 的前瞻新闻收盘研究")
     sub = command.add_subparsers(dest="news_endpoint_action", required=True)
-    plan = sub.add_parser("plan", help="查看预定研究族、两档收盘和揭晓日期")
-    plan.set_defaults(func=lambda a: {"plan": PLAN, "plan_sha256": PLAN_SHA})
+    plan = sub.add_parser("plan", help="查看冻结终点、收盘口径与事前功效")
     registration = sub.add_parser("register", help="登记本机前瞻开始时间，之后自动绑定新封存")
     registration.add_argument("--starts-at", help="带 UTC 偏移的未来时刻，默认从登记时起")
-    registration.add_argument("--mode", choices=("technical", "formal"), default="technical")
-    registration.set_defaults(func=lambda a: enroll(a.data_dir, starts_at=a.starts_at, mode=a.mode))
-    output = sub.add_parser("report", help="查看覆盖、缺件及到期后的十项同时推断")
-    output.set_defaults(func=lambda a: report(a.data_dir))
+    registration.add_argument("--mode", choices=("both", "technical", "formal"),
+                              help="v2 固定同时绑定两种模式；v1 为单一模式")
+    output = sub.add_parser("report", help="查看覆盖、缺件及窗口结束后的同时推断")
+    for action in (plan, registration, output):
+        action.add_argument("--version", choices=("v1", "v2"),
+                            help="新登记默认 v2；只有旧登记的数据库默认展示 v1")
+        action.set_defaults(func=_command)

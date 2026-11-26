@@ -288,12 +288,7 @@ def _ingest(db, event, reply, sha, *, sport=None):
             event.get("ended") if type(event.get("ended")) is bool else None,
         ),
     )
-    for contract in provider.normalized_markets(event, sport=sport or "epl"):
-        if sport is not None:
-            contract["event_teams"] = [
-                {key: team.get(key) for key in ("id", "league", "ordering", "name", "abbreviation")}
-                for team in provider.teams(event).values()
-            ]
+    for contract in provider.normalized_markets(event, sport=sport or "epl", project_teams=sport is not None):
         contract_storage.record(db, match[1], event["slug"], reply.received_at, sha, contract)
     return True
 
@@ -533,6 +528,7 @@ def stored_books(root, token, *, before=None, limit=2):
 def book_summary(book):
     return {
         "token_id": book["token_id"],
+        "source_sha256": book["source_sha256"],
         "received_at": book["received_at"],
         "observed_at": book["observed_at"],
         "bids": len(book["bids"]),

@@ -79,6 +79,8 @@ def main(argv=None):
                     result, ensure_ascii=False, indent=2, allow_nan=False, default=str
                 )
             )
+        if hasattr(args, "result_exit_code"):
+            return args.result_exit_code(result)
     except (ValueError, KeyError, OSError, sqlite3.Error) as exc:
         print(f"pm861: {exc}", file=sys.stderr)
         return 2

@@ -23,6 +23,7 @@ jobs:
           cache-dependency-path: constraints/research.txt
       - run: python -m pip install -c constraints/research.txt -e . ruff mypy
       - run: python scripts/check_league_boundaries.py
+      - run: python scripts/check_recipe_references.py
       - run: ruff check src tests scripts
       - run: mypy --strict --follow-imports=silent src/polymarket861/{blob_storage,score_bounds,experiment_statistics}.py
       - run: |

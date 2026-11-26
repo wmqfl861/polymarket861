@@ -11,9 +11,11 @@ from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 
+from . import big5_market_receipts as receipts
 from . import big5_market_schedule as schedule
 from . import market_archive as archive
 from . import market_provider as provider
+from . import market_watch_health
 from .store import canonical, iso, now_utc
 
 MARKETS = provider.SPORT_MARKETS
@@ -41,6 +43,7 @@ CREATE TABLE IF NOT EXISTS big5_runs (
  id INTEGER PRIMARY KEY, sport TEXT NOT NULL, fixture TEXT NOT NULL, phase TEXT NOT NULL,
  started TEXT NOT NULL, finished TEXT NOT NULL, report TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS big5_run_time ON big5_runs(finished,sport);
+CREATE INDEX IF NOT EXISTS big5_fixed_runs ON big5_runs(fixture,phase,started);
 CREATE TABLE IF NOT EXISTS big5_last_dispatch(
  fixture TEXT NOT NULL, phase TEXT NOT NULL, started TEXT NOT NULL, PRIMARY KEY(fixture,phase));
 """
@@ -58,6 +61,7 @@ def _db(root):
         dbscope.prepare(db, "five-league-market-v1", SCHEMA)
         dbscope.prepare(db, "five-league-market-schedule-v1", schedule.SCHEMA)
         schedule.recover(root, db, _identity)
+        schedule.recover_play(root, db, _identity)
     except BaseException:
         db.close()
         raise
@@ -158,6 +162,7 @@ def _record(db, event, identity, reply, sha):
         delays,
         schedule.stopped(event),
         "validated_receipt",
+        started=schedule.has_started(event),
     )
     db.execute(
         "INSERT INTO big5_event_delays VALUES(?,?,?,?) ON CONFLICT(slug) DO UPDATE SET "
@@ -357,9 +362,30 @@ def _refresh(root, main):
                 if identity[0] != slug:
                     raise ValueError("unexpected event slug")
                 if pair is not None and pair != identity[3:6]:
-                    raise ValueError(
-                        "auxiliary event kickoff or team IDs differ from main event"
+                    prior = db.execute(
+                        "SELECT home_id,away_id,event_id FROM big5_events WHERE slug=?",
+                        (slug,),
+                    ).fetchone()
+                    if pair[1:] == identity[4:6] and (
+                        prior is None or tuple(prior) == identity[4:7]
+                    ):
+                        schedule.record(
+                            db,
+                            identity,
+                            reply.received_at,
+                            sha,
+                            schedule.delays(event),
+                            True,
+                            "conflicting_aux_schedule",
+                            started=schedule.has_started(event),
+                        )
+                    gaps.append(
+                        {
+                            "slug": slug,
+                            "error": "auxiliary event kickoff or team IDs differ from main event",
+                        }
                     )
+                    continue
                 _record(db, event, identity, reply, sha)
             pair = identity[3:6]
             events.append(slug)
@@ -436,14 +462,8 @@ def _measure(root, selected, result, window):
         for key, contract in selected.items()
         for t in contract["tokens"]
     }
-    from .ledger_terms import rule_profile
-
     groups = {}
     for key, c in selected.items():
-        try:
-            profile = rule_profile(c)
-        except ValueError as exc:
-            profile = {"version": None, "unreviewed": str(exc)}
         groups[key] = {
             "condition": c["condition_id"],
             "market_slug": c["slug"],
@@ -451,7 +471,7 @@ def _measure(root, selected, result, window):
             "event_id": c["event_id"],
             "protocol": c["protocol"],
             "rule_sha256": c["rule_sha256"],
-            "rule_profile": profile,
+            "rule_profile": receipts.rule_profile(c),
             "contract_source_sha256": c.get("source_sha256"),
             "contract_received": c.get("recorded_at"),
             "seconds_delay": c["seconds_delay"],
@@ -469,8 +489,8 @@ def _measure(root, selected, result, window):
                 entry["error"] = observation["error"]
                 continue
             row = db.execute(
-                "SELECT payload FROM ma_books WHERE token=? AND received_at=? ORDER BY sha LIMIT 1",
-                (token, observation["received_at"]),
+                "SELECT payload FROM ma_books WHERE token=? AND received_at=? AND sha=?",
+                (token, observation["received_at"], observation["source_sha256"]),
             ).fetchone()
             if not row:
                 entry["error"] = "missing stored receipt"
@@ -876,6 +896,8 @@ def _job(data_dir, event, job, workers):
     if attempt is None:
         return {"fixture": fixture, "phase": phase, "state": "already_claimed"}
     retry_after = None
+    fixed = phase.startswith(("t1_", "t24_"))
+    witness = {}
     # Stop network work before the lease can be reclaimed by a second process.
     deadline = iso(min(end, now + timedelta(seconds=85)))
     try:
@@ -901,17 +923,21 @@ def _job(data_dir, event, job, workers):
             report_tokens = [
                 v for c in report["contracts"].values() for v in c["tokens"].values()
             ]
-            ok = (
-                bool(report_tokens)
-                and not report["core_missing"]
-                and all(
-                    "error" not in v
-                    and v.get("on_time", True)
-                    and v["observed_at"]
-                    and (not phase.startswith(("t1_", "t24_")) or v["pregame"] is True)
-                    for v in report_tokens
+            if fixed:
+                with closing(_db(root)) as db:
+                    witness = receipts.witness(
+                        db, root, report, fixture, kickoff, (iso(first), iso(end))
+                    )
+                ok = bool(witness)
+            else:
+                ok = (
+                    bool(report_tokens)
+                    and not report["core_missing"]
+                    and all(
+                        "error" not in v and v.get("on_time", True) and v["observed_at"]
+                        for v in report_tokens
+                    )
                 )
-            )
         retry_after = report.get("retry_at")
         details = {
             "state": "complete" if ok else "partial",
@@ -919,11 +945,11 @@ def _job(data_dir, event, job, workers):
             "expected": report.get("requested_tokens"),
             "error": report.get("error"),
         }
-        if ok and phase != "terminal":
+        if fixed:
+            details.update(witness)
+        elif ok and phase != "terminal":
             details["first_receipt"] = min(v["received_at"] for v in report_tokens)
             details["finished"] = max(v["received_at"] for v in report_tokens)
-            if phase.startswith(("t1_", "t24_")):
-                details["bindings"] = schedule.bindings(report["contracts"])
     except (ValueError, OSError, KeyError, TypeError) as exc:
         ok = False
         retry_after = getattr(exc, "retry_at", None)
@@ -1048,7 +1074,12 @@ def watch(
     last_jobs = []
     # The same pool is kept between ticks: games with a slow network never block scheduling other games.
     pending, active = {}, set()
-    with ThreadPoolExecutor(max_workers=workers) as pool:
+    with (
+        market_watch_health.monitor(
+            root, selected, start, end, continuous=cycles == 0, discover=discover
+        ) as heartbeat,
+        ThreadPoolExecutor(max_workers=workers) as pool,
+    ):
         while cycles == 0 or count < cycles:
             now = provider.moment(now_utc())
             if discover and (next_catalog is None or now >= next_catalog):
@@ -1092,6 +1123,8 @@ def watch(
                     active.add(key)
                     pending[task] = key
             count += 1
+            if heartbeat is not None:
+                heartbeat(count, discovery)
             if cycles == 0 or count < cycles:
                 time.sleep(interval)
         for task, key in pending.items():
@@ -1131,7 +1164,7 @@ def weekly_report(data_dir, start, end):
     now = now_utc()
     stats, target_counts = {}, defaultdict(Counter)
     with closing(_db(root)) as db:
-        schedule.count_windows(db, target_counts, start, end, now)
+        schedule.count_windows(root, db, target_counts, start, end, now)
         history_origins = {
             r[0]: r[1]
             for r in db.execute(
@@ -1139,6 +1172,20 @@ def weekly_report(data_dir, start, end):
                 (min(now, end),),
             )
         }
+        catalogue_flags = [
+            {
+                "league": r["sport"],
+                "live": None if r["live"] is None else bool(r["live"]),
+                "ended": None if r["ended"] is None else bool(r["ended"]),
+                "receipts": r["n"],
+            }
+            for r in db.execute(
+                "SELECT h.sport,s.live,s.ended,count(*) n FROM big5_schedule_receipts h JOIN "
+                "ma_event_states s ON (h.slug,h.received,h.sha)=(s.slug,s.received_at,s.sha) "
+                "WHERE h.received>=? AND h.received<? GROUP BY h.sport,s.live,s.ended ORDER BY h.sport,s.live,s.ended",
+                (start, min(end, now)),
+            )
+        ]
         for row in db.execute(
             "SELECT * FROM big5_runs WHERE finished>=? AND finished<? ORDER BY id",
             (start, end),
@@ -1222,12 +1269,33 @@ def weekly_report(data_dir, start, end):
     for group in stats.values():
         for measure in ("levels_for_50", "vwap_above_best_ask", "latency_ms"):
             group[measure] = _quantiles(group[measure])
+    raw_bytes, missing_raw = 0, 0
+    for row in blobs:
+        try:
+            raw_bytes += blob_size(root, row["sha256"])[1]
+        except FileNotFoundError:
+            missing_raw += 1
+    database_bytes = 0
+    for path in root.glob("runtime.sqlite3*"):
+        try:
+            if path.is_file():
+                database_bytes += path.stat().st_size
+        except FileNotFoundError:
+            # Another connection may checkpoint and unlink the WAL during this reading.
+            continue
     return {
         "receipt_window": [start, end],
         "schedule_receipt_origins_before_report_end": history_origins,
         "denominator_basis": "Observed domestic schedule and delay versions at each window expiry. "
         "A trace without a verifiable earlier original cannot establish earlier obligations. "
         "Pairs require identical condition, side, outcome tokens, rule and fee terms across matching delay legs.",
+        "fixed_window_basis": "Timely, complete, fresh native Gamma-bound CLOB receipts. "
+        "Complete windows and identical-contract pairs are partitioned by exchange_state. "
+        "Pairs share one uninterrupted main/aux schedule. Prior native evidence that play started "
+        "applies to later receipts on the same fixture, including after a flag disappears. "
+        "Schedule-only requires a known unchanged schedule before kickoff without contradictory flags. "
+        "Receipt completeness does not authorize an entry, CLV or return.",
+        "catalogue_exchange_flags": catalogue_flags,
         "generated_at": now,
         "by_league": dict(target_counts),
         "by_league_family": {
@@ -1240,10 +1308,9 @@ def weekly_report(data_dir, start, end):
         "cooldowns_expiring_in_window": failures,
         "raw_unique_bodies": len(blobs),
         "raw_unique_decoded_bytes": sum(r["size"] for r in blobs),
-        "raw_unique_on_disk_bytes": sum(blob_size(root, r["sha256"])[1] for r in blobs),
-        "database_bytes_at_report": sum(
-            p.stat().st_size for p in root.glob("runtime.sqlite3*") if p.is_file()
-        ),
+        "raw_unique_on_disk_bytes": raw_bytes,
+        "raw_missing_bodies": missing_raw,
+        "database_bytes_at_report": database_bytes,
         "depth_basis": "single visible ask book, USD 50 before fees; no trade or guaranteed fill",
         "evidence_grade": "research observations; no inferred actual kickoff, A-grade entry, profit or ROI",
     }
@@ -1322,6 +1389,33 @@ def register(commands):
             pages=a.pages,
             page_size=a.page_size,
         )
+    )
+    p = commands.add_parser(
+        "league-watchdog",
+        help="check the heartbeat for the requested continuous watch scope",
+    )
+    p.add_argument("--league", action="append", choices=MARKETS)
+    p.add_argument("--start", required=True)
+    p.add_argument("--end", required=True)
+    p.add_argument(
+        "--max-age",
+        type=int,
+        default=180,
+        help="maximum seconds since an advancing scheduler tick",
+    )
+    p.add_argument(
+        "--local-catalog",
+        action="store_true",
+        help="check a watcher using only its local catalog",
+    )
+    p.set_defaults(
+        func=lambda a: market_watch_health.status(
+            research_root(a.data_dir),
+            *_args(a.league, a.start, a.end),
+            discover=not a.local_catalog,
+            max_age=a.max_age,
+        ),
+        result_exit_code=lambda result: 0 if result["healthy"] else 1,
     )
     p = commands.add_parser(
         "league-terminal",

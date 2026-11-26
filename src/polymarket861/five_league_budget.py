@@ -30,7 +30,14 @@ def register(commands):
     custom.add_argument("input", type=Path)
     custom.add_argument("--as-of", help="截止时刻，带 UTC 偏移")
     custom.add_argument("--details", action="store_true", help="包含逐意图的模拟决定")
-    for parser in (demo, custom):
+    custom.add_argument(
+        "--entry-basis", choices=("explicit_pregame", "scheduled_with_incomplete_flags"),
+        default="explicit_pregame", help="本机入场凭据，排期研究档另核两次盘口及赛程原件",
+    )
+    contract = sub.add_parser("verify-contract", help="离线核对某份 Gamma 原件及其球队映射")
+    contract.add_argument("condition", help="Polymarket condition ID")
+    contract.add_argument("--as-of", required=True, help="截止时刻，带 UTC 偏移")
+    for parser in (demo, custom, contract):
         parser.add_argument("--output", type=Path)
         parser.set_defaults(func=_cli)
 
@@ -41,9 +48,12 @@ def _cli(args):
         if args.write_input:
             _write_json(args.write_input, document)
         result = stress_report(document)
+    elif args.risk_command == "verify-contract":
+        result = budget_archive_proof.verify_contract(args.data_dir, args.condition, args.as_of)
     else:
         document = json.loads(args.input.read_bytes())
-        result = replay(document, as_of=args.as_of, data_dir=args.data_dir, details=args.details)
+        result = replay(document, as_of=args.as_of, data_dir=args.data_dir, details=args.details,
+                        entry_basis=args.entry_basis)
     if args.output:
         _write_json(args.output, result)
     return result
@@ -141,20 +151,28 @@ def _synthetic_payout(event, originals, kickoff):
     return amount, None
 
 
-def replay(document, *, as_of=None, data_dir=None, details=False):
+def replay(document, *, as_of=None, data_dir=None, details=False, entry_basis="explicit_pregame"):
     """Pure replay of an input set. Exchanging retry order preserves all balances."""
     if not isinstance(document, dict) or document.get("schema") != SCHEMA:
         raise ValueError("unsupported five-league paper replay schema")
     mode = document.get("evidence_mode")
     if mode not in {"synthetic", "local_receipts"}:
         raise ValueError("evidence_mode must be synthetic or local_receipts")
+    if entry_basis not in {"explicit_pregame", "scheduled_with_incomplete_flags"}:
+        raise ValueError("unrecognized five-league entry basis")
+    scheduled = entry_basis == "scheduled_with_incomplete_flags"
+    if scheduled and mode != "local_receipts":
+        raise ValueError("schedule-based research requires authentic local receipts")
     if mode == "local_receipts":
         with budget_archive_proof.read_archive(data_dir) as source:
-            return _replay(document, mode, source, as_of, details)
-    return _replay(document, mode, None, as_of, details)
+            if scheduled:
+                with budget_archive_proof.football_archive(source) as football:
+                    return _replay(document, mode, source, as_of, details, scheduled, football)
+            return _replay(document, mode, source, as_of, details, scheduled)
+    return _replay(document, mode, None, as_of, details, scheduled)
 
 
-def _replay(document, mode, source, as_of, details):
+def _replay(document, mode, source, as_of, details, scheduled, football=None):
     stop = rules.instant(as_of) if as_of is not None else None
     raw_books = _indexed(document["books"], "books")
     books, depth = _books(document["books"])
@@ -207,6 +225,7 @@ def _replay(document, mode, source, as_of, details):
     proof_gaps = Counter()
     decisions = []
     counts = {code: Counter() for code in CODES}
+    basis_counts = {code: {} for code in CODES}
     observed_fixtures = {code: set() for code in CODES}
     cohorts = {code: {} for code in CODES}
     receipt_counts = Counter()
@@ -262,7 +281,10 @@ def _replay(document, mode, source, as_of, details):
         entry_market = None
         if mode == "local_receipts":
             try:
-                entry_market = budget_archive_proof.entry(source, op, (raw_books[op["decision_book"]], raw_books[op["execution_book"]]))
+                entry_market = budget_archive_proof.entry(
+                    source, op, (raw_books[op["decision_book"]], raw_books[op["execution_book"]]),
+                    scheduled=scheduled, as_of=stop, football=football,
+                )
                 if token in entry_markets and any(
                     entry_markets[token][key] != entry_market[key]
                     for key in ("fixture", "slug", "tokens", "rule_sha256")
@@ -301,9 +323,15 @@ def _replay(document, mode, source, as_of, details):
             positions.setdefault(token, []).append({"net": fill["net"], "spent": cost})
         counts[code][outcome] += 1
         seen["outcomes"][outcome] += 1
+        evidence = (entry_market or {}).get("entry_evidence")
+        if scheduled:
+            basis = evidence["basis"] if evidence else "unverified"
+            basis_counts[code].setdefault(basis, Counter())[outcome] += 1
         if details:
             decisions.append({"id": key, "league": code, "fixture_id": fixture, "at": rules.iso(when),
                               "outcome": outcome, "cost_including_cash_fees": rules.fmt(cost) if outcome == "filled" else None})
+            if scheduled:
+                decisions[-1]["entry_evidence"] = evidence
 
     for token, event in credited_events.items():
         budget_archive_proof.audit_redemption(source, entry_markets[token], event,
@@ -338,6 +366,15 @@ def _replay(document, mode, source, as_of, details):
     }
     if details:
         result["decisions"] = decisions
+    if scheduled:
+        result["entry_policy"] = {
+            "selected": "scheduled_with_incomplete_flags", "research_only": True,
+            "eligible_for_formal_accounts": False,
+            "outcomes_by_league_and_evidence": {
+                code: {basis: dict(outcomes) for basis, outcomes in groups.items()}
+                for code, groups in basis_counts.items()
+            },
+        }
     return result
 
 

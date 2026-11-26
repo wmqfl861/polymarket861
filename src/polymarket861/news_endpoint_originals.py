@@ -23,11 +23,11 @@ BODY_SOURCE = "epl-endpoint-news-response"
 # licence to retain its full payload. Only the registered, explicitly open text
 # feed is copied, never linked article bodies, photographs, or other endpoints.
 OPEN_FEED_LICENSES = {"cc0", "cc0 1.0", "cc by 4.0", "cc by-sa 4.0"}
-SCHEMA = """CREATE TABLE IF NOT EXISTS news_endpoint_poll_originals(
+V1_ORIGINALS = "news_endpoint_poll_originals"
+V2_ORIGINALS = "news_endpoint_v2_poll_originals"
+SCHEMA = """CREATE TABLE IF NOT EXISTS {table}(
  receipt TEXT PRIMARY KEY, source TEXT NOT NULL, season TEXT NOT NULL, club TEXT NOT NULL,
  observed_at TEXT NOT NULL, response_sha TEXT NOT NULL, digest TEXT NOT NULL, document TEXT NOT NULL)"""
-INDEX = """CREATE INDEX IF NOT EXISTS endpoint_poll_observation ON
- news_endpoint_poll_originals(source,season,club,observed_at,response_sha)"""
 
 
 def retainable(config):
@@ -39,7 +39,9 @@ def retainable(config):
     )
 
 
-def _registration(root, started):
+def _registrations(root, started):
+    from .news_endpoint_study import PLAN, V2_VERSION
+
     with closing(
         sqlite3.connect(
             (Path(root) / "runtime.sqlite3").resolve().as_uri() + "?mode=ro", uri=True
@@ -49,13 +51,23 @@ def _registration(root, started):
             "SELECT 1 FROM sqlite_master WHERE type='table' AND name='news_endpoint_declarations'"
         ).fetchone()
         if not exists:
-            return False
-        row = db.execute(
-            "SELECT digest FROM news_endpoint_declarations WHERE json_extract(manifest,'$.registered_at')<=?"
-            " AND ends_at>? LIMIT 1",
-            (started, started),
-        ).fetchone()
-        return row[0] if row else None
+            return []
+        tables = {PLAN["version"]: V1_ORIGINALS, V2_VERSION: V2_ORIGINALS}
+        rows = db.execute(
+            "SELECT version,digest,manifest,starts_at,ends_at,mode FROM news_endpoint_declarations "
+            "WHERE version IN (?,?) AND ends_at>?", (*tables, started),
+        )
+        registrations = []
+        for version, digest, encoded, start, end, mode in rows:
+            try:
+                manifest = json.loads(encoded)
+                if (store.digest(manifest) == digest and manifest["registered_at"] <= started
+                        and (manifest["version"], manifest["starts_at"], manifest["ends_at"], manifest["mode"])
+                        == (version, start, end, mode)):
+                    registrations.append((tables[version], digest))
+            except (KeyError, TypeError, ValueError):
+                continue
+        return registrations
 
 
 def save(root, evidence_json, raw_receipt):
@@ -69,10 +81,10 @@ def save(root, evidence_json, raw_receipt):
         or not retainable(config)
     ):
         return
-    registration = _registration(root, evidence["started"])
-    if not registration:
+    registrations = _registrations(root, evidence["started"])
+    if not registrations:
         return
-    body, url, cache_control = raw_receipt
+    _, url, _ = raw_receipt
     proof_id = evidence["receipt"]
     if (
         url != config["url"]
@@ -80,6 +92,20 @@ def save(root, evidence_json, raw_receipt):
         or proof_id != store.digest(proof)
     ):
         raise ValueError("endpoint news capture scope mismatch")
+    errors = []
+    for table, registration in registrations:
+        try:
+            _save_for_study(root, table, registration, evidence, raw_receipt)
+        except (OSError, TypeError, ValueError, sqlite3.Error) as exc:
+            errors.append(exc)
+    if errors:
+        raise ExceptionGroup("Incomplete prospective response retention", errors)
+
+
+def _save_for_study(root, table, registration, evidence, raw_receipt):
+    proof, proof_id, config = evidence["proof"], evidence["receipt"], evidence["config"]
+    body, url, cache_control = raw_receipt
+    season = proof["season"]
     meta = {
         "receipt": proof_id,
         "source": proof["source"],
@@ -112,10 +138,9 @@ def save(root, evidence_json, raw_receipt):
         "parsed_sha256": evidence["parsed_sha256"],
     }
     with closing(store.connect(root)) as db, db:
-        db.execute(SCHEMA)
-        db.execute(INDEX)
+        ensure_source_table(db, table)
         db.execute(
-            "INSERT OR IGNORE INTO news_endpoint_poll_originals VALUES(?,?,?,?,?,?,?,?)",
+            f"INSERT OR IGNORE INTO {table} VALUES(?,?,?,?,?,?,?,?)",
             (
                 proof_id,
                 proof["source"],
@@ -127,6 +152,26 @@ def save(root, evidence_json, raw_receipt):
                 store.canonical(manifest),
             ),
         )
+
+
+def ensure_source_table(db, table):
+    if table not in (V1_ORIGINALS, V2_ORIGINALS):
+        raise ValueError("unknown prospective study receipt table")
+    db.execute(SCHEMA.format(table=table))
+    # Keep the original v1 index name in installed databases.
+    index = "endpoint_poll_observation" if table == V1_ORIGINALS else "endpoint_v2_poll_observation"
+    db.execute(f"CREATE INDEX IF NOT EXISTS {index} ON {table}(source,season,club,observed_at,response_sha)")
+
+
+def scope_originals(db, table, digest):
+    """Expose only the physical receipts subscribed to by this registration."""
+    if table not in (V1_ORIGINALS, V2_ORIGINALS):
+        raise ValueError("unknown prospective study receipt table")
+    db.execute("CREATE TEMP TABLE study_subscription(digest TEXT NOT NULL)")
+    db.execute("INSERT INTO study_subscription VALUES(?)", (digest,))
+    db.execute(f"""CREATE TEMP VIEW news_endpoint_poll_originals AS
+        SELECT o.* FROM main.{table} o, study_subscription d
+        WHERE json_valid(o.document) AND json_extract(o.document,'$.metadata.registration')=d.digest""")
 
 
 def _require(test, reason):

@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS big5_schedule_receipts(
  PRIMARY KEY(slug,received,sha));
 CREATE INDEX IF NOT EXISTS big5_schedule_by_fixture ON big5_schedule_receipts(fixture,received,slug,sha);
 CREATE TABLE IF NOT EXISTS big5_schedule_recovery(version INTEGER PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS big5_play_evidence(
+ fixture TEXT NOT NULL, received TEXT NOT NULL, slug TEXT NOT NULL, sha TEXT NOT NULL,
+ state TEXT NOT NULL, PRIMARY KEY(fixture,state,received,slug,sha));
 """
 
 
@@ -33,21 +36,111 @@ def delays(event):
     )
 
 
-def stopped(event):
-    status = (
-        str(event.get("gameStatus") or event.get("status") or "").casefold().strip()
-    )
+# Gamma can omit the typed flags. A sporting status, cancellation or malformed
+# value must not be silently promoted to an explicit or schedule-only pregame.
+_STARTED = {
+    "live",
+    "in progress",
+    "in play",
+    "inplay",
+    "playing",
+    "started",
+    "first half",
+    "second half",
+    "half time",
+    "halftime",
+    "ht",
+    "1h",
+    "2h",
+    "extra time",
+    "et",
+    "penalties",
+    "pens",
+    "full time",
+    "fulltime",
+    "ft",
+    "aet",
+    "ended",
+    "final",
+    "finished",
+    "completed",
+}
+_STOPPED = {"cancelled", "canceled", "postponed", "abandoned", "suspended", "void"}
+_PLANNED = {"scheduled", "not started", "ns", "pre", "pregame", "pre game", "upcoming"}
+
+
+def _status(value):
+    return " ".join(str(value).casefold().replace("-", " ").replace("_", " ").split())
+
+
+def has_started(event):
     return (
         event.get("live") is True
         or event.get("ended") is True
-        or event.get("cancelled") is True
-        or event.get("canceled") is True
-        or status
-        in {"cancelled", "canceled", "postponed", "abandoned", "suspended", "void"}
+        or any(_status(event.get(k)) in _STARTED for k in ("gameStatus", "status"))
     )
 
 
-def record(db, fields, received, sha, waits, stop, origin):
+def stopped(event):
+    return (
+        has_started(event)
+        or event.get("cancelled") is True
+        or event.get("canceled") is True
+        or any(_status(event.get(k)) in _STOPPED for k in ("gameStatus", "status"))
+    )
+
+
+def pregame_flags(event):
+    """Interpret native Gamma fields independently of the receipt's clock and contract."""
+    if stopped(event):
+        return "not_pregame"
+    if any(
+        event.get(k) is not None and type(event[k]) is not bool
+        for k in ("live", "ended", "cancelled", "canceled")
+    ):
+        return "unclassified"
+    if any(
+        event.get(k) not in (None, "") and _status(event[k]) not in _PLANNED
+        for k in ("gameStatus", "status")
+    ):
+        return "unclassified"
+    if event.get("live") is False and event.get("ended") is False:
+        return "explicit_pregame"
+    return "schedule_only"
+
+
+def _record_play(db, fixture, slug, received, sha, started):
+    if started is not False:
+        db.execute(
+            "INSERT OR IGNORE INTO big5_play_evidence VALUES(?,?,?,?,?)",
+            (fixture, iso(received), slug, sha, "started" if started else "unverified"),
+        )
+
+
+def play_history(db, fixture, through):
+    for state, grade in (("started", "not_pregame"), ("unverified", "unclassified")):
+        if db.execute(
+            "SELECT 1 FROM big5_play_evidence WHERE fixture=? AND state=? AND received<=? LIMIT 1",
+            (fixture, state, through),
+        ).fetchone():
+            return grade
+    return None
+
+
+def consistent_during(db, fixture, kickoff, first, last):
+    # Each linked event contributes its most recent receipt at the first book
+    # request and any corrections received through the last book response.
+    conflict = db.execute(
+        "SELECT 1 FROM big5_schedule_receipts s WHERE fixture=? AND received<=? AND "
+        "(kickoff<>? OR stopped) AND received>=COALESCE(("
+        "SELECT MAX(h.received) FROM big5_schedule_receipts h WHERE h.slug=s.slug AND h.received<=?"
+        "),?) LIMIT 1",
+        (fixture, last, kickoff, first, first),
+    ).fetchone()
+    return conflict is None
+
+
+def record(db, fields, received, sha, waits, stop, origin, *, started):
     slug, fixture, sport, kickoff = fields[:4]
     db.execute(
         "INSERT OR IGNORE INTO big5_schedule_receipts VALUES(?,?,?,?,?,?,?,?,?)",
@@ -63,6 +156,19 @@ def record(db, fields, received, sha, waits, stop, origin):
             origin,
         ),
     )
+    _record_play(db, fixture, slug, received, sha, started)
+
+
+def _original_events(root, sha):
+    data = read_blob(root, sha)
+    if hashlib.sha256(data).hexdigest() != sha:
+        raise ValueError("schedule receipt hash mismatch")
+    data = json.loads(data)
+    result = {}
+    for event in data if isinstance(data, list) else [data]:
+        if isinstance(event, dict) and isinstance(slug := event.get("slug"), str):
+            result[slug] = None if slug in result else event
+    return result
 
 
 def recover(root, db, validate):
@@ -82,14 +188,7 @@ def recover(root, db, validate):
         for sha, rows in groupby(old, key=lambda r: r["sha"]):
             originals = {}
             try:
-                body = read_blob(root, sha)
-                if hashlib.sha256(body).hexdigest() == sha:
-                    data = json.loads(body)
-                    originals = {
-                        r.get("slug"): r
-                        for r in (data if isinstance(data, list) else [data])
-                        if isinstance(r, dict)
-                    }
+                originals = _original_events(root, sha)
             except (OSError, TypeError, ValueError):
                 pass
             for r in rows:
@@ -116,6 +215,7 @@ def recover(root, db, validate):
                         [],
                         True,
                         "legacy_unverified",
+                        started=None,
                     )
                     continue
                 record(
@@ -126,6 +226,7 @@ def recover(root, db, validate):
                     delays(event),
                     stopped(event),
                     "recovered_original",
+                    started=has_started(event),
                 )
         # An incomplete old installation may have the current index only. State before the
         # latest observed receipt, or a receipt without original evidence, is unknown.
@@ -141,8 +242,79 @@ def recover(root, db, validate):
                 [],
                 True,
                 "legacy_unverified",
+                started=None,
             )
         db.execute("INSERT INTO big5_schedule_recovery VALUES(1)")
+
+
+def recover_play(root, db, validate):
+    """Index prior observations once, including text statuses ignored by older collectors."""
+    if db.execute("SELECT 1 FROM big5_schedule_recovery WHERE version=2").fetchone():
+        return
+    with db:
+        db.execute("BEGIN IMMEDIATE")
+        if db.execute(
+            "SELECT 1 FROM big5_schedule_recovery WHERE version=2"
+        ).fetchone():
+            return
+        known = db.execute(
+            "SELECT h.*,s.live,s.ended FROM big5_schedule_receipts h LEFT JOIN ma_event_states s "
+            "ON (s.slug,s.received_at,s.sha)=(h.slug,h.received,h.sha) ORDER BY h.sha"
+        )
+        for sha, rows in groupby(known, key=lambda r: r["sha"]):
+            try:
+                originals = _original_events(root, sha)
+            except (OSError, TypeError, ValueError):
+                originals = {}
+            for r in rows:
+                native = originals.get(r["slug"])
+                if r["live"] or r["ended"]:
+                    started = True
+                elif native is None or r["origin"] == "legacy_unverified":
+                    started = None
+                else:
+                    started = has_started(native)
+                _record_play(db, r["fixture"], r["slug"], r["received"], sha, started)
+        # Older direct refreshes archived the auxiliary but rejected its divergent
+        # clock before indexing it. Recover that interruption at its own receipt time.
+        from .archive_proof import original_receipt
+
+        skipped = db.execute(
+            "SELECT r.selector,r.sha,r.received_at,b.sport,b.fixture,b.home_id,b.away_id,b.event_id FROM ma_requests r "
+            "JOIN big5_events b ON b.slug=r.selector WHERE r.operation='league_event' AND r.status='ok' "
+            "AND b.slug<>b.fixture AND NOT EXISTS (SELECT 1 FROM big5_schedule_receipts h "
+            "WHERE h.slug=r.selector AND h.received=r.received_at AND h.sha=r.sha)"
+        )
+        for r in skipped:
+            try:
+                reply, _, _, _ = original_receipt(
+                    db,
+                    root,
+                    r["sha"],
+                    r["received_at"],
+                    {"league_event"},
+                    expected_selector=r["selector"],
+                )
+                event = json.loads(reply.body)
+                fields = validate(event, r["sport"], history=db)
+                if (fields[0], fields[1], *fields[4:7]) != tuple(
+                    r[k]
+                    for k in ("selector", "fixture", "home_id", "away_id", "event_id")
+                ):
+                    continue
+                record(
+                    db,
+                    fields,
+                    r["received_at"],
+                    r["sha"],
+                    delays(event),
+                    True,
+                    "conflicting_aux_schedule",
+                    started=has_started(event),
+                )
+            except (OSError, KeyError, TypeError, ValueError):
+                continue
+        db.execute("INSERT INTO big5_schedule_recovery VALUES(2)")
 
 
 def bindings(contracts):
@@ -188,14 +360,23 @@ def _epochs(receipts):
     out = []
     previous = None
     for timestamp, items in groupby(receipts, key=lambda r: r["received"]):
-        for row in items:
-            latest[row["slug"]] = row
+        for slug, values in groupby(items, key=lambda r: r["slug"]):
+            rows = list(values)
+            # No hash ordering can establish which differing response was
+            # received last when both observations have the exact same clock.
+            latest[slug] = (
+                rows[0]
+                if len({(r["kickoff"], r["stopped"], r["delays"]) for r in rows}) == 1
+                else None
+            )
         if main not in latest:
             continue
         primary = latest[main]
-        kickoff = primary["kickoff"]
-        siblings = [r for r in latest.values() if r["kickoff"] == kickoff]
-        active = all(not r["stopped"] for r in siblings)
+        kickoff = primary["kickoff"] if primary is not None else None
+        siblings = [r for r in latest.values() if r is not None]
+        active = len(siblings) == len(latest) and all(
+            r["kickoff"] == kickoff and not r["stopped"] for r in siblings
+        )
         current = kickoff if active else None
         waits = frozenset(
             max(5, n) for r in siblings for n in json.loads(r["delays"])
@@ -252,7 +433,59 @@ def _pair_matches(decision, executions):
     return checked == decision
 
 
-def count_windows(db, counts, start, end, now):
+def _fixed_slot(root, db, slots, fixture, epoch, phase, first, expires):
+    from . import big5_market_receipts as receipts
+
+    if phase + "@" + first not in slots:
+        return {}
+    # The legacy slot row only saved a summary for fully flagged books. Reopen
+    # the actual run from its own window, including an earlier complete attempt
+    # followed by an unsuccessful retry. Never synthesize a leg from two runs.
+    for row in db.execute(
+        "SELECT report FROM big5_runs WHERE fixture=? AND phase=? AND started>=? AND started<? "
+        "ORDER BY started,id",
+        (fixture, phase, first, expires),
+    ):
+        item = receipts.witness(
+            db,
+            root,
+            json.loads(row["report"]),
+            fixture,
+            epoch["kick"],
+            (first, expires),
+        )
+        if (
+            item
+            and epoch["since"] <= item["first_request"]
+            and (not epoch["until"] or item["finished"] < epoch["until"])
+        ):
+            return item
+    return {}
+
+
+def _count_state(counter, prefix, state):
+    from .big5_market_receipts import STATES
+
+    counter[prefix + "_complete"] += state is not None
+    for name in STATES:
+        counter[prefix + "_" + name] += state == name
+
+
+def _pair_state(decision, executions):
+    from .big5_market_receipts import combined_state
+
+    if not _pair_matches(
+        decision.get("bindings", {}),
+        {delay: item.get("bindings", {}) for delay, item in executions.items()},
+    ):
+        return None
+    grades = [decision["exchange_state"]]
+    for side, (delay, _) in decision["bindings"].items():
+        grades.append(executions[delay]["contract_exchange_states"][side])
+    return combined_state(grades)
+
+
+def count_windows(root, db, counts, start, end, now):
     scope = db.execute(
         "SELECT * FROM big5_schedule_receipts WHERE received<? "
         "ORDER BY fixture,received,slug,sha",
@@ -281,21 +514,30 @@ def count_windows(db, counts, start, end, now):
             for hours in (24, 1):
                 instant = kick - timedelta(hours=hours)
                 decision_end = iso(instant)
-                decision_key = f"t{hours}_decision@" + iso(
-                    instant - timedelta(seconds=25)
-                )
+                if decision_end >= end or decision_end > now:
+                    continue
+                max_wait = max(max(waits) for _, waits in epoch["waits"])
+                if iso(instant + timedelta(seconds=max_wait + 5)) < start:
+                    continue
                 has_decision = known(decision_end)
                 decision = (
-                    (_slot_receipt(slots, decision_key, epoch).get("bindings") or {})
+                    _fixed_slot(
+                        root,
+                        db,
+                        slots,
+                        fixture,
+                        epoch,
+                        f"t{hours}_decision",
+                        iso(instant - timedelta(seconds=25)),
+                        decision_end,
+                    )
                     if has_decision
                     else {}
                 )
                 if has_decision and due(decision_end):
                     c = counts[league]
                     c["fixed_windows_due"] += 1
-                    c["fixed_windows_complete"] += bool(
-                        _slot_receipt(slots, decision_key, epoch)
-                    )
+                    _count_state(c, "fixed_windows", decision.get("exchange_state"))
                 executions = {}
                 latest_expiry = None
                 for i, (begin, waits) in enumerate(epoch["waits"]):
@@ -310,21 +552,32 @@ def count_windows(db, counts, start, end, now):
                         if not _held_at_expiry(begin, until, expires):
                             continue
                         role = "execution" if delay == 5 else f"execution_{delay}s"
-                        key = f"t{hours}_{role}@" + iso(opens)
-                        executions[delay] = (
-                            _slot_receipt(slots, key, epoch).get("bindings") or {}
+                        item = (
+                            _fixed_slot(
+                                root,
+                                db,
+                                slots,
+                                fixture,
+                                epoch,
+                                f"t{hours}_{role}",
+                                iso(opens),
+                                expires,
+                            )
+                            if expires < end and expires <= now
+                            else {}
                         )
+                        executions[delay] = item
                         latest_expiry = max(latest_expiry or expires, expires)
                         if due(expires):
                             c = counts[league]
                             c["fixed_windows_due"] += 1
-                            c["fixed_windows_complete"] += bool(
-                                _slot_receipt(slots, key, epoch)
-                            )
+                            _count_state(c, "fixed_windows", item.get("exchange_state"))
                 if has_decision and latest_expiry and due(latest_expiry):
                     c = counts[league]
                     c[f"t{hours}_pairs_due"] += 1
-                    c[f"t{hours}_pairs_complete"] += _pair_matches(decision, executions)
+                    _count_state(
+                        c, f"t{hours}_pairs", _pair_state(decision, executions)
+                    )
             if (
                 iso(kick - timedelta(seconds=120)) >= end
                 or iso(kick + timedelta(seconds=600)) < start

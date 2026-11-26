@@ -1,0 +1,11 @@
+[Unit]
+Description=Check the continuous market collector heartbeat for the configured fixture window
+
+[Service]
+Type=oneshot
+Environment=PM861_DATA_DIR=%h/.local/share/polymarket861-five/state
+EnvironmentFile=%h/.config/polymarket861-five/window.env
+ExecStart=%h/.local/share/polymarket861-five/venv/bin/pm861 market league-watchdog --start ${PM861_KICKOFF_START} --end ${PM861_KICKOFF_END}
+TimeoutStartSec=30s
+NoNewPrivileges=yes
+UMask=0077

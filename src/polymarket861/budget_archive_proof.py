@@ -9,12 +9,22 @@ from zoneinfo import ZoneInfo
 from . import (
     archive_proof,
     big5_market,
+    budget_schedule,
     dbscope,
     league_registry,
     ledger_rules as rules,
     ledger_terms,
     settlement,
+    shadow_market,
 )
+
+
+@contextmanager
+def _readonly(archive):
+    with closing(sqlite3.connect((archive / "runtime.sqlite3").resolve().as_uri() + "?mode=ro", uri=True)) as db:
+        db.row_factory = sqlite3.Row
+        db.execute("BEGIN")
+        yield db
 
 
 @contextmanager
@@ -30,13 +40,45 @@ def read_archive(data_dir):
     if not db_file.is_file():
         yield None
         return
-    with closing(
-        sqlite3.connect(db_file.resolve().as_uri() + "?mode=ro", uri=True)
-    ) as db:
-        db.row_factory = sqlite3.Row
-        db.execute("BEGIN")
+    with _readonly(archive) as db:
         with dbscope.bind(archive, db):
             yield (archive, db)
+
+
+@contextmanager
+def football_archive(source):
+    # In a deployment, primary football receipts can be a sibling of the dedicated market store.
+    if source:
+        market = source[0].resolve()
+        parent = market.parent
+        if market == big5_market.research_root(parent) and (parent / "runtime.sqlite3").is_file():
+            with _readonly(parent) as db:
+                yield parent, db
+            return
+    yield None
+
+
+def verify_contract(data_dir, condition, as_of):
+    """Independently inspect a retained Gamma contract even if no timely CLOB pair exists."""
+    at = rules.iso(rules.instant(as_of))
+    with read_archive(data_dir) as source:
+        if source is None:
+            raise ValueError("no local market archive")
+        root, db = source
+        market = archive_proof.original_market(db, root, condition, at)
+        league = market["fixture"].split("-", 1)[0]
+        native = archive_proof._event_capture(
+            db, root, market["source_sha256"], market["recorded_at"], market["event_slug"]
+        )
+        _, main, _, kickoff, home, away, event_id = big5_market._identity(native, league)
+        return {
+            "scope": "archived_gamma_contract", "as_of": at, "league": league,
+            "fixture": main, "event_slug": market["event_slug"], "event_id": event_id,
+            "kickoff": kickoff, "home_club_id": home, "away_club_id": away,
+            "condition_id": condition, "market_slug": market["slug"], "tokens": market["tokens"],
+            "source_sha256": market["source_sha256"], "received_at": market["recorded_at"],
+            "order_books_checked": 0,
+        }
 
 
 def _gamma_identity(source, market, fixture, kickoff):
@@ -63,7 +105,7 @@ def _gamma_identity(source, market, fixture, kickoff):
         )
 
 
-def entry(source, op, candidates):
+def entry(source, op, candidates, *, scheduled=False, as_of=None, football=None):
     if source is None:
         raise ValueError("no local market archive")
     root, db = source
@@ -90,7 +132,16 @@ def entry(source, op, candidates):
     for stage, at, submitted in zip(
         ("first", "second"), (decision, target), candidates
     ):
-        verified = archive_proof.eligible_book(db, root, terms, at, kickoff, stage)
+        if scheduled:
+            # Borrow only the shadow clock interpretation. These five cash buckets
+            # still require the full frozen, authoritative fee as at each book.
+            seen_by = at + timedelta(seconds=5) if stage == "second" else at
+            verified = shadow_market.book(
+                db, root, terms, at, kickoff, stage,
+                seen_by=seen_by, fee_check=ledger_terms.verify_book_terms,
+            )
+        else:
+            verified = archive_proof.eligible_book(db, root, terms, at, kickoff, stage)
         if not verified:
             raise ValueError(
                 f"missing freshly captured verified {stage} book or fee authority"
@@ -140,12 +191,17 @@ def entry(source, op, candidates):
         raise ValueError(
             "execution requires an independently observed fresh venue book"
         )
-    return {
+    result = {
         **market,
         "entry_terms": terms,
         "decision_at": rules.iso(decision),
         "budget_fixture_id": op["fixture_id"],
     }
+    if scheduled:
+        result["entry_evidence"] = budget_schedule.attest(
+            source, op["fixture_id"], market, kickoff, snapshots, as_of, football
+        )
+    return result
 
 
 def _terminal(source, market, token, kickoff, at):

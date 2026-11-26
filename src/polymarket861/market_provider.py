@@ -213,7 +213,7 @@ def family(event: dict, market: dict, *, sport: str = "epl") -> tuple[str | None
     return side + "_total" if side else "total", side, None
 
 
-def normalized_markets(event: dict, *, sport: str = "epl") -> list[dict]:
+def normalized_markets(event: dict, *, sport: str = "epl", project_teams=False) -> list[dict]:
     identity = SPORT_FIXTURES[sport].fullmatch(str(event.get("slug", "")))
     if not identity:
         return []
@@ -286,6 +286,14 @@ def normalized_markets(event: dict, *, sport: str = "epl") -> list[dict]:
                 "ended": event.get("ended"),
             }
         )
+    if project_teams:
+        # The domestic collector has always kept these five original fields in its indexed contracts.
+        projected = [
+            {key: team.get(key) for key in ("id", "league", "ordering", "name", "abbreviation")}
+            for team in teams(event).values()
+        ]
+        for contract in extracted:
+            contract["event_teams"] = projected
     return extracted
 
 

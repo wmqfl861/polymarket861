@@ -305,6 +305,8 @@ def publish_round(
             news_study = round_summary(db, season, round_id, horizon=horizon, mode=mode)
             if news_study["sealed"]:
                 report["news_study"] = news_study
+            else:
+                report["news_availability_fields"] = news_study["availability_fields"]
         checksum = store.digest(report)
         if head and checksum == head["sha256"]:
             return report | _publication(head)

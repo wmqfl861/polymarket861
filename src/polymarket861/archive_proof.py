@@ -79,6 +79,10 @@ def original_receipt(db, root, sha, received_at, operations, *, expected_selecto
 
 
 def _event_capture(db, root, sha, received_at, event_slug):
+    return _event_with_operation(db, root, sha, received_at, event_slug)[0]
+
+
+def _event_with_operation(db, root, sha, received_at, event_slug, *, allow_undated=False):
     reply, operation, selector, _ = original_receipt(
         db, root, sha, received_at, {"event", "catalog", "league_event", "league_catalog"}
     )
@@ -104,8 +108,9 @@ def _event_capture(db, root, sha, received_at, event_slug):
             raise ValueError("unknown domestic event sport")
         if operation == "league_catalog" and selector != sport:
             raise ValueError("domestic catalogue selector differs from event sport")
-        _identity(native[0], sport)
-    return native[0]
+        if not allow_undated or native[0].get("startTime"):
+            _identity(native[0], sport)
+    return native[0], operation
 
 
 def original_market(db, root, condition, as_of, *, receipt_at=None, sha=None):
@@ -120,9 +125,11 @@ def _gamma_markets(db, root, sha, received_at, slug):
     key = ("gamma_conditions", sha, received_at, slug)
     if active is not None and key in active.checked:
         return active.checked[key]
-    event = _event_capture(db, root, sha, received_at, slug)
+    event, operation = _event_with_operation(db, root, sha, received_at, slug)
     by_condition = {}
-    for market in provider.normalized_markets(event, sport=slug.split("-", 1)[0]):
+    for market in provider.normalized_markets(
+        event, sport=slug.split("-", 1)[0], project_teams=operation in {"league_catalog", "league_event"}
+    ):
         by_condition.setdefault(market["condition_id"], []).append(market)
     result = (by_condition, event.get("teams") or [], event.get("title"))
     if active is not None:

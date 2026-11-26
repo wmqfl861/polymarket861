@@ -13,6 +13,7 @@ from scipy.stats import t as student
 
 from . import (
     archive_proof,
+    big5_market_schedule,
     comparisons,
     football,
     kickoff_proof,
@@ -172,10 +173,19 @@ def _history_states(body, operation, selectors, slugs):
         key = event["slug"]
         if key not in slugs:
             continue
-        flags = (event.get("live"), event.get("ended"))
-        if key in states or any(v is not None and type(v) is not bool for v in flags):
+        state = big5_market_schedule.pregame_flags(event)
+        if key in states or state == "unclassified":
             raise ValueError("ambiguous Gamma event state")
-        states[key] = flags
+        reason = None
+        if state == "not_pregame":
+            reason = (
+                "exchange_start_or_end_observed"
+                if big5_market_schedule.has_started(event)
+                else "exchange_schedule_interrupted"
+            )
+        # Historical indexes stored only these two booleans. Recheck them
+        # separately from sporting statuses recovered from the original bytes.
+        states[key] = (event.get("live"), event.get("ended"), reason)
     return states
 
 
@@ -252,9 +262,10 @@ def _first_disqualifying_state(db, root, slug, close):
             native = _history_states(reply.body, operation, direct, slugs)
         except (ValueError, OSError, KeyError, TypeError):
             return unknown
-        if any(live is True or ended is True for live, ended in native.values()):
-            return stamp, "exchange_start_or_end_observed"
-        if indexes != native.keys() or states != native:
+        for _, _, reason in native.values():
+            if reason:
+                return stamp, reason
+        if indexes != native.keys() or states != {k: v[:2] for k, v in native.items()}:
             return unknown
     return None
 
@@ -273,13 +284,27 @@ def _state_at_book(db, root, fixture, slug, received):
     ):
         raise ValueError("stale_exchange_pregame_state")
     if (
-        event.get("live") is not False
-        or event.get("ended") is not False
+        big5_market_schedule.pregame_flags(event) != "explicit_pregame"
         or event.get("closed") is True
         or event.get("archived") is True
     ):
         raise ValueError("no_explicit_exchange_pregame_state")
     return {"event_slug": slug, "sha256": row["sha"], "received_at": row["received_at"]}
+
+
+def _closing_state_check(db, root, fixture, close, *, explicit):
+    history = {}
+
+    def check(slug, received):
+        if slug not in history:
+            history[slug] = _first_disqualifying_state(db, root, slug, close)
+        problem = history[slug]
+        if problem and problem[0] <= received:
+            raise ValueError(problem[1])
+        if explicit:
+            return _state_at_book(db, root, fixture, slug, received)
+
+    return check
 
 
 def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False, as_of=None):
@@ -330,15 +355,6 @@ def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False, as_of=None
         before = comparisons.frame(
             db, root, fixture, cut, cut, min(scheduled, close), prospective=True
         )
-        history = {}
-
-        def state_check(slug, received):
-            if slug not in history:
-                history[slug] = _first_disqualifying_state(db, root, slug, close)
-            if history[slug] and history[slug][0] <= received:
-                raise ValueError(history[slug][1])
-            return _state_at_book(db, root, fixture, slug, received)
-
         after = comparisons._closing_frame(
             db,
             root,
@@ -347,7 +363,9 @@ def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False, as_of=None
             close,
             not scheduled_proxy,
             True,
-            validate_state=state_check if scheduled_proxy else None,
+            validate_state=_closing_state_check(
+                db, root, fixture, close, explicit=scheduled_proxy
+            ),
         )
     except (DatabaseError, OSError, TypeError, KeyError, ValueError):
         return witness | {"reason": "unavailable_or_invalid_market_archive"}
@@ -667,7 +685,9 @@ def summary(rows, capability=None, mode=None, *, field="market_close"):
     return report
 
 
-def _schedule_pair_at_book(db, root, fixture, version, received, scheduled):
+def _schedule_pair_at_book(
+    db, root, fixture, version, received, scheduled, *, decision=False
+):
     from . import opportunity, schedule_consensus
 
     admitted = schedule_consensus._registration(db, fixture["fixture_id"], version)
@@ -687,8 +707,12 @@ def _schedule_pair_at_book(db, root, fixture, version, received, scheduled):
     ):
         raise ValueError("schedule_sources_disagree_on_fixture")
     receipts = {}
+    # A T−24h opening book may arrive a few seconds before the decision.
+    # Its independent schedules must be fresh at that receipt. The near-start
+    # closing reference retains its original kickoff-relative 24-hour rule.
+    fresh_at = store.instant(received) if decision else scheduled
     for source, info in (("openligadb", ol), ("gamma", gamma)):
-        if info["kickoff"] != fixture["kickoff"] or not scheduled - timedelta(
+        if info["kickoff"] != fixture["kickoff"] or not fresh_at - timedelta(
             hours=24
         ) <= store.instant(info["received_at"]) <= store.instant(received):
             raise ValueError("schedule_sources_outside_24h_or_disagree")
@@ -699,16 +723,22 @@ def _schedule_pair_at_book(db, root, fixture, version, received, scheduled):
     return slug, receipts
 
 
-def _retrospective_clock(db, root, fixture, scheduled, cutoff):
+def _retrospective_clock(db, root, fixture, scheduled, *, as_of=None):
     from . import result_admission
 
-    now = store.now_utc()
+    now = store.iso(as_of) if as_of is not None else store.now_utc()
     if store.instant(now) <= scheduled:
         raise ValueError("awaiting_postmatch_clock_check")
     proof = None
     try:
         proof = kickoff_proof.resolve(
-            root, fixture["fixture_id"], scheduled, cutoff, db=db, prospective=True
+            root,
+            fixture["fixture_id"],
+            scheduled,
+            scheduled - timedelta(hours=1),
+            db=db,
+            prospective=True,
+            received_through=as_of,
         )
     except kickoff_proof.MissingKickoffProof:
         pass
@@ -754,6 +784,7 @@ def _retrospective_clock(db, root, fixture, scheduled, cutoff):
         or final.get("period") != "regulation"
         or final.get("registry_kickoff", fixture["kickoff"]) != fixture["kickoff"]
         or store.instant(final["confirmed_at"]) < scheduled
+        or store.instant(final["confirmed_at"]) > store.instant(now)
     ):
         raise ValueError("awaiting_verified_postmatch_result")
     return {
@@ -764,11 +795,11 @@ def _retrospective_clock(db, root, fixture, scheduled, cutoff):
     }
 
 
-def _schedule_only_frame(db, root, fixture, cutoff, scheduled):
+def _schedule_only_frame(db, root, fixture, cutoff, scheduled, *, as_of=None):
     version = _scheduled_revision(db, fixture, cutoff, scheduled)
     if version != fixture["version"]:
         raise ValueError("retrospective_fixture_revision")
-    retrospective = _retrospective_clock(db, root, fixture, scheduled, cutoff)
+    retrospective = _retrospective_clock(db, root, fixture, scheduled, as_of=as_of)
     slug, _ = comparisons._catalog(db, root, fixture, store.iso(cutoff), True)
     # A correction published after kickoff can still invalidate a weak clock.
     rows = db.execute(
@@ -784,9 +815,7 @@ def _schedule_only_frame(db, root, fixture, cutoff, scheduled):
         if native_start != store.instant(row["kickoff"]) or native_start != scheduled:
             raise ValueError("retrospective_exchange_schedule_revision")
     # Reject even a known early start after the chosen book, and corrupt state history.
-    state = _first_disqualifying_state(
-        db, root, slug, scheduled - timedelta(microseconds=1)
-    )
+    state = _first_disqualifying_state(db, root, slug, scheduled)
     if state:
         raise ValueError(state[1])
     stamps = db.execute(
@@ -894,19 +923,16 @@ def close_reference(root, fixture_id):
                     root, fixture_id, scheduled, cut, db=db, prospective=True
                 )
                 end = store.instant(proof["actual_kickoff"])
-                frame = comparisons._closing_frame(db, root, f, cut, end, True, True)
+                frame = comparisons._closing_frame(
+                    db, root, f, cut, end, True, True,
+                    validate_state=_closing_state_check(db, root, f, end, explicit=False),
+                )
                 witness = {
                     "kickoff_proof": proof["proof_id"],
                     "actual_kickoff": proof["actual_kickoff"],
                 }
             else:
                 version = _scheduled_revision(db, f, cut, scheduled)
-
-                def eligible_state(slug, received):
-                    problem = _first_disqualifying_state(db, root, slug, scheduled)
-                    if problem and problem[0] <= received:
-                        raise ValueError(problem[1])
-                    return _state_at_book(db, root, f, slug, received)
 
                 frame = comparisons._closing_frame(
                     db,
@@ -916,7 +942,7 @@ def close_reference(root, fixture_id):
                     scheduled,
                     False,
                     True,
-                    validate_state=eligible_state,
+                    validate_state=_closing_state_check(db, root, f, scheduled, explicit=True),
                 )
                 witness = {
                     "schedule_version": version,

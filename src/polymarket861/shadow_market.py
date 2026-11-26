@@ -68,7 +68,7 @@ def _verify_fee(contract, market, *, data_dir, at):
         raise ValueError("research rule or fee profile changed")
 
 
-def book(db, root, contract, target, kickoff, stage, *, seen_by):
+def book(db, root, contract, target, kickoff, stage, *, seen_by, fee_check=None):
     cutoff, now, planned = map(instant, (target, seen_by, kickoff))
     begin = cutoff if stage == "second" else cutoff - timedelta(seconds=30)
     end = min(now, cutoff + timedelta(seconds=5) if stage == "second" else cutoff)
@@ -81,7 +81,7 @@ def book(db, root, contract, target, kickoff, stage, *, seen_by):
     for row in rows:
         try:
             raw, market = archive_proof._original_book(
-                db, root, contract, row, fee_check=_verify_fee
+                db, root, contract, row, fee_check=fee_check or _verify_fee
             )
             if (
                 market["game_times"] != [iso(planned)]

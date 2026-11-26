@@ -208,6 +208,7 @@ def _quote(
     as_of_book=False,
     *,
     schedule_reference=None,
+    decision_reference=None,
 ):
     row, reply, native = batch
     (token,) = [t["token_id"] for t in m["tokens"] if t["outcome"].lower() == outcome]
@@ -287,6 +288,17 @@ def _quote(
         ):
             raise ValueError("invalid_schedule_reference_window")
         book = book | {"pregame": True}
+    if decision_reference is not None and book["pregame"] is None:
+        # Only supplied after the research caller verified both native schedules
+        # at this exact opening receipt. Use the normal decision-boundary check.
+        if (
+            decision_reference != reply.received_at
+            or as_of_book
+            or actual
+            or not store.instant(reply.received_at) <= target < kickoff
+        ):
+            raise ValueError("invalid_research_decision_reference")
+        book = book | {"pregame": True}
     special, profile = ledger_terms._interpret(observed, outcome)
     terms = {
         "condition_id": m["condition_id"],
@@ -328,6 +340,7 @@ def frame(
     prospective=False,
     as_of_book=False,
     schedule_reference=None,
+    verify_decision_schedule=None,
 ):
     result = {
         "target": store.iso(target),
@@ -345,6 +358,15 @@ def frame(
             batch=batch[0]["sha"],
             received_at=batch[0]["received_at"],
         )
+        decision_reference = None
+        if verify_decision_schedule is not None:
+            if (
+                actual or as_of_book or not prospective
+                or cutoff != target or target >= kickoff
+            ):
+                raise ValueError("invalid_research_decision_window")
+            decision_reference = result["received_at"]
+            result["schedule_sources"] = verify_decision_schedule(slug, decision_reference)
     except _BAD as exc:
         result["missing"] = dict.fromkeys(ITEMS, str(exc))
         return result
@@ -368,6 +390,7 @@ def frame(
                         actual,
                         as_of_book,
                         schedule_reference=schedule_reference,
+                        decision_reference=decision_reference,
                     )
                     for side in sides
                 ]
@@ -418,14 +441,14 @@ def _closing_frame(
             actual=actual,
             before=before,
             prospective=prospective,
-            as_of_book=validate_state is not None,
+            as_of_book=validate_state is not None and not actual,
         )
         receipt = {"received_at": data["received_at"], "batch": data["batch"]}
         if validate_state and data["items"]:
             try:
-                receipt["explicit_pregame_event"] = validate_state(
-                    data["fixture_slug"], data["received_at"]
-                )
+                witness = validate_state(data["fixture_slug"], data["received_at"])
+                if witness is not None:
+                    receipt["explicit_pregame_event"] = witness
             except _BAD as exc:
                 data["missing"].update(dict.fromkeys(data["items"], str(exc)))
                 data["items"] = {}

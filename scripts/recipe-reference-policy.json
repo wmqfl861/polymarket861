@@ -1,0 +1,211 @@
+{
+  "__init__.__version__": {
+    "reason": "The HTTP User-Agent advertises the installed package version. Receipt parsing, source identity and cutoff checks operate on the archived response.",
+    "callers": [
+      "market_provider.get"
+    ]
+  },
+  "big5_market._identity": {
+    "reason": "Only the league_event and league_catalog operations in the isolated five-league market archive enter this branch. EPL schedule consensus uses its own event and catalog receipts.",
+    "callers": [
+      "archive_proof._event_with_operation"
+    ]
+  },
+  "blob_storage.blob_size": {
+    "reason": "The file length measures physical storage. Admission uses the digest of the decoded original.",
+    "callers": [
+      "store.archive_bytes"
+    ]
+  },
+  "blob_storage.representation": {
+    "reason": "The writer may gzip the same raw bytes. The evidence reader reopens and hashes the decoded original.",
+    "callers": [
+      "store.archive_bytes"
+    ]
+  },
+  "contract_storage.prepare": {
+    "reason": "Market contract table creation and migration. The EPL kickoff evidence is reread from the native event.",
+    "callers": [
+      "market_archive.prepare"
+    ]
+  },
+  "contract_storage.record": {
+    "reason": "Keeps normalized market contracts for market and paper workflows. The certified kickoff is decoded independently from the archived event.",
+    "callers": [
+      "market_archive._ingest"
+    ]
+  },
+  "dbscope.prepare": {
+    "reason": "Installs versioned SQLite schema definitions before the receipt and research queries execute. The queries that select times, results and models are covered.",
+    "callers": [
+      "independent_results._receive",
+      "independent_results.sync",
+      "jobs_research._open",
+      "market_archive.prepare"
+    ]
+  },
+  "evidence_sources.db": {
+    "reason": "Opens the transaction for the evidence writer and as-of reader. Field eligibility, cutoff and claim selection reside in the calling definitions.",
+    "callers": [
+      "evidence._match_impacts",
+      "evidence.as_of_context",
+      "evidence.import_evidence",
+      "evidence.open_incident",
+      "evidence.resolve_incident"
+    ]
+  },
+  "evidence_sources.publish_source": {
+    "reason": "Publishes the source report after committing the field-level grant or claim; forecast admission reads the time-versioned source table.",
+    "callers": [
+      "evidence.import_evidence"
+    ]
+  },
+  "football_model.apply_context": {
+    "reason": "Only the B2 primary forecast calls this probability adjustment. B2 explicitly signs it.",
+    "callers": [
+      "pipeline._forecast_arms"
+    ],
+    "families": [
+      "B0",
+      "B1",
+      "B3"
+    ]
+  },
+  "league_registry.club_key": {
+    "reason": "Explicit-league replay resolves source club aliases. The original EPL protocol calls team_key and the five-league report signs the registry and its effective club keys.",
+    "callers": [
+      "football._club_key"
+    ]
+  },
+  "league_registry.fixture_count": {
+    "reason": "The explicit-league engine checks the domestic season shape. The five-league replay manifest identifies that implementation.",
+    "callers": [
+      "football.FootballEngine"
+    ]
+  },
+  "league_registry.fixture_exception": {
+    "reason": "Explicit-league historical parsing applies adjudications and replay exclusions from the signed five-league registry.",
+    "callers": [
+      "football._check_scope",
+      "football._parse_match"
+    ]
+  },
+  "league_registry.profile": {
+    "reason": "These calls validate a supplied domestic league. The original EPL forecast omits the league selector and its historical five-league counterpart signs league_registry.py.",
+    "callers": [
+      "football.FootballEngine",
+      "football._check_scope",
+      "football._parse_match",
+      "football.load_fixtures"
+    ]
+  },
+  "league_registry.round_count": {
+    "reason": "Only the explicit domestic archive parser uses the registered season length. The five-league replay signs the registry and membership asset.",
+    "callers": [
+      "football._parse_match"
+    ]
+  },
+  "league_registry.season_window": {
+    "reason": "Explicit-league parsing applies the calendar of the named competition. Its research manifest signs that calendar.",
+    "callers": [
+      "football._parse_match"
+    ]
+  },
+  "league_registry.source_blobs": {
+    "reason": "The original EPL protocol signs its SOURCE_BLOBS table. Five-league replay signs the membership asset and forty observed Git blob IDs.",
+    "callers": [
+      "football._blobs"
+    ]
+  },
+  "league_registry.validate_members": {
+    "reason": "Validation against season membership occurs in the explicit-league loader. The five-league replay also signs the resulting club keys.",
+    "callers": [
+      "football.load_fixtures"
+    ]
+  },
+  "model_study.build_sources": {
+    "reason": "Binds the captured physical release manifest to the scope in which the primary recipe is independently verified.",
+    "callers": [
+      "pipeline.make_forecast"
+    ]
+  },
+  "news.snapshot": {
+    "reason": "Reads the prospective news companion facts. B3 includes the companion identity in its own recipe; the other families identify this arm separately.",
+    "callers": [
+      "pipeline.make_forecast"
+    ]
+  },
+  "news_model.paired_prediction": {
+    "reason": "Generates the paired news study probabilities. The companion identity signs this module and participates in the B3 recipe.",
+    "callers": [
+      "pipeline._forecast_arms"
+    ]
+  },
+  "news_study_plan.PAIR_RECIPE_KIND": {
+    "reason": "Storage kind of the separately signed paired news recipe. The seal keeps both recipe digests.",
+    "callers": [
+      "pipeline.make_forecast"
+    ]
+  },
+  "news_study_plan.declaration": {
+    "reason": "Builds the independent prospective study declaration accompanying the forecast. The primary probability is already computed.",
+    "callers": [
+      "pipeline.make_forecast"
+    ]
+  },
+  "result_admission.database": {
+    "reason": "Initializes the result-admission schema and opens its connection. The receipt, source-pair and cutoff queries run in the signed reader/writer.",
+    "callers": [
+      "result_feed.sync",
+      "result_operations._fallback",
+      "result_operations.manual",
+      "result_operations.rollback"
+    ]
+  },
+  "result_admission.enqueue": {
+    "reason": "Queues a round for report publication after a result correction. The corrected result has already been written by the signed admission path.",
+    "callers": [
+      "result_operations.manual",
+      "result_operations.rollback"
+    ]
+  },
+  "result_operations.publications": {
+    "reason": "Reissues the round reports after reviewing the admitted results and frozen training manifest; the next forecast reads the admitted inputs.",
+    "callers": [
+      "datasets.observe",
+      "result_admission.review_pairing"
+    ]
+  },
+  "store.connect": {
+    "reason": "Opens or initializes SQLite. Identity, value and as-of predicates are in the signed transaction and input selectors.",
+    "callers": [
+      "datasets.observe",
+      "dbscope.reading",
+      "independent_results._receive",
+      "independent_results.sync",
+      "jobs_research._open",
+      "market_archive.database",
+      "paired_proof._retain",
+      "paired_proof.frozen_manifest",
+      "pipeline.make_forecast"
+    ]
+  },
+  "store.put_report": {
+    "reason": "Stores generated diagnostics and derived reports; the forecast, source evidence and probability recipe have their own records.",
+    "callers": [
+      "pipeline.make_forecast",
+      "result_admission.reconcile",
+      "result_operations.manual",
+      "result_operations.rollback",
+      "schedule_consensus.sync"
+    ]
+  },
+  "store.save_report": {
+    "reason": "Opens a connection and saves the incident or result report after its versioned facts have been written.",
+    "callers": [
+      "evidence.open_incident",
+      "evidence.resolve_incident",
+      "result_feed.reconcile"
+    ]
+  }
+}

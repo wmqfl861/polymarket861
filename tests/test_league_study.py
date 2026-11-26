@@ -84,3 +84,54 @@ class LeagueStudyTests(unittest.TestCase):
             ):
                 with self.assertRaisesRegex(ValueError, "blob mismatch"):
                     study._snapshot(base, base / "snapshot", ["bun"])
+
+    def test_replay_identifies_membership_asset_and_actually_applied_club_aliases(self):
+        import shutil
+        from polymarket861 import pipeline, store
+
+        code = "lal"
+        name = "RC Celta"
+        mapping = study.league_registry.ALIASES[code]
+        season = next(
+            s
+            for s in study.SOURCE_SEASONS
+            if name in study.league_registry.members(code, s)
+        )
+        manifest = {code: {season: study.league_registry.source_blob(code, season)}}
+        with tempfile.TemporaryDirectory() as temp:
+            package = Path(temp) / "polymarket861"
+            shutil.copytree(
+                study.model_study.PACKAGE_ROOT,
+                package,
+                ignore=shutil.ignore_patterns("__pycache__"),
+            )
+
+            def main_id():
+                return store.digest(
+                    pipeline._build_recipe("B1", study.football.DEFAULT_LINES)
+                )
+
+            with patch.object(study.model_study, "PACKAGE_ROOT", package):
+                before = study.research_recipe(manifest)
+                primary = main_id()
+                with patch.dict(mapping, {name: name}):
+                    after = study.research_recipe(manifest)
+                    self.assertNotEqual(
+                        before["manifest"]["effective_club_keys_sha256"],
+                        after["manifest"]["effective_club_keys_sha256"],
+                    )
+                    self.assertNotEqual(before["sha256"], after["sha256"])
+                    self.assertEqual(primary, main_id())
+                asset = package / "assets/league-memberships-v1.json.gz"
+                # gzip allows trailing zero padding without changing its decoded membership.
+                asset.write_bytes(asset.read_bytes() + b"\0")
+                changed_asset = study.research_recipe(manifest)
+                self.assertNotEqual(before["sha256"], changed_asset["sha256"])
+                self.assertEqual(
+                    before["manifest"]["effective_club_keys_sha256"],
+                    changed_asset["manifest"]["effective_club_keys_sha256"],
+                )
+                self.assertEqual(primary, main_id())
+                self.assertEqual(
+                    changed_asset["sha256"], store.digest(changed_asset["manifest"])
+                )
