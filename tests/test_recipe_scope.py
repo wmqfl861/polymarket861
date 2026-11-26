@@ -2,10 +2,12 @@
 
 import importlib.util
 import json
+import os
 import shutil
 import tempfile
 import unittest
 from contextlib import closing
+from datetime import timedelta
 from pathlib import Path
 from unittest.mock import patch
 
@@ -248,6 +250,174 @@ class RecipeScopeTests(unittest.TestCase):
                             )
                     finally:
                         path.write_text(original)
+
+    def test_native_news_dispatch_changes_sealed_facts_companion_and_era(self):
+        from polymarket861 import news_roster, news_sources, news_endpoint_study, season
+        from polymarket861.market_provider import Reply
+        from test_news_endpoint_study import fixed_sqlite_clock
+        from test_news_matchday import (
+            AWAY,
+            HOME,
+            AWAY_RUMOUR,
+            HOME_OUT,
+            FID,
+            KICKOFF,
+            seed_fixture,
+            add_club_feed,
+            roster_transport,
+            rss,
+        )
+        from test_paired_proof import at
+
+        cutoff = store.instant(KICKOFF) - timedelta(minutes=61)
+        when = store.instant("2026-08-12T12:25:00Z")
+
+        def seal(directory, adapter):
+            state, history = directory / "runtime", directory / "history"
+            with fixed_sqlite_clock(cutoff):
+                with at("2026-08-01T10:00Z"):
+                    seed_fixture(state, history)
+                    news_endpoint_study.enroll(state)
+                    home, away = (add_club_feed(state, team) for team in (HOME, AWAY))
+                bodies = {
+                    home["url"]: rss(home, HOME_OUT),
+                    away["url"]: rss(away, AWAY_RUMOUR),
+                }
+                squads = {team: roster_transport(team) for team in (HOME, AWAY)}
+                refresh = news_roster.refresh
+
+                def transport(url):
+                    if url not in bodies:
+                        raise ConnectionError("outside the fixture's publisher scope")
+                    return Reply(bodies[url], store.now_utc(), store.now_utc(), {}, url)
+
+                with (
+                    patch.dict(
+                        os.environ,
+                        {"PM861_NEWS_LLM_URL": "", "PM861_NEWS_LLM_MODEL": ""},
+                    ),
+                    patch.object(adapter, "_get", side_effect=transport),
+                    patch.object(news_sources, "_get", side_effect=transport),
+                    patch.object(news_sources, "poll", adapter.poll),
+                    patch.object(
+                        news_roster,
+                        "refresh",
+                        side_effect=lambda r, t, s: refresh(r, t, s, getter=squads[t]),
+                    ),
+                ):
+                    with at(when):
+                        for _ in range(2):
+                            season._service(
+                                state, "news", when, {"football_root": history}
+                            )
+                    with at(cutoff):
+                        return pipeline.make_forecast(state, FID, history)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / "package"
+            shutil.copytree(
+                model_study.PACKAGE_ROOT,
+                package,
+                ignore=shutil.ignore_patterns("__pycache__"),
+            )
+            with patch.object(model_study, "PACKAGE_ROOT", package):
+                first = seal(root / "first", news_sources)
+                source = package / "news_sources.py"
+                raw = source.read_text()
+                marker = (
+                    '"articles": rows, "cursor": dict(next_cursor, binding=binding)'
+                )
+                self.assertEqual(raw.count(marker), 1)
+                source.write_text(raw.replace(marker, marker.replace("rows,", "[],")))
+                spec = importlib.util.spec_from_file_location(
+                    "polymarket861.mutated_native_dispatch", source
+                )
+                adapter = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(adapter)
+                second = seal(root / "second", adapter)
+                facts = lambda forecast: len(
+                    forecast["context"]["player_news"]["facts"]
+                )
+                self.assertEqual((facts(first), facts(second)), (2, 0))
+                self.assertEqual(
+                    (first["news_pair"]["changed"], second["news_pair"]["changed"]),
+                    (True, False),
+                )
+                self.assertEqual(first["recipe_digest"], second["recipe_digest"])
+                self.assertEqual(first["probabilities"], second["probabilities"])
+                self.assertNotEqual(
+                    first["news_recipe_sha256"], second["news_recipe_sha256"]
+                )
+                old_era, new_era = (
+                    s["news_study"]["era_sha256"] for s in (first, second)
+                )
+                self.assertTrue(old_era and new_era)
+                self.assertNotEqual(old_era, new_era)
+
+    def test_news_feature_identity_covers_claims_and_clocks_separately_from_readonly_study(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as directory:
+            package = Path(directory) / "package"
+            shutil.copytree(
+                model_study.PACKAGE_ROOT,
+                package,
+                ignore=shutil.ignore_patterns("__pycache__"),
+            )
+            with patch.object(model_study, "PACKAGE_ROOT", package):
+                primary = pipeline._build_recipe("B1", football.DEFAULT_LINES)
+                baseline = pipeline._study_recipe(primary)
+                b3 = pipeline._build_recipe("B3", football.DEFAULT_LINES)
+                for filename, before, after, affects in (
+                    ("news.py", 'articles = result["articles"]', "articles = []", True),
+                    (
+                        "news_sources.py",
+                        "if received < requested:",
+                        "if received <= requested:",
+                        True,
+                    ),
+                    (
+                        "news_endpoint_originals.py",
+                        'BODY_SOURCE = "epl-endpoint-news-response"',
+                        'BODY_SOURCE = "changed-research-storage-label"',
+                        False,
+                    ),
+                    (
+                        "news_endpoint_originals.py",
+                        "def verify(db, root, fixture, snapshot):",
+                        "def verify(db, root, fixture, snapshot):\n    return None",
+                        False,
+                    ),
+                ):
+                    path = package / filename
+                    raw = path.read_text()
+                    self.assertEqual(raw.count(before), 1)
+                    path.write_text(raw.replace(before, after))
+                    try:
+                        with self.subTest(file=filename):
+                            self.assertEqual(
+                                primary,
+                                pipeline._build_recipe("B1", football.DEFAULT_LINES),
+                            )
+                            current = pipeline._study_recipe(primary)
+                            self.assertEqual(
+                                affects,
+                                baseline["news_probability_source"]
+                                != current["news_probability_source"],
+                            )
+                            self.assertEqual(
+                                affects,
+                                baseline["news_frozen_feature_source"]
+                                != current["news_frozen_feature_source"],
+                            )
+                            self.assertEqual(
+                                affects,
+                                b3
+                                != pipeline._build_recipe("B3", football.DEFAULT_LINES),
+                            )
+                    finally:
+                        path.write_text(raw)
 
     def test_formal_release_uses_the_reference_python(self):
         with patch.object(

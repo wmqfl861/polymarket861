@@ -16,6 +16,7 @@ from polymarket861 import (
     model_study,
     news_era_replay as replay,
     news_evaluation,
+    news_study_plan,
     pipeline,
     store,
 )
@@ -55,7 +56,7 @@ class EraReplayTests(unittest.TestCase):
                 )
         self.clock = "2026-08-12T12:58Z"
 
-    def seal(self, index, recipe, extractor="c" * 64):
+    def seal(self, index, recipe, extractor="c" * 64, *, split_recipe=False):
         home, away = self.teams[index]
         fixture = football.fixture_id(SEASON, home, away)
         snapshot = {
@@ -76,7 +77,7 @@ class EraReplayTests(unittest.TestCase):
             at(self.clock),
             patch.object(pipeline, "_build_recipe", return_value=recipe),
         ):
-            name = "B1@" + store.digest(recipe)
+            name = "B1" if split_recipe else "B1@" + store.digest(recipe)
             pipeline.register_recipe(self.root, name, "B1")
             with closing(store.connect(self.root)) as db, db:
                 db.execute(
@@ -94,6 +95,66 @@ class EraReplayTests(unittest.TestCase):
             pipeline, "_build_recipe", return_value=candidate or self.current
         ):
             return replay.compare(self.root, source, SEASON)
+
+    def test_inventory_validates_each_news_companion_under_one_b1_and_legacy_combined_seals(
+        self,
+    ):
+        package = self.root.parent / "source"
+        shutil.copytree(
+            model_study.PACKAGE_ROOT,
+            package,
+            ignore=shutil.ignore_patterns("__pycache__"),
+        )
+        primary = pipeline._build_recipe("B1", self.current["lines"])
+        with patch.object(model_study, "PACKAGE_ROOT", package):
+            source = package / "news_sources.py"
+            content = source.read_text()
+            clock = "if received < requested:"
+            self.assertEqual(content.count(clock), 1)
+            source.write_text(content.replace(clock, "if received <= requested:"))
+            self.clock = "2026-08-12T12:56Z"
+            first = self.seal(0, primary, split_recipe=True)
+            source.write_text(content)
+            self.clock = "2026-08-12T12:57Z"
+            second = self.seal(1, primary, split_recipe=True)
+        legacy_recipe = deepcopy(self.current)
+        for key in ("news_probability_source", "news_frozen_feature_source"):
+            del legacy_recipe[key][news_study_plan.INPUT_CONTRACT_KEY]
+        self.assertFalse(replay._same_features(legacy_recipe, self.current))
+        self.clock = "2026-08-12T12:58Z"
+        legacy = self.seal(2, legacy_recipe)
+        self.assertNotIn("news_recipe_sha256", legacy)
+        self.assertEqual(first["model_version"], second["model_version"])
+        self.assertEqual(first["recipe_digest"], second["recipe_digest"])
+        self.assertNotEqual(first["news_recipe_sha256"], second["news_recipe_sha256"])
+        expected = {
+            s["digest"]: s["news_study"]["era_sha256"] for s in (first, second, legacy)
+        }
+        self.assertEqual(len(set(expected.values())), 3)
+        scope = replay._scope(SEASON, "T-60m", "technical")
+        with closing(store.connect(self.root)) as db:
+            rows = replay._inventory(db, scope)
+            self.assertEqual({row["digest"]: era for era, row, _ in rows}, expected)
+            db.execute(
+                "DELETE FROM reports WHERE kind=? AND key=?",
+                (news_study_plan.PAIR_RECIPE_KIND, first["news_recipe_sha256"]),
+            )
+            with self.assertRaisesRegex(ValueError, "original paired news recipe"):
+                replay._inventory(db, scope)
+            db.rollback()
+            body = json.loads(
+                db.execute(
+                    "SELECT data_json FROM forecast_seals WHERE digest=?",
+                    (first["digest"],),
+                ).fetchone()[0]
+            )
+            body["news_recipe_sha256"] = second["news_recipe_sha256"]
+            db.execute(
+                "UPDATE forecast_seals SET data_json=?,digest=? WHERE digest=?",
+                (store.canonical(body), store.digest(body), first["digest"]),
+            )
+            with self.assertRaisesRegex(ValueError, "invalid_declaration"):
+                replay._inventory(db, scope)
 
     def test_all_original_arms_pool_only_while_complete_inventory_still_matches(self):
         old = self.seal(0, self.previous)

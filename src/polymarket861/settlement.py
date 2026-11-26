@@ -49,25 +49,34 @@ def _records(root, token):
         return _records_from_db(db, root, token)
 
 
-def _records_from_db(db, root, token):
+def resolution_history(db, root, token, *, as_of, market=None):
+    """Reconstruct every authenticated observation through a single receipt frontier."""
+
     if not db.execute(
         "SELECT 1 FROM sqlite_master WHERE name='ma_requests'"
     ).fetchone():
-        return None
+        return []
     rows = db.execute(
         "SELECT sha,received_at FROM ma_requests WHERE operation='resolution' AND selector=? AND status='ok' "
         "AND received_at<=? ORDER BY received_at,rowid",
-        (token, store.now_utc()),
+        (token, store.iso(as_of)),
     ).fetchall()
     items = []
     saw_terminal = False
     for r in rows:
         reply, _, selector, _ = archive_proof.original_receipt(
-            db, root, r["sha"], r["received_at"], {"resolution"}, expected_selector=token
+            db,
+            root,
+            r["sha"],
+            r["received_at"],
+            {"resolution"},
+            expected_selector=token,
         )
         if selector != token:
             raise ValueError("resolution request selector differs from token")
         native = market_provider.resolution_row(json.loads(reply.body), token)
+        if market is not None and native is not None:
+            _match_record_identity(market, token, native, require_complete=False)
         resolved = native is not None and native["resolved"]
         if saw_terminal and not resolved:
             raise ValueError("venue withdrew an observed terminal token state")
@@ -86,8 +95,37 @@ def _records_from_db(db, root, token):
                 "row": native,
             }
         )
-    if len({item["condition_id"] for item in items if item["row"] is not None}) > 1:
-        raise ValueError("official token changed its condition identity")
+    # Pending rows can be sparse. Every identity value they do give must
+    # stay consistent as data arrives. The closed flag legitimately changes before settlement.
+    nonempty = [item["row"] for item in items if item["row"] is not None]
+    for field in (
+        "condition_id",
+        "outcome",
+        "outcome_index",
+        "opposite_token_id",
+        "market_slug",
+        "event_slug",
+    ):
+        values = [row[field] for row in nonempty if row.get(field) is not None]
+        if values and any(
+            type(v) is not type(values[0]) or v != values[0] for v in values[1:]
+        ):
+            raise ValueError(f"official token changed its {field} identity")
+    terminal = [i for i in items if i["status"] == "resolved"]
+    if len({number(v["payout"]) for v in terminal}) > 1:
+        raise ValueError("conflicting terminal payouts for official token")
+    closed = [
+        item["row"]["closed"]
+        for item in terminal
+        if item["row"].get("closed") is not None
+    ]
+    if closed and any(type(v) is not bool or v != closed[0] for v in closed):
+        raise ValueError("conflicting official token closed state")
+    return items
+
+
+def _records_from_db(db, root, token, *, market=None):
+    items = resolution_history(db, root, token, as_of=store.now_utc(), market=market)
     terminal = [i for i in items if i["status"] == "resolved"]
     if terminal:
         identity = (
@@ -99,15 +137,6 @@ def _records_from_db(db, root, token):
             "event_slug",
             "closed",
         )
-        if (
-            items[-1]["status"] != "resolved"
-            or len({(v["condition_id"], number(v["payout"])) for v in terminal}) != 1
-            or any(
-                len({t["row"][k] for t in terminal if t["row"].get(k) is not None}) > 1
-                for k in identity
-            )
-        ):
-            raise ValueError("conflicting official token payouts or identities")
         # Older versions returned a sparse status. A fuller native receipt may
         # complete missing identifiers; a later incomplete response cannot qualify.
         if all(terminal[-1]["row"].get(k) is not None for k in identity):
@@ -260,26 +289,42 @@ def _outcome_slot(market, token_id):
     return matching[0]
 
 
-def _verify_token(market, official, token_id):
+def _match_record_identity(market, token_id, native, *, require_complete):
     tokens = market["tokens"]
     index = _outcome_slot(market, token_id)
+    expected = {
+        "condition_id": market["condition_id"],
+        "outcome": tokens[index]["outcome"],
+        "outcome_index": index,
+        "opposite_token_id": tokens[1 - index]["token_id"],
+        "market_slug": market["slug"],
+    }
+    if str(native.get("token_id")) != token_id:
+        raise ValueError("official token identity mismatch")
+    for name, value in expected.items():
+        actual = native.get(name)
+        if actual is None and not require_complete:
+            continue
+        if actual != value or type(actual) is not type(value):
+            raise ValueError(f"official token {name} differs from frozen market")
+    event_slug = native.get("event_slug")
+    if (event_slug is not None or require_complete) and event_slug not in (
+        market["fixture"],
+        market["fixture"] + "-more-markets",
+    ):
+        raise ValueError("official token event_slug differs from frozen market")
+    return tokens[1 - index]["token_id"]
+
+
+def _verify_token(market, official, token_id):
     native = official["row"]
     if (
         official["status"] != "resolved"
         or native.get("resolved") is not True
         or native.get("closed") is not True
-        or str(native.get("token_id")) != token_id
-        or native.get("condition_id") != market["condition_id"]
-        or native.get("market_slug") != market["slug"]
-        or native.get("event_slug")
-        not in (market["fixture"], market["fixture"] + "-more-markets")
-        or native.get("outcome") != tokens[index]["outcome"]
-        or type(native.get("outcome_index")) is not int
-        or native["outcome_index"] != index
-        or native.get("opposite_token_id") != tokens[1 - index]["token_id"]
     ):
-        raise ValueError("official token, outcome, fixture or market identity mismatch")
-    return tokens[1 - index]["token_id"]
+        raise ValueError("official token lacks a closed, resolved state")
+    return _match_record_identity(market, token_id, native, require_complete=True)
 
 
 def require_reviewed_equal_split(contract):
@@ -345,7 +390,7 @@ def _binary_history(db, root, market, token, amount):
     """Compare all available native receipts for the two token IDs frozen at entry."""
     index = _outcome_slot(market, token)
     ids = [token, market["tokens"][1 - index]["token_id"]]
-    records = [_records_from_db(db, root, ident) for ident in ids]
+    records = [_records_from_db(db, root, ident, market=market) for ident in ids]
     for side, (ident, record) in enumerate(zip(ids, records, strict=True)):
         if not record:
             continue

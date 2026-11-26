@@ -35,8 +35,10 @@ _MIXED_FEATURES = {
 def feature_sources(root, sources, physical, input_sources=None):
     """Exclude comments in feature modules; keep the semantic selectors of mixed modules."""
     required = set(news_study_plan._MODEL_FILES) | set(news_study_plan._SYMBOLS)
-    if required.difference(sources) or (required | _MIXED_FEATURES.keys()).difference(
-        physical
+    if (
+        sources.get(news_study_plan.INPUT_CONTRACT_KEY) != store.digest(news_study_plan.INPUT_CONTRACT)
+        or required.difference(sources)
+        or (required | _MIXED_FEATURES.keys()).difference(physical)
     ):
         # Physical version registration also supports partial package manifests.
         # An explicit null preserves that provenance without attesting completeness.
@@ -124,12 +126,12 @@ def _inventory(db, scope):
         del payload["digest"]
         if payload.get("purpose") != "main":
             continue
-        name = payload["model_version"]
-        if name not in recipes:
-            recipes[name] = _recipe(db, payload)
-        recipe = recipes[name]
-        if store.digest(recipe) != payload["recipe_digest"]:
-            raise ValueError("missing_or_damaged_original_recipe")
+        # Several paired news eras may run against one unchanged B1. Validate
+        # and cache the two identities that were actually recorded on this seal.
+        key = (payload["model_version"], payload["recipe_digest"], payload.get("news_recipe_sha256"))
+        if key not in recipes:
+            recipes[key] = _recipe(db, payload)
+        recipe = recipes[key]
         if "news_probability_source" not in recipe:
             continue  # No prospective research era existed on these old receipts.
         # Classify by archived recipe and frozen inputs rather than allowing a
@@ -277,6 +279,7 @@ def _replay_one(root, db, era, entry, payload, candidate, target, cache):
         "fixture_id": fx["fixture_id"],
         "input_cutoff": proof["input_cutoff"],
         "original_recipe_sha256": payload["recipe_digest"],
+        **({"original_news_recipe_sha256": payload["news_recipe_sha256"]} if "news_recipe_sha256" in payload else {}),
         "frame_sha256": proof["frame"],
         "manifest_sha256": snapshot,
         "training_sha256": proof["training"],

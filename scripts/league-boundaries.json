@@ -240,8 +240,8 @@
   ],
   "news_endpoint_originals.py": [
     "\"\"\"Physical dependencies of prospectively declared EPL news-endpoint observations.\"\"\"",
-    ".startswith(f\"epl/{task['season']}/\")",
-    "BODY_SOURCE = \"epl-endpoint-news-response\""
+    "BODY_SOURCE = \"epl-endpoint-news-response\"",
+    "or not evidence[\"fixture_id\"].startswith(f\"epl/{season}/\")"
   ],
   "news_endpoint_study.py": [
     "\"\"\"Prospective EPL news price-gap study; opt-in registration never retrofits existing seals.\"\"\"",
@@ -341,7 +341,7 @@
     "WIRE_HOST = \"https://touchlinewire.com\"",
     "WIRE_MODEL = \"touchline-availability-fields-v2\"",
     "def active_sources(team, season, league=\"epl\", at=None):",
-    "def poll(source, team, season, cursor=None, *, getter=None, league=\"epl\"):",
+    "def poll(source, team, season, cursor=None, *, getter=None, league=\"epl\", raw_receipts=None):",
     "if league != \"epl\" or (season == news_scope.WIRE_MEMBERSHIP[\"season\"] and not scope):"
   ],
   "news_study_plan.py": [
@@ -349,6 +349,7 @@
     "\"epl-player-news-paired-v2\",",
     "\"version\": \"epl-news-observed-pairs-v1\",",
     "\"version\": \"epl-news-observed-pairs-v2\",",
+    "INPUT_CONTRACT = \"epl-news-native-dispatch-to-frozen-facts-v1\"",
     "return (source.get(\"id\") == \"touchline-availability\" and source.get(\"status\") == \"partial\""
   ],
   "news_wire_identity.py": [

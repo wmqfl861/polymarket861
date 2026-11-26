@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import re
 import uuid
 from collections import Counter, defaultdict
@@ -1389,7 +1390,8 @@ def _drain_feed_inbox(root, task, detail):
         ).fetchone()[0]
 
 
-def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, decision):
+def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, decision, originals):
+    from . import news_sources
     from .news_sources import MAX_ITEMS, WIRE
 
     target = task["target"]
@@ -1411,14 +1413,17 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
     provider_after = task["provider_after"]
     issues = detail["issues"]
     proof_id = None
+    raw_receipts = []
     detail["polled"] = task["network_due"]
     if task["network_due"]:
         try:
             local_start = _utc()
-            from . import news_endpoint_originals
-
             input_cursor = json.loads(cursor) if cursor else None
-            result, raw_reply = news_endpoint_originals.collect(root, task, poll, input_cursor, local_start)
+            args = (task["config"], task["team"], task["season"], input_cursor)
+            if poll is news_sources.poll and task["config"].get("kind") in {"feed", "wiki"}:
+                result = poll(*args, raw_receipts=raw_receipts)
+            else:
+                result = poll(*args)
             received = _utc()
             if not isinstance(result, dict) or result.get("status") in {
                 "error",
@@ -1462,14 +1467,6 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
             if len(candidate_cursor) > 2_000_000:
                 raise ValueError("news cursor exceeds the storage bound")
             proof_id, proof = _poll_proof(root, task, result, local_start, received, stage_feed)
-            from sqlite3 import DatabaseError
-
-            try:
-                news_endpoint_originals.save(root, task, proof_id, proof, result, raw_reply, input_cursor)
-            except (OSError, ValueError, DatabaseError) as exc:
-                # The optional study will reject the missing original. Ordinary
-                # collection retains its existing evidence and status.
-                detail["endpoint_original_issue"] = str(exc)[:240]
             detail["source_observed_at"] = received
             detail["response_sha256"] = proof["response_sha256"]
             detail["response_hash_basis"] = proof["hash_basis"]
@@ -1578,7 +1575,43 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
         )
     detail["pending_entries"] = (detail.get("provider_pending", 0) + detail.get("inbox_pending", 0)
                                 + detail.get("analysis_remaining", 0))
-    return _finish(root, task, detail, cursor, provider_after, proof_id)
+    outcome = _finish(root, task, detail, cursor, provider_after, proof_id)
+    if len(raw_receipts) == 1 and proof_id:
+        # Finish operational storage before exposing an immutable, bounded copy.
+        # The optional observer never receives a poller, a task or the live result.
+        try:
+            evidence = store.canonical(
+                {
+                    "fixture_id": target["fixture_id"],
+                    "config": task["config"],
+                    "cursor": input_cursor,
+                    "started": local_start,
+                    "receipt": proof_id,
+                    "proof": proof,
+                    "parsed_sha256": store.digest(result),
+                }
+            )
+            originals.append((evidence, raw_receipts[0]))
+        except Exception:
+            logging.getLogger(__name__).exception(
+                "Could not copy completed news response"
+            )
+    return outcome
+
+
+def _retain_endpoint_originals(root, originals):
+    """Separate optional research storage from completed news claims and checks."""
+    from . import news_endpoint_originals
+
+    for evidence, raw_receipt in originals:
+        try:
+            news_endpoint_originals.save(root, evidence, raw_receipt)
+        except Exception:
+            # Missing copies disqualify research at read time. Each observation
+            # stands alone and ordinary news has already committed for every club.
+            logging.getLogger(__name__).exception(
+                "Could not retain research news response"
+            )
 
 
 def sync(
@@ -1670,7 +1703,7 @@ def sync(
             # An observed directory can resolve the very first injury batch.
             # Its failure still permits the ordinary roster-only path.
             usage = news_minutes.refresh(data_dir, club, season_id, getter=importance_getter)
-        outcomes = []
+        outcomes, originals = [], []
         for task in group:
             try:
                 result = _poll_stream(
@@ -1682,6 +1715,7 @@ def sync(
                     extract,
                     settings,
                     decision,
+                    originals,
                 )
             except Exception as exc:
                 # A broken source must not suppress a healthy source or other club.
@@ -1703,18 +1737,20 @@ def sync(
         for result in outcomes:
             if result["source"] == news_sources.WIRE and usage is not None:
                 result["player_usage"] = usage
-        return outcomes
+        return outcomes, originals
 
-    streams = []
+    streams, originals = [], []
     if by_club:
         with ThreadPoolExecutor(max_workers=min(workers, len(by_club))) as pool:
-            for group in pool.map(run_club, by_club.values()):
+            for group, copies in pool.map(run_club, by_club.values()):
                 streams.extend(group)
+                originals.extend(copies)
     successes = sum(s["state"] == "ok" for s in streams)
     if streams:
         with _db(data_dir, write=True) as db:
             store.put_report(db, "news-coverage", "epl-teams", _status_db(db))
             _publish_research_health(db)
+    _retain_endpoint_originals(data_dir, originals)
     return {
         "state": (
             "awaiting_schedule"

@@ -348,6 +348,9 @@ class EraTests(unittest.TestCase):
 
         code = Path(news.__file__).read_text()
         changes = (
+            # Check frequency changes which publications have arrived by a
+            # prospective cutoff, even with the same published archive.
+            ("POLL_INTERVAL = timedelta(minutes=20)", "POLL_INTERVAL = timedelta(minutes=25)"),
             ("claims = news_sources.wire_claim(original, aliases)", "claims = []"),
             ("effective_at=effective,", "effective_at=known,"),
             ('first = old["first_seen_at"] if same else received', "first = received"),
@@ -375,21 +378,11 @@ class EraTests(unittest.TestCase):
                 with self.subTest(old=old):
                     self.assertEqual(code.count(old), 1)
                     self.assertNotEqual(base, fingerprint(code.replace(old, new)))
-            for old, new in (
-                (
-                    "POLL_INTERVAL = timedelta(minutes=20)",
-                    "POLL_INTERVAL = timedelta(minutes=25)",
-                ),
-                (
-                    "CREATE INDEX IF NOT EXISTS news_wire_poll_team",
-                    "CREATE INDEX IF NOT EXISTS news_wire_poll_team_v2",
-                ),
-            ):
-                with self.subTest(old=old):
-                    self.assertEqual(code.count(old), 1)
-                    self.assertEqual(base, fingerprint(code.replace(old, new)))
+            index = "CREATE INDEX IF NOT EXISTS news_wire_poll_team"
+            self.assertEqual(code.count(index), 1)
+            self.assertEqual(base, fingerprint(code.replace(index, index + "_v2")))
 
-    def test_wire_mapping_quarantine_and_claimant_change_era_while_transport_does_not(
+    def test_source_delivery_wire_mapping_quarantine_and_claimant_change_era(
         self,
     ):
         import hashlib
@@ -414,6 +407,7 @@ class EraTests(unittest.TestCase):
                 "wire_labels",
                 "_wire_rejection",
                 "_wire_row",
+                "_get",
             ):
                 with self.subTest(name=name):
                     self.assertNotEqual(
@@ -421,7 +415,7 @@ class EraTests(unittest.TestCase):
                     )
             for name in ("WIRE_MODEL", "WIRE_FIELDS"):
                 self.assertNotEqual(base, fingerprint(f"{name} = 'different'"))
-            self.assertEqual(base, fingerprint("def _get(url): return None"))
+            self.assertEqual(base, fingerprint("def diagnostic_label(url): return 'news feed'"))
 
     def test_narrow_probability_source_and_runtime_while_physical_gate_stays_whole(
         self,

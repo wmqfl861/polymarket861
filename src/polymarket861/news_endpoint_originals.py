@@ -39,9 +39,7 @@ def retainable(config):
     )
 
 
-def _registration(root, task, started):
-    if not retainable(task["config"]):
-        return False
+def _registration(root, started):
     with closing(
         sqlite3.connect(
             (Path(root) / "runtime.sqlite3").resolve().as_uri() + "?mode=ro", uri=True
@@ -60,55 +58,43 @@ def _registration(root, task, started):
         return row[0] if row else None
 
 
-def collect(root, task, poll, cursor, started):
-    args = (task["config"], task["team"], task["season"], cursor)
+def save(root, evidence_json, raw_receipt):
+    """Observe an immutable copy of a completed operational poll after dispatch."""
+    evidence = json.loads(evidence_json)
+    config, proof = evidence["config"], evidence["proof"]
+    season = proof["season"]
     if (
-        poll is not news_sources.poll
-        or task["season"] not in {"2026-27", "2027-28"}
-        or not (task["target"] or {})
-        .get("fixture_id", "")
-        .startswith(f"epl/{task['season']}/")
+        season not in {"2026-27", "2027-28"}
+        or not evidence["fixture_id"].startswith(f"epl/{season}/")
+        or not retainable(config)
     ):
-        return poll(*args), None
-    registration = _registration(root, task, started)
-    if not registration:
-        return poll(*args), None
-    replies = []
-
-    def get(url):
-        reply = news_sources._get(url)
-        replies.append(reply)
-        return reply
-
-    result = poll(*args, getter=get)
-    return result, (replies[0], registration) if len(replies) == 1 else None
-
-
-def save(root, task, proof_id, proof, result, capture, cursor):
-    if capture is None:
         return
-    reply, registration = capture
+    registration = _registration(root, evidence["started"])
+    if not registration:
+        return
+    body, url, cache_control = raw_receipt
+    proof_id = evidence["receipt"]
     if (
-        result["request_url"] != task["config"]["url"]
-        or reply.url != result["request_url"]
-        or result["response_sha256"] != proof["response_sha256"]
+        url != config["url"]
+        or url != proof["request_url"]
+        or proof_id != store.digest(proof)
     ):
         raise ValueError("endpoint news capture scope mismatch")
     meta = {
         "receipt": proof_id,
-        "source": task["source"],
-        "season": task["season"],
-        "team": task["team_key"],
-        "url": reply.url,
-        "license": task["config"]["license"],
-        "license_url": task["config"]["license_url"],
+        "source": proof["source"],
+        "season": season,
+        "team": proof["team"],
+        "url": url,
+        "license": config["license"],
+        "license_url": config["license_url"],
         "registration": registration,
         "recorded_at": store.now_utc(),
     }
     archive = store.archive_bytes(
         root,
         BODY_SOURCE,
-        reply.body,
+        body,
         observed_at=proof["observed_at"],
         media_type="application/octet-stream",
         metadata=meta,
@@ -117,15 +103,13 @@ def save(root, task, proof_id, proof, result, capture, cursor):
         raise ValueError("endpoint news native response digest mismatch")
     # Only cache-control affects the adapter. Other response headers can contain
     # network/session identifiers and are outside the experiment.
-    headers = {
-        k.lower(): v for k, v in reply.headers.items() if k.lower() == "cache-control"
-    }
+    headers = {"cache-control": cache_control} if cache_control else {}
     manifest = {
         "metadata": meta,
-        "config": task["config"],
-        "cursor": cursor,
+        "config": config,
+        "cursor": evidence["cursor"],
         "headers": headers,
-        "parsed_sha256": store.digest(result),
+        "parsed_sha256": evidence["parsed_sha256"],
     }
     with closing(store.connect(root)) as db, db:
         db.execute(SCHEMA)
@@ -134,9 +118,9 @@ def save(root, task, proof_id, proof, result, capture, cursor):
             "INSERT OR IGNORE INTO news_endpoint_poll_originals VALUES(?,?,?,?,?,?,?,?)",
             (
                 proof_id,
-                task["source"],
-                task["season"],
-                task["team_key"],
+                proof["source"],
+                season,
+                proof["team"],
                 proof["observed_at"],
                 archive["sha256"],
                 store.digest(manifest),

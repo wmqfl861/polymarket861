@@ -72,9 +72,11 @@ LEGACY_POLICY = (
     "fac9ee74e81e1e3d4bb2374b07815cc849e6076c44d00c06721a9b0322f40f3f",
 )
 
-# Use the full source identities of the dedicated models. In mixed-purpose modules,
-# retain the actual definitions and transitive module-local constants/helpers used
-# by the prediction path. A collector, CLI, ledger, or report edit is not a model edit.
+# A complete footprint vouches for the operational route from a native reply to
+# a time-bound player fact. Earlier manifests identified only selected adapters
+# and writers. Their stored identities remain meaningful within their own era.
+INPUT_CONTRACT = "epl-news-native-dispatch-to-frozen-facts-v1"
+INPUT_CONTRACT_KEY = "news_input_contract"
 _MODEL_FILES = (
     "football_model.py",
     "score_bounds.py",
@@ -89,37 +91,26 @@ _MODEL_FILES = (
 _SYMBOLS = {
     "football.py": ("FootballEngine", "load_fixtures", "history_kickoff"),
     "pipeline.py": ("_forecast_arms", "_with_schedule_revisions"),
-    "news.py": (
-        "snapshot",
-        # These writers choose the claimant, persist effective/first-observed
-        # times and tie the upstream state to its original receipt. The reader
-        # alone cannot identify a change to a value already written to SQLite.
-        "_extract_pending",
-        "_collect_wire",
-        "_poll_proof",
-        "_wire_unmatched",
-    ),
-    # The adapter parses/quarantines native rows. The claimant is invoked from
-    # news._extract_pending, so it is a separate root (including WIRE_MODEL).
+    # Source registration, scheduling, dispatch, ordinary writes and the as-of
+    # reader can change different stages of the same SQLite-backed input.
+    "news.py": ("add_feed", "disable_feed", "sync", "snapshot"),
     "news_sources.py": (
         "WIRE_CLUBS",
-        "_wire_header",
-        "_wire_club",
-        "_wire_availability",
-        "_wire_rumours",
-        "_feed",
-        "_wiki",
+        "poll",
+        "active_sources",
+        "validate_source",
         "wire_claim",
         "wire_fingerprint",
         "wiki_prose",
     ),
-    "news_roster.py": ("roster_views", "parse_squad", "_people", "refresh"),
+    "news_roster.py": ("roster_views", "as_of", "refresh"),
     "news_minutes.py": ("parse", "latest", "club_games", "verified_players", "same_snapshot", "refresh"),
     "evidence.py": ("_collect", "_selected_lineup"),
     "evidence_sources.py": ("name_key", "source_at", "granted", "required", "utc", "dump"),
     "jobs_research.py": ("_pointer",),
     "blob_storage.py": ("read_blob",),
-    "news_poll_archive.py": ("SCHEMA", "history", "verified_check", "wire_coverage_received", "_sample", "_fold"),
+    "news_poll_archive.py": ("SCHEMA", "history", "verified_check", "wire_coverage_received", "track"),
+    "schedule_consensus.py": ("readiness", "eligible_news", "require_news"),
     "result_freshness.py": ("_AS_OF",),
     # A club's completed-match denominator is itself an input to the frozen
     # player-usage weights. Include provider identity, regulation score bounds
@@ -127,13 +118,18 @@ _SYMBOLS = {
     "result_pairings.py": ("decision", "unique_fixtures"),
     "result_admission.py": ("_raw_rows", "_pair"),
     "result_feed.py": ("_fixture_rows", "BASE"),
-    "independent_results.py": ("verified", "_query", "_title"),
+    "independent_results.py": ("verified", "_query", "_title", "_url", "_get"),
     "opportunity.py": ("_club",),
 }
 
-# Writers call the connection / schema installer for storage. A new index or
-# SQLite connection option changes the physical release, not the news policy.
-_STORAGE_ONLY = {"news.py": {"_db"}, "news_roster.py": {"_connection"}, "news_minutes.py": {"_connection"}}
+# Dispatch completes for every club before passing immutable copies to optional
+# research retention. The reporting functions consume completed operational rows.
+_STORAGE_ONLY = {
+    "news.py": {"_db", "_retain_endpoint_originals", "_status_db", "_publish_research_health"},
+    "news_roster.py": {"_connection"},
+    "news_minutes.py": {"_connection"},
+    "schedule_consensus.py": {"_db"},
+}
 
 
 def _symbol_digest(path, physical_sha, roots):
@@ -164,6 +160,8 @@ def probability_sources(root, files):
                 # Inventory tools can register partial, non-executable source bytes.
                 # Preserve their physical digest. No era replay can be certified.
                 sources[name] = files[name]
+    if complete:
+        sources[INPUT_CONTRACT_KEY] = store.digest(INPUT_CONTRACT)
     return sources
 
 

@@ -2,7 +2,6 @@
 
 from contextlib import closing, contextmanager
 from datetime import timedelta
-import json
 from pathlib import Path
 import sqlite3
 from zoneinfo import ZoneInfo
@@ -14,7 +13,6 @@ from . import (
     league_registry,
     ledger_rules as rules,
     ledger_terms,
-    market_provider,
     settlement,
 )
 
@@ -152,32 +150,14 @@ def entry(source, op, candidates):
 
 def _terminal(source, market, token, kickoff, at):
     root, db = source
-    rows = db.execute(
-        "SELECT sha,received_at FROM ma_requests WHERE operation='resolution' AND selector=? AND status='ok' "
-        "AND received_at<=? ORDER BY received_at,sha",
-        (token, rules.iso(at)),
-    )
+    history = settlement.resolution_history(db, root, token, as_of=at, market=market)
     terminal = None
-    for record in rows:
-        reply, _, selector, _ = archive_proof.original_receipt(
-            db, root, record["sha"], record["received_at"], {"resolution"}
-        )
-        if selector != token:
-            raise ValueError("resolution capture requested a different token")
-        payload = json.loads(reply.body)
-        row = market_provider.resolution_row(payload, token)
-        if row is None:
-            if terminal:
-                raise ValueError("venue withdrew an observed terminal state")
+    for record in history:
+        if record["status"] != "resolved":
             continue
-        if row.get("resolved") is False and row.get("final_price") is None:
-            if terminal:
-                raise ValueError("venue withdrew an observed terminal state")
-            continue
-        value = rules.unit(row.get("final_price"))
-        official = {"status": "resolved", "row": row}
-        settlement._verify_token(market, official, token)
-        if rules.instant(record["received_at"]) < kickoff or value not in {
+        settlement._verify_token(market, record, token)
+        value = rules.unit(record["payout"])
+        if rules.instant(record["resolved_at"]) < kickoff or value not in {
             rules.ZERO,
             rules.ONE,
             rules.D("0.5"),
@@ -189,7 +169,7 @@ def _terminal(source, market, token, kickoff, at):
             raise ValueError("conflicting terminal payouts")
         if terminal is None:
             terminal = (value, set())
-        terminal[1].add(record["sha"])
+        terminal[1].add(record["source_sha256"])
     return terminal
 
 

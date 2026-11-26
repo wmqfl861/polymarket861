@@ -893,7 +893,7 @@ def _wire_rumours(source, raw, received, cursor):
         "blocked": sorted(blocked)}, {"upstream_rumours": len(rows), "revision_conflicts": conflicts}
 
 
-def poll(source, team, season, cursor=None, *, getter=None, league="epl"):
+def poll(source, team, season, cursor=None, *, getter=None, league="epl", raw_receipts=None):
     """Fetch one bounded, explicitly scoped source. A failed read never advances the cursor."""
     source = validate_source(source)
     if football.team_key(team) != football.team_key(source["team"]) or source.get("season", season) != season:
@@ -925,6 +925,10 @@ def poll(source, team, season, cursor=None, *, getter=None, league="epl"):
     cache = {k.lower(): v for k, v in answer.headers.items()}.get("cache-control", "")
     max_age = max((int(i) for i in re.findall(r"\b(?:s-maxage|max-age)=(\d{1,10})\b", cache)), default=0)
     next_poll = store.iso(store.instant(received) + timedelta(seconds=max(300, min(max_age, 31536000))))
+    if raw_receipts is not None:
+        # The ordinary adapter owns the response and its projection. An in-memory
+        # copy contains immutable bytes and selected headers, never live articles.
+        raw_receipts.append((answer.body, url, cache))
     return {
         "status": "ok", "source": source["id"], "request_url": url, "requested_at": requested,
         "received_at": received, "response_sha256": digest, "next_poll_after": next_poll,

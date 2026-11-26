@@ -5,7 +5,7 @@ import os
 import sqlite3
 import tempfile
 import unittest
-from contextlib import closing
+from contextlib import ExitStack, closing
 from datetime import timedelta
 from pathlib import Path
 from unittest.mock import patch
@@ -53,6 +53,31 @@ def fixed_sqlite_clock(stamp):
         "julianday('now')", f"julianday('{clock}')"
     )
     return patch.object(trial, "_TRIGGER", trigger)
+
+
+def collect_native_seal(root, history, feeds, when, cutoff):
+    squads = {team: roster_transport(team) for team in (HOME, AWAY)}
+    refresh = news_roster.refresh
+
+    def fetch(url):
+        if url not in feeds:
+            raise ConnectionError("outside offline publisher scope")
+        return Reply(feeds[url], store.now_utc(), store.now_utc(), {}, url)
+
+    with (
+        patch.dict(os.environ, {"PM861_NEWS_LLM_URL": "", "PM861_NEWS_LLM_MODEL": ""}),
+        patch.object(news_sources, "_get", side_effect=fetch),
+        patch.object(
+            news_roster,
+            "refresh",
+            side_effect=lambda r, t, s: refresh(r, t, s, getter=squads[t]),
+        ),
+    ):
+        with at(when):
+            for _ in range(2):
+                season._service(root, "news", when, {"football_root": history})
+        with at(cutoff):
+            return pipeline.make_forecast(root, FID, history)
 
 
 def raw_seal(
@@ -175,6 +200,98 @@ class NewsEndpointStudy(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "declaration"):
             trial.report(self.root)
 
+    def test_optional_retention_cannot_change_operational_facts_or_sealed_arms(self):
+        kickoff = store.instant(KICKOFF)
+        cutoff = kickoff - timedelta(minutes=61)
+        when = store.instant("2026-08-12T12:25:00Z")
+        ordinary_digest = store.digest
+        projections = {}
+        for variant in (
+            "retained",
+            "false_replacement",
+            "observer_error",
+            "copy_error",
+        ):
+            with self.subTest(variant=variant), fixed_sqlite_clock(cutoff):
+                root, history = (
+                    self.root / variant / "app",
+                    self.root / variant / "history",
+                )
+                with at("2026-08-01T10:00Z"):
+                    seed_fixture(root, history)
+                    trial.enroll(root)
+                    home, away = (add_club_feed(root, team) for team in (HOME, AWAY))
+                feeds = {
+                    home["url"]: rss(home, HOME_OUT),
+                    away["url"]: rss(away, AWAY_RUMOUR),
+                }
+                observations = []
+
+                def observe(directory, encoded, receipt):
+                    observations.append((encoded, receipt))
+                    # Even altering the decoded configuration and proof here cannot
+                    # write to the values already used to commit this batch.
+                    copy = json.loads(encoded)
+                    copy["proof"].clear()
+                    copy["config"].clear()
+                    if variant == "observer_error":
+                        raise RuntimeError("private storage unavailable")
+                    return {"articles": [], "status": "error"}
+
+                def no_projection(obj):
+                    if (
+                        isinstance(obj, dict)
+                        and "articles" in obj
+                        and "request_url" in obj
+                    ):
+                        raise ValueError("private projection unavailable")
+                    return ordinary_digest(obj)
+
+                with ExitStack() as stack:
+                    if variant in {"false_replacement", "observer_error"}:
+                        stack.enter_context(
+                            patch.object(
+                                news_endpoint_originals, "save", side_effect=observe
+                            )
+                        )
+                    if variant == "copy_error":
+                        stack.enter_context(
+                            patch.object(store, "digest", side_effect=no_projection)
+                        )
+                    if variant in {"copy_error", "observer_error"}:
+                        stack.enter_context(
+                            self.assertLogs(news.__name__, level="ERROR")
+                        )
+                    seal = collect_native_seal(root, history, feeds, when, cutoff)
+                if variant in {"false_replacement", "observer_error"}:
+                    self.assertEqual(len(observations), 2)
+                    for encoded, receipt in observations:
+                        self.assertIsInstance(encoded, str)
+                        self.assertIsInstance(receipt, tuple)
+                        self.assertTrue(
+                            all(isinstance(value, (str, bytes)) for value in receipt)
+                        )
+                pair = seal["news_pair"]
+                facts = seal["context"]["player_news"]["facts"]
+                self.assertEqual(len(facts), 2)
+                self.assertTrue(
+                    pair["changed"] and pair["coverage"]["both_teams_observed"]
+                )
+                projections[variant] = (
+                    sorted((fact["event"], fact["original_sha256"]) for fact in facts),
+                    pair["with_news"],
+                    pair["no_news"],
+                    seal["news_recipe_sha256"],
+                    seal["news_study"]["era_sha256"],
+                )
+                with at(kickoff + timedelta(minutes=1)):
+                    cell = trial.report(root)["horizons"]["T-60m"]
+                    self.assertEqual(
+                        cell["qualified_news_pairs"], int(variant == "retained")
+                    )
+        for projection in projections.values():
+            self.assertEqual(projection, projections["retained"])
+
     def test_both_slopes_have_distinct_book_families_and_tenfold_simultaneous_intervals(
         self,
     ):
@@ -235,30 +352,7 @@ class NewsEndpointStudy(unittest.TestCase):
                 home["url"]: rss(home, HOME_OUT),
                 away["url"]: rss(away, AWAY_RUMOUR),
             }
-            squads = {team: roster_transport(team) for team in (HOME, AWAY)}
-            refresh = news_roster.refresh
-
-            def fetch(url):
-                if url not in feeds:
-                    raise ConnectionError("outside offline publisher scope")
-                return Reply(feeds[url], store.now_utc(), store.now_utc(), {}, url)
-
-            with (
-                patch.dict(
-                    os.environ, {"PM861_NEWS_LLM_URL": "", "PM861_NEWS_LLM_MODEL": ""}
-                ),
-                patch.object(news_sources, "_get", side_effect=fetch),
-                patch.object(
-                    news_roster,
-                    "refresh",
-                    side_effect=lambda r, t, s: refresh(r, t, s, getter=squads[t]),
-                ),
-            ):
-                with at(when):
-                    for _ in range(2):
-                        season._service(root, "news", when, {"football_root": history})
-                with at(cutoff):
-                    seal = pipeline.make_forecast(root, FID, history)
+            seal = collect_native_seal(root, history, feeds, when, cutoff)
             self.assertTrue(seal["news_pair"]["changed"])
             with at(kickoff + timedelta(days=1)):
                 before = trial.report(root)
@@ -459,30 +553,7 @@ class NewsEndpointStudy(unittest.TestCase):
                 ]: f'<rss version="2.0"><channel><title>{s["team"]}</title></channel></rss>'.encode()
                 for s in (home, away)
             }
-            squads = {team: roster_transport(team) for team in (HOME, AWAY)}
-            refresh = news_roster.refresh
-
-            def fetch(url):
-                if url not in feeds:
-                    raise ConnectionError("outside offline publisher scope")
-                return Reply(feeds[url], store.now_utc(), store.now_utc(), {}, url)
-
-            with (
-                patch.dict(
-                    os.environ, {"PM861_NEWS_LLM_URL": "", "PM861_NEWS_LLM_MODEL": ""}
-                ),
-                patch.object(news_sources, "_get", side_effect=fetch),
-                patch.object(
-                    news_roster,
-                    "refresh",
-                    side_effect=lambda r, t, s: refresh(r, t, s, getter=squads[t]),
-                ),
-            ):
-                with at(when):
-                    for _ in range(2):
-                        season._service(root, "news", when, {"football_root": history})
-                with at(cutoff):
-                    seal = pipeline.make_forecast(root, FID, history)
+            seal = collect_native_seal(root, history, feeds, when, cutoff)
             self.assertEqual(seal["context"]["player_news"]["facts"], [])
             with at(kickoff + timedelta(minutes=1)), closing(store.connect(root)) as db:
 
