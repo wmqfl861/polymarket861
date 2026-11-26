@@ -1,0 +1,1788 @@
+{
+ "summary": {
+  "command": "pm861 --data-dir <data> forecast make epl/2026-27/nottingham-forest/chelsea <data>/datasets/football-inputs/2aea8c8dfdda42e137f3c71ae4752913dee599c46ad6b48fa61a5e8aa2e7de67/sources --horizon early",
+  "exit_status": 0,
+  "package_version": "0.5.0a1",
+  "python": "3.12.3",
+  "decision_module_files": 90,
+  "files_named_in_recipe_list": 26,
+  "files_executed": 84,
+  "files_executed_outside_recipe_list": [
+   "big5_market.py",
+   "big5_market_schedule.py",
+   "budget_archive_proof.py",
+   "cli.py",
+   "comparisons.py",
+   "context_feeds.py",
+   "contract_storage.py",
+   "dashboard.py",
+   "fee_registry.py",
+   "five_league_budget.py",
+   "football_candidates.py",
+   "historical_inputs.py",
+   "jobs.py",
+   "kickoff_proof.py",
+   "league_catalog.py",
+   "league_source_rights.py",
+   "league_study.py",
+   "ledger.py",
+   "ledger_rules.py",
+   "maintenance.py",
+   "model_study.py",
+   "news.py",
+   "news_accumulation.py",
+   "news_admission.py",
+   "news_ai.py",
+   "news_ai_corpus.py",
+   "news_endpoint_study.py",
+   "news_era_replay.py",
+   "news_evaluation.py",
+   "news_importance.py",
+   "news_market.py",
+   "news_minutes.py",
+   "news_model.py",
+   "news_poll_archive.py",
+   "news_retention.py",
+   "news_roster.py",
+   "news_scope.py",
+   "news_sources.py",
+   "news_study_plan.py",
+   "news_wire_identity.py",
+   "operations.py",
+   "qualification.py",
+   "recipe_identity.py",
+   "research_workspace.py",
+   "result_freshness.py",
+   "round_history.py",
+   "runner.py",
+   "season.py",
+   "season_alerts.py",
+   "season_backfill.py",
+   "season_health.py",
+   "season_readiness.py",
+   "settlement.py",
+   "shadow.py",
+   "shadow_market.py",
+   "strategy.py",
+   "strategy_scope.py",
+   "trial_evidence.py"
+  ],
+  "executed_top_level_definitions": 235,
+  "executed_and_covered": 68,
+  "executed_and_not_covered": 167
+ },
+ "modules": {
+  "archive_proof.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "big5_market.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_window_args": 2,
+    "register": 1
+   }
+  },
+  "big5_market_schedule.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "blob_storage.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "blob_name": 1188,
+    "blob_path": 18,
+    "open_blob": 36,
+    "read_blob": 18
+   },
+   "not_covered": {}
+  },
+  "budget_archive_proof.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "cli.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "main": 1
+   }
+  },
+  "comparisons.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "context_feeds.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 5
+   }
+  },
+  "contract_storage.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "dashboard.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "datasets.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "dbscope.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "current": 11
+   },
+   "not_covered": {
+    "_schema_digest": 5,
+    "checked": 4,
+    "prepare": 62,
+    "reading": 14
+   }
+  },
+  "evidence.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "_collect": 5,
+    "_evidence_ids": 3,
+    "_match_impacts": 1,
+    "_prefer_sources": 1,
+    "_selected_lineup": 2,
+    "as_of_context": 1
+   },
+   "not_covered": {
+    "<module>": 1,
+    "register": 27
+   }
+  },
+  "evidence_sources.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "name_key": 6,
+    "utc": 2
+   },
+   "not_covered": {
+    "<module>": 1,
+    "db": 2
+   }
+  },
+  "fee_registry.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "Document": 1,
+    "FeePolicy": 1,
+    "register": 1
+   }
+  },
+  "five_league_budget.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "football.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "FootballEngine": 11057,
+    "_check_scope": 1,
+    "_club_key": 100,
+    "_evidence_map": 2,
+    "_known_schedule": 760,
+    "_parse_match": 31640,
+    "_parsed_version": 1570,
+    "_score": 3140,
+    "blob_sha": 25,
+    "fixture_id": 7602,
+    "history_kickoff": 380,
+    "iso": 2385,
+    "load_fixtures": 2,
+    "read_json_rows": 3473,
+    "season_year": 3816,
+    "team_key": 170,
+    "utc": 10899,
+    "verified_event_kickoff": 382
+   },
+   "not_covered": {
+    "register": 8
+   }
+  },
+  "football_candidates.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "football_model.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "TeamModel": 1,
+    "_goals_matrix": 5,
+    "fit_team_model": 45,
+    "half_line": 8,
+    "probabilities": 38
+   },
+   "not_covered": {}
+  },
+  "historical_inputs.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "independent_results.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "input_manifest.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "_effective_rows": 1,
+    "_hash": 90,
+    "_install": 33,
+    "_materialize": 3,
+    "_save": 3477,
+    "verify_observed_inputs": 3
+   },
+   "not_covered": {
+    "<module>": 1,
+    "_db": 3
+   }
+  },
+  "jobs.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_setup": 6,
+    "register": 1
+   }
+  },
+  "jobs_research.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "_builtin_controls": 1,
+    "_open": 4,
+    "_pointer": 4,
+    "active_version": 6,
+    "model_for_decision": 4
+   },
+   "not_covered": {
+    "<module>": 1,
+    "register_cli": 1
+   }
+  },
+  "kickoff_proof.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "MissingKickoffProof": 1,
+    "_NoRedirect": 1
+   }
+  },
+  "league_catalog.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_league_option": 5,
+    "register": 1
+   }
+  },
+  "league_source_rights.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "league_study.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "PairedScore": 1,
+    "register": 1
+   }
+  },
+  "ledger.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "DecisionWindowClosed": 1,
+    "register": 1
+   }
+  },
+  "ledger_rules.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "number": 1
+   }
+  },
+  "ledger_terms.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "maintenance.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "market_archive.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "DeferredFetch": 1
+   },
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "market_http.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "_Transport": 1
+   },
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "market_provider.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "Reply": 1
+   },
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "model_study.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "_file_sha": 4,
+    "_inventory": 1,
+    "build_sources": 4,
+    "numeric_runtime": 1,
+    "probability_implementation": 2,
+    "register": 1,
+    "release_provenance": 6
+   }
+  },
+  "news.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_empty_side": 2,
+    "_empty_snapshot": 1,
+    "register": 1,
+    "snapshot": 1
+   }
+  },
+  "news_accumulation.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "news_admission.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "add_commands": 1
+   }
+  },
+  "news_ai.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_Classifier": 1,
+    "_Mention": 1
+   }
+  },
+  "news_ai_corpus.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "news_endpoint_study.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "news_era_replay.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "feature_sources": 1,
+    "register": 1
+   }
+  },
+  "news_evaluation.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "news_importance.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "news_market.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "news_minutes.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "news_model.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_active_claims": 1,
+    "paired_prediction": 2
+   }
+  },
+  "news_poll_archive.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_clock_sql": 11,
+    "_restore_sql": 10
+   }
+  },
+  "news_retention.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "news_roster.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_MissingTemplate": 1
+   }
+  },
+  "news_scope.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "news_sources.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_NoRedirect": 1,
+    "_Text": 1
+   }
+  },
+  "news_study_plan.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "_symbol_digest": 21,
+    "probability_sources": 1
+   }
+  },
+  "news_wire_identity.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "operations.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "opportunity.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "paired_proof.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "frozen_manifest": 1,
+    "live_frame": 1,
+    "make_proof": 2
+   },
+   "not_covered": {
+    "<module>": 1,
+    "PairValidator": 1,
+    "SealedInputConflict": 1,
+    "_open": 2
+   }
+  },
+  "pipeline.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "_existing": 2,
+    "_forecast_arms": 1,
+    "_lineups": 1,
+    "_with_schedule_revisions": 4,
+    "make_forecast": 387
+   },
+   "not_covered": {
+    "<module>": 1,
+    "_build_recipe": 6,
+    "_decision_reason": 1,
+    "_recipe": 1,
+    "_retain_manifest": 2,
+    "_study_recipe": 1,
+    "prepare_builtin": 1,
+    "register": 2,
+    "register_recipe": 1
+   }
+  },
+  "qualification.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "recipe_identity.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "_module": 13,
+    "_tree": 203803,
+    "module_digest": 9,
+    "primary_sources": 1,
+    "symbols_digest": 3567
+   }
+  },
+  "research_workspace.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "result_admission.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "result_feed.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "result_freshness.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "result_operations.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "result_pairings.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "result_training_review.py": {
+   "in_recipe_list": true,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "round_history.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register_history": 1
+   }
+  },
+  "runner.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "schedule_consensus.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "FixedSchedules": 1,
+    "result_links": 1
+   },
+   "not_covered": {
+    "<module>": 1,
+    "NewsScheduleChanged": 1
+   }
+  },
+  "score_bounds.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "valid_score": 37880
+   },
+   "not_covered": {}
+  },
+  "season.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "Coordinator": 1,
+    "register": 1
+   }
+  },
+  "season_alerts.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "season_backfill.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "add_parser": 1
+   }
+  },
+  "season_health.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "season_readiness.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "settlement.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "shadow.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "shadow_market.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "store.py": {
+   "in_recipe_list": true,
+   "covered": {
+    "canonical": 3548,
+    "digest": 72,
+    "ensure_unfinished_at": 1,
+    "fixture_at": 3,
+    "instant": 4762,
+    "iso": 4751,
+    "now_utc": 13
+   },
+   "not_covered": {
+    "builtin_model_at": 5,
+    "connect": 21,
+    "put_report": 1
+   }
+  },
+  "strategy.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1,
+    "register": 1
+   }
+  },
+  "strategy_scope.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  },
+  "trial_evidence.py": {
+   "in_recipe_list": false,
+   "covered": {},
+   "not_covered": {
+    "<module>": 1
+   }
+  }
+ },
+ "recipe_coverage": {
+  "football_model.py": {
+   "roots": [
+    "fit_team_model",
+    "_goals_matrix",
+    "probabilities"
+   ],
+   "definitions": [
+    "DECAY_PER_DAY",
+    "DEFAULT_LINES",
+    "MIN_MATCHES",
+    "PROB_KEYS",
+    "RIDGE",
+    "TAIL_TOLERANCE",
+    "TeamModel",
+    "_goals_matrix",
+    "fit_team_model",
+    "half_line",
+    "probabilities"
+   ],
+   "imports_recorded_by_name_only": [
+    "dataclass",
+    "gammaln",
+    "math",
+    "minimize",
+    "np",
+    "poisson"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "football.py": {
+   "roots": [
+    "FootballEngine",
+    "load_fixtures",
+    "history_kickoff"
+   ],
+   "definitions": [
+    "EXCLUDED_PREMATCH",
+    "Fixture",
+    "FootballEngine",
+    "KICKOFF_MISMATCH",
+    "LONDON",
+    "MATCH_STARTED",
+    "MODEL_VERSION",
+    "RECEIPT_GRADES",
+    "REPAIR_2019",
+    "ResultVersion",
+    "SEASON_PATTERN",
+    "SOURCE_BLOBS",
+    "TrainingFit",
+    "UNKNOWN_RECONCILED_KICKOFF",
+    "_blobs",
+    "_check_scope",
+    "_club_key",
+    "_evidence_map",
+    "_known_schedule",
+    "_late_replacement",
+    "_parse_match",
+    "_parsed_version",
+    "_score",
+    "blob_sha",
+    "fixture_id",
+    "history_kickoff",
+    "iso",
+    "load_fixtures",
+    "read_json_rows",
+    "season_year",
+    "team_key",
+    "utc",
+    "verified_event_kickoff",
+    "verify_2019_repair"
+   ],
+   "imports_recorded_by_name_only": [
+    "DEFAULT_LINES",
+    "INVALID_SCORE",
+    "Path",
+    "UTC",
+    "ZoneInfo",
+    "_goals_matrix",
+    "bisect",
+    "collections",
+    "csv",
+    "dataclass",
+    "date",
+    "datetime",
+    "fit_team_model",
+    "hashlib",
+    "json",
+    "league_registry",
+    "lru_cache",
+    "math",
+    "np",
+    "probabilities",
+    "re",
+    "time",
+    "timedelta",
+    "unicodedata",
+    "valid_score"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "score_bounds.py": {
+   "roots": [
+    "valid_score",
+    "INVALID_SCORE"
+   ],
+   "definitions": [
+    "INVALID_SCORE",
+    "valid_score"
+   ],
+   "imports_recorded_by_name_only": [],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "pipeline.py": {
+   "roots": [
+    "make_forecast"
+   ],
+   "definitions": [
+    "HORIZONS",
+    "_existing",
+    "_forecast_arms",
+    "_lineups",
+    "_verified_seal",
+    "_with_schedule_revisions",
+    "make_forecast"
+   ],
+   "imports_recorded_by_name_only": [
+    "PROTOCOL",
+    "Path",
+    "canonical",
+    "closing",
+    "connect",
+    "dbscope",
+    "digest",
+    "ensure_unfinished_at",
+    "evidence",
+    "fixture_at",
+    "football",
+    "instant",
+    "iso",
+    "json",
+    "now_utc",
+    "paired_proof",
+    "put_report",
+    "replace",
+    "require_formal",
+    "timedelta"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "_recipe",
+    "prepare_builtin",
+    "_build_recipe",
+    "_study_recipe",
+    "_retain_manifest",
+    "_decision_reason"
+   ]
+  },
+  "datasets.py": {
+   "roots": [
+    "refresh",
+    "observe"
+   ],
+   "definitions": [
+    "BASE",
+    "GIT_REMOTE",
+    "_atomic",
+    "_get",
+    "_git_season_objects",
+    "_provider_head",
+    "_seasons",
+    "observe",
+    "refresh"
+   ],
+   "imports_recorded_by_name_only": [
+    "Path",
+    "Request",
+    "archive_bytes",
+    "closing",
+    "connect",
+    "football",
+    "input_manifest",
+    "instant",
+    "iso",
+    "json",
+    "now_utc",
+    "quote",
+    "re",
+    "record_result",
+    "register_fixture",
+    "subprocess",
+    "tempfile",
+    "urlopen"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "_publish_observation"
+   ]
+  },
+  "input_manifest.py": {
+   "roots": [
+    "create_observed_inputs",
+    "verify_observed_inputs"
+   ],
+   "definitions": [
+    "_effective_rows",
+    "_hash",
+    "_install",
+    "_materialize",
+    "_save",
+    "create_observed_inputs",
+    "remember_rows",
+    "verify_observed_inputs"
+   ],
+   "imports_recorded_by_name_only": [
+    "INVALID_SCORE",
+    "Path",
+    "archive_bytes",
+    "canonical",
+    "closing",
+    "defaultdict",
+    "digest",
+    "football",
+    "hashlib",
+    "iso",
+    "json",
+    "now_utc",
+    "os",
+    "re",
+    "read_blob",
+    "tempfile",
+    "valid_score"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "_db"
+   ]
+  },
+  "paired_proof.py": {
+   "roots": [
+    "attest_provider_files",
+    "capture_history",
+    "frozen_manifest",
+    "live_frame",
+    "make_proof"
+   ],
+   "definitions": [
+    "POLICY",
+    "_retain",
+    "_sha",
+    "_snapshot_view",
+    "_trusted",
+    "attest_provider_files",
+    "capture_history",
+    "frozen_manifest",
+    "live_frame",
+    "make_proof"
+   ],
+   "imports_recorded_by_name_only": [
+    "Path",
+    "closing",
+    "football",
+    "hashlib",
+    "input_manifest",
+    "json",
+    "store"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "_open"
+   ]
+  },
+  "evidence.py": {
+   "roots": [
+    "as_of_context",
+    "import_evidence",
+    "open_incident",
+    "resolve_incident"
+   ],
+   "definitions": [
+    "_ACTIONS",
+    "_check_value",
+    "_collect",
+    "_evidence_ids",
+    "_guard_rule",
+    "_impacted",
+    "_incident_at",
+    "_ingest",
+    "_joint_estimate",
+    "_lineup_key",
+    "_match_impacts",
+    "_number",
+    "_passes_guard",
+    "_prefer_sources",
+    "_selected_lineup",
+    "as_of_context",
+    "import_evidence",
+    "open_incident",
+    "resolve_incident"
+   ],
+   "imports_recorded_by_name_only": [
+    "FIELDS",
+    "METHODS",
+    "USES",
+    "db",
+    "digest",
+    "dump",
+    "granted",
+    "json",
+    "math",
+    "name_key",
+    "now_utc",
+    "publish_source",
+    "required",
+    "save_report",
+    "source_at",
+    "utc"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "_db"
+   ]
+  },
+  "evidence_sources.py": {
+   "roots": [
+    "register_source",
+    "source_at",
+    "name_key",
+    "granted",
+    "required",
+    "utc"
+   ],
+   "definitions": [
+    "FIELDS",
+    "METHODS",
+    "USES",
+    "dump",
+    "granted",
+    "name_key",
+    "promoted_field",
+    "register_source",
+    "required",
+    "source_at",
+    "utc"
+   ],
+   "imports_recorded_by_name_only": [
+    "datetime",
+    "json",
+    "now_utc",
+    "timezone"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "db",
+    "publish_source"
+   ]
+  },
+  "jobs_research.py": {
+   "roots": [
+    "active_version",
+    "model_for_decision",
+    "_pointer"
+   ],
+   "definitions": [
+    "_SCHEMA",
+    "_builtin_controls",
+    "_is_builtin",
+    "_open",
+    "_pointer",
+    "_restore_pointer",
+    "active_version",
+    "model_for_decision"
+   ],
+   "imports_recorded_by_name_only": [
+    "dbscope",
+    "json",
+    "store"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "schedule_consensus.py": {
+   "roots": [
+    "sync",
+    "review_schedule",
+    "require_fixed",
+    "result_links"
+   ],
+   "definitions": [
+    "DECISION_LEAD",
+    "FixedSchedules",
+    "KNOWN_EPL",
+    "MAX_AGE",
+    "MAX_SHIFT",
+    "REFRESH",
+    "SOURCE",
+    "WEEK",
+    "_admit_same_time",
+    "_check_latest",
+    "_choose",
+    "_competition",
+    "_confirmation_details",
+    "_dispatch_checks",
+    "_evaluate",
+    "_events",
+    "_frontier",
+    "_gamma",
+    "_hold",
+    "_label",
+    "_league_id",
+    "_main_event",
+    "_proof_at",
+    "_recheck_early_results",
+    "_register_league",
+    "_registration",
+    "_registration_reference",
+    "_review",
+    "_round",
+    "_upcoming",
+    "attest",
+    "fixed_schedules",
+    "readiness",
+    "require_fixed",
+    "result_links",
+    "review_schedule",
+    "sync"
+   ],
+   "imports_recorded_by_name_only": [
+    "ContextVar",
+    "Counter",
+    "ExitStack",
+    "Path",
+    "archive_proof",
+    "closing",
+    "dataclass",
+    "dbscope",
+    "defaultdict",
+    "hashlib",
+    "json",
+    "ledger_terms",
+    "market_provider",
+    "nullcontext",
+    "opportunity",
+    "re",
+    "result_admission",
+    "result_feed",
+    "store",
+    "timedelta",
+    "urlsplit"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "_db"
+   ]
+  },
+  "result_pairings.py": {
+   "roots": [
+    "decision",
+    "unique_fixtures"
+   ],
+   "definitions": [
+    "_final",
+    "_other",
+    "_primary",
+    "_repeat",
+    "decision",
+    "unique_fixtures"
+   ],
+   "imports_recorded_by_name_only": [
+    "Counter",
+    "opportunity",
+    "store",
+    "timedelta",
+    "valid_score"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "result_admission.py": {
+   "roots": [
+    "reconcile",
+    "review_pairing",
+    "_raw_rows",
+    "_pair"
+   ],
+   "definitions": [
+    "INTERVAL",
+    "_anchor",
+    "_decode",
+    "_pair",
+    "_raw_rows",
+    "_reference",
+    "_result",
+    "_same_run",
+    "disposition",
+    "last_disposition",
+    "last_result",
+    "pairing_review",
+    "reconcile",
+    "review_pairing",
+    "scope"
+   ],
+   "imports_recorded_by_name_only": [
+    "Counter",
+    "INVALID_SCORE",
+    "closing",
+    "defaultdict",
+    "hashlib",
+    "json",
+    "lru_cache",
+    "result_pairings",
+    "store",
+    "timedelta",
+    "valid_score"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "database",
+    "enqueue"
+   ]
+  },
+  "result_feed.py": {
+   "roots": [
+    "sync",
+    "_fixture_rows"
+   ],
+   "definitions": [
+    "AGENT",
+    "ATTRIBUTION",
+    "BASE",
+    "LICENSE",
+    "TERMS",
+    "_fixture_rows",
+    "_full_time",
+    "_get",
+    "reconcile",
+    "sync"
+   ],
+   "imports_recorded_by_name_only": [
+    "Counter",
+    "HTTPError",
+    "INVALID_SCORE",
+    "Request",
+    "archive_bytes",
+    "canonical",
+    "closing",
+    "eligible_fixtures",
+    "fixture_id",
+    "instant",
+    "json",
+    "now_utc",
+    "re",
+    "save_report",
+    "timedelta",
+    "urlopen",
+    "valid_score"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "_db"
+   ]
+  },
+  "result_operations.py": {
+   "roots": [
+    "manual",
+    "rollback",
+    "_fallback"
+   ],
+   "definitions": [
+    "_batch",
+    "_fallback",
+    "_raw_file",
+    "manual",
+    "rollback"
+   ],
+   "imports_recorded_by_name_only": [
+    "Path",
+    "admission",
+    "closing",
+    "feed",
+    "hashlib",
+    "json",
+    "store",
+    "timedelta",
+    "valid_score"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "publications"
+   ]
+  },
+  "result_training_review.py": {
+   "roots": [
+    "describe",
+    "validate",
+    "bound",
+    "still_applies"
+   ],
+   "definitions": [
+    "FACT",
+    "ORIGINAL",
+    "_fields",
+    "bound",
+    "describe",
+    "still_applies",
+    "validate"
+   ],
+   "imports_recorded_by_name_only": [
+    "fixture_id",
+    "json",
+    "result_pairings",
+    "store",
+    "timedelta"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "independent_results.py": {
+   "roots": [
+    "sync",
+    "verified"
+   ],
+   "definitions": [
+    "API",
+    "LICENSE",
+    "LIMIT",
+    "SOURCE",
+    "_BOX",
+    "_FIELDS",
+    "_LINK",
+    "_REPORT",
+    "_SCHEMA",
+    "_SECTION",
+    "_article",
+    "_club",
+    "_decode",
+    "_get",
+    "_kickoff",
+    "_plain",
+    "_query",
+    "_receive",
+    "_title",
+    "_url",
+    "sync",
+    "verified"
+   ],
+   "imports_recorded_by_name_only": [
+    "AGENT",
+    "HTTPError",
+    "INVALID_SCORE",
+    "Request",
+    "ZoneInfo",
+    "closing",
+    "datetime",
+    "dbscope",
+    "defaultdict",
+    "hashlib",
+    "json",
+    "lru_cache",
+    "parsedate_to_datetime",
+    "re",
+    "store",
+    "timedelta",
+    "urlencode",
+    "urlopen",
+    "valid_score"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "opportunity.py": {
+   "roots": [
+    "_club"
+   ],
+   "definitions": [
+    "_club"
+   ],
+   "imports_recorded_by_name_only": [
+    "football"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "market_archive.py": {
+   "roots": [
+    "_fetch_once",
+    "observe_event",
+    "catalog_window"
+   ],
+   "definitions": [
+    "DeferredFetch",
+    "_DEADLINE",
+    "_SCHEMA",
+    "_fetch",
+    "_fetch_once",
+    "_ingest",
+    "_log",
+    "_retry_at",
+    "catalog_window",
+    "database",
+    "league_tag",
+    "observe_event",
+    "prepare"
+   ],
+   "imports_recorded_by_name_only": [
+    "ContextVar",
+    "FIXTURE",
+    "GAMMA",
+    "HTTPException",
+    "archive_bytes",
+    "canonical",
+    "closing",
+    "connect",
+    "contract_storage",
+    "dbscope",
+    "hashlib",
+    "iso",
+    "json",
+    "math",
+    "moment",
+    "now_utc",
+    "parsedate_to_datetime",
+    "provider",
+    "random",
+    "time",
+    "timedelta",
+    "urlsplit"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "market_provider.py": {
+   "roots": [
+    "get",
+    "FIXTURE",
+    "normalized_markets"
+   ],
+   "definitions": [
+    "CLOB",
+    "FIXTURE",
+    "Reply",
+    "SPORT_FIXTURES",
+    "SPORT_MARKETS",
+    "VENUE",
+    "family",
+    "get",
+    "moment",
+    "normalized_markets",
+    "number",
+    "sequence",
+    "teams"
+   ],
+   "imports_recorded_by_name_only": [
+    "Any",
+    "Decimal",
+    "InvalidOperation",
+    "UTC",
+    "__version__",
+    "canonical",
+    "dataclass",
+    "datetime",
+    "hashlib",
+    "iso",
+    "json",
+    "market_http",
+    "re",
+    "urlencode"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "market_http.py": {
+   "roots": [
+    "read"
+   ],
+   "definitions": [
+    "_MAX_BODY",
+    "_Transport",
+    "_lock",
+    "_owner",
+    "read"
+   ],
+   "imports_recorded_by_name_only": [
+    "FutureTimeout",
+    "HTTPError",
+    "asyncio",
+    "getproxies",
+    "httpx",
+    "os",
+    "proxy_bypass",
+    "ssl",
+    "store",
+    "threading",
+    "time",
+    "urlsplit"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "ledger_terms.py": {
+   "roots": [
+    "_interpret"
+   ],
+   "definitions": [
+    "_DAY",
+    "_DEADLINE",
+    "_LEAGUE_HEADERS",
+    "_LIGUE1_TOTAL",
+    "_MONTH",
+    "_REGULAR",
+    "_REVIEW",
+    "_REVIEW_BY_SPORT",
+    "_TIME",
+    "_TRANSLATE",
+    "_WEEK",
+    "_YEAR",
+    "_interpret",
+    "_norm",
+    "_subject"
+   ],
+   "imports_recorded_by_name_only": [
+    "Decimal",
+    "ZoneInfo",
+    "datetime",
+    "hashlib",
+    "number",
+    "re",
+    "store",
+    "teams"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "blob_storage.py": {
+   "roots": [
+    "read_blob"
+   ],
+   "definitions": [
+    "blob_name",
+    "blob_path",
+    "open_blob",
+    "read_blob"
+   ],
+   "imports_recorded_by_name_only": [
+    "BufferedReader",
+    "Iterator",
+    "Path",
+    "PathLike",
+    "contextmanager",
+    "gzip",
+    "hashlib",
+    "zlib"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "archive_proof.py": {
+   "roots": [
+    "original_receipt",
+    "_body",
+    "_event_capture"
+   ],
+   "definitions": [
+    "_body",
+    "_event_capture",
+    "original_receipt"
+   ],
+   "imports_recorded_by_name_only": [
+    "dbscope",
+    "instant",
+    "json",
+    "parse_qs",
+    "provider",
+    "store",
+    "urlsplit"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "dbscope.py": {
+   "roots": [
+    "verified_bytes",
+    "recheck_originals"
+   ],
+   "definitions": [
+    "EvidenceChanged",
+    "_active",
+    "_identity",
+    "current",
+    "recheck_originals",
+    "verified_bytes"
+   ],
+   "imports_recorded_by_name_only": [
+    "ContextVar",
+    "Path",
+    "hashlib",
+    "os"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": []
+  },
+  "store.py": {
+   "roots": [
+    "archive_bytes",
+    "register_fixture",
+    "register_fixture_db",
+    "record_result",
+    "record_result_db",
+    "eligible_fixture_rows",
+    "fixture_at",
+    "ensure_unfinished_at",
+    "require_formal",
+    "instant",
+    "iso",
+    "digest"
+   ],
+   "definitions": [
+    "PROTOCOL",
+    "archive_bytes",
+    "canonical",
+    "digest",
+    "eligible_fixture_rows",
+    "ensure_unfinished_at",
+    "fixture_at",
+    "instant",
+    "iso",
+    "now_utc",
+    "record_result",
+    "record_result_db",
+    "register_fixture",
+    "register_fixture_db",
+    "require_formal"
+   ],
+   "imports_recorded_by_name_only": [
+    "Any",
+    "INVALID_SCORE",
+    "Path",
+    "blob_path",
+    "blob_size",
+    "closing",
+    "datetime",
+    "dbscope",
+    "hashlib",
+    "json",
+    "os",
+    "read_blob",
+    "representation",
+    "tempfile",
+    "timezone",
+    "valid_score"
+   ],
+   "unresolved_names": [],
+   "deliberately_ignored": [
+    "connect"
+   ]
+  }
+ }
+}

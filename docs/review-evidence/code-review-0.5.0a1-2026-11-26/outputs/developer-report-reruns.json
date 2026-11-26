@@ -1,0 +1,55 @@
+{
+ "commit": "49313f4",
+ "python": "3.12.3",
+ "numpy": "2.3.5",
+ "scipy": "1.17.0",
+ "rows": [
+  {
+   "report": "leagues baseline-study",
+   "command": "pm861 leagues baseline-study HISTORY --output OUT",
+   "published": "reports/five-leagues-0.5/baseline-study.json",
+   "published_sha256": "5cf85a3b42bda1fcc864dc7ea92746717336ca79a320f289abae5613886f3d44",
+   "rerun_sha256": "5cf85a3b42bda1fcc864dc7ea92746717336ca79a320f289abae5613886f3d44",
+   "byte_identical": true,
+   "differing_json_paths": []
+  },
+  {
+   "report": "leagues inventory",
+   "command": "pm861 leagues inventory HISTORY --output OUT",
+   "published": "reports/five-leagues-0.5/history-inventory.json",
+   "published_sha256": "ee2a687eabc86a9dc3575969f42cd6265c3e33fdf5089b7aae72705d4a2619e4",
+   "rerun_sha256": "ee2a687eabc86a9dc3575969f42cd6265c3e33fdf5089b7aae72705d4a2619e4",
+   "byte_identical": true,
+   "differing_json_paths": []
+  },
+  {
+   "report": "paper-risk stress",
+   "command": "pm861 paper-risk stress --write-input scenario.json --output OUT",
+   "published": "reports/five-leagues-0.5/capital-stress.json",
+   "published_sha256": "b750f9339b2ab8c4e118d4f73d5642b5ea6b44880b8bc27b7d78ec39a7345ed6",
+   "rerun_sha256": "b750f9339b2ab8c4e118d4f73d5642b5ea6b44880b8bc27b7d78ec39a7345ed6",
+   "byte_identical": true,
+   "differing_json_paths": []
+  },
+  {
+   "report": "news market study",
+   "command": "PYTHONPATH=src python scripts/reproduce_news_market_study.py reports/news-early-seals-0.4.2.json",
+   "published": "reports/news-market-study-0.4.2.json",
+   "published_sha256": "38b347a39e8d06e66323e63e49839e973de6ae58e2a23461eadebb8495fdc22e",
+   "rerun_sha256": "38b347a39e8d06e66323e63e49839e973de6ae58e2a23461eadebb8495fdc22e",
+   "byte_identical": true,
+   "differing_json_paths": []
+  },
+  {
+   "report": "news absorption",
+   "command": "PYTHONPATH=src python scripts/reproduce_news_absorption.py",
+   "published": "reports/news-absorption-0.4.2.json",
+   "published_sha256": "917d6c5b7f091ba44747e4d7b9041da5894e749fb721d18ef0f79c0c4c987b14",
+   "rerun_sha256": "16ee53d740576891f073df0fb7cf1655538d2133d7f446bcae4c906f1e584921",
+   "byte_identical": false,
+   "differing_json_paths": [
+    "/news_policy"
+   ]
+  }
+ ]
+}

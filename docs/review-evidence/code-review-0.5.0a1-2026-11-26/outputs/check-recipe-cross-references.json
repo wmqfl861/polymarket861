@@ -1,0 +1,616 @@
+{
+ "package_version": "0.5.0a1",
+ "python": "3.12.3",
+ "family": "B1",
+ "files_in_recipe_list": 26,
+ "definitions_in_recipe": 296,
+ "cross_file_references": 155,
+ "cross_file_references_into_recipe": 110,
+ "cross_file_references_not_in_recipe": 45,
+ "not_in_recipe": [
+  {
+   "target": "big5_market.py:_identity",
+   "defined_at": "big5_market.py:_identity",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "archive_proof.py:_event_capture"
+   ]
+  },
+  {
+   "target": "blob_storage.py:blob_size",
+   "defined_at": "blob_storage.py:blob_size",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "store.py:archive_bytes"
+   ]
+  },
+  {
+   "target": "blob_storage.py:decoded",
+   "defined_at": "blob_storage.py:decoded",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "dbscope.py:recheck_originals",
+    "dbscope.py:verified_bytes"
+   ]
+  },
+  {
+   "target": "blob_storage.py:representation",
+   "defined_at": "blob_storage.py:representation",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "store.py:archive_bytes"
+   ]
+  },
+  {
+   "target": "contract_storage.py:prepare",
+   "defined_at": "contract_storage.py:prepare",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "market_archive.py:prepare"
+   ]
+  },
+  {
+   "target": "contract_storage.py:record",
+   "defined_at": "contract_storage.py:record",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "market_archive.py:_ingest"
+   ]
+  },
+  {
+   "target": "dbscope.py:bind",
+   "defined_at": "dbscope.py:bind",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "schedule_consensus.py:readiness"
+   ]
+  },
+  {
+   "target": "dbscope.py:checked",
+   "defined_at": "dbscope.py:checked",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "jobs_research.py:active_version",
+    "jobs_research.py:model_for_decision",
+    "schedule_consensus.py:_check_latest",
+    "schedule_consensus.py:attest"
+   ]
+  },
+  {
+   "target": "dbscope.py:for_connection",
+   "defined_at": "dbscope.py:for_connection",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "schedule_consensus.py:readiness"
+   ]
+  },
+  {
+   "target": "dbscope.py:prepare",
+   "defined_at": "dbscope.py:prepare",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "independent_results.py:_receive",
+    "independent_results.py:sync",
+    "jobs_research.py:_open",
+    "market_archive.py:prepare"
+   ]
+  },
+  {
+   "target": "dbscope.py:reading",
+   "defined_at": "dbscope.py:reading",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "jobs_research.py:active_version",
+    "jobs_research.py:model_for_decision",
+    "store.py:fixture_at",
+    "store.py:require_formal"
+   ]
+  },
+  {
+   "target": "evidence.py:link_lineage_db",
+   "defined_at": "evidence.py:link_lineage_db",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:make_forecast"
+   ]
+  },
+  {
+   "target": "evidence_sources.py:db",
+   "defined_at": "evidence_sources.py:db",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": true,
+   "used_by": [
+    "evidence.py:_match_impacts",
+    "evidence.py:as_of_context",
+    "evidence.py:import_evidence",
+    "evidence.py:open_incident",
+    "evidence.py:resolve_incident"
+   ]
+  },
+  {
+   "target": "evidence_sources.py:digest",
+   "defined_at": "evidence_sources.py:digest",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "evidence.py:_ingest"
+   ]
+  },
+  {
+   "target": "evidence_sources.py:publish_source",
+   "defined_at": "evidence_sources.py:publish_source",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": true,
+   "used_by": [
+    "evidence.py:import_evidence"
+   ]
+  },
+  {
+   "target": "football.py:SOURCE_COMMIT",
+   "defined_at": "football.py:SOURCE_COMMIT",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "datasets.py:observe",
+    "datasets.py:refresh"
+   ]
+  },
+  {
+   "target": "football.py:apply_context",
+   "defined_at": "football_model.py:apply_context",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:_forecast_arms"
+   ]
+  },
+  {
+   "target": "league_registry.py:club_key",
+   "defined_at": "league_registry.py:club_key",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "football.py:_club_key"
+   ]
+  },
+  {
+   "target": "league_registry.py:fixture_count",
+   "defined_at": "league_registry.py:fixture_count",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "football.py:FootballEngine"
+   ]
+  },
+  {
+   "target": "league_registry.py:fixture_exception",
+   "defined_at": "league_registry.py:fixture_exception",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "football.py:_check_scope",
+    "football.py:_parse_match"
+   ]
+  },
+  {
+   "target": "league_registry.py:profile",
+   "defined_at": "league_registry.py:profile",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "football.py:FootballEngine",
+    "football.py:_check_scope",
+    "football.py:_parse_match",
+    "football.py:load_fixtures"
+   ]
+  },
+  {
+   "target": "league_registry.py:round_count",
+   "defined_at": "league_registry.py:round_count",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "football.py:_parse_match"
+   ]
+  },
+  {
+   "target": "league_registry.py:season_window",
+   "defined_at": "league_registry.py:season_window",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "football.py:_parse_match"
+   ]
+  },
+  {
+   "target": "league_registry.py:source_blobs",
+   "defined_at": "league_registry.py:source_blobs",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "football.py:_blobs"
+   ]
+  },
+  {
+   "target": "league_registry.py:validate_members",
+   "defined_at": "league_registry.py:validate_members",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "football.py:load_fixtures"
+   ]
+  },
+  {
+   "target": "ledger_rules.py:instant",
+   "defined_at": "ledger_rules.py:instant",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "archive_proof.py:original_receipt"
+   ]
+  },
+  {
+   "target": "ledger_rules.py:number",
+   "defined_at": "ledger_rules.py:number",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "ledger_terms.py:_subject"
+   ]
+  },
+  {
+   "target": "market_provider.py:GAMMA",
+   "defined_at": "market_provider.py:GAMMA",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "market_archive.py:catalog_window",
+    "market_archive.py:league_tag",
+    "market_archive.py:observe_event"
+   ]
+  },
+  {
+   "target": "model_study.py:build_sources",
+   "defined_at": "model_study.py:build_sources",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:make_forecast"
+   ]
+  },
+  {
+   "target": "news.py:snapshot",
+   "defined_at": "news.py:snapshot",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:make_forecast"
+   ]
+  },
+  {
+   "target": "news_model.py:paired_prediction",
+   "defined_at": "news_model.py:paired_prediction",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:_forecast_arms"
+   ]
+  },
+  {
+   "target": "news_study_plan.py:PAIR_RECIPE_KIND",
+   "defined_at": "news_study_plan.py:PAIR_RECIPE_KIND",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:make_forecast"
+   ]
+  },
+  {
+   "target": "news_study_plan.py:declaration",
+   "defined_at": "news_study_plan.py:declaration",
+   "target_file_in_recipe_list": false,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:make_forecast"
+   ]
+  },
+  {
+   "target": "paired_proof.py:SealedInputConflict",
+   "defined_at": "paired_proof.py:SealedInputConflict",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:make_forecast"
+   ]
+  },
+  {
+   "target": "paired_proof.py:check_replay_cache",
+   "defined_at": "paired_proof.py:check_replay_cache",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:make_forecast"
+   ]
+  },
+  {
+   "target": "result_admission.py:database",
+   "defined_at": "result_admission.py:database",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": true,
+   "used_by": [
+    "result_feed.py:sync",
+    "result_operations.py:_fallback",
+    "result_operations.py:manual",
+    "result_operations.py:rollback"
+   ]
+  },
+  {
+   "target": "result_admission.py:enqueue",
+   "defined_at": "result_admission.py:enqueue",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": true,
+   "used_by": [
+    "result_operations.py:manual",
+    "result_operations.py:rollback"
+   ]
+  },
+  {
+   "target": "result_operations.py:publications",
+   "defined_at": "result_operations.py:publications",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": true,
+   "used_by": [
+    "datasets.py:observe",
+    "result_admission.py:review_pairing"
+   ]
+  },
+  {
+   "target": "result_pairings.py:SOURCE",
+   "defined_at": "result_pairings.py:SOURCE",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "result_admission.py:reconcile",
+    "result_admission.py:review_pairing"
+   ]
+  },
+  {
+   "target": "result_pairings.py:signature",
+   "defined_at": "result_pairings.py:signature",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "result_admission.py:reconcile"
+   ]
+  },
+  {
+   "target": "store.py:builtin_model_at",
+   "defined_at": "store.py:builtin_model_at",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "jobs_research.py:_restore_pointer",
+    "jobs_research.py:active_version",
+    "jobs_research.py:model_for_decision"
+   ]
+  },
+  {
+   "target": "store.py:connect",
+   "defined_at": "store.py:connect",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": true,
+   "used_by": [
+    "datasets.py:observe",
+    "independent_results.py:_receive",
+    "independent_results.py:sync",
+    "jobs_research.py:_open",
+    "market_archive.py:database",
+    "paired_proof.py:_retain",
+    "paired_proof.py:frozen_manifest",
+    "pipeline.py:make_forecast"
+   ]
+  },
+  {
+   "target": "store.py:eligible_fixtures",
+   "defined_at": "store.py:eligible_fixtures",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "result_feed.py:reconcile"
+   ]
+  },
+  {
+   "target": "store.py:put_report",
+   "defined_at": "store.py:put_report",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "pipeline.py:make_forecast",
+    "result_admission.py:reconcile",
+    "result_operations.py:manual",
+    "result_operations.py:rollback",
+    "schedule_consensus.py:sync"
+   ]
+  },
+  {
+   "target": "store.py:save_report",
+   "defined_at": "store.py:save_report",
+   "target_file_in_recipe_list": true,
+   "target_definition_in_recipe": false,
+   "deliberately_ignored": false,
+   "used_by": [
+    "evidence.py:open_incident",
+    "evidence.py:resolve_incident",
+    "result_feed.py:reconcile"
+   ]
+  }
+ ],
+ "in_recipe": [
+  "archive_proof.py:_body",
+  "archive_proof.py:_event_capture",
+  "archive_proof.py:original_receipt",
+  "blob_storage.py:blob_path",
+  "blob_storage.py:read_blob",
+  "datasets.py:refresh",
+  "dbscope.py:EvidenceChanged",
+  "dbscope.py:current",
+  "dbscope.py:recheck_originals",
+  "dbscope.py:verified_bytes",
+  "evidence.py:as_of_context",
+  "evidence_sources.py:FIELDS",
+  "evidence_sources.py:METHODS",
+  "evidence_sources.py:USES",
+  "evidence_sources.py:dump",
+  "evidence_sources.py:granted",
+  "evidence_sources.py:name_key",
+  "evidence_sources.py:required",
+  "evidence_sources.py:source_at",
+  "evidence_sources.py:utc",
+  "football.py:FootballEngine",
+  "football.py:MODEL_VERSION",
+  "football.py:SOURCE_BLOBS",
+  "football.py:blob_sha",
+  "football.py:fixture_id",
+  "football.py:history_kickoff",
+  "football.py:load_fixtures",
+  "football.py:season_year",
+  "football.py:team_key",
+  "football.py:utc",
+  "football_model.py:DEFAULT_LINES",
+  "football_model.py:_goals_matrix",
+  "football_model.py:fit_team_model",
+  "football_model.py:probabilities",
+  "independent_results.py:verified",
+  "input_manifest.py:_install",
+  "input_manifest.py:_materialize",
+  "input_manifest.py:create_observed_inputs",
+  "input_manifest.py:verify_observed_inputs",
+  "jobs.py:active_version",
+  "jobs.py:model_for_decision",
+  "jobs_research.py:_pointer",
+  "ledger_terms.py:_interpret",
+  "market_http.py:read",
+  "market_provider.py:FIXTURE",
+  "market_provider.py:Reply",
+  "market_provider.py:SPORT_FIXTURES",
+  "market_provider.py:SPORT_MARKETS",
+  "market_provider.py:get",
+  "market_provider.py:moment",
+  "market_provider.py:normalized_markets",
+  "market_provider.py:teams",
+  "opportunity.py:_club",
+  "paired_proof.py:attest_provider_files",
+  "paired_proof.py:capture_history",
+  "paired_proof.py:frozen_manifest",
+  "paired_proof.py:live_frame",
+  "paired_proof.py:make_proof",
+  "pipeline.py:_verified_seal",
+  "result_admission.py:INTERVAL",
+  "result_admission.py:_pair",
+  "result_admission.py:_raw_rows",
+  "result_admission.py:_reference",
+  "result_admission.py:_result",
+  "result_admission.py:disposition",
+  "result_admission.py:last_disposition",
+  "result_admission.py:last_result",
+  "result_admission.py:pairing_review",
+  "result_admission.py:reconcile",
+  "result_admission.py:scope",
+  "result_feed.py:AGENT",
+  "result_feed.py:ATTRIBUTION",
+  "result_feed.py:BASE",
+  "result_feed.py:LICENSE",
+  "result_feed.py:TERMS",
+  "result_feed.py:_fixture_rows",
+  "result_feed.py:_full_time",
+  "result_feed.py:_get",
+  "result_feed.py:now_utc",
+  "result_feed.py:sync",
+  "result_pairings.py:_final",
+  "result_pairings.py:_other",
+  "result_pairings.py:_primary",
+  "result_pairings.py:decision",
+  "result_pairings.py:unique_fixtures",
+  "result_training_review.py:bound",
+  "result_training_review.py:still_applies",
+  "result_training_review.py:validate",
+  "schedule_consensus.py:attest",
+  "schedule_consensus.py:require_fixed",
+  "schedule_consensus.py:result_links",
+  "score_bounds.py:INVALID_SCORE",
+  "score_bounds.py:valid_score",
+  "store.py:PROTOCOL",
+  "store.py:archive_bytes",
+  "store.py:blob_path",
+  "store.py:canonical",
+  "store.py:digest",
+  "store.py:eligible_fixture_rows",
+  "store.py:ensure_unfinished_at",
+  "store.py:fixture_at",
+  "store.py:instant",
+  "store.py:iso",
+  "store.py:now_utc",
+  "store.py:read_blob",
+  "store.py:record_result",
+  "store.py:record_result_db",
+  "store.py:register_fixture",
+  "store.py:register_fixture_db",
+  "store.py:require_formal"
+ ]
+}

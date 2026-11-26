@@ -1,0 +1,580 @@
+{
+ "package_version": "0.5.0a1",
+ "study": "epl-news-home-and-full-over-v1",
+ "family_comparisons": 10,
+ "draws_per_cell": 2000,
+ "seed": 861,
+ "movement_source": "reports/news-early-seals-0.4.2.json，10 场第 12 轮提前封存",
+ "movement_rms_pp": {
+  "home_win": 0.6342,
+  "full_over_2_5": 0.4962
+ },
+ "movement_pp": {
+  "home_win": [
+   -0.67,
+   -0.829,
+   -0.146,
+   1.02,
+   0.296,
+   0.3,
+   0.899,
+   -0.483,
+   0.514,
+   -0.584
+  ],
+  "full_over_2_5": [
+   -0.447,
+   -0.24,
+   -0.556,
+   -0.3,
+   0.18,
+   0.216,
+   0.155,
+   -0.983,
+   0.319,
+   -0.796
+  ]
+ },
+ "cells": [
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.002,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.1215,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.6465,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.0015,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0345,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.194,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.002,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0115,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.0545,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.003,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.4215,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.9905,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.0025,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.112,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.623,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.002,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0325,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.183,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.0035,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.1715,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.802,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.001,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0455,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.267,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.002,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.016,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "home_win",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.0775,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.002,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0635,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.316,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.002,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.02,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.0905,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.0015,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0095,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "本赛季余下 27 轮，每轮 10 场全部合格",
+   "rounds": 27,
+   "matches": 270,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.0245,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.003,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.1965,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.8645,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.002,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.052,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.326,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.002,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0185,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "到 2028 年 6 月共 65 轮，每轮 10 场全部合格（上限）",
+   "rounds": 65,
+   "matches": 650,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.0885,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.005,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0965,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 3,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.5175,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.003,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0245,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 5,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.1455,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.0,
+   "lower_bound_above_zero": 0.0025,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 0.5,
+   "lower_bound_above_zero": 0.0175,
+   "interval_defined": 1.0
+  },
+  {
+   "endpoint": "full_over_2_5",
+   "sample": "65 轮，每轮只有 5 场合格",
+   "rounds": 65,
+   "matches": 325,
+   "assumed_gap_sd_pp": 8,
+   "assumed_slope": 1.0,
+   "lower_bound_above_zero": 0.047,
+   "interval_defined": 1.0
+  }
+ ]
+}

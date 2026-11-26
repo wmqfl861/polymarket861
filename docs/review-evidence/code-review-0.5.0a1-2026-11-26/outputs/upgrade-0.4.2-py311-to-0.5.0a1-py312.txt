@@ -1,0 +1,98 @@
+== old version (8125d57, 0.4.2) on Python 3.11.18: initialise, fetch the pinned history, seal one early forecast
+  "model_version": "B1",
+== new version (0.5.0a1) on the same data directory, before any baseline: season readiness (release part)
+{
+ "checks.release_executable": false,
+ "state": "approval_required",
+ "ready": false,
+ "active_version": "B1",
+ "approval": null,
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "reference_python": "3.12",
+ "running_python": {
+  "implementation": "CPython",
+  "version": "3.12.3",
+  "compiler": "GCC 13.3.0"
+ },
+ "actions": [
+  "Use the incumbent installation against this data directory to run forecast release-baseline HISTORY.",
+  "Run forecast release-compare HISTORY with the installed build.",
+  "Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON."
+ ]
+}
+== new version: forecast make before approval (expected: exit 2)
+pm861: a changed builtin requires forecast release-compare and named release-approve
+exit=2
+== rollback check: the old version seals again on the directory the new version has just opened
+  "model_version": "B1",
+{"state": "ready", "ready": true, "active_version": "B1"}
+== new version: release-compare without a baseline saved by the old version (expected: error)
+pm861: missing frozen study from this physical recipe; run forecast release-baseline before installing its successor
+exit=2
+== the documented order: baseline with the old version, compare with the new one
+  "version": "B1",
+  "recipe": "5d2c22a06033c759b7c9b32853d55e37e3667648a46be9bb251110d902fa49e8",
+  "study_sha256": "3bb8e38af23dd0c23ed3b76c131e8db8f708043f1a9e07abbecaa0dc36869aa7",
+  "matches": 1900,
+  "to_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+    "paired_count": 1900,
+    "rounds": 190,
+    "changed_predictions": 0,
+    "changed_training_views": 0,
+    "candidate_score": 75.44781323408776,
+    "baseline_score": 75.44781323408776,
+      "rounds": 190,
+  "report_sha256": "dacb10c3cdd76489a108c2a7812cd0e88defeb633e2261af725cc64a437343c1"
+== new version: readiness after compare, before approval
+{
+ "checks.release_executable": false,
+ "state": "approval_required",
+ "ready": false,
+ "active_version": "B1",
+ "approval": null,
+ "baseline_sha256": "3bb8e38af23dd0c23ed3b76c131e8db8f708043f1a9e07abbecaa0dc36869aa7",
+ "comparison_sha256": "dacb10c3cdd76489a108c2a7812cd0e88defeb633e2261af725cc64a437343c1",
+ "reference_python": "3.12",
+ "running_python": {
+  "implementation": "CPython",
+  "version": "3.12.3",
+  "compiler": "GCC 13.3.0"
+ },
+ "actions": [
+  "Review the comparison and run forecast release-approve dacb10c3cdd76489a108c2a7812cd0e88defeb633e2261af725cc64a437343c1 --reviewer NAME --reason REASON."
+ ]
+}
+== approve in this scratch directory only, then the same forecast succeeds
+  "version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+  "effective_at": "2026-11-26T10:41:43.677974Z",
+  "reviewer": "scratch replication",
+  "model_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+  "release_provenance_sha256": "e26e82ce25246e873fccaaed182024ef77a4bcca12a029f76a3f873349365542",
+  "news_recipe_sha256": "de538af3469c4f05b8ee87b14907f052ab96438b02ea7dc1d00a4a04947be18a",
+{
+ "checks.release_executable": true,
+ "state": "ready",
+ "ready": true,
+ "active_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+ "approval": {
+  "effective_at": "2026-11-26T10:41:43.677974Z",
+  "comparison": "dacb10c3cdd76489a108c2a7812cd0e88defeb633e2261af725cc64a437343c1",
+  "reviewer": "scratch replication",
+  "reason": "isolated scratch copy; verifies the gate only"
+ },
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "reference_python": "3.12",
+ "running_python": {
+  "implementation": "CPython",
+  "version": "3.12.3",
+  "compiler": "GCC 13.3.0"
+ },
+ "actions": null
+}
+== the seal written by the old version reopens byte-identically under the new one
+identical (235804906009e2282d67276b373a651ae7c800c92b5126a276baf7625b77fd06)
+== after approval of the new recipe: the old version on the same directory
+exit=2
+pm861: a changed builtin requires forecast release-compare and named release-approve

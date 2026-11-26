@@ -1,0 +1,109 @@
+{
+ "what": "scripts/check_recipe_identity.py run under three interpreters on commit 49313f4, same NumPy 2.3.5 and SciPy 1.17.0",
+ "identical_except_python_field": true,
+ "parts_that_differ_between_interpreters": [],
+ "runs": [
+  {
+   "python": "3.11.18",
+   "numeric_runtime": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+   },
+   "package_files_sha256": "fc91b13fbea1b925c75a680f832351e49049bc1894c292ce780afcf0f0d448a8",
+   "recipes": {
+    "B0": {
+     "primary": "3477385537f5d6bba22d8987cabd708edb2a65fbe7cbdd8e09e08e515175f4cb",
+     "paired": "0b6b833a60e4d138c3ce5a944ba1148b00acec2d47835f4e1369ce71f8ef3760",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B1": {
+     "primary": "826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+     "paired": "de538af3469c4f05b8ee87b14907f052ab96438b02ea7dc1d00a4a04947be18a",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B2": {
+     "primary": "d991381326ef71946737a1c77aeff0de9a4adf787bb50dd657970807312b4031",
+     "paired": "212b589fa403d562049130491e3b10346916342b320b46d949414aa09d5fff7a",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B3": {
+     "primary": "cc36fe6228c8af882a22ed53c9ab3c04f058adeb89e1dfa412ee4ed6aaf73d69",
+     "paired": "cc36fe6228c8af882a22ed53c9ab3c04f058adeb89e1dfa412ee4ed6aaf73d69",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    }
+   }
+  },
+  {
+   "python": "3.12.3",
+   "numeric_runtime": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+   },
+   "package_files_sha256": "fc91b13fbea1b925c75a680f832351e49049bc1894c292ce780afcf0f0d448a8",
+   "recipes": {
+    "B0": {
+     "primary": "3477385537f5d6bba22d8987cabd708edb2a65fbe7cbdd8e09e08e515175f4cb",
+     "paired": "0b6b833a60e4d138c3ce5a944ba1148b00acec2d47835f4e1369ce71f8ef3760",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B1": {
+     "primary": "826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+     "paired": "de538af3469c4f05b8ee87b14907f052ab96438b02ea7dc1d00a4a04947be18a",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B2": {
+     "primary": "d991381326ef71946737a1c77aeff0de9a4adf787bb50dd657970807312b4031",
+     "paired": "212b589fa403d562049130491e3b10346916342b320b46d949414aa09d5fff7a",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B3": {
+     "primary": "cc36fe6228c8af882a22ed53c9ab3c04f058adeb89e1dfa412ee4ed6aaf73d69",
+     "paired": "cc36fe6228c8af882a22ed53c9ab3c04f058adeb89e1dfa412ee4ed6aaf73d69",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    }
+   }
+  },
+  {
+   "python": "3.13.18",
+   "numeric_runtime": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+   },
+   "package_files_sha256": "fc91b13fbea1b925c75a680f832351e49049bc1894c292ce780afcf0f0d448a8",
+   "recipes": {
+    "B0": {
+     "primary": "3477385537f5d6bba22d8987cabd708edb2a65fbe7cbdd8e09e08e515175f4cb",
+     "paired": "0b6b833a60e4d138c3ce5a944ba1148b00acec2d47835f4e1369ce71f8ef3760",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B1": {
+     "primary": "826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+     "paired": "de538af3469c4f05b8ee87b14907f052ab96438b02ea7dc1d00a4a04947be18a",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B2": {
+     "primary": "d991381326ef71946737a1c77aeff0de9a4adf787bb50dd657970807312b4031",
+     "paired": "212b589fa403d562049130491e3b10346916342b320b46d949414aa09d5fff7a",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    },
+    "B3": {
+     "primary": "cc36fe6228c8af882a22ed53c9ab3c04f058adeb89e1dfa412ee4ed6aaf73d69",
+     "paired": "cc36fe6228c8af882a22ed53c9ab3c04f058adeb89e1dfa412ee4ed6aaf73d69",
+     "probability_source": "7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a",
+     "frozen_feature_source": "d7cb2fd526659add80ada51ebcc8b68b19f5fecc90c52f04d4fef836ef661d01"
+    }
+   }
+  }
+ ]
+}

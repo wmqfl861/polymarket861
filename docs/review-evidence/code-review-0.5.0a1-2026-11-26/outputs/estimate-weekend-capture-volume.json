@@ -1,0 +1,72 @@
+{
+ "basis": "planning estimate from the tick schedule and the developer's one real sample; not a measurement",
+ "start": "2026-11-26T19:25:00Z",
+ "fixtures": 38,
+ "fixtures_by_date": {
+  "2026-11-27": 4,
+  "2026-11-28": 17,
+  "2026-11-29": 14,
+  "2026-11-30": 3
+ },
+ "sample": {
+  "token_observations": 2280,
+  "database_bytes": 33841152,
+  "database_bytes_per_observation": 14843,
+  "raw_bodies": 165,
+  "raw_on_disk_bytes": 5098654,
+  "raw_on_disk_bytes_per_body": 30901,
+  "bodies_per_catalog_refresh": 13,
+  "tokens_per_all_line_capture": 48.0,
+  "slowest_book_request_ms": 4671.69
+ },
+ "scenarios": [
+  {
+   "saturday_sunday_kickoff_utc": "12:00",
+   "captures": 16649,
+   "captures_per_fixture": 438,
+   "token_observations": 213468,
+   "catalog_refreshes": 1158,
+   "raw_bodies": 48352,
+   "database_gb_upper_bound": 3.17,
+   "raw_originals_gb_at_sample_average": 1.49,
+   "raw_originals_gb_extremes": [
+    1.12,
+    5.9
+   ],
+   "total_gb": 4.66,
+   "total_gb_worst_case": 9.07
+  },
+  {
+   "saturday_sunday_kickoff_utc": "16:00",
+   "captures": 17145,
+   "captures_per_fixture": 451,
+   "token_observations": 219420,
+   "catalog_refreshes": 1158,
+   "raw_bodies": 49344,
+   "database_gb_upper_bound": 3.26,
+   "raw_originals_gb_at_sample_average": 1.52,
+   "raw_originals_gb_extremes": [
+    1.15,
+    5.9
+   ],
+   "total_gb": 4.78,
+   "total_gb_worst_case": 9.16
+  },
+  {
+   "saturday_sunday_kickoff_utc": "20:00",
+   "captures": 17641,
+   "captures_per_fixture": 464,
+   "token_observations": 225372,
+   "catalog_refreshes": 1158,
+   "raw_bodies": 50336,
+   "database_gb_upper_bound": 3.35,
+   "raw_originals_gb_at_sample_average": 1.56,
+   "raw_originals_gb_extremes": [
+    1.18,
+    5.9
+   ],
+   "total_gb": 4.9,
+   "total_gb_worst_case": 9.25
+  }
+ ]
+}

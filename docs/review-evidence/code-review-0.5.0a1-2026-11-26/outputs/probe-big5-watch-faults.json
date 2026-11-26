@@ -1,0 +1,511 @@
+{
+ "cases": 56,
+ "watch_returned": 56,
+ "watch_raised": 0,
+ "rows": [
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "对照：一切正常",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "对照：一切正常",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿请求断网",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿请求断网",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿返回一个对象而不是列表",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿返回一个对象而不是列表",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿里有一行 bids 为 null",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿里有一行 bids 为 null",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿每行是字符串",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿每行是字符串",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿返回空列表",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿返回空列表",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿返回 HTML 错误页",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "订单簿返回 HTML 错误页",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "单场赛事接口返回 null",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "单场赛事接口返回 null",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "单场赛事接口返回空列表",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "单场赛事接口返回空列表",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "单场赛事接口断网",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "单场赛事接口断网",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "目录刷新断网",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "目录刷新断网",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "目录返回一个对象而不是列表",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "目录返回一个对象而不是列表",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "目录里 markets 为 null",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "目录里 markets 为 null",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "联赛清单接口断网",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "T−60 分钟决策时窗",
+   "fault": "联赛清单接口断网",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "对照：一切正常",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "对照：一切正常",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿请求断网",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿请求断网",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿返回一个对象而不是列表",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿返回一个对象而不是列表",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿里有一行 bids 为 null",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿里有一行 bids 为 null",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿每行是字符串",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿每行是字符串",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿返回空列表",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿返回空列表",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿返回 HTML 错误页",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "订单簿返回 HTML 错误页",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "单场赛事接口返回 null",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "单场赛事接口返回 null",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "单场赛事接口返回空列表",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "单场赛事接口返回空列表",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "单场赛事接口断网",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "单场赛事接口断网",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "partial": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "目录刷新断网",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "目录刷新断网",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "目录返回一个对象而不是列表",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "目录返回一个对象而不是列表",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "目录里 markets 为 null",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "目录里 markets 为 null",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "联赛清单接口断网",
+   "catalog_refresh_inside_watch": false,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  },
+  {
+   "moment": "开球后 3 秒的收盘时窗",
+   "fault": "联赛清单接口断网",
+   "catalog_refresh_inside_watch": true,
+   "watch": "returned",
+   "states": {
+    "complete": 1
+   }
+  }
+ ]
+}

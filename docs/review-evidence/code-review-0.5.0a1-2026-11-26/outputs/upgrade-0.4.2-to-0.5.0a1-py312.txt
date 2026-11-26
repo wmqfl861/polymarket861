@@ -1,0 +1,128 @@
+== old version (8125d57, 0.4.2) on Python 3.12.3: initialise, fetch the pinned history, seal one early forecast
+  "model_version": "B1",
+== new version (0.5.0a1) on the same data directory, before any baseline: season readiness (release part)
+{
+ "checks.release_executable": false,
+ "state": "approval_required",
+ "ready": false,
+ "active_version": "B1",
+ "approval": null,
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "reference_python": "3.12",
+ "running_python": {
+  "implementation": "CPython",
+  "version": "3.12.3",
+  "compiler": "GCC 13.3.0"
+ },
+ "actions": [
+  "Use the incumbent installation against this data directory to run forecast release-baseline HISTORY.",
+  "Run forecast release-compare HISTORY with the installed build.",
+  "Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON."
+ ]
+}
+== new version: forecast make before approval (expected: exit 2)
+pm861: a changed builtin requires forecast release-compare and named release-approve
+exit=2
+== rollback check: the old version seals again on the directory the new version has just opened
+  "model_version": "B1",
+{"state": "ready", "ready": true, "active_version": "B1"}
+== new version: release-compare without a baseline saved by the old version (expected: error)
+pm861: missing frozen study from this physical recipe; run forecast release-baseline before installing its successor
+exit=2
+== new version under Python 3.13.18: release-baseline and release-compare (expected: refused, reference interpreter is 3.12)
+pm861: formal release baselines and comparisons require CPython 3.12
+exit=2
+pm861: formal release baselines and comparisons require CPython 3.12
+exit=2
+== the documented order: baseline with the old version, compare with the new one
+  "version": "B1",
+  "recipe": "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+  "study_sha256": "73ff50e2d1c14cc7f8f2930b3d1665a929144f39acb5a67713cd1be8087774e3",
+  "matches": 1900,
+  "to_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+    "paired_count": 1900,
+    "rounds": 190,
+    "changed_predictions": 0,
+    "changed_training_views": 0,
+    "candidate_score": 75.44781323408776,
+    "baseline_score": 75.44781323408776,
+      "rounds": 190,
+  "report_sha256": "2bfdf6c705bcda437cb90b17fec83349d83f4e6ef87046cb01be7777bbe044cb"
+== new version: readiness after compare, before approval
+{
+ "checks.release_executable": false,
+ "state": "approval_required",
+ "ready": false,
+ "active_version": "B1",
+ "approval": null,
+ "baseline_sha256": "73ff50e2d1c14cc7f8f2930b3d1665a929144f39acb5a67713cd1be8087774e3",
+ "comparison_sha256": "2bfdf6c705bcda437cb90b17fec83349d83f4e6ef87046cb01be7777bbe044cb",
+ "reference_python": "3.12",
+ "running_python": {
+  "implementation": "CPython",
+  "version": "3.12.3",
+  "compiler": "GCC 13.3.0"
+ },
+ "actions": [
+  "Review the comparison and run forecast release-approve 2bfdf6c705bcda437cb90b17fec83349d83f4e6ef87046cb01be7777bbe044cb --reviewer NAME --reason REASON."
+ ]
+}
+== approve in this scratch directory only, then the same forecast succeeds
+  "version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+  "effective_at": "2026-11-26T10:40:49.788859Z",
+  "reviewer": "scratch replication",
+  "model_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+  "release_provenance_sha256": "e26e82ce25246e873fccaaed182024ef77a4bcca12a029f76a3f873349365542",
+  "news_recipe_sha256": "de538af3469c4f05b8ee87b14907f052ab96438b02ea7dc1d00a4a04947be18a",
+{
+ "checks.release_executable": true,
+ "state": "ready",
+ "ready": true,
+ "active_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+ "approval": {
+  "effective_at": "2026-11-26T10:40:49.788859Z",
+  "comparison": "2bfdf6c705bcda437cb90b17fec83349d83f4e6ef87046cb01be7777bbe044cb",
+  "reviewer": "scratch replication",
+  "reason": "isolated scratch copy; verifies the gate only"
+ },
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "reference_python": "3.12",
+ "running_python": {
+  "implementation": "CPython",
+  "version": "3.12.3",
+  "compiler": "GCC 13.3.0"
+ },
+ "actions": null
+}
+== the approved recipe under Python 3.13.18: readiness and one seal (same recipe digest expected)
+{
+ "checks.release_executable": true,
+ "state": "ready",
+ "ready": true,
+ "active_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+ "approval": {
+  "effective_at": "2026-11-26T10:40:49.788859Z",
+  "comparison": "2bfdf6c705bcda437cb90b17fec83349d83f4e6ef87046cb01be7777bbe044cb",
+  "reviewer": "scratch replication",
+  "reason": "isolated scratch copy; verifies the gate only"
+ },
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "reference_python": "3.12",
+ "running_python": {
+  "implementation": "CPython",
+  "version": "3.13.18",
+  "compiler": "GCC 13.3.0"
+ },
+ "actions": null
+}
+  "model_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+  "release_provenance_sha256": "0fed60d8d3f15c84e0c07c92547a5451dea97155029c193e3841747ef1725777",
+  "news_recipe_sha256": "de538af3469c4f05b8ee87b14907f052ab96438b02ea7dc1d00a4a04947be18a",
+== the seal written by the old version reopens byte-identically under the new one
+identical (f204f232179d4bc33efec17a03b78d4cb78038f75dd3a0a87ec50c282e9a887e)
+== after approval of the new recipe: the old version on the same directory
+exit=2
+pm861: a changed builtin requires forecast release-compare and named release-approve
