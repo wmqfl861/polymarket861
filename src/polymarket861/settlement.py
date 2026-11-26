@@ -306,13 +306,13 @@ def _match_record_identity(market, token_id, native, *, require_complete):
         if actual is None and not require_complete:
             continue
         if actual != value or type(actual) is not type(value):
-            raise ValueError(f"official token {name} differs from frozen market")
+            raise ValueError(f"official token identity mismatch in {name} against frozen market")
     event_slug = native.get("event_slug")
     if (event_slug is not None or require_complete) and event_slug not in (
         market["fixture"],
         market["fixture"] + "-more-markets",
     ):
-        raise ValueError("official token event_slug differs from frozen market")
+        raise ValueError("official token identity mismatch in event_slug against frozen market")
     return tokens[1 - index]["token_id"]
 
 
