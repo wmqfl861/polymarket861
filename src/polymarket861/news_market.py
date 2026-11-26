@@ -282,7 +282,7 @@ def _state_at_book(db, root, fixture, slug, received):
     return {"event_slug": slug, "sha256": row["sha"], "received_at": row["received_at"]}
 
 
-def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False):
+def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False, as_of=None):
     """Use the two predeclared clock tiers independently, with shared book eligibility."""
     if entry["mode"] == "replay":
         return {"reason": "requires_prospective_seal"}
@@ -291,7 +291,7 @@ def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False):
     scheduled = store.instant(fixture["kickoff"])
     cut = store.instant(pair["input_cutoff"])
     if scheduled_proxy:
-        if store.instant(store.now_utc()) < scheduled:
+        if store.instant(as_of or store.now_utc()) < scheduled:
             return {"reason": "awaiting_scheduled_kickoff"}
         try:
             version = _scheduled_revision(db, fixture, cut, scheduled)
@@ -311,6 +311,7 @@ def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False):
                 scheduled - timedelta(hours=1),
                 db=db,
                 prospective=True,
+                received_through=as_of,
             )
         except kickoff_proof.MissingKickoffProof:
             return {"reason": "missing_verified_actual_kickoff"}
@@ -321,6 +322,8 @@ def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False):
             "actual_kickoff": proof["actual_kickoff"],
             "kickoff_proof": proof["proof_id"],
         }
+    if as_of is not None and close > store.instant(as_of):
+        return {"reason": "closing_clock_after_analysis_cutoff"}
     if not cut <= store.instant(entry["sealed_at"]) < min(scheduled, close):
         return witness | {"reason": "seal_outside_pregame_window"}
     try:

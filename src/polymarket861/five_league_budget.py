@@ -6,13 +6,11 @@ import hashlib
 import json
 import sqlite3
 from collections import Counter
-from contextlib import closing
 from datetime import UTC, datetime, timedelta
 from decimal import ROUND_DOWN
 from pathlib import Path
-from urllib.parse import parse_qs, urlsplit
 
-from . import league_registry, ledger_rules as rules, store
+from . import budget_archive_proof, league_registry, ledger_rules as rules
 from .football import _write_json
 
 SCHEMA = "five-league-paper-risk-v1"
@@ -107,40 +105,17 @@ def _books(rows):
     return by_id, remaining
 
 
-def _original_payout(event, originals, mode, data_dir):
-    """Return a payout from the original bytes at its receipt frontier, or a pending reason."""
+def _synthetic_payout(event, originals, kickoff):
     sha = event.get("original_sha256")
     original = originals.get(sha)
     if original is None:
         return None, "missing_original"
-    if not isinstance(sha, str) or len(sha) != 64 or any(c not in "0123456789abcdef" for c in sha):
-        raise ValueError("invalid redemption SHA-256")
     received = rules.instant(original["received_at"])
     if received > rules.instant(event["at"]):
         return None, "original_not_yet_received"
-    if mode == "synthetic":
-        body = original["body"].encode("utf-8")
-    else:
-        if "body" in original:
-            raise ValueError("local receipt replay uses the stored original bytes")
-        if data_dir is None:
-            raise ValueError("local receipt replay requires the archive data directory")
-        archive = Path(data_dir).expanduser()
-        path = archive / "runtime.sqlite3"
-        if not path.is_file() or not store.blob_path(archive, sha).is_file():
-            return None, "missing_local_original"
-        body = store.read_blob(archive, sha)
-        with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True)) as db:
-            receipts = db.execute(
-                "SELECT metadata FROM observations WHERE source='polymarket.com' AND sha256=? AND observed_at=?",
-                (sha, rules.iso(received)),
-            ).fetchall()
-        url = original["source"]
-        query = parse_qs(urlsplit(url).query, keep_blank_values=True)
-        if (url.split("?", 1)[0] != EXCHANGE_URL
-                or ("token_id" in query and query["token_id"] != [event["token_id"]])
-                or not any(json.loads(r[0]).get("url") == url for r in receipts)):
-            return None, "unverified_local_resolution_receipt"
+    if received < kickoff:
+        raise ValueError("synthetic terminal receipt predates fixture")
+    body = original["body"].encode("utf-8")
     if hashlib.sha256(body).hexdigest() != sha:
         raise ValueError("redemption original SHA-256 mismatch")
     payload = json.loads(body)
@@ -154,7 +129,16 @@ def _original_payout(event, originals, mode, data_dir):
         return None, "venue_still_pending"
     if row.get("resolved") is not True or row.get("final_price") is None:
         raise ValueError("unrecognized terminal state in redemption original")
-    return rules.unit(row["final_price"]), None
+    if row.get("closed") is not True or row.get("fixture_id") != event["fixture_id"]:
+        return None, "unverified_terminal_pair"
+    amount = rules.unit(row["final_price"])
+    other = [r for r in payload["data"] if r.get("token_id") == row.get("opposite_token_id") and r != row]
+    if (amount not in {rules.ZERO, rules.ONE, rules.D("0.5")} or len(other) != 1
+            or other[0].get("opposite_token_id") != event["token_id"] or other[0].get("resolved") is not True
+            or other[0].get("closed") is not True or other[0].get("condition_id") != event["condition_id"]
+            or other[0].get("fixture_id") != event["fixture_id"] or rules.unit(other[0].get("final_price")) + amount != 1):
+        return None, "unverified_terminal_pair"
+    return amount, None
 
 
 def replay(document, *, as_of=None, data_dir=None, details=False):
@@ -164,7 +148,15 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
     mode = document.get("evidence_mode")
     if mode not in {"synthetic", "local_receipts"}:
         raise ValueError("evidence_mode must be synthetic or local_receipts")
+    if mode == "local_receipts":
+        with budget_archive_proof.read_archive(data_dir) as source:
+            return _replay(document, mode, source, as_of, details)
+    return _replay(document, mode, None, as_of, details)
+
+
+def _replay(document, mode, source, as_of, details):
     stop = rules.instant(as_of) if as_of is not None else None
+    raw_books = _indexed(document["books"], "books")
     books, depth = _books(document["books"])
     intents = _indexed(document["intents"], "intents")
     redeem = _indexed(document["redemptions"], "redemptions")
@@ -187,7 +179,7 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
         first, second = (books[op[k]] for k in ("decision_book", "execution_book"))
         if any(book[:3] != (fixture, condition, token) for book in (first, second)):
             raise ValueError("intent and book identity disagree")
-        if not first[3] <= decision <= second[3] < kickoff:
+        if not first[3] <= decision < second[3] < kickoff or first[4] == second[4]:
             raise ValueError("book receipts, decision and first kickoff are out of order")
         size = rules.number(op["shares"])
         if size <= 0 or size % rules.UNIT or not rules.ZERO < rules.unit(op["limit_price"]) < rules.ONE:
@@ -211,7 +203,8 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
     proceeds = Counter()
     exposure = Counter()
     fixture_peak = Counter()
-    positions, resolved = {}, {}
+    positions, resolved, entry_markets, credited_events = {}, {}, {}, {}
+    proof_gaps = Counter()
     decisions = []
     counts = {code: Counter() for code in CODES}
     observed_fixtures = {code: set() for code in CODES}
@@ -224,7 +217,14 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
         fixture, token = op["fixture_id"], op["token_id"]
         code = _scope(fixture)
         if action == 0:
-            amount, reason = _original_payout(op, originals, mode, data_dir)
+            if mode == "local_receipts":
+                try:
+                    amount, reason = budget_archive_proof.redemption(source, entry_markets.get(token), op, fixture_kickoffs[fixture])
+                except (ValueError, TypeError, KeyError, OSError, sqlite3.Error) as exc:
+                    proof_gaps[str(exc)] += 1
+                    amount, reason = None, "unverified_terminal_pair"
+            else:
+                amount, reason = _synthetic_payout(op, originals, fixture_kickoffs[fixture])
             if reason:
                 receipt_counts[reason] += 1
                 continue
@@ -234,6 +234,8 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
                 receipt_counts["duplicate_terminal"] += 1
                 continue
             resolved[token] = amount
+            if mode == "local_receipts":
+                credited_events[token] = op
             receipt_counts["terminal_original"] += 1
             for pos in positions.get(token, []):
                 receipt_counts["positions_redeemed"] += 1
@@ -257,7 +259,21 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
         requested = rules.number(op["shares"])
         fill = rules.price_fill(paired, requested, op["fee"])
         cost = fill["spent"]
-        if fill["gross"] < requested:
+        entry_market = None
+        if mode == "local_receipts":
+            try:
+                entry_market = budget_archive_proof.entry(source, op, (raw_books[op["decision_book"]], raw_books[op["execution_book"]]))
+                if token in entry_markets and any(
+                    entry_markets[token][key] != entry_market[key]
+                    for key in ("fixture", "slug", "tokens", "rule_sha256")
+                ):
+                    raise ValueError("frozen terms differ between purchases of one token")
+            except (ValueError, TypeError, KeyError, OSError, sqlite3.Error) as exc:
+                entry_market = None
+                proof_gaps[str(exc)] += 1
+        if mode == "local_receipts" and entry_market is None:
+            outcome = "skipped_unverified_entry"
+        elif fill["gross"] < requested:
             outcome = "skipped_depth"
         elif fill["net"] <= 0:
             outcome = "skipped_fee"
@@ -269,6 +285,8 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
             outcome = "skipped_cash"
         else:
             outcome = "filled"
+            if entry_market is not None:
+                entry_markets[token] = entry_market
             for a, b, used in fill["used"]:
                 depth[first][a] -= used
                 if second != first:
@@ -287,6 +305,9 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
             decisions.append({"id": key, "league": code, "fixture_id": fixture, "at": rules.iso(when),
                               "outcome": outcome, "cost_including_cash_fees": rules.fmt(cost) if outcome == "filled" else None})
 
+    for token, event in credited_events.items():
+        budget_archive_proof.audit_redemption(source, entry_markets[token], event,
+                                               fixture_kickoffs[event["fixture_id"]], stop, resolved[token])
     summary = {}
     for code in CODES:
         if cash[code] != BUCKET - spent[code] + proceeds[code] or cash[code] < 0 or encumbered[code] < 0:
@@ -303,7 +324,10 @@ def replay(document, *, as_of=None, data_dir=None, details=False):
         }
     result = {
         "schema": SCHEMA, "evidence_mode": mode, "as_of": rules.iso(stop) if stop else None,
-        "execution_basis": "Research replay of supplied sizes and paired asks; no live orders or return qualification.",
+        "execution_basis": ("Synthetic scenario; operator-specified prices, fees and hypothetical fills."
+                            if mode == "synthetic" else
+                            "Paper fills require independently received decision and delayed execution CLOB originals, a verified Gamma fixture, selection, rules and fees. Both terminal token originals are required to release cash."),
+        "verified_orders_at_venue": 0, "proof_gaps": dict(sorted(proof_gaps.items())),
         "limits": {"initial_cash": "10000", "bucket_per_league": "2000", "cost_per_intent": "50",
                    "fixture_unredeemed_cost_upper_bound": "150", "cross_bucket_transfers": False},
         "allocation": "Full size or skip. Each fill consumes both books. At equal times, terminal receipts precede fills, then operator-supplied rank and ID order fills. Cash fees increase the debit; share fees reduce redeemable shares.",
@@ -351,8 +375,13 @@ def stress_scenario():
                         "fee": fee,
                     })
                     pending = cohort == "prior_round" and index == 0 and lane == 0
-                    body = rules.packed({"data": [{"condition_id": condition, "token_id": token,
-                                                   "resolved": not pending, "final_price": None if pending else "0.50"}]})
+                    terminal = {"fixture_id": fixture, "condition_id": condition, "closed": not pending,
+                                "resolved": not pending, "final_price": None if pending else "0.50"}
+                    other = f"opposite-{token}"
+                    body = rules.packed({"data": [
+                        dict(terminal, token_id=token, opposite_token_id=other),
+                        dict(terminal, token_id=other, opposite_token_id=token),
+                    ]})
                     sha = hashlib.sha256(body.encode()).hexdigest()
                     at = rules.iso(kickoff + timedelta(hours=2, days=11))
                     document["originals"][sha] = {"received_at": at, "body": body}

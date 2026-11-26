@@ -428,3 +428,267 @@ class TestDomesticMarket(unittest.TestCase):
             [provider.number(t["payout"]) for t in total["tokens"].values()], [0.5, 0.5]
         )
         self.assertTrue(all(len(t["sha256"]) == 64 for t in total["tokens"].values()))
+
+    def _schedule(
+        self, when, kickoff, *, wait=1, cancelled=False, league="sea", aux=False
+    ):
+        from types import SimpleNamespace
+
+        root = big5.research_root(self.root)
+        event = native(aux, league=league)
+        event["startTime"] = kickoff
+        event["gameStatus"] = "postponed" if cancelled else None
+        for m in event["markets"]:
+            m.update(gameStartTime=kickoff, secondsDelay=wait)
+        with closing(big5._db(root)) as db, db:
+            big5._record(
+                db,
+                event,
+                big5._identity(event, league),
+                SimpleNamespace(received_at=iso(when)),
+                str(abs(hash((when, kickoff, wait, cancelled)))).zfill(64),
+            )
+        return root
+
+    def _due(self):
+        with patch.object(big5, "now_utc", return_value=iso("2030-01-25T12:00Z")):
+            return big5.weekly_report(
+                self.root, "2030-01-11T13:59Z", "2030-01-11T14:02Z"
+            )["by_league"].get("sea", {})
+
+    def test_schedule_revisions_preserve_matured_windows_after_downtime(self):
+        kick = "2030-01-12T14:00Z"
+        self._schedule("2030-01-10T00:00Z", kick)
+        original = self._due()
+        self.assertEqual(
+            (original["fixed_windows_due"], original["t24_pairs_due"]), (2, 1)
+        )
+        self._schedule("2030-01-12T08:00Z", "2030-01-18T14:00Z")
+        self.assertEqual(self._due(), original)
+
+    def test_schedule_before_open_late_discovery_and_changed_delay(self):
+        kick = "2030-01-12T14:00Z"
+        self._schedule("2030-01-10T00:00Z", kick)
+        self._schedule("2030-01-11T13:55Z", kick, cancelled=True)
+        self.assertEqual(self._due(), {})
+        # A restart and a new source receipt after the decision expired only grants the execution observation.
+        self._schedule("2030-01-11T14:00:05Z", kick, wait=30)
+        report = self._due()
+        self.assertEqual(report["fixed_windows_due"], 1)
+        self.assertNotIn("t24_pairs_due", report)
+        self._schedule("2030-01-11T14:01Z", kick, wait=1)
+        self.assertEqual(self._due(), report)
+
+    def test_old_future_replacement_does_not_create_a_due_or_a_pair(self):
+        self._schedule("2030-01-10T00:00Z", "2030-01-12T14:00Z")
+        self._schedule("2030-01-11T13:59:35Z", "2030-01-18T14:00Z")
+        self.assertEqual(self._due(), {})
+
+    def test_late_first_receipt_and_delays_retrieved_after_deadline_are_not_backdated(
+        self,
+    ):
+        kick = "2030-01-12T14:00Z"
+        self._schedule("2030-01-11T14:00:10Z", kick)
+        self.assertEqual(self._due(), {})
+        self._schedule("2030-01-11T14:00:12Z", kick, wait=40, aux=True)
+        self.assertEqual(self._due()["fixed_windows_due"], 1)
+        self.assertNotIn("t24_pairs_due", self._due())
+
+    def test_equal_deadline_fixtures_rotate_across_scheduling_processes(self):
+        kick = provider.moment("2030-01-12T14:00Z")
+        for league in ("bun", "sea"):
+            root = self._schedule("2030-01-12T13:56Z", iso(kick), league=league)
+        served = []
+        for offset in range(-119, -48, 12):
+            at = kick + timedelta(seconds=offset)
+            ranked = big5._ranked_jobs(root, ["bun", "sea"], iso(START), iso(END), at)
+            _, _, event, (phase, first, end, _) = ranked[0]
+            fixture = event["fixture"]
+            served.append(event["sport"])
+            key = phase + "@" + iso(first)
+            attempt = big5._claim(root, fixture, event["kickoff"], key, end, at)
+            big5._finish(
+                root,
+                fixture,
+                event["kickoff"],
+                key,
+                attempt,
+                True,
+                iso(at),
+                {"state": "complete"},
+            )
+        self.assertEqual(served, ["bun", "sea"] * 3)
+
+    def test_parent_order_and_rules_cannot_change_across_decision_legs(self):
+        from contextlib import ExitStack
+        from polymarket861 import store
+        from unittest.mock import patch
+
+        cutoff = provider.moment(DAY + "T13:00:00Z")
+        for change in ("unchanged", "ids", "rules", "direction"):
+            data = self.root / change
+            for offset in (-10, 6):
+                stamp = iso(cutoff + timedelta(seconds=offset))
+
+                def get(url, params=None, **kwargs):
+                    base = gamma(url, params, **kwargs)
+                    raw = json.loads(base.body)
+                    if offset > 0 and url.endswith("/events"):
+                        for e in raw:
+                            for c in e["markets"]:
+                                if change == "ids":
+                                    i = int(c["conditionId"], 16) + 100
+                                    c.update(
+                                        conditionId="0x" + format(i, "064x"),
+                                        clobTokenIds=[str(10 * i), str(10 * i + 1)],
+                                    )
+                                elif change == "rules":
+                                    c["description"] += " replacement clause"
+                                elif change == "direction":
+                                    c["outcomes"] = list(reversed(c["outcomes"]))
+                    return provider.Reply(
+                        json.dumps(raw).encode(),
+                        base.requested_at,
+                        base.received_at,
+                        base.headers,
+                        base.url,
+                    )
+
+                with ExitStack() as stack:
+                    for module in (store, big5, archive):
+                        stack.enter_context(
+                            patch.object(module, "now_utc", return_value=stamp)
+                        )
+                    stack.enter_context(
+                        patch(__name__ + ".now_utc", return_value=stamp)
+                    )
+                    stack.enter_context(patch.object(provider, "get", side_effect=get))
+                    big5.catalog(data, ["sea"], START, END)
+                    self.assertEqual(
+                        big5.watch(data, ["sea"], START, END, discover=False)["states"],
+                        {"complete": 1},
+                    )
+            with patch.object(
+                big5, "now_utc", return_value=iso(cutoff + timedelta(minutes=2))
+            ):
+                report = big5.weekly_report(
+                    data,
+                    iso(cutoff - timedelta(minutes=1)),
+                    iso(cutoff + timedelta(minutes=1)),
+                )
+            c = report["by_league"]["sea"]
+            self.assertEqual(
+                (
+                    c["fixed_windows_complete"],
+                    c["t1_pairs_due"],
+                    c["t1_pairs_complete"],
+                ),
+                (2, 1, int(change == "unchanged")),
+            )
+
+    def test_delayed_book_requires_fresh_specific_domestic_state(self):
+        from contextlib import ExitStack
+        from polymarket861 import store
+        from unittest.mock import patch
+
+        for mode, stale in (("catalog", False), ("event", False), ("catalog", True)):
+            dest = self.root / (mode + str(stale))
+            kick = provider.moment(DAY + "T14:00Z")
+            stamp = iso(kick + timedelta(seconds=3))
+
+            def get(url, params=None, **kwargs):
+                r = gamma(url, params, **kwargs)
+                h = dict(r.headers)
+                if stale and url.endswith("/events"):
+                    h["age"] = "600"
+                return provider.Reply(r.body, r.requested_at, r.received_at, h, r.url)
+
+            with ExitStack() as stack:
+                for module in (store, big5, archive):
+                    stack.enter_context(
+                        patch.object(module, "now_utc", return_value=stamp)
+                    )
+                stack.enter_context(patch(__name__ + ".now_utc", return_value=stamp))
+                stack.enter_context(patch.object(provider, "get", side_effect=get))
+                big5.catalog(dest, ["sea"], START, END)
+                r = big5._sample(
+                    big5.research_root(dest),
+                    BASE,
+                    all_lines=False,
+                    phase="test",
+                    refresh=mode == "event",
+                )
+            t = r["contracts"]["moneyline.home"]["tokens"]["Yes"]
+            self.assertIs(t["pregame"], None if stale else True)
+
+    def test_legacy_schedule_recovered_from_each_original_and_missing_original_stays_unknown(
+        self,
+    ):
+        from types import SimpleNamespace
+        from polymarket861.store import archive_bytes, canonical
+
+        for present in (True, False):
+            data = self.root / str(present)
+            root = big5.research_root(data)
+            for stamp, kick in (
+                ("2030-01-10T00:00Z", "2030-01-12T14:00Z"),
+                ("2030-01-12T08:00Z", "2030-01-18T14:00Z"),
+            ):
+                e = native()
+                e["startTime"] = kick
+                for c in e["markets"]:
+                    c["gameStartTime"] = kick
+                raw = canonical(e).encode()
+                sha = (
+                    archive_bytes(root, "polymarket.com", raw, observed_at=stamp)[
+                        "sha256"
+                    ]
+                    if present
+                    else "0" * 64
+                )
+                with closing(big5._db(root)) as db, db:
+                    big5._record(
+                        db,
+                        e,
+                        big5._identity(e, "sea"),
+                        SimpleNamespace(received_at=iso(stamp)),
+                        sha,
+                    )
+            # Emulate a v1 installation retaining the mutable current index and immutable originals only.
+            with closing(big5._db(root)) as db, db:
+                db.execute("DELETE FROM big5_schedule_receipts")
+                db.execute("DELETE FROM big5_schedule_recovery")
+            with patch.object(big5, "now_utc", return_value=iso("2030-01-25T00:00Z")):
+                r = big5.weekly_report(data, "2030-01-11T13:59Z", "2030-01-11T14:02Z")
+            if present:
+                self.assertEqual(r["by_league"]["sea"]["fixed_windows_due"], 2)
+                self.assertEqual(
+                    r["schedule_receipt_origins_before_report_end"],
+                    {"recovered_original": 1},
+                )
+            else:
+                self.assertEqual(r["by_league"], {})
+                self.assertEqual(
+                    r["schedule_receipt_origins_before_report_end"],
+                    {"legacy_unverified": 1},
+                )
+
+    def test_missing_time_in_cancelled_receipt_closes_only_its_existing_schedule(self):
+        from types import SimpleNamespace
+
+        root = self._schedule("2030-01-10T00:00Z", "2030-01-12T14:00Z")
+        e = native()
+        e.pop("startTime")
+        e["gameStatus"] = "Cancelled"
+        with closing(big5._db(root)) as db, db:
+            fields = big5._identity(e, "sea", history=db)
+            big5._record(
+                db,
+                e,
+                fields,
+                SimpleNamespace(received_at=iso("2030-01-11T13:00Z")),
+                "d" * 64,
+            )
+            with self.assertRaisesRegex(ValueError, "missing_scheduled"):
+                big5._identity(e | {"id": "987654321"}, "sea", history=db)
+        self.assertEqual(self._due(), {})

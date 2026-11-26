@@ -429,6 +429,17 @@ def observe(
             result_admission.reconcile(data_dir, football.season_year(register_season))
             result_operations.publications(data_dir)
             manifest = input_manifest.verify_observed_inputs(data_dir, manifest["root"])
+    return _publish_observation(
+        data_dir, register_season, manifest, updated_rounds, tracked_rounds,
+        revision, summary, registered, conflicts,
+    )
+
+
+def _publish_observation(
+    data_dir, register_season, manifest, updated_rounds, tracked_rounds,
+    revision, summary, registered, conflicts,
+):
+    """Publish round and diagnostic reports after the training manifest has been frozen."""
     from .jobs import review_due_experiments
     from .pipeline import publish_round
     from .round_history import ready_for_experiment_review

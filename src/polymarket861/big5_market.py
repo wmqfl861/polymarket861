@@ -11,6 +11,7 @@ from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 
+from . import big5_market_schedule as schedule
 from . import market_archive as archive
 from . import market_provider as provider
 from .store import canonical, iso, now_utc
@@ -40,6 +41,8 @@ CREATE TABLE IF NOT EXISTS big5_runs (
  id INTEGER PRIMARY KEY, sport TEXT NOT NULL, fixture TEXT NOT NULL, phase TEXT NOT NULL,
  started TEXT NOT NULL, finished TEXT NOT NULL, report TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS big5_run_time ON big5_runs(finished,sport);
+CREATE TABLE IF NOT EXISTS big5_last_dispatch(
+ fixture TEXT NOT NULL, phase TEXT NOT NULL, started TEXT NOT NULL, PRIMARY KEY(fixture,phase));
 """
 
 
@@ -53,6 +56,8 @@ def _db(root):
     db = archive.database(root)
     try:
         dbscope.prepare(db, "five-league-market-v1", SCHEMA)
+        dbscope.prepare(db, "five-league-market-schedule-v1", schedule.SCHEMA)
+        schedule.recover(root, db, _identity)
     except BaseException:
         db.close()
         raise
@@ -77,7 +82,7 @@ def _sports_row(sports, league):
     }
 
 
-def _identity(event, league):
+def _identity(event, league, *, history=None):
     """Require three independent Gamma fields and both domestic team identities."""
     if not isinstance(event, dict):
         raise ValueError("invalid_event")
@@ -116,8 +121,16 @@ def _identity(event, league):
         ids.append(str(team["id"]))
     if ids[0] == ids[1]:
         raise ValueError("identical_team_ids")
+    published = event.get("startTime")
+    if not published and history is not None and schedule.stopped(event):
+        prior = history.execute(
+            "SELECT kickoff FROM big5_events WHERE slug=? AND event_id=? AND home_id=? AND away_id=?",
+            (event["slug"], str(event["id"]), *ids),
+        ).fetchone()
+        if prior:
+            published = prior[0]
     try:
-        kickoff = iso(provider.moment(event["startTime"]))
+        kickoff = iso(provider.moment(published))
     except (KeyError, TypeError, ValueError) as exc:
         raise ValueError("missing_scheduled_kickoff") from exc
     return (event["slug"], match[1], league, kickoff, *ids, str(event["id"]))
@@ -136,16 +149,15 @@ def _record(db, event, identity, reply, sha):
     ):
         raise ValueError("unidentifiable contract in domestic event")
     archive._ingest(db, event, reply, sha, sport=identity[2])
-    delays = sorted(
-        {
-            m["secondsDelay"]
-            for m in event.get("markets") or []
-            if isinstance(m, dict)
-            and type(m.get("secondsDelay")) is int
-            and m["secondsDelay"] >= 0
-            and m.get("sportsMarketType")
-            in ("moneyline", "totals", "soccer_team_totals")
-        }
+    delays = schedule.delays(event)
+    schedule.record(
+        db,
+        identity,
+        reply.received_at,
+        sha,
+        delays,
+        schedule.stopped(event),
+        "validated_receipt",
     )
     db.execute(
         "INSERT INTO big5_event_delays VALUES(?,?,?,?) ON CONFLICT(slug) DO UPDATE SET "
@@ -227,8 +239,14 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
                         continue
                     seen.add(event_id)
                     try:
-                        fields = _identity(event, league)
-                        if not start <= fields[3] < end:
+                        fields = _identity(event, league, history=db)
+                        in_window = start <= fields[3] < end
+                        if (
+                            not in_window
+                            and not db.execute(
+                                "SELECT 1 FROM big5_events WHERE slug=?", (fields[0],)
+                            ).fetchone()
+                        ):
                             raise ValueError("scheduled_kickoff_outside_window")
                         # An invalid market must not leave a half-ingested event.
                         db.execute("SAVEPOINT league_event")
@@ -239,7 +257,10 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
                             raise
                         finally:
                             db.execute("RELEASE league_event")
-                        domestic[fields[1]].add(fields[0])
+                        if in_window:
+                            domestic[fields[1]].add(fields[0])
+                        else:
+                            rejected["known_fixture_moved_outside_window"] += 1
                     except (TypeError, ValueError, KeyError) as exc:
                         rejected[str(exc)] += 1
             offset += len(events)
@@ -331,14 +352,14 @@ def _refresh(root, main):
             event, reply, sha = archive._fetch(
                 root, "league_event", slug, provider.GAMMA + "/events/slug/" + slug
             )
-            identity = _identity(event, league)
-            if identity[0] != slug:
-                raise ValueError("unexpected event slug")
-            if pair is not None and pair != identity[3:6]:
-                raise ValueError(
-                    "auxiliary event kickoff or team IDs differ from main event"
-                )
             with closing(_db(root)) as db, db:
+                identity = _identity(event, league, history=db)
+                if identity[0] != slug:
+                    raise ValueError("unexpected event slug")
+                if pair is not None and pair != identity[3:6]:
+                    raise ValueError(
+                        "auxiliary event kickoff or team IDs differ from main event"
+                    )
                 _record(db, event, identity, reply, sha)
             pair = identity[3:6]
             events.append(slug)
@@ -425,6 +446,10 @@ def _measure(root, selected, result, window):
             profile = {"version": None, "unreviewed": str(exc)}
         groups[key] = {
             "condition": c["condition_id"],
+            "market_slug": c["slug"],
+            "event_slug": c["event_slug"],
+            "event_id": c["event_id"],
+            "protocol": c["protocol"],
             "rule_sha256": c["rule_sha256"],
             "rule_profile": profile,
             "contract_source_sha256": c.get("source_sha256"),
@@ -543,7 +568,11 @@ def _sample(
         "contracts": {},
     }
     if refresh:
-        sources = _refresh(root, fixture)
+        timer = archive._DEADLINE.set(deadline)
+        try:
+            sources = _refresh(root, fixture)
+        finally:
+            archive._DEADLINE.reset(timer)
     else:
         # Only identities accepted into the isolated catalog can reach the book collector.
         with closing(_db(root)) as db:
@@ -582,7 +611,18 @@ def _sample(
     ]
     selected, report["excluded_contracts"] = _selection(contracts, all_lines)
     report["core_missing"] = [key for key in CORE if key not in selected]
-    if fixture not in sources["events"] or archive.market_state(root, fixture):
+    with closing(_db(root)) as db:
+        stopped = db.execute(
+            "SELECT 1 FROM big5_events e JOIN big5_schedule_receipts s ON "
+            "(e.slug,e.receipt,e.sha)=(s.slug,s.received,s.sha) "
+            "WHERE e.fixture=? AND s.stopped=1 LIMIT 1",
+            (fixture,),
+        ).fetchone()
+    if (
+        fixture not in sources["events"]
+        or stopped
+        or archive.market_state(root, fixture)
+    ):
         report["error"] = "unverified main event or observed live/ended"
     elif len(archive.fixture_times(root, fixture)) != 1:
         report["error"] = "ambiguous scheduled start"
@@ -719,6 +759,11 @@ def _claim(root, fixture, kickoff, name, end, now):
             "SET expires=excluded.expires,attempts=excluded.attempts",
             (*key, lease, attempt),
         )
+        db.execute(
+            "INSERT INTO big5_last_dispatch VALUES(?,?,?) ON CONFLICT(fixture,phase) "
+            "DO UPDATE SET started=excluded.started",
+            (fixture, name.split("@", 1)[0], iso(now)),
+        )
         return attempt
 
 
@@ -849,7 +894,7 @@ def _job(data_dir, event, job, workers):
                 all_lines=all_lines,
                 phase=phase,
                 workers=workers,
-                refresh=False,
+                refresh=phase == "closing" and now >= provider.moment(kickoff),
                 deadline=deadline,
                 window=(iso(first), iso(end)),
             )
@@ -860,7 +905,10 @@ def _job(data_dir, event, job, workers):
                 bool(report_tokens)
                 and not report["core_missing"]
                 and all(
-                    "error" not in v and v.get("on_time", True) and v["observed_at"]
+                    "error" not in v
+                    and v.get("on_time", True)
+                    and v["observed_at"]
+                    and (not phase.startswith(("t1_", "t24_")) or v["pregame"] is True)
                     for v in report_tokens
                 )
             )
@@ -871,6 +919,11 @@ def _job(data_dir, event, job, workers):
             "expected": report.get("requested_tokens"),
             "error": report.get("error"),
         }
+        if ok and phase != "terminal":
+            details["first_receipt"] = min(v["received_at"] for v in report_tokens)
+            details["finished"] = max(v["received_at"] for v in report_tokens)
+            if phase.startswith(("t1_", "t24_")):
+                details["bindings"] = schedule.bindings(report["contracts"])
     except (ValueError, OSError, KeyError, TypeError) as exc:
         ok = False
         retry_after = getattr(exc, "retry_at", None)
@@ -899,7 +952,17 @@ def _ranked_jobs(root, leagues, start, end, now):
             for r in db.execute(
                 "SELECT e.fixture,max(s.ended) ended FROM big5_events e JOIN ma_event_states s "
                 "ON (e.slug,e.receipt,e.sha)=(s.slug,s.received_at,s.sha) "
-                "WHERE e.kickoff>=? AND e.kickoff<? AND (s.live=1 OR s.ended=1) GROUP BY e.fixture",
+                "JOIN big5_events main ON main.slug=e.fixture AND main.kickoff=e.kickoff "
+                "JOIN big5_schedule_receipts v ON (e.slug,e.receipt,e.sha)=(v.slug,v.received,v.sha) "
+                "WHERE e.kickoff>=? AND e.kickoff<? AND v.stopped=1 GROUP BY e.fixture",
+                (start, end),
+            )
+        }
+        last_dispatched = {
+            (r["fixture"], r["phase"]): r["started"]
+            for r in db.execute(
+                "SELECT d.* FROM big5_last_dispatch d JOIN big5_events e ON d.fixture=e.slug "
+                "WHERE e.kickoff>=? AND e.kickoff<?",
                 (start, end),
             )
         }
@@ -911,8 +974,8 @@ def _ranked_jobs(root, leagues, start, end, now):
                 n
                 for r in db.execute(
                     "SELECT delays FROM big5_event_delays JOIN big5_events USING(slug) "
-                    "WHERE fixture=?",
-                    (event["fixture"],),
+                    "WHERE fixture=? AND kickoff=?",
+                    (event["fixture"], event["kickoff"]),
                 )
                 for n in json.loads(r[0])
             }
@@ -952,7 +1015,15 @@ def _ranked_jobs(root, leagues, start, end, now):
                     continue
                 score = 2 if phase == "terminal" else 1 if phase == "periodic" else 0
                 slots.append((score, last, event, options))
-    return sorted(slots, key=lambda r: (r[0], r[1], r[2]["fixture"]))
+    return sorted(
+        slots,
+        key=lambda r: (
+            r[0],
+            r[1],
+            last_dispatched.get((r[2]["fixture"], r[3][0]), ""),
+            r[2]["fixture"],
+        ),
+    )
 
 
 def watch(
@@ -1060,67 +1131,14 @@ def weekly_report(data_dir, start, end):
     now = now_utc()
     stats, target_counts = {}, defaultdict(Counter)
     with closing(_db(root)) as db:
-        for fixture in db.execute("SELECT * FROM big5_events WHERE slug=fixture"):
-            kick = provider.moment(fixture["kickoff"])
-            fixture_id = fixture["fixture"]
-            slots = {
-                r["slot"]: bool(r["success"])
-                for r in db.execute(
-                    "SELECT slot,success FROM big5_slots WHERE fixture=? AND kickoff=?",
-                    (fixture_id, fixture["kickoff"]),
-                )
-            }
-            delays = {
-                max(5, n)
-                for r in db.execute(
-                    "SELECT delays FROM big5_event_delays JOIN big5_events USING(slug) WHERE fixture=?",
-                    (fixture_id,),
-                )
-                for n in json.loads(r[0])
-            }
-            windows = [("decision", -25, 0)] + [
-                ("execution" if n == 5 else f"execution_{n}s", n, n + 5)
-                for n in sorted(delays or {5})
-            ]
-            for hours in (24, 1):
-                instant = kick - timedelta(hours=hours)
-                complete = []
-                for role, begin, finish in windows:
-                    first = iso(instant + timedelta(seconds=begin))
-                    expires = iso(instant + timedelta(seconds=finish))
-                    ok = slots.get(f"t{hours}_{role}@" + first, False)
-                    complete.append(ok)
-                    if start <= expires < end and expires <= now:
-                        counters = target_counts[fixture["sport"]]
-                        counters["fixed_windows_due"] += 1
-                        counters["fixed_windows_complete"] += int(ok)
-                latest = iso(instant + timedelta(seconds=windows[-1][2]))
-                if start <= latest < end and latest <= now:
-                    counters = target_counts[fixture["sport"]]
-                    counters[f"t{hours}_pairs_due"] += 1
-                    counters[f"t{hours}_pairs_complete"] += int(all(complete))
-            if (
-                iso(kick - timedelta(seconds=120)) >= end
-                or iso(kick + timedelta(seconds=600)) < start
-            ):
-                continue
-            stop = db.execute(
-                "SELECT min(s.received_at) FROM ma_event_states s WHERE s.slug IN (?,?) AND (s.live=1 OR s.ended=1)",
-                (fixture_id, fixture_id + "-more-markets"),
-            ).fetchone()[0]
-            for offset in range(-120, 600, 12):
-                first = iso(kick + timedelta(seconds=offset))
-                expires = iso(kick + timedelta(seconds=offset + 12))
-                if (
-                    start <= expires < end
-                    and expires <= now
-                    and (stop is None or first < stop)
-                ):
-                    counters = target_counts[fixture["sport"]]
-                    counters["closing_slots_due"] += 1
-                    counters["closing_slots_complete"] += int(
-                        slots.get("closing@" + first, False)
-                    )
+        schedule.count_windows(db, target_counts, start, end, now)
+        history_origins = {
+            r[0]: r[1]
+            for r in db.execute(
+                "SELECT origin,count(*) FROM big5_schedule_receipts WHERE received<? GROUP BY origin",
+                (min(now, end),),
+            )
+        }
         for row in db.execute(
             "SELECT * FROM big5_runs WHERE finished>=? AND finished<? ORDER BY id",
             (start, end),
@@ -1206,6 +1224,10 @@ def weekly_report(data_dir, start, end):
             group[measure] = _quantiles(group[measure])
     return {
         "receipt_window": [start, end],
+        "schedule_receipt_origins_before_report_end": history_origins,
+        "denominator_basis": "Observed domestic schedule and delay versions at each window expiry. "
+        "A trace without a verifiable earlier original cannot establish earlier obligations. "
+        "Pairs require identical condition, side, outcome tokens, rule and fee terms across matching delay legs.",
         "generated_at": now,
         "by_league": dict(target_counts),
         "by_league_family": {

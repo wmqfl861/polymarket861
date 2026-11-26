@@ -49,9 +49,13 @@ def _records(root, token):
 
 
 def _records_from_db(db, root, token):
+    if not db.execute(
+        "SELECT 1 FROM sqlite_master WHERE name='ma_requests'"
+    ).fetchone():
+        return None
     rows = db.execute(
         "SELECT sha,received_at FROM ma_requests WHERE operation='resolution' AND selector=? AND status='ok' "
-        "AND received_at<=? ORDER BY received_at",
+        "AND received_at<=? ORDER BY received_at,rowid",
         (token, store.now_utc()),
     ).fetchall()
     items = []
@@ -160,16 +164,20 @@ def _positions(root, account, limit, now):
             SELECT 'research_shadow',account,id,fixture,token,condition_id,status,plan,result,plan_sha,cutoff
               FROM research_shadow_orders WHERE status=:shadow_state
           )
-          SELECT b.* FROM balances b LEFT JOIN settlement_queue q
+          SELECT b.*, json_extract(q.details,'$.opposite_token_id') AS previously_known_opposite,
+            (SELECT coalesce(max(rowid),0) FROM ma_requests) AS resolution_request_cursor
+          FROM balances b LEFT JOIN settlement_queue q
             ON q.mode=b.mode AND q.account=b.account AND q.intent_id=b.id
           WHERE (:account IS NULL OR b.account=:account) AND b.cutoff<=:mature
         """
         # A newly observed refund, conflicting token payout, or revised league score
         # immediately reopens the audit. Otherwise posted cash is rechecked once a day.
         audit_due = """
-          AND (q.checked_at IS NULL OR q.checked_at<=:daily OR EXISTS (
+          AND (q.checked_at IS NULL OR q.checked_at<=:daily
+            OR json_extract(q.details,'$.resolution_request_cursor') IS NULL OR EXISTS (
             SELECT 1 FROM ma_requests r WHERE r.operation='resolution' AND r.selector IN (b.token,json_extract(q.details,'$.opposite_token_id'))
-              AND r.status='ok' AND r.received_at>q.checked_at AND r.received_at<=:now
+              AND r.status='ok' AND (r.received_at>q.checked_at
+                OR r.rowid>json_extract(q.details,'$.resolution_request_cursor')) AND r.received_at<=:now
           ) OR EXISTS (
             SELECT 1 FROM result_versions r WHERE r.fixture_id=b.fixture
               AND r.recorded_at>q.checked_at AND r.recorded_at<=:now
@@ -244,14 +252,19 @@ def _entry_market(db, root, intent, seal, mode):
     return market
 
 
-def _verify_token(market, official, token_id):
+def _outcome_slot(market, token_id):
     tokens = market["tokens"]
     if len(tokens) != 2 or len({t["token_id"] for t in tokens}) != 2:
         raise ValueError("entry market has no unambiguous pair of outcome tokens")
     matching = [i for i, t in enumerate(tokens) if t["token_id"] == token_id]
     if len(matching) != 1:
         raise ValueError("resolution token absent from original contract")
-    index = matching[0]
+    return matching[0]
+
+
+def _verify_token(market, official, token_id):
+    tokens = market["tokens"]
+    index = _outcome_slot(market, token_id)
     native = official["row"]
     if (
         official["status"] != "resolved"
@@ -317,15 +330,76 @@ def _split_event(root, db, intent, seal, mode, official, opposite):
     }
 
 
+def _account_positions(db, account, condition, token):
+    return db.execute(
+        "SELECT i.original plan,i.result,i.fingerprint,i.token,i.condition_id,i.fixture, "
+        "'formal' mode FROM paper_intents i WHERE account=? AND condition_id=? AND token=? "
+        "AND (status IN ('filled','frozen','settled') OR (status='skipped' "
+        "AND json_extract(result,'$.reason')='token resolved before execution'))",
+        (account, condition, token),
+    ).fetchall()
+
+
+def _binary_history(db, root, market, token, amount):
+    """Compare all available native receipts for the two token IDs frozen at entry."""
+    index = _outcome_slot(market, token)
+    ids = [token, market["tokens"][1 - index]["token_id"]]
+    records = [_records_from_db(db, root, ident) for ident in ids]
+    for side, (ident, record) in enumerate(zip(ids, records, strict=True)):
+        if not record:
+            continue
+        row = record["row"]
+        slot = index if side == 0 else 1 - index
+        # Sparse older binary receipts still bind token, condition and price. Any
+        # additional identity the exchange actually published must also agree.
+        expected = {
+            "condition_id": market["condition_id"],
+            "outcome_index": slot,
+            "outcome": market["tokens"][slot]["outcome"],
+            "opposite_token_id": ids[1 - side],
+            "market_slug": market["slug"],
+        }
+        if (
+            str(row["token_id"]) != ident
+            or any(row.get(k) is not None and row[k] != v for k, v in expected.items())
+            or (
+                row.get("outcome_index") is not None
+                and type(row["outcome_index"]) is not int
+            )
+            or row.get("event_slug")
+            not in (None, market["fixture"], market["fixture"] + "-more-markets")
+        ):
+            raise ValueError(
+                "official binary token, outcome or market identity mismatch"
+            )
+        if record["status"] == "resolved":
+            if row.get("closed") is not None and row["closed"] is not True:
+                raise ValueError("terminal binary token is not closed")
+            if number(record["payout"]) != (amount if side == 0 else 1 - amount):
+                raise ValueError("conflicting official binary token payout vector")
+        elif side == 0 or (
+            records[0]
+            and instant(record["resolved_at"]) >= instant(records[0]["resolved_at"])
+        ):
+            raise ValueError(
+                "official token status disagrees with a terminal binary payout"
+            )
+    return ids[1], records
+
+
+def attest_ledger_payout_history(db, root, account, event):
+    """The direct and automatic cash paths share the same locked contradiction check."""
+    token, condition = event["token_id"], event["condition_id"]
+    for row in _account_positions(db, account, condition, token):
+        intent, seal = _held(row)
+        market = archive_proof.original_market(db, root, condition, seal)
+        _binary_history(db, root, market, token, unit(event["payout"]))
+
+
 def attest_ledger_split(db, root, account, event):
     """Repeat both native proofs and entry contracts inside the cash transaction."""
     condition, token = event["condition_id"], event["token_id"]
-    rows = db.execute(
-        "SELECT i.original plan,i.result,i.fingerprint,i.token,i.condition_id,i.fixture, "
-        "'formal' mode FROM paper_intents i WHERE account=? AND condition_id=? AND token=? "
-        "AND status IN ('filled','frozen','settled')",
-        (account, condition, token),
-    ).fetchall()
+    rows = _account_positions(db, account, condition, token)
     if not rows:
         raise ValueError("missing held position for split payout")
     held = _records_from_db(db, root, token)
@@ -407,10 +481,15 @@ def _match(root, position, official, score):
     ):
         raise ValueError("special payout or conflict with verified regulation score")
     with closing(store.connect(root)) as db:
+        db.execute("BEGIN")
         market = _entry_market(db, root, intent, seal, position["mode"])
-    _verify_token(market, official, c["token_id"])
+        opposite, records = _binary_history(db, root, market, c["token_id"], value)
+        if not records[0]:
+            raise ValueError("held token resolution receipt is unavailable")
+        _verify_token(market, official, c["token_id"])
     return {k: v for k, v in official.items() if k != "row"} | {
         "scenario": "normal",
+        "opposite_token_id": opposite,
         "score": goals,
         "resolved_at": iso(max(observed, instant(score["confirmed_at"]))),
         "exchange_observed_at": iso(observed),
@@ -440,6 +519,14 @@ def _credit_shadow(root, pos, event):
                 != event
             ):
                 raise ValueError("split evidence changed before the shadow settlement")
+        elif scenario == "normal":
+            intent, seal = _held(row)
+            market = archive_proof.original_market(db, root, row["condition_id"], seal)
+            _, records = _binary_history(
+                db, root, market, row["token"], unit(event["payout"])
+            )
+            if event.get("status") == "resolved" and not records[0]:
+                raise ValueError("held token resolution receipt is unavailable")
         out = json.loads(row["result"])
         if scenario == "exchange_split" and any(
             instant(t["received_at"]) < instant(out["filled_at"])
@@ -492,10 +579,51 @@ def _credit_shadow(root, pos, event):
 
 def _record(root, p, state, why, detail):
     checked = store.now_utc()
+    cursor = p["resolution_request_cursor"]
+    detail = {"resolution_request_cursor": cursor, **detail}
+    if p["previously_known_opposite"]:
+        detail.setdefault("opposite_token_id", p["previously_known_opposite"])
     with closing(store.connect(root)) as db, db:
+        db.execute("BEGIN IMMEDIATE")
+        # Older booked rows have no stored counter-token. Recover the watch even
+        # when this audit stopped at a missing result or contradictory held-token receipt.
+        if p["status"] == "settled" and not detail.get("opposite_token_id"):
+            try:
+                _, seal = _held(p)
+                market = archive_proof.original_market(
+                    db, root, p["condition_id"], seal
+                )
+                slot = _outcome_slot(market, p["token"])
+                detail["opposite_token_id"] = market["tokens"][1 - slot]["token_id"]
+            except (OSError, KeyError, TypeError, ValueError) as exc:
+                state, why = "manual_review", str(exc)
+        other = detail.get("opposite_token_id")
+        if (
+            state == "settled"
+            and other
+            and "payout" in detail
+            and db.execute(
+                "SELECT 1 FROM ma_requests WHERE rowid>? AND operation='resolution' AND selector IN (?,?) "
+                "AND status='ok' AND received_at<=? LIMIT 1",
+                (cursor, p["token"], other, checked),
+            ).fetchone()
+        ):
+            try:
+                intent, seal = _held(p)
+                market = archive_proof.original_market(
+                    db, root, p["condition_id"], seal
+                )
+                _binary_history(db, root, market, p["token"], unit(detail["payout"]))
+            except (OSError, ValueError, KeyError, TypeError) as ex:
+                state, why = "manual_review", str(ex)
+            detail["resolution_request_cursor"] = db.execute(
+                "SELECT coalesce(max(rowid),0) FROM ma_requests"
+            ).fetchone()[0]
         db.execute(
             "INSERT INTO settlement_queue VALUES (?,?,?,?,?,?,?,?,?) ON CONFLICT(mode,account,intent_id) DO UPDATE SET "
-            "state=excluded.state,reason=excluded.reason,checked_at=excluded.checked_at,details=excluded.details",
+            "state=excluded.state,reason=excluded.reason,checked_at=excluded.checked_at,details=excluded.details "
+            "WHERE coalesce(json_extract(settlement_queue.details,'$.resolution_request_cursor'),-1) "
+            "<=json_extract(excluded.details,'$.resolution_request_cursor')",
             (
                 p["mode"],
                 p["account"],
@@ -507,6 +635,15 @@ def _record(root, p, state, why, detail):
                 checked,
                 packed(detail),
             ),
+        )
+        saved = db.execute(
+            "SELECT state,reason,details FROM settlement_queue WHERE mode=? AND account=? AND intent_id=?",
+            (p["mode"], p["account"], p["id"]),
+        ).fetchone()
+        state, why, detail = (
+            saved["state"],
+            saved["reason"],
+            json.loads(saved["details"]),
         )
     return {
         "mode": p["mode"],
@@ -544,7 +681,8 @@ def sync(data_dir, *, account=None, limit=50, cached_only=False):
         return item
 
     for p in rows:
-        state, why, detail = "pending", None, {}
+        state, why = "pending", None
+        detail = {}
         try:
             fixture = p["fixture"]
             official = lookup(p["token"])
@@ -576,6 +714,7 @@ def sync(data_dir, *, account=None, limit=50, cached_only=False):
                     state = "manual_review"
                     why = "terminal token has no independently verified normal regulation score"
             if event:
+                detail["opposite_token_id"] = event["opposite_token_id"]
                 if p["mode"] == "research_shadow":
                     _credit_shadow(data_dir, p, event)
                 elif already:

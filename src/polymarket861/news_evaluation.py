@@ -375,7 +375,7 @@ def _line_metrics(pair, home, away):
     return scores
 
 
-def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy=None):
+def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy=None, *, as_of=None, reopen_news=False):
     goals = (fixture["home_goals"], fixture["away_goals"])
     if mode == "replay":
         # Strict replay authenticates its archived season and label in _proof_issue.
@@ -427,6 +427,14 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy
         if issue:
             return record | {"reason": issue}
         pair = payload["news_pair"]
+        root = Path(db.execute("PRAGMA database_list").fetchone()[2]).parent
+        if reopen_news:
+            from . import news
+
+            sealed_news = payload["context"]["player_news"]
+            reopened = news.snapshot(root, fixture["fixture_id"], pair["input_cutoff"])
+            if store.digest(reopened) != store.digest(sealed_news):
+                return record | {"reason": "news_originals_do_not_match_sealed_snapshot"}
         applied_status = {fact["status"] for fact in pair["applied"]}
         if len(applied_status) > 1:
             news_slice = "confirmed_and_reported"
@@ -464,14 +472,13 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy
             news_slice=news_slice,
             digest=store.digest(pair),
         )
-        root = Path(db.execute("PRAGMA database_list").fetchone()[2]).parent
-        record["market_close"] = news_market.observe(db, root, fixture, entry, pair)
+        record["market_close"] = news_market.observe(db, root, fixture, entry, pair, as_of=as_of)
         if (
             study_status == "declared"
             and record["study_plan_sha256"] == news_study_plan.PLAN_SHA256
         ):
             record["scheduled_market_close"] = news_market.observe(
-                db, root, fixture, entry, pair, scheduled_proxy=True
+                db, root, fixture, entry, pair, scheduled_proxy=True, as_of=as_of
             )
         else:
             record["scheduled_market_close"] = {
@@ -505,7 +512,7 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy
         return record | {"sealed": False, "reason": "invalid_seal_or_archived_evidence"}
 
 
-def _records(db, fixtures, horizon, mode, policy=None):
+def _records(db, fixtures, horizon, mode, policy=None, *, as_of=None, reopen_news=False, eligible_seals=None):
     ids = [f["fixture_id"] for f in fixtures]
     found = defaultdict(list)
     if ids:
@@ -516,6 +523,10 @@ def _records(db, fixtures, horizon, mode, policy=None):
             + ") AND protocol=? AND horizon=? AND mode=?"
         )
         for row in db.execute(sql, (*ids, store.PROTOCOL, horizon, mode)):
+            if eligible_seals is not None and row["digest"] not in eligible_seals:
+                continue
+            if as_of is not None and row["sealed_at"] > as_of:
+                continue
             try:
                 payload = json.loads(row["data_json"])
             except (TypeError, ValueError):
@@ -536,13 +547,14 @@ def _records(db, fixtures, horizon, mode, policy=None):
             db,
             fixtures[0]["season"],
             [f["fixture_id"] for f in fixtures if f["home_goals"] is not None],
-            at=store.now_utc(),
+            at=as_of or store.now_utc(),
         )
     for f in fixtures:
         outcome = verified.get(f["fixture_id"])
         matches = found.get((f["fixture_id"], f["kickoff"]), [])
         if len(matches) == 1:
-            yield _score_one(f, *matches[0], None, db, cache, mode, outcome, policy)
+            yield _score_one(f, *matches[0], None, db, cache, mode, outcome, policy,
+                             as_of=as_of, reopen_news=reopen_news)
         else:
             reason = "ambiguous_primary_seal" if matches else "no_primary_seal"
             yield _score_one(f, None, None, reason, db, cache, mode, outcome)

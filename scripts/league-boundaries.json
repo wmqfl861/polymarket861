@@ -1,7 +1,4 @@
 {
-  "archive_proof.py": [
-    "raise ValueError(\"Gamma capture does not identify a unique matching EPL event\")"
-  ],
   "datasets.py": [
     "_atomic(root / season / \"en.1.json\", raw)",
     "_get(BASE + f\"/contents/{season}/en.1.json?ref=\" + quote(revision))",
@@ -177,6 +174,7 @@
     "\"denominator\": \"events matching the dated catalog query, not all EPL fixtures\",",
     "\"discover\", help=\"record a main EPL fixture and its more-markets event\"",
     "\"supply a main EPL fixture slug such as epl-not-che-2026-11-27\"",
+    "accepted = (operation in (\"event\", \"catalog\") and contract[\"fixture\"].startswith(\"epl-\"))",
     "for contract in provider.normalized_markets(event, sport=sport or \"epl\"):",
     "league = next((x for x in sports if x.get(\"sport\") == \"epl\"), {})",
     "match = provider.SPORT_FIXTURES[sport or \"epl\"].fullmatch(str(event.get(\"slug\", \"\")))",

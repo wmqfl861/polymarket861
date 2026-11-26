@@ -180,6 +180,23 @@ def _receipts_before_end(db, row):
     return record
 
 
+def _scope_fixture_history(db, as_of):
+    """Scope the normal schedule/result queries (including nested validators) to this read connection.
+
+    Filtering versions before the native ranking keeps a backdated later arrival
+    from hiding the version actually on hand. TEMP objects never touch the runtime DB.
+    """
+    db.execute("CREATE TEMP TABLE endpoint_study_clock(cut TEXT NOT NULL)")
+    db.execute("INSERT INTO endpoint_study_clock VALUES(?)", (as_of,))
+    db.execute("""CREATE TEMP VIEW fixture_versions AS SELECT f.* FROM main.fixture_versions f
+        JOIN main.schedule_receipts s USING(fixture_id,version), endpoint_study_clock w
+        WHERE f.known_at<=w.cut AND s.recorded_at<=w.cut""")
+    db.execute("""CREATE TEMP VIEW result_versions AS SELECT r.* FROM main.result_versions r, endpoint_study_clock w
+        WHERE r.recorded_at<=w.cut AND r.received_at<=w.cut AND r.published_at<=w.cut AND r.finalized_at<=w.cut""")
+    db.execute("""CREATE TEMP VIEW result_dispositions AS SELECT d.* FROM main.result_dispositions d, endpoint_study_clock w
+        WHERE d.at<=w.cut""")
+
+
 def report(data_dir):
     path = Path(data_dir).expanduser() / "runtime.sqlite3"
     if not path.is_file():
@@ -194,9 +211,12 @@ def report(data_dir):
             return _summary(None, {}, {}, {}, reveal=False)
         now = store.now_utc()
         reveal = now >= END
+        as_of = min(now, store.iso(store.instant(END) - timedelta(microseconds=1)))
+        _scope_fixture_history(db, as_of)
         binding_rows = db.execute("""SELECT b.seal,b.bound_at,b.probability_era,s.fixture_id,s.horizon,s.kickoff
                     FROM news_endpoint_bindings b JOIN forecast_seals s ON s.digest=b.seal
-                    WHERE b.declaration=? ORDER BY b.capture_order""", (registration["registration_sha256"],)).fetchall()
+                    WHERE b.declaration=? AND b.bound_at<=? ORDER BY b.capture_order""",
+                                  (registration["registration_sha256"], as_of)).fetchall()
         bindings = {r["seal"]: r for r in binding_rows}
         era = binding_rows[0]["probability_era"] if binding_rows else None
         bound_keys = {(r["fixture_id"], r["horizon"], r["kickoff"]) for r in binding_rows}
@@ -207,11 +227,12 @@ def report(data_dir):
                         if f["fixture_id"].startswith(f"epl/{season}/")]
             for horizon, lead in HORIZONS.items():
                 scheduled = [f for f in fixtures if registration["starts_at"] <= store.iso(store.instant(f["kickoff"]) - lead)
-                             <= now and f["kickoff"] < END]
+                             <= as_of and f["kickoff"] < END]
                 due[horizon] += len(scheduled)
                 candidates = [f for f in scheduled if (f["fixture_id"], horizon, f["kickoff"]) in bound_keys]
                 reasons[horizon]["no_prospective_binding"] += len(scheduled) - len(candidates)
-                for row in news_evaluation._records(db, candidates, horizon, registration["mode"]):
+                for row in news_evaluation._records(db, candidates, horizon, registration["mode"], as_of=as_of,
+                                                    reopen_news=True, eligible_seals=bindings):
                     binding = bindings.get(row.get("seal"))
                     if not binding or row.get("study_status") != "declared" or row.get("study_plan_sha256") != news_study_plan.PLAN_SHA256:
                         reason = row.get("reason") or "native_seal_failed_reverification"

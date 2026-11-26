@@ -79,25 +79,24 @@ class CapitalReplay(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "mismatched redemption"):
             risk.replay(doc)
 
-    def test_local_mode_requires_stored_original_timely_receipt_and_correct_source(self):
+    def test_bare_local_file_does_not_prove_a_fill_or_release_cash(self):
         doc = one_fixture()
         event = doc["redemptions"][0]
-        sha = event["original_sha256"]
-        original = doc["originals"][sha]
-        body = original.pop("body").encode()
+        original = doc["originals"][event["original_sha256"]]
+        raw = original.pop("body").encode()
         url = f"{risk.EXCHANGE_URL}?token_id={event['token_id']}"
-        original["source"] = url
         doc["evidence_mode"] = "local_receipts"
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            self.assertEqual(risk.replay(doc, data_dir=root)["redemption_events"], {"missing_local_original": 1})
-            self.assertEqual(list(root.iterdir()), [])
-            store.archive_bytes(root, "polymarket.com", body, observed_at=original["received_at"],
-                                metadata={"url": "https://example.invalid/"})
-            self.assertEqual(risk.replay(doc, data_dir=root)["redemption_events"], {"unverified_local_resolution_receipt": 1})
-            store.archive_bytes(root, "polymarket.com", body, observed_at=original["received_at"], metadata={"url": url})
-            self.assertEqual(risk.replay(doc, data_dir=root)["redemption_events"]["positions_redeemed"], 1)
-            self.assertEqual(Decimal(risk.replay(doc, data_dir=root)["leagues"]["epl"]["available_cash"]), 2000)
+            for archive in (False, True):
+                if archive:
+                    store.archive_bytes(root, "polymarket.com", raw, observed_at=original["received_at"],
+                                        metadata={"url": url})
+                report = risk.replay(doc, data_dir=root)
+                self.assertEqual(report["redemption_events"], {"missing_verified_entry": 1})
+                self.assertEqual(report["leagues"]["epl"]["outcomes"], {"skipped_unverified_entry":1})
+                self.assertEqual(Decimal(report["leagues"]["epl"]["available_cash"]), 2000)
+            self.assertEqual(risk.replay(doc)["leagues"]["epl"]["outcomes"], {"skipped_unverified_entry":1})
 
     def test_timing_fee_and_scope_cannot_bypass_limits(self):
         doc = one_fixture()
@@ -124,6 +123,7 @@ class CapitalReplay(unittest.TestCase):
         record = doc["originals"][event["original_sha256"]]
         raw = json.loads(record["body"])
         raw["data"][0]["final_price"] = "1"
+        raw["data"][1]["final_price"] = "0"
         body = json.dumps(raw)
         sha = hashlib.sha256(body.encode()).hexdigest()
         doc["originals"][sha] = dict(record, body=body)

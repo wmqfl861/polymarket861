@@ -114,10 +114,32 @@ BLIND_LABELS = """CREATE TABLE IF NOT EXISTS news_admission_blind_labels(
     PRIMARY KEY(registration, cluster))"""
 
 
-def _freeze_labels(root, registration, pointers):
+def _check_holdout_reservation(db, registration, plan):
+    """The original plan is the reservation, including plans written by earlier builds."""
+    clusters = {sample["id"] for sample in plan["samples"]}
+    predictions = {sample["confirmed_prediction_sha256"] for sample in plan["samples"]}
+    for row in db.execute(
+        "SELECT id, document FROM news_admission_plans "
+        "WHERE id != ? AND json_extract(document, '$.kind') = 'confirmed_absence'",
+        (registration,),
+    ):
+        other = json.loads(row["document"])
+        if store.digest(other) != row["id"]:
+            raise ValueError("registered holdout SHA-256 mismatch")
+        overlaps = any(
+            sample["id"] in clusters or sample["confirmed_prediction_sha256"] in predictions
+            for sample in other["samples"]
+        )
+        same_trial = all(other[key] == plan[key] for key in ("language", "season", "model_sha256"))
+        if overlaps or same_trial:
+            raise ValueError("blind holdout already reserved in another registration")
+
+
+def _freeze_labels(root, registration, plan, pointers):
     with closing(store.connect(root)) as db, db:
         db.execute(BLIND_LABELS)
         db.execute("BEGIN IMMEDIATE")
+        _check_holdout_reservation(db, registration, plan)
         known = dict(db.execute("SELECT cluster,evidence_sha256 FROM news_admission_blind_labels WHERE registration=?",
                                 (registration,)))
         for cluster, item in pointers.items():
@@ -136,6 +158,8 @@ def register(root, plan, directory=None):
         db.execute("BEGIN IMMEDIATE")
         old = db.execute("SELECT recorded_at FROM news_admission_plans WHERE id=?", (ident,)).fetchone()
         now = store.iso(store.now_utc())
+        if plan["kind"] == "confirmed_absence":
+            _check_holdout_reservation(db, ident, plan)
         if not old:
             if now >= store.iso(plan["opens_at"]):
                 raise ValueError("local preregistration must precede the cohort opening")
@@ -214,7 +238,7 @@ def audit(root, registration, review, directory=None):
                     raise ValueError("disagreement needs a third registered adjudicator")
                 a = decision["adjudicated"]
             correct += a
-        _freeze_labels(root, registration, pointers)
+        _freeze_labels(root, registration, plan, pointers)
         n = len(decisions)
         if n < 84:
             return result | {"language":plan["language"], "status":"awaiting_fixed_84"}

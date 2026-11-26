@@ -104,11 +104,12 @@ def _permission(root, db, when):
     return store.digest(grant)
 
 
-def _fixture(db, fid, at, planned=None):
+def _fixture(db, fid, at, planned=None, *, require_local_receipt=False):
+    local_limit = "AND s.recorded_at<=:at " if require_local_receipt else ""
     row = db.execute(
         "SELECT f.*,s.precision FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
-        "WHERE f.fixture_id=? AND f.known_at<=? ORDER BY f.known_at DESC LIMIT 1",
-        (fid, store.iso(at)),
+        f"WHERE f.fixture_id=:fid AND f.known_at<=:at {local_limit}ORDER BY f.known_at DESC LIMIT 1",
+        {"fid": fid, "at": store.iso(at)},
     ).fetchone()
     if row is None or row["precision"] not in ("minute", "second"):
         raise ValueError("no precise archived schedule version at the decision cutoff")
@@ -412,7 +413,7 @@ def import_open(
 
 
 def resolve(
-    data_dir, fixture_id, scheduled_kickoff, decision_at, *, db=None, prospective=False
+    data_dir, fixture_id, scheduled_kickoff, decision_at, *, db=None, prospective=False, received_through=None
 ):
     """Recheck every independent receipt. The caller cannot choose between conflicting revisions."""
     if store.instant(scheduled_kickoff) - store.instant(decision_at) != timedelta(
@@ -428,7 +429,8 @@ def resolve(
             "SELECT 1 FROM football_kickoff_receipts WHERE fixture_id=?", (fixture_id,)
         ).fetchone():
             raise MissingKickoffProof("independent actual kickoff proof is missing")
-        fx = _fixture(conn, fixture_id, decision_at, scheduled_kickoff)
+        fx = _fixture(conn, fixture_id, decision_at, scheduled_kickoff,
+                      require_local_receipt=received_through is not None)
         if prospective:
             known = conn.execute(
                 "SELECT f.version FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
@@ -439,9 +441,14 @@ def resolve(
                 raise ValueError(
                     "prospective kickoff proof disagrees with the schedule actually held at decision"
                 )
+        time_limit = "AND received_at<=:cut " if received_through is not None else ""
+        params = {"fixture": fixture_id, "version": fx["version"]}
+        if received_through is not None:
+            params["cut"] = store.iso(received_through)
         rows = conn.execute(
-            "SELECT * FROM football_kickoff_receipts WHERE fixture_id=? AND schedule_version=? ORDER BY received_at,proof_id",
-            (fixture_id, fx["version"]),
+            "SELECT * FROM football_kickoff_receipts WHERE fixture_id=:fixture AND schedule_version=:version "
+            f"{time_limit}ORDER BY received_at,proof_id",
+            params,
         ).fetchall()
         if not rows:
             raise MissingKickoffProof("independent actual kickoff proof is missing")
@@ -480,8 +487,9 @@ def resolve(
                     "independent kickoff proof receipt is missing or premature"
                 )
             same_event = conn.execute(
-                "SELECT DISTINCT fixture_id FROM football_kickoff_receipts WHERE (authority=?)=(?=?) AND provider_event_id=?",
-                (SOURCE, authority, SOURCE, r["provider_event_id"]),
+                "SELECT DISTINCT fixture_id FROM football_kickoff_receipts WHERE (authority=:espn)=(:authority=:espn) "
+                f"AND provider_event_id=:event {time_limit}",
+                {**params, "espn": SOURCE, "authority": authority, "event": r["provider_event_id"]},
             ).fetchall()
             if len(same_event) != 1:
                 raise ValueError(

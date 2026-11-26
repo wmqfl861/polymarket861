@@ -1203,6 +1203,10 @@ def settle(data_dir, account, settlement):
             raise ValueError("resolution from the future")
         if final and acc["mode"] in ("formal", "historical"):
             _attest_resolution(db, data_dir, settlement, amount)
+        if final and amount in (0, 1) and acc["mode"] in ("formal", "historical"):
+            from .settlement import attest_ledger_payout_history
+
+            attest_ledger_payout_history(db, data_dir, account, settlement)
         if final and (
             state == "exchange_split"
             or (acc["mode"] in ("formal", "historical") and amount not in (0, 1))
@@ -1219,6 +1223,9 @@ def settle(data_dir, account, settlement):
                     (account, *ids, doc),
                 ).fetchone()
             ):
+                from .settlement import attest_ledger_payout_history
+
+                attest_ledger_payout_history(db, data_dir, account, settlement)
                 return dict(settlement)
             settlement = attest_ledger_split(db, data_dir, account, settlement)
             state = settlement["scenario"]

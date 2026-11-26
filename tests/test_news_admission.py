@@ -1,4 +1,6 @@
 import hashlib
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 import tempfile
 import unittest
 from datetime import timedelta
@@ -137,12 +139,51 @@ class NewsAdmissionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "received_at"):
             self.audit(reg, review)
 
-    def test_confirmed_absence_requires_all_84_and_adjudication_of_disagreement(self):
+    def blind_plan(self):
         scope = {"language":"es","league":"lal","season":"2026-27","model_sha256":"c"*64}
         samples = [{"id":str(i),"confirmed_prediction_sha256":self.proof(scope | {"kind":"system_confirmed_absence",
                    "id":str(i),"predicted_at":store.iso(self.now)})} for i in range(84)]
         plan = scope | {"kind":"confirmed_absence","samples":samples,"reviewers":["a","b","c"],
                         "training_clusters":[],"opens_at":store.iso(self.open)}
+        return plan
+
+    def test_blind_reservations_are_atomic_and_retries_use_the_original_plan(self):
+        plan = self.blind_plan()
+        alternative = plan | {"reviewers": ["a", "b", "another adjudicator"]}
+        # Initialize the general database before racing the two admission registrations.
+        with closing(store.connect(self.root)):
+            pass
+
+        def enroll(candidate):
+            try:
+                return news_admission.register(self.root, candidate, self.directory)["registration"]
+            except ValueError as exc:
+                return str(exc)
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            outcomes = list(pool.map(enroll, (plan, alternative)))
+        self.assertEqual(sum("already reserved" in v for v in outcomes), 1)
+        accepted = next(p for p in (plan, alternative) if store.digest(p) in outcomes)
+        self.assertEqual(enroll(accepted), store.digest(accepted))
+        # A second model cannot claim a previously reserved case, even before first unblinding.
+        self.assertIn("already reserved", enroll(accepted | {"model_sha256":"d" * 64}))
+
+    def test_overlapping_legacy_registrations_never_get_a_precision_verdict(self):
+        first = self.blind_plan()
+        reg = news_admission.register(self.root, first, self.directory)["registration"]
+        second = first | {"reviewers": ["a", "b", "replacement"]}
+        second_id = store.digest(second)
+        with closing(store.connect(self.root)) as db, db:
+            db.execute("INSERT INTO news_admission_plans VALUES(?,?,?)",
+                       (second_id, store.iso(self.now), store.canonical(second)))
+        self.now = self.open + timedelta(hours=1)
+        for ident in (reg, second_id):
+            with self.assertRaisesRegex(ValueError, "already reserved"):
+                self.audit(ident, {"registration": ident, "decisions": []})
+
+    def test_confirmed_absence_requires_all_84_and_adjudication_of_disagreement(self):
+        plan = self.blind_plan()
+        scope = {k: plan[k] for k in ("language", "league", "season", "model_sha256")}
         with self.assertRaisesRegex(ValueError, "held-out"):
             news_admission.register(self.root, plan | {"training_clusters":["0"]}, self.directory)
         reg = news_admission.register(self.root, plan, self.directory)["registration"]

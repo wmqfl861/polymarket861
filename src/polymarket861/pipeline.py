@@ -254,6 +254,21 @@ def read_forecast(data_dir, seal_digest):
     return _verified_seal(row)
 
 
+def _decision_reason(state, horizon, stale):
+    """Display the explanation for an already computed eligibility decision."""
+    return (
+        "须再核实同一代币双时点价量及账户风险"
+        if state == "eligible_for_price_check"
+        else (
+            "此时点只记录预测"
+            if horizon != "T-60m"
+            else "近期已过期的两场球队赛果待确认"
+            if stale
+            else "两队正式首发未全部及时确认"
+        )
+    )
+
+
 def make_forecast(
     data_dir,
     fixture_id,
@@ -525,17 +540,7 @@ def make_forecast(
         if both and not stale and horizon == "T-60m"
         else "no_paper_order"
     )
-    reason = (
-        "须再核实同一代币双时点价量及账户风险"
-        if state == "eligible_for_price_check"
-        else (
-            "此时点只记录预测"
-            if horizon != "T-60m"
-            else "近期已过期的两场球队赛果待确认"
-            if stale
-            else "两队正式首发未全部及时确认"
-        )
-    )
+    reason = _decision_reason(state, horizon, stale)
     companion = None
     if news_pair is not None:
         from . import model_study

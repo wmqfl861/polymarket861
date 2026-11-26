@@ -38,6 +38,8 @@ def original_receipt(db, root, sha, received_at, operations):
         allowed = {
             "event": ("gamma-api.polymarket.com", "/events/slug/" + row["selector"]),
             "catalog": ("gamma-api.polymarket.com", "/events"),
+            "league_event": ("gamma-api.polymarket.com", "/events/slug/" + row["selector"]),
+            "league_catalog": ("gamma-api.polymarket.com", "/events"),
             "book": ("clob.polymarket.com", "/book"),
             "books": ("clob.polymarket.com", "/books"),
             "trades": ("data-api.polymarket.com", "/v2/trades"),
@@ -46,6 +48,10 @@ def original_receipt(db, root, sha, received_at, operations):
         }
         if uri.scheme != "https" or (uri.netloc, uri.path) != allowed[operation]:
             continue
+        if operation == "league_catalog":
+            entry = provider.SPORT_MARKETS.get(row["selector"])
+            if not entry or parse_qs(uri.query).get("tag_id") != [entry[1]]:
+                continue
         if operation in ("book","resolution") and parse_qs(uri.query).get("token_id") != [
             row["selector"]
         ]:
@@ -71,12 +77,12 @@ def original_receipt(db, root, sha, received_at, operations):
 
 def _event_capture(db, root, sha, received_at, event_slug):
     reply, operation, selector, _ = original_receipt(
-        db, root, sha, received_at, {"event", "catalog"}
+        db, root, sha, received_at, {"event", "catalog", "league_event", "league_catalog"}
     )
     body = json.loads(reply.body)
-    if operation == "event" and isinstance(body, dict) and selector == event_slug:
+    if operation in {"event", "league_event"} and isinstance(body, dict) and selector == event_slug:
         events = [body]
-    elif operation == "catalog" and isinstance(body, list):
+    elif operation in {"catalog", "league_catalog"} and isinstance(body, list):
         events = body
     else:
         events = []
@@ -86,7 +92,16 @@ def _event_capture(db, root, sha, received_at, event_slug):
         if isinstance(event, dict) and event.get("slug") == event_slug
     ]
     if len(native) != 1:
-        raise ValueError("Gamma capture does not identify a unique matching EPL event")
+        raise ValueError("Gamma capture does not identify a unique matching domestic event")
+    if operation.startswith("league_"):
+        from .big5_market import _identity
+
+        sport = event_slug.split("-", 1)[0]
+        if sport not in provider.SPORT_FIXTURES:
+            raise ValueError("unknown domestic event sport")
+        if operation == "league_catalog" and selector != sport:
+            raise ValueError("domestic catalogue selector differs from event sport")
+        _identity(native[0], sport)
     return native[0]
 
 
@@ -104,7 +119,7 @@ def _gamma_markets(db, root, sha, received_at, slug):
         return active.checked[key]
     event = _event_capture(db, root, sha, received_at, slug)
     by_condition = {}
-    for market in provider.normalized_markets(event):
+    for market in provider.normalized_markets(event, sport=slug.split("-", 1)[0]):
         by_condition.setdefault(market["condition_id"], []).append(market)
     result = (by_condition, event.get("teams") or [], event.get("title"))
     if active is not None:

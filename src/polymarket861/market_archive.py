@@ -464,10 +464,18 @@ def _book_value(db, contract, token, raw, reply, sha, times):
                 headers,
                 meta.get("url", ""),
             )
-            if meta.get("operation") in (
-                "event",
-                "catalog",
-            ) and provider.fresh_observation(state):
+            operation = meta.get("operation")
+            accepted = (operation in ("event", "catalog") and contract["fixture"].startswith("epl-"))
+            if operation in ("league_event", "league_catalog"):
+                from urllib.parse import parse_qs
+                url = urlsplit(state.url)
+                league = contract["fixture"].split("-", 1)[0]
+                tag = provider.SPORT_MARKETS.get(league, (None, None))[1]
+                accepted = url.scheme == "https" and url.netloc == "gamma-api.polymarket.com" and (
+                    (operation == "league_event" and url.path == "/events/slug/" + contract["event_slug"])
+                    or (operation == "league_catalog" and url.path == "/events"
+                        and parse_qs(url.query).get("tag_id") == [tag]))
+            if accepted and provider.fresh_observation(state):
                 valid = True
                 break
         if not valid:

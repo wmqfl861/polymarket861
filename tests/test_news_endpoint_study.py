@@ -1,5 +1,7 @@
 """Separate forward registration for home-win and regulation full-match Over 2.5."""
 
+import json
+import os
 import sqlite3
 import tempfile
 import unittest
@@ -11,10 +13,13 @@ from unittest.mock import patch
 from scipy.stats import t
 
 from polymarket861 import news_endpoint_study as trial
-from polymarket861 import news_market, news_study_plan, pipeline, store
-from test_news_accumulation import coverage
-from test_news_matchday import AWAY, FID, HOME, KICKOFF, seed_fixture
+from polymarket861 import kickoff_proof, news, news_market, news_roster, news_sources, news_study_plan, pipeline, result_admission, result_feed, season, store
+from polymarket861.blob_storage import blob_path
+from polymarket861.market_provider import Reply
+from kickoff_fixture import capture_example
+from test_news_matchday import AWAY, AWAY_RUMOUR, FID, HOME, HOME_OUT, KICKOFF, add_club_feed, roster_transport, rss, seed_fixture
 from test_paired_proof import at
+from test_result_feed import match
 
 
 def fixed_sqlite_clock(stamp):
@@ -123,29 +128,142 @@ class NewsEndpointStudy(unittest.TestCase):
         self.assertAlmostEqual(home["slope"], legacy["slope"])
         self.assertGreater(total["interval"]["critical_t"], legacy["interval"]["critical_t"])
 
-    def test_native_forecast_transaction_binds_and_missing_books_stay_missing(self):
+    def test_native_news_originals_and_fixed_window_revisions(self):
         root, history = self.root / "runtime", self.root / "history"
         kickoff = store.instant(KICKOFF)
         cutoff = kickoff - timedelta(minutes=61)
-        snapshot = {"fixture_id": FID, "cutoff": store.iso(cutoff), "facts": [],
-                    "coverage": coverage(HOME, AWAY, cutoff)}
+        when = store.instant("2026-08-12T12:25:00Z")
         with fixed_sqlite_clock(cutoff):
-            with at("2026-08-01T10:00:00Z"):
+            with at("2026-08-01T10:00Z"):
                 seed_fixture(root, history)
                 trial.enroll(root)
-            with at(cutoff), patch("polymarket861.news.snapshot", return_value=snapshot):
-                seal = pipeline.make_forecast(root, FID, history)
-            with at(kickoff + timedelta(minutes=1)):
-                result = trial.report(root)
-            self.assertEqual(result["bound_seals"], 1)
-            self.assertEqual(result["initial_bound_probability_era"], seal["news_study"]["era_sha256"])
-            h = result["horizons"]["T-60m"]
-            self.assertEqual(h["qualified_news_pairs"], 1, h["exclusions"])
-            for field in trial.CLOCKS:
-                cell = h["clocks"][field]["full_over_2_5"]
-                self.assertEqual(cell["matched_books"], 0)
-                self.assertEqual(sum(cell["missing"].values()), 1)
-                self.assertIsNone(cell["slope"])
+                home, away = (add_club_feed(root, team) for team in (HOME, AWAY))
+            feeds = {home["url"]: rss(home, HOME_OUT), away["url"]: rss(away, AWAY_RUMOUR)}
+            squads = {team: roster_transport(team) for team in (HOME, AWAY)}
+            refresh = news_roster.refresh
+
+            def fetch(url):
+                if url not in feeds:
+                    raise ConnectionError("outside offline publisher scope")
+                return Reply(feeds[url], store.now_utc(), store.now_utc(), {}, url)
+
+            with (patch.dict(os.environ, {"PM861_NEWS_LLM_URL": "", "PM861_NEWS_LLM_MODEL": ""}),
+                  patch.object(news_sources, "_get", side_effect=fetch),
+                  patch.object(news_roster, "refresh", side_effect=lambda r, t, s: refresh(r, t, s, getter=squads[t]))):
+                with at(when):
+                    for _ in range(2):
+                        season._service(root, "news", when, {"football_root": history})
+                with at(cutoff):
+                    seal = pipeline.make_forecast(root, FID, history)
+            self.assertTrue(seal["news_pair"]["changed"])
+            with at(kickoff + timedelta(days=1)):
+                before = trial.report(root)
+                self.assertEqual(before["bound_seals"], 1)
+                self.assertEqual(before["initial_bound_probability_era"], seal["news_study"]["era_sha256"])
+                cell = before["horizons"]["T-60m"]
+                self.assertEqual(cell["qualified_news_pairs"], 1, cell["exclusions"])
+                for field in trial.CLOCKS:
+                    total = cell["clocks"][field]["full_over_2_5"]
+                    self.assertEqual(total["matched_books"], 0)
+                    self.assertEqual(sum(total["missing"].values()), 1)
+                fact = next(f for f in seal["context"]["player_news"]["facts"] if f["event"] == "injury")
+                original = Path(blob_path(root, fact["original_sha256"]))
+                saved = original.read_bytes()
+                original.unlink()
+                self.assertFalse(news.snapshot(root, FID, seal["input_cutoff"])["coverage"]["both_teams_observed"])
+                rejected = trial.report(root)["horizons"]["T-60m"]
+                self.assertEqual(rejected["qualified_news_pairs"], 0)
+                self.assertEqual(rejected["exclusions"]["news_originals_do_not_match_sealed_snapshot"], 1)
+                original.write_bytes(saved)
+                self.assertEqual(trial.report(root), before)
+                # An alternative provenance with the same probabilities and both
+                # teams covered still must not replace the sealed identities.
+                substitute = news.snapshot(root, FID, seal["input_cutoff"])
+                substitute["facts"][0]["original_sha256"] = "f" * 64
+                with patch.object(news, "snapshot", return_value=substitute):
+                    other = trial.report(root)["horizons"]["T-60m"]
+                    self.assertEqual(other["exclusions"]["news_originals_do_not_match_sealed_snapshot"], 1)
+
+            def provider_documents(score):
+                game = match(101, HOME, AWAY, score) | {"matchDateTimeUTC": KICKOFF}
+                raw = json.dumps([game]).encode()
+                base = result_feed.BASE
+                return {f"{base}/getmatchdata/pl/2026": raw, f"{base}/getmatchdata/pl/2026/1": raw,
+                        f"{base}/getlastchangedate/pl/2026/1": json.dumps(f"final-{score[0]}-{score[1]}").encode()}
+
+            feeds = provider_documents([0, 2])
+            with (patch.object(result_feed, "_get", side_effect=feeds.__getitem__),
+                  patch.object(result_feed, "now_utc", side_effect=lambda: store.now_utc())):
+                with at("2026-08-13T10:00Z"):
+                    result_feed.sync_primary(root, 2026)
+                with at("2026-08-13T10:41Z"):
+                    result_feed.sync_primary(root, 2026, round_id=1)
+                    self.assertEqual(result_admission.verified_regulation(root, FID)["away_goals"], 2)
+                with at(trial.END):
+                    frozen = trial.report(root)
+                    self.assertEqual(frozen["horizons"]["T-60m"]["score_guardrail"]["pairs"], 1)
+                    feeds.update(provider_documents([3, 1]))
+                    result_feed.sync_primary(root, 2026, round_id=1)
+                    self.assertIsNone(result_admission.verified_regulation(root, FID))
+                    self.assertEqual(trial.report(root), frozen)
+                with at("2028-07-02T10:41Z"):
+                    result_feed.sync_primary(root, 2026, round_id=1)
+                    self.assertEqual(result_admission.verified_regulation(root, FID)["home_goals"], 3)
+                    self.assertEqual(trial.report(root), frozen)
+
+            with at("2028-07-02T12:00Z"):
+                store.register_fixture(root, {"fixture_id": FID, "season": "2026-27", "home": HOME, "away": AWAY,
+                    "round_id": 1, "known_at": store.now_utc(), "kickoff": store.iso(kickoff + timedelta(minutes=5)),
+                    "source": "calendar", "locator": "late:reschedule"})
+                self.assertEqual(trial.report(root), frozen)
+
+    def test_result_versions_dispositions_and_backdated_publication_are_read_as_received(self):
+        before, after = "2028-06-29T12:00:00Z", "2028-07-02T12:00:00Z"
+        known = store.iso("2026-08-01T10:00:00Z")
+        with at(known):
+            store.register_fixture(self.root, {"fixture_id": FID, "season": "2026-27", "home": HOME, "away": AWAY,
+                "round_id": 1, "known_at": known, "kickoff": KICKOFF, "source": "calendar", "locator": "fixture:1"})
+        for home_width, publication, recording in ((1, "2026-08-13T12:00Z", before), (3, "2026-08-14T12:00Z", after)):
+            with closing(store.connect(self.root)) as db, db:
+                store.record_result_db(db, {"fixture_id": FID, "home_goals": home_width, "away_goals": 1,
+                    "finalized_at": "2026-08-12T16:00Z", "published_at": publication, "received_at": publication,
+                    "source": "operator", "locator": "report:1"}, recorded_at=store.iso(recording))
+        with closing(store.connect(self.root)) as db, db:
+            db.execute("INSERT INTO result_dispositions VALUES(?,?,?,?,?)",
+                       (FID, store.iso(KICKOFF), store.iso(after), 1, "late_dispute"))
+            latest, = store.eligible_fixture_rows(db, season="2026-27")
+            trial._scope_fixture_history(db, store.iso(store.instant(trial.END) - timedelta(microseconds=1)))
+            old, = store.eligible_fixture_rows(db, season="2026-27")
+            self.assertEqual((old["result_version"], old["home_goals"], old["result_disposition"]), (1, 1, None))
+            self.assertEqual((latest["result_version"], latest["home_goals"], latest["result_disposition"]),
+                             (2, None, "late_dispute"))
+        # A subsequently ingested, backdated fixture is absent from the old denominator.
+        with at(after):
+            store.register_fixture(self.root, {"fixture_id": "epl/2026-27/else/away", "season": "2026-27",
+                "home": "Else", "away": "Away", "round_id": 1, "known_at": known, "kickoff": KICKOFF,
+                "source": "calendar", "locator": "fixture:late"})
+        with closing(store.connect(self.root)) as db:
+            self.assertEqual(len(store.eligible_fixture_rows(db, season="2026-27")), 2)
+            trial._scope_fixture_history(db, store.iso(store.instant(trial.END) - timedelta(microseconds=1)))
+            self.assertEqual(len(store.eligible_fixture_rows(db, season="2026-27")), 1)
+
+    def test_post_end_conflicting_first_whistle_leaves_old_witness_available(self):
+        kickoff = store.instant(KICKOFF)
+        cut = kickoff - timedelta(hours=1)
+        with at(cut - timedelta(days=1)):
+            fixture = store.register_fixture(self.root, {"fixture_id": FID, "season": "2026-27", "home": HOME,
+                "away": AWAY, "round_id": 1, "known_at": store.now_utc(), "kickoff": KICKOFF,
+                "source": "calendar", "locator": "fixture:1"})
+        with patch.dict(kickoff_proof.OPEN_RELEASES, clear=True):
+            with at(kickoff + timedelta(days=1)):
+                original = capture_example(self.root, fixture, 17, store.iso(kickoff + timedelta(seconds=7)))
+            with at("2028-07-02T00:00Z"):
+                with self.assertRaisesRegex(ValueError, "conflicting"):
+                    capture_example(self.root, fixture, 18, store.iso(kickoff + timedelta(seconds=8)))
+                with self.assertRaisesRegex(ValueError, "conflicting"):
+                    kickoff_proof.resolve(self.root, FID, kickoff, cut, prospective=True)
+                limited = kickoff_proof.resolve(self.root, FID, kickoff, cut, prospective=True, received_through=trial.END)
+                self.assertEqual(limited["proof_id"], original["proof_id"])
 
     def test_pending_estimates_prior_to_reveal_and_late_first_whistle_or_result(self):
         with sqlite3.connect(":memory:") as db:
