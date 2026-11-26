@@ -1,0 +1,416 @@
+{
+  "controlled_sources_and_clocks": {
+    "source": "Offline source bytes and clocks, real news sync/forecast/round and dashboard.",
+    "outputs": [
+      {
+        "path": "forecast round",
+        "horizon": "T-60m",
+        "fields": {
+          "all_source_suspensions": {
+            "expected_fixtures": 10,
+            "sealed_fixtures": 0,
+            "fixtures_with_evidence": 0,
+            "scope_format_unverified_fixtures": 0,
+            "evaluated_players": null,
+            "scope_excluded_players": null,
+            "also_applied_from_another_claim": null,
+            "by_source": {},
+            "excluded_players": []
+          },
+          "source": "touchline-availability",
+          "status": "unobserved",
+          "basis": "latest_grounded_wire_facts_in_selected_seals",
+          "expected_team_fixtures": 20,
+          "sealed_team_fixtures": 0,
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 20,
+          "suspensions": {
+            "observed": null,
+            "scope_excluded": null,
+            "scope_excluded_without_named_competition": null,
+            "scope_excluded_with_other_or_unrecognized_competition": null,
+            "scope_excluded_field_support_unverified": null,
+            "field_support_unverified": null,
+            "applied": null
+          },
+          "injuries": {
+            "observed": null,
+            "field_verifiable": null,
+            "with_native_onset": null,
+            "with_injury_started_at": null,
+            "with_injury_date_only": null,
+            "no_native_onset": null,
+            "field_support_unverified": null
+          },
+          "players": []
+        }
+      },
+      {
+        "path": "news evaluate",
+        "horizon": "T-24h",
+        "fields": {
+          "all_source_suspensions": {
+            "expected_fixtures": 10,
+            "sealed_fixtures": 1,
+            "fixtures_with_evidence": 1,
+            "scope_format_unverified_fixtures": 0,
+            "evaluated_players": 0,
+            "scope_excluded_players": 0,
+            "also_applied_from_another_claim": 0,
+            "by_source": {
+              "touchline-availability": {
+                "fixtures_with_evidence": 1,
+                "evaluated_players": 0,
+                "scope_excluded_players": 0
+              }
+            },
+            "excluded_players": []
+          },
+          "source": "touchline-availability",
+          "status": "partial",
+          "basis": "latest_grounded_wire_facts_in_selected_seals",
+          "expected_team_fixtures": 20,
+          "sealed_team_fixtures": 2,
+          "observed_team_fixtures": 1,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 19,
+          "suspensions": {
+            "observed": 0,
+            "scope_excluded": 0,
+            "scope_excluded_without_named_competition": 0,
+            "scope_excluded_with_other_or_unrecognized_competition": 0,
+            "scope_excluded_field_support_unverified": 0,
+            "field_support_unverified": 0,
+            "applied": 0
+          },
+          "injuries": {
+            "observed": 0,
+            "field_verifiable": 0,
+            "with_native_onset": 0,
+            "with_injury_started_at": 0,
+            "with_injury_date_only": 0,
+            "no_native_onset": 0,
+            "field_support_unverified": 0
+          },
+          "players": []
+        }
+      },
+      {
+        "path": "news evaluate",
+        "horizon": "T-60m",
+        "fields": {
+          "all_source_suspensions": {
+            "expected_fixtures": 10,
+            "sealed_fixtures": 1,
+            "fixtures_with_evidence": 1,
+            "scope_format_unverified_fixtures": 0,
+            "evaluated_players": 1,
+            "scope_excluded_players": 1,
+            "also_applied_from_another_claim": 0,
+            "by_source": {
+              "arsenal-bulletins": {
+                "fixtures_with_evidence": 1,
+                "evaluated_players": 1,
+                "scope_excluded_players": 1
+              },
+              "touchline-availability": {
+                "fixtures_with_evidence": 1,
+                "evaluated_players": 1,
+                "scope_excluded_players": 1
+              }
+            },
+            "excluded_players": [
+              {
+                "fixture_id": "epl/2026-27/arsenal/chelsea",
+                "team": "Arsenal FC",
+                "player_id": "enwiki:123",
+                "player": "Morgan Smith",
+                "input_cutoff": "2026-08-12T12:59:00.000000Z",
+                "also_applied": false,
+                "claims": [
+                  {
+                    "fixture_id": "epl/2026-27/arsenal/chelsea",
+                    "team": "Arsenal FC",
+                    "player_id": "enwiki:123",
+                    "player": "Morgan Smith",
+                    "source": "arsenal-bulletins",
+                    "origin": "arsenal.example",
+                    "status": "confirmed",
+                    "claim_id": "49c4a637e9c2398313b14e64de2d39599e94f42d59c8c40cf0886c94ff52b01d",
+                    "known_at": "2026-08-12T12:15:00.000000Z",
+                    "input_cutoff": "2026-08-12T12:59:00.000000Z",
+                    "decision": "suspension_competition_unverified"
+                  },
+                  {
+                    "fixture_id": "epl/2026-27/arsenal/chelsea",
+                    "team": "Arsenal FC",
+                    "player_id": "enwiki:123",
+                    "player": "Morgan Smith",
+                    "source": "touchline-availability",
+                    "origin": "touchlinewire.com",
+                    "status": "reported",
+                    "claim_id": "94c2370fd817594a7da6ce0b199e4073d6d8624c2ba185e49c35593a65e540ff",
+                    "known_at": "2026-08-12T12:15:00.000000Z",
+                    "input_cutoff": "2026-08-12T12:59:00.000000Z",
+                    "decision": "suspension_competition_unverified"
+                  }
+                ]
+              }
+            ]
+          },
+          "source": "touchline-availability",
+          "status": "partial",
+          "basis": "latest_grounded_wire_facts_in_selected_seals",
+          "expected_team_fixtures": 20,
+          "sealed_team_fixtures": 2,
+          "observed_team_fixtures": 2,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 18,
+          "suspensions": {
+            "observed": 1,
+            "scope_excluded": 1,
+            "scope_excluded_without_named_competition": 1,
+            "scope_excluded_with_other_or_unrecognized_competition": 0,
+            "scope_excluded_field_support_unverified": 0,
+            "field_support_unverified": 0,
+            "applied": 0
+          },
+          "injuries": {
+            "observed": 1,
+            "field_verifiable": 1,
+            "with_native_onset": 1,
+            "with_injury_started_at": 0,
+            "with_injury_date_only": 1,
+            "no_native_onset": 0,
+            "field_support_unverified": 0
+          },
+          "players": [
+            {
+              "fixture_id": "epl/2026-27/arsenal/chelsea",
+              "team": "Arsenal FC",
+              "player_id": "enwiki:123",
+              "provider_player_id": 4,
+              "player": "Morgan Smith",
+              "event": "suspension",
+              "source": "touchline-availability",
+              "status": "reported",
+              "known_at": "2026-08-12T12:15:00.000000Z",
+              "observed_at": "2026-08-12T12:35:00.000000Z",
+              "input_cutoff": "2026-08-12T12:59:00.000000Z",
+              "claim_id": "94c2370fd817594a7da6ce0b199e4073d6d8624c2ba185e49c35593a65e540ff",
+              "decision": "suspension_competition_unverified",
+              "field_status": "missing",
+              "field": null,
+              "value": null
+            },
+            {
+              "fixture_id": "epl/2026-27/arsenal/chelsea",
+              "team": "Chelsea FC",
+              "player_id": "enwiki:124",
+              "provider_player_id": 6,
+              "player": "Leo James",
+              "event": "injury",
+              "source": "touchline-availability",
+              "status": "reported",
+              "known_at": "2026-08-12T12:15:00.000000Z",
+              "observed_at": "2026-08-12T12:35:00.000000Z",
+              "input_cutoff": "2026-08-12T12:59:00.000000Z",
+              "claim_id": "a9b5079b2e36a7b09959e9d737032ade3dcefa050afd460b766cc2ba94447d9b",
+              "decision": "applied",
+              "field_status": "supplied",
+              "field": "injury_date",
+              "value": "2026-08-05"
+            }
+          ]
+        }
+      },
+      {
+        "path": "forecast round",
+        "horizon": "T-60m",
+        "fields": {
+          "all_source_suspensions": {
+            "expected_fixtures": 10,
+            "sealed_fixtures": 1,
+            "fixtures_with_evidence": 1,
+            "scope_format_unverified_fixtures": 0,
+            "evaluated_players": 1,
+            "scope_excluded_players": 1,
+            "also_applied_from_another_claim": 0,
+            "by_source": {
+              "arsenal-bulletins": {
+                "fixtures_with_evidence": 1,
+                "evaluated_players": 1,
+                "scope_excluded_players": 1
+              },
+              "touchline-availability": {
+                "fixtures_with_evidence": 1,
+                "evaluated_players": 1,
+                "scope_excluded_players": 1
+              }
+            },
+            "excluded_players": [
+              {
+                "fixture_id": "epl/2026-27/arsenal/chelsea",
+                "team": "Arsenal FC",
+                "player_id": "enwiki:123",
+                "player": "Morgan Smith",
+                "input_cutoff": "2026-08-12T12:59:00.000000Z",
+                "also_applied": false,
+                "claims": [
+                  {
+                    "fixture_id": "epl/2026-27/arsenal/chelsea",
+                    "team": "Arsenal FC",
+                    "player_id": "enwiki:123",
+                    "player": "Morgan Smith",
+                    "source": "arsenal-bulletins",
+                    "origin": "arsenal.example",
+                    "status": "confirmed",
+                    "claim_id": "49c4a637e9c2398313b14e64de2d39599e94f42d59c8c40cf0886c94ff52b01d",
+                    "known_at": "2026-08-12T12:15:00.000000Z",
+                    "input_cutoff": "2026-08-12T12:59:00.000000Z",
+                    "decision": "suspension_competition_unverified"
+                  },
+                  {
+                    "fixture_id": "epl/2026-27/arsenal/chelsea",
+                    "team": "Arsenal FC",
+                    "player_id": "enwiki:123",
+                    "player": "Morgan Smith",
+                    "source": "touchline-availability",
+                    "origin": "touchlinewire.com",
+                    "status": "reported",
+                    "claim_id": "94c2370fd817594a7da6ce0b199e4073d6d8624c2ba185e49c35593a65e540ff",
+                    "known_at": "2026-08-12T12:15:00.000000Z",
+                    "input_cutoff": "2026-08-12T12:59:00.000000Z",
+                    "decision": "suspension_competition_unverified"
+                  }
+                ]
+              }
+            ]
+          },
+          "source": "touchline-availability",
+          "status": "partial",
+          "basis": "latest_grounded_wire_facts_in_selected_seals",
+          "expected_team_fixtures": 20,
+          "sealed_team_fixtures": 2,
+          "observed_team_fixtures": 2,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 18,
+          "suspensions": {
+            "observed": 1,
+            "scope_excluded": 1,
+            "scope_excluded_without_named_competition": 1,
+            "scope_excluded_with_other_or_unrecognized_competition": 0,
+            "scope_excluded_field_support_unverified": 0,
+            "field_support_unverified": 0,
+            "applied": 0
+          },
+          "injuries": {
+            "observed": 1,
+            "field_verifiable": 1,
+            "with_native_onset": 1,
+            "with_injury_started_at": 0,
+            "with_injury_date_only": 1,
+            "no_native_onset": 0,
+            "field_support_unverified": 0
+          },
+          "players": [
+            {
+              "fixture_id": "epl/2026-27/arsenal/chelsea",
+              "team": "Arsenal FC",
+              "player_id": "enwiki:123",
+              "provider_player_id": 4,
+              "player": "Morgan Smith",
+              "event": "suspension",
+              "source": "touchline-availability",
+              "status": "reported",
+              "known_at": "2026-08-12T12:15:00.000000Z",
+              "observed_at": "2026-08-12T12:35:00.000000Z",
+              "input_cutoff": "2026-08-12T12:59:00.000000Z",
+              "claim_id": "94c2370fd817594a7da6ce0b199e4073d6d8624c2ba185e49c35593a65e540ff",
+              "decision": "suspension_competition_unverified",
+              "field_status": "missing",
+              "field": null,
+              "value": null
+            },
+            {
+              "fixture_id": "epl/2026-27/arsenal/chelsea",
+              "team": "Chelsea FC",
+              "player_id": "enwiki:124",
+              "provider_player_id": 6,
+              "player": "Leo James",
+              "event": "injury",
+              "source": "touchline-availability",
+              "status": "reported",
+              "known_at": "2026-08-12T12:15:00.000000Z",
+              "observed_at": "2026-08-12T12:35:00.000000Z",
+              "input_cutoff": "2026-08-12T12:59:00.000000Z",
+              "claim_id": "a9b5079b2e36a7b09959e9d737032ade3dcefa050afd460b766cc2ba94447d9b",
+              "decision": "applied",
+              "field_status": "supplied",
+              "field": "injury_date",
+              "value": "2026-08-05"
+            }
+          ]
+        }
+      },
+      {
+        "path": "news evaluate",
+        "horizon": "T-24h",
+        "fields": {
+          "all_source_suspensions": {
+            "expected_fixtures": 10,
+            "sealed_fixtures": 1,
+            "fixtures_with_evidence": 1,
+            "scope_format_unverified_fixtures": 0,
+            "evaluated_players": 0,
+            "scope_excluded_players": 0,
+            "also_applied_from_another_claim": 0,
+            "by_source": {
+              "touchline-availability": {
+                "fixtures_with_evidence": 1,
+                "evaluated_players": 0,
+                "scope_excluded_players": 0
+              }
+            },
+            "excluded_players": []
+          },
+          "source": "touchline-availability",
+          "status": "partial",
+          "basis": "latest_grounded_wire_facts_in_selected_seals",
+          "expected_team_fixtures": 20,
+          "sealed_team_fixtures": 2,
+          "observed_team_fixtures": 1,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 19,
+          "suspensions": {
+            "observed": 0,
+            "scope_excluded": 0,
+            "scope_excluded_without_named_competition": 0,
+            "scope_excluded_with_other_or_unrecognized_competition": 0,
+            "scope_excluded_field_support_unverified": 0,
+            "field_support_unverified": 0,
+            "applied": 0
+          },
+          "injuries": {
+            "observed": 0,
+            "field_verifiable": 0,
+            "with_native_onset": 0,
+            "with_injury_started_at": 0,
+            "with_injury_date_only": 0,
+            "no_native_onset": 0,
+            "field_support_unverified": 0
+          },
+          "players": []
+        }
+      }
+    ]
+  },
+  "browser_check": {
+    "browser": "Chromium",
+    "width": 375,
+    "errors": [],
+    "summary": "停赛赛事范围与受伤日期\n全部新闻来源的停赛\n范围未核实而剔除 / 有处置记录的球员\n1 / 1\n有核对依据的比赛 / 应有比赛\n1 / 10\n同人另有停赛主张获采用\n0\n旧封存无法核对范围规则的场数\n0\n逐来源核对停赛处置\n来源\t有核对依据的比赛\t有处置记录的球员\t因范围未核实剔除\narsenal-bulletins\t1\t1\t1\ntouchline-availability\t1\t1\t1\n球队\t球员\t来源\t主张可用时间\t预测截止\nArsenal FC\tMorgan Smith\tarsenal-bulletins\t2026-08-12 12:15 UTC\t2026-08-12 12:59 UTC\nArsenal FC\tMorgan Smith\ttouchline-availability\t2026-08-12 12:15 UTC\t2026-08-12 12:59 UTC\n\n总计按同场、同队、同一球员去重。同一球员可能出现在多个来源。\n\nTouchline Wire 伤停字段\n球队采集完整 / 应采队次\n2 / 20\n部分采集 / 未观察队次\n0 / 18\n本联赛范围未核实而剔除 / 已观察停赛\n1 / 1\n来源给出受伤时间或日期 / 可核对字段的伤病\n1 / 1\n因缺赛事名 / 填了其他或无法识别的赛事而剔除\n1 / 0\n因范围未核实而剔除且旧记录缺审核字段\n0\n实际计入预测的停赛\n0\n受伤时间戳 / 仅日期\n0 / 1\n缺少受伤日期 / 旧记录无法核对\n0 / 0\n\nTouchline Wire 赛前封存。按比赛、球队、球员和事件去重。数字仅涵盖已识别球员。部分采集和缺报的球队仍可能有其他伤停。\n\n逐名核对封存的伤停和采集时间\n球队\t球员\t事件\t来源给出的字段\t预测处理\t最后观测\t预测截止\nArsenal FC\tMorgan Smith\t停赛\t缺少字段\t范围未核实，已剔除\t2026-08-12 12:35 UTC\t2026-08-12 12:59 UTC\nChelsea FC\tLeo James\t伤病\t受伤日期 2026-08-05\t已计入\t2026-08-12 12:35 UTC\t2026-08-12 12:59 UTC",
+    "missing": "停赛赛事范围与受伤日期\n全部新闻来源的停赛\n范围未核实而剔除 / 有处置记录的球员\n未观察 / 未观察\n有核对依据的比赛 / 应有比赛\n0 / 10\n同人另有停赛主张获采用\n未观察\n旧封存无法核对范围规则的场数\n0\nTouchline Wire 伤停字段\n球队采集完整 / 应采队次\n0 / 20\n部分采集 / 未观察队次\n0 / 20\n本联赛范围未核实而剔除 / 已观察停赛\n未观察 / 未观察\n来源给出受伤时间或日期 / 可核对字段的伤病\n未观察 / 未观察\n因缺赛事名 / 填了其他或无法识别的赛事而剔除\n未观察 / 未观察\n因范围未核实而剔除且旧记录缺审核字段\n未观察\n实际计入预测的停赛\n未观察\n受伤时间戳 / 仅日期\n未观察 / 未观察\n缺少受伤日期 / 旧记录无法核对\n未观察 / 未观察\n\nTouchline Wire 赛前封存。按比赛、球队、球员和事件去重。数字仅涵盖已识别球员。部分采集和缺报的球队仍可能有其他伤停。"
+  }
+}

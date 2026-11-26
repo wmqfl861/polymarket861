@@ -1,0 +1,153 @@
+{
+  "scope": "Isolated rehearsal on a copied SQLite database. Named approvals and seals shown below were created in the rehearsal only.",
+  "candidate_source_tree": "0a0bd93fa0002418ae0d2a004d1b38c4dd46419c",
+  "previous_0_4_2_to_a1_on_same_3_12_14": {
+    "from_version": "B1",
+    "to_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+    "report_sha256_of_this_environment": "700ef99b5e82aeac620ac2e9840277ca6c94975bf648bec30d40f61c9470a460",
+    "execution": {
+      "reference_python": "3.12",
+      "release_provenance_sha256": "01d89fbe9a3699666b0b283673a29eac9041d2a58806eb04a20bb7b06f05cbe0",
+      "python": "3.12.14",
+      "numeric_runtime": {
+        "numpy": "2.3.5",
+        "scipy": "1.17.0"
+      }
+    },
+    "paired_count": 1900,
+    "rounds": 190,
+    "changed_training_views": 0,
+    "changed_predictions": 0,
+    "baseline_score": 75.44781323408776,
+    "candidate_score": 75.44781323408776
+  },
+  "original_a1_to_audit_3_12_3": {
+    "fields": 68,
+    "equal": 65,
+    "different": [
+      "candidate_execution.python",
+      "candidate_execution.release_provenance_sha256",
+      "report_sha256"
+    ]
+  },
+  "original_a1_recomputed_on_matching_3_12_14": {
+    "published": "reports/five-leagues-0.5/release-comparison-0.4.2.json",
+    "leaf_fields": 68,
+    "identical": 68,
+    "different": {}
+  },
+  "old_reverse_a1_to_0_4_2": {
+    "old_before": {
+      "state": "approval_required",
+      "ready": false,
+      "active_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc"
+    },
+    "reverse_report_sha256_of_this_environment": "89e1da2f33e8294a284bc14e648e87a21b8d9c80d585cbd8644185726c221e87",
+    "new_old_version_seal": {
+      "digest": "c3bde9b161bb206ad6d09c8669726e2e391229e328f63dfff600ae3deae1d94e",
+      "model_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85"
+    },
+    "a1_seal_preserved": true
+  },
+  "a1_to_a2_and_back": {
+    "forward": {
+      "from_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+      "to_version": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+      "report_sha256_of_this_environment": "463646b1cdb5af45468dd988bb9a71e0c9abd0fba8ac5ae3ce5d40b26c171b50",
+      "execution": {
+        "reference_python": "3.12",
+        "release_provenance_sha256": "f5b79418cc6f5354fd0866952eb888c63e7bfcd538da815430176e5670308661",
+        "python": "3.12.14",
+        "numeric_runtime": {
+          "numpy": "2.3.5",
+          "scipy": "1.17.0"
+        }
+      },
+      "paired_count": 1900,
+      "rounds": 190,
+      "changed_training_views": 0,
+      "changed_predictions": 0,
+      "baseline_score": 75.44781323408776,
+      "candidate_score": 75.44781323408776
+    },
+    "reverse": {
+      "from_version": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+      "to_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+      "report_sha256_of_this_environment": "0a8dc09ce223628c63cad663e5652eaf3f935c82972c3505c989a4152b5f8f02",
+      "execution": {
+        "reference_python": "3.12",
+        "release_provenance_sha256": "01d89fbe9a3699666b0b283673a29eac9041d2a58806eb04a20bb7b06f05cbe0",
+        "python": "3.12.14",
+        "numeric_runtime": {
+          "numpy": "2.3.5",
+          "scipy": "1.17.0"
+        }
+      },
+      "paired_count": 1900,
+      "rounds": 190,
+      "changed_training_views": 0,
+      "changed_predictions": 0,
+      "baseline_score": 75.44781323408776,
+      "candidate_score": 75.44781323408776
+    },
+    "old-seal-before": {
+      "exit": 0,
+      "digest": "06f1ad63f6fe258ec1d84f8b32108e2304eda5a95179bad9482de0930bffbcc7",
+      "model_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc"
+    },
+    "candidate-before": {
+      "exit": 0,
+      "ready": false,
+      "state": "approval_required",
+      "active_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc"
+    },
+    "candidate-seal-before": {
+      "exit": 2,
+      "reason": "pm861: a changed builtin requires forecast release-compare and named release-approve"
+    },
+    "candidate-sign-scratch": {
+      "exit": 0,
+      "version": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+      "effective_at": "2026-11-26T12:11:06.505078Z"
+    },
+    "candidate-seal": {
+      "exit": 0,
+      "digest": "a36123c020e375033756519b50e549a8e41309805b83f44bec463e37f4a99470",
+      "model_version": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261"
+    },
+    "old-seal-by-new": {
+      "exit": 0,
+      "digest": "06f1ad63f6fe258ec1d84f8b32108e2304eda5a95179bad9482de0930bffbcc7",
+      "model_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc"
+    },
+    "before-reverse": {
+      "exit": 0,
+      "ready": false,
+      "state": "approval_required",
+      "active_version": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261"
+    },
+    "freeze-active-before-reverse": {
+      "exit": 0,
+      "version": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+      "matches": 1900,
+      "study_sha256": "73d00a64cbd2235bfef1498bff459775cd2b218a4d530a2c82dd97c16d7a138f"
+    },
+    "old-sign-reverse-scratch": {
+      "exit": 0,
+      "version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc",
+      "effective_at": "2026-11-26T12:11:42.437293Z"
+    },
+    "new-seal-on-old-after-reverse": {
+      "exit": 0,
+      "digest": "b239181ea53dd64dc8f822f33d03ba668220391a2c6b65d5f1c8dc07020c1cdb",
+      "model_version": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc"
+    },
+    "new-seal-reopened-on-reversed-runtime": {
+      "exit": 0,
+      "digest": "a36123c020e375033756519b50e549a8e41309805b83f44bec463e37f4a99470",
+      "model_version": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261"
+    },
+    "a1_seal_reopened_with_a2": true,
+    "a2_seal_reopened_after_reverse": true
+  }
+}

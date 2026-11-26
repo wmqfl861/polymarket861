@@ -1,0 +1,166 @@
+{
+  "subject": "Claude 0.5.0a1 T2-1 and T2-6",
+  "scope": "Controlled source copies, pinned historical inputs, no deployments or model approvals.",
+  "claude_scanner": {
+    "family": "B1",
+    "reference_commit": "49313f4",
+    "before": {
+      "files_in_recipe_list": 26,
+      "definitions_in_recipe": 296,
+      "cross_file_references": 155,
+      "cross_file_references_into_recipe": 110,
+      "cross_file_references_not_in_recipe": 45
+    },
+    "before_unexplained": 39,
+    "after": {
+      "files_in_recipe_list": 28,
+      "definitions_in_recipe": 317,
+      "cross_file_references": 156,
+      "cross_file_references_into_recipe": 127,
+      "cross_file_references_not_in_recipe": 29
+    },
+    "newly_signed_targets": [
+      "blob_storage.decoded",
+      "dbscope.bind",
+      "dbscope.checked",
+      "dbscope.for_connection",
+      "dbscope.reading",
+      "evidence.link_lineage_db",
+      "evidence_sources.digest",
+      "football.SOURCE_COMMIT",
+      "ledger_rules.instant",
+      "ledger_rules.number",
+      "market_provider.GAMMA",
+      "paired_proof.SealedInputConflict",
+      "paired_proof.check_replay_cache",
+      "result_pairings.SOURCE",
+      "result_pairings.signature",
+      "store.builtin_model_at",
+      "store.eligible_fixtures"
+    ],
+    "newly_qualified_exclusions": [
+      "big5_market._identity",
+      "blob_storage.blob_size",
+      "blob_storage.representation",
+      "contract_storage.prepare",
+      "contract_storage.record",
+      "dbscope.prepare",
+      "football_model.apply_context",
+      "league_registry.club_key",
+      "league_registry.fixture_count",
+      "league_registry.fixture_exception",
+      "league_registry.profile",
+      "league_registry.round_count",
+      "league_registry.season_window",
+      "league_registry.source_blobs",
+      "league_registry.validate_members",
+      "model_study.build_sources",
+      "news.snapshot",
+      "news_model.paired_prediction",
+      "news_study_plan.PAIR_RECIPE_KIND",
+      "news_study_plan.declaration",
+      "store.put_report",
+      "store.save_report"
+    ],
+    "previously_excluded_now_qualified": [
+      "evidence_sources.db",
+      "evidence_sources.publish_source",
+      "result_admission.database",
+      "result_admission.enqueue",
+      "result_operations.publications",
+      "store.connect"
+    ],
+    "added_after_original_39": {
+      "target": "market_provider.fresh_observation",
+      "caller": "archive_proof._event_with_operation",
+      "decision": "qualified exclusion for the explicit require_fresh paper-entry branch",
+      "primary_epl_entry": "schedule_consensus._gamma uses its signed receipt deadline MAX_AGE and leaves require_fresh at False",
+      "paper_entry": "budget_schedule requires fresh Gamma parent HTTP evidence on both book legs"
+    }
+  },
+  "ci": {
+    "qualified_policy_sha256": "d8716adc119f963e91f1edfb8e420d3d2829a0efaa7f26624b27064ae9b50a49",
+    "control": {
+      "scope": "primary football probability and input admission; B3 news is signed separately",
+      "reviewed_edges_by_family": {
+        "B0": 60,
+        "B1": 60,
+        "B2": 59,
+        "B3": 60
+      },
+      "unreviewed": [],
+      "obsolete": []
+    },
+    "controlled_negative": {
+      "change": "add a fresh unsigned research_probe.uncertified_input() call to football._club_key in a source copy",
+      "returncode": 1,
+      "detected": [
+        [
+          "B0",
+          "football._club_key",
+          "research_probe.uncertified_input"
+        ],
+        [
+          "B1",
+          "football._club_key",
+          "research_probe.uncertified_input"
+        ],
+        [
+          "B2",
+          "football._club_key",
+          "research_probe.uncertified_input"
+        ],
+        [
+          "B3",
+          "football._club_key",
+          "research_probe.uncertified_input"
+        ]
+      ]
+    },
+    "additional_target_beyond_claude_scanner": "__init__.__version__ (HTTP User-Agent in market_provider.get)"
+  },
+  "pinned_replay": {
+    "research_id": "7dab5bcc0b471fa97afd87cb2deae096e41b759e5e28473fb8dca81e8893f2ca",
+    "canonical_a1_fields_unchanged": true,
+    "verified_openfootball_blobs": 40,
+    "source_commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "development_pairs": 7126,
+    "holdout_pairs": 1751
+  },
+  "celta_alias_removal": {
+    "changed_file": [
+      "league_registry.py"
+    ],
+    "removed": "RC Celta -> RC Celta de Vigo",
+    "research_id": "61dae2d3e285ef926d6d1362a7361e6bb47ef89862b0fb9753f6f8cddf93c086",
+    "identical_country_results": {
+      "epl": true,
+      "lal": false,
+      "bun": true,
+      "sea": true,
+      "fl1": true
+    },
+    "effective_club_fingerprints_changed": [
+      "lal"
+    ],
+    "primary_b1_unchanged": true,
+    "control_primary_b1": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+    "mutated_primary_b1": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+    "lal_development_mean_b1": [
+      76.07987242051323,
+      76.072781995375
+    ],
+    "lal_holdout_mean_b1": [
+      75.86949646093588,
+      75.86949646093588
+    ]
+  },
+  "tools_without_archived_review_docs": {
+    "package": "0.5.0a1 code and league-boundaries.json; 0.5.0a2 product scripts",
+    "check_league_boundaries_exit": 0,
+    "reproduce_news_absorption_exit": 0,
+    "original_stdout_sha256": "16ee53d740576891f073df0fb7cf1655538d2133d7f446bcae4c906f1e584921",
+    "isolated_stdout_sha256": "16ee53d740576891f073df0fb7cf1655538d2133d7f446bcae4c906f1e584921",
+    "same_stdout_bytes": true
+  }
+}

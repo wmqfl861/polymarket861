@@ -1,0 +1,2919 @@
+{
+  "protocol": "five-league-initial-b1-2026-11-26-v1",
+  "research_recipe": {
+    "sha256": "7dab5bcc0b471fa97afd87cb2deae096e41b759e5e28473fb8dca81e8893f2ca",
+    "manifest": {
+      "format": "five-league-historical-replay-v1",
+      "package_files_sha256": {
+        "league_study.py": "ed740a8261a9be94c4c99174d8fc4c26761fc06d28258144719aa055fb9e10cc",
+        "league_registry.py": "baf69122654f12e1d6e5e8c3025142adc7f70dfb9c9fad9345fc37720071991d",
+        "football.py": "f0db7ff4ed77d00ba22e4a96e11b9991793d0d653871756047fc273e50f720e8",
+        "football_model.py": "093e90294315132d2c60826734bb7a12fc329264ca8d4863bb3ad69bd5b2b829",
+        "historical_inputs.py": "0b8b3482109bf54880ce77be95e9c48439ba8df969c44dd4a788ebb023a1b30d",
+        "score_bounds.py": "ba4b9fc61058292e26b4db10d732f17978973fa0e307acc3ffdddb3d0a754eac",
+        "experiment_statistics.py": "b8eff64b3810976a0d03adf8c7acc9e5caec5949d6e931ba110598336ed748c6",
+        "assets/league-memberships-v1.json.gz": "3d20a7db74ade47bea643af5a8f24d19a22c7920d03bdbb3cd36ad4b4d300e37"
+      },
+      "registry_version": "openfootball-five-v1",
+      "effective_club_keys_sha256": {
+        "epl": "8bec7149ff772877c2c1a889162ee734c7e9c24de44831d9c7f284a7d1532779",
+        "lal": "fc4a34f15556ed3c1c5ab9b36e9a0422f0aa11d695ff5dca3262b745886925c6",
+        "bun": "0455eba6ec3465ddb417863428adbd7031f9a842ce5a553019a925e06aa54217",
+        "sea": "de015fccbc7324813c760ba2d11605eb24549d0944d5b7576dcb0082a0e52efd",
+        "fl1": "982aa19b131655ba82ac5740a8094aeefe6ab1515228e09f3a78ab359d5aadee"
+      },
+      "openfootball_commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+      "verified_source_blobs_sha256": "d8c9a948aacb0b2f9e574791639e3551ef848ba3c5424b48cb8ef20ac5c84f5b",
+      "numeric_runtime": {
+        "numpy": "2.3.5",
+        "scipy": "1.17.0"
+      }
+    }
+  },
+  "scope": "retrospective, research-only; unverified local receipts; no news, executions or ROI",
+  "inputs": {
+    "openfootball_commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "git_blobs": {
+      "epl": {
+        "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+        "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+        "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+        "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+        "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+        "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+        "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+        "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+      },
+      "lal": {
+        "2018-19": "16fc0602a202a7757e1cb3dbfa47008d0aaa27af",
+        "2019-20": "64307d5017689bbe5e099e2f1162a05a56bc47c5",
+        "2020-21": "a75987a794ded50077d54d934a0bd951938becea",
+        "2021-22": "0fc4da4c0d441eb9e1068b0dcd13495c54150882",
+        "2022-23": "f777848f48f8ec0528cc0ec67c6c05bba0bca961",
+        "2023-24": "a9d391f61af872bb9f456951d2f71f10d9e10704",
+        "2024-25": "ba4e9bc10b172d6413a92aeba0c04eb70961cd05",
+        "2025-26": "ca95ceb8861f8f1ae876eb066e71148ff773425b"
+      },
+      "bun": {
+        "2018-19": "1d54f5ab4e9aa24e9b1f92b9cfaaec03f54cc54a",
+        "2019-20": "d47c58202cbcd4eff7e8898a5b426c80be567b02",
+        "2020-21": "39b187140dd0fe025e029d82dc40b5e59266678d",
+        "2021-22": "716c7bddd678bcac2cfc0988108a4196b1edda8e",
+        "2022-23": "7fc779362c4d775bc7cea2fa3b79ce1941bbc796",
+        "2023-24": "2c41078e751d914f24bfe7e55c5567cea70a4aee",
+        "2024-25": "9921b1d8485429913ff6d161500beb519d8b0e51",
+        "2025-26": "320994ff4b376c0aa7abe7929f9b9740cfc0eff5"
+      },
+      "sea": {
+        "2018-19": "b064ae0c6aa7bc5cc6b1732934a5549bb858e565",
+        "2019-20": "5858e492e536affca47beb6182dea468b5ac7aff",
+        "2020-21": "f2bdbfb26bca5a438763be3d4b3c2c21ff770822",
+        "2021-22": "c214cde31d8186600e41c190f4cd29526d64bc14",
+        "2022-23": "b9bec73a92557da814c959b7c4f12bb501c20c7a",
+        "2023-24": "674079696d1298ce45abab6a1f8953d0675b995f",
+        "2024-25": "5c1cb89a7b676eee1db06d79b65773220b599e96",
+        "2025-26": "00c57db6aa94737d6f965a67d1b89de58fcf3746"
+      },
+      "fl1": {
+        "2018-19": "35d23884ffc7468eafd832e54e7c2958decf0633",
+        "2019-20": "bdf6dde0982880d1c51bb28e4340f325f84e8e09",
+        "2020-21": "f7fecceedcfc367bc252caf2de2bab0fd7fc95f4",
+        "2021-22": "eff96e594a2651be60e09555a5f70aacf2be4716",
+        "2022-23": "5fae7b79a038f09f1ae982143cdd02dc111eb9f5",
+        "2023-24": "a5c5c479bd14c4581931219a41687d9938e4dc1e",
+        "2024-25": "8bc6ec90c62fa423386ec60473cfa6236419a636",
+        "2025-26": "b6eec1251b125725d32efe85c8a969b68765d26a"
+      }
+    }
+  },
+  "assumptions": {
+    "archive_lag_hours": 24,
+    "cutoff_minutes": 60,
+    "decay_per_day": 0.002,
+    "ridge": 8.0,
+    "minimum_matches": 40,
+    "development": [
+      "2021-22",
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "holdout": "2025-26",
+    "family_comparisons_per_registered_analysis": 10,
+    "prior_disclosure": "EPL holdout outcomes and five-league descriptive aggregates were public."
+  },
+  "leagues": {
+    "epl": {
+      "development": {
+        "matches": 1519,
+        "cluster_unit": "season_official_round",
+        "clusters": 152,
+        "mean_b1": 75.67669474898176,
+        "mean_b0": 73.53991862285676,
+        "intervals": {
+          "composite": {
+            "difference": 2.136776126125005,
+            "standard_error": 0.21172238371145757,
+            "lower": 1.5336066503522554,
+            "upper": 2.7399456018977544
+          },
+          "result": {
+            "difference": 3.5585996006128844,
+            "standard_error": 0.3099349135391045,
+            "lower": 2.675635428162291,
+            "upper": 4.441563773063478
+          },
+          "total": {
+            "difference": 0.5162083992316138,
+            "standard_error": 0.22721406787204645,
+            "lower": -0.13109486556324457,
+            "upper": 1.1635116640264722
+          },
+          "home": {
+            "difference": 2.892205968969169,
+            "standard_error": 0.3471552315664426,
+            "lower": 1.90320596167156,
+            "upper": 3.881205976266778
+          },
+          "away": {
+            "difference": 1.5800905356863495,
+            "standard_error": 0.3090763969519692,
+            "lower": 0.6995721650953758,
+            "upper": 2.460608906277323
+          }
+        }
+      },
+      "holdout": {
+        "matches": 380,
+        "cluster_unit": "season_official_round",
+        "clusters": 38,
+        "mean_b1": 74.52587165292077,
+        "mean_b0": 73.64667974761466,
+        "intervals": {
+          "composite": {
+            "difference": 0.8791919053061086,
+            "standard_error": 0.3741312107830915,
+            "lower": -0.2376810692385376,
+            "upper": 1.9960648798507548
+          },
+          "result": {
+            "difference": 2.07531431836932,
+            "standard_error": 0.6031184784079079,
+            "lower": 0.274858463397051,
+            "upper": 3.875770173341589
+          },
+          "total": {
+            "difference": -0.1940612029127058,
+            "standard_error": 0.4236197777971915,
+            "lower": -1.4586696281600604,
+            "upper": 1.0705472223346488
+          },
+          "home": {
+            "difference": 0.8351733307156954,
+            "standard_error": 0.5503338880259879,
+            "lower": -0.8077076393743949,
+            "upper": 2.478054300805786
+          },
+          "away": {
+            "difference": 0.8003411750521203,
+            "standard_error": 0.5306709540778386,
+            "lower": -0.7838411382726658,
+            "upper": 2.3845234883769066
+          }
+        },
+        "scheduled": 380,
+        "coverage": 1.0,
+        "rounds_with_pairs": 38,
+        "registered_rounds": 38,
+        "fallback_fixtures": [
+          "epl/2025-26/sunderland/west-ham-united"
+        ]
+      },
+      "by_season": {
+        "2021-22": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 76.21982669793574,
+          "mean_b0": 73.75,
+          "intervals": {
+            "composite": {
+              "difference": 2.469826697935748,
+              "standard_error": 0.3823747746119423,
+              "lower": 1.3283446734401338,
+              "upper": 3.6113087224313625
+            },
+            "result": {
+              "difference": 4.171673264503327,
+              "standard_error": 0.5599505247841536,
+              "lower": 2.500084286656474,
+              "upper": 5.84326224235018
+            },
+            "total": {
+              "difference": 0.479316316800941,
+              "standard_error": 0.462501939551682,
+              "lower": -0.90136485085293,
+              "upper": 1.8599974844548122
+            },
+            "home": {
+              "difference": 3.2199834875646705,
+              "standard_error": 0.6974121651668893,
+              "lower": 1.138037964326414,
+              "upper": 5.301929010802927
+            },
+            "away": {
+              "difference": 2.0083337228740614,
+              "standard_error": 0.5156597993784414,
+              "lower": 0.46896336994513144,
+              "upper": 3.5477040758029914
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "epl/2021-22/brentford/arsenal"
+          ]
+        },
+        "2022-23": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 75.41649438009257,
+          "mean_b0": 73.89860341643582,
+          "intervals": {
+            "composite": {
+              "difference": 1.517890963656756,
+              "standard_error": 0.38109248184185524,
+              "lower": 0.38023689603586086,
+              "upper": 2.6555450312776507
+            },
+            "result": {
+              "difference": 2.2848087815775906,
+              "standard_error": 0.64321380085636,
+              "lower": 0.3646586034436752,
+              "upper": 4.204958959711506
+            },
+            "total": {
+              "difference": 0.7104269607557464,
+              "standard_error": 0.42058360549551077,
+              "lower": -0.545117749163741,
+              "upper": 1.9659716706752337
+            },
+            "home": {
+              "difference": 2.55122912968643,
+              "standard_error": 0.6970364331555192,
+              "lower": 0.47040525820316104,
+              "upper": 4.632053001169698
+            },
+            "away": {
+              "difference": 0.5250989826072477,
+              "standard_error": 0.5471623760047206,
+              "lower": -1.108314250061036,
+              "upper": 2.1585122152755316
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "epl/2022-23/newcastle-united/nottingham-forest"
+          ]
+        },
+        "2023-24": {
+          "matches": 379,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 76.01336647013139,
+          "mean_b0": 73.20841352849791,
+          "intervals": {
+            "composite": {
+              "difference": 2.804952941633485,
+              "standard_error": 0.5119250122708686,
+              "lower": 1.2767318397317413,
+              "upper": 4.333174043535228
+            },
+            "result": {
+              "difference": 4.47452847650447,
+              "standard_error": 0.7039663271639214,
+              "lower": 2.373017180098156,
+              "upper": 6.576039772910784
+            },
+            "total": {
+              "difference": 0.6421496153243011,
+              "standard_error": 0.5229353888042801,
+              "lower": -0.9189401477190478,
+              "upper": 2.20323937836765
+            },
+            "home": {
+              "difference": 3.430598884746212,
+              "standard_error": 0.7503274604609423,
+              "lower": 1.1906882905632563,
+              "upper": 5.6705094789291675
+            },
+            "away": {
+              "difference": 2.672534789958955,
+              "standard_error": 0.6946324898060219,
+              "lower": 0.5988872760796675,
+              "upper": 4.746182303838243
+            }
+          },
+          "scheduled": 380,
+          "coverage": 0.9973684210526316,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "epl/2023-24/brighton-hove-albion/luton-town"
+          ]
+        },
+        "2024-25": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 75.0579774259809,
+          "mean_b0": 73.30178516466606,
+          "intervals": {
+            "composite": {
+              "difference": 1.756192261314843,
+              "standard_error": 0.3865701185913194,
+              "lower": 0.6021861111263271,
+              "upper": 2.910198411503359
+            },
+            "result": {
+              "difference": 3.3057982190132384,
+              "standard_error": 0.5172537065541328,
+              "lower": 1.7616696641563367,
+              "upper": 4.84992677387014
+            },
+            "total": {
+              "difference": 0.2332721282983422,
+              "standard_error": 0.41848532913831593,
+              "lower": -1.0160087145901864,
+              "upper": 1.4825529711868706
+            },
+            "home": {
+              "difference": 2.3684291973419405,
+              "standard_error": 0.6415955663905235,
+              "lower": 0.4531098440343915,
+              "upper": 4.28374855064949
+            },
+            "away": {
+              "difference": 1.1172695006058513,
+              "standard_error": 0.662624588330035,
+              "lower": -0.8608266155282658,
+              "upper": 3.0953656167399686
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "epl/2024-25/ipswich-town/liverpool"
+          ]
+        },
+        "2025-26": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 74.52587165292077,
+          "mean_b0": 73.64667974761466,
+          "intervals": {
+            "composite": {
+              "difference": 0.8791919053061086,
+              "standard_error": 0.3741312107830915,
+              "lower": -0.2376810692385376,
+              "upper": 1.9960648798507548
+            },
+            "result": {
+              "difference": 2.07531431836932,
+              "standard_error": 0.6031184784079079,
+              "lower": 0.274858463397051,
+              "upper": 3.875770173341589
+            },
+            "total": {
+              "difference": -0.1940612029127058,
+              "standard_error": 0.4236197777971915,
+              "lower": -1.4586696281600604,
+              "upper": 1.0705472223346488
+            },
+            "home": {
+              "difference": 0.8351733307156954,
+              "standard_error": 0.5503338880259879,
+              "lower": -0.8077076393743949,
+              "upper": 2.478054300805786
+            },
+            "away": {
+              "difference": 0.8003411750521203,
+              "standard_error": 0.5306709540778386,
+              "lower": -0.7838411382726658,
+              "upper": 2.3845234883769066
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "epl/2025-26/sunderland/west-ham-united"
+          ]
+        }
+      },
+      "paired_counts_by_official_round": {
+        "2021-22": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2022-23": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2023-24": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 9,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2024-25": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2025-26": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        }
+      },
+      "omissions_in_graded_fixtures": {
+        "registered_replayed": 1
+      },
+      "excluded_fixtures": [
+        {
+          "fixture_id": "epl/2023-24/bournemouth/luton-town",
+          "round": 17,
+          "reason": "registered_replayed",
+          "regulation_result_versions": 1
+        }
+      ],
+      "missing_score_without_exception": []
+    },
+    "lal": {
+      "development": {
+        "matches": 1509,
+        "cluster_unit": "season_official_round",
+        "clusters": 151,
+        "mean_b1": 76.07987242051323,
+        "mean_b0": 74.32203277972465,
+        "intervals": {
+          "composite": {
+            "difference": 1.757839640788576,
+            "standard_error": 0.19661476414984397,
+            "lower": 1.197654207606752,
+            "upper": 2.3180250739704
+          },
+          "result": {
+            "difference": 2.9414562611922745,
+            "standard_error": 0.2938509098425383,
+            "lower": 2.1042302271617777,
+            "upper": 3.7786822952227714
+          },
+          "total": {
+            "difference": 0.6825842113302389,
+            "standard_error": 0.27045076542248814,
+            "lower": -0.0879712443479993,
+            "upper": 1.453139667008477
+          },
+          "home": {
+            "difference": 1.9871286368430812,
+            "standard_error": 0.33204451208127916,
+            "lower": 1.0410832081582875,
+            "upper": 2.933174065527875
+          },
+          "away": {
+            "difference": 1.420189453788716,
+            "standard_error": 0.2732713736259552,
+            "lower": 0.6415976553916207,
+            "upper": 2.198781252185811
+          }
+        }
+      },
+      "holdout": {
+        "matches": 380,
+        "cluster_unit": "season_official_round",
+        "clusters": 38,
+        "mean_b1": 75.86949646093588,
+        "mean_b0": 74.26969355955679,
+        "intervals": {
+          "composite": {
+            "difference": 1.5998029013790935,
+            "standard_error": 0.39810940400355727,
+            "lower": 0.41134916796032495,
+            "upper": 2.788256634797862
+          },
+          "result": {
+            "difference": 2.436409538117042,
+            "standard_error": 0.57128649039719,
+            "lower": 0.7309799362627252,
+            "upper": 4.141839139971358
+          },
+          "total": {
+            "difference": 0.6141952976164151,
+            "standard_error": 0.5543684811724392,
+            "lower": -1.0407299176974907,
+            "upper": 2.269120512930321
+          },
+          "home": {
+            "difference": 2.622013464189729,
+            "standard_error": 0.5070113578484208,
+            "lower": 1.1084608199640957,
+            "upper": 4.135566108415362
+          },
+          "away": {
+            "difference": 0.7265933055932015,
+            "standard_error": 0.5484969069544398,
+            "lower": -0.9108038276652388,
+            "upper": 2.3639904388516415
+          }
+        },
+        "scheduled": 380,
+        "coverage": 1.0,
+        "rounds_with_pairs": 38,
+        "registered_rounds": 38,
+        "fallback_fixtures": [
+          "lal/2025-26/villarreal-cf/real-oviedo",
+          "lal/2025-26/deportivo-alaves/levante-ud"
+        ]
+      },
+      "by_season": {
+        "2021-22": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 75.66869753470563,
+          "mean_b0": 74.43805786395814,
+          "intervals": {
+            "composite": {
+              "difference": 1.2306396707474756,
+              "standard_error": 0.3729083964985479,
+              "lower": 0.11741709528189914,
+              "upper": 2.3438622462130523
+            },
+            "result": {
+              "difference": 2.481948645927056,
+              "standard_error": 0.5801838142349207,
+              "lower": 0.7499583609387825,
+              "upper": 4.2139389309153295
+            },
+            "total": {
+              "difference": 0.02358791998579378,
+              "standard_error": 0.4711595540416911,
+              "lower": -1.3829383398956896,
+              "upper": 1.4301141798672772
+            },
+            "home": {
+              "difference": 1.4169871270341683,
+              "standard_error": 0.6322436897075628,
+              "lower": -0.4704145919583742,
+              "upper": 3.304388846026711
+            },
+            "away": {
+              "difference": 1.0000349900429004,
+              "standard_error": 0.5564187884696207,
+              "lower": -0.661010892950509,
+              "upper": 2.66108087303631
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": []
+        },
+        "2022-23": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 76.04255368680991,
+          "mean_b0": 74.63527239150507,
+          "intervals": {
+            "composite": {
+              "difference": 1.4072812953048328,
+              "standard_error": 0.3929768759504304,
+              "lower": 0.2341494107679878,
+              "upper": 2.5804131798416776
+            },
+            "result": {
+              "difference": 2.1497298065263517,
+              "standard_error": 0.6863729780283794,
+              "lower": 0.10073895111742726,
+              "upper": 4.198720661935276
+            },
+            "total": {
+              "difference": 0.278697065305924,
+              "standard_error": 0.4447685384014806,
+              "lower": -1.0490455719057443,
+              "upper": 1.6064397025175923
+            },
+            "home": {
+              "difference": 1.4485768776369268,
+              "standard_error": 0.5868984594496837,
+              "lower": -0.30345826209181936,
+              "upper": 3.200612017365673
+            },
+            "away": {
+              "difference": 1.7521214317501215,
+              "standard_error": 0.45134049539023485,
+              "lower": 0.40475989897706444,
+              "upper": 3.0994829645231787
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "lal/2022-23/valencia-cf/girona",
+            "lal/2022-23/ud-almeria/real-madrid-cf"
+          ]
+        },
+        "2023-24": {
+          "matches": 379,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 76.24292181716332,
+          "mean_b0": 73.92353304771673,
+          "intervals": {
+            "composite": {
+              "difference": 2.3193887694465882,
+              "standard_error": 0.34164697829454765,
+              "lower": 1.2994891569728069,
+              "upper": 3.33928838192037
+            },
+            "result": {
+              "difference": 3.79909937982668,
+              "standard_error": 0.42896804668222327,
+              "lower": 2.5185250666605192,
+              "upper": 5.0796736929928406
+            },
+            "total": {
+              "difference": 1.5041008526417303,
+              "standard_error": 0.5425538618248696,
+              "lower": -0.11555484044703546,
+              "upper": 3.123756545730496
+            },
+            "home": {
+              "difference": 2.329097851246056,
+              "standard_error": 0.6629059382991185,
+              "lower": 0.35016183678803103,
+              "upper": 4.308033865704081
+            },
+            "away": {
+              "difference": 1.6452569940719046,
+              "standard_error": 0.5776614241586592,
+              "lower": -0.07920334092492198,
+              "upper": 3.369717329068731
+            }
+          },
+          "scheduled": 380,
+          "coverage": 0.9973684210526316,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "lal/2023-24/ud-las-palmas/rcd-mallorca"
+          ]
+        },
+        "2024-25": {
+          "matches": 370,
+          "cluster_unit": "season_official_round",
+          "clusters": 37,
+          "mean_b1": 76.37347202614501,
+          "mean_b0": 74.28935930390224,
+          "intervals": {
+            "composite": {
+              "difference": 2.0841127222427716,
+              "standard_error": 0.4483379412813399,
+              "lower": 0.7433641289505097,
+              "upper": 3.4248613155350336
+            },
+            "result": {
+              "difference": 3.3480027601419904,
+              "standard_error": 0.6089505482944874,
+              "lower": 1.5269443222212769,
+              "upper": 5.169061198062704
+            },
+            "total": {
+              "difference": 0.9326947495547623,
+              "standard_error": 0.6729167707966068,
+              "lower": -1.0796538178446853,
+              "upper": 2.94504331695421
+            },
+            "home": {
+              "difference": 2.7754992043214513,
+              "standard_error": 0.7665815830816486,
+              "lower": 0.4830472734786917,
+              "upper": 5.067951135164211
+            },
+            "away": {
+              "difference": 1.2802541749528937,
+              "standard_error": 0.6047835311762473,
+              "lower": -0.5283428542288275,
+              "upper": 3.088851204134615
+            }
+          },
+          "scheduled": 380,
+          "coverage": 0.9736842105263158,
+          "rounds_with_pairs": 37,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "lal/2024-25/ca-osasuna/cd-leganes"
+          ]
+        },
+        "2025-26": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 75.86949646093588,
+          "mean_b0": 74.26969355955679,
+          "intervals": {
+            "composite": {
+              "difference": 1.5998029013790935,
+              "standard_error": 0.39810940400355727,
+              "lower": 0.41134916796032495,
+              "upper": 2.788256634797862
+            },
+            "result": {
+              "difference": 2.436409538117042,
+              "standard_error": 0.57128649039719,
+              "lower": 0.7309799362627252,
+              "upper": 4.141839139971358
+            },
+            "total": {
+              "difference": 0.6141952976164151,
+              "standard_error": 0.5543684811724392,
+              "lower": -1.0407299176974907,
+              "upper": 2.269120512930321
+            },
+            "home": {
+              "difference": 2.622013464189729,
+              "standard_error": 0.5070113578484208,
+              "lower": 1.1084608199640957,
+              "upper": 4.135566108415362
+            },
+            "away": {
+              "difference": 0.7265933055932015,
+              "standard_error": 0.5484969069544398,
+              "lower": -0.9108038276652388,
+              "upper": 2.3639904388516415
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "lal/2025-26/villarreal-cf/real-oviedo",
+            "lal/2025-26/deportivo-alaves/levante-ud"
+          ]
+        }
+      },
+      "paired_counts_by_official_round": {
+        "2021-22": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2022-23": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2023-24": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 9,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2024-25": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 0
+        },
+        "2025-26": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        }
+      },
+      "omissions_in_graded_fixtures": {
+        "registered_resumed": 1
+      },
+      "excluded_fixtures": [
+        {
+          "fixture_id": "lal/2023-24/granada-cf/athletic-club",
+          "round": 16,
+          "reason": "registered_resumed",
+          "regulation_result_versions": 1
+        }
+      ],
+      "missing_score_without_exception": [
+        "lal/2024-25/real-betis-balompie/valencia-cf",
+        "lal/2024-25/real-madrid-cf/real-sociedad-de-futbol",
+        "lal/2024-25/cd-leganes/real-valladolid-cf",
+        "lal/2024-25/rcd-espanyol-de-barcelona/ud-las-palmas",
+        "lal/2024-25/deportivo-alaves/ca-osasuna",
+        "lal/2024-25/getafe-cf/rc-celta-de-vigo",
+        "lal/2024-25/rayo-vallecano-de-madrid/rcd-mallorca",
+        "lal/2024-25/girona/club-atletico-de-madrid",
+        "lal/2024-25/villarreal-cf/sevilla",
+        "lal/2024-25/athletic-club/barcelona"
+      ]
+    },
+    "bun": {
+      "development": {
+        "matches": 1222,
+        "cluster_unit": "season_official_round",
+        "clusters": 136,
+        "mean_b1": 75.38854151468358,
+        "mean_b0": 73.62817270371694,
+        "intervals": {
+          "composite": {
+            "difference": 1.7603688109666396,
+            "standard_error": 0.19941336510509472,
+            "lower": 1.1912621358282203,
+            "upper": 2.329475486105059
+          },
+          "result": {
+            "difference": 2.6176506083293654,
+            "standard_error": 0.34306865776840956,
+            "lower": 1.6385654649445016,
+            "upper": 3.5967357517142293
+          },
+          "total": {
+            "difference": 0.6846949138605751,
+            "standard_error": 0.28881180463835204,
+            "lower": -0.13954635899410972,
+            "upper": 1.50893618671526
+          },
+          "home": {
+            "difference": 2.1511078482401658,
+            "standard_error": 0.3568313285929828,
+            "lower": 1.1327453583751925,
+            "upper": 3.169470338105139
+          },
+          "away": {
+            "difference": 1.5880218734364593,
+            "standard_error": 0.35166488157335707,
+            "lower": 0.584403929324818,
+            "upper": 2.5916398175481006
+          }
+        }
+      },
+      "holdout": {
+        "matches": 306,
+        "cluster_unit": "season_official_round",
+        "clusters": 34,
+        "mean_b1": 75.62217313616095,
+        "mean_b0": 73.8439395143097,
+        "intervals": {
+          "composite": {
+            "difference": 1.778233621851258,
+            "standard_error": 0.5073808907030618,
+            "lower": 0.25190912145215294,
+            "upper": 3.304558122250363
+          },
+          "result": {
+            "difference": 3.584360627988426,
+            "standard_error": 0.7363566835083322,
+            "lower": 1.369221532950737,
+            "upper": 5.7994997230261145
+          },
+          "total": {
+            "difference": 0.013187738971957965,
+            "standard_error": 0.5117118480343177,
+            "lower": -1.5261653291284634,
+            "upper": 1.5525408070723792
+          },
+          "home": {
+            "difference": 0.8066632398165617,
+            "standard_error": 0.6927135932384599,
+            "lower": -1.2771868784925569,
+            "upper": 2.89051335812568
+          },
+          "away": {
+            "difference": 2.708722880628092,
+            "standard_error": 0.731518348305908,
+            "lower": 0.5081386687086269,
+            "upper": 4.909307092547557
+          }
+        },
+        "scheduled": 306,
+        "coverage": 1.0,
+        "rounds_with_pairs": 34,
+        "registered_rounds": 34,
+        "fallback_fixtures": [
+          "bun/2025-26/borussia-monchengladbach/hamburger-sv"
+        ]
+      },
+      "by_season": {
+        "2021-22": {
+          "matches": 305,
+          "cluster_unit": "season_official_round",
+          "clusters": 34,
+          "mean_b1": 75.5817949018998,
+          "mean_b0": 73.85657505975352,
+          "intervals": {
+            "composite": {
+              "difference": 1.7252198421462681,
+              "standard_error": 0.39995677868168583,
+              "lower": 0.5220530662815741,
+              "upper": 2.928386618010962
+            },
+            "result": {
+              "difference": 2.306887563362028,
+              "standard_error": 0.6278354032097013,
+              "lower": 0.4182067405406191,
+              "upper": 4.195568386183437
+            },
+            "total": {
+              "difference": 1.095084153113628,
+              "standard_error": 0.769554366336938,
+              "lower": -1.2199216053838682,
+              "upper": 3.410089911611124
+            },
+            "home": {
+              "difference": 2.0889978266001727,
+              "standard_error": 0.7693726038636831,
+              "lower": -0.22546114639304937,
+              "upper": 4.403456799593394
+            },
+            "away": {
+              "difference": 1.4099098255092501,
+              "standard_error": 0.6366688440422111,
+              "lower": -0.5053441249417843,
+              "upper": 3.3251637759602843
+            }
+          },
+          "scheduled": 306,
+          "coverage": 0.9967320261437909,
+          "rounds_with_pairs": 34,
+          "registered_rounds": 34,
+          "fallback_fixtures": [
+            "bun/2021-22/vfb-stuttgart/spvgg-greuther-furth-1903",
+            "bun/2021-22/vfl-wolfsburg/vfl-bochum-1848"
+          ]
+        },
+        "2022-23": {
+          "matches": 306,
+          "cluster_unit": "season_official_round",
+          "clusters": 34,
+          "mean_b1": 74.91728390043495,
+          "mean_b0": 73.84675671639982,
+          "intervals": {
+            "composite": {
+              "difference": 1.070527184035125,
+              "standard_error": 0.3837915427295441,
+              "lower": -0.08401065025808552,
+              "upper": 2.225065018328335
+            },
+            "result": {
+              "difference": 2.1257469536808684,
+              "standard_error": 0.7095786786034631,
+              "lower": -0.008837422590266097,
+              "upper": 4.2603313299520025
+            },
+            "total": {
+              "difference": -0.25537127217634226,
+              "standard_error": 0.47454323468849957,
+              "lower": -1.6829121568952168,
+              "upper": 1.172169612542532
+            },
+            "home": {
+              "difference": 1.628130556077005,
+              "standard_error": 0.7002612913506445,
+              "lower": -0.47842486462196154,
+              "upper": 3.7346859767759715
+            },
+            "away": {
+              "difference": 0.7836024985589797,
+              "standard_error": 0.6605740461458496,
+              "lower": -1.2035640846426032,
+              "upper": 2.770769081760563
+            }
+          },
+          "scheduled": 306,
+          "coverage": 1.0,
+          "rounds_with_pairs": 34,
+          "registered_rounds": 34,
+          "fallback_fixtures": []
+        },
+        "2023-24": {
+          "matches": 306,
+          "cluster_unit": "season_official_round",
+          "clusters": 34,
+          "mean_b1": 76.01779270183893,
+          "mean_b0": 73.80585647230164,
+          "intervals": {
+            "composite": {
+              "difference": 2.2119362295372853,
+              "standard_error": 0.36114276202907303,
+              "lower": 1.1255314083723258,
+              "upper": 3.298341050702245
+            },
+            "result": {
+              "difference": 3.2354138422069387,
+              "standard_error": 0.6120652456548001,
+              "lower": 1.3941734695330437,
+              "upper": 5.076654214880834
+            },
+            "total": {
+              "difference": 0.7534196539740687,
+              "standard_error": 0.411605796758585,
+              "lower": -0.4847901872132585,
+              "upper": 1.991629495161396
+            },
+            "home": {
+              "difference": 1.8458801726982275,
+              "standard_error": 0.7515446801357615,
+              "lower": -0.4149480915399453,
+              "upper": 4.1067084369364
+            },
+            "away": {
+              "difference": 3.013031249269896,
+              "standard_error": 0.7015988066994161,
+              "lower": 0.9024522587363206,
+              "upper": 5.1236102398034715
+            }
+          },
+          "scheduled": 306,
+          "coverage": 1.0,
+          "rounds_with_pairs": 34,
+          "registered_rounds": 34,
+          "fallback_fixtures": [
+            "bun/2023-24/vfl-wolfsburg/1-heidenheim-1846",
+            "bun/2023-24/eintracht-frankfurt/sv-darmstadt-98"
+          ]
+        },
+        "2024-25": {
+          "matches": 305,
+          "cluster_unit": "season_official_round",
+          "clusters": 34,
+          "mean_b1": 75.03677654284621,
+          "mean_b0": 73.00220332778567,
+          "intervals": {
+            "composite": {
+              "difference": 2.0345732150605405,
+              "standard_error": 0.43619947067288584,
+              "lower": 0.7223796513128138,
+              "upper": 3.3467667788082673
+            },
+            "result": {
+              "difference": 2.802141419709494,
+              "standard_error": 0.7945636828632923,
+              "lower": 0.4119015850931347,
+              "upper": 5.192381254325854
+            },
+            "total": {
+              "difference": 1.1485039777306967,
+              "standard_error": 0.5837309645701989,
+              "lower": -0.6075000208245449,
+              "upper": 2.904507976285938
+            },
+            "home": {
+              "difference": 3.0441382637088807,
+              "standard_error": 0.6328864552658127,
+              "lower": 1.1402626539979794,
+              "upper": 4.948013873419782
+            },
+            "away": {
+              "difference": 1.1435091990930997,
+              "standard_error": 0.7757421824353856,
+              "lower": -1.1901110076189072,
+              "upper": 3.4771294058051065
+            }
+          },
+          "scheduled": 306,
+          "coverage": 0.9967320261437909,
+          "rounds_with_pairs": 34,
+          "registered_rounds": 34,
+          "fallback_fixtures": [
+            "bun/2024-25/tsg-1899-hoffenheim/holstein-kiel",
+            "bun/2024-25/st-pauli-1910/1-heidenheim-1846"
+          ]
+        },
+        "2025-26": {
+          "matches": 306,
+          "cluster_unit": "season_official_round",
+          "clusters": 34,
+          "mean_b1": 75.62217313616095,
+          "mean_b0": 73.8439395143097,
+          "intervals": {
+            "composite": {
+              "difference": 1.778233621851258,
+              "standard_error": 0.5073808907030618,
+              "lower": 0.25190912145215294,
+              "upper": 3.304558122250363
+            },
+            "result": {
+              "difference": 3.584360627988426,
+              "standard_error": 0.7363566835083322,
+              "lower": 1.369221532950737,
+              "upper": 5.7994997230261145
+            },
+            "total": {
+              "difference": 0.013187738971957965,
+              "standard_error": 0.5117118480343177,
+              "lower": -1.5261653291284634,
+              "upper": 1.5525408070723792
+            },
+            "home": {
+              "difference": 0.8066632398165617,
+              "standard_error": 0.6927135932384599,
+              "lower": -1.2771868784925569,
+              "upper": 2.89051335812568
+            },
+            "away": {
+              "difference": 2.708722880628092,
+              "standard_error": 0.731518348305908,
+              "lower": 0.5081386687086269,
+              "upper": 4.909307092547557
+            }
+          },
+          "scheduled": 306,
+          "coverage": 1.0,
+          "rounds_with_pairs": 34,
+          "registered_rounds": 34,
+          "fallback_fixtures": [
+            "bun/2025-26/borussia-monchengladbach/hamburger-sv"
+          ]
+        }
+      },
+      "paired_counts_by_official_round": {
+        "2021-22": {
+          "1": 9,
+          "2": 9,
+          "3": 9,
+          "4": 9,
+          "5": 9,
+          "6": 9,
+          "7": 9,
+          "8": 9,
+          "9": 9,
+          "10": 9,
+          "11": 9,
+          "12": 9,
+          "13": 9,
+          "14": 9,
+          "15": 9,
+          "16": 9,
+          "17": 9,
+          "18": 9,
+          "19": 9,
+          "20": 9,
+          "21": 9,
+          "22": 9,
+          "23": 9,
+          "24": 9,
+          "25": 9,
+          "26": 9,
+          "27": 8,
+          "28": 9,
+          "29": 9,
+          "30": 9,
+          "31": 9,
+          "32": 9,
+          "33": 9,
+          "34": 9
+        },
+        "2022-23": {
+          "1": 9,
+          "2": 9,
+          "3": 9,
+          "4": 9,
+          "5": 9,
+          "6": 9,
+          "7": 9,
+          "8": 9,
+          "9": 9,
+          "10": 9,
+          "11": 9,
+          "12": 9,
+          "13": 9,
+          "14": 9,
+          "15": 9,
+          "16": 9,
+          "17": 9,
+          "18": 9,
+          "19": 9,
+          "20": 9,
+          "21": 9,
+          "22": 9,
+          "23": 9,
+          "24": 9,
+          "25": 9,
+          "26": 9,
+          "27": 9,
+          "28": 9,
+          "29": 9,
+          "30": 9,
+          "31": 9,
+          "32": 9,
+          "33": 9,
+          "34": 9
+        },
+        "2023-24": {
+          "1": 9,
+          "2": 9,
+          "3": 9,
+          "4": 9,
+          "5": 9,
+          "6": 9,
+          "7": 9,
+          "8": 9,
+          "9": 9,
+          "10": 9,
+          "11": 9,
+          "12": 9,
+          "13": 9,
+          "14": 9,
+          "15": 9,
+          "16": 9,
+          "17": 9,
+          "18": 9,
+          "19": 9,
+          "20": 9,
+          "21": 9,
+          "22": 9,
+          "23": 9,
+          "24": 9,
+          "25": 9,
+          "26": 9,
+          "27": 9,
+          "28": 9,
+          "29": 9,
+          "30": 9,
+          "31": 9,
+          "32": 9,
+          "33": 9,
+          "34": 9
+        },
+        "2024-25": {
+          "1": 9,
+          "2": 9,
+          "3": 9,
+          "4": 9,
+          "5": 9,
+          "6": 9,
+          "7": 9,
+          "8": 9,
+          "9": 9,
+          "10": 9,
+          "11": 9,
+          "12": 9,
+          "13": 9,
+          "14": 8,
+          "15": 9,
+          "16": 9,
+          "17": 9,
+          "18": 9,
+          "19": 9,
+          "20": 9,
+          "21": 9,
+          "22": 9,
+          "23": 9,
+          "24": 9,
+          "25": 9,
+          "26": 9,
+          "27": 9,
+          "28": 9,
+          "29": 9,
+          "30": 9,
+          "31": 9,
+          "32": 9,
+          "33": 9,
+          "34": 9
+        },
+        "2025-26": {
+          "1": 9,
+          "2": 9,
+          "3": 9,
+          "4": 9,
+          "5": 9,
+          "6": 9,
+          "7": 9,
+          "8": 9,
+          "9": 9,
+          "10": 9,
+          "11": 9,
+          "12": 9,
+          "13": 9,
+          "14": 9,
+          "15": 9,
+          "16": 9,
+          "17": 9,
+          "18": 9,
+          "19": 9,
+          "20": 9,
+          "21": 9,
+          "22": 9,
+          "23": 9,
+          "24": 9,
+          "25": 9,
+          "26": 9,
+          "27": 9,
+          "28": 9,
+          "29": 9,
+          "30": 9,
+          "31": 9,
+          "32": 9,
+          "33": 9,
+          "34": 9
+        }
+      },
+      "omissions_in_graded_fixtures": {},
+      "excluded_fixtures": [
+        {
+          "fixture_id": "bun/2021-22/vfl-bochum-1848/borussia-monchengladbach",
+          "round": 27,
+          "reason": "registered_awarded",
+          "regulation_result_versions": 0
+        },
+        {
+          "fixture_id": "bun/2024-25/1-union-berlin/vfl-bochum-1848",
+          "round": 14,
+          "reason": "registered_awarded",
+          "regulation_result_versions": 0
+        }
+      ],
+      "missing_score_without_exception": []
+    },
+    "sea": {
+      "development": {
+        "matches": 1508,
+        "cluster_unit": "season_official_round",
+        "clusters": 151,
+        "mean_b1": 75.7009074210221,
+        "mean_b0": 73.6367896793069,
+        "intervals": {
+          "composite": {
+            "difference": 2.0641177417152017,
+            "standard_error": 0.18862992116819494,
+            "lower": 1.5266823433230081,
+            "upper": 2.601553140107395
+          },
+          "result": {
+            "difference": 3.4918805534226265,
+            "standard_error": 0.30121045615883885,
+            "lower": 2.6336860501164625,
+            "upper": 4.350075056728791
+          },
+          "total": {
+            "difference": 0.6143610156944268,
+            "standard_error": 0.23494604942179956,
+            "lower": -0.05503609209043858,
+            "upper": 1.2837581234792923
+          },
+          "home": {
+            "difference": 1.7595406641315972,
+            "standard_error": 0.31838951370363566,
+            "lower": 0.8524004072651703,
+            "upper": 2.666680920998024
+          },
+          "away": {
+            "difference": 2.3906887336121514,
+            "standard_error": 0.2936520088140247,
+            "lower": 1.5540293989305054,
+            "upper": 3.2273480682937974
+          }
+        }
+      },
+      "holdout": {
+        "matches": 380,
+        "cluster_unit": "season_official_round",
+        "clusters": 38,
+        "mean_b1": 75.43443486970091,
+        "mean_b0": 73.94455505540166,
+        "intervals": {
+          "composite": {
+            "difference": 1.489879814299235,
+            "standard_error": 0.28290230689557694,
+            "lower": 0.64534738315921,
+            "upper": 2.3344122454392604
+          },
+          "result": {
+            "difference": 3.3469620333821006,
+            "standard_error": 0.5389332394186748,
+            "lower": 1.7381147818239033,
+            "upper": 4.9558092849402975
+          },
+          "total": {
+            "difference": -0.5353397012668694,
+            "standard_error": 0.4980354713874492,
+            "lower": -2.0220971337542,
+            "upper": 0.9514177312204614
+          },
+          "home": {
+            "difference": 2.040495876709545,
+            "standard_error": 0.6177645292367407,
+            "lower": 0.19631798550220148,
+            "upper": 3.8846737679168886
+          },
+          "away": {
+            "difference": 1.107401048372161,
+            "standard_error": 0.5014235415058534,
+            "lower": -0.3894706003100379,
+            "upper": 2.60427269705436
+          }
+        },
+        "scheduled": 380,
+        "coverage": 1.0,
+        "rounds_with_pairs": 38,
+        "registered_rounds": 38,
+        "fallback_fixtures": [
+          "sea/2025-26/atalanta-bc/ac-pisa-1909"
+        ]
+      },
+      "by_season": {
+        "2021-22": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 75.3750938813135,
+          "mean_b0": 73.47704605754555,
+          "intervals": {
+            "composite": {
+              "difference": 1.8980478237679497,
+              "standard_error": 0.34739727794488723,
+              "lower": 0.8609821634214039,
+              "upper": 2.9351134841144955
+            },
+            "result": {
+              "difference": 3.501670363847273,
+              "standard_error": 0.6241824954670008,
+              "lower": 1.6383332770755867,
+              "upper": 5.365007450618959
+            },
+            "total": {
+              "difference": -0.03983335154651725,
+              "standard_error": 0.2833848004552931,
+              "lower": -0.8858061437195363,
+              "upper": 0.8061394406265018
+            },
+            "home": {
+              "difference": 1.0653903395780084,
+              "standard_error": 0.7085580720398644,
+              "lower": -1.0498284359429466,
+              "upper": 3.1806091150989637
+            },
+            "away": {
+              "difference": 3.064963943193029,
+              "standard_error": 0.5845779884409724,
+              "lower": 1.3198559757587818,
+              "upper": 4.8100719106272765
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "sea/2021-22/bologna-1909/us-salernitana-1919",
+            "sea/2021-22/ssc-napoli/venezia"
+          ]
+        },
+        "2022-23": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 75.38638770785913,
+          "mean_b0": 73.37949446955444,
+          "intervals": {
+            "composite": {
+              "difference": 2.006893238304682,
+              "standard_error": 0.3406327018943284,
+              "lower": 0.9900214884295653,
+              "upper": 3.0237649881797988
+            },
+            "result": {
+              "difference": 3.135012013016845,
+              "standard_error": 0.6333232825641549,
+              "lower": 1.244387445862249,
+              "upper": 5.025636580171441
+            },
+            "total": {
+              "difference": 1.2245954115485733,
+              "standard_error": 0.4487112443471891,
+              "lower": -0.1149171651667289,
+              "upper": 2.5641079882638755
+            },
+            "home": {
+              "difference": 1.8676832638245362,
+              "standard_error": 0.5390006659934109,
+              "lower": 0.2586347274846408,
+              "upper": 3.4767318001644316
+            },
+            "away": {
+              "difference": 1.800282264828759,
+              "standard_error": 0.5972398727467219,
+              "lower": 0.01737548248595977,
+              "upper": 3.583189047171558
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "sea/2022-23/ac-monza/torino",
+            "sea/2022-23/acf-fiorentina/us-cremonese"
+          ]
+        },
+        "2023-24": {
+          "matches": 379,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 76.1562741639094,
+          "mean_b0": 73.73735246028899,
+          "intervals": {
+            "composite": {
+              "difference": 2.418921703620425,
+              "standard_error": 0.35465586066587074,
+              "lower": 1.360187402324105,
+              "upper": 3.4776560049167453
+            },
+            "result": {
+              "difference": 3.396941563564461,
+              "standard_error": 0.523209370222003,
+              "lower": 1.8350338991213824,
+              "upper": 4.958849228007539
+            },
+            "total": {
+              "difference": 1.0223856082788267,
+              "standard_error": 0.5049828639335523,
+              "lower": -0.48511148653727476,
+              "upper": 2.5298827030949282
+            },
+            "home": {
+              "difference": 1.906283231743342,
+              "standard_error": 0.6715085755764041,
+              "lower": -0.09833375454459237,
+              "upper": 3.9109002180312764
+            },
+            "away": {
+              "difference": 3.3500764108950754,
+              "standard_error": 0.4845732832539475,
+              "lower": 1.9035068955640622,
+              "upper": 4.7966459262260885
+            }
+          },
+          "scheduled": 380,
+          "coverage": 0.9973684210526316,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "sea/2023-24/frosinone-calcio/ssc-napoli"
+          ]
+        },
+        "2024-25": {
+          "matches": 369,
+          "cluster_unit": "season_official_round",
+          "clusters": 37,
+          "mean_b1": 75.89262189402183,
+          "mean_b0": 73.96297250310916,
+          "intervals": {
+            "composite": {
+              "difference": 1.9296493909126888,
+              "standard_error": 0.4666542569726925,
+              "lower": 0.5341261014898853,
+              "upper": 3.325172680335492
+            },
+            "result": {
+              "difference": 3.9468176660217473,
+              "standard_error": 0.6397396495782451,
+              "lower": 2.033684834136176,
+              "upper": 5.8599504979073185
+            },
+            "total": {
+              "difference": 0.240549277313657,
+              "standard_error": 0.5847533159199395,
+              "lower": -1.5081476621021088,
+              "upper": 1.989246216729423
+            },
+            "home": {
+              "difference": 2.212298122999338,
+              "standard_error": 0.6254883330293075,
+              "lower": 0.3417836618921628,
+              "upper": 4.082812584106513
+            },
+            "away": {
+              "difference": 1.318932497316018,
+              "standard_error": 0.6321236260575086,
+              "lower": -0.5714247184958277,
+              "upper": 3.2092897131278635
+            }
+          },
+          "scheduled": 380,
+          "coverage": 0.9710526315789474,
+          "rounds_with_pairs": 37,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "sea/2024-25/parma-calcio-1913/acf-fiorentina",
+            "sea/2024-25/juventus/como-1907"
+          ]
+        },
+        "2025-26": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 75.43443486970091,
+          "mean_b0": 73.94455505540166,
+          "intervals": {
+            "composite": {
+              "difference": 1.489879814299235,
+              "standard_error": 0.28290230689557694,
+              "lower": 0.64534738315921,
+              "upper": 2.3344122454392604
+            },
+            "result": {
+              "difference": 3.3469620333821006,
+              "standard_error": 0.5389332394186748,
+              "lower": 1.7381147818239033,
+              "upper": 4.9558092849402975
+            },
+            "total": {
+              "difference": -0.5353397012668694,
+              "standard_error": 0.4980354713874492,
+              "lower": -2.0220971337542,
+              "upper": 0.9514177312204614
+            },
+            "home": {
+              "difference": 2.040495876709545,
+              "standard_error": 0.6177645292367407,
+              "lower": 0.19631798550220148,
+              "upper": 3.8846737679168886
+            },
+            "away": {
+              "difference": 1.107401048372161,
+              "standard_error": 0.5014235415058534,
+              "lower": -0.3894706003100379,
+              "upper": 2.60427269705436
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "sea/2025-26/atalanta-bc/ac-pisa-1909"
+          ]
+        }
+      },
+      "paired_counts_by_official_round": {
+        "2021-22": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2022-23": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2023-24": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 9,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2024-25": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 9,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 0
+        },
+        "2025-26": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        }
+      },
+      "omissions_in_graded_fixtures": {
+        "registered_resumed": 2
+      },
+      "excluded_fixtures": [
+        {
+          "fixture_id": "sea/2023-24/udinese-calcio/as-roma",
+          "round": 32,
+          "reason": "registered_resumed",
+          "regulation_result_versions": 1
+        },
+        {
+          "fixture_id": "sea/2024-25/acf-fiorentina/internazionale-milano",
+          "round": 14,
+          "reason": "registered_resumed",
+          "regulation_result_versions": 1
+        }
+      ],
+      "missing_score_without_exception": [
+        "sea/2024-25/como-1907/internazionale-milano",
+        "sea/2024-25/ssc-napoli/cagliari-calcio",
+        "sea/2024-25/bologna-1909/genoa-cfc",
+        "sea/2024-25/ac-milan/ac-monza",
+        "sea/2024-25/atalanta-bc/parma-calcio-1913",
+        "sea/2024-25/empoli/hellas-verona",
+        "sea/2024-25/ss-lazio/us-lecce",
+        "sea/2024-25/torino/as-roma",
+        "sea/2024-25/udinese-calcio/acf-fiorentina",
+        "sea/2024-25/venezia/juventus"
+      ]
+    },
+    "fl1": {
+      "development": {
+        "matches": 1368,
+        "cluster_unit": "season_official_round",
+        "clusters": 144,
+        "mean_b1": 75.2255704215872,
+        "mean_b0": 73.70782441124173,
+        "intervals": {
+          "composite": {
+            "difference": 1.5177460103454692,
+            "standard_error": 0.1855479725454226,
+            "lower": 0.9887034394101715,
+            "upper": 2.046788581280767
+          },
+          "result": {
+            "difference": 2.56015307116745,
+            "standard_error": 0.2758080835167241,
+            "lower": 1.7737568870070173,
+            "upper": 3.3465492553278824
+          },
+          "total": {
+            "difference": 0.19789784803652652,
+            "standard_error": 0.22518180864661363,
+            "lower": -0.44415046615403253,
+            "upper": 0.8399461622270856
+          },
+          "home": {
+            "difference": 1.9014568122499924,
+            "standard_error": 0.31948797730108885,
+            "lower": 0.9905185865417655,
+            "upper": 2.812395037958219
+          },
+          "away": {
+            "difference": 1.4114763099279037,
+            "standard_error": 0.2689571625981788,
+            "lower": 0.6446137739464313,
+            "upper": 2.1783388459093764
+          }
+        }
+      },
+      "holdout": {
+        "matches": 305,
+        "cluster_unit": "season_official_round",
+        "clusters": 34,
+        "mean_b1": 74.6266553042808,
+        "mean_b0": 73.89296108442592,
+        "intervals": {
+          "composite": {
+            "difference": 0.733694219854878,
+            "standard_error": 0.41287049020655414,
+            "lower": -0.5083201252672637,
+            "upper": 1.9757085649770199
+          },
+          "result": {
+            "difference": 2.3434079848786196,
+            "standard_error": 0.6600840824505456,
+            "lower": 0.35771533103888586,
+            "upper": 4.329100638718353
+          },
+          "total": {
+            "difference": 0.14379266823940945,
+            "standard_error": 0.554117228118317,
+            "lower": -1.5231260448368362,
+            "upper": 1.8107113813156552
+          },
+          "home": {
+            "difference": 0.364332385671265,
+            "standard_error": 0.8277009902222894,
+            "lower": -2.1255924883820505,
+            "upper": 2.854257259724581
+          },
+          "away": {
+            "difference": 0.08324384063022292,
+            "standard_error": 0.6717575113567689,
+            "lower": -1.9375653122139307,
+            "upper": 2.1040529934743764
+          }
+        },
+        "scheduled": 306,
+        "coverage": 0.9967320261437909,
+        "rounds_with_pairs": 34,
+        "registered_rounds": 34,
+        "fallback_fixtures": [
+          "fl1/2025-26/angers-sco/paris"
+        ]
+      },
+      "by_season": {
+        "2021-22": {
+          "matches": 378,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 74.89119787089201,
+          "mean_b0": 73.69738353559336,
+          "intervals": {
+            "composite": {
+              "difference": 1.1938143352986488,
+              "standard_error": 0.35123417812119057,
+              "lower": 0.14529459149306967,
+              "upper": 2.2423340791042277
+            },
+            "result": {
+              "difference": 2.251824534849903,
+              "standard_error": 0.49085897440065784,
+              "lower": 0.7864906973619623,
+              "upper": 3.7171583723378436
+            },
+            "total": {
+              "difference": -0.1181304101343505,
+              "standard_error": 0.43669828134465016,
+              "lower": -1.421781360406733,
+              "upper": 1.185520540138032
+            },
+            "home": {
+              "difference": 1.722188282268826,
+              "standard_error": 0.5960289626249612,
+              "lower": -0.057103637826137144,
+              "upper": 3.5014802023637888
+            },
+            "away": {
+              "difference": 0.9193749342101848,
+              "standard_error": 0.542048821695406,
+              "lower": -0.6987730908321815,
+              "upper": 2.5375229592525512
+            }
+          },
+          "scheduled": 380,
+          "coverage": 0.9947368421052631,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "fl1/2021-22/es-troyes-ac/paris-saint-germain",
+            "fl1/2021-22/girondins-bordeaux/clermont-foot-63"
+          ]
+        },
+        "2022-23": {
+          "matches": 380,
+          "cluster_unit": "season_official_round",
+          "clusters": 38,
+          "mean_b1": 75.75937952838396,
+          "mean_b0": 73.83219355955679,
+          "intervals": {
+            "composite": {
+              "difference": 1.9271859688271706,
+              "standard_error": 0.36054571262678253,
+              "lower": 0.8508690219519308,
+              "upper": 3.0035029157024105
+            },
+            "result": {
+              "difference": 3.1197823020124384,
+              "standard_error": 0.5846672562276695,
+              "lower": 1.3744078484482298,
+              "upper": 4.865156755576647
+            },
+            "total": {
+              "difference": 0.26213096817052556,
+              "standard_error": 0.4134307262799731,
+              "lower": -0.9720606515609107,
+              "upper": 1.4963225879019617
+            },
+            "home": {
+              "difference": 2.5905857363989178,
+              "standard_error": 0.5160644514112244,
+              "lower": 1.0500073983928704,
+              "upper": 4.131164074404965
+            },
+            "away": {
+              "difference": 1.7362448687268035,
+              "standard_error": 0.637315736337846,
+              "lower": -0.16629814733939519,
+              "upper": 3.638787884793002
+            }
+          },
+          "scheduled": 380,
+          "coverage": 1.0,
+          "rounds_with_pairs": 38,
+          "registered_rounds": 38,
+          "fallback_fixtures": [
+            "fl1/2022-23/olympique-lyonnais/ac-ajaccio",
+            "fl1/2022-23/lille-osc/aj-auxerre"
+          ]
+        },
+        "2023-24": {
+          "matches": 305,
+          "cluster_unit": "season_official_round",
+          "clusters": 34,
+          "mean_b1": 74.85396146976905,
+          "mean_b0": 73.59792357295309,
+          "intervals": {
+            "composite": {
+              "difference": 1.2560378968159538,
+              "standard_error": 0.3507252361267361,
+              "lower": 0.20097151450360107,
+              "upper": 2.3111042791283065
+            },
+            "result": {
+              "difference": 1.8074383845130648,
+              "standard_error": 0.5232993158621988,
+              "lower": 0.23322740913360884,
+              "upper": 3.3816493598925206
+            },
+            "total": {
+              "difference": 0.15872535110914843,
+              "standard_error": 0.5534091195872289,
+              "lower": -1.5060632001503136,
+              "upper": 1.8235139023686104
+            },
+            "home": {
+              "difference": 1.583195183925939,
+              "standard_error": 0.4845424171874899,
+              "lower": 0.12557433854669608,
+              "upper": 3.040816029305182
+            },
+            "away": {
+              "difference": 1.4747926677156793,
+              "standard_error": 0.43852945558808026,
+              "lower": 0.15558994550971073,
+              "upper": 2.7939953899216476
+            }
+          },
+          "scheduled": 306,
+          "coverage": 0.9967320261437909,
+          "rounds_with_pairs": 34,
+          "registered_rounds": 34,
+          "fallback_fixtures": [
+            "fl1/2023-24/montpellier-hsc/le-havre-ac"
+          ]
+        },
+        "2024-25": {
+          "matches": 305,
+          "cluster_unit": "season_official_round",
+          "clusters": 34,
+          "mean_b1": 75.34650843432338,
+          "mean_b0": 73.67571336308889,
+          "intervals": {
+            "composite": {
+              "difference": 1.6707950712344986,
+              "standard_error": 0.4225355773863261,
+              "lower": 0.39970580501996444,
+              "upper": 2.9418843374490327
+            },
+            "result": {
+              "difference": 2.997749984074087,
+              "standard_error": 0.5897586543361326,
+              "lower": 1.223613236061527,
+              "upper": 4.771886732086647
+            },
+            "total": {
+              "difference": 0.5487100037759431,
+              "standard_error": 0.4109022552112034,
+              "lower": -0.6873834141867543,
+              "upper": 1.7848034217386406
+            },
+            "home": {
+              "difference": 1.583307008299588,
+              "standard_error": 0.9360201517025866,
+              "lower": -1.2324681156537027,
+              "upper": 4.399082132252879
+            },
+            "away": {
+              "difference": 1.5534132887883776,
+              "standard_error": 0.44234639685295796,
+              "lower": 0.22272828359556973,
+              "upper": 2.8840982939811854
+            }
+          },
+          "scheduled": 306,
+          "coverage": 0.9967320261437909,
+          "rounds_with_pairs": 34,
+          "registered_rounds": 34,
+          "fallback_fixtures": []
+        },
+        "2025-26": {
+          "matches": 305,
+          "cluster_unit": "season_official_round",
+          "clusters": 34,
+          "mean_b1": 74.6266553042808,
+          "mean_b0": 73.89296108442592,
+          "intervals": {
+            "composite": {
+              "difference": 0.733694219854878,
+              "standard_error": 0.41287049020655414,
+              "lower": -0.5083201252672637,
+              "upper": 1.9757085649770199
+            },
+            "result": {
+              "difference": 2.3434079848786196,
+              "standard_error": 0.6600840824505456,
+              "lower": 0.35771533103888586,
+              "upper": 4.329100638718353
+            },
+            "total": {
+              "difference": 0.14379266823940945,
+              "standard_error": 0.554117228118317,
+              "lower": -1.5231260448368362,
+              "upper": 1.8107113813156552
+            },
+            "home": {
+              "difference": 0.364332385671265,
+              "standard_error": 0.8277009902222894,
+              "lower": -2.1255924883820505,
+              "upper": 2.854257259724581
+            },
+            "away": {
+              "difference": 0.08324384063022292,
+              "standard_error": 0.6717575113567689,
+              "lower": -1.9375653122139307,
+              "upper": 2.1040529934743764
+            }
+          },
+          "scheduled": 306,
+          "coverage": 0.9967320261437909,
+          "rounds_with_pairs": 34,
+          "registered_rounds": 34,
+          "fallback_fixtures": [
+            "fl1/2025-26/angers-sco/paris"
+          ]
+        }
+      },
+      "paired_counts_by_official_round": {
+        "2021-22": {
+          "1": 10,
+          "2": 10,
+          "3": 9,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 9,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2022-23": {
+          "1": 10,
+          "2": 10,
+          "3": 10,
+          "4": 10,
+          "5": 10,
+          "6": 10,
+          "7": 10,
+          "8": 10,
+          "9": 10,
+          "10": 10,
+          "11": 10,
+          "12": 10,
+          "13": 10,
+          "14": 10,
+          "15": 10,
+          "16": 10,
+          "17": 10,
+          "18": 10,
+          "19": 10,
+          "20": 10,
+          "21": 10,
+          "22": 10,
+          "23": 10,
+          "24": 10,
+          "25": 10,
+          "26": 10,
+          "27": 10,
+          "28": 10,
+          "29": 10,
+          "30": 10,
+          "31": 10,
+          "32": 10,
+          "33": 10,
+          "34": 10,
+          "35": 10,
+          "36": 10,
+          "37": 10,
+          "38": 10
+        },
+        "2023-24": {
+          "1": 9,
+          "2": 9,
+          "3": 9,
+          "4": 9,
+          "5": 9,
+          "6": 9,
+          "7": 9,
+          "8": 8,
+          "9": 9,
+          "10": 9,
+          "11": 9,
+          "12": 9,
+          "13": 9,
+          "14": 9,
+          "15": 9,
+          "16": 9,
+          "17": 9,
+          "18": 9,
+          "19": 9,
+          "20": 9,
+          "21": 9,
+          "22": 9,
+          "23": 9,
+          "24": 9,
+          "25": 9,
+          "26": 9,
+          "27": 9,
+          "28": 9,
+          "29": 9,
+          "30": 9,
+          "31": 9,
+          "32": 9,
+          "33": 9,
+          "34": 9
+        },
+        "2024-25": {
+          "1": 9,
+          "2": 9,
+          "3": 9,
+          "4": 9,
+          "5": 9,
+          "6": 9,
+          "7": 9,
+          "8": 9,
+          "9": 9,
+          "10": 9,
+          "11": 9,
+          "12": 9,
+          "13": 9,
+          "14": 9,
+          "15": 9,
+          "16": 9,
+          "17": 9,
+          "18": 9,
+          "19": 9,
+          "20": 9,
+          "21": 9,
+          "22": 9,
+          "23": 9,
+          "24": 9,
+          "25": 9,
+          "26": 8,
+          "27": 9,
+          "28": 9,
+          "29": 9,
+          "30": 9,
+          "31": 9,
+          "32": 9,
+          "33": 9,
+          "34": 9
+        },
+        "2025-26": {
+          "1": 9,
+          "2": 9,
+          "3": 9,
+          "4": 9,
+          "5": 9,
+          "6": 9,
+          "7": 9,
+          "8": 9,
+          "9": 9,
+          "10": 9,
+          "11": 9,
+          "12": 9,
+          "13": 9,
+          "14": 9,
+          "15": 9,
+          "16": 9,
+          "17": 9,
+          "18": 9,
+          "19": 9,
+          "20": 9,
+          "21": 9,
+          "22": 9,
+          "23": 9,
+          "24": 9,
+          "25": 9,
+          "26": 9,
+          "27": 9,
+          "28": 9,
+          "29": 9,
+          "30": 9,
+          "31": 9,
+          "32": 9,
+          "33": 9,
+          "34": 8
+        }
+      },
+      "omissions_in_graded_fixtures": {
+        "registered_replayed": 3
+      },
+      "excluded_fixtures": [
+        {
+          "fixture_id": "fl1/2021-22/ogc-nice/olympique-de-marseille",
+          "round": 3,
+          "reason": "registered_replayed",
+          "regulation_result_versions": 1
+        },
+        {
+          "fixture_id": "fl1/2021-22/olympique-lyonnais/olympique-de-marseille",
+          "round": 14,
+          "reason": "registered_replayed",
+          "regulation_result_versions": 1
+        },
+        {
+          "fixture_id": "fl1/2023-24/montpellier-hsc/clermont-foot-63",
+          "round": 8,
+          "reason": "registered_replayed",
+          "regulation_result_versions": 1
+        },
+        {
+          "fixture_id": "fl1/2024-25/montpellier-hsc/as-saint-etienne",
+          "round": 26,
+          "reason": "registered_awarded",
+          "regulation_result_versions": 0
+        },
+        {
+          "fixture_id": "fl1/2025-26/nantes/toulouse",
+          "round": 34,
+          "reason": "registered_abandoned",
+          "regulation_result_versions": 0
+        }
+      ],
+      "missing_score_without_exception": []
+    }
+  },
+  "pooled": {
+    "development": {
+      "matches": 7126,
+      "cluster_unit": "shared_UTC_week_Tuesday_through_Monday",
+      "clusters": 151,
+      "mean_b1": 75.6311778367715,
+      "mean_b0": 73.77340633281497,
+      "intervals": {
+        "composite": {
+          "difference": 1.8577715039565255,
+          "standard_error": 0.08503958934756191,
+          "lower": 1.6154807512643086,
+          "upper": 2.100062256648742
+        },
+        "result": {
+          "difference": 3.060761242038591,
+          "standard_error": 0.12774013526680775,
+          "lower": 2.696810125149904,
+          "upper": 3.4247123589272777
+        },
+        "total": {
+          "difference": 0.5399969107281695,
+          "standard_error": 0.11573528428552074,
+          "lower": 0.21024944419256736,
+          "upper": 0.8697443772637716
+        },
+        "home": {
+          "difference": 2.143568904164791,
+          "standard_error": 0.142677932231435,
+          "lower": 1.7370577267455813,
+          "upper": 2.5500800815840012
+        },
+        "away": {
+          "difference": 1.6867589588945526,
+          "standard_error": 0.14992503577085575,
+          "lower": 1.2595996788107333,
+          "upper": 2.113918238978372
+        }
+      }
+    },
+    "holdout": {
+      "matches": 1751,
+      "cluster_unit": "shared_UTC_week_Tuesday_through_Monday",
+      "clusters": 37,
+      "mean_b1": 75.22378068602099,
+      "mean_b0": 73.92390142770215,
+      "intervals": {
+        "composite": {
+          "difference": 1.2998792583188512,
+          "standard_error": 0.17375197796566283,
+          "lower": 0.7802763012873261,
+          "upper": 1.8194822153503765
+        },
+        "result": {
+          "difference": 2.7400653487735314,
+          "standard_error": 0.25586375170641473,
+          "lower": 1.974908234935631,
+          "upper": 3.5052224626114317
+        },
+        "total": {
+          "difference": 0.002349561076206812,
+          "standard_error": 0.24518940839075917,
+          "lower": -0.7308860724072057,
+          "upper": 0.7355851945596192
+        },
+        "home": {
+          "difference": 1.3975326923057059,
+          "standard_error": 0.2880601861620181,
+          "lower": 0.5360925735496728,
+          "upper": 2.258972811061739
+        },
+        "away": {
+          "difference": 1.0595694311199646,
+          "standard_error": 0.27048177664638545,
+          "lower": 0.2506973099843032,
+          "upper": 1.868441552255626
+        }
+      }
+    }
+  },
+  "initial_research_gate": {
+    "protocol": "initial-local-B1-research-v1",
+    "per_league": {
+      "epl": {
+        "history_lower_positive": true,
+        "holdout_point_positive": true,
+        "holdout_coverage": true,
+        "holdout_every_round_represented": true
+      },
+      "lal": {
+        "history_lower_positive": true,
+        "holdout_point_positive": true,
+        "holdout_coverage": true,
+        "holdout_every_round_represented": true
+      },
+      "bun": {
+        "history_lower_positive": true,
+        "holdout_point_positive": true,
+        "holdout_coverage": true,
+        "holdout_every_round_represented": true
+      },
+      "sea": {
+        "history_lower_positive": true,
+        "holdout_point_positive": true,
+        "holdout_coverage": true,
+        "holdout_every_round_represented": true
+      },
+      "fl1": {
+        "history_lower_positive": true,
+        "holdout_point_positive": true,
+        "holdout_coverage": true,
+        "holdout_every_round_represented": true
+      }
+    },
+    "pooled_holdout_lower_positive": true,
+    "research_criteria_met": true,
+    "formal_promotion": false
+  }
+}

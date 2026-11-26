@@ -1,0 +1,721 @@
+{
+  "scope": "Independent offline probes on controlled native-format records and clocks. Before and after refer to this review iteration, not all cases existed in 0.5.0a1. An independent normal positive control is retained alongside the negative arms.",
+  "checks": {
+    "same_fixture_temporal_contradictions": {
+      "before": {
+        "normal": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 1,
+          "t1_pairs_complete": 1,
+          "t1_pairs_schedule_only": 1,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "prior_live": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 1,
+          "t1_pairs_complete": 1,
+          "t1_pairs_schedule_only": 1,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "prior_game_status": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 1,
+          "t1_pairs_complete": 1,
+          "t1_pairs_schedule_only": 1,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "aux_temporary_reschedule_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 1,
+          "t1_pairs_complete": 1,
+          "t1_pairs_schedule_only": 1,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "main_temporary_reschedule_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "both_temporary_reschedule_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "postponed_then_restored_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "live_then_restored_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        }
+      },
+      "after": {
+        "normal": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 1,
+          "t1_pairs_complete": 1,
+          "t1_pairs_schedule_only": 1,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "prior_live": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 0,
+          "t1_pairs_due": 1,
+          "t1_pairs_complete": 1,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 1,
+          "t1_pairs_unclassified": 0
+        },
+        "prior_game_status": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 0,
+          "t1_pairs_due": 1,
+          "t1_pairs_complete": 1,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 1,
+          "t1_pairs_unclassified": 0
+        },
+        "aux_temporary_reschedule_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "main_temporary_reschedule_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "both_temporary_reschedule_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "postponed_then_restored_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 2,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        },
+        "live_then_restored_between_legs": {
+          "fixed_windows_due": 2,
+          "fixed_windows_complete": 2,
+          "fixed_windows_schedule_only": 1,
+          "t1_pairs_due": 0,
+          "t1_pairs_complete": 0,
+          "t1_pairs_schedule_only": 0,
+          "t1_pairs_not_pregame": 0,
+          "t1_pairs_unclassified": 0
+        }
+      }
+    },
+    "exchange_status_on_news_quote": {
+      "before": {
+        "control": {
+          "endpoints": [
+            "home_win",
+            "total_over_2_5"
+          ],
+          "reason": null,
+          "missing": {}
+        },
+        "native_in_progress_3s_before_closing_book": {
+          "endpoints": [
+            "home_win",
+            "total_over_2_5"
+          ],
+          "reason": null,
+          "missing": {}
+        },
+        "plus_postponed": {
+          "endpoints": [
+            "home_win",
+            "total_over_2_5"
+          ],
+          "reason": null,
+          "missing": {}
+        },
+        "plus_native_live_boolean": {
+          "endpoints": [],
+          "reason": "exchange_start_or_end_observed",
+          "missing": null
+        }
+      },
+      "after": {
+        "control": {
+          "endpoints": [
+            "home_win",
+            "total_over_2_5"
+          ],
+          "reason": null,
+          "missing": {}
+        },
+        "native_in_progress_3s_before_closing_book": {
+          "endpoints": [],
+          "reason": "exchange_start_or_end_observed",
+          "missing": null
+        },
+        "plus_postponed": {
+          "endpoints": [],
+          "reason": "exchange_start_or_end_observed",
+          "missing": null
+        },
+        "plus_native_live_boolean": {
+          "endpoints": [],
+          "reason": "exchange_start_or_end_observed",
+          "missing": null
+        }
+      }
+    },
+    "parent_event_availability": {
+      "before": [
+        {
+          "native_fields": {
+            "closed": true
+          },
+          "paper": {
+            "filled": 1
+          },
+          "weak_fixed_pairs": 1,
+          "weak_news_endpoints": [],
+          "news_reason": null
+        },
+        {
+          "native_fields": {
+            "archived": true
+          },
+          "paper": {
+            "filled": 1
+          },
+          "weak_fixed_pairs": 1,
+          "weak_news_endpoints": [],
+          "news_reason": null
+        },
+        {
+          "native_fields": {
+            "active": false
+          },
+          "paper": {
+            "filled": 1
+          },
+          "weak_fixed_pairs": 1,
+          "weak_news_endpoints": [],
+          "news_reason": null
+        }
+      ],
+      "after": [
+        {
+          "native_fields": {
+            "closed": true
+          },
+          "paper": {
+            "skipped_unverified_entry": 1
+          },
+          "weak_fixed_pairs": 0,
+          "weak_news_endpoints": [],
+          "news_reason": "unverified_exchange_state_history"
+        },
+        {
+          "native_fields": {
+            "archived": true
+          },
+          "paper": {
+            "skipped_unverified_entry": 1
+          },
+          "weak_fixed_pairs": 0,
+          "weak_news_endpoints": [],
+          "news_reason": "unverified_exchange_state_history"
+        },
+        {
+          "native_fields": {
+            "active": false
+          },
+          "paper": {
+            "skipped_unverified_entry": 1
+          },
+          "weak_fixed_pairs": 0,
+          "weak_news_endpoints": [],
+          "news_reason": "unverified_exchange_state_history"
+        }
+      ]
+    },
+    "unknown_vs_observed_field_coverage": {
+      "before": {
+        "missing_None": {
+          "status": "unobserved",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 20,
+          "injuries": null,
+          "suspensions": null,
+          "applied_suspensions": null,
+          "injuries_verified_without_onset": null
+        },
+        "missing_injury": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 20,
+          "injuries": 1,
+          "suspensions": 0,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 1
+        },
+        "missing_suspension": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 20,
+          "injuries": 0,
+          "suspensions": 1,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 0
+        },
+        "partial_None": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 1,
+          "unobserved_team_fixtures": 19,
+          "injuries": null,
+          "suspensions": null,
+          "applied_suspensions": null,
+          "injuries_verified_without_onset": null
+        },
+        "partial_injury": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 1,
+          "unobserved_team_fixtures": 19,
+          "injuries": 1,
+          "suspensions": 0,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 1
+        },
+        "partial_suspension": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 1,
+          "unobserved_team_fixtures": 19,
+          "injuries": 0,
+          "suspensions": 1,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 0
+        },
+        "complete_None": {
+          "status": "partial",
+          "observed_team_fixtures": 1,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 19,
+          "injuries": 0,
+          "suspensions": 0,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 0
+        },
+        "complete_injury": {
+          "status": "partial",
+          "observed_team_fixtures": 1,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 19,
+          "injuries": 1,
+          "suspensions": 0,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 1
+        },
+        "complete_suspension": {
+          "status": "partial",
+          "observed_team_fixtures": 1,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 19,
+          "injuries": 0,
+          "suspensions": 1,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 0
+        }
+      },
+      "after": {
+        "missing_None": {
+          "status": "unobserved",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 20,
+          "injuries": null,
+          "suspensions": null,
+          "applied_suspensions": null,
+          "injuries_verified_without_onset": null
+        },
+        "missing_injury": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 20,
+          "injuries": 1,
+          "suspensions": null,
+          "applied_suspensions": null,
+          "injuries_verified_without_onset": 1
+        },
+        "missing_suspension": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 20,
+          "injuries": null,
+          "suspensions": 1,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": null
+        },
+        "partial_None": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 1,
+          "unobserved_team_fixtures": 19,
+          "injuries": null,
+          "suspensions": null,
+          "applied_suspensions": null,
+          "injuries_verified_without_onset": null
+        },
+        "partial_injury": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 1,
+          "unobserved_team_fixtures": 19,
+          "injuries": 1,
+          "suspensions": null,
+          "applied_suspensions": null,
+          "injuries_verified_without_onset": 1
+        },
+        "partial_suspension": {
+          "status": "partial",
+          "observed_team_fixtures": 0,
+          "partial_team_fixtures": 1,
+          "unobserved_team_fixtures": 19,
+          "injuries": null,
+          "suspensions": 1,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": null
+        },
+        "complete_None": {
+          "status": "partial",
+          "observed_team_fixtures": 1,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 19,
+          "injuries": 0,
+          "suspensions": 0,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 0
+        },
+        "complete_injury": {
+          "status": "partial",
+          "observed_team_fixtures": 1,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 19,
+          "injuries": 1,
+          "suspensions": 0,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 1
+        },
+        "complete_suspension": {
+          "status": "partial",
+          "observed_team_fixtures": 1,
+          "partial_team_fixtures": 0,
+          "unobserved_team_fixtures": 19,
+          "injuries": 0,
+          "suspensions": 1,
+          "applied_suspensions": 0,
+          "injuries_verified_without_onset": 0
+        }
+      }
+    },
+    "late_ingestion_of_older_schedule": {
+      "before": {
+        "calendar": {
+          "known_at": "2026-11-23T07:00:00.000000Z",
+          "kickoff": "2026-11-28T15:00:00.000000Z",
+          "version": 1,
+          "source": "openfootball"
+        },
+        "baseline": [
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          },
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          }
+        ],
+        "superseded": {
+          "known_at": "2026-11-16T07:00:00.000000Z",
+          "recorded_at": "2028-06-30T23:00:00.000000Z",
+          "kickoff": "2026-11-29T15:00:00.000000Z",
+          "version": 2,
+          "source": "prior calendar"
+        },
+        "winner_after_receipt": {
+          "known_at": "2026-11-23T07:00:00.000000Z",
+          "kickoff": "2026-11-28T15:00:00.000000Z",
+          "version": 1,
+          "source": "openfootball"
+        },
+        "pre_receipt": [
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          },
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          }
+        ],
+        "after_receipt": [
+          {
+            "reason": "retrospective_fixture_revision",
+            "endpoints": [],
+            "missing": null
+          },
+          {
+            "reason": "retrospective_fixture_revision",
+            "endpoints": [],
+            "missing": null
+          }
+        ],
+        "end": [
+          {
+            "reason": "retrospective_fixture_revision",
+            "endpoints": [],
+            "missing": null
+          },
+          {
+            "reason": "retrospective_fixture_revision",
+            "endpoints": [],
+            "missing": null
+          }
+        ]
+      },
+      "after": {
+        "calendar": {
+          "known_at": "2026-11-23T07:00:00.000000Z",
+          "kickoff": "2026-11-28T15:00:00.000000Z",
+          "version": 1,
+          "source": "openfootball"
+        },
+        "baseline": [
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          },
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          }
+        ],
+        "superseded": {
+          "known_at": "2026-11-16T07:00:00.000000Z",
+          "recorded_at": "2028-06-30T23:00:00.000000Z",
+          "kickoff": "2026-11-29T15:00:00.000000Z",
+          "version": 2,
+          "source": "prior calendar"
+        },
+        "winner_after_receipt": {
+          "known_at": "2026-11-23T07:00:00.000000Z",
+          "kickoff": "2026-11-28T15:00:00.000000Z",
+          "version": 1,
+          "source": "openfootball"
+        },
+        "pre_receipt": [
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          },
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          }
+        ],
+        "after_receipt": [
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          },
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          }
+        ],
+        "end": [
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          },
+          {
+            "reason": null,
+            "endpoints": [
+              "home_win",
+              "total_over_2_5"
+            ],
+            "missing": {}
+          }
+        ]
+      }
+    },
+    "http_cached_gamma_decision": {
+      "before": [
+        {
+          "age_seconds_on_gamma": 0,
+          "outcome": {
+            "filled": 1
+          },
+          "basis": "scheduled_with_incomplete_flags",
+          "gaps": {}
+        },
+        {
+          "age_seconds_on_gamma": 31,
+          "outcome": {
+            "filled": 1
+          },
+          "basis": "scheduled_with_incomplete_flags",
+          "gaps": {}
+        },
+        {
+          "age_seconds_on_gamma": 86400,
+          "outcome": {
+            "filled": 1
+          },
+          "basis": "scheduled_with_incomplete_flags",
+          "gaps": {}
+        }
+      ],
+      "after": [
+        {
+          "age_seconds_on_gamma": 0,
+          "outcome": {
+            "filled": 1
+          },
+          "basis": "scheduled_with_incomplete_flags",
+          "gaps": {}
+        },
+        {
+          "age_seconds_on_gamma": 31,
+          "outcome": {
+            "skipped_unverified_entry": 1
+          },
+          "basis": null,
+          "gaps": {
+            "Gamma parent event lacks a fresh HTTP observation at its receipt time": 1
+          }
+        },
+        {
+          "age_seconds_on_gamma": 86400,
+          "outcome": {
+            "skipped_unverified_entry": 1
+          },
+          "basis": null,
+          "gaps": {
+            "Gamma parent event lacks a fresh HTTP observation at its receipt time": 1
+          }
+        }
+      ]
+    }
+  }
+}

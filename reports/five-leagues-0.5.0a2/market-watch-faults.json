@@ -1,0 +1,35 @@
+{
+  "evidence": "Synthetic clocks and domestic Gamma/CLOB fixtures; these runs are independent of the live weekend.",
+  "probes": {
+    "faults": "docs/review-evidence/code-review-0.5.0a1-2026-11-26/probe_big5_watch_faults.py",
+    "concurrent_report": "docs/review-evidence/code-review-0.5.0a1-2026-11-26/probe_big5_report_during_watch.py"
+  },
+  "cases": 56,
+  "watch_returned": 56,
+  "watch_raised": 0,
+  "report_and_watch": [
+    {
+      "second_process": false,
+      "watch": "returned",
+      "fixed_windows_due": 2,
+      "fixed_windows_complete": 2,
+      "t1_pairs_due": 1,
+      "t1_pairs_complete": 1,
+      "archived_books": 40
+    },
+    {
+      "second_process": true,
+      "watch": "returned",
+      "fixed_windows_due": 2,
+      "fixed_windows_complete": 2,
+      "t1_pairs_due": 1,
+      "t1_pairs_complete": 1,
+      "archived_books": 40,
+      "concurrent_queries": {
+        "weekly_report_ok": 3170,
+        "sql_ok": 3170,
+        "errors": {}
+      }
+    }
+  ]
+}

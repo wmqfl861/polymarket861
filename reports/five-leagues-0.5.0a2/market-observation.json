@@ -1,0 +1,358 @@
+{
+  "context": "Free public Polymarket International Gamma and CLOB, isolated manual archive. All 25 HTTP originals were reopened and SHA-256 verified. Counts refer to this observation only.",
+  "command": "pm861 --data-dir ISOLATED market league-archive --start 2026-11-27T00:00:00Z --end 2026-12-01T00:00:00Z --mode core --limit-fixtures 1 --workers 3",
+  "window_utc": [
+    "2026-11-27T00:00:00.000000Z",
+    "2026-12-01T00:00:00.000000Z"
+  ],
+  "denominator": "Gamma domestic events in the query window; independent schedule reconciliation is separate",
+  "sport_source": {
+    "sha256": "ea7dee4f34de0cac1b412019d443b09744216af210e9c7782b1a9352b3277baa",
+    "received_at": "2026-11-26T11:36:54.830649Z",
+    "url": "https://gamma-api.polymarket.com/sports"
+  },
+  "leagues": {
+    "lal": {
+      "series": "10193",
+      "tag": "780",
+      "fixtures_with_both_events": 10,
+      "page_walk_complete": true,
+      "unsampled_fixtures": 9,
+      "fixtures": 10,
+      "first_scheduled_fixture": {
+        "fixture": "lal-lev-rrc-2026-11-27",
+        "kickoff": "2026-11-27T20:00:00.000000Z"
+      },
+      "event_states": [
+        {
+          "live": null,
+          "ended": null,
+          "receipts": 22
+        }
+      ],
+      "manual_core_sample": {
+        "fixture": "lal-bet-ray-2026-11-28",
+        "started": "2026-11-26T11:36:58.618591Z",
+        "finished": "2026-11-26T11:37:03.520074Z",
+        "phase": "manual_core",
+        "capture_window": null,
+        "core_expected": 6,
+        "core_missing": [],
+        "requested_tokens": 12,
+        "received_tokens": 12,
+        "fresh_tokens": 12,
+        "two_sided_tokens": 12
+      }
+    },
+    "bun": {
+      "series": "10194",
+      "tag": "1494",
+      "fixtures_with_both_events": 9,
+      "page_walk_complete": true,
+      "unsampled_fixtures": 8,
+      "fixtures": 9,
+      "first_scheduled_fixture": {
+        "fixture": "bun-wer-moe-2026-11-27",
+        "kickoff": "2026-11-27T19:30:00.000000Z"
+      },
+      "event_states": [
+        {
+          "live": null,
+          "ended": null,
+          "receipts": 20
+        }
+      ],
+      "manual_core_sample": {
+        "fixture": "bun-dor-b04-2026-11-29",
+        "started": "2026-11-26T11:37:03.526333Z",
+        "finished": "2026-11-26T11:37:04.112267Z",
+        "phase": "manual_core",
+        "capture_window": null,
+        "core_expected": 6,
+        "core_missing": [],
+        "requested_tokens": 12,
+        "received_tokens": 12,
+        "fresh_tokens": 12,
+        "two_sided_tokens": 12
+      }
+    },
+    "sea": {
+      "series": "10203",
+      "tag": "101962",
+      "fixtures_with_both_events": 10,
+      "page_walk_complete": true,
+      "unsampled_fixtures": 9,
+      "fixtures": 10,
+      "first_scheduled_fixture": {
+        "fixture": "sea-ven-bol-2026-11-27",
+        "kickoff": "2026-11-27T19:45:00.000000Z"
+      },
+      "event_states": [
+        {
+          "live": null,
+          "ended": null,
+          "receipts": 22
+        }
+      ],
+      "manual_core_sample": {
+        "fixture": "sea-cag-mil-2026-11-30",
+        "started": "2026-11-26T11:37:04.118816Z",
+        "finished": "2026-11-26T11:37:04.596824Z",
+        "phase": "manual_core",
+        "capture_window": null,
+        "core_expected": 6,
+        "core_missing": [],
+        "requested_tokens": 12,
+        "received_tokens": 12,
+        "fresh_tokens": 12,
+        "two_sided_tokens": 12
+      }
+    },
+    "fl1": {
+      "series": "10195",
+      "tag": "102070",
+      "fixtures_with_both_events": 9,
+      "page_walk_complete": true,
+      "unsampled_fixtures": 8,
+      "fixtures": 9,
+      "first_scheduled_fixture": {
+        "fixture": "fl1-sbr-pfc-2026-11-27",
+        "kickoff": "2026-11-27T19:45:00.000000Z"
+      },
+      "event_states": [
+        {
+          "live": null,
+          "ended": null,
+          "receipts": 20
+        }
+      ],
+      "manual_core_sample": {
+        "fixture": "fl1-aja-olm-2026-11-29",
+        "started": "2026-11-26T11:37:04.603229Z",
+        "finished": "2026-11-26T11:37:05.069890Z",
+        "phase": "manual_core",
+        "capture_window": null,
+        "core_expected": 6,
+        "core_missing": [],
+        "requested_tokens": 12,
+        "received_tokens": 12,
+        "fresh_tokens": 12,
+        "two_sided_tokens": 12
+      }
+    }
+  },
+  "totals": {
+    "domestic_fixtures": 38,
+    "event_state_receipts": 84,
+    "fresh_two_sided_tokens": 48,
+    "request_counts": {
+      "league_sports": 1,
+      "league_catalog": 12,
+      "league_event": 8,
+      "books": 4
+    }
+  },
+  "verified_receipts": [
+    {
+      "operation": "league_sports",
+      "requested_at": "2026-11-26T11:36:50.209639Z",
+      "received_at": "2026-11-26T11:36:54.830649Z",
+      "status": "ok",
+      "sha256": "ea7dee4f34de0cac1b412019d443b09744216af210e9c7782b1a9352b3277baa",
+      "original_bytes": 157822
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:54.938729Z",
+      "received_at": "2026-11-26T11:36:55.184107Z",
+      "status": "ok",
+      "sha256": "f25e96cb0db8fbb922413f77466f93211d7b0291f1b8d1c183ae9c7e0217e3ce",
+      "original_bytes": 2653882
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:55.302781Z",
+      "received_at": "2026-11-26T11:36:55.544166Z",
+      "status": "ok",
+      "sha256": "346aad4efbbc61d5a73dd2e2241c0b1f08cdadca4e7a325daecf4ceb4267b487",
+      "original_bytes": 2949620
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:55.670968Z",
+      "received_at": "2026-11-26T11:36:55.845714Z",
+      "status": "ok",
+      "sha256": "ec1b768f4c91c9c4c6be97617deb6507eab136df1c659e74ab640dfddc3a1968",
+      "original_bytes": 1089921
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:55.901197Z",
+      "received_at": "2026-11-26T11:36:56.101433Z",
+      "status": "ok",
+      "sha256": "50c55c0e7c6f5d97159957255dcbe451a5fec834ab132ef6dc40851cc61d645f",
+      "original_bytes": 2709620
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:56.223902Z",
+      "received_at": "2026-11-26T11:36:56.414539Z",
+      "status": "ok",
+      "sha256": "506634058e076a49dd52ca84ca65fe17daed8796ca016bd673951a5d04ca2ea8",
+      "original_bytes": 2790009
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:56.520249Z",
+      "received_at": "2026-11-26T11:36:56.695321Z",
+      "status": "ok",
+      "sha256": "af27eb376dbc94fc35cc7800bb261f05c5a8e288cd47478c6c2f05446e5bc6ec",
+      "original_bytes": 431446
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:56.719567Z",
+      "received_at": "2026-11-26T11:36:56.962076Z",
+      "status": "ok",
+      "sha256": "b21bd6cbd4aa9ecfd62044df15578ce7237e3eebecd959dcb152d9739b178ea8",
+      "original_bytes": 2932927
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:57.105363Z",
+      "received_at": "2026-11-26T11:36:57.290195Z",
+      "status": "ok",
+      "sha256": "7594cf2081350de3eafcedc4f6bc25ad0c55b983a57f856a3c9c78b9d7bd5216",
+      "original_bytes": 3011330
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:57.412188Z",
+      "received_at": "2026-11-26T11:36:57.680415Z",
+      "status": "ok",
+      "sha256": "96d2357d51612a7332abf13c534531e664dcfa05a20b88540d2dd3675721d85b",
+      "original_bytes": 1389336
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:57.746382Z",
+      "received_at": "2026-11-26T11:36:57.952855Z",
+      "status": "ok",
+      "sha256": "8e4722371b88db4eac490a2ed731eac49c87011d877c7fadbd57dd401d422c26",
+      "original_bytes": 2868096
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:58.134235Z",
+      "received_at": "2026-11-26T11:36:58.326320Z",
+      "status": "ok",
+      "sha256": "36e7b4461ab7fdf6197853182e677041fb3a4e927d0ba02e64c1a39fa479155c",
+      "original_bytes": 2778641
+    },
+    {
+      "operation": "league_catalog",
+      "requested_at": "2026-11-26T11:36:58.426535Z",
+      "received_at": "2026-11-26T11:36:58.593673Z",
+      "status": "ok",
+      "sha256": "fee4ce44016213de1f2abb6bae5173367e280e1aad0c57b8e3ae6e9cc2efe65e",
+      "original_bytes": 461331
+    },
+    {
+      "operation": "league_event",
+      "requested_at": "2026-11-26T11:36:58.620115Z",
+      "received_at": "2026-11-26T11:36:58.657100Z",
+      "status": "ok",
+      "sha256": "07ad4b2005bde85350c58fd3975ca3a5ade5b3cba18651bd66b1de20da89b582",
+      "original_bytes": 22986
+    },
+    {
+      "operation": "league_event",
+      "requested_at": "2026-11-26T11:36:58.679241Z",
+      "received_at": "2026-11-26T11:36:58.756434Z",
+      "status": "ok",
+      "sha256": "8c5b33f1dbf17ec155ec77054e02e2085c20b9e0400bec01f4d6191c8b980430",
+      "original_bytes": 326833
+    },
+    {
+      "operation": "books",
+      "requested_at": "2026-11-26T11:36:58.800503Z",
+      "received_at": "2026-11-26T11:37:03.482349Z",
+      "status": "ok",
+      "sha256": "4c7d4d9621731329d8ba5cf4a8c7437ed97cb51ee1bbfaeead04073638312486",
+      "original_bytes": 23608
+    },
+    {
+      "operation": "league_event",
+      "requested_at": "2026-11-26T11:37:03.527566Z",
+      "received_at": "2026-11-26T11:37:03.689797Z",
+      "status": "ok",
+      "sha256": "3542fb213bbc293ea612dd5e4a393d4f70f5dffb680cb2452c22b6684fffc667",
+      "original_bytes": 23076
+    },
+    {
+      "operation": "league_event",
+      "requested_at": "2026-11-26T11:37:03.713410Z",
+      "received_at": "2026-11-26T11:37:03.916943Z",
+      "status": "ok",
+      "sha256": "d9ee8c086887b7dd0c38813a7a148bd466ef479ca0e5c70151f1ead570d53344",
+      "original_bytes": 306450
+    },
+    {
+      "operation": "books",
+      "requested_at": "2026-11-26T11:37:03.957987Z",
+      "received_at": "2026-11-26T11:37:04.085234Z",
+      "status": "ok",
+      "sha256": "822a82decb10d2d59c7a7a019c8cf7bd9f2b85050178799957147e6e96c3c1fa",
+      "original_bytes": 15518
+    },
+    {
+      "operation": "league_event",
+      "requested_at": "2026-11-26T11:37:04.120034Z",
+      "received_at": "2026-11-26T11:37:04.265171Z",
+      "status": "ok",
+      "sha256": "d87ebcd0441e321e20108e9e6339c4ec6509db63f9e4c27447d10a65d6b59335",
+      "original_bytes": 22121
+    },
+    {
+      "operation": "league_event",
+      "requested_at": "2026-11-26T11:37:04.292601Z",
+      "received_at": "2026-11-26T11:37:04.377293Z",
+      "status": "ok",
+      "sha256": "9d3cc2dedb7d17402f6f9d227355f116d2327e13e4ff9ae482b4056c1fd21636",
+      "original_bytes": 321439
+    },
+    {
+      "operation": "books",
+      "requested_at": "2026-11-26T11:37:04.420477Z",
+      "received_at": "2026-11-26T11:37:04.565995Z",
+      "status": "ok",
+      "sha256": "5a98a027846b898b35383c1443e593193ef652c4e9e3cc2d8180a9cbae8ebe75",
+      "original_bytes": 20492
+    },
+    {
+      "operation": "league_event",
+      "requested_at": "2026-11-26T11:37:04.604680Z",
+      "received_at": "2026-11-26T11:37:04.642735Z",
+      "status": "ok",
+      "sha256": "ac6338b362460344249a30ac1ca1568bc57a1354ceef07d38f73068a448de043",
+      "original_bytes": 22745
+    },
+    {
+      "operation": "league_event",
+      "requested_at": "2026-11-26T11:37:04.666611Z",
+      "received_at": "2026-11-26T11:37:04.865489Z",
+      "status": "ok",
+      "sha256": "0b0fb98e76522dc6bfa1b70b9bd48f08e9e72f6694aa724ee55eff0c689cf83b",
+      "original_bytes": 322029
+    },
+    {
+      "operation": "books",
+      "requested_at": "2026-11-26T11:37:04.909415Z",
+      "received_at": "2026-11-26T11:37:05.041346Z",
+      "status": "ok",
+      "sha256": "2e135ddb725c0e8c61a99ea858215ab5124352add096ddd48f24aca90ed13cc2",
+      "original_bytes": 20247
+    }
+  ],
+  "qualification": "Manual sample outside the fixed decision and execution windows. No prospective window pair, formally eligible entry, financial return is established by this observation."
+}

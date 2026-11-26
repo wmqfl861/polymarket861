@@ -1,0 +1,182 @@
+{
+  "evidence": "Synthetic domestic Serie A Gamma/CLOB fixtures only. UTC times, 14 native books per leg.",
+  "probe": "docs/review-evidence/code-review-0.5.0a1-2026-11-26/probe_big5_missing_flags.py",
+  "a1_repository_commit": "821c54f",
+  "report_window": [
+    "2030-01-12T12:59Z",
+    "2030-01-12T13:01Z"
+  ],
+  "reread": "a1 native replies and operator slot flags preserved; only the new weekly-report code was applied",
+  "arms": [
+    {
+      "event_flags": "对照：live=false 且 ended=false",
+      "native_books": 28,
+      "a1_fixed_complete": 2,
+      "a1_t1_pairs_complete": 1,
+      "a2_replay_of_a1_originals": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 2,
+        "fixed_windows_schedule_only": 0,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 1,
+        "t1_pairs_schedule_only": 0,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      },
+      "a2_new_capture": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 2,
+        "fixed_windows_schedule_only": 0,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 1,
+        "t1_pairs_schedule_only": 0,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      }
+    },
+    {
+      "event_flags": "两个标记都没有",
+      "native_books": 28,
+      "a1_fixed_complete": 0,
+      "a1_t1_pairs_complete": 0,
+      "a2_replay_of_a1_originals": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 0,
+        "fixed_windows_schedule_only": 2,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      },
+      "a2_new_capture": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 0,
+        "fixed_windows_schedule_only": 2,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      }
+    },
+    {
+      "event_flags": "两个标记都是 null",
+      "native_books": 28,
+      "a1_fixed_complete": 0,
+      "a1_t1_pairs_complete": 0,
+      "a2_replay_of_a1_originals": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 0,
+        "fixed_windows_schedule_only": 2,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      },
+      "a2_new_capture": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 0,
+        "fixed_windows_schedule_only": 2,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      }
+    },
+    {
+      "event_flags": "只有 live=false",
+      "native_books": 28,
+      "a1_fixed_complete": 0,
+      "a1_t1_pairs_complete": 0,
+      "a2_replay_of_a1_originals": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 0,
+        "fixed_windows_schedule_only": 2,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      },
+      "a2_new_capture": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 0,
+        "fixed_windows_schedule_only": 2,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      }
+    },
+    {
+      "event_flags": "只有 ended=false",
+      "native_books": 28,
+      "a1_fixed_complete": 0,
+      "a1_t1_pairs_complete": 0,
+      "a2_replay_of_a1_originals": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 0,
+        "fixed_windows_schedule_only": 2,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      },
+      "a2_new_capture": {
+        "fixed_windows_due": 2,
+        "fixed_windows_complete": 2,
+        "fixed_windows_explicit_pregame": 0,
+        "fixed_windows_schedule_only": 2,
+        "fixed_windows_unclassified": 0,
+        "fixed_windows_not_pregame": 0,
+        "t1_pairs_due": 1,
+        "t1_pairs_complete": 1,
+        "t1_pairs_explicit_pregame": 0,
+        "t1_pairs_schedule_only": 1,
+        "t1_pairs_unclassified": 0,
+        "t1_pairs_not_pregame": 0
+      }
+    }
+  ]
+}

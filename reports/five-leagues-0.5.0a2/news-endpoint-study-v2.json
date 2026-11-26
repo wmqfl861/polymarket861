@@ -1,0 +1,1437 @@
+{
+  "scope": "Public v2 declaration and read-only CLI output against an unregistered, empty runtime. No prospective evidence is inferred from these fixtures or simulations.",
+  "plan": {
+    "version": "epl-news-home-and-full-over-v2",
+    "eligible_seasons": [
+      "2026-27",
+      "2027-28"
+    ],
+    "ends_at_exclusive": "2028-07-01T00:00:00.000000Z",
+    "modes": [
+      "technical",
+      "formal"
+    ],
+    "horizons": [
+      "T-24h",
+      "T-60m"
+    ],
+    "endpoints": [
+      "home_win",
+      "full_over_2_5"
+    ],
+    "prices": "Use the normalized Yes midpoints of all three verified 1X2 contracts for home win. Use the Over midpoint of the verified full-match 2.5 contract with both Over and Under books. At each clock require matching event, tokens, market rules, depth, spread and native decision/closing receipts.",
+    "closing_clocks": [
+      "market_close",
+      "scheduled_market_close",
+      "dual_schedule_close"
+    ],
+    "native_pair_declaration_sha256": "bd084455a380733a8361b6db880fa042842a14937fea2eb42d9e0028f4a2aa16",
+    "population": "Prospectively bound native EPL main seals with contemporaneous registered news originals for both clubs. At each fixture, official kickoff and horizon choose the first bound seal across modes in local insertion order, before checking its facts, outcomes or books. No replacement or retrospective binding.",
+    "comparability": "Enroll the installed news policy ID and SHA for paired B1 versus with-news probabilities on the local receipt clock. Admit every individually reverified implementation era satisfying that contract. Report incompatible eras and their counts separately. A first seal never determines a cohort. This estimates the registered process across implementations, without certifying identical model probabilities.",
+    "estimand": "Common within-stratum slope of closing probability minus B1 on with-news probability minus B1. Subtract both sample means separately within each (technical/formal mode, probability era). Weight by within-stratum squared movement. The paired outcome guardrail is the fixture-weighted mean four-component score difference.",
+    "references": {
+      "market_close": "Independently proved first whistle and a fresh same-contract pre-whistle receipt.",
+      "scheduled_market_close": "Frozen unchanged kickoff and explicitly pregame exchange state at the receipt.",
+      "dual_schedule_close": "OpenLigaDB and native Gamma must independently agree on the fixture and unchanged kickoff at both books. At decision use schedule receipts seen within 24 hours of the book. At close use schedule receipts seen in the 24 hours before kickoff and a native book 120 to 10 seconds before kickoff. Screen contrary evidence of actual start through the fixed analysis cutoff. This is a separate research reference."
+    },
+    "interval": "Two-sided simultaneous Bonferroni family. Cluster by season and official round across strata; slope uses CR1 and Student G-1. Singleton or invariant strata supply no slope leverage. Zero movement and missing books stay visible in coverage. The score guardrail uses paired scores from verified regulation finals.",
+    "family_comparisons": 14,
+    "family_confidence": 0.95,
+    "score_guardrail": "Per horizon use the match-weighted four-component score difference (with news minus B1) with the same simultaneous round-cluster interval. Its upper bound below zero flags deterioration.",
+    "sensitivity_at_end": "For each estimable slope report the minimum slope magnitude for 80% two-sided rejection at the observed CR1 standard error and G-1 degrees of freedom using the noncentral Student distribution. This conditional approximation requires positive estimable cluster variance. It is separate from the registered design simulations.",
+    "zero_move_tolerance": 1e-12,
+    "reporting": "Before the fixed end publish only coverage, missingness and the advance design. Reveal all fourteen registered estimates together using evidence received strictly before the end. No automated promotion, trading or statement of profitability.",
+    "planning_power": {
+      "design": "epl-news-home-and-full-over-v2",
+      "scope": "Prospective design sensitivity. All closes and their noise are simulated. The reported probabilities describe the ability to detect a stipulated slope.",
+      "source": {
+        "file": "news-early-seals-0.4.2.json",
+        "sha256": "46a998f5c8f33449b364d37d19e82e7fed45fd12a806408422b0b89e6c24e9f2",
+        "round": 12,
+        "fixtures": 10,
+        "basis": "2026/27 matchweek 12 unscheduled, pre-release technical early seals"
+      },
+      "family_comparisons": 14,
+      "family_confidence": 0.95,
+      "simulated_outcomes": "The fourteen comparisons include twelve price slopes and two paired score guardrails. The table estimates marginal power for price slopes under assumed eligible coverage. Score guardrail power would also require a model of regulation results and all score components.",
+      "replications_per_cell": 2000,
+      "seed": 861,
+      "estimator": "Common within-(mode,probability-era) slope, both axes demeaned even for one stratum. Season/official-round CR1 clusters and Student intervals with G-1 degrees of freedom.",
+      "estimand": "Fraction of replications with a positive lower simultaneous bound, including undefined intervals in the denominator.",
+      "clock_and_horizon_assumption": "The same empirical movement distribution is used as a design input for each of three research clocks and two horizons. Receipt, admission, coverage and agreement between clocks remain empirical questions.",
+      "simulation": "With-replacement movement draws from ten prior fixtures. The close gap equals beta times the movement plus Gaussian noise with 5% of variance shared by each round. Strata are consecutive approximately equal blocks of rounds with a shared slope. The 650-fixture case assumes every future book and eligibility proof is present.",
+      "layouts": {
+        "one_mode_era": [
+          "technical/era_1"
+        ],
+        "four_mode_era_groups": [
+          "technical/era_1",
+          "technical/era_2",
+          "formal/era_2",
+          "formal/era_3"
+        ]
+      },
+      "movements": {
+        "home_win": {
+          "rms_pp": 0.634196,
+          "moves_pp": [
+            -0.669718,
+            -0.829171,
+            -0.146331,
+            1.019833,
+            0.295647,
+            0.299793,
+            0.899011,
+            -0.483399,
+            0.514279,
+            -0.58383
+          ]
+        },
+        "full_over_2_5": {
+          "rms_pp": 0.496152,
+          "moves_pp": [
+            -0.446832,
+            -0.239644,
+            -0.555935,
+            -0.30019,
+            0.179619,
+            0.215575,
+            0.155494,
+            -0.983009,
+            0.319162,
+            -0.796441
+          ]
+        }
+      },
+      "maximum_monte_carlo_standard_error_pp": 1.118,
+      "production_check": "The first replicate of each cell is checked against news_market.price_gap_slope.",
+      "reproduce": "PYTHONPATH=src python scripts/reproduce_news_endpoint_power.py reports/news-early-seals-0.4.2.json",
+      "cells": [
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.081
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.6065
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0305
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.165
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.001
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0105
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0455
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.378
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.986
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.001
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0845
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.5915
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.003
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0215
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.159
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.141
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.769
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.001
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.037
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.242
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0035
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.011
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0695
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0035
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.082
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.6025
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.02
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.1525
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.012
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0425
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.001
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.3905
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.9865
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.002
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0935
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.5815
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0265
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.172
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.133
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.7765
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.044
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.2605
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0185
+        },
+        {
+          "endpoint": "home_win",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0595
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.002
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0325
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.2255
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.002
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0165
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.054
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.002
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0075
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.021
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.132
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.73
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0315
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.202
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.012
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.049
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.057
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.331
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.014
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.087
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.005
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "one_mode_era",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0215
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.002
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0385
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.234
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.002
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0135
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0535
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.006
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 27,
+          "matches": 270,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.02
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0035
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.1335
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.742
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.035
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.2285
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.002
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0115
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 650,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.059
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0015
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0555
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 3.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.326
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0025
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.0105
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 5.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.083
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.001
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 0.5,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.008
+        },
+        {
+          "endpoint": "full_over_2_5",
+          "layout": "four_mode_era_groups",
+          "rounds": 65,
+          "matches": 325,
+          "assumed_gap_sd_pp": 8.0,
+          "assumed_slope": 1.0,
+          "interval_defined": 1.0,
+          "lower_bound_above_zero": 0.029
+        }
+      ]
+    }
+  },
+  "plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+  "empty_runtime": {
+    "version": "epl-news-home-and-full-over-v2",
+    "plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+    "registration": null,
+    "state": "not_registered",
+    "bound_seals": 0,
+    "family_comparisons": 14,
+    "horizons": {
+      "T-24h": {
+        "past_scheduled_windows": 0,
+        "qualified_news_pairs": 0,
+        "duplicate_bindings_ignored": 0,
+        "exclusions": {},
+        "strata": [],
+        "clocks": {
+          "market_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            }
+          },
+          "scheduled_market_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            }
+          },
+          "dual_schedule_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            }
+          }
+        },
+        "score_guardrail": {
+          "pairs": 0,
+          "status": "no_verified_scored_pairs",
+          "interval": null
+        }
+      },
+      "T-60m": {
+        "past_scheduled_windows": 0,
+        "qualified_news_pairs": 0,
+        "duplicate_bindings_ignored": 0,
+        "exclusions": {},
+        "strata": [],
+        "clocks": {
+          "market_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            }
+          },
+          "scheduled_market_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            }
+          },
+          "dual_schedule_close": {
+            "home_win": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            },
+            "full_over_2_5": {
+              "eligible_news_pairs": 0,
+              "matched_books": 0,
+              "missing": {},
+              "method": "within_era_fixed_effects",
+              "predictor": "with_news_minus_B1",
+              "response": "close_minus_B1",
+              "pairs": 0,
+              "informative_pairs": 0,
+              "rounds": 0,
+              "informative_rounds": 0,
+              "slope": null,
+              "interval": null,
+              "status": "no_matched_endpoint_pairs",
+              "strata": []
+            }
+          }
+        },
+        "score_guardrail": {
+          "pairs": 0,
+          "status": "no_verified_scored_pairs",
+          "interval": null
+        }
+      }
+    },
+    "automatic_promotion": false
+  }
+}

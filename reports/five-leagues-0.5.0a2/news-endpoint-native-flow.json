@@ -1,0 +1,47 @@
+{
+  "scope": "Controlled offline native EPL forecast, licensed news originals from both clubs, two official schedules, exchange contracts and native order books at both decisions and close, and a verified regulation final. The exchange records omit live/ended. No market or eligibility evaluator was mocked. This is a functionality check only.",
+  "v2_plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+  "prospective_state": "prospective_collection",
+  "end_state": "window_ended",
+  "bound_seals": 2,
+  "horizons": {
+    "T-24h": {
+      "qualified_news_pairs": 1,
+      "clocks": {
+        "market_close": {
+          "home_win": 0,
+          "full_over_2_5": 0
+        },
+        "scheduled_market_close": {
+          "home_win": 0,
+          "full_over_2_5": 0
+        },
+        "dual_schedule_close": {
+          "home_win": 1,
+          "full_over_2_5": 1
+        }
+      },
+      "scored_matches": 1,
+      "revealed_slope_status": "no_informative_news_movements"
+    },
+    "T-60m": {
+      "qualified_news_pairs": 1,
+      "clocks": {
+        "market_close": {
+          "home_win": 0,
+          "full_over_2_5": 0
+        },
+        "scheduled_market_close": {
+          "home_win": 0,
+          "full_over_2_5": 0
+        },
+        "dual_schedule_close": {
+          "home_win": 1,
+          "full_over_2_5": 1
+        }
+      },
+      "scored_matches": 1,
+      "revealed_slope_status": "no_informative_news_movements"
+    }
+  }
+}

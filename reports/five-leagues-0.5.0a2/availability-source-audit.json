@@ -1,0 +1,392 @@
+{
+  "scope": "Provider fields and season-to-date player directory reconciliation as of 2026-11-26. Observational audit only.",
+  "credit": {
+    "touchline": "Tactical Data by Touchline Wire (https://touchlinewire.com). Normalized factual fields.",
+    "football_data": "Football-Data.co.uk, English Premier League results (normalized counts and finals).",
+    "espn": "ESPN public scoreboard, English Premier League (normalized full-time status).",
+    "openligadb": "Data from OpenLigaDB (www.openligadb.de), licensed under ODbL 1.0."
+  },
+  "historical_early_technical_seals": {
+    "file": "reports/news-early-seals-0.4.2.json",
+    "sha256": "46a998f5c8f33449b364d37d19e82e7fed45fd12a806408422b0b89e6c24e9f2",
+    "horizon": "early",
+    "mode": "technical",
+    "season": "2026-27",
+    "round": 12,
+    "seals": 10,
+    "report_as_of": "2026-11-26T04:04:09.448486Z",
+    "input_cutoff_range": [
+      "2026-11-26T04:04:06.488251Z",
+      "2026-11-26T04:04:09.226074Z"
+    ],
+    "applied_items": 90,
+    "injuries": 84,
+    "suspensions": 6,
+    "weight_all": 15.126477272727273,
+    "weight_suspensions": 1.9445454545454546,
+    "weight_share": 0.1285524328953596,
+    "importance_at_least_0_88_full_precision": 2,
+    "importance_displayed_to_two_decimals_at_least_0_88": 3,
+    "players": [
+      {
+        "fixture": "epl/2026-27/brighton-hove-albion/newcastle-united",
+        "cutoff": "2026-11-26T04:04:07.841754Z",
+        "club": "Brighton & Hove Albion FC",
+        "player": "Costinha",
+        "importance_multiplier": 0.5196969696969697,
+        "combined_weight": 0.23386363636363636,
+        "historical_decision": "applied_as_reported"
+      },
+      {
+        "fixture": "epl/2026-27/crystal-palace/hull-city",
+        "cutoff": "2026-11-26T04:04:08.334045Z",
+        "club": "Crystal Palace FC",
+        "player": "Jean-Philippe Mateta",
+        "importance_multiplier": 0.4143939393939394,
+        "combined_weight": 0.18647727272727274,
+        "historical_decision": "applied_as_reported"
+      },
+      {
+        "fixture": "epl/2026-27/crystal-palace/hull-city",
+        "cutoff": "2026-11-26T04:04:08.334045Z",
+        "club": "Crystal Palace FC",
+        "player": "Yeremy Pino",
+        "importance_multiplier": 0.8795454545454545,
+        "combined_weight": 0.39579545454545456,
+        "historical_decision": "applied_as_reported"
+      },
+      {
+        "fixture": "epl/2026-27/everton/liverpool",
+        "cutoff": "2026-11-26T04:04:07.595094Z",
+        "club": "Everton FC",
+        "player": "James Tarkowski",
+        "importance_multiplier": 0.9806818181818182,
+        "combined_weight": 0.4413068181818182,
+        "historical_decision": "applied_as_reported"
+      },
+      {
+        "fixture": "epl/2026-27/manchester-united/brentford",
+        "cutoff": "2026-11-26T04:04:07.091635Z",
+        "club": "Brentford FC",
+        "player": "Igor Thiago",
+        "importance_multiplier": 0.9030303030303031,
+        "combined_weight": 0.40636363636363637,
+        "historical_decision": "applied_as_reported"
+      },
+      {
+        "fixture": "epl/2026-27/manchester-united/brentford",
+        "cutoff": "2026-11-26T04:04:07.091635Z",
+        "club": "Manchester United FC",
+        "player": "Leny Yoro",
+        "importance_multiplier": 0.6238636363636363,
+        "combined_weight": 0.28073863636363633,
+        "historical_decision": "applied_as_reported"
+      }
+    ],
+    "new_scope_review": {
+      "file": "reports/five-leagues-0.5/news-audit.json",
+      "sha256": "3bef4923f3a8480f9e51acd77a99ad3422d46e9c8a9d742b32e02a7dbdf3fd50",
+      "classifications": {
+        "scope_unverified": 6
+      }
+    },
+    "original_directory_fallbacks": {
+      "Manchester City FC": 1,
+      "Nottingham Forest FC": 4
+    },
+    "original_directory_starts_and_minutes_for_five_fallbacks": null
+  },
+  "published_documentation": {
+    "provider_docs": {
+      "url": "https://touchlinewire.com/docs",
+      "bytes": 46856,
+      "body_sha256": "a1ab059338afb71efafaaf819ffb671961cae1b52f0401c7a71b5f3b2a54ed6c"
+    },
+    "openapi": {
+      "url": "https://touchlinewire.com/api/v1/openapi.json",
+      "bytes": 20328,
+      "body_sha256": "7a2f8fe9c9c031f3bb96e128fac4b4e6572eb923db4350b8b6e0cd7543b614f0"
+    },
+    "injuries_200_schema_declared": false,
+    "literal_field_names_found_in_documentation_html": [],
+    "interpretation": "The published example and OpenAPI do not promise the three fields. Coverage in this dated observation does not determine coverage of future responses."
+  },
+  "native_availability": {
+    "url": "https://touchlinewire.com/api/v1/injuries",
+    "bytes": 49333,
+    "body_sha256": "11852c5ea131fdacf1ae5577f45244e3202622c2aee413c44ab42293278efde1",
+    "provider_as_of": "2026-11-26T11:34:51.333193+00:00",
+    "season_coverage": "current provider-wide Premier League list",
+    "provider_reported_rows": 91,
+    "observed_rows": 91,
+    "unique_provider_player_ids": 91,
+    "rows_by_category_and_status": [
+      {
+        "category": "ineligible",
+        "status": "doubtful",
+        "rows": 1
+      },
+      {
+        "category": "injury",
+        "status": "doubtful",
+        "rows": 16
+      },
+      {
+        "category": "injury",
+        "status": "injured",
+        "rows": 68
+      },
+      {
+        "category": "suspension",
+        "status": "suspended",
+        "rows": 6
+      }
+    ],
+    "across_all_rows": {
+      "suspension_competition": {
+        "rows": 91,
+        "key_present": 0,
+        "nonnull_nonblank": 0
+      },
+      "injury_started_at": {
+        "rows": 91,
+        "key_present": 0,
+        "nonnull_nonblank": 0
+      },
+      "injury_date": {
+        "rows": 91,
+        "key_present": 0,
+        "nonnull_nonblank": 0
+      }
+    },
+    "applicable_rows": {
+      "suspension_competition": {
+        "rows": 6,
+        "key_present": 0,
+        "nonnull_nonblank": 0
+      },
+      "injury_started_at": {
+        "rows": 84,
+        "key_present": 0,
+        "nonnull_nonblank": 0
+      },
+      "injury_date": {
+        "rows": 84,
+        "key_present": 0,
+        "nonnull_nonblank": 0
+      }
+    },
+    "suspensions": [
+      {
+        "provider_player_id": 106,
+        "club": "Brentford",
+        "player": "Igor Thiago",
+        "named_competition": null
+      },
+      {
+        "provider_player_id": 119,
+        "club": "Brighton",
+        "player": "Costinha",
+        "named_competition": null
+      },
+      {
+        "provider_player_id": 211,
+        "club": "Crystal Palace",
+        "player": "Yeremy Pino",
+        "named_competition": null
+      },
+      {
+        "provider_player_id": 223,
+        "club": "Crystal Palace",
+        "player": "Jean-Philippe Mateta",
+        "named_competition": null
+      },
+      {
+        "provider_player_id": 229,
+        "club": "Everton",
+        "player": "James Tarkowski",
+        "named_competition": null
+      },
+      {
+        "provider_player_id": 420,
+        "club": "Man Utd",
+        "player": "Leny Yoro",
+        "named_competition": null
+      }
+    ]
+  },
+  "standings": {
+    "url": "https://touchlinewire.com/api/v1/table",
+    "bytes": 10588,
+    "body_sha256": "e75101f016f8d15866a97e6a2090b8d12967335f23c33c78e75431658c2ca894",
+    "provider_as_of": "2026-11-26T11:35:34.117930+00:00",
+    "season": "2026/27",
+    "competition": "epl",
+    "clubs": 20
+  },
+  "cross_checks": {
+    "football_data": {
+      "url": "https://www.football-data.co.uk/mmz4281/2627/E0.csv",
+      "bytes": 53914,
+      "body_sha256": "21d2b96792bd0bc8a324123ae68eaf60b981c5a016c538d086e8d8a5cbedd95a"
+    },
+    "espn_round_11_day": {
+      "url": "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=20261121",
+      "bytes": 83847,
+      "body_sha256": "c5f775926d9b6f1a4257a9078cbfabcce92d0c284cd0b99990d58db2ce496f2c"
+    },
+    "openligadb_season": {
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026",
+      "bytes": 1003464,
+      "body_sha256": "b8b95a74468c081c2b9c6779b8c0aeb05d5c4c4d191c456b610bb2a9441a73b1"
+    },
+    "openligadb_round_11": {
+      "url": "https://api.openligadb.de/getmatchdata/pl/2026/11",
+      "bytes": 23818,
+      "body_sha256": "74289b0bed15caab46671da4adb2bf005580ba9ef296dc1f6d1744274d0fbd81"
+    }
+  },
+  "directories": {
+    "Manchester City FC": {
+      "url": "https://touchlinewire.com/api/v1/players?club=man-city&limit=65",
+      "bytes": 21662,
+      "body_sha256": "e52bbb1149815a2637fcc922d7164829ca078b2d76cced5eb21dfa5874b792ea",
+      "provider_as_of": "2026-11-26T11:35:35.099180Z",
+      "provider_count": 26,
+      "total_matched": 26,
+      "table_games_played": 11,
+      "football_data_finished_matches": 11,
+      "last_football_data_final": [
+        {
+          "Date": "21/11/2026",
+          "HomeTeam": "Man City",
+          "AwayTeam": "Fulham",
+          "FTHG": "1",
+          "FTAG": "1"
+        }
+      ],
+      "espn_final": {
+        "event": "401879233",
+        "completed": true,
+        "clock": "2026-11-21T12:30Z",
+        "status": "STATUS_FULL_TIME",
+        "score": {
+          "Manchester City": "1",
+          "Fulham": "1"
+        }
+      },
+      "openligadb": {
+        "season_rows_finished": 10,
+        "round_11_id": 86635,
+        "round_11_finished_in_season": false,
+        "round_11_finished_in_round_reply": false,
+        "round_11_result_rows": 0
+      },
+      "by_position": {
+        "DEF": {
+          "players": 10,
+          "starts": 47,
+          "minutes": 4206
+        },
+        "FWD": {
+          "players": 1,
+          "starts": 11,
+          "minutes": 979
+        },
+        "GK": {
+          "players": 3,
+          "starts": 11,
+          "minutes": 990
+        },
+        "MID": {
+          "players": 12,
+          "starts": 54,
+          "minutes": 4810
+        }
+      },
+      "individual_starts_appearances_and_minutes_within_caps": true,
+      "observed_starts": 123,
+      "expected_starts": 121,
+      "extra_starts": 2,
+      "goalkeeper_starts": 11,
+      "permitted_extra_starts": 1,
+      "observed_minutes": 10985,
+      "maximum_minutes": 10890,
+      "passes_appearance_totals_when_11_prior_matches_are_known": false
+    },
+    "Nottingham Forest FC": {
+      "url": "https://touchlinewire.com/api/v1/players?club=nott-m-forest&limit=65",
+      "bytes": 21068,
+      "body_sha256": "f1d648388ea29fab4cf0621a3c380c16e42d14e22f50ebecb66cbb71e8dab0a5",
+      "provider_as_of": "2026-11-26T11:35:35.332987Z",
+      "provider_count": 25,
+      "total_matched": 25,
+      "table_games_played": 11,
+      "football_data_finished_matches": 11,
+      "last_football_data_final": [
+        {
+          "Date": "21/11/2026",
+          "HomeTeam": "Bournemouth",
+          "AwayTeam": "Nott'm Forest",
+          "FTHG": "2",
+          "FTAG": "0"
+        }
+      ],
+      "espn_final": {
+        "event": "401879238",
+        "completed": true,
+        "clock": "2026-11-21T15:00Z",
+        "status": "STATUS_FULL_TIME",
+        "score": {
+          "AFC Bournemouth": "2",
+          "Nottingham Forest": "0"
+        }
+      },
+      "openligadb": {
+        "season_rows_finished": 10,
+        "round_11_id": 86628,
+        "round_11_finished_in_season": false,
+        "round_11_finished_in_round_reply": false,
+        "round_11_result_rows": 0
+      },
+      "by_position": {
+        "DEF": {
+          "players": 10,
+          "starts": 56,
+          "minutes": 4964
+        },
+        "FWD": {
+          "players": 4,
+          "starts": 11,
+          "minutes": 1252
+        },
+        "GK": {
+          "players": 3,
+          "starts": 11,
+          "minutes": 990
+        },
+        "MID": {
+          "players": 8,
+          "starts": 44,
+          "minutes": 3710
+        }
+      },
+      "individual_starts_appearances_and_minutes_within_caps": true,
+      "observed_starts": 122,
+      "expected_starts": 121,
+      "extra_starts": 1,
+      "goalkeeper_starts": 11,
+      "permitted_extra_starts": 1,
+      "observed_minutes": 10916,
+      "maximum_minutes": 10890,
+      "passes_appearance_totals_when_11_prior_matches_are_known": false
+    }
+  },
+  "comparison_limit": "These directories and results were received after all ten early forecast cutoffs. They cannot establish the exact earlier directory totals, identify a particular player as an error, or change an old probability.",
+  "reproduction": {
+    "original_seals": "python -I docs/review-evidence/code-review-0.5.0a1-2026-11-26/check_report_details.py .",
+    "field_inventory": "Count distinct player_id and category/status in the native response. Test each named key for presence and nonblank values in every row and again for its applicable category.",
+    "directory_check": "For each club sum starts and minutes by position in the full club reply (limit 65). Compute 11 * played and 11 * 90 * played; run news_minutes.parse and news_importance.appearance_totals(players, played, diagnostics).",
+    "source_availability": "These HTTP endpoints change in place. Each stored SHA-256 identifies the response bytes used on the stated date; a later request is a new observation."
+  }
+}

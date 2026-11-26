@@ -1,0 +1,276 @@
+{
+  "scope": "Independent replay of archived original Gamma contracts. Each market is counted once per league and condition in each archive. These overlapping observations do not double the number of fixtures.",
+  "samples": [
+    {
+      "archive": "0.5.0a2 manual sample 2026-11-26",
+      "contracts": {
+        "bun": 486,
+        "fl1": 522,
+        "lal": 580,
+        "sea": 580
+      },
+      "validated": {
+        "('bun', True)": 216,
+        "('fl1', True)": 216,
+        "('lal', True)": 240,
+        "('sea', True)": 240
+      },
+      "issues": {
+        "('bun', 'Gamma capture does not identify a unique matching outcome contract')": 270,
+        "('fl1', 'Gamma capture does not identify a unique matching outcome contract')": 306,
+        "('lal', 'Gamma capture does not identify a unique matching outcome contract')": 340,
+        "('sea', 'Gamma capture does not identify a unique matching outcome contract')": 340
+      },
+      "flags_in_first_event_receipt": {
+        "('None', 'None', 'None', 'None')": 76
+      },
+      "book_rows": 48,
+      "book_range": [
+        "2026-11-26T11:37:03.482349Z",
+        "2026-11-26T11:37:05.041346Z"
+      ],
+      "run_types": [
+        [
+          "manual_core",
+          4
+        ]
+      ],
+      "fee_switch": {
+        "('fee True', 'bun')": 216,
+        "('fee True', 'fl1')": 216,
+        "('fee True', 'lal')": 240,
+        "('fee True', 'sea')": 240
+      }
+    },
+    {
+      "archive": "0.5.0a1 archived discovery 2026-11-26",
+      "contracts": {
+        "bun": 486,
+        "fl1": 522,
+        "lal": 580,
+        "sea": 580
+      },
+      "validated": {
+        "('bun', True)": 216,
+        "('fl1', True)": 216,
+        "('lal', True)": 240,
+        "('sea', True)": 240
+      },
+      "issues": {
+        "('bun', 'Gamma capture does not identify a unique matching outcome contract')": 270,
+        "('fl1', 'Gamma capture does not identify a unique matching outcome contract')": 306,
+        "('lal', 'Gamma capture does not identify a unique matching outcome contract')": 340,
+        "('sea', 'Gamma capture does not identify a unique matching outcome contract')": 340
+      },
+      "flags_in_first_event_receipt": {
+        "('None', 'None', 'None', 'None')": 76
+      },
+      "book_rows": 2280,
+      "book_range": [
+        "2026-11-26T07:25:00.417322Z",
+        "2026-11-26T07:27:36.942664Z"
+      ],
+      "run_types": [
+        [
+          "manual_all",
+          38
+        ],
+        [
+          "periodic",
+          38
+        ]
+      ],
+      "fee_switch": {
+        "('fee True', 'bun')": 216,
+        "('fee True', 'fl1')": 216,
+        "('fee True', 'lal')": 240,
+        "('fee True', 'sea')": 240
+      }
+    }
+  ],
+  "controlled_clob_replay": {
+    "scope": "Controlled fixture clocks and original-format CLOB stubs. Candidate Gamma fields seeded by recorded public events; zero actual decision/exit slots or executions are implied.",
+    "cases": [
+      {
+        "league": "bun",
+        "fee_mode": "as_seen_in_real_metadata",
+        "watch_states": [
+          {
+            "complete": 1
+          },
+          {
+            "complete": 1
+          }
+        ],
+        "fee_authority_gap": "fee-enabled market lacks one reviewed effective charging asset and rounding policy"
+      },
+      {
+        "league": "bun",
+        "fee_mode": "synthetic_disabled",
+        "domestic_fixture": "bun-wer-moe-2026-11-27",
+        "watch_states": [
+          {
+            "complete": 1
+          },
+          {
+            "complete": 1
+          }
+        ],
+        "actual_operations_in_controlled_db": [
+          "books",
+          "league_catalog",
+          "league_sports"
+        ],
+        "matched_book_count": 2,
+        "flag": "scheduled_with_incomplete_flags",
+        "default": {
+          "skipped_unverified_entry": 1
+        },
+        "research": {
+          "filled": 1
+        },
+        "research_gaps": {},
+        "book_hashes": [
+          "36bdf0776da86bb4cd1103a75a30fe9fc547938d2d32e44e0fd94ce4797a55f3",
+          "b523e2dd521b39cd44255d366ccb82b1d1641b1bc78280392b1ed6958dad9f5b"
+        ],
+        "verified_venue_orders": 0
+      },
+      {
+        "league": "fl1",
+        "fee_mode": "as_seen_in_real_metadata",
+        "watch_states": [
+          {
+            "complete": 1
+          },
+          {
+            "complete": 1
+          }
+        ],
+        "fee_authority_gap": "fee-enabled market lacks one reviewed effective charging asset and rounding policy"
+      },
+      {
+        "league": "fl1",
+        "fee_mode": "synthetic_disabled",
+        "domestic_fixture": "fl1-sbr-pfc-2026-11-27",
+        "watch_states": [
+          {
+            "complete": 1
+          },
+          {
+            "complete": 1
+          }
+        ],
+        "actual_operations_in_controlled_db": [
+          "books",
+          "league_catalog",
+          "league_sports"
+        ],
+        "matched_book_count": 2,
+        "flag": "scheduled_with_incomplete_flags",
+        "default": {
+          "skipped_unverified_entry": 1
+        },
+        "research": {
+          "filled": 1
+        },
+        "research_gaps": {},
+        "book_hashes": [
+          "0522219d410add8ac01de3f4c305a8f8db70becd6f138993e6edb60d171c7486",
+          "5d1512e8e358cc2fd0341f1465afc868af15822592cdbfa37955a24f13fc0627"
+        ],
+        "verified_venue_orders": 0
+      },
+      {
+        "league": "lal",
+        "fee_mode": "as_seen_in_real_metadata",
+        "watch_states": [
+          {
+            "complete": 1
+          },
+          {
+            "complete": 1
+          }
+        ],
+        "fee_authority_gap": "fee-enabled market lacks one reviewed effective charging asset and rounding policy"
+      },
+      {
+        "league": "lal",
+        "fee_mode": "synthetic_disabled",
+        "domestic_fixture": "lal-lev-rrc-2026-11-27",
+        "watch_states": [
+          {
+            "complete": 1
+          },
+          {
+            "complete": 1
+          }
+        ],
+        "actual_operations_in_controlled_db": [
+          "books",
+          "league_catalog",
+          "league_sports"
+        ],
+        "matched_book_count": 2,
+        "flag": "scheduled_with_incomplete_flags",
+        "default": {
+          "skipped_unverified_entry": 1
+        },
+        "research": {
+          "filled": 1
+        },
+        "research_gaps": {},
+        "book_hashes": [
+          "dde26ae82d2ce09021878a235974b30640647c1316cc736e462ff7fc14713ea5",
+          "63d36ea70f8ea800153881780a1185dabec9b8ff5a8bd00ca6348952d56e63a8"
+        ],
+        "verified_venue_orders": 0
+      },
+      {
+        "league": "sea",
+        "fee_mode": "as_seen_in_real_metadata",
+        "watch_states": [
+          {
+            "complete": 1
+          },
+          {
+            "complete": 1
+          }
+        ],
+        "fee_authority_gap": "fee-enabled market lacks one reviewed effective charging asset and rounding policy"
+      },
+      {
+        "league": "sea",
+        "fee_mode": "synthetic_disabled",
+        "domestic_fixture": "sea-ven-bol-2026-11-27",
+        "watch_states": [
+          {
+            "complete": 1
+          },
+          {
+            "complete": 1
+          }
+        ],
+        "actual_operations_in_controlled_db": [
+          "books",
+          "league_catalog",
+          "league_sports"
+        ],
+        "matched_book_count": 2,
+        "flag": "scheduled_with_incomplete_flags",
+        "default": {
+          "skipped_unverified_entry": 1
+        },
+        "research": {
+          "filled": 1
+        },
+        "research_gaps": {},
+        "book_hashes": [
+          "afd1efbaf5a16dbf98162421c499e8b1e8c6becc2d5d677e52e7bd6f149cb25d",
+          "af56f2f17ecd942d4b3014965aeb3e610ab69fef375008e7da9834f275ed5043"
+        ],
+        "verified_venue_orders": 0
+      }
+    ]
+  }
+}
