@@ -191,7 +191,12 @@ class DashboardBrowserTests(unittest.TestCase):
 
         row = {"kind": "news-accumulation", "key": "news-seasons", "payload": {
             "first_season": "2026-27", "through_season": "2027-28", "horizon": "T-60m",
-            "scheduled": 760, "eligible_seals": 3, "eras": {"a" * 64: {
+            "scheduled": 760, "eligible_seals": 3,
+            "scheduled_market_close": {"clock_basis":"scheduled_kickoff_with_native_pregame_event",
+                "status":"descriptive_scheduled_proxy", "eligible_seals":3, "paired_fixtures":2,
+                "home_win_regression":{"pairs":2,"informative_pairs":2,"slope":0.5,
+                                       "interval":{"lower":0.1,"upper":0.9}}},
+            "eras": {"a" * 64: {
                 "score": {"pairs": 3, "mean": 0.1}, "home_close": {"pairs": 0, "mean": None},
             }},
         }}
@@ -207,6 +212,10 @@ class DashboardBrowserTests(unittest.TestCase):
                 self.assertIn("主胜收盘配对", detail.inner_text())
                 cells = detail.locator("tbody tr").first.locator("td").all_text_contents()
                 self.assertEqual(cells, ["a" * 12, "3", "0.1", "0", "—"])
+                proxy = detail.locator("section", has=page.get_by_role("heading", name="计划开球前的盘口参照"))
+                self.assertIn("新闻调整与主胜盘口变化的斜率", proxy.inner_text())
+                self.assertIn("0.1 至 0.9", proxy.inner_text())
+                self.assertNotIn("实际开球时间来源", proxy.inner_text())
             finally:
                 browser.close()
 

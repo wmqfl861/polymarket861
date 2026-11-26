@@ -469,6 +469,8 @@ class TrainingFit:
     baseline: np.ndarray
     b1: object
     evidence: dict
+    # Membership of the exact finite B1 training sample, for research on absences.
+    team_kickoffs: dict
 
 
 class FootballEngine:
@@ -563,7 +565,11 @@ class FootballEngine:
                 b"".join(x[2] for x in eligible)
             ).hexdigest(),
         }
-        result = TrainingFit(grid, fitted, evidence)
+        by_club = collections.defaultdict(list)
+        for home, away, _, _, played in records:
+            by_club[home].append(played)
+            by_club[away].append(played)
+        result = TrainingFit(grid, fitted, evidence, {club: tuple(sorted(stamps)) for club, stamps in by_club.items()})
         self.last_fit[season] = (cache_key, result)
         return result
 

@@ -16,6 +16,7 @@ from . import (
     input_manifest,
     news,
     news_model,
+    news_poll_archive,
     news_roster,
     paired_proof,
     pipeline,
@@ -69,16 +70,32 @@ def _weight_inputs(db, fixture, at):
     """Detect independent result, minutes and lineup receipts at this decision cutoff."""
     params = {"season": fixture["season"], "at": at, "home": fixture["home"], "away": fixture["away"]}
     games = list(db.execute(
-        "SELECT fixture_id,kickoff,received,goals,away_goals FROM (" +
+        "SELECT fixture_id,kickoff,received,goals,away_goals,hold_reason,round_id FROM (" +
         result_freshness._AS_OF.format(times="result_event_times") +
-        ") WHERE kickoff<:at AND (home IN (:home,:away) OR away IN (:home,:away)) ORDER BY fixture_id", params,
+        ") WHERE (kickoff<:at OR hold_reason='cross_source_score_conflict') "
+        "AND (home IN (:home,:away) OR away IN (:home,:away)) ORDER BY fixture_id", params,
     ))
     result = {"matches": [tuple(g) for g in games]}
     if not games:
         return result
     tables = {r[0] for r in db.execute(
-        "SELECT name FROM sqlite_master WHERE name IN ('news_usage_history','ev_facts','research_events')"
+        "SELECT name FROM sqlite_master WHERE name IN ('news_usage_history','ev_facts','research_events',"
+        "'rf_native_requests','epl_wiki_receipts')"
     )}
+    # The shared score-conflict label can mask a later change to a provider's
+    # kickoff or match identity. Reevaluate affected teams upon the new receipt.
+    rounds = sorted({str(g["round_id"]) for g in games if g["hold_reason"] == "cross_source_score_conflict"})
+    if rounds:
+        year = football.season_year(fixture["season"])
+        if "rf_native_requests" in tables:
+            scopes = ["season", *rounds]
+            marks = ",".join("?" for _ in scopes)
+            result["disputed_primary"] = db.execute(
+                f"SELECT max(rowid) FROM rf_native_requests WHERE season=? AND received_at<=? AND scope IN ({marks})",
+                (year, at, *scopes)).fetchone()[0]
+        if "epl_wiki_receipts" in tables:
+            result["disputed_independent"] = db.execute(
+                "SELECT max(rowid) FROM epl_wiki_receipts WHERE year=? AND received<=?", (year, at)).fetchone()[0]
     if "news_usage_history" in tables:
         result["directory"] = [tuple(r) for r in db.execute(
             """SELECT club,max(known_at) FROM news_usage_history WHERE season=? AND club IN (?,?)
@@ -130,8 +147,9 @@ def _cursor(db, fixture, at, roster_token):
         WHERE f.season=? AND (f.home IN (?,?) OR f.away IN (?,?)) AND f.known_at<=? AND r.recorded_at<=?""",
         (fixture["season"], fixture["home"], fixture["away"], fixture["home"], fixture["away"], at, at),
     ).fetchone()
+    polls = news_poll_archive.history(db, "news_wire_polls")
     wire = db.execute(
-        "SELECT max(rowid) FROM news_wire_polls WHERE fixture_id=? AND provider_at<=? AND observed_at<=? AND recorded_at<=?",
+        f"SELECT max(rowid) FROM {polls} WHERE fixture_id=? AND provider_at<=? AND observed_at<=? AND recorded_at<=?",
         (fixture["fixture_id"], at, at, at),
     ).fetchone()[0]
     return store.digest([roster_token, fixture["version"], list(schedule), wire, _weight_inputs(db, fixture, at),
@@ -167,7 +185,7 @@ def _claim(root, limit, eligible_schedules):
                 and job["cursor"] == cursor
                 and (
                     (job["retry_at"] > at and job["retry_manifest"] == manifest)
-                    or (not job["last_error"] and job["review_at"] > at)
+                    or (not job["last_error"] and job["review_at"] > at and job["retry_manifest"] == manifest)
                 )
             ):
                 continue
@@ -187,7 +205,7 @@ def _claim(root, limit, eligible_schedules):
                 (*key, ticket + i, owner, store.iso(store.instant(at) + LEASE)),
             )
             tasks.append(
-                f | {"owner": owner, "cursor": cursor, "roster_expiry": roster_expiry,
+                f | {"owner": owner, "cursor": cursor, "roster_expiry": roster_expiry, "claimed_manifest": manifest,
                      "schedule_status": eligible_schedules[f["fixture_id"], f["kickoff"], f["version"]]}
             )
         return tasks, len(games), len(due)
@@ -196,11 +214,11 @@ def _claim(root, limit, eligible_schedules):
 _WEIGHT_FIELDS = {"chance_of_playing": None, "duration_multiplier": 1, "importance_multiplier": 1}
 
 
-def _semantic(fixture, snapshot):
+def _semantic(fixture, snapshot, training_kickoffs=None):
     cut = store.instant(snapshot["cutoff"])
     clubs = {football.team_key(fixture[side]): side for side in ("home", "away")}
     chosen, excluded = news_model._active_claims(
-        snapshot["facts"], cut, clubs, news_model.LOCAL, fixture
+        snapshot["facts"], cut, clubs, news_model.LOCAL, fixture, training_kickoffs
     )
     # A renewed bulletin, a synonym, a new receipt, or the same extraction under
     # a new roster/model do not represent new player information. Keep neutral
@@ -340,14 +358,17 @@ def _report(root, task, previous, cache, history_root):
     if fixture["kickoff"] != task["kickoff"] or fixture["precision"] == "date":
         raise ValueError("fixture schedule changed")
 
-    def sample():
+    def sample(engine=None):
         cut = _now()
         if cut >= fixture["kickoff"]:
             raise ValueError("fixture already started")
         snapshot = news.snapshot(root, fixture["fixture_id"], cut)
         if snapshot["cutoff"] != cut or snapshot["fixture_id"] != fixture["fixture_id"]:
             raise ValueError("news snapshot cutoff or fixture changed")
-        return cut, snapshot, _semantic(fixture, snapshot)
+        kickoffs = None
+        if engine is not None and snapshot["facts"]:
+            kickoffs = engine.fit(fixture["season"], store.instant(cut), fixture["fixture_id"]).team_kickoffs
+        return cut, snapshot, _semantic(fixture, snapshot, kickoffs)
 
     def same(state):
         return (
@@ -356,14 +377,14 @@ def _report(root, task, previous, cache, history_root):
         )
 
     cut, snapshot, state = sample()
-    if same(state):
+    if same(state) and not any(row["state"] == "active" for row in state):
         return None, _review(snapshot, task["roster_expiry"])
     if "history" not in cache:
         cache["history"] = _history(root, history_root)
     manifest, seen, engine, recipe = cache["history"]
     # Verification may materialize a newly adjudicated manifest. Freeze news and
     # the decision time together after that manifest is actually available.
-    cut, snapshot, state = sample()
+    cut, snapshot, state = sample(engine)
     if seen > cut:
         raise ValueError("football history was unavailable at decision time")
     if same(state):
@@ -485,8 +506,9 @@ def _run(root, task, cache, history_root):
                 store.put_report(db, "news-update", ident, doc | {"digest": ident})
                 item.update(status="published", digest=ident, revision=doc["revision"])
             db.execute(
-                "UPDATE news_event_work SET owner=NULL,lease_until='',cursor=?,review_at=?,retry_at='',retry_manifest='',last_error=NULL WHERE fixture_id=? AND kickoff=?",
-                (task["cursor"], review, *key),
+                "UPDATE news_event_work SET owner=NULL,lease_until='',cursor=?,review_at=?,retry_at='',retry_manifest=?,last_error=NULL WHERE fixture_id=? AND kickoff=?",
+                # New history arriving during this calculation must still wake the next pass.
+                (task["cursor"], review, task["claimed_manifest"], *key),
             )
             try:
                 dbscope.recheck_originals(originals)

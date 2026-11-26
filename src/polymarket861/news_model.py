@@ -11,7 +11,7 @@ import re
 from . import football, football_model, news_importance, store
 from .news import COVERAGE_AGE
 
-PROTOCOL = "epl-player-news-paired-v2"
+PROTOCOL = "epl-player-news-paired-v3"
 LOCAL = "local_receipt"
 HISTORICAL = "publication_time_reconstruction"
 
@@ -35,9 +35,12 @@ POLICY = {
     "wire_source": "touchline-availability",
     "wire_absence_probability": "reported.out * (1 - chance_of_playing / 100)",
     "wire_max_age_hours": COVERAGE_AGE / timedelta(hours=1),
-    # Elapsed local absence duration, followed by its remaining marginal effect.
-    # Discrete transitions allow identical polls to retain a single event forecast.
-    "duration_steps_days": [[0, 1.0], [7, 0.75], [14, 0.5], [28, 0.25], [42, 0.0]],
+    "duration": {
+        "basis": "fraction of team training-match weight from before the first observed absence",
+        "decay_per_day": football_model.DECAY_PER_DAY,
+        "cohort": "exact eligible B1 matches for this club; a match counts as exposed only after observed onset",
+        "unavailable": "retain full duration factor and label unavailable training exposure",
+    },
     "importance": news_importance.POLICY,
     "effect_basis": "fixed untrained positional effect times absence probability, duration and observed minutes/starts",
     "returns": "restore typical lineup, no additional positive effect",
@@ -75,7 +78,30 @@ def _wire(row):
     return row.get("source") == POLICY["wire_source"] and row.get("time_basis") == "provider_snapshot"
 
 
-def _timing(row, cutoff, basis, pub, received):
+def duration_evidence(team_kickoffs, onset):
+    """Approximate remaining effect by the fraction of B1's weight preceding the episode.
+
+    The time anchor cancels in the ratio. Use the latest club kickoff (as in
+    B1, up to a common factor) so repeated polls leave the estimate identical.
+    """
+    if not team_kickoffs:
+        return {"duration_multiplier": 1.0, "duration_basis": "no_training_match_exposure",
+                "team_training_matches": 0, "matches_in_episode": 0}
+    last = max(team_kickoffs)
+    start = onset.timestamp()
+    before, after = [], []
+    for played in team_kickoffs:
+        weight = math.exp(-football_model.DECAY_PER_DAY * (last - played) / 86400)
+        (after if played > start else before).append(weight)
+    before_sum, after_sum = math.fsum(before), math.fsum(after)
+    return {
+        "duration_multiplier": before_sum / (before_sum + after_sum),
+        "duration_basis": "b1_weighted_training_matches", "team_training_matches": len(team_kickoffs),
+        "matches_in_episode": len(after), "weight_before_episode": before_sum, "weight_during_episode": after_sum,
+    }
+
+
+def _timing(row, cutoff, basis, pub, received, training_kickoffs=None):
     # Text bulletins have no continuing provider presence. Their original clocks
     # and publication window apply. Offline revision reconstructions retain public time.
     onset = received if basis == LOCAL else pub
@@ -102,23 +128,18 @@ def _timing(row, cutoff, basis, pub, received):
         details["chance_of_playing"] = chance
     elif cutoff - pub > timedelta(days=POLICY["max_publication_age_days"]):
         return details, "publication_outside_window"
-    age_days = (cutoff - onset).days
     details["duration_from"] = store.iso(onset)
-    details["duration_multiplier"] = next(
-        weight for days, weight in reversed(POLICY["duration_steps_days"]) if days <= age_days
-    )
+    details.update(duration_evidence((training_kickoffs or {}).get(football.team_key(row.get("team", ""))), onset))
     return details, None
 
 
 def next_weight_review(row, cutoff):
-    """First future duration or source-freshness boundary for the event scheduler."""
+    """First source-freshness deadline. Duration changes when training results arrive."""
     cut = store.instant(cutoff)
     try:
         received = store.instant(row["received_at"])
-        onset = received
         deadlines = []
         if _wire(row):
-            onset = store.instant(row.get("absence_first_seen_at") or row.get("first_seen_at") or received)
             last = store.instant(row.get("last_seen_at") or received)
             published = store.instant(row.get("last_seen_state_as_of") or row.get("observed_state_as_of") or row["published_at"])
             deadlines.append(min(last, published) + timedelta(hours=POLICY["wire_max_age_hours"], microseconds=1))
@@ -126,7 +147,6 @@ def next_weight_review(row, cutoff):
         if history.get("basis") == "epl_season_minutes_and_starts":
             deadlines.append(store.instant(history["provider_as_of"]) +
                              timedelta(days=news_importance.POLICY["directory_max_age_days"], microseconds=1))
-        deadlines.extend(onset + timedelta(days=days) for days, _ in POLICY["duration_steps_days"][1:])
         return min((d for d in deadlines if d > cut), default=None)
     except (TypeError, ValueError, KeyError, AttributeError, OverflowError):
         return None
@@ -144,7 +164,7 @@ def usable_wire_observation(row, cutoff):
         return False
 
 
-def _inspect(row, cutoff, clubs, basis, baseline):
+def _inspect(row, cutoff, clubs, basis, baseline, training_kickoffs=None):
     ident = row.get("id") or row.get("claim_id") or row.get("evidence_id")
     name = row.get("player_name") or row.get("name")
     item = {
@@ -210,7 +230,7 @@ def _inspect(row, cutoff, clubs, basis, baseline):
             item["historical_revision"] = row["historical_revision"]
         if (known if basis == LOCAL else public_at) > cutoff:
             return item, "unavailable_at_cutoff"
-        timing, issue = _timing(row, cutoff, basis, pub, received)
+        timing, issue = _timing(row, cutoff, basis, pub, received, training_kickoffs)
         item.update(timing)
         if issue:
             return item, issue
@@ -296,18 +316,20 @@ def _supported_absence(absences):
         key=lambda i: (i["duration_from"], i["id"]),
     )
     if episode["duration_from"] < item["duration_from"]:
-        item.update(duration_multiplier=episode["duration_multiplier"], duration_from=episode["duration_from"],
-                    duration_evidence_id=episode["id"])
+        item.update({k: episode[k] for k in ("duration_from", "duration_multiplier", "duration_basis",
+                    "team_training_matches", "matches_in_episode", "weight_before_episode", "weight_during_episode")
+                     if k in episode})
+        item["duration_evidence_id"] = episode["id"]
     return item
 
 
-def _active_claims(facts, cutoff, clubs, basis, baseline):
+def _active_claims(facts, cutoff, clubs, basis, baseline, training_kickoffs=None):
     by_player, excluded = defaultdict(list), []
     for fact in facts:
         if not isinstance(fact, dict):
             excluded.append({"id": None, "reason": "invalid_claim"})
             continue
-        item, issue = _inspect(fact, cutoff, clubs, basis, baseline)
+        item, issue = _inspect(fact, cutoff, clubs, basis, baseline, training_kickoffs)
         if issue in (None, "retracted", "unresolved_conflict"):
             by_player[item["player_id"]].append((item, issue))
         else:
@@ -363,7 +385,7 @@ def _active_claims(facts, cutoff, clubs, basis, baseline):
             )
             continue
         if item["duration_multiplier"] == 0:
-            excluded.append(item | {"reason": "absence_duration_limit"})
+            excluded.append(item | {"reason": "absence_spans_all_team_training_matches"})
         else:
             chosen.append(item)
         for other in items:
@@ -385,6 +407,7 @@ def paired_prediction(
     cutoff=None,
     coverage=None,
     availability_basis=LOCAL,
+    training_kickoffs=None,
 ):
     """Apply an explicitly declared candidate to the exact same pre-match base.
 
@@ -402,7 +425,7 @@ def paired_prediction(
         lines = tuple(map(float, original["totals"]["total"]))
     facts = list(facts)
     chosen, excluded = _active_claims(
-        facts, instant, clubs, availability_basis, baseline
+        facts, instant, clubs, availability_basis, baseline, training_kickoffs
     )
     candidate = dict(baseline, model="B3-news", base_model=baseline["model"])
     applied = []
@@ -477,6 +500,7 @@ def paired_prediction(
             sorted(Counter(i["reason"] for i in excluded).items())
         ),
         "log_goal_shifts": shifts,
+        "max_abs_log_adjustment_per_team": POLICY["max_abs_log_adjustment_per_team"],
         "coverage": coverage or {"both_teams_observed": False},
         "effect_basis": POLICY["effect_basis"],
     }
@@ -493,6 +517,7 @@ def make_pair(
     cutoff=None,
     coverage=None,
     availability_basis=LOCAL,
+    training_kickoffs=None,
 ):
     return paired_prediction(
         baseline,
@@ -503,4 +528,5 @@ def make_pair(
         cutoff=cutoff,
         coverage=coverage,
         availability_basis=availability_basis,
+        training_kickoffs=training_kickoffs,
     )[1]

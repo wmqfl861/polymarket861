@@ -170,9 +170,32 @@ def _stored_arms(pair, lines):
             "lambda_home": stored["home"], "lambda_away": stored["away"], "rho": stored["rho"]}
         grid = replay(rates, lines)["adaptive_grid"] if rates is not None else None
         arms[arm] = {"rates": rates, "adaptive_grid": grid, **pair[arm]}
-    return {"lines": lines, "policy_sha256": pair["policy_sha256"], "base_model": pair["base_model"],
+    weight_evidence = {}
+    # Preserve the byte-reproducible export of pre-v3 archives.
+    if pair.get("protocol") == "epl-player-news-paired-v3":
+        from polymarket861.news_weight_audit import public_claim
+
+        weight_evidence = {
+            "news_protocol": pair["protocol"],
+            "applied_player_weights": [public_claim(i) for i in pair["applied"]],
+            "log_goal_shifts": pair["log_goal_shifts"],
+            "max_abs_log_adjustment_per_team": pair["max_abs_log_adjustment_per_team"],
+        }
+    return {**weight_evidence, "lines": lines, "policy_sha256": pair["policy_sha256"], "base_model": pair["base_model"],
             "changed": pair["changed"], "applied_claims": len(pair["applied"]),
             "excluded_reasons": pair["excluded_reasons"], "arms": arms}
+
+
+def _weight_sources(records):
+    if not any("applied_player_weights" in record for record in records):
+        return {}
+    from polymarket861 import news_model
+
+    return {"weight_evidence_protocol": "epl-applied-player-weights-v1",
+            "weight_policies": {news_model.POLICY_SHA256: news_model.POLICY},
+            "source_credit": {"touchline": "Tactical Data by Touchline Wire (https://touchlinewire.com).",
+                              "touchline_terms": "https://touchlinewire.com/docs#attribution",
+                              "rosters": "English Wikipedia contributors, CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)."}}
 
 
 def _early_seals(db, season, round_id, through, recipe):
@@ -220,7 +243,7 @@ def export_runtime(root, season, round_id, *, pre_release=False, early_seals=Fal
             seals = _early_seals(db, season, round_id, through, recipe)
             if not seals:
                 raise ValueError("no matching technical early main B1 seals")
-            return metadata | {
+            return metadata | _weight_sources(seals) | {
                 "source_kind": "verified_stored_technical_early_seals", "required_recipe_sha256": recipe,
                 "provenance": ("Numerical values copied from the news arms attached to hash-verified primary B1 "
                                "technical early seals. The unchanged arm equals the sealed primary forecast. "
@@ -243,7 +266,7 @@ def export_runtime(root, season, round_id, *, pre_release=False, early_seals=Fal
                                      "recipe_sha256", "training_sha256")}
         event["receipt_sha256"] = doc["digest"]
         events.append(event | _stored_arms(pair, lines))
-    return metadata | {"source_kind": "verified_stored_event_documents",
+    return metadata | _weight_sources(events) | {"source_kind": "verified_stored_event_documents",
             "provenance": ("Rates, rho and both direction vectors are copied from hash-verified "
                            "immutable event documents. Grid policies and tail bounds were recalculated. "
                            "An empirical B0 fallback has no Dixon–Coles rates. These are event forecasts."),
@@ -267,11 +290,75 @@ def _vector(arm, lines):
     return result
 
 
-def _verify_events(events):
+def _verify_player_weights(event, policy):
+    players = event.get("applied_player_weights")
+    if not isinstance(players, list) or len(players) != event["applied_claims"]:
+        raise ValueError("missing applied player weights")
+    seen = set()
+    sums = {"home": 0.0, "away": 0.0}
+    bound = event["max_abs_log_adjustment_per_team"]
+    if not math.isfinite(bound) or not 0 < bound <= 1 or bound != policy["max_abs_log_adjustment_per_team"]:
+        raise ValueError("invalid log adjustment limit")
+    for row in players:
+        if not row["player_id"] or row["player_id"] in seen or not row["claim_id"]:
+            raise ValueError("missing or duplicated player identity")
+        seen.add(row["player_id"])
+        chance = row["source_chance_of_playing_percent"]
+        if chance is not None and (type(chance) is not int or not 0 <= chance <= 100):
+            raise ValueError("invalid source playing probability")
+        expected = None if chance is None else 1.0 - chance / 100
+        if row["source_absence_probability"] != expected:
+            raise ValueError("absence probability disagrees with source")
+        basis = row["importance_basis"]
+        history = row["importance_evidence"]
+        if not basis or basis != history.get("basis") or (
+                basis == "neutral" and (not row["fallback_reason"] or row["fallback_reason"] != history.get("reason"))):
+            raise ValueError("missing player importance evidence")
+        factors = [row[k] for k in ("absence_weight", "duration_multiplier", "importance_multiplier")]
+        if (not all(type(f) in (int, float) and 0 <= f <= 1 for f in factors)
+                or not math.isclose(row["combined_weight"], math.prod(factors), rel_tol=1e-12)):
+            raise ValueError("incorrect combined player weight")
+        absence = policy["absence_weight"][row["evidence_status"]]
+        expected_absence = absence["out"] * expected if expected is not None else absence[row["availability"]]
+        if not math.isclose(row["absence_weight"], expected_absence, abs_tol=1e-14):
+            raise ValueError("absence weight disagrees with the source and policy")
+        if basis == "neutral" and row["importance_multiplier"] != policy["importance"]["neutral_multiplier"]:
+            raise ValueError("neutral importance disagrees with the policy")
+        coefficients = policy["role_log_rate_effects"][row["role"]]
+        for coefficient, field in zip(coefficients, ("own_log_shift", "opponent_log_shift"), strict=True):
+            if not math.isclose(row[field], coefficient * row["combined_weight"], abs_tol=1e-14):
+                raise ValueError("player contribution disagrees with the role and combined weight")
+        if row["duration_basis"] == "b1_weighted_training_matches":
+            exposure = row["duration_evidence"]
+            before, after = exposure["weight_before_episode"], exposure["weight_during_episode"]
+            if (min(before, after) < 0 or before + after <= 0 or not math.isclose(
+                    row["duration_multiplier"], before / (before + after), abs_tol=1e-14)):
+                raise ValueError("duration multiplier disagrees with B1 training exposure")
+        side = row["side"]
+        if side not in sums:
+            raise ValueError("invalid player team side")
+        sums[side] += row["own_log_shift"]
+        sums["away" if side == "home" else "home"] += row["opponent_log_shift"]
+    for side, value in sums.items():
+        shift = max(-bound, min(bound, value))
+        if not math.isclose(shift, event["log_goal_shifts"][side], abs_tol=1e-14):
+            raise ValueError("player contributions disagree with forecast")
+        original, adjusted = (event["arms"][key]["rates"] for key in ARMS)
+        if original is not None and not math.isclose(
+                original["lambda_" + side] * math.exp(shift), adjusted["lambda_" + side], rel_tol=1e-12):
+            raise ValueError("player contributions disagree with goal rates")
+
+
+def _verify_events(events, policies=None):
     trials = comparable = comparisons = 0
     worst = 0.0
     receipts = set()
     for event in events:
+        if event.get("news_protocol") == "epl-player-news-paired-v3" or event.get("policy_sha256") in (policies or {}):
+            policy = (policies or {}).get(event["policy_sha256"])
+            if not policy or policy["protocol"] != event.get("news_protocol"):
+                raise ValueError("missing verified player-weight policy")
+            _verify_player_weights(event, policy)
         if event.get("receipt_sha256"):
             if event["receipt_sha256"] in receipts:
                 raise ValueError("duplicate event receipt")
@@ -319,7 +406,12 @@ def verify(report, historical_source=LEGACY):
     records = report.get(name)
     if report["protocol"] != PROTOCOL or not records:
         raise ValueError("unknown or empty replay report")
-    summary = _verify_events(records)
+    policies = report.get("weight_policies", {})
+    for identity, policy in policies.items():
+        encoded = json.dumps(policy, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
+        if hashlib.sha256(encoded.encode()).hexdigest() != identity:
+            raise ValueError("player-weight policy digest mismatch")
+    summary = _verify_events(records, policies)
     checked = {"absolute_tolerance": ATOL, name: summary}
     if report["source_kind"] == "inferred_from_historical_public_probabilities":
         raw = Path(historical_source).read_bytes()

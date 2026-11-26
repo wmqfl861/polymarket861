@@ -196,7 +196,7 @@ def _batch(db, root, slug, target, kickoff, before=None):
     return row, reply, native
 
 
-def _quote(db, data, m, outcome, batch, target, kickoff, actual):
+def _quote(db, data, m, outcome, batch, target, kickoff, actual, as_of_book=False):
     row, reply, native = batch
     (token,) = [t["token_id"] for t in m["tokens"] if t["outcome"].lower() == outcome]
     raw = native.get(token)
@@ -235,7 +235,11 @@ def _quote(db, data, m, outcome, batch, target, kickoff, actual):
     )
     # A notice received between this book and the observation boundary can remove
     # the contract, identify in-play, or replace its settlement terms.
-    boundary = min(target, kickoff - timedelta(microseconds=1))
+    boundary = (
+        store.instant(reply.received_at)
+        if as_of_book
+        else min(target, kickoff - timedelta(microseconds=1))
+    )
     current = archive_proof.original_market(db, data, m["condition_id"], boundary)
     if (
         any(current[k] != observed[k] for k in keys)
@@ -297,6 +301,7 @@ def frame(
     actual=False,
     before=None,
     prospective=False,
+    as_of_book=False,
 ):
     result = {
         "target": store.iso(target),
@@ -326,7 +331,17 @@ def frame(
                 market = contracts[k][0]
                 sides = ("yes",) if family == "result" else ("over", "under")
                 quotes[k] = [
-                    _quote(db, root, market, side, batch, target, kickoff, actual)
+                    _quote(
+                        db,
+                        root,
+                        market,
+                        side,
+                        batch,
+                        target,
+                        kickoff,
+                        actual,
+                        as_of_book,
+                    )
                     for side in sides
                 ]
             if family == "result":
@@ -360,19 +375,13 @@ def frame(
     return result
 
 
-def _closing_frame(db, root, fixture, cutoff, close, actual, prospective):
-    # Each family uses its most recent eligible cohort. Never stitch the three
-    # moneylines or the two directions of an Over/Under market across requests.
-    last = frame(
-        db, root, fixture, cutoff, close, close, actual=actual, prospective=prospective
-    )
-    used = {
-        k: {"received_at": last["received_at"], "batch": last["batch"]}
-        for k in last["items"]
-    }
-    boundary = last["received_at"]
-    while last["missing"] and boundary:
-        older = frame(
+def _closing_frame(
+    db, root, fixture, cutoff, close, actual, prospective, *, validate_state=None
+):
+    # Each family uses its latest qualifying native batch. A scheduled-clock
+    # study can additionally require an explicit venue state at the book.
+    def sample(before=None):
+        data = frame(
             db,
             root,
             fixture,
@@ -380,14 +389,31 @@ def _closing_frame(db, root, fixture, cutoff, close, actual, prospective):
             close,
             close,
             actual=actual,
-            before=store.instant(boundary),
+            before=before,
             prospective=prospective,
+            as_of_book=validate_state is not None,
         )
+        receipt = {"received_at": data["received_at"], "batch": data["batch"]}
+        if validate_state and data["items"]:
+            try:
+                receipt["explicit_pregame_event"] = validate_state(
+                    data["fixture_slug"], data["received_at"]
+                )
+            except _BAD as exc:
+                data["missing"].update(dict.fromkeys(data["items"], str(exc)))
+                data["items"] = {}
+        return data, receipt
+
+    last, receipt = sample()
+    used = dict.fromkeys(last["items"], receipt)
+    boundary = last["received_at"]
+    while last["missing"] and boundary:
+        older, receipt = sample(store.instant(boundary))
         boundary = older["received_at"]
         for key in older["items"].keys() & last["missing"].keys():
             last["items"][key] = older["items"][key]
             del last["missing"][key]
-            used[key] = {"received_at": boundary, "batch": older["batch"]}
+            used[key] = receipt
     witnesses = {v["batch"]: v["received_at"] for v in used.values()}
     if len(witnesses) == 1:
         last["batch"], last["received_at"] = next(iter(witnesses.items()))

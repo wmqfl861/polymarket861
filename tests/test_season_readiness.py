@@ -234,7 +234,10 @@ class SchedulePrerequisites(unittest.TestCase):
             schedules, "readiness", wraps=schedules.readiness
         ) as preflight:
             recovered = runner.run_due(self.root)
-        self.assertEqual(preflight.call_count, 1)
+        # One shared dispatch batch plus one independent reread under the writer's lock.
+        self.assertEqual(preflight.call_count, 2)
+        self.assertEqual(preflight.call_args.kwargs["fixture_ids"], {native.FID})
+        self.assertIsNotNone(preflight.call_args.kwargs["_connection"])
         self.assertEqual(recovered["counts"], {"done": 1, "waiting_schedule": 9})
         with closing(store.connect(self.root)) as db:
             fixed = db.execute(

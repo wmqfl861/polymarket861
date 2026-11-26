@@ -419,12 +419,12 @@ class EventNewsTests(unittest.TestCase):
             (agreement["published"], agreement["unchanged"]), (0, 1), agreement
         )
         original = news_events.list_updates(self.root, self.fid)[0]
-        self.assertEqual(original["news_pair"]["applied"][0]["prior_weight"], 1)
+        self.assertEqual(original["news_pair"]["applied"][0]["prior_weight"], 0.55)
         self.story("2023-08-12T08:03Z", "club2", "", retracted=True)
         downgrade = self.run_event("2023-08-12T08:03Z")
         self.assertEqual(downgrade["published"], 1, downgrade)
         downgraded = news_events.list_updates(self.root, self.fid)[0]
-        self.assertEqual(downgraded["news_pair"]["applied"][0]["prior_weight"], 0.45)
+        self.assertEqual(downgraded["news_pair"]["applied"][0]["prior_weight"], 0.45 * 0.55)
         self.assertEqual(downgraded["previous_digest"], original["digest"])
         self.assertNotEqual(
             downgraded["news_pair"]["with_news"], original["news_pair"]["with_news"]

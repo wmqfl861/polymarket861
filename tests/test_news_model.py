@@ -177,7 +177,7 @@ class NewsModelTests(unittest.TestCase):
         for source in (wire, wire | {"origin": club["origin"]}):
             both = self.pair(source, club)[1]
             self.assertEqual(both["with_news"], expected["with_news"])
-            self.assertEqual(both["applied"][0]["prior_weight"], 1)
+            self.assertEqual(both["applied"][0]["prior_weight"], 0.55)
         contrary = wire | {"availability": "doubtful"}
         self.assertFalse(self.pair(club, contrary)[1]["changed"])
         correction = club | {

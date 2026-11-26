@@ -154,14 +154,35 @@ def training(root, season, at):
         return result | {"state": "unavailable", "reason": str(exc)}
 
 
+def _coordinator(root, at):
+    with closing(store.connect(root)) as db:
+        installed = db.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='season_services'"
+        ).fetchone()
+        heartbeat = (
+            db.execute(
+                "SELECT updated FROM season_services WHERE service='heartbeat'"
+            ).fetchone()
+            if installed
+            else None
+        )
+    stamp = heartbeat[0] if heartbeat else None
+    age = (store.instant(at) - store.instant(stamp)).total_seconds() if stamp else None
+    if age is None:
+        state = "unobserved"
+    elif age < 0:
+        state = "future_timestamp"
+    else:
+        state = "current" if age <= 90 else "stale"
+    return {"state": state, "last_local_heartbeat": stamp, "age_seconds": age, "fresh_limit_seconds": 90}
+
+
 def report(root, year, round_id=None):
     if not 2000 <= year <= 2100 or round_id is not None and not 1 <= round_id <= 38:
         raise ValueError("select an EPL season year and a matchweek from 1 through 38")
-    at = store.iso(store.now_utc())
     season = scope(year)
-    schedules = schedule_consensus.readiness(
-        root, season=season, round_id=round_id, at=at
-    )
+    schedules = schedule_consensus.readiness(root, season=season, round_id=round_id)
+    at = schedules["as_of"]
     results = result_freshness.status(root, year, at, round_id=round_id)
     model = release(root, at)
     sample = training(root, season, at)
@@ -175,6 +196,18 @@ def report(root, year, round_id=None):
             "opens": store.iso(cutoff - timedelta(minutes=5)),
             "cutoff": store.iso(cutoff),
         }
+    windows = []
+    for f in schedules["fixtures"]:
+        for horizon, offset in pipeline.HORIZONS.items():
+            cutoff = store.instant(f["kickoff"]) - offset
+            if store.iso(cutoff) >= at:
+                opens = store.iso(cutoff - timedelta(minutes=5))
+                windows.append({
+                    "fixture_id": f["fixture_id"], "horizon": horizon, "opens": opens,
+                    "cutoff": store.iso(cutoff), "window_open": opens <= at,
+                    "fixed_b1_block_reason": f["fixed_b1_block_reason"],
+                })
+    next_window = min(windows, key=lambda w: (w["cutoff"], w["fixture_id"]), default=None)
     last = results["latest_round"]
     checks = {
         "reported_round_schedule_confirmed": schedules["state"] == "ready",
@@ -198,6 +231,8 @@ def report(root, year, round_id=None):
         "checks": checks,
         "state": "ready" if all(checks.values()) else "attention",
         "first_registered_window": first,
+        "next_registered_window": next_window,
+        "coordinator": _coordinator(root, at),
         "schedule": schedules,
         "release": model,
         "results": results,

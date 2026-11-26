@@ -8,7 +8,7 @@ from dataclasses import replace
 from datetime import timedelta
 from pathlib import Path
 
-from . import evidence, football, paired_proof
+from . import dbscope, evidence, football, paired_proof
 from .round_history import publish_round, ready_for_experiment_review, register_history
 from .store import (
     PROTOCOL,
@@ -40,16 +40,19 @@ def _build_recipe(family, lines):
         for x in lines
     ):
         raise ValueError("select half-goal lines between 0.5 and 19.5")
-    from . import model_study, news_model, news_study_plan
+    from . import model_study, news_era_replay, news_model, news_study_plan
 
     physical = model_study.decision_implementation()
+    probability = news_study_plan.probability_sources(model_study.PACKAGE_ROOT, physical["algorithm_source"])
     return {
         "family": family,
         **physical,
-        "news_probability_source": news_study_plan.probability_sources(
-            model_study.PACKAGE_ROOT, physical["algorithm_source"]
+        "news_probability_source": probability,
+        "news_frozen_feature_source": news_era_replay.feature_sources(
+            model_study.PACKAGE_ROOT, probability, physical["algorithm_source"]
         ),
         "news_probability_policy": [news_model.PROTOCOL, news_model.POLICY_SHA256],
+        "news_study_plan_sha256": news_study_plan.PLAN_SHA256,
         "lines": sorted(set(map(float, lines)) | {1.5, 2.5}),
     }
 
@@ -81,6 +84,32 @@ def prepare_builtin(data_dir):
         return builtin_model_at(db)
 
 
+def _with_schedule_revisions(history, fixture_id, kickoff, evidence_cutoff, revisions):
+    """Apply the fixture timeline actually observed at this forecast frame."""
+    if revisions:
+        updated = []
+        for match in history:
+            if match.fixture_id == fixture_id:
+                timeline = {
+                    when: k
+                    for when, k in match.schedule_versions
+                    if when <= evidence_cutoff
+                }
+                timeline.update(
+                    {instant(r["known_at"]): instant(r["kickoff"]) for r in revisions}
+                )
+                known = sorted(timeline.items())
+                match = replace(
+                    match,
+                    kickoff=kickoff,
+                    schedule_versions=tuple(known),
+                    schedule_grades=tuple("recorded_schedule" for _ in known),
+                )
+            updated.append(match)
+        history = updated
+    return history
+
+
 def _forecast_arms(engine, home, away, kickoff, cutoff, season, recipe, context, *, include_pair):
     family = recipe["family"]
     result = engine.forecast(
@@ -102,8 +131,10 @@ def _forecast_arms(engine, home, away, kickoff, cutoff, season, recipe, context,
         if family == "B0":
             team_model = engine.forecast(home, away, kickoff, cutoff, season=season, lines=recipe["lines"])
         observation = context.get("player_news", {})
+        training = engine.fit(season, football.utc(cutoff), team_model["fixture_id"]) if observation.get("facts") else None
         with_news, pair = paired_prediction(
             team_model, observation.get("facts", []), home=home, away=away,
+            training_kickoffs=training.team_kickoffs if training else None,
             lines=recipe["lines"], cutoff=iso(cutoff), coverage=observation.get("coverage"),
         )
         if family == "B3":
@@ -390,27 +421,7 @@ def make_forecast(
     history = football.load_fixtures(
         root, evidence_path=evidence_path, archive_lag_hours=archive_lag_hours
     )
-    if revisions:
-        updated = []
-        for match in history:
-            if match.fixture_id == fixture_id:
-                timeline = {
-                    when: k
-                    for when, k in match.schedule_versions
-                    if when <= evidence_cutoff
-                }
-                timeline.update(
-                    {instant(r["known_at"]): instant(r["kickoff"]) for r in revisions}
-                )
-                known = sorted(timeline.items())
-                match = replace(
-                    match,
-                    kickoff=kickoff,
-                    schedule_versions=tuple(known),
-                    schedule_grades=tuple("recorded_schedule" for _ in known),
-                )
-            updated.append(match)
-        history = updated
+    history = _with_schedule_revisions(history, fixture_id, kickoff, evidence_cutoff, revisions)
     engine = football.FootballEngine(history)
     result, news_pair = _forecast_arms(
         engine,
@@ -504,7 +515,9 @@ def make_forecast(
             return old | {"digest": existing["digest"]}
         sealed_at = now_utc()
         if fixed_builtin:
-            schedule_consensus.require_fixed(data_dir, current_schedule, sealed_at, fixed_schedules, db=db)
+            fixed_schedules = schedule_consensus.require_fixed(
+                data_dir, current_schedule, sealed_at, fixed_schedules, db=db
+            )
             sealed_at = now_utc()
         if not replay and (
             (horizon != "early" and instant(sealed_at) > deadline)
@@ -569,6 +582,11 @@ def make_forecast(
         if context["evidence_ids"]:
             evidence.link_lineage_db(db, "prediction", seal, context["evidence_ids"])
         put_report(db, "match", seal, published)
+        if fixed_builtin:
+            # The SQLite write lock covers receipt rows, not their archived files.
+            dbscope.recheck_originals(fixed_schedules)
+            if instant(now_utc()) > deadline:
+                raise ValueError("calculation finished after its sealing deadline")
     return published
 
 

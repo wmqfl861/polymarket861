@@ -1,12 +1,25 @@
 """Paired probabilities against verified, matched Polymarket decision and closing books."""
 
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import timedelta
+from itertools import groupby
 from pathlib import Path
 from sqlite3 import DatabaseError
 from statistics import fmean
+import json
+import math
 
-from . import comparisons, football, kickoff_proof, news_study_plan, store
+from scipy.stats import t as student
+
+from . import (
+    archive_proof,
+    comparisons,
+    football,
+    kickoff_proof,
+    market_provider,
+    news_study_plan,
+    store,
+)
 
 _TOL = news_study_plan.PLAN["direction_absolute_tolerance"]
 
@@ -105,40 +118,235 @@ def _contracts(group):
     }
 
 
-def observe(db, root, fixture, entry, pair):
-    """No final score or execution is used as a proxy for a price or kickoff."""
+def _scheduled_revision(db, fixture, cutoff, close):
+    versions = []
+    for stamp in (cutoff, close - timedelta(microseconds=1)):
+        when = store.iso(stamp)
+        row = db.execute(
+            "SELECT f.*,s.precision FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
+            "WHERE f.fixture_id=? AND f.known_at<=? AND s.recorded_at<=? ORDER BY f.known_at DESC LIMIT 1",
+            (fixture["fixture_id"], when, when),
+        ).fetchone()
+        if (
+            not row
+            or row["precision"] not in ("minute", "second")
+            or any(row[k] != fixture[k] for k in ("home", "away", "kickoff"))
+        ):
+            raise ValueError("unverified_scheduled_fixture_identity")
+        versions.append(row["version"])
+    if versions[0] != versions[1]:
+        raise ValueError("scheduled_fixture_revision_changed")
+    if db.execute(
+        "SELECT 1 FROM sqlite_master WHERE name='epl_schedule_holds'"
+    ).fetchone():
+        held = db.execute(
+            "SELECT reason FROM epl_schedule_holds WHERE fixture=? AND version=? AND at<? ORDER BY at DESC LIMIT 1",
+            (fixture["fixture_id"], versions[0], store.iso(close)),
+        ).fetchone()
+        if held and held[0]:
+            raise ValueError("scheduled_fixture_under_review")
+    if db.execute(
+        "SELECT 1 FROM sqlite_master WHERE name='epl_schedule_reviews'"
+    ).fetchone():
+        review = db.execute(
+            "SELECT action FROM epl_schedule_reviews WHERE fixture=? AND version=? AND at<? ORDER BY at DESC LIMIT 1",
+            (fixture["fixture_id"], versions[0], store.iso(close)),
+        ).fetchone()
+        if review and review[0] == "withdrawn":
+            raise ValueError("scheduled_fixture_withdrawn")
+    return versions[0]
+
+
+def _history_states(body, operation, selectors, slugs):
+    events = json.loads(body)
+    if operation == "event":
+        if not isinstance(events, dict) or {events.get("slug")} != selectors:
+            raise ValueError("unexpected Gamma event identity")
+        events = [events]
+    if not isinstance(events, list):
+        raise ValueError("unexpected Gamma catalogue")
+    states = {}
+    for event in events:
+        if not isinstance(event, dict) or not isinstance(event.get("slug"), str):
+            raise ValueError("unknown Gamma event identity")
+        key = event["slug"]
+        if key not in slugs:
+            continue
+        flags = (event.get("live"), event.get("ended"))
+        if key in states or any(v is not None and type(v) is not bool for v in flags):
+            raise ValueError("ambiguous Gamma event state")
+        states[key] = flags
+    return states
+
+
+def _first_disqualifying_state(db, root, slug, close):
+    # The collector commits the original and request before writing its two
+    # indexes. Enumerate all three independently; read whole catalogue pages
+    # because a missing member cannot be discovered from a derived index.
+    aux = slug + "-more-markets"
+    slugs = {slug, aux}
+    rows = db.execute(
+        """
+        SELECT received_at,sha,'event_index' AS kind,slug AS selector,NULL AS live,NULL AS ended
+          FROM ma_events WHERE slug IN (:slug,:aux) AND received_at<:close
+        UNION ALL
+        SELECT received_at,sha,'state_index',slug,live,ended
+          FROM ma_event_states WHERE slug IN (:slug,:aux) AND received_at<:close
+        UNION ALL
+        SELECT received_at,sha,operation,selector,NULL,NULL FROM ma_requests
+          WHERE status='ok' AND received_at<:close
+            AND (operation='catalog' OR (operation='event' AND selector IN (:slug,:aux)))
+        UNION ALL
+        SELECT o.observed_at,o.sha256,'unlogged',json_extract(o.metadata,'$.operation'),NULL,NULL
+          FROM observations o WHERE o.source='polymarket.com' AND o.observed_at<:close
+            AND json_valid(o.metadata) AND json_extract(o.metadata,'$.operation') IN ('catalog','event')
+            AND (json_extract(o.metadata,'$.url') IN (:main_url,:aux_url,:catalog_url)
+                 OR json_extract(o.metadata,'$.url') LIKE :catalog_query)
+            AND NOT EXISTS (SELECT 1 FROM ma_requests r WHERE r.sha=o.sha256
+                 AND r.received_at=o.observed_at AND r.status='ok'
+                 AND r.requested_at=json_extract(o.metadata,'$.requested_at')
+                 AND r.operation=json_extract(o.metadata,'$.operation')
+                 AND (r.operation='catalog' OR json_extract(o.metadata,'$.url')=:direct_url || r.selector))
+        ORDER BY received_at,sha
+        """,
+        {
+            "slug": slug,
+            "aux": aux,
+            "close": store.iso(close),
+            "main_url": market_provider.GAMMA + "/events/slug/" + slug,
+            "aux_url": market_provider.GAMMA + "/events/slug/" + aux,
+            "direct_url": market_provider.GAMMA + "/events/slug/",
+            "catalog_url": market_provider.GAMMA + "/events",
+            "catalog_query": market_provider.GAMMA + "/events?%",
+        },
+    )
+    for (stamp, sha), group in groupby(
+        rows, key=lambda r: (r["received_at"], r["sha"])
+    ):
+        receipts = list(group)
+        indexes = {r["selector"] for r in receipts if r["kind"] == "event_index"}
+        states = {
+            r["selector"]: (r["live"], r["ended"])
+            for r in receipts
+            if r["kind"] == "state_index"
+        }
+        requests = {r["kind"] for r in receipts if r["kind"] in ("event", "catalog")}
+        unlogged = {r["selector"] for r in receipts if r["kind"] == "unlogged"}
+        unknown = stamp, "unverified_exchange_state_history"
+        try:
+            if unlogged == {"catalog"} and not (requests or indexes or states):
+                # An orphan catalogue containing exclusively different slugs
+                # cannot contribute evidence about this fixture.
+                if not _history_states(
+                    archive_proof._body(root, sha), "catalog", set(), slugs
+                ):
+                    continue
+            if unlogged or len(requests) != 1:
+                return unknown
+            reply, operation, selector, _ = archive_proof.original_receipt(
+                db, root, sha, stamp, requests
+            )
+            direct = {r["selector"] for r in receipts if r["kind"] == "event"}
+            if operation == "event" and direct != {selector}:
+                return unknown
+            native = _history_states(reply.body, operation, direct, slugs)
+        except (ValueError, OSError, KeyError, TypeError):
+            return unknown
+        if any(live is True or ended is True for live, ended in native.values()):
+            return stamp, "exchange_start_or_end_observed"
+        if indexes != native.keys() or states != native:
+            return unknown
+    return None
+
+
+def _state_at_book(db, root, fixture, slug, received):
+    event, row = comparisons._event(db, root, slug, received)
+    if not comparisons._participants(event, fixture, slug):
+        raise ValueError("exchange_fixture_revision_changed")
+    age = (store.instant(received) - store.instant(row["received_at"])).total_seconds()
+    reply, _, _, _ = archive_proof.original_receipt(
+        db, root, row["sha"], row["received_at"], {"event", "catalog"}
+    )
+    if not market_provider.fresh_observation(reply) or (
+        age + float(reply.headers.get("age", 0))
+        > news_study_plan.PLAN["scheduled_state_max_age_seconds"]
+    ):
+        raise ValueError("stale_exchange_pregame_state")
+    if (
+        event.get("live") is not False
+        or event.get("ended") is not False
+        or event.get("closed") is True
+        or event.get("archived") is True
+    ):
+        raise ValueError("no_explicit_exchange_pregame_state")
+    return {"event_slug": slug, "sha256": row["sha"], "received_at": row["received_at"]}
+
+
+def observe(db, root, fixture, entry, pair, *, scheduled_proxy=False):
+    """Use the two predeclared clock tiers independently, with shared book eligibility."""
     if entry["mode"] == "replay":
         return {"reason": "requires_prospective_seal"}
     if not news_study_plan.timely_coverage(pair):
         return {"reason": "news_coverage_incomplete_or_stale"}
     scheduled = store.instant(fixture["kickoff"])
     cut = store.instant(pair["input_cutoff"])
-    try:
-        proof = kickoff_proof.resolve(
-            root,
-            fixture["fixture_id"],
-            scheduled,
-            scheduled - timedelta(hours=1),
-            db=db,
-            prospective=True,
-        )
-    except kickoff_proof.MissingKickoffProof:
-        return {"reason": "missing_verified_actual_kickoff"}
-    except (KeyError, TypeError, OSError, ValueError, OverflowError):
-        return {"reason": "invalid_actual_kickoff_evidence"}
-    close = store.instant(proof["actual_kickoff"])
-    witness = {
-        "actual_kickoff": proof["actual_kickoff"],
-        "kickoff_proof": proof["proof_id"],
-    }
+    if scheduled_proxy:
+        if store.instant(store.now_utc()) < scheduled:
+            return {"reason": "awaiting_scheduled_kickoff"}
+        try:
+            version = _scheduled_revision(db, fixture, cut, scheduled)
+        except (DatabaseError, ValueError) as exc:
+            return {"reason": str(exc)}
+        close = scheduled
+        witness = {
+            "scheduled_kickoff": store.iso(scheduled),
+            "schedule_version": version,
+        }
+    else:
+        try:
+            proof = kickoff_proof.resolve(
+                root,
+                fixture["fixture_id"],
+                scheduled,
+                scheduled - timedelta(hours=1),
+                db=db,
+                prospective=True,
+            )
+        except kickoff_proof.MissingKickoffProof:
+            return {"reason": "missing_verified_actual_kickoff"}
+        except (KeyError, TypeError, OSError, ValueError, OverflowError):
+            return {"reason": "invalid_actual_kickoff_evidence"}
+        close = store.instant(proof["actual_kickoff"])
+        witness = {
+            "actual_kickoff": proof["actual_kickoff"],
+            "kickoff_proof": proof["proof_id"],
+        }
     if not cut <= store.instant(entry["sealed_at"]) < min(scheduled, close):
         return witness | {"reason": "seal_outside_pregame_window"}
     try:
         before = comparisons.frame(
             db, root, fixture, cut, cut, min(scheduled, close), prospective=True
         )
-        after = comparisons._closing_frame(db, root, fixture, cut, close, True, True)
-    except (DatabaseError, OSError, ValueError):
+        history = {}
+
+        def state_check(slug, received):
+            if slug not in history:
+                history[slug] = _first_disqualifying_state(db, root, slug, close)
+            if history[slug] and history[slug][0] <= received:
+                raise ValueError(history[slug][1])
+            return _state_at_book(db, root, fixture, slug, received)
+
+        after = comparisons._closing_frame(
+            db,
+            root,
+            fixture,
+            cut,
+            close,
+            not scheduled_proxy,
+            True,
+            validate_state=state_check if scheduled_proxy else None,
+        )
+    except (DatabaseError, OSError, TypeError, KeyError, ValueError):
         return witness | {"reason": "unavailable_or_invalid_market_archive"}
     result = witness | {
         "input_cutoff": pair["input_cutoff"],
@@ -169,8 +377,8 @@ def observe(db, root, fixture, entry, pair):
             <= pair["input_cutoff"]
             <= entry["sealed_at"]
             < close_receipt["received_at"]
-            < proof["actual_kickoff"]
-            and before["batch"] != close_receipt["batch"]
+            < store.iso(close)
+            and (scheduled_proxy or before["batch"] != close_receipt["batch"])
         ):
             result["missing"][family] = {"pair": "unmatched_decision_close_clocks"}
             continue
@@ -194,14 +402,115 @@ def observe(db, root, fixture, entry, pair):
     return result
 
 
-def coverage(rows, capability=None, mode=None):
+def regression(rows, field="market_close", *, fixed_effects=False):
+    """Home-win price-gap slope, with one observation per supplied prospective fixture.
+
+    Single-era estimates use the prespecified zero intercept. After a validated
+    equivalence comparison, the optional pooled estimator de-means both axes in
+    each era and retains a common slope. Influence is clustered by season/round.
+    """
+    points = []
+    for row in rows:
+        if (
+            row.get("study_status") != "declared"
+            or row.get("study_plan_sha256") != news_study_plan.PLAN_SHA256
+        ):
+            continue
+        home = (row.get(field) or {}).get("endpoints", {}).get("home_win")
+        if home:
+            base = home["no_news"]
+            points.append(
+                (
+                    (row["season"], row["round_id"]),
+                    row["implementation"],
+                    home["with_news"] - base,
+                    home["close"] - base,
+                )
+            )
+    rounds = {r for r, _, _, _ in points}
+    method = "within_era_fixed_effects" if fixed_effects else "through_origin"
+    result = {
+        "method": method,
+        "predictor": "with_news_minus_B1",
+        "response": "close_minus_B1",
+        "pairs": len(points),
+        "informative_pairs": 0,
+        "rounds": len(rounds),
+        "informative_rounds": 0,
+        "slope": None,
+        "interval": None,
+    }
+    if not points:
+        return result | {"status": "no_matched_home_win_pairs"}
+    eras = {era for _, era, _, _ in points}
+    if len(eras) > 1 and not fixed_effects:
+        return result | {"status": "multiple_probability_eras"}
+    if fixed_effects:
+        axes = defaultdict(list)
+        for _, era, x, y in points:
+            axes[era].append((x, y))
+        means = {
+            era: (fmean(x for x, _ in vals), fmean(y for _, y in vals))
+            for era, vals in axes.items()
+        }
+        points = [
+            (rnd, era, x - means[era][0], y - means[era][1])
+            for rnd, era, x, y in points
+        ]
+    informative = [p for p in points if abs(p[2]) > _TOL]
+    result.update(
+        informative_pairs=len(informative),
+        informative_rounds=len({p[0] for p in informative}),
+    )
+    if not informative:
+        return result | {"status": "no_informative_news_movements"}
+    # A common one-direction shift cannot distinguish the news adjustment from
+    # a constant level difference, even when the through-origin fit is finite.
+    moves = [p[2] for p in informative]
+    if len(moves) > 1 and max(moves) - min(moves) <= _TOL:
+        return result | {"status": "no_variation_in_news_movements"}
+    # Rows at zero (including after within-era centering) have no slope
+    # leverage. Empty-information rounds must not tighten a critical value.
+    xx = math.fsum(x * x for _, _, x, _ in informative)
+    slope = math.fsum(x * y for _, _, x, y in informative) / xx
+    result["slope"] = slope
+    g, n = result["informative_rounds"], len(informative)
+    p = 1 + len({era for _, era, _, _ in informative}) if fixed_effects else 1
+    if g < 2 or n <= p:
+        return result | {"status": "insufficient_independent_rounds"}
+    scores = defaultdict(list)
+    for rnd, _, x, y in informative:
+        scores[rnd].append(x * (y - slope * x))
+    meat = math.fsum(math.fsum(v) ** 2 for v in scores.values())
+    se = math.sqrt(g / (g - 1) * (n - 1) / (n - p) * meat) / xx
+    if se <= 1e-15 * max(1.0, abs(slope)):
+        return result | {"status": "no_estimable_cluster_variance"}
+    family = news_study_plan.PLAN["family_comparisons"]
+    critical = float(student.ppf(1 - 0.025 / family, g - 1))
+    return result | {
+        "status": "estimated",
+        "interval": {
+            "lower": slope - critical * se,
+            "upper": slope + critical * se,
+            "standard_error": se,
+            "degrees_of_freedom": g - 1,
+            "family_comparisons": family,
+            "critical_t": critical,
+            "family_confidence": news_study_plan.PLAN["family_confidence"],
+            "cluster": "season_and_official_round",
+        },
+    }
+
+
+def coverage(rows, capability=None, mode=None, *, field="market_close"):
     """Per-fixture denominators; an archived receipt counts only after successful reverification."""
-    observed = [r.get("market_close") or {} for r in rows]
+    observed = [r.get(field) or {} for r in rows]
     eligible = sum(
         bool(
             r.get("sealed")
             and r.get("timely_news_coverage")
-            and obs.get("reason") != "requires_prospective_seal"
+            and obs.get("reason")
+            not in {"requires_prospective_seal", "requires_scheduled_proxy_declaration"}
         )
         for r, obs in zip(rows, observed)
     )
@@ -212,6 +521,29 @@ def coverage(rows, capability=None, mode=None):
         for r, obs in zip(rows, observed)
         if obs.get("reason") or not obs
     )
+    if field == "scheduled_market_close":
+        available = sum(bool(obs.get("scheduled_kickoff")) for obs in observed)
+        if mode == "replay":
+            state = "requires_prospective_seal"
+        elif paired:
+            state = "descriptive_scheduled_proxy"
+        elif not eligible:
+            state = "no_eligible_news_seals"
+        elif not available and missing["awaiting_scheduled_kickoff"] == eligible:
+            state = "awaiting_scheduled_kickoff"
+        else:
+            state = "no_matched_scheduled_quotes"
+        return {
+            "status": state,
+            "clock_basis": "scheduled_kickoff_with_native_pregame_event",
+            "scheduled_clock_eligible": True,
+            "eligible_seals": eligible,
+            "paired_fixtures": paired,
+            "home_win_pairs": sum(
+                "home_win" in obs.get("endpoints", {}) for obs in observed
+            ),
+            "exclusions": dict(sorted(missing.items())),
+        }
     if mode == "replay":
         state = "requires_prospective_seal"
     elif paired:
@@ -256,11 +588,11 @@ def coverage(rows, capability=None, mode=None):
     }
 
 
-def summary(rows, capability=None, mode=None):
+def summary(rows, capability=None, mode=None, *, field="market_close"):
     family_gaps = Counter()
     compared = {k: [] for k in football.PROB_KEYS}
     for r in rows:
-        obs = r.get("market_close") or {}
+        obs = r.get(field) or {}
         if obs and not obs.get("reason"):
             for family, reasons in obs["missing"].items():
                 for stage, error in reasons.items():
@@ -297,18 +629,15 @@ def summary(rows, capability=None, mode=None):
             else None,
         }
     report = {
-        **coverage(rows, capability, mode),
+        **coverage(rows, capability, mode, field=field),
+        "home_win_regression": regression(rows, field),
         "unit": "matched fixture per endpoint",
         "primary_endpoint": "home_win",
         "endpoints": metrics,
         "missing_family_reasons": dict(sorted(family_gaps.items())),
     }
     eras = sorted(
-        {
-            r["implementation"]
-            for r in rows
-            if (r.get("market_close") or {}).get("endpoints")
-        }
+        {r["implementation"] for r in rows if (r.get(field) or {}).get("endpoints")}
     )
     if len(eras) > 1:
         report.update(
@@ -319,6 +648,7 @@ def summary(rows, capability=None, mode=None):
                     [r for r in rows if r.get("implementation") == key],
                     capability,
                     mode,
+                    field=field,
                 )
                 for key in eras
             },

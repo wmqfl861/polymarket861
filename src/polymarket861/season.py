@@ -612,7 +612,14 @@ def sync_news(root, *, history_root=None, **options):
         updates = news_events.refresh(root, limit=2, history_root=history_root)
     except (OSError, ValueError, RuntimeError) as exc:
         updates = {"state": "error", "reason": str(exc), "items": []}
-    return result | {"prediction_updates": updates}
+    with news._db(root, write=bool(updates.get("published"))) as db:
+        if updates.get("published"):
+            coverage = news._status_db(db)
+            store.put_report(db, "news-coverage", "epl-teams", coverage)
+            weights = coverage["player_weights"]
+        else:
+            weights = news.weight_status(db)
+    return result | {"prediction_updates": updates, "player_weights": weights}
 
 
 def _service(root, name, now, options):
@@ -884,10 +891,6 @@ class Coordinator:
                 problems = list(season_health.service_problems(name, result))
                 if name == "forecast" and result.get("release_readiness", {}).get("ready") is False:
                     problems.append(("release_approval", result["release_readiness"]["reason"]))
-                if name == "news" and result.get("schedule_readiness", {}).get("blocked_fixtures"):
-                    blocked = result["schedule_readiness"]["blocked_fixtures"]
-                    problems.append(("schedule_readiness", f"{len(blocked)} news fixture(s) awaiting confirmed kickoffs: "
-                                     + ", ".join(blocked) + ". " + result["schedule_readiness"]["action"]))
                 for cause, reason in problems:
                     season_alerts.report_cause(db, None, name, cause, reason, stamp)
                 if error:
@@ -904,11 +907,23 @@ class Coordinator:
                             "next_window_opens",
                             "awaiting_exact_kickoff",
                             "release_readiness",
+                            "schedule_preflight",
                         )
                         if k in result
                     }
                 )
+                warnings = result.get("schedule_preflight", {}).get("blocked", [])
                 if name == "forecast":
+                    for warning in warnings:
+                        # One operator alert per fixture and actual decision window,
+                        # including across restarts and recurring forecast health checks.
+                        _alert(
+                            db,
+                            store.digest(["schedule_preflight", warning["fixture_id"], warning["cutoff"], warning["horizon"]]),
+                            warning["fixture_id"], "forecast_schedule_preflight",
+                            f"{warning['horizon']} opens {warning['opens']}; {warning['schedule_reason']}. "
+                            f"Check the two native receipts with {warning['readiness_command']}.",
+                        )
                     for job in result.get("jobs", []):
                         if job.get("state") in ("missed", "error", "waiting_schedule"):
                             _alert(
@@ -939,7 +954,7 @@ class Coordinator:
                                 "health": "error"
                                 if error
                                 else "degraded"
-                                if problems
+                                if problems or warnings or result.get("schedule_readiness", {}).get("blocked_fixtures")
                                 else "ok",
                                 "summary": summary,
                             }

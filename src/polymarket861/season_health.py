@@ -72,6 +72,12 @@ def service_problems(name, result):
         for err in result.get("catalog_errors", []):
             yield "catalog", str(err.get("error") or err)
     elif name == "news":
+        weights = result.get("player_weights") or {}
+        if weights.get("alert"):
+            yield "player_weight_fallback", (
+                f"player weights use fallback for {weights['fallback_claims']}/{weights['weights_with_basis']} "
+                f"applied claims ({weights['fallback_share']:.1%}); see news status for source reasons"
+            )
         for stream in result.get("streams", []):
             if stream.get("state") in ("error", "no_roster", "pending", "lease_lost", "degraded"):
                 cause = f"{stream.get('source')}/{stream.get('team')}"

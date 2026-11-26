@@ -278,6 +278,7 @@ def compare(panel, history):
             "as_of": "publisher_revision",
             "fixture_id": fixture.fixture_id,
         }
+        training = engine.fit(SEASON, cutoff, baseline["fixture_id"])
         arms = {}
         for mode in PANELS:
             candidates = (
@@ -293,6 +294,7 @@ def compare(panel, history):
                 cutoff=cutoff,
                 coverage=coverage,
                 availability_basis=news_model.HISTORICAL,
+                training_kickoffs=training.team_kickoffs,
                 lines=football.DEFAULT_LINES,
             )
         # Carry both actual receipt clocks. Only the independently labelled reconstruction may use these revisions.
@@ -303,6 +305,7 @@ def compare(panel, history):
             away=fixture.away,
             cutoff=cutoff,
             availability_basis=news_model.LOCAL,
+            training_kickoffs=training.team_kickoffs,
             lines=football.DEFAULT_LINES,
         )
         frozen.append((fixture, baseline, facts, arms, strict))

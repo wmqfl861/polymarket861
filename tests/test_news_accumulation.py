@@ -496,12 +496,12 @@ class EraTests(unittest.TestCase):
                 (1, 0, 0),
             )
             self.assertIsNone(early["home_close"]["mean"])
-            self.assertIsNone(early["score"]["power"]["mde_at_target_power"])
-            self.assertGreater(
-                study["planning"]["score_points"][
-                    "illustrative_matches_at_assumed_variance"
-                ],
-                380,
+            self.assertEqual(
+                early["score"]["guardrail"]["status"], "insufficient_independent_rounds"
+            )
+            self.assertNotIn("practical_effect", study["plan"])
+            self.assertIsNone(
+                early["scheduled_market_close"]["home_win_regression"]["slope"]
             )
             self.assertEqual(
                 news_evaluation.evaluate_accumulation(root, SEASON, mode="formal")[
@@ -580,6 +580,7 @@ class EraTests(unittest.TestCase):
                     "timely_news_coverage": True,
                     "observed_both": True,
                     "study_status": "declared",
+                    "study_plan_sha256": plan.PLAN_SHA256,
                     "implementation": era,
                     "policy_sha256": era,
                     "news_protocol": "test",
@@ -609,11 +610,10 @@ class EraTests(unittest.TestCase):
             one = first[key]
             self.assertEqual(
                 (one["pairs"], one["rounds"], one["interval"]["family_comparisons"]),
-                (3, 2, 4),
+                (3, 2, plan.PLAN["family_comparisons"]),
             )
             self.assertAlmostEqual(one["mean"], -1 / 3)
-            self.assertGreater(one["power"]["mde_at_target_power"], 0)
-            self.assertTrue(0 <= one["power"]["power_at_practical_effect"] <= 1)
+            self.assertNotIn("power", one)
         primary = first["market_close"]["endpoints"]["home_win"]
         self.assertEqual(
             (primary["toward"], primary["away"], primary["unchanged"]), (1, 1, 1)

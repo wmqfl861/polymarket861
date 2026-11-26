@@ -15,6 +15,7 @@ from pathlib import Path
 from . import dbscope, evidence, forward_window, jobs, pipeline, schedule_consensus, season_readiness, store
 
 _WINDOW = timedelta(minutes=5)
+_SCHEDULE_NOTICE = timedelta(hours=12)
 _LEASE = timedelta(seconds=30)
 _LINEUP_GRACE = timedelta(seconds=90)
 _SCHEMA = """
@@ -334,7 +335,11 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
     for row in recorded.values():
         past_slots.setdefault((row["fixture_id"], row["kickoff"]), []).append(row)
     future, due, unanchored = [], [], []
-    waiting = []
+    waiting, upcoming = [], []
+    selected_now = versions or [
+        jobs.active_version(data_dir, "model", "epl", default="B1", at=observed)
+    ]
+    watch_fixed = any(v == "B1" or v.startswith("B1@") for v in selected_now)
     previous = Counter()
     for f in fixtures:
         if (
@@ -357,6 +362,20 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
             opens = cutoff - _WINDOW
             if clock < opens:
                 future.append(opens)
+                if (
+                    watch_fixed
+                    and opens - clock <= _SCHEDULE_NOTICE
+                    and f["home_goals"] is None
+                ):
+                    upcoming.append({
+                        "fixture_id": f["fixture_id"],
+                        "kickoff": f["kickoff"],
+                        "horizon": horizon,
+                        "opens": store.iso(opens),
+                        "cutoff": store.iso(cutoff),
+                        "readiness_command":
+                            f"season readiness --year {f['season'][:4]} --round {f['round_id']}",
+                    })
                 continue
             # Historical misses predating activation are technical observations only.
             mode = "technical"
@@ -436,16 +455,18 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
         and (s["version"] == "B1" or s["version"].startswith("B1@"))
     ]
     schedules = None
-    if checking:
+    preflight = {"lead_hours": _SCHEDULE_NOTICE // timedelta(hours=1), "checked": len(upcoming), "blocked": []}
+    if checking or upcoming:
         schedules = schedule_consensus.fixed_schedules(
-            data_dir, {s["fixture_id"] for s in checking}, observed
+            data_dir, {s["fixture_id"] for s in checking + upcoming}, None
         )
-        for slot in checking:
+        for slot in checking + upcoming:
             match = schedules.fixtures.get(slot["fixture_id"])
             if not match or match["kickoff"] != slot["kickoff"]:
                 slot["schedule_reason"] = "registered schedule changed during dispatch"
             elif match["fixed_b1_block_reason"]:
                 slot["schedule_reason"] = match["fixed_b1_block_reason"]
+        preflight["blocked"] = [s for s in upcoming if s.get("schedule_reason")]
         due.extend(s for s in waiting if s.get("schedule_reason"))
         waiting = [s for s in waiting if not s.get("schedule_reason")]
     if waiting:
@@ -481,6 +502,7 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
     summary = {
         "observed_at": observed,
         "release_readiness": release,
+        "schedule_preflight": preflight,
         "next_window_opens": store.iso(min(future)) if future else None,
         "counts": dict(previous + Counter(r["state"] for r in records)),
         "superseded": superseded,

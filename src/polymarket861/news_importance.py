@@ -5,13 +5,13 @@ from __future__ import annotations
 from collections import defaultdict
 from datetime import timedelta
 
-from . import evidence, football, news_minutes, news_roster, result_freshness, store
-from .score_bounds import valid_score
+from . import evidence, football, news_minutes, news_roster, store
 
 POLICY = {
     "directory_basis": "mean of minutes/(90*completed EPL matches) and starts/completed EPL matches",
     "required_team_starts_per_match": 11,
-    "required_goalkeeper_starts_per_match": 1,
+    "maximum_goalkeeper_starts_per_match": 1,
+    "minimum_team_start_coverage": 0.90,
     "directory_max_age_days": 7,
     "lineup_basis": "share of prior completed EPL matches with a confirmed start",
     "lineup_lookback_matches": 8,
@@ -19,7 +19,8 @@ POLICY = {
     "minimum_lineup_coverage": 0.75,
     "minimum_multiplier": 0.25,
     "maximum_multiplier": 1.0,
-    "neutral_multiplier": 1.0,
+    "neutral_multiplier": 0.55,
+    "neutral_basis": "predeclared squad-average prior (11 regular starters among about 27.5 players)",
 }
 
 
@@ -43,53 +44,116 @@ def _resolve(values, names):
     return next(iter(matches)) if len(matches) == 1 else None
 
 
-def _directory(db, root, fixture, team, cutoff, games, names, tables):
-    club = football.team_key(team)
-    if "news_usage_history" not in tables:
+def directory_players(db, root, fixture, team, cutoff, games=None):
+    """Reopen the as-of native directory; key rows only by unique publisher ID."""
+    at, club = store.iso(cutoff), football.team_key(team)
+    if not db.execute("SELECT 1 FROM sqlite_master WHERE name='news_usage_history'").fetchone():
         return {}, "no_received_player_directory"
-    row = news_minutes.latest(db, fixture["season"], club, cutoff)
-    if not row:
-        return {}, "no_received_player_directory"
-    if store.instant(cutoff) - store.instant(row["provider_as_of"]) > timedelta(days=POLICY["directory_max_age_days"]):
-        return {}, "stale_player_directory"
-    # The denominator must cover this club's prior league fixtures. An unresolved
-    # or newly played match makes a cumulative directory unusable until reconciled.
-    played = len(games)
-    if (played < POLICY["minimum_matches"] or played > 38 or
-            any(not g["completed"] or g["kickoff"] >= row["provider_as_of"] or
-                g["received"] > row["provider_as_of"] for g in games)):
+    limit = store.iso(store.instant(at) - timedelta(days=POLICY["directory_max_age_days"]))
+    rows = db.execute("SELECT * FROM news_usage_history WHERE season=? AND club=? AND known_at<=? "
+                      "AND received_at<=? AND provider_as_of<=? AND provider_as_of>=? ORDER BY known_at DESC",
+                      (fixture["season"], club, at, at, at, limit))
+    if games is None:
+        games = news_minutes.club_games(db, root, fixture["season"], team, at)
+    rejected = None
+    for row in rows:
+        players, reason = _reconciled_directory(root, row, fixture, team, games)
+        if players:
+            if rejected:
+                for player in players.values():
+                    player.update(directory_fallback_reason="newer_directory_does_not_reconcile",
+                                  rejected_directory_sha256=rejected["original_sha256"],
+                                  rejected_provider_as_of=rejected["provider_as_of"])
+            return players, None
+        if reason != "team_appearances_do_not_reconcile":
+            return {}, reason
+        if rejected is None:
+            rejected = row
+    if rejected:
+        return {}, "team_appearances_do_not_reconcile"
+    old = news_minutes.latest(db, fixture["season"], club, at)
+    return {}, "stale_player_directory" if old else "no_received_player_directory"
+
+
+def appearance_totals(players, played):
+    """Bound the club's EPL usage, including transparent losses from departed players."""
+    if not 1 <= played <= 38:
+        return None
+    starts = sum(p["starts"] for p in players)
+    required = POLICY["required_team_starts_per_match"] * played
+    keepers = sum(p["starts"] for p in players if p["position"] == "GK")
+    if (not required * POLICY["minimum_team_start_coverage"] <= starts <= required
+            or keepers > POLICY["maximum_goalkeeper_starts_per_match"] * played
+            or required - starts < played - keepers
+            or any(p["starts"] > played or p.get("appearances", 0) > played or p["minutes"] > 90 * played for p in players)
+            or sum(p["minutes"] for p in players) > 11 * 90 * played):
+        return None
+    return {"team_starts": starts, "expected_team_starts": required,
+            "goalkeeper_starts": keepers, "start_coverage": starts / required}
+
+
+def _reconciled_directory(root, row, fixture, team, games):
+    stamp = row["provider_as_of"]
+    # An older directory is a valid historical share for the matches it covers.
+    # A new or corrected prior final must actually have been known by its timestamp.
+    scope = [g for g in games if g["fixture_id"] != fixture["fixture_id"] and g["kickoff"] < stamp]
+    played = len(scope)
+    if (not POLICY["minimum_matches"] <= played <= 38
+            or any(not g["completed"] or not g["received"] or g["received"] > stamp for g in scope)):
         return {}, "prior_results_incomplete_at_directory_snapshot"
     try:
-        raw = store.read_blob(root, row["original_sha256"])
-        stamp, players = news_minutes.parse(raw, team, fixture["season"], row["received_at"])
-        if stamp != row["provider_as_of"] or store.digest(players) != row["usage_sha256"]:
-            return {}, "invalid_player_directory_proof"
+        players = news_minutes.verified_players(root, row, team, fixture["season"])
     except (KeyError, ValueError, TypeError, OSError):
         return {}, "invalid_player_directory_proof"
-    if (sum(p["starts"] for p in players) != POLICY["required_team_starts_per_match"] * played
-            or sum(p["starts"] for p in players if p["position"] == "GK") !=
-            POLICY["required_goalkeeper_starts_per_match"] * played
-            or any(p["starts"] > played or p["minutes"] > 90 * played for p in players)
-            or sum(p["minutes"] for p in players) > 11 * 90 * played):
+    totals = appearance_totals(players, played)
+    if totals is None:
         return {}, "team_appearances_do_not_reconcile"
+    common = {
+        "basis": "epl_season_minutes_and_starts", "matches": played, "known_at": row["known_at"],
+        "provider_as_of": stamp, "received_at": row["received_at"], "original_sha256": row["original_sha256"],
+        "season": fixture["season"], "team": team, **totals,
+        "later_completed_matches": sum(g["completed"] and g["kickoff"] >= stamp for g in games),
+        "score_disputed_fixtures": [g["fixture_id"] for g in scope if g["hold_reason"] == "cross_source_score_conflict"],
+        "fixtures_sha256": store.digest([(g["fixture_id"], g["kickoff"], g["received"]) for g in scope]),
+        "url": news_minutes.source_url(team), "attribution": news_minutes.ATTRIBUTION,
+    }
+    return {p["id"]: common | {k: v for k, v in p.items() if k != "id"}
+            | {"provider_player_id": p["id"]} for p in players}, None
+
+
+def _directory(db, root, fixture, team, cutoff, games, players):
+    rows, reason = directory_players(db, root, fixture, team, cutoff, games)
+    if not rows:
+        return {}, reason
+    ordinary = [p for p in players.values() if p.get("identity_basis") != "touchline_directory_id"]
+    names = _identities(ordinary)
     grounded = defaultdict(list)
-    for p in players:
+    aliases = defaultdict(list)
+    for id_, member in players.items():
+        pid = member.get("provider_player_id")
+        if type(pid) is not int or pid <= 0 or pid not in rows:
+            continue
+        reviewed = member.get("identity_basis") == "reviewed_provider_alias" and member.get("alias_receipt")
+        joined = (member.get("identity_basis") == "touchline_id_to_roster" and
+                  member.get("directory_sha256") == rows[pid]["original_sha256"])
+        if reviewed or joined:
+            aliases[pid].append(id_)
+    for provider_id, p in rows.items():
         ident = _resolve(p["names"], names)
+        direct = f"touchline:epl:{provider_id}"
+        member = players.get(direct, {})
+        # The caller has already revalidated alias receipts or numeric members
+        # against the same club and cutoff. Refuse competing asserted owners.
+        bound = list(aliases[provider_id])
+        if member.get("identity_basis") == "touchline_directory_id" and member.get("provider_player_id") == provider_id:
+            bound.append(direct)
+        if bound:
+            if len(bound) != 1 or ident and bound[0] != ident:
+                continue
+            ident = bound[0]
         if ident:
             grounded[ident].append(p)
-    result = {}
-    for ident, matches in grounded.items():
-        if len(matches) != 1:
-            continue
-        p = matches[0]
-        result[ident] = {
-            "basis": "epl_season_minutes_and_starts", "matches": played, "starts": p["starts"],
-            "minutes": p["minutes"], "known_at": row["known_at"], "provider_as_of": stamp,
-            "original_sha256": row["original_sha256"], "provider_player_id": p["id"],
-            "url": news_minutes.source_url(team), "attribution": news_minutes.ATTRIBUTION,
-            "fixtures_sha256": store.digest([(g["fixture_id"], g["kickoff"], g["received"]) for g in games]),
-        }
-    return result, "no_unique_player_directory_identity"
+    return {ident: rows[0] for ident, rows in grounded.items() if len(rows) == 1}, "no_unique_player_directory_identity"
 
 
 def _lineup_member(row, names, players):
@@ -161,29 +225,20 @@ def player_history(db, fixture, cutoff, squads, data_dir):
     """Return the grounded evidence for both current squads using the same SQLite snapshot."""
     at = store.iso(cutoff)
     tables = {r[0] for r in db.execute(
-        "SELECT name FROM sqlite_master WHERE name IN ('news_usage_history','ev_facts')"
+        "SELECT name FROM sqlite_master WHERE name='ev_facts'"
     )}
     result = {}
     if not any(view["players"] for view in squads.values()):
         return result
-    rows = db.execute(result_freshness._AS_OF.format(times="result_event_times"),
-                      {"season": fixture["season"], "at": at})
-    matches = defaultdict(list)
-    for row in rows:
-        if row["fixture_id"] == fixture["fixture_id"] or row["kickoff"] >= at:
-            continue
-        game = dict(row)
-        game["completed"] = valid_score((row["goals"], row["away_goals"])) and bool(row["received"])
-        for side in ("home", "away"):
-            matches[football.team_key(row[side])].append(game)
     for side in ("home", "away"):
         team = fixture[side]
         club = football.team_key(team)
         players = {p["player_id"]: p for p in squads[club]["players"]}
         if not players:
             continue
-        games = matches[club]
-        directory, reason = _directory(db, data_dir, fixture, team, at, games, _identities(players.values()), tables)
+        games = [g for g in news_minutes.club_games(db, data_dir, fixture["season"], team, at)
+                 if g["fixture_id"] != fixture["fixture_id"]]
+        directory, reason = _directory(db, data_dir, fixture, team, at, games, players)
         lineups = _lineups(db, fixture, team, at, games, players, tables) if players.keys() - directory.keys() else {}
         for ident in players:
             weight = directory.get(ident) or lineups.get(ident) or {
@@ -210,12 +265,13 @@ def assess(row, cutoff, *, local):
             raise ValueError
         share = starts / matches
         if basis == "epl_season_minutes_and_starts":
+            if (row.get("provider_player_id") is not None and
+                    row["provider_player_id"] != history["provider_player_id"]):
+                return neutral, {"basis": "neutral", "reason": "provider_player_id_mismatch"}
             minutes = history["minutes"]
             if (type(minutes) is not int or not 0 <= minutes <= 90 * matches
                     or not store.instant(history["provider_as_of"]) <= store.instant(history["known_at"])
-                    or cutoff - store.instant(history["provider_as_of"]) > timedelta(days=POLICY["directory_max_age_days"])
-                    or (row.get("provider_player_id") is not None and
-                        row["provider_player_id"] != history["provider_player_id"])):
+                    or cutoff - store.instant(history["provider_as_of"]) > timedelta(days=POLICY["directory_max_age_days"])):
                 raise ValueError
             share = (share + minutes / (90 * matches)) / 2
         elif basis == "confirmed_lineup_starts":

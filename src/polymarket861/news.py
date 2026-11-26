@@ -13,7 +13,7 @@ from datetime import date, timedelta
 from time import monotonic
 from urllib.parse import urlsplit
 
-from . import dbscope, store
+from . import dbscope, news_poll_archive, store
 from .football import team_key
 from .news_retention import retention
 from .news_scope import competition_target, injury_headline
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS news_analysis_runs (
 CREATE INDEX IF NOT EXISTS news_analysis_asof ON news_analysis_runs(article,known_at DESC,seq DESC);
 CREATE TABLE IF NOT EXISTS news_claim_runs (
  claim TEXT PRIMARY KEY REFERENCES news_claims(id),run INTEGER NOT NULL REFERENCES news_analysis_runs(seq));
-"""
+""" + news_poll_archive.SCHEMA
 
 
 @contextmanager
@@ -439,6 +439,10 @@ def _poll_proof(root, task, response, local_start, received, stage_feed):
             "INSERT OR IGNORE INTO news_poll_proofs VALUES (?,?)",
             (ident, store.canonical(proof)),
         )
+        # An exactly repeated physical receipt can be referenced by a new
+        # collector after a restore. Count its hash once; retain its original
+        # compact wire ordering and recorded-at clock.
+        db.execute("UPDATE news_poll_ticks SET standalone_proof=1 WHERE receipt=? AND standalone_proof=0", (ident,))
         if stage_feed:
             # A rolling feed can remove an entry before the next tick or while
             # this process restarts. Capture the authorized original projections
@@ -898,14 +902,18 @@ def _extract_pending(root, task, players, extract, settings, decision):
         }
         for p in sorted(players, key=lambda x: str(x["player_id"]))
     ]
-    from . import news_ai, news_sources
+    from . import news_ai, news_sources, news_wire_identity
 
     structured = task["source"] == news_sources.WIRE and task["config"].get("kind") == "touchline"
     aliases = news_ai._roster_index(players)[1] if structured else None
-    policy = store.digest([news_sources.WIRE_MODEL if structured else settings, stable_roster])
     at = _utc()
     target = task["target"]
     with _db(root) as db:
+        directory = news_wire_identity.directory(db, root, target, task["team"], at, players) if structured else {}
+        policy_input = [news_sources.WIRE_MODEL if structured else settings, stable_roster]
+        if structured:
+            policy_input.append(news_wire_identity.signature(directory))
+        policy = store.digest(policy_input)
         articles = db.execute(
             """SELECT a.*,p.receipt receipt_id,pp.payload source_proof,count(*) OVER () pending_total FROM news_articles a
             LEFT JOIN news_article_proofs p ON p.article=a.seq LEFT JOIN news_poll_proofs pp ON pp.id=p.receipt
@@ -940,10 +948,14 @@ def _extract_pending(root, task, players, extract, settings, decision):
         original = json.loads(store.read_blob(root, article["original_sha256"]))
         proof = json.loads(article["source_proof"]) if article["source_proof"] else {}
         rows = []
+        provider_identity = None
         if structured:
             claims = news_sources.wire_claim(original, aliases)
+            claims, provider_identity = news_wire_identity.bind(original, aliases, claims, directory)
             meta = {"backend": "structured_wire", "model_version": news_sources.WIRE_MODEL,
                     "unmatched_player": not claims}
+            if provider_identity:
+                meta["provider_identity"] = news_wire_identity.proof(provider_identity, article["original_sha256"])
         else:
             claims = extract(original["text"], players, authority=original["authority"],
                              title=original["title"], team=task["team"])
@@ -951,7 +963,12 @@ def _extract_pending(root, task, players, extract, settings, decision):
                 "backend": "injected", "model_version": claims[0]["model_version"] if claims else settings["extractor"]
             }
         for claim in claims:
-            fact = _grounded(claim, original, identities)
+            claimant = identities
+            if provider_identity and provider_identity["identity_basis"] == "touchline_directory_id":
+                claimant = {provider_identity["player_id"]: provider_identity}
+            fact = _grounded(claim, original, claimant)
+            if provider_identity:
+                fact["provider_identity"] = meta["provider_identity"]
             if structured:
                 fact.update(chance_of_playing=claim["chance_of_playing"],
                             provider_player_id=original["provider_player_id"])
@@ -1053,7 +1070,7 @@ def _extract_pending(root, task, players, extract, settings, decision):
     }
 
 
-def _finish(root, task, detail, cursor, provider_after):
+def _finish(root, task, detail, cursor, provider_after, receipt=None):
     with _db(root, write=True) as db:
         if not _owns(db, task):
             detail.update(state="lease_lost", issues=["news stream lease lost"])
@@ -1090,7 +1107,7 @@ def _finish(root, task, detail, cursor, provider_after):
             (*_key(task), task["settings_id"], retry),
         )
         detail.update(checked_at=at, next_at=next_at, local_retry_at=retry)
-        db.execute(
+        check = db.execute(
             """INSERT INTO news_checks
             (season,team_key,source,fixture_id,kickoff,checked_at,state,detail) VALUES (?,?,?,?,?,?,?,?)""",
             (
@@ -1102,6 +1119,7 @@ def _finish(root, task, detail, cursor, provider_after):
                 store.canonical(detail),
             ),
         )
+        news_poll_archive.track(db, check.lastrowid, receipt)
     return detail
 
 
@@ -1247,37 +1265,46 @@ def _collect_wire(root, task, result, received, receipt, detail):
         manifest = store.digest([articles, projection])
         db.execute("INSERT OR IGNORE INTO news_wire_manifests VALUES (?,?,?)",
                    (manifest, store.canonical(articles), store.canonical(projection)))
-        db.execute("INSERT OR IGNORE INTO news_wire_polls VALUES (?,?,?,?,?,?,?,?)",
-                   (receipt, task["season"], task["team_key"], fixture, received, snapshot, _utc(), manifest))
+        db.execute("""INSERT OR IGNORE INTO news_wire_polls SELECT ?,?,?,?,?,?,?,?
+            WHERE NOT EXISTS (SELECT 1 FROM news_poll_ticks WHERE receipt=? AND wire_order IS NOT NULL)""",
+            (receipt, task["season"], task["team_key"], fixture, received, snapshot, _utc(), manifest, receipt))
 
 
 def _wire_witnesses(root, db, game, at, selected):
     tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE name IN "
                                       "('news_wire_polls','news_wire_manifests')")}
     manifests = "news_wire_manifests" if "news_wire_manifests" in tables else "(SELECT NULL id,NULL articles,NULL projection)"
+    polls = news_poll_archive.history(db, "news_wire_polls")
+    receipts = news_poll_archive.history(db, "news_poll_proofs")
     rows = db.execute(
         f"""WITH latest AS (
         SELECT j.value article,p.receipt,p.observed_at,p.provider_at,m.id AS manifest,m.projection,m.articles,
           row_number() OVER (PARTITION BY j.value ORDER BY p.observed_at DESC,p.recorded_at DESC,p.rowid DESC) n
-        FROM news_wire_polls p LEFT JOIN {manifests} m ON m.id=p.articles
-        JOIN json_each(coalesce(m.articles,CASE WHEN json_valid(p.articles) THEN p.articles END)) j
+        FROM {polls} p LEFT JOIN {manifests} m ON m.id=p.articles
+        JOIN json_each(CASE WHEN json_valid(m.articles) THEN m.articles
+             WHEN json_valid(p.articles) THEN p.articles END) j
         WHERE p.fixture_id=? AND p.observed_at<=? AND p.recorded_at<=? AND p.provider_at<=?)
-        SELECT l.*,s.state_sha256,s.first_seen_at,s.absence_first_seen_at,a.external_id,pp.payload
+        SELECT l.*,s.state_sha256,s.first_seen_at,s.absence_first_seen_at,a.external_id
         FROM latest l JOIN news_wire_states s ON s.article=l.article JOIN news_articles a ON a.seq=l.article
-        JOIN news_poll_proofs pp ON pp.id=l.receipt WHERE l.n=1""",
+        WHERE l.n=1""",
         (game["fixture_id"], at, at, at)) if "news_wire_polls" in tables else ()
     witnesses, proofs = {}, {}
     for row in rows:
         receipt = row["receipt"]
         if receipt not in proofs:
-            proof = json.loads(row["payload"])
+            saved = db.execute(f"SELECT payload FROM {receipts} WHERE id=?", (receipt,)).fetchone()
+            proof = json.loads(saved[0]) if saved else {}
             valid = store.digest(proof) == receipt
             states = proof.get("wire_states", {})
             if row["manifest"]:
-                projection = json.loads(row["projection"])
-                valid = (valid and store.digest(projection) == proof.get("wire_projection_sha256")
-                         and store.digest([json.loads(row["articles"]), projection]) == row["manifest"])
-                states = projection["states"]
+                try:
+                    projection = json.loads(row["projection"])
+                    states = projection["states"]
+                    valid = (valid and isinstance(states, dict)
+                             and store.digest(projection) == proof.get("wire_projection_sha256")
+                             and store.digest([json.loads(row["articles"]), projection]) == row["manifest"])
+                except (KeyError, ValueError, TypeError):
+                    valid = False
             proofs[receipt] = proof | {"states": states} if valid else {}
         proof = proofs[receipt]
         if (proof.get("states", {}).get(row["external_id"]) == row["state_sha256"]
@@ -1310,13 +1337,24 @@ def _wire_unmatched(root, task):
     # The count reflects every valid row in the latest receipt, including
     # unchanged states. A new roster can re-resolve them without a new fetch.
     with _db(root) as db:
-        return db.execute(
-            """SELECT count(*) FROM json_each((SELECT coalesce(m.articles,CASE WHEN json_valid(p.articles) THEN p.articles END)
+        rows = db.execute(
+            """SELECT a.original_sha256,r.claim_count,r.metadata FROM json_each((
+            SELECT coalesce(m.articles,CASE WHEN json_valid(p.articles) THEN p.articles END)
             FROM news_wire_polls p LEFT JOIN news_wire_manifests m ON m.id=p.articles WHERE p.season=? AND p.team_key=? AND p.fixture_id=?
             ORDER BY p.observed_at DESC,p.recorded_at DESC,p.rowid DESC LIMIT 1)) j
-            WHERE (SELECT r.claim_count FROM news_analysis_runs r WHERE r.article=j.value
-                   ORDER BY r.known_at DESC,r.seq DESC LIMIT 1)=0""",
-            (task["season"], task["team_key"], task["target"]["fixture_id"])).fetchone()[0]
+            JOIN news_articles a ON a.seq=j.value LEFT JOIN news_analysis_runs r ON r.seq=(
+            SELECT x.seq FROM news_analysis_runs x WHERE x.article=j.value ORDER BY x.known_at DESC,x.seq DESC LIMIT 1)""",
+            (task["season"], task["team_key"], task["target"]["fixture_id"]),
+        ).fetchall()
+    reviewed, unknown = [], 0
+    for row in rows:
+        item = json.loads(row["metadata"]).get("provider_identity") if row["metadata"] else None
+        if item:
+            reviewed.append(item)
+        elif not row["claim_count"]:
+            unknown += 1
+    return {"unmatched_players": unknown + len(reviewed), "unresolved_players": unknown,
+            "provider_identity_reviews": reviewed}
 
 
 def _drain_feed_inbox(root, task, detail):
@@ -1359,6 +1397,7 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
     cursor = task["cursor"]
     provider_after = task["provider_after"]
     issues = detail["issues"]
+    proof_id = None
     detail["polled"] = task["network_due"]
     if task["network_due"]:
         try:
@@ -1485,9 +1524,14 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
             detail["extraction_pending"] = backlog
             detail.update(analysis)
             if task["source"] == WIRE:
-                detail["unmatched_players"] = _wire_unmatched(root, task)
+                detail.update(_wire_unmatched(root, task))
                 if detail["unmatched_players"]:
-                    issues.append(f"{detail['unmatched_players']} listed players lack a unique roster identity")
+                    detail["identity_only_partial"] = bool(
+                        detail["provider_identity_reviews"] and not detail["unresolved_players"] and
+                        not issues and detail.get("fetch_complete") and not backlog and
+                        not detail.get("provider_pending") and not detail.get("inbox_pending")
+                    )
+                    issues.append(f"{detail['unmatched_players']} listed players lack a direct roster name match")
         except Exception as exc:
             issues.append("extraction: " + str(exc)[:240])
     wire_gap = (task["source"] == WIRE and detail.get("source_observed_at") and
@@ -1513,7 +1557,7 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
         )
     detail["pending_entries"] = (detail.get("provider_pending", 0) + detail.get("inbox_pending", 0)
                                 + detail.get("analysis_remaining", 0))
-    return _finish(root, task, detail, cursor, provider_after)
+    return _finish(root, task, detail, cursor, provider_after, proof_id)
 
 
 def sync(
@@ -1598,6 +1642,13 @@ def sync(
         except Exception as exc:
             roster_issue = str(exc)[:160]
             players = []
+        usage = None
+        if any(task["source"] == news_sources.WIRE for task in group) and (poller is None or importance_getter is not None):
+            from . import news_minutes
+
+            # An observed directory can resolve the very first injury batch.
+            # Its failure still permits the ordinary roster-only path.
+            usage = news_minutes.refresh(data_dir, club, season_id, getter=importance_getter)
         outcomes = []
         for task in group:
             try:
@@ -1628,15 +1679,9 @@ def sync(
                     data_dir, task, result, task["cursor"], task["provider_after"]
                 )
             outcomes.append(result)
-        # The same licensed source publishes completed EPL starts/minutes. Keep
-        # that receipt separate from the availability outcome and its coverage.
         for result in outcomes:
-            if result["source"] == news_sources.WIRE and (poller is None or importance_getter is not None):
-                from . import news_minutes
-
-                result["player_usage"] = news_minutes.refresh(
-                    data_dir, club, season_id, getter=importance_getter
-                )
+            if result["source"] == news_sources.WIRE and usage is not None:
+                result["player_usage"] = usage
         return outcomes
 
     streams = []
@@ -1698,21 +1743,28 @@ def _empty_snapshot(fixture_id, at, reason, fixture=None):
 
 def _side_coverage(db, game, side, at, games):
     club = team_key(game[side])
+    checks = news_poll_archive.history(db, "news_checks")
     rows = db.execute(
-        """SELECT s.source,s.config,c.detail,c.kickoff AS recorded_kickoff
-        FROM news_streams s LEFT JOIN news_feed_config f ON f.id=s.source
-        LEFT JOIN news_checks c ON c.id=(SELECT x.id FROM news_checks x
-          WHERE x.season=s.season AND x.team_key=s.team_key AND x.source=s.source
-          AND x.fixture_id=? AND x.checked_at<=? ORDER BY x.checked_at DESC,x.id DESC LIMIT 1)
+        """SELECT s.source,s.config FROM news_streams s
+        LEFT JOIN news_feed_config f ON f.id=s.source
         WHERE s.season=? AND s.team_key=? AND s.registered_at<=?
           AND (f.disabled_at IS NULL OR f.disabled_at>?) ORDER BY s.source""",
-        (game["fixture_id"], at, game["season"], club, at, at),
+        (game["season"], club, at, at),
     )
     sources = []
     for row in rows:
-        raw = json.loads(row["detail"]) if row["detail"] else {}
+        check = db.execute(
+            f"""SELECT id,season,team_key,source,fixture_id,kickoff,checked_at,detail FROM {checks} WHERE season=? AND team_key=?
+                AND source=? AND fixture_id=? AND checked_at<=?
+                ORDER BY checked_at DESC,id DESC LIMIT 1""",
+            (game["season"], club, row["source"], game["fixture_id"], at),
+        ).fetchone()
+        raw = json.loads(check["detail"]) if check else {}
+        if not news_poll_archive.verified_check(db, check, raw):
+            raw = {"state": "invalid_poll_evidence", "checked_at": check["checked_at"],
+                   "issues": ["archived poll receipt or wire membership failed verification"]}
         stamp = raw.get("checked_at")
-        observed = raw.get("source_observed_at") or stamp
+        observed = raw.get("source_observed_at") or (stamp if raw.get("state") != "invalid_poll_evidence" else None)
         freshness = min(observed, raw.get("provider_state_as_of") or observed) if observed else None
         state = raw.get("state", "never_checked")
         if freshness and freshness < _plus(at, -COVERAGE_AGE):
@@ -1731,11 +1783,14 @@ def _side_coverage(db, game, side, at, games):
                 "id": row["source"],
                 "origin": json.loads(row["config"])["origin"],
                 "status": state,
-                "recorded_kickoff": row["recorded_kickoff"],
+                "recorded_kickoff": check["kickoff"] if check else None,
                 "checked_at": stamp,
                 "source_observed_at": observed,
                 "provider_state_as_of": raw.get("provider_state_as_of"),
                 "availability_observed": eligible,
+                "study_eligible": eligible or (state == "partial" and raw.get("identity_only_partial") is True),
+                "unresolved_players": raw.get("unresolved_players", raw.get("unmatched_players", 0)),
+                "provider_identity_reviews": raw.get("provider_identity_reviews", []),
                 "extractor_config_sha256": raw.get("extractor_config_sha256"),
                 "fetch_complete": bool(raw.get("fetch_complete")),
                 "pending_entries": raw.get("pending_entries", raw.get("provider_pending", 0)),
@@ -1973,8 +2028,53 @@ def snapshot(data_dir, fixture_id, cutoff):
             + run_filter,
             args,
         ).fetchall()
-        from . import news_importance
+        from . import news_ai, news_importance, news_wire_identity
 
+        # Reopen the latest scoped native directory at the requested cutoff.
+        # A later transfer, withdrawn alias or corrupt file cannot be used to
+        # preserve an older single-provider identity by accident.
+        checked = {}
+        proof_rows = defaultdict(list)
+        for row in rows:
+            stored = json.loads(row["payload"])
+            if stored.get("provider_identity"):
+                proof_rows[team_key(stored["team"])].append(stored["provider_identity"])
+        for side in ("home", "away"):
+            club = team_key(game[side])
+            wire_source = next((src for src in coverage[side]["sources"]
+                                if src["id"] == "touchline-availability"), None)
+            reviews = wire_source["provider_identity_reviews"] if wire_source else []
+            if not reviews and not proof_rows[club]:
+                continue
+            members = squads[club]["players"]
+            aliases = news_ai._roster_index(members)[1]
+            directory = news_wire_identity.directory(db, data_dir, game, game[side], at, members)
+            extra, reviewed_members = {}, {}
+            for item in [*reviews, *proof_rows[club]]:
+                key = store.digest(item)
+                if key in checked:
+                    continue
+                good = news_wire_identity.revalidates(data_dir, item, directory, aliases)
+                checked[key] = good
+                if good:
+                    member = directory[item["provider_player_id"]]
+                    if item["identity_basis"] == "touchline_directory_id":
+                        extra[member["player_id"]] = member
+                    else:
+                        reviewed_members[member["player_id"]] = {
+                            "provider_player_id": member["provider_player_id"],
+                            "identity_basis": member["identity_basis"],
+                            "directory_sha256": member["original_sha256"],
+                            "alias_receipt": member.get("alias_receipt"),
+                        }
+            if wire_source and reviews:
+                wire_source["directory_evidence_verified"] = all(checked[store.digest(x)] for x in reviews)
+                if not wire_source["directory_evidence_verified"]:
+                    wire_source["study_eligible"] = False
+            eligible[club].update(extra)
+            squads[club] = dict(squads[club], players=[
+                *(p | reviewed_members.get(p["player_id"], {}) for p in members), *extra.values()
+            ])
         importance = news_importance.player_history(db, game, at, squads, data_dir) if rows else {}
         witnesses = _wire_witnesses(data_dir, db, game, at, rows) if rows else {}
     facts = []
@@ -2015,7 +2115,8 @@ def snapshot(data_dir, fixture_id, cutoff):
                 fact["quote"], raw["title"], game, fact["team"], antecedent=antecedent.get("quote", ""))):
             continue
         player = eligible.get(club, {}).get(str(fact["player_id"]))
-        if player is None:
+        identity = fact.get("provider_identity")
+        if player is None or (identity and not checked.get(store.digest(identity))):
             for side in ("home", "away"):
                 if club == team_key(game[side]):
                     coverage[side]["roster"]["excluded_claims"] += 1
@@ -2031,8 +2132,29 @@ def snapshot(data_dir, fixture_id, cutoff):
                 "effective_at": fact.get("effective_at", fact["published_at"]),
                 "roster_validated_at": squads[club]["seen_at"],
                 "active_roster_sha256": squads[club]["digest"],
+                **({"directory_identity_validated_at": player["seen_at"],
+                    "active_directory_sha256": player["original_sha256"]} if
+                    identity and player.get("identity_basis") == "touchline_directory_id" else {}),
             }
         )
+    # Two independently named active absences must not be added twice if
+    # the source-only claimant still has a plausible unresolved roster alias.
+    active_names = {(team_key(f["team"]), f["player_id"]) for f in facts
+                    if f["event"] in ("injury", "suspension", "return", "availability")
+                    and f["status"] in ("reported", "confirmed")}
+    distinct = []
+    for fact in facts:
+        club = team_key(fact["team"])
+        person = eligible[club][fact["player_id"]]
+        overlaps = [pid for pid in person.get("possible_roster_ids", ()) if (club, pid) in active_names]
+        if overlaps:
+            side = next(s for s in coverage.values() if team_key(s["team"]) == club)
+            side["roster"]["excluded_claims"] += 1
+            side["roster"].setdefault("possible_duplicate_claims", []).append(
+                {"provider_player_id": person["provider_player_id"], "unresolved_roster_ids": overlaps})
+        else:
+            distinct.append(fact)
+    facts = distinct
     for side in coverage.values():
         for src in side["sources"]:
             if (team_key(side["team"]), src["id"]) in bad_sources:
@@ -2044,14 +2166,24 @@ def snapshot(data_dir, fixture_id, cutoff):
             side["roster"]["coverage_gap"] = "reported_player_no_longer_unique_member"
             for source in side["sources"]:
                 source["availability_observed"] = False
+        for src in side["sources"]:
+            if src["status"] != "partial":
+                src["study_eligible"] = src["availability_observed"]
+            elif not side["roster"]["eligible_players"] or side["roster"]["excluded_claims"]:
+                src["study_eligible"] = False
         side["observed"] = any(s["availability_observed"] for s in side["sources"])
-        if any(s["id"] == "touchline-availability" and s["status"] == "partial"
-               and (s["unmatched_players"] or s["invalid_entries"] or s["rejected_items"])
-               for s in side["sources"]):
-            side["coverage_gap"] = "incomplete_availability_feed"
-            side["observed"] = False
+        side["study_qualified"] = any(s["study_eligible"] for s in side["sources"])
+        for src in side["sources"]:
+            if (src["id"] == "touchline-availability" and src["status"] == "partial" and
+                    (src["unmatched_players"] or src["invalid_entries"] or src["rejected_items"]
+                     or src["revision_conflicts"])):
+                side["coverage_gap"] = "incomplete_availability_feed"
+                side["observed"] = False
+                side["study_qualified"] = bool(src["study_eligible"])
     observed = sum(side["observed"] for side in coverage.values())
-    coverage.update(observed_teams=observed, both_teams_observed=observed == 2)
+    qualified = sum(side["study_qualified"] for side in coverage.values())
+    coverage.update(observed_teams=observed, both_teams_observed=observed == 2,
+                    study_qualified_teams=qualified, both_teams_study_qualified=qualified == 2)
     return {
         "fixture_id": fixture_id,
         "cutoff": at,
@@ -2146,11 +2278,22 @@ def _publish_research_health(db):
         store.put_report(db, "source", RESEARCH_SOURCE, report)
 
 
+def weight_status(db, team=None):
+    from . import news_weight_audit
+
+    at = _utc()
+    return news_weight_audit.current_usage(db, _schedule(db, at), at, team)
+
+
 def _status_db(db, team=None):
     where = " WHERE s.team_key=?" if team else ""
     values = (team_key(team),) if team else ()
     rows = db.execute(
         """SELECT s.season,s.team,s.source,s.next_at,s.started,
+      (SELECT json_object('first_checked_at',r.first_checked_at,'last_checked_at',r.last_checked_at,
+                          'observations',r.observations) FROM news_poll_runs r
+       WHERE r.season=s.season AND r.team_key=s.team_key AND r.source=s.source
+       ORDER BY r.id DESC LIMIT 1) AS compact_run,
       (SELECT detail FROM news_checks c WHERE c.season=s.season AND c.team_key=s.team_key
        AND c.source=s.source ORDER BY c.checked_at DESC,c.id DESC LIMIT 1) AS detail
        FROM news_streams s"""
@@ -2162,6 +2305,9 @@ def _status_db(db, team=None):
     for r in rows:
         stream = dict(r)
         last = stream.pop("detail")
+        archived = stream.pop("compact_run")
+        if archived:
+            stream["latest_compacted_run"] = json.loads(archived)
         stream["latest"] = json.loads(last) if last else None
         streams.append(stream)
     counts = {
@@ -2178,9 +2324,14 @@ def _status_db(db, team=None):
             "news_wire_manifests",
         )
     }
+    storage = news_poll_archive.inventory(db)
+    counts["news_poll_proofs"] += storage["individually_replayable_checks_in_runs"] - storage["reopened_standalone_proofs"]
+    counts["news_wire_polls"] += storage["wire_confirmations_in_runs"]
     return {
         "streams": streams,
         "archive_counts": counts,
+        "poll_storage": storage,
+        "player_weights": weight_status(db, team),
         "pending_entries": sum(
             (s["latest"] or {}).get("pending_entries", (s["latest"] or {}).get("provider_pending", 0)) for s in streams
         ),
@@ -2223,23 +2374,36 @@ def sources(data_dir, team=None, season=None):
 def article(data_dir, sha):
     with _db(data_dir) as db:
         records = db.execute(
-            """SELECT p.id,p.payload FROM news_articles a LEFT JOIN news_article_proofs link
+            """SELECT a.seq,a.season,a.team_key,a.fixture_id,p.id,p.payload FROM news_articles a LEFT JOIN news_article_proofs link
             ON link.article=a.seq LEFT JOIN news_poll_proofs p ON p.id=link.receipt
             WHERE a.original_sha256=?""",
             (sha,),
         ).fetchall()
         if not records:
             raise ValueError("unknown archived news document")
-        standing = db.execute(
-            """SELECT s.first_seen_at,s.absence_first_seen_at,p.observed_at last_seen_at,
-            p.provider_at last_seen_state_as_of,p.receipt last_seen_receipt,
-            count(*) OVER () AS confirmations FROM news_articles a JOIN news_wire_states s ON s.article=a.seq
-            JOIN news_wire_polls p ON p.fixture_id IS a.fixture_id AND p.season=a.season AND p.team_key=a.team_key
-            LEFT JOIN news_wire_manifests m ON m.id=p.articles
-            WHERE a.original_sha256=? AND a.seq IN (SELECT value FROM json_each(coalesce(m.articles,
-                 CASE WHEN json_valid(p.articles) THEN p.articles END)))
-            ORDER BY p.observed_at DESC,p.recorded_at DESC,p.rowid DESC LIMIT 1""", (sha,)
-        ).fetchone()
+        polls = news_poll_archive.history(db, "news_wire_polls")
+        # Restrict each history query to this fixture and team before looking
+        # up membership. A single original may appear in multiple editions.
+        confirmations = []
+        for record in records:
+            latest = db.execute(
+                f"""SELECT s.first_seen_at,s.absence_first_seen_at,p.observed_at last_seen_at,
+                p.provider_at last_seen_state_as_of,p.receipt last_seen_receipt,p.recorded_at,p.rowid AS wire_order,
+                count(*) OVER () AS confirmations FROM news_wire_states s JOIN {polls} p
+                ON p.fixture_id IS ? AND p.season=? AND p.team_key=?
+                LEFT JOIN news_wire_manifests m ON m.id=p.articles
+                WHERE s.article=? AND s.article IN (SELECT value FROM json_each(coalesce(m.articles,
+                     CASE WHEN json_valid(p.articles) THEN p.articles END)))
+                ORDER BY p.observed_at DESC,p.recorded_at DESC,p.rowid DESC LIMIT 1""",
+                (record["fixture_id"],record["season"],record["team_key"],record["seq"]),
+            ).fetchone()
+            if latest:
+                confirmations.append(dict(latest))
+        standing = {}
+        if confirmations:
+            standing = max(confirmations, key=lambda r: (r["last_seen_at"],r["recorded_at"],r["wire_order"]))
+            standing["confirmations"] = sum(r["confirmations"] for r in confirmations)
+            del standing["recorded_at"], standing["wire_order"]
         conflicts = [
             dict(row) for row in db.execute(
                 """SELECT DISTINCT m.reason,m.recorded_at AS observed_at,m.receipt,
@@ -2376,9 +2540,26 @@ def register(subparsers):
         return roster_at(a.data_dir, a.team, a.season, a.at or _utc())
 
     roster.set_defaults(func=squad)
+    from .news_wire_identity import register_alias
+    alias = commands.add_parser("player-alias", help="登记或撤回单支球队本赛季的具名球员身份核对")
+    alias.add_argument("team")
+    alias.add_argument("season")
+    alias.add_argument("provider_id", type=int)
+    alias.add_argument("player_id")
+    alias.add_argument("--reviewer", required=True)
+    alias.add_argument("--reason", required=True)
+    alias.add_argument("--withdraw", action="store_true")
+    alias.set_defaults(func=lambda a: register_alias(a.data_dir, a.team, a.season, a.provider_id, a.player_id,
+                                                     a.reviewer, a.reason, withdraw=a.withdraw))
     health = commands.add_parser("status")
     health.add_argument("--team")
     health.set_defaults(func=lambda a: status(a.data_dir, a.team))
+    proof = commands.add_parser("receipt", help="按 SHA-256 核验单次新闻轮询的实际时间和响应摘要")
+    proof.add_argument("sha256")
+    def show_receipt(a):
+        with _db(a.data_dir) as db:
+            return news_poll_archive.receipt(db, a.sha256)
+    proof.set_defaults(func=show_receipt)
     cold = commands.add_parser("retention", help="盘点已完赛且被取代的旧伤停版本，保留可重放证据")
     cold.add_argument("--days", type=int, default=90)
     cold.add_argument("--compact", action="store_true", help="在校验旧版 SHA-256 后压缩存储原件")
@@ -2395,6 +2576,9 @@ def register(subparsers):
     original = commands.add_parser("article")
     original.add_argument("sha256")
     original.set_defaults(func=lambda a: article(a.data_dir, a.sha256))
+    from . import news_era_replay
+
+    news_era_replay.register(commands)
     ev = commands.add_parser("evaluate")
     ev.add_argument("season")
     ev.add_argument("round", type=int, nargs="?")

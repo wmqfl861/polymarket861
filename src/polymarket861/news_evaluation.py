@@ -195,7 +195,11 @@ def _proof_issue(db, fixture, entry, payload, cache):
 
 def _policy(value, db=None):
     current = (news_model.PROTOCOL, news_model.POLICY_SHA256)
-    for identity in (current, news_study_plan.LEGACY_POLICY):
+    for identity in (
+        current,
+        news_study_plan.PREVIOUS_POLICY,
+        news_study_plan.LEGACY_POLICY,
+    ):
         if value in (identity[0], identity[1], identity[0].rsplit("-", 1)[-1]):
             return identity
     if value in (None, "current"):
@@ -450,6 +454,7 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy
             recipe=payload["recipe_digest"],
             implementation=implementation,
             study_status=study_status,
+            study_plan_sha256=(payload.get("news_study") or {}).get("plan_sha256"),
             extractor_config_sha256=(payload.get("news_study") or {}).get(
                 "extractor_config_sha256"
             ),
@@ -466,6 +471,18 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy
         )
         root = Path(db.execute("PRAGMA database_list").fetchone()[2]).parent
         record["market_close"] = news_market.observe(db, root, fixture, entry, pair)
+        if (
+            study_status == "declared"
+            and record["study_plan_sha256"] == news_study_plan.PLAN_SHA256
+        ):
+            record["scheduled_market_close"] = news_market.observe(
+                db, root, fixture, entry, pair, scheduled_proxy=True
+            )
+        else:
+            record["scheduled_market_close"] = {
+                "reason": "requires_scheduled_proxy_declaration"
+            }
+
         if not record["completed"]:
             return record | {
                 "reason": "awaiting_verified_score",
@@ -598,6 +615,8 @@ def _complete_calendar(records):
 
 
 def _summary(records, season, rnd, horizon, mode, policy=None, capability=None):
+    from . import news_accumulation
+
     done = [r for r in records if r["scored"]]
     expected = max(10 if rnd else 380, len(records))
     sealed = [r for r in records if r["sealed"]]
@@ -643,12 +662,21 @@ def _summary(records, season, rnd, horizon, mode, policy=None, capability=None):
         and _complete_calendar(records)
     ):
         primary = interval["endpoints"]["score"]
+        current_policy = policy is None or policy == _policy(None)
         if not changed:
             verdict = "no_observed_changes"
         elif primary["lower"] > 0:
-            verdict = "higher_score_this_season"
+            verdict = (
+                "no_decline_in_estimated_interval"
+                if current_policy
+                else "higher_score_this_season"
+            )
         elif primary["upper"] < 0:
-            verdict = "lower_score_this_season"
+            verdict = (
+                "evidence_of_score_deterioration"
+                if current_policy
+                else "lower_score_this_season"
+            )
         else:
             verdict = "inconclusive"
     counts = Counter(r["reason"] for r in records if not r["sealed"])
@@ -679,6 +707,10 @@ def _summary(records, season, rnd, horizon, mode, policy=None, capability=None):
         "endpoints": metrics,
         "lines": lines,
         "market_close": news_market.summary(records, capability, mode),
+        "scheduled_market_close": news_market.summary(
+            records, mode=mode, field="scheduled_market_close"
+        ),
+        "score_guardrail": news_accumulation.score_guardrail(records),
         "affected": _means(changed),
         "covered_sample": _means(observed),
         "by_news_status": {key: _means(rows) for key, rows in sorted(slices.items())},
@@ -803,6 +835,11 @@ def evaluate_accumulation(
         ]
         result = news_accumulation.summarize(
             records, seasons, horizon, mode, news_market.source_capability(db)
+        )
+        from . import news_era_replay
+
+        result["era_equivalence"] = news_era_replay.accumulation(
+            db, records, seasons, horizon, mode, result
         )
         key = f"{through_season}/{horizon}/{mode}/{news_study_plan.PLAN_SHA256}"
         prev = db.execute(

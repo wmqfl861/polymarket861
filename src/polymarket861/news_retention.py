@@ -7,7 +7,7 @@ from datetime import timedelta
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-from . import store
+from . import news_poll_archive, store
 from .blob_storage import blob_name
 
 
@@ -85,6 +85,8 @@ def retention(data_dir, *, days=90, backup_to=None, compact=False, limit=500):
         raise ValueError("news retention requires 1–36500 days and a limit of 1–50000 originals")
     before = store.iso(store.instant(store.now_utc()) - timedelta(days=days))
     with _db(data_dir) as db:
+        poll_storage = news_poll_archive.inventory(db)
+        legacy_checks = news_poll_archive.upgrade_inventory(db)
         events = db.execute("SELECT 1 FROM sqlite_master WHERE name='news_event_updates'").fetchone()
         event_ref = "OR EXISTS (SELECT 1 FROM news_event_updates u WHERE u.fixture_id=c.fixture_id)" if events else ""
         row = db.execute(_COLD + """
@@ -102,11 +104,15 @@ def retention(data_dir, *, days=90, backup_to=None, compact=False, limit=500):
                 EXCEPT SELECT original_sha256 FROM news_wire_compactions ORDER BY 1 LIMIT ?""",
                 ((before,) * 4) + (limit,))]
     result = {"mode": "compact" if compact else "inventory", "superseded_before": before, **dict(row),
-              "deleted_versions": 0, "compacted_originals": 0, "encoded_bytes_saved": 0}
+              "deleted_versions": 0, "compacted_originals": 0, "encoded_bytes_saved": 0, "poll_storage": poll_storage, "pre_upgrade_checks": legacy_checks}
     if backup_to:
         from .operations import backup_state
 
         result["backup"] = backup_state(data_dir, backup_to, compress=True)
+    if compact:
+        with _db(data_dir, write=True) as db:
+            result["pre_upgrade_checks"] = news_poll_archive.compact_existing(db, limit)
+            result["poll_storage"] = news_poll_archive.inventory(db)
     for sha in candidates:
         savings = _compact(data_dir, sha)
         with _db(data_dir, write=True) as db:

@@ -11,6 +11,7 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from . import (
     archive_proof,
@@ -126,7 +127,7 @@ def _register_league(root, year):
         )
 
 
-def _round(root, db, year, rnd, at):
+def _round(root, db, year, rnd, at, *, fresh=True):
     # Only collector request rows can introduce a schedule. Uploaded bytes and the legacy candidate cache cannot.
     row = db.execute(
         "SELECT * FROM rf_native_requests WHERE season=? AND scope=? AND received_at<=? "
@@ -142,7 +143,7 @@ def _round(root, db, year, rnd, at):
         <= store.instant(at)
     ):
         raise ValueError("missing native OpenLigaDB matchweek request")
-    if store.instant(at) - store.instant(row["received_at"]) > MAX_AGE:
+    if fresh and store.instant(at) - store.instant(row["received_at"]) > MAX_AGE:
         raise ValueError("stale OpenLigaDB matchweek request")
     obs = db.execute(
         "SELECT metadata FROM observations WHERE source='openligadb-results' AND sha256=? AND observed_at=?",
@@ -219,14 +220,15 @@ def _round(root, db, year, rnd, at):
     return result
 
 
-def _gamma(root, db, r, at):
+def _gamma(root, db, r, at, *, fresh=True, native=None):
     slug = r["slug"]
     match = market_provider.FIXTURE.fullmatch(slug)
     if not match or match[5] or r["fixture"] != slug:
         raise ValueError("not a main EPL exchange event")
-    if store.instant(at) - store.instant(r["received_at"]) > MAX_AGE:
+    if fresh and store.instant(at) - store.instant(r["received_at"]) > MAX_AGE:
         raise ValueError("stale Gamma archive")
-    native = archive_proof._event_capture(db, root, r["sha"], r["received_at"], slug)
+    if native is None:
+        native = archive_proof._event_capture(db, root, r["sha"], r["received_at"], slug)
     kickoff = store.iso(native["startTime"])
     tags = {
         str(t.get("slug", "")).casefold()
@@ -283,24 +285,148 @@ def _gamma(root, db, r, at):
     }
 
 
-def _events(root, db, now):
+def _main_event(slug):
+    match = market_provider.FIXTURE.fullmatch(slug) if isinstance(slug, str) else None
+    return bool(match and not match[5])
+
+
+def _events(root, db, now, *, since=None):
+    """Select the latest original for each main slug, independently of the derived index."""
     by_pair = defaultdict(list)
-    errors = []
     if not db.execute("SELECT 1 FROM sqlite_master WHERE name='ma_events'").fetchone():
-        return by_pair, errors
-    # Use the latest version of each primary event, including conflicting rows received together.
-    rows = db.execute(
-        "WITH latest AS (SELECT *,dense_rank() OVER(PARTITION BY slug ORDER BY received_at DESC) rk "
-        "FROM ma_events WHERE slug=fixture AND received_at<=?) SELECT * FROM latest WHERE rk=1 "
-        "AND received_at>=? AND julianday(kickoff)>=julianday(?) ORDER BY slug,sha",
-        (store.iso(now), store.iso(now - MAX_AGE), store.iso(now - MAX_SHIFT)),
-    )
-    for r in rows:
+        return by_pair, []
+    at, lower = store.iso(now), since or store.iso(now - MAX_AGE)
+    indexes = {
+        (r["slug"], r["received_at"], r["sha"]): r
+        for r in db.execute(
+            "SELECT * FROM ma_events WHERE slug=fixture AND received_at BETWEEN ? AND ?",
+            (lower, at),
+        )
+    }
+    latest = {}
+    errors = []
+
+    def remember(slug, stamp, sha, native=None, error=None):
+        if not _main_event(slug):
+            return
+        versions = latest.get(slug)
+        if versions is None or stamp > versions[0]:
+            versions = latest[slug] = (stamp, {})
+        if stamp == versions[0]:
+            versions[1][sha] = (native, error)
+
+    # An existing index without an authenticated original also keeps an older
+    # valid event from resurfacing. A complete catalogue can contain other sports.
+    for slug, stamp, sha in indexes:
+        remember(
+            slug, stamp, sha, error="missing authenticated-origin exchange capture"
+        )
+    for row in db.execute(
+        """SELECT r.received_at stamp,r.sha,r.operation,r.selector,NULL url,0 orphan
+             FROM ma_requests r WHERE r.status='ok' AND r.operation IN ('event','catalog')
+             AND r.received_at BETWEEN :lower AND :at
+           UNION ALL
+           SELECT o.observed_at,o.sha256,json_extract(o.metadata,'$.operation'),NULL,
+                  json_extract(o.metadata,'$.url'),1 FROM observations o
+             WHERE o.source='polymarket.com' AND o.observed_at BETWEEN :lower AND :at
+               AND json_valid(o.metadata) AND json_extract(o.metadata,'$.operation') IN ('event','catalog')
+               AND NOT EXISTS (SELECT 1 FROM ma_requests r WHERE r.sha=o.sha256 AND r.received_at=o.observed_at
+                   AND r.status='ok' AND r.operation=json_extract(o.metadata,'$.operation')
+                   AND r.requested_at=json_extract(o.metadata,'$.requested_at'))""",
+        {"lower": lower, "at": at},
+    ):
+        stamp, sha, operation, selector, url, orphan = row
+        if orphan:
+            location = urlsplit(url or "")
+            if (
+                location.scheme != "https"
+                or location.netloc != "gamma-api.polymarket.com"
+            ):
+                continue
+            if operation == "event" and location.path.startswith("/events/slug/"):
+                selector = location.path.removeprefix("/events/slug/")
+            elif operation != "catalog" or location.path != "/events":
+                continue
+        if operation == "event" and not _main_event(selector):
+            continue
+
         try:
-            pair, event = _gamma(root, db, r, store.iso(now))
-            by_pair[pair].append(event)
+            if orphan:
+                raw = archive_proof._body(root, sha)
+            else:
+                reply, _, _, _ = archive_proof.original_receipt(
+                    db, root, sha, stamp, {operation}
+                )
+                raw = reply.body
+            data = json.loads(raw)
+            if operation == "event":
+                if not isinstance(data, dict) or data.get("slug") != selector:
+                    raise ValueError("wrong native Gamma main event identity")
+                entries = [data]
+            elif not isinstance(data, list):
+                raise ValueError("invalid original Gamma catalogue")
+            else:
+                entries = data
+            found = set()
+            for event in entries:
+                if not isinstance(event, dict) or not isinstance(
+                    event.get("slug"), str
+                ):
+                    raise ValueError("unknown original Gamma catalogue membership")
+                slug = event["slug"]
+                if not _main_event(slug):
+                    continue
+                issue = None
+                if orphan:
+                    issue = "native Gamma original lacks its authenticated request"
+                elif (slug, stamp, sha) not in indexes:
+                    issue = "native Gamma original lacks its matching event index"
+                elif slug in found:
+                    issue = "ambiguous native Gamma main event in catalogue"
+                remember(slug, stamp, sha, event, issue)
+                found.add(slug)
         except (ValueError, OSError, TypeError, KeyError) as exc:
-            errors.append({"slug": r["slug"], "reason": str(exc)})
+            if operation == "event":
+                remember(selector, stamp, sha, error=str(exc))
+            else:
+                # Without the body we cannot identify which fixture appeared on this page.
+                errors.append({"slug": None, "received_at": stamp, "reason": str(exc)})
+
+    for slug, (stamp, versions) in latest.items():
+        for sha, (event, error) in versions.items():
+            index = indexes.get((slug, stamp, sha))
+            try:
+                if error:
+                    raise ValueError(error)
+                pair, verified = _gamma(
+                    root, db, index, at, fresh=since is None, native=event
+                )
+                if store.instant(verified["kickoff"]) >= now - MAX_SHIFT:
+                    by_pair[pair].append(verified)
+            except (ValueError, OSError, TypeError, KeyError) as exc:
+                errors.append({"slug": slug, "received_at": stamp, "reason": str(exc)})
+
+    # A missing alternate-date slug for the same teams can signal a move. It
+    # is a conflict until an ingress repair or a newer complete receipt resolves it.
+    for pair, matches in list(by_pair.items()):
+        codes = {
+            market_provider.FIXTURE.fullmatch(e["slug"]).group(2, 3) for e in matches
+        }
+        earliest = min(e["received_at"] for e in matches)
+        unresolved = next(
+            (
+                e
+                for e in errors
+                if e["received_at"] >= earliest
+                and (
+                    e["slug"] is None
+                    or market_provider.FIXTURE.fullmatch(e["slug"]).group(2, 3) in codes
+                )
+            ),
+            None,
+        )
+        if unresolved:
+            del by_pair[pair]
     return by_pair, errors
 
 
@@ -379,8 +505,57 @@ def _hold(db, fid, version, at, reason=None):
         )
 
 
+def _registration(db, fid, version):
+    return db.execute(
+        "SELECT f.*,s.recorded_at,s.precision FROM fixture_versions f "
+        "JOIN schedule_receipts s USING(fixture_id,version) WHERE f.fixture_id=? AND f.version=?",
+        (fid, version),
+    ).fetchone()
+
+
+def _registration_reference(f):
+    return {k: f[k] for k in ("version", "source", "locator", "known_at", "recorded_at")}
+
+
+def _admit_same_time(db, f, ol, event, at):
+    # The initial file registration and already sealed forecasts keep their identity.
+    # This receipt records when this particular file version was independently confirmed.
+    proof = {
+        "fixture_id": f["fixture_id"],
+        "round": f["round_id"],
+        "season": f["season"],
+        "previous": f["kickoff"],
+        "kickoff": f["kickoff"],
+        "registered": _registration_reference(f),
+        "confirmed_at": at,
+        "gamma": event,
+        "openligadb": ol,
+    }
+    db.execute(
+        "INSERT OR IGNORE INTO epl_schedule_proofs VALUES(?,?,?,?)",
+        (f["fixture_id"], f["version"], store.digest(proof), store.canonical(proof)),
+    )
+
+
+def _confirmation_details(proof, digest, registered_at):
+    return {
+        "proof_sha256": digest,
+        "accepted_at": proof.get("confirmed_at", registered_at),
+        "openligadb_sha256": proof["openligadb"]["sha256"],
+        "gamma_sha256": proof["gamma"]["sha256"],
+    }
+
+
+def _proof_at(db, fid, version, cutoff):
+    return db.execute(
+        "SELECT * FROM epl_schedule_proofs WHERE fixture=? AND version=? "
+        "AND (NOT json_valid(proof) OR coalesce(json_extract(proof,'$.confirmed_at'),'')<=?)",
+        (fid, version, cutoff),
+    ).fetchone()
+
+
 def attest(root, db, fixture, cutoff):
-    """Reopen both original witnesses to a derived kickoff, bounded by its real admission and later holds."""
+    """Reopen both original witnesses, bounded by their local admission and later holds."""
     fid = fixture["fixture_id"]
     version = fixture["version"]
     if not db.execute(
@@ -397,17 +572,26 @@ def attest(root, db, fixture, cutoff):
         )
 
     def verify():
-        row = db.execute(
-            "SELECT * FROM epl_schedule_proofs WHERE fixture=? AND version=?",
-            (fid, version),
-        ).fetchone()
+        row = _proof_at(db, fid, version, cutoff)
         if not row:
             raise ValueError("missing original schedule confirmation")
         proof = json.loads(row["proof"])
-        cutoff_when_accepted = fixture["recorded_at"]
+        if not isinstance(proof, dict):
+            raise ValueError("invalid original schedule confirmation")
+        when = proof.get("confirmed_at", fixture["recorded_at"])
+        if fixture["source"] == SOURCE:
+            anchored = fixture["locator"] == "schedule-proof:" + row["proof_digest"]
+        else:
+            anchored = (
+                fixture["source"] == "openfootball"
+                and proof.get("registered") == _registration_reference(fixture)
+                and proof["previous"] == fixture["kickoff"]
+                and max(fixture["known_at"], fixture["recorded_at"]) <= when
+            )
         if (
-            store.digest(proof) != row["proof_digest"]
-            or fixture["locator"] != "schedule-proof:" + row["proof_digest"]
+            not anchored
+            or when > cutoff
+            or store.digest(proof) != row["proof_digest"]
             or fid != proof["fixture_id"]
             or fixture["kickoff"] != proof["kickoff"]
             or fixture["round_id"] != proof["round"]
@@ -416,11 +600,7 @@ def attest(root, db, fixture, cutoff):
             raise ValueError("schedule identity differs from its frozen confirmation")
         pair = tuple(opportunity._club(fixture[k]) for k in ("home", "away"))
         observed = _round(
-            root,
-            db,
-            int(fixture["season"][:4]),
-            fixture["round_id"],
-            cutoff_when_accepted,
+            root, db, int(fixture["season"][:4]), fixture["round_id"], when
         ).get(pair)
         gamma = proof["gamma"]
         raw = db.execute(
@@ -429,7 +609,7 @@ def attest(root, db, fixture, cutoff):
         ).fetchone()
         if not raw:
             raise ValueError("the original exchange schedule receipt is absent")
-        gamma_pair, verified = _gamma(root, db, raw, cutoff_when_accepted)
+        gamma_pair, verified = _gamma(root, db, raw, when)
         if (
             not observed
             or observed != proof["openligadb"]
@@ -437,16 +617,57 @@ def attest(root, db, fixture, cutoff):
             or verified != gamma
             or observed["kickoff"] != fixture["kickoff"]
             or verified["kickoff"] != fixture["kickoff"]
-            or max(gamma["received_at"], observed["received_at"]) > cutoff_when_accepted
+            or max(gamma["received_at"], observed["received_at"]) > when
         ):
             raise ValueError("native sources no longer certify the stored kickoff")
+        return proof
 
     try:
-        dbscope.checked(root, ("approved_schedule_sources", fid, version), verify)
+        return dbscope.checked(
+            root, ("approved_schedule_sources", fid, version, cutoff), verify
+        )
     except (KeyError, TypeError, OSError) as exc:
         raise ValueError(
             "original schedule evidence is unavailable or incomplete"
         ) from exc
+
+
+def _check_latest(root, db, f, proof, at):
+    """A proven decision clock survives silence, not a newer contrary native original."""
+    year, rnd = int(f["season"][:4]), f["round_id"]
+    pair = tuple(opportunity._club(f[k]) for k in ("home", "away"))
+    week = dbscope.checked(
+        root,
+        ("latest_schedule_round", year, rnd, at),
+        lambda: _round(root, db, year, rnd, at, fresh=False),
+    )
+    ol = week.get(pair)
+    gamma = proof["gamma"]
+    # Share the catalogue parse across the round; ignore older alternative slugs
+    # that were not witnesses when this version was originally accepted.
+    since = gamma["received_at"][:10] + "T00:00:00.000000Z"
+    candidates, errors = dbscope.checked(
+        root,
+        ("latest_schedule_events", at, since),
+        lambda: _events(root, db, store.instant(at), since=since),
+    )
+    matches = [
+        e for e in candidates.get(pair, ()) if e["received_at"] >= gamma["received_at"]
+    ]
+    if not ol or ol.get("match_id") != proof["openligadb"]["match_id"]:
+        raise ValueError(
+            "latest OpenLigaDB original no longer identifies the confirmed fixture"
+        )
+    if (
+        len(matches) != 1
+        or any(e["slug"] == gamma["slug"] for e in errors)
+        or any(matches[0][k] != gamma[k] for k in ("slug", "event_id", "game_id"))
+    ):
+        raise ValueError(
+            "latest Gamma original no longer identifies one confirmed pregame event"
+        )
+    if ol["kickoff"] != f["kickoff"] or matches[0]["kickoff"] != f["kickoff"]:
+        raise ValueError("independent sources disagree with the confirmed UTC kickoff")
 
 
 def result_links(db):
@@ -518,8 +739,9 @@ def readiness(
     """Check the currently registered kickoff against local originals without revising it."""
     from .football import team_key
 
-    at = store.iso(at or store.now_utc())
-    now = store.instant(at)
+    # Only a current, owned inspection can admit a new receipt. A caller
+    # replaying an explicit historical cutoff never retroactively certifies it.
+    admit_now = at is None and _connection is None
     connection = (
         nullcontext(_connection) if _connection is not None else closing(_db(root))
     )
@@ -527,8 +749,9 @@ def readiness(
         db = stack.enter_context(connection)
         snapshot = dbscope.for_connection(db) or stack.enter_context(dbscope.bind(root, db))
         if not db.in_transaction:
-            db.execute("BEGIN")
-        frontier = _frontier(db) if _with_frontier else None
+            db.execute("BEGIN IMMEDIATE" if admit_now else "BEGIN")
+        at = store.iso(at or store.now_utc())
+        now = store.instant(at)
         registered = [
             dict(r)
             for r in db.execute(
@@ -641,6 +864,8 @@ def readiness(
                 if review
                 else None,
             }
+            durable = None
+            item["fixed_confirmation"] = None
             try:
                 if f["precision"] == "date":
                     seal_reason = (
@@ -650,9 +875,16 @@ def readiness(
                 if review and review["action"] == "withdrawn":
                     seal_reason = "schedule withdrawn by operator: " + review["reason"]
                     raise ValueError(seal_reason)
-                if f["source"] == SOURCE:
+                saved = _proof_at(db, f["fixture_id"], f["version"], at)
+                if f["source"] == SOURCE or saved:
                     try:
-                        attest(root, db, f, at)
+                        durable = attest(root, db, f, at)
+                        _check_latest(root, db, f, durable, at)
+                        if pairs[f["season"], rnd, *pair] != 1:
+                            raise ValueError("non-unique local fixture identity")
+                        item["fixed_confirmation"] = _confirmation_details(
+                            durable, saved["proof_digest"], f["recorded_at"]
+                        )
                     except (ValueError, OSError, KeyError, TypeError) as exc:
                         seal_reason = str(exc)
                         raise
@@ -669,6 +901,12 @@ def readiness(
                     raise ValueError(
                         "agreed native kickoff has not been applied to the registered schedule"
                     )
+                if admit_now and bulk and not durable:
+                    _admit_same_time(db, f, ol, markets[0], at)
+                    saved = _proof_at(db, f["fixture_id"], f["version"], at)
+                    item["fixed_confirmation"] = _confirmation_details(
+                        json.loads(saved["proof"]), saved["proof_digest"], at
+                    )
                 item.update(status="confirmed", news_eligible=True)
             except (ValueError, OSError, KeyError, TypeError) as exc:
                 if seal_reason is None:
@@ -677,7 +915,7 @@ def readiness(
                             "native kickoff conflicts with the registered schedule: "
                             + str(exc)
                         )
-                    elif bulk:
+                    elif bulk and not durable:
                         seal_reason = (
                             "unconfirmed bulk placeholder kickoff for this EPL round"
                         )
@@ -700,7 +938,13 @@ def readiness(
                 )
             item["fixed_b1_block_reason"] = seal_reason
             items.append(item)
-    confirmed = sum(i["status"] == "confirmed" for i in items)
+        frontier = _frontier(db) if _with_frontier else None
+        if admit_now:
+            dbscope.recheck_originals(snapshot)
+            db.commit()
+    confirmed = sum(
+        i["status"] == "confirmed" or bool(i["fixed_confirmation"]) for i in items
+    )
     blocked = [i["fixture_id"] for i in items if not i["news_eligible"]]
     round_registered = (
         sum(f["round_id"] == round_id for f in registered)
@@ -716,6 +960,8 @@ def readiness(
         "registered_in_round": round_registered,
         "expected_in_round": 10 if round_id is not None else None,
         "confirmed": confirmed,
+        "fresh_news_confirmed": sum(i["status"] == "confirmed" for i in items),
+        "durable_fixed_confirmations": sum(bool(i["fixed_confirmation"]) for i in items),
         "blocked_fixtures": blocked,
         "fixed_b1_blocked_fixtures": [
             i["fixture_id"] for i in items if i["fixed_b1_block_reason"]
@@ -730,7 +976,7 @@ def readiness(
         else "unconfirmed",
         "source_errors": errors,
         "action": None
-        if items and complete and confirmed == len(items)
+        if items and complete and confirmed == len(items) and not blocked
         else "Register the season with data refresh, then run season run for the event catalogue "
         "and result-feed witnesses. Inspect season readiness before the first full news sync.",
     }
@@ -772,12 +1018,14 @@ def _frontier(db):
     values = list(
         db.execute(
             """SELECT (SELECT max(rowid) FROM fixture_versions), (SELECT max(rowid) FROM rf_native_requests),
-        (SELECT max(rowid) FROM epl_schedule_reviews), (SELECT max(rowid) FROM epl_schedule_holds)"""
+        (SELECT max(rowid) FROM epl_schedule_reviews), (SELECT max(rowid) FROM epl_schedule_holds),
+        (SELECT max(rowid) FROM epl_schedule_proofs), (SELECT count(*) FROM epl_schedule_proofs),
+        (SELECT count(*) FROM rf_native_requests)"""
         ).fetchone()
     )
     gamma = db.execute("SELECT 1 FROM sqlite_master WHERE name='ma_events'").fetchone()
-    values.append(
-        db.execute("SELECT max(rowid) FROM ma_events").fetchone()[0] if gamma else None
+    values.extend(
+        db.execute("SELECT max(rowid),count(*) FROM ma_events").fetchone() if gamma else (None, 0)
     )
     return tuple(values)
 
@@ -814,13 +1062,13 @@ def dispatch_checks(checks):
 
 
 def require_fixed(root, fixture, at, checks=None, *, db=None):
-    """Reuse one verified dispatch batch until a schedule, original, or hold changes."""
+    """Share preflight reads across dispatch jobs; each writer reopens its own fixture evidence."""
     at = store.iso(at)
     fid = fixture["fixture_id"]
     checks = checks or _dispatch_checks.get()
     row = (
         checks.fixtures.get(fid)
-        if checks and checks.root == Path(root).resolve()
+        if db is None and checks and checks.root == Path(root).resolve()
         else None
     )
     if row and checks.checked <= at <= store.iso(
@@ -829,14 +1077,11 @@ def require_fixed(root, fixture, at, checks=None, *, db=None):
         receipts = [r["received_at"] for r in row["gamma"]]
         if row["openligadb"] and row["openligadb"].get("received_at"):
             receipts.append(row["openligadb"]["received_at"])
-        expired = row["bulk_placeholder"] and any(
+        expired = row["bulk_placeholder"] and not row["fixed_confirmation"] and any(
             store.instant(stamp) + MAX_AGE < store.instant(at) for stamp in receipts
         )
-        if db is None:
-            with closing(_db(root)) as connection:
-                current = _frontier(connection)
-        else:
-            current = _frontier(db)
+        with closing(_db(root)) as connection:
+            current = _frontier(connection)
         if current != checks.frontier or expired:
             row = None
         else:
@@ -847,6 +1092,9 @@ def require_fixed(root, fixture, at, checks=None, *, db=None):
     else:
         row = None
     if row is None:
+        # Counts and max(rowid) schedule dispatch work but cannot attest an
+        # existing request's contents. Reopen original bytes, receipt metadata,
+        # local registration and holds within the actual sealing transaction.
         checks = fixed_schedules(root, {fid}, at, db=db)
         row = checks.fixtures.get(fid)
     if not row or (row["kickoff"], row["version"]) != (
@@ -862,7 +1110,7 @@ def require_fixed(root, fixture, at, checks=None, *, db=None):
     return checks
 
 
-def _evaluate(db, f, ol, events, ambiguous, at, approval=None):
+def _evaluate(root, db, f, ol, events, ambiguous, at, approval=None):
     fid, old, version = f["fixture_id"], f["kickoff"], f["schedule_version"]
     source = db.execute(
         "SELECT source FROM fixture_versions WHERE fixture_id=? AND version=?",
@@ -877,10 +1125,10 @@ def _evaluate(db, f, ol, events, ambiguous, at, approval=None):
         "openligadb_kickoff": ol["kickoff"] if ol else None,
         "gamma_kickoffs": [e["kickoff"] for e in events],
     }
+    reviewed = _review(db, f, at)
     try:
         if approval and (not ol or approval["kickoff"] != ol["kickoff"]):
             raise ValueError("requested kickoff differs from current native evidence")
-        reviewed = _review(db, f, at)
         if reviewed and reviewed["action"] == "withdrawn" and not approval:
             raise ValueError("schedule withdrawn by operator: " + reviewed["reason"])
         event = _choose(
@@ -918,8 +1166,13 @@ def _evaluate(db, f, ol, events, ambiguous, at, approval=None):
         ident = store.digest(proof)
         row.update(kickoff=proposed, gamma_slug=event["slug"])
         if old == proposed:
-            if source == SOURCE:
+            if source == "openfootball":
+                _admit_same_time(db, _registration(db, fid, version), ol, event, at)
+            if source in (SOURCE, "openfootball"):
                 _hold(db, fid, version, at)
+                saved = _proof_at(db, fid, version, at)
+                if saved:
+                    row["proof"] = saved["proof_digest"]
             row["status"] = "unchanged"
         else:
             new = store.register_fixture_db(
@@ -964,8 +1217,17 @@ def _evaluate(db, f, ol, events, ambiguous, at, approval=None):
         if approval:
             raise
         row.update(status="deferred", reason=str(exc))
-        if source == SOURCE and at < old:
-            _hold(db, fid, version, at, str(exc))
+        saved = _proof_at(db, fid, version, at)
+        if saved and at < old:
+            reason = str(exc)
+            if not ambiguous and not (reviewed and reviewed["action"] == "withdrawn"):
+                try:
+                    _check_latest(root, db, f, json.loads(saved["proof"]), at)
+                except (ValueError, OSError, TypeError, KeyError) as updated:
+                    reason = str(updated)
+                else:
+                    reason = None
+            _hold(db, fid, version, at, reason)
         return row
 
 
@@ -1012,7 +1274,7 @@ def review_schedule(root, year, fid, kickoff, reviewer, reason, *, withdraw=Fals
         ol = _round(root, db, year, f["round_id"], at)
         events, _ = _events(root, db, store.instant(at))
         return _evaluate(
-            db,
+            root, db,
             f,
             ol.get(pair),
             events.get(pair, []),
@@ -1080,7 +1342,7 @@ def sync(root, year, *, fetch=False):
             rnd = f["round_id"]
             pair = clubs(f)
             row = _evaluate(
-                db,
+                root, db,
                 f,
                 rounds.get(rnd, {}).get(pair),
                 markets.get(pair, []),

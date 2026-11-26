@@ -465,9 +465,9 @@
     detail.append(box);
   }
 
-  function marketClosePanel(close, detail) {
+  function marketClosePanel(close, detail, scheduled = false) {
     if (!close) return;
-    const box = panel("新闻调整与临近开球的盘口");
+    const box = panel(scheduled ? "计划开球前的盘口参照" : "新闻调整与临近开球的盘口");
     const counts = [["合格赛前封存场次", close.eligible_seals]];
     if (num(close.verified_actual_kickoffs) !== null)
       counts.push(["已核实实际开球时间的场次", close.verified_actual_kickoffs]);
@@ -484,6 +484,9 @@
       source = routes.join("，") || "已有通过审核的免费来源可用";
     }
     const status = {
+      descriptive_scheduled_proxy: "已配对计划开球前的原生盘口，交易所当时显示比赛尚未开始。",
+      awaiting_scheduled_kickoff: "等待到达登记的开球时刻。",
+      no_matched_scheduled_quotes: "缺少与决策时点匹配的盘口或交易所赛前状态记录。",
       actual_kickoff_source_unavailable: "目前无法采集新的实际开球凭据。",
       awaiting_verified_actual_kickoff: "等待核验相应比赛上半场的实际开球时间。",
       invalid_actual_kickoff_evidence: "收到的实际开球记录未通过核验。",
@@ -500,6 +503,13 @@
     const cohorts = close.status === "multiple_probability_eras"
       ? Object.entries(object(close.by_era)) : [["", close]];
     for (const [era, cohort] of cohorts) {
+      const fit = object(cohort.home_win_regression);
+      if (fit.pairs > 0) {
+        const interval = object(fit.interval);
+        facts(box, [["斜率所用主胜配对", fit.pairs], ["有新闻调整的配对", fit.informative_pairs],
+          ["新闻调整与主胜盘口变化的斜率", format(fit.slope)],
+          ["按轮估计的区间", num(interval.lower) === null ? null : format(interval.lower) + " 至 " + format(interval.upper)]]);
+      }
       const rows = Object.entries(object(cohort.endpoints)).filter(([, row]) => row.pairs > 0).map(([key, row]) => [
         newsLabel(key), row.pairs, row.toward, row.away, row.unchanged, row.at_reference, format(row.mean_distance_gain_pp),
       ]);
@@ -520,9 +530,30 @@
     table(box, ["预测方法指纹", "赛果配对", "平均分差（分）", "主胜收盘配对", "平均缩短距离（百分点）"],
       entries.map(([key, era]) => [key.slice(0, 12), object(era.score).pairs, format(object(era.score).mean),
         object(era.home_close).pairs, format(object(era.home_close).mean)]));
+    const guardrails = {
+      evidence_of_score_deterioration: "分差区间整体低于零",
+      no_observed_score_difference: "已观察样本的分差为零",
+      no_decline_in_estimated_interval: "分差区间下界达到零",
+      insufficient_independent_rounds: "独立轮次数不足",
+      inconclusive: "分差方向仍不确定",
+    };
+    const grades = entries.filter(([, era]) => object(era.score).guardrail);
+    table(box, ["预测方法", "赛果是否显示退步"], grades.map(([id, era]) =>
+      [id.slice(0, 12), guardrails[era.score.guardrail.status] || "待核"]));
+    const proofRows = array(object(p.era_equivalence).comparisons);
+    if (proofRows.length) {
+      table(box, ["旧预测方法", "当前预测方法", "逐位重放核对", "可汇总的赛果配对"],
+        proofRows.map(proof => {
+          const labels = {bit_identical: "全部概率相同", inventory_changed_replay_required: "封存已更新，需重放",
+            invalid_replay_certificate: "重放凭据未通过核验", input_evidence_unavailable: "缺少原始输入"};
+          return [(proof.source_era || "").slice(0, 12), (proof.target_era || "").slice(0, 12),
+            labels[proof.status] || "尚未核实等价", object(object(proof.pooled).score).pairs];
+        }));
+    }
     if (!entries.length) box.append(create("p", "note", "尚无同一预测方法下可汇总的赛前封存。"));
     detail.append(box);
     marketClosePanel(p.market_close, detail);
+    marketClosePanel(p.scheduled_market_close, detail, true);
   }
 
   function newsStudy(p, detail) {
@@ -564,6 +595,7 @@
     if (p.verdict) box.append(create("p", "note", newsLabel(p.verdict)));
     detail.append(box);
     marketClosePanel(p.market_close, detail);
+    marketClosePanel(p.scheduled_market_close, detail, true);
   }
   function renderNewsCoverage(row, detail) {
     const p = object(row.payload), counts = object(p.archive_counts);
@@ -576,6 +608,29 @@
         last.unmatched_players, object(last.provider_counts).invalid_entries, last.provider_pending,
         time(stream.next_at), array(last.issues).join(" · ")];
     }));
+    const weights = p.player_weights;
+    if (weights) {
+      box.append(create("h4", "", "未来七天预测采用的球员权重"));
+      metrics(box, [["已有预测的比赛", weights.forecasts], ["采用的球员结论", weights.applied_claims],
+        ["回退的结论", weights.fallback_claims], ["回退占已知依据", probability(weights.fallback_share)]]);
+      if (weights.alert) box.append(create("p", "note",
+        "回退占比超过 " + probability(weights.alert_threshold) + "，请核对出场资料和名单。"));
+      const reasons = {
+        no_received_player_directory: "预测时尚未收到出场目录",
+        invalid_player_directory_proof: "出场目录原件未通过核验",
+        stale_player_directory: "出场目录已过期",
+        provider_player_id_mismatch: "伤停与出场目录的球员编号不一致",
+        no_unique_player_directory_identity: "出场目录里缺少唯一身份",
+        prior_results_incomplete_at_directory_snapshot: "出场资料与已赛场次未能对账",
+        team_appearances_do_not_reconcile: "球队首发或分钟未能对账",
+        no_local_as_of_player_history: "预测当时缺少个人出场资料",
+        invalid_or_unavailable_player_history: "球员记录缺失或未通过核验",
+        reason_unrecorded: "早期记录未保存原因",
+      };
+      table(box, ["回退原因", "结论数"], Object.entries(object(weights.fallback_reasons))
+        .map(([cause, count]) => [reasons[cause] || cause, count]));
+      if (weights.unrecorded_basis > 0) facts(box, [["未记录权重依据的早期结论", weights.unrecorded_basis]]);
+    }
     detail.append(box);
   }
 

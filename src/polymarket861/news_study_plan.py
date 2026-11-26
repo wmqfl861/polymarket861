@@ -9,7 +9,7 @@ from functools import lru_cache
 from . import store
 
 FIRST_SEASON = 2026
-PLAN = {
+ORIGINAL_PLAN = {
     "version": "epl-news-observed-pairs-v1",
     "first_season": "2026-27",
     "population": "every unique prospectively sealed primary pair with timely observations of both teams",
@@ -41,6 +41,33 @@ PLAN = {
     "empirical_mde": "two-sided noncentral Student-t planning approximation at the observed CR1 standard error and G-1 degrees of freedom; undefined for fewer than two rounds or zero estimated variance",
     "authority": "descriptive repeated looks, no activation, accuracy verdict, CLV, or return inference",
 }
+ORIGINAL_PLAN_SHA256 = store.digest(ORIGINAL_PLAN)
+PREVIOUS_POLICY = (
+    "epl-player-news-paired-v2",
+    "b973656b0a32354e301e03807af5a639c0fa32aee245e4662a15908db4dc386a",
+)
+PLAN = {
+    **{key: ORIGINAL_PLAN[key] for key in (
+        "first_season", "stopping", "market_decision", "reference", "coverage_age_hours",
+        "direction", "direction_absolute_tolerance", "unit", "family_confidence", "authority",
+    )},
+    "version": "epl-news-observed-pairs-v2",
+    "population": "unique prospective primary seals with timely qualified coverage for both clubs; full coverage reported separately",
+    "strata": ["mode", "decision horizon", "probability era", "verified actual or scheduled pregame clock"],
+    "market_close": "same native contract, token, rules and two-sided books; last qualified receipt in the final 30 seconds strictly before its clock and after sealing",
+    "clock_tiers": {
+        "market_close": "independently verified first-half kickoff",
+        "scheduled_market_close": "frozen scheduled kickoff with unchanged local schedule, original fresh explicitly pregame exchange state at the closing book and no previously observed start/end",
+    },
+    "scheduled_state_max_age_seconds": 30,
+    "primary_market_estimand": "home win; through-origin slope of (close minus B1) on (news minus B1), per tier",
+    "secondary_market_estimand": "absolute distance gain in percentage points and its direction",
+    "score": "with-news minus no-news four-component score on verified regulation results; upper simultaneous bound below zero flags deterioration",
+    "guardrail": "descriptive only; no minimum positive gain or automatic promotion",
+    "interval": "round-clustered slope sandwich CR1 uses G/(G-1)*(N-1)/(N-P) and Student G-1. G counts season-rounds and N pairs with absolute slope predictor above direction_absolute_tolerance after within-era centering for an approved pooled fit. P is one slope plus the informative era intercepts for a pooled fit. Fewer than two informative rounds, N<=P or zero residual variance leaves the interval unavailable. The outcome guardrail uses all scored rounds.",
+    "family_comparisons": 6,  # two slopes and one outcome safeguard, at two horizons
+    "geometry": "all qualified pairs including zero news moves retained; a zero move provides no slope information",
+}
 PLAN_SHA256 = store.digest(PLAN)
 LEGACY_POLICY = (
     "epl-player-news-paired-v1",
@@ -55,6 +82,7 @@ _MODEL_FILES = (
     "score_bounds.py",
     "news_model.py",
     "news_importance.py",
+    "news_wire_identity.py",
     "news_ai.py",
     "news_ai_corpus.py",
     "news_scope.py",
@@ -62,7 +90,7 @@ _MODEL_FILES = (
 )
 _SYMBOLS = {
     "football.py": ("FootballEngine", "load_fixtures", "history_kickoff"),
-    "pipeline.py": ("_forecast_arms",),
+    "pipeline.py": ("_forecast_arms", "_with_schedule_revisions"),
     "news.py": (
         "snapshot",
         # These writers choose the claimant, persist effective/first-observed
@@ -76,21 +104,38 @@ _SYMBOLS = {
     # The adapter parses/quarantines native rows. The claimant is invoked from
     # news._extract_pending, so it is a separate root (including WIRE_MODEL).
     "news_sources.py": (
+        "WIRE_CLUBS",
+        "_wire_header",
+        "_wire_club",
         "_wire_availability",
+        "_wire_rumours",
+        "_feed",
+        "_wiki",
         "wire_claim",
         "wire_fingerprint",
         "wiki_prose",
     ),
-    "news_roster.py": ("roster_views", "parse_squad", "_people"),
-    "news_minutes.py": ("parse", "latest"),
+    "news_roster.py": ("roster_views", "parse_squad", "_people", "refresh"),
+    "news_minutes.py": ("parse", "latest", "club_games", "verified_players", "same_snapshot", "refresh"),
     "evidence.py": ("_collect", "_selected_lineup"),
-    "evidence_sources.py": ("name_key", "source_at", "granted"),
+    "evidence_sources.py": ("name_key", "source_at", "granted", "required", "utc", "dump"),
+    "jobs_research.py": ("_pointer",),
+    "blob_storage.py": ("read_blob",),
+    "news_poll_archive.py": ("SCHEMA", "history", "verified_check", "_sample", "_fold"),
     "result_freshness.py": ("_AS_OF",),
+    # A club's completed-match denominator is itself an input to the frozen
+    # player-usage weights. Include provider identity, regulation score bounds
+    # (a dedicated model file), ordered fixture uniqueness and club matching.
+    "result_pairings.py": ("decision", "unique_fixtures"),
+    "result_admission.py": ("_raw_rows", "_pair"),
+    "result_feed.py": ("_fixture_rows", "BASE"),
+    "independent_results.py": ("verified", "_query", "_title"),
+    "opportunity.py": ("_club",),
 }
 
 # Writers call the connection / schema installer for storage. A new index or
 # SQLite connection option changes the physical release, not the news policy.
-_STORAGE_ONLY = {"news.py": {"_db"}}
+_STORAGE_ONLY = {"news.py": {"_db"}, "news_roster.py": {"_connection"}, "news_minutes.py": {"_connection"}}
 
 
 @lru_cache(maxsize=128)
@@ -142,10 +187,18 @@ def _symbol_digest(path, physical_sha, roots):
 
 def probability_sources(root, files):
     """Stored alongside, and independently of, the complete physical-release manifest."""
+    complete = (set(_MODEL_FILES) | _SYMBOLS.keys()) <= files.keys()
     sources = {name: files[name] for name in _MODEL_FILES if name in files}
     for name, names in _SYMBOLS.items():
         if name in files:
-            sources[name] = _symbol_digest(root / name, files[name], names)
+            try:
+                sources[name] = _symbol_digest(root / name, files[name], names)
+            except SyntaxError:
+                if complete:
+                    raise
+                # Inventory tools can register partial, non-executable source bytes.
+                # Preserve their physical digest. No era replay can be certified.
+                sources[name] = files[name]
     return sources
 
 
@@ -156,7 +209,7 @@ def extractor_identity(snapshot):
         s.get("extractor_config_sha256")
         for side in ("home", "away")
         for s in snapshot.get("coverage", {}).get(side, {}).get("sources", [])
-        if s.get("availability_observed")
+        if s.get("study_eligible", s.get("availability_observed"))
     ]
     stamps.extend(f.get("extractor_config_sha256") for f in snapshot.get("facts", []))
     distinct = set(stamps)
@@ -167,14 +220,23 @@ def extractor_identity(snapshot):
     return None
 
 
+def _study_source(source):
+    if source.get("status") in ("ok", "degraded"):
+        return source.get("availability_observed", source.get("status") == "ok") is True
+    return (source.get("id") == "touchline-availability" and source.get("status") == "partial"
+            and source.get("study_eligible") is True and source.get("directory_evidence_verified") is True
+            and bool(source.get("provider_identity_reviews")) and source.get("fetch_complete") is True
+            and all(source.get(key) == 0 for key in
+                    ("unresolved_players", "invalid_entries", "rejected_items", "revision_conflicts")))
+
+
 def timely_coverage(pair):
     cut = store.instant(pair["input_cutoff"])
     lower = cut - timedelta(hours=PLAN["coverage_age_hours"])
     for side in ("home", "away"):
         sources = pair["coverage"].get(side, {}).get("sources", [])
         if not any(
-            s.get("status") in ("ok", "degraded")
-            and s.get("availability_observed", s.get("status") == "ok") is True
+            _study_source(s)
             and s.get("checked_at")
             and lower
             <= store.instant(s.get("source_observed_at") or s["checked_at"])
@@ -183,13 +245,14 @@ def timely_coverage(pair):
             for s in sources
         ):
             return False
-    return pair["coverage"].get("both_teams_observed") is True
+    return pair["coverage"].get("both_teams_study_qualified", pair["coverage"].get("both_teams_observed")) is True
 
 
 def era(recipe, pair, extractor):
     return store.digest(
         {
             "probability_source": recipe["news_probability_source"],
+            **({"frozen_feature_source": recipe["news_frozen_feature_source"]} if "news_frozen_feature_source" in recipe else {}),
             "numeric_runtime": recipe["numeric_runtime"],
             "lines": recipe["lines"],
             "protocol": pair["protocol"],
@@ -201,10 +264,15 @@ def era(recipe, pair, extractor):
 
 
 def declaration(recipe, pair, snapshot):
+    # Recipes written by 0.4.1 predate this explicit binding and used exactly v1.
+    digest = recipe.get("news_study_plan_sha256", ORIGINAL_PLAN_SHA256)
+    versions = {ORIGINAL_PLAN_SHA256: ORIGINAL_PLAN["version"], PLAN_SHA256: PLAN["version"]}
+    if digest not in versions:
+        raise ValueError("unknown preregistered news study")
     extractor = extractor_identity(snapshot)
     return {
-        "plan_version": PLAN["version"],
-        "plan_sha256": PLAN_SHA256,
+        "plan_version": versions[digest],
+        "plan_sha256": digest,
         "extractor_config_sha256": extractor,
         "era_sha256": era(recipe, pair, extractor) if extractor else None,
     }

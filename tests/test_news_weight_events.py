@@ -8,7 +8,7 @@ from datetime import timedelta
 from pathlib import Path
 from unittest.mock import patch
 
-from polymarket861 import evidence, evidence_sources, news, news_events, news_minutes, news_model, news_roster, news_sources, store
+from polymarket861 import datasets, evidence, evidence_sources, football, news, news_events, news_minutes, news_roster, news_sources, paired_proof, store
 from polymarket861.market_provider import Reply
 from test_news_importance import envelope, reply, usage_rows
 from test_news_matchday import FID, HOME, SEASON, roster_transport, seed_fixture
@@ -50,6 +50,17 @@ class WeightEvents(unittest.TestCase):
             "home": HOME, "away": f"Visitors {i}", "round_id": 1, "kickoff": when,
             "known_at": store.now_utc(), "source": "league", "locator": f"league/{i}"})
 
+    def observe_new_training_match(self):
+        path = self.history / SEASON / "en.1.json"
+        body = json.loads(path.read_text())
+        game = next(g for g in body["matches"] if g["team1"] == HOME and g["team2"] != "Chelsea FC")
+        game.update(date="2026-08-08", score={"ft": [2, 1]})
+        path.write_text(json.dumps(body))
+        blobs = {p.parent.name: football.blob_sha(p.read_bytes()) for p in self.history.glob("*/en.1.json")}
+        revision = "c" * 40
+        paired_proof.attest_provider_files(self.root, revision, blobs)
+        datasets.observe(self.root, self.history, revision=revision, expected=blobs)
+
     def test_same_label_probability_changes_then_expires_at_the_source_boundary(self):
         with at("2026-08-11T08:00Z"):
             self.squad()
@@ -61,7 +72,7 @@ class WeightEvents(unittest.TestCase):
         self.assertEqual(change["previous_digest"], first["digest"])
         for doc, chance, weight in ((first, 25, 0.3375), (change, 75, 0.1125)):
             self.assertEqual((doc["state"][0]["availability"], doc["state"][0]["chance_of_playing"]), ("doubtful", chance))
-            self.assertAlmostEqual(doc["news_pair"]["applied"][0]["prior_weight"], weight)
+            self.assertAlmostEqual(doc["news_pair"]["applied"][0]["prior_weight"], 0.55 * weight)
         self.assertNotEqual(first["news_pair"]["with_news"], change["news_pair"]["with_news"])
         with at("2026-08-11T08:20Z"):
             self.wire(75)
@@ -78,9 +89,7 @@ class WeightEvents(unittest.TestCase):
             self.wire(75)
             self.assertEqual(self.event(1)["previous_digest"], expired["digest"])
 
-    def test_continuous_episode_crosses_exact_duration_boundary_and_reset_restores_effect(self):
-        with at("2026-08-01T10:05Z"):
-            self.prior_fixture(1, "2026-08-08T15:00Z")
+    def test_episode_duration_uses_b1_matches_and_reset_keeps_the_new_first_observation(self):
         with at("2026-08-05T09:00Z"):
             self.squad()
             self.wire(25)
@@ -88,12 +97,12 @@ class WeightEvents(unittest.TestCase):
             self.squad()
             self.wire(25)
             first = self.event(1)
-        with at("2026-08-12T08:59:59Z"):
-            self.assertEqual(news_events.refresh(self.root, history_root=self.history)["attempted"], 0)
+        item = first["news_pair"]["applied"][0]
+        self.assertEqual(item["duration_basis"], "b1_weighted_training_matches")
+        self.assertEqual((item["duration_multiplier"], item["matches_in_episode"]), (1, 0))
+        self.assertGreater(item["team_training_matches"], 100)
         with at("2026-08-12T09:00Z"):
-            decayed = self.event(1)
-        self.assertEqual(decayed["state"][0]["duration_multiplier"], 0.75)
-        self.assertAlmostEqual(decayed["news_pair"]["applied"][0]["prior_weight"], 0.75 * first["news_pair"]["applied"][0]["prior_weight"])
+            self.assertEqual(self.event(0), first)  # Seven days alone never imply that B1 has absorbed a match.
         with at("2026-08-12T09:10Z"):
             self.wire(None)
             self.event(1)
@@ -102,16 +111,47 @@ class WeightEvents(unittest.TestCase):
             restored = self.event(1)
         self.assertEqual(restored["news_pair"]["with_news"], first["news_pair"]["with_news"])
         self.assertEqual(restored["state"], first["state"])
-        onset = store.instant("2026-07-01T00:00Z")
-        for days, _ in news_model.POLICY["duration_steps_days"][1:]:
-            deadline = onset + timedelta(days=days)
-            snap = {"cutoff": store.iso(deadline - timedelta(minutes=1)), "facts": [{
-                "source": news_sources.WIRE, "time_basis": "provider_snapshot",
-                "received_at": store.iso(onset), "published_at": store.iso(onset),
-                "absence_first_seen_at": store.iso(onset), "last_seen_at": store.iso(deadline - timedelta(minutes=2)),
-                "last_seen_state_as_of": store.iso(deadline - timedelta(minutes=2)),
-            }]}
-            self.assertEqual(news_events._review(snap, None), store.iso(deadline))
+        self.assertEqual(restored["news_pair"]["applied"][0]["duration_from"], store.iso("2026-08-12T09:20Z"))
+
+    def test_new_verified_b1_training_match_wakes_an_active_episode_inside_the_review_interval(self):
+        with at("2026-08-05T09:00Z"):
+            self.squad()
+            self.wire(25)
+        with at("2026-08-12T08:55Z"):
+            self.squad()
+            self.wire(25)
+            first = self.event(1)
+        with at("2026-08-12T08:56Z"):
+            self.observe_new_training_match()
+            changed = self.event(1)
+        self.assertEqual(changed["previous_digest"], first["digest"])
+        old, new = [r["news_pair"]["applied"][0] for r in (first, changed)]
+        self.assertEqual((old["matches_in_episode"], new["matches_in_episode"]), (0, 1))
+        self.assertEqual(new["team_training_matches"], old["team_training_matches"] + 1)
+        self.assertTrue(0 < new["duration_multiplier"] < old["duration_multiplier"])
+        self.assertEqual(changed["state"][0]["duration_multiplier"], new["duration_multiplier"])
+
+    def test_concurrent_new_history_between_calculation_and_commit_wakes_the_next_pass(self):
+        with at("2026-08-05T09:00Z"):
+            self.squad()
+            self.wire(25)
+        with at("2026-08-12T08:55Z"):
+            self.squad()
+            self.wire(25)
+            calculate = news_events._report
+
+            def concurrent_observation(*args):
+                calculated = calculate(*args)
+                self.observe_new_training_match()
+                return calculated
+
+            with patch.object(news_events, "_report", side_effect=concurrent_observation):
+                first = self.event(1)
+            second = self.event(1)
+            self.assertEqual(self.event(0), second)
+        self.assertEqual(first["news_pair"]["applied"][0]["matches_in_episode"], 0)
+        self.assertEqual(second["news_pair"]["applied"][0]["matches_in_episode"], 1)
+        self.assertEqual(second["previous_digest"], first["digest"])
 
     def test_independently_received_lineups_and_minutes_wake_a_fixture_inside_its_review_interval(self):
         kicks = [f"2026-08-{i:02}T15:00Z" for i in (4, 6, 8)]
