@@ -1,0 +1,139 @@
+{
+ "news-early-seals-0.4.2.json": {
+  "records": 10,
+  "stored_values_compared": 600,
+  "max_abs_difference": 2.0040913373264857e-13,
+  "mean_abs_home_win_move_pp": 0.574,
+  "max_abs_home_win_move_pp": 1.02,
+  "mean_abs_over25_move_pp": 0.419,
+  "applied_claims_total": 90,
+  "policy_sha256": [
+   "3ff85504f692d3928f14f2b20954b88d0fafd8d55da045dca648e8826e7a362b"
+  ],
+  "recipe_sha256": [
+   "f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85"
+  ],
+  "fixtures": [
+   {
+    "fixture": "arsenal/manchester-city",
+    "kickoff": "2026-11-29T16:30:00.000000Z",
+    "applied_claims": 4,
+    "home_win_no_news_pct": 47.614,
+    "home_win_with_news_pct": 46.944,
+    "home_win_move_pp": -0.67,
+    "over25_move_pp": -0.447,
+    "home_log_shift": -0.014472,
+    "away_log_shift": 0.004084,
+    "rho_equal": true
+   },
+   {
+    "fixture": "brighton-hove-albion/newcastle-united",
+    "kickoff": "2026-11-29T14:05:00.000000Z",
+    "applied_claims": 10,
+    "home_win_no_news_pct": 51.558,
+    "home_win_with_news_pct": 50.729,
+    "home_win_move_pp": -0.829,
+    "over25_move_pp": -0.24,
+    "home_log_shift": -0.012742,
+    "away_log_shift": 0.010119,
+    "rho_equal": true
+   },
+   {
+    "fixture": "crystal-palace/hull-city",
+    "kickoff": "2026-11-29T14:05:00.000000Z",
+    "applied_claims": 14,
+    "home_win_no_news_pct": 31.698,
+    "home_win_with_news_pct": 31.551,
+    "home_win_move_pp": -0.146,
+    "over25_move_pp": -0.556,
+    "home_log_shift": -0.01062,
+    "away_log_shift": -0.007497,
+    "rho_equal": true
+   },
+   {
+    "fixture": "everton/liverpool",
+    "kickoff": "2026-11-29T12:00:00.000000Z",
+    "applied_claims": 8,
+    "home_win_no_news_pct": 28.039,
+    "home_win_with_news_pct": 29.059,
+    "home_win_move_pp": 1.02,
+    "over25_move_pp": -0.3,
+    "home_log_shift": 0.016432,
+    "away_log_shift": -0.020972,
+    "rho_equal": true
+   },
+   {
+    "fixture": "fulham/bournemouth",
+    "kickoff": "2026-11-29T14:05:00.000000Z",
+    "applied_claims": 6,
+    "home_win_no_news_pct": 36.041,
+    "home_win_with_news_pct": 36.337,
+    "home_win_move_pp": 0.296,
+    "over25_move_pp": 0.18,
+    "home_log_shift": 0.007226,
+    "away_log_shift": -0.001748,
+    "rho_equal": true
+   },
+   {
+    "fixture": "ipswich-town/aston-villa",
+    "kickoff": "2026-11-28T17:30:00.000000Z",
+    "applied_claims": 4,
+    "home_win_no_news_pct": 25.664,
+    "home_win_with_news_pct": 25.964,
+    "home_win_move_pp": 0.3,
+    "over25_move_pp": 0.216,
+    "home_log_shift": 0.009225,
+    "away_log_shift": -0.00091,
+    "rho_equal": true
+   },
+   {
+    "fixture": "leeds-united/coventry-city",
+    "kickoff": "2026-11-28T15:00:00.000000Z",
+    "applied_claims": 8,
+    "home_win_no_news_pct": 55.084,
+    "home_win_with_news_pct": 55.983,
+    "home_win_move_pp": 0.899,
+    "over25_move_pp": 0.155,
+    "home_log_shift": 0.01223,
+    "away_log_shift": -0.015316,
+    "rho_equal": true
+   },
+   {
+    "fixture": "manchester-united/brentford",
+    "kickoff": "2026-11-28T15:00:00.000000Z",
+    "applied_claims": 15,
+    "home_win_no_news_pct": 39.058,
+    "home_win_with_news_pct": 38.574,
+    "home_win_move_pp": -0.483,
+    "over25_move_pp": -0.983,
+    "home_log_shift": -0.019836,
+    "away_log_shift": -0.009203,
+    "rho_equal": true
+   },
+   {
+    "fixture": "nottingham-forest/chelsea",
+    "kickoff": "2026-11-27T20:00:00.000000Z",
+    "applied_claims": 10,
+    "home_win_no_news_pct": 37.853,
+    "home_win_with_news_pct": 38.367,
+    "home_win_move_pp": 0.514,
+    "over25_move_pp": 0.319,
+    "home_log_shift": 0.011909,
+    "away_log_shift": -0.002702,
+    "rho_equal": true
+   },
+   {
+    "fixture": "sunderland/tottenham-hotspur",
+    "kickoff": "2026-11-29T14:05:00.000000Z",
+    "applied_claims": 11,
+    "home_win_no_news_pct": 37.218,
+    "home_win_with_news_pct": 36.634,
+    "home_win_move_pp": -0.584,
+    "over25_move_pp": -0.796,
+    "home_log_shift": -0.020486,
+    "away_log_shift": -0.004726,
+    "rho_equal": true
+   }
+  ]
+ }
+}

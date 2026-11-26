@@ -1,0 +1,352 @@
+{
+  "note": "Reruns of the repository's own reproduction scripts at 88c7a82 with NumPy 2.3.5 and SciPy 1.17.0; single-threaded BLAS.",
+  "runs": [
+    {
+      "script": "scripts/reproduce_news_absorption.py",
+      "python": "3.12",
+      "published": "reports/news-absorption-0.4.2.json",
+      "published_sha256": "917d6c5b7f091ba44747e4d7b9041da5894e749fb721d18ef0f79c0c4c987b14",
+      "rerun_sha256": "917d6c5b7f091ba44747e4d7b9041da5894e749fb721d18ef0f79c0c4c987b14",
+      "byte_identical": true
+    },
+    {
+      "script": "scripts/reproduce_news_absorption.py",
+      "python": "3.13",
+      "published": "reports/news-absorption-0.4.2.json",
+      "published_sha256": "917d6c5b7f091ba44747e4d7b9041da5894e749fb721d18ef0f79c0c4c987b14",
+      "rerun_sha256": "917d6c5b7f091ba44747e4d7b9041da5894e749fb721d18ef0f79c0c4c987b14",
+      "byte_identical": true
+    },
+    {
+      "script": "scripts/reproduce_news_history.py",
+      "python": "3.11",
+      "published": "reports/news-history-0.4.2.json",
+      "published_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "rerun_sha256": "f27e742ae127cdcc7e3669a4c22dce50c4c9f230592cf3931c1fbd2c439e9c5d",
+      "byte_identical": false,
+      "leaf_values": 1760,
+      "differing_leaf_values": 8,
+      "differing_values_that_are_floats": 8,
+      "largest_absolute_float_difference": 1.4210854715202004e-14,
+      "examples": [
+        {
+          "path": "matches/club/10/score_with_news",
+          "published": 80.83270661317303,
+          "rerun": 80.83270661317304
+        },
+        {
+          "path": "matches/club/10/score_without_news",
+          "published": 80.83270661317303,
+          "rerun": 80.83270661317304
+        },
+        {
+          "path": "matches/club/6/score_with_news",
+          "published": 73.99813683807727,
+          "rerun": 73.99813683807729
+        },
+        {
+          "path": "matches/club/6/score_without_news",
+          "published": 73.99813683807727,
+          "rerun": 73.99813683807729
+        }
+      ]
+    },
+    {
+      "script": "scripts/reproduce_news_history.py",
+      "python": "3.12",
+      "published": "reports/news-history-0.4.2.json",
+      "published_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "rerun_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "byte_identical": true,
+      "leaf_values": 1760,
+      "differing_leaf_values": 0,
+      "differing_values_that_are_floats": 0,
+      "largest_absolute_float_difference": 0.0,
+      "examples": []
+    },
+    {
+      "script": "scripts/reproduce_news_history.py",
+      "python": "3.13",
+      "published": "reports/news-history-0.4.2.json",
+      "published_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "rerun_sha256": "f1ff5f6253fb38daec468e03d3e247f7eef1099fbc91446499e32c580210eea2",
+      "byte_identical": true,
+      "leaf_values": 1760,
+      "differing_leaf_values": 0,
+      "differing_values_that_are_floats": 0,
+      "largest_absolute_float_difference": 0.0,
+      "examples": []
+    },
+    {
+      "script": "scripts/reproduce_news_market_study.py",
+      "python": "3.12",
+      "published": "reports/news-market-study-0.4.2.json",
+      "published_sha256": "300948ca4559fc08f058f7563d6df1f09db076163faafd64fee2312f28dfb02d",
+      "rerun_with_reports/news-early-seals-0.4.1.json": {
+        "sha256": "300948ca4559fc08f058f7563d6df1f09db076163faafd64fee2312f28dfb02d",
+        "byte_identical_to_published": true,
+        "moves": {
+          "fixtures": 10,
+          "mean_absolute_move_pp": 1.1101,
+          "largest_absolute_move_pp": 2.6493
+        }
+      },
+      "rerun_with_reports/news-early-seals-0.4.2.json": {
+        "sha256": "38b347a39e8d06e66323e63e49839e973de6ae58e2a23461eadebb8495fdc22e",
+        "byte_identical_to_published": false,
+        "moves": {
+          "fixtures": 10,
+          "mean_absolute_move_pp": 0.5741,
+          "largest_absolute_move_pp": 1.0198
+        }
+      },
+      "replications_per_cell": 2000,
+      "family_comparisons": 6,
+      "cells": [
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 0,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 0.0025,
+          "slope_detection_with_0.4.2_moves": 0.0035,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0
+        },
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 0,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 0.004,
+          "slope_detection_with_0.4.2_moves": 0.0045,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0
+        },
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 0,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 0.0075,
+          "slope_detection_with_0.4.2_moves": 0.003,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0
+        },
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 0.5,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 0.7195,
+          "slope_detection_with_0.4.2_moves": 0.159,
+          "distance_detection_with_0.4.1_moves": 0.003,
+          "distance_detection_with_0.4.2_moves": 0.008
+        },
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 0.5,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 0.892,
+          "slope_detection_with_0.4.2_moves": 0.2535,
+          "distance_detection_with_0.4.1_moves": 0.001,
+          "distance_detection_with_0.4.2_moves": 0.0035
+        },
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 0.5,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 0.998,
+          "slope_detection_with_0.4.2_moves": 0.5975,
+          "distance_detection_with_0.4.1_moves": 0.0035,
+          "distance_detection_with_0.4.2_moves": 0.004
+        },
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 1,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 1.0,
+          "slope_detection_with_0.4.2_moves": 0.736,
+          "distance_detection_with_0.4.1_moves": 0.566,
+          "distance_detection_with_0.4.2_moves": 0.0845
+        },
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 1,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 1.0,
+          "slope_detection_with_0.4.2_moves": 0.8965,
+          "distance_detection_with_0.4.1_moves": 0.7705,
+          "distance_detection_with_0.4.2_moves": 0.156
+        },
+        {
+          "assumed_gap_sd_pp": 3,
+          "assumed_beta": 1,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 1.0,
+          "slope_detection_with_0.4.2_moves": 0.9985,
+          "distance_detection_with_0.4.1_moves": 0.9865,
+          "distance_detection_with_0.4.2_moves": 0.387
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 0,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 0.0045,
+          "slope_detection_with_0.4.2_moves": 0.004,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0005
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 0,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 0.0065,
+          "slope_detection_with_0.4.2_moves": 0.0015,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 0,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 0.005,
+          "slope_detection_with_0.4.2_moves": 0.005,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 0.5,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 0.2475,
+          "slope_detection_with_0.4.2_moves": 0.058,
+          "distance_detection_with_0.4.1_moves": 0.0035,
+          "distance_detection_with_0.4.2_moves": 0.0055
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 0.5,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 0.394,
+          "slope_detection_with_0.4.2_moves": 0.0755,
+          "distance_detection_with_0.4.1_moves": 0.005,
+          "distance_detection_with_0.4.2_moves": 0.006
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 0.5,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 0.7905,
+          "slope_detection_with_0.4.2_moves": 0.1795,
+          "distance_detection_with_0.4.1_moves": 0.005,
+          "distance_detection_with_0.4.2_moves": 0.003
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 1,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 0.887,
+          "slope_detection_with_0.4.2_moves": 0.2335,
+          "distance_detection_with_0.4.1_moves": 0.1605,
+          "distance_detection_with_0.4.2_moves": 0.031
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 1,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 0.9745,
+          "slope_detection_with_0.4.2_moves": 0.3995,
+          "distance_detection_with_0.4.1_moves": 0.24,
+          "distance_detection_with_0.4.2_moves": 0.047
+        },
+        {
+          "assumed_gap_sd_pp": 5,
+          "assumed_beta": 1,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 1.0,
+          "slope_detection_with_0.4.2_moves": 0.776,
+          "distance_detection_with_0.4.1_moves": 0.602,
+          "distance_detection_with_0.4.2_moves": 0.1
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 0,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 0.0055,
+          "slope_detection_with_0.4.2_moves": 0.0025,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0005
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 0,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 0.0065,
+          "slope_detection_with_0.4.2_moves": 0.005,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0015
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 0,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 0.0065,
+          "slope_detection_with_0.4.2_moves": 0.0035,
+          "distance_detection_with_0.4.1_moves": 0.0,
+          "distance_detection_with_0.4.2_moves": 0.0005
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 0.5,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 0.081,
+          "slope_detection_with_0.4.2_moves": 0.0165,
+          "distance_detection_with_0.4.1_moves": 0.003,
+          "distance_detection_with_0.4.2_moves": 0.0055
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 0.5,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 0.118,
+          "slope_detection_with_0.4.2_moves": 0.028,
+          "distance_detection_with_0.4.1_moves": 0.0035,
+          "distance_detection_with_0.4.2_moves": 0.004
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 0.5,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 0.309,
+          "slope_detection_with_0.4.2_moves": 0.0565,
+          "distance_detection_with_0.4.1_moves": 0.0035,
+          "distance_detection_with_0.4.2_moves": 0.0055
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 1,
+          "matches": 270,
+          "slope_detection_with_0.4.1_moves": 0.4315,
+          "slope_detection_with_0.4.2_moves": 0.079,
+          "distance_detection_with_0.4.1_moves": 0.0555,
+          "distance_detection_with_0.4.2_moves": 0.0155
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 1,
+          "matches": 380,
+          "slope_detection_with_0.4.1_moves": 0.634,
+          "slope_detection_with_0.4.2_moves": 0.124,
+          "distance_detection_with_0.4.1_moves": 0.0835,
+          "distance_detection_with_0.4.2_moves": 0.023
+        },
+        {
+          "assumed_gap_sd_pp": 8,
+          "assumed_beta": 1,
+          "matches": 760,
+          "slope_detection_with_0.4.1_moves": 0.9455,
+          "slope_detection_with_0.4.2_moves": 0.302,
+          "distance_detection_with_0.4.1_moves": 0.194,
+          "distance_detection_with_0.4.2_moves": 0.0315
+        }
+      ]
+    }
+  ]
+}

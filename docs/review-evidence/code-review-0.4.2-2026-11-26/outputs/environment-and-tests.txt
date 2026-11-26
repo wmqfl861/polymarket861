@@ -1,0 +1,48 @@
+Review environment and repository checks for 0.4.2 (commits a5a66e7, 9d4a786, 8125d57) and the 0.5 plan (88c7a82).
+Recorded 2026-11-26 (UTC). Product code was not modified; src and tests are identical at 8125d57 and 88c7a82.
+
+== interpreters and numeric libraries
+python 3.11.18 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+python 3.12.3 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+python 3.13.18 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+
+== unit tests: python -m unittest discover -s tests (run 2026-11-26 05:26-05:30 UTC with PM861_TEST_CHROMIUM pointing at a real Chromium)
+-- Python 3.11: last lines of the run
+   Ran 476 tests in 235.285s
+
+   OK
+   skipped tests reported: 0
+-- Python 3.12: last lines of the run
+   Ran 476 tests in 235.405s
+
+   OK
+   skipped tests reported: 0
+-- Python 3.13: last lines of the run
+   Ran 476 tests in 218.215s
+
+   OK
+   skipped tests reported: 0
+
+== trees signed by the independent 0.4.2 review (docs/INDEPENDENT-REVIEW-0.4.2.md) against the repository
+src   at 8125d57: 2dfa1be3645e9191493b33832051f511ea902e83
+tests at 8125d57: 51616bcfa9afd51854ebd33adc05e24c0f83e478
+src   at 88c7a82: 2dfa1be3645e9191493b33832051f511ea902e83
+tests at 88c7a82: 51616bcfa9afd51854ebd33adc05e24c0f83e478
+lines of docs/INDEPENDENT-REVIEW-0.4.2.md naming the two trees:
+   13:| A、B 的 `src` | `2dfa1be3645e9191493b33832051f511ea902e83` | 两树相同，包含看板资源 |
+   14:| A、B 的 `tests` | `51616bcfa9afd51854ebd33adc05e24c0f83e478` | 两树相同 |
+
+== GitHub Actions (workflow 'EPL regression': ruff check src tests scripts; mypy --strict on blob_storage, score_bounds, experiment_statistics; unittest with Chromium)
+run 45753495190 head 8125d57 event push status completed conclusion success
+   unittest (3.11): success
+   unittest (3.12): success
+   unittest (3.13): success
+run 45757077560 head 88c7a82 event push status completed conclusion success
+   unittest (3.11): success
+   unittest (3.12): success
+   unittest (3.13): success
+
+== module count and change size
+modules in src/polymarket861: 83
+source change 0.4.1 (ea58105) to 0.4.2 (8125d57):  24 files changed, 3502 insertions(+), 368 deletions(-)
+new modules: 4

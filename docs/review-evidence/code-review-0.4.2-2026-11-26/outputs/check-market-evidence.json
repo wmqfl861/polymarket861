@@ -1,0 +1,559 @@
+{
+ "rows": 1752,
+ "columns": [
+  "league",
+  "date",
+  "round",
+  "home",
+  "away",
+  "gamma_main_slug",
+  "main_offset",
+  "total_offset",
+  "result_1x2",
+  "total",
+  "home_total",
+  "away_total",
+  "home_gamma_market_id",
+  "draw_gamma_market_id",
+  "away_gamma_market_id",
+  "draw_condition_id",
+  "total_line",
+  "total_gamma_market_id",
+  "total_condition_id",
+  "other_main_candidates",
+  "status"
+ ],
+ "league_codes": [
+  "bun",
+  "epl",
+  "fl1",
+  "lal",
+  "sea"
+ ],
+ "coverage": {
+  "epl": {
+   "source_fixtures": 380,
+   "table_rows": 380,
+   "duplicate_rows": 0,
+   "rows_not_in_source_by_date_round_pair": 0,
+   "source_fixtures_not_in_table": 0,
+   "ordered_pairs_match_source": true,
+   "result_1x2": 378,
+   "total": 295,
+   "home_total": 0,
+   "away_total": 0,
+   "status": {
+    "matched": 378,
+    "no_unique_exact_date": 2
+   },
+   "total_line": {
+    "": 85,
+    "3.5": 7,
+    "2.5": 288
+   },
+   "main_offset": {
+    "0": 85,
+    "100": 53,
+    "200": 48,
+    "300": 46,
+    "400": 50,
+    "500": 19,
+    "600": 23,
+    "700": 15,
+    "800": 19,
+    "900": 11,
+    "": 2,
+    "1000": 9
+   }
+  },
+  "lal": {
+   "source_fixtures": 380,
+   "table_rows": 380,
+   "duplicate_rows": 0,
+   "rows_not_in_source_by_date_round_pair": 0,
+   "source_fixtures_not_in_table": 0,
+   "ordered_pairs_match_source": true,
+   "result_1x2": 371,
+   "total": 282,
+   "home_total": 0,
+   "away_total": 0,
+   "status": {
+    "matched": 371,
+    "no_unique_exact_date": 9
+   },
+   "total_line": {
+    "": 98,
+    "2.5": 274,
+    "1.5": 3,
+    "3.5": 5
+   },
+   "main_offset": {
+    "0": 90,
+    "100": 50,
+    "200": 49,
+    "300": 46,
+    "": 9,
+    "400": 26,
+    "500": 24,
+    "600": 20,
+    "700": 17,
+    "800": 18,
+    "900": 21,
+    "1000": 10
+   }
+  },
+  "bun": {
+   "source_fixtures": 306,
+   "table_rows": 306,
+   "duplicate_rows": 0,
+   "rows_not_in_source_by_date_round_pair": 0,
+   "source_fixtures_not_in_table": 0,
+   "ordered_pairs_match_source": true,
+   "result_1x2": 303,
+   "total": 236,
+   "home_total": 0,
+   "away_total": 0,
+   "status": {
+    "matched": 303,
+    "no_unique_exact_date": 3
+   },
+   "total_line": {
+    "": 70,
+    "2.5": 220,
+    "3.5": 15,
+    "4.5": 1
+   },
+   "main_offset": {
+    "0": 81,
+    "100": 54,
+    "200": 44,
+    "": 3,
+    "300": 43,
+    "400": 18,
+    "500": 24,
+    "600": 18,
+    "700": 21
+   }
+  },
+  "sea": {
+   "source_fixtures": 380,
+   "table_rows": 380,
+   "duplicate_rows": 0,
+   "rows_not_in_source_by_date_round_pair": 0,
+   "source_fixtures_not_in_table": 0,
+   "ordered_pairs_match_source": true,
+   "result_1x2": 375,
+   "total": 300,
+   "home_total": 0,
+   "away_total": 0,
+   "status": {
+    "matched": 375,
+    "no_main_for_pair": 1,
+    "no_unique_exact_date": 4
+   },
+   "total_line": {
+    "": 80,
+    "2.5": 299,
+    "1.5": 1
+   },
+   "main_offset": {
+    "0": 90,
+    "": 5,
+    "100": 49,
+    "200": 56,
+    "300": 43,
+    "400": 37,
+    "500": 29,
+    "600": 23,
+    "700": 15,
+    "800": 16,
+    "900": 15,
+    "1000": 2
+   }
+  },
+  "fl1": {
+   "source_fixtures": 306,
+   "table_rows": 306,
+   "duplicate_rows": 0,
+   "rows_not_in_source_by_date_round_pair": 0,
+   "source_fixtures_not_in_table": 0,
+   "ordered_pairs_match_source": true,
+   "result_1x2": 303,
+   "total": 224,
+   "home_total": 0,
+   "away_total": 0,
+   "status": {
+    "matched": 303,
+    "no_main_for_pair": 2,
+    "no_unique_exact_date": 1
+   },
+   "total_line": {
+    "": 82,
+    "2.5": 215,
+    "3.5": 9
+   },
+   "main_offset": {
+    "0": 84,
+    "": 3,
+    "100": 50,
+    "200": 53,
+    "300": 36,
+    "400": 21,
+    "500": 20,
+    "600": 14,
+    "700": 15,
+    "800": 10
+   }
+  }
+ },
+ "all": {
+  "table_rows": 1752,
+  "result_1x2": 1730,
+  "total": 1337,
+  "home_total": 0,
+  "away_total": 0
+ },
+ "date_or_round_differences_vs_source_sample": [],
+ "identifiers": {
+  "gamma_main_slug": {
+   "present": 1730,
+   "distinct": 1730
+  },
+  "home_gamma_market_id": {
+   "present": 1730,
+   "distinct": 1730
+  },
+  "draw_gamma_market_id": {
+   "present": 1730,
+   "distinct": 1730
+  },
+  "away_gamma_market_id": {
+   "present": 1730,
+   "distinct": 1730
+  },
+  "draw_condition_id": {
+   "present": 1730,
+   "distinct": 1730
+  },
+  "total_gamma_market_id": {
+   "present": 1337,
+   "distinct": 1337
+  },
+  "total_condition_id": {
+   "present": 1337,
+   "distinct": 1337
+  }
+ },
+ "flag_vs_identifier": {
+  "result_1x2_flag_without_three_market_ids": 0,
+  "three_market_ids_without_flag": 0,
+  "total_flag_without_market_id": 0,
+  "total_market_id_without_flag": 0,
+  "total_flag_without_line": 0,
+  "slug_date_differs_from_fixture_date": 0,
+  "rows_with_other_main_candidates": 21
+ },
+ "gaps": {
+  "epl": {
+   "fixtures_without_1x2": [
+    [
+     "2026-05-13",
+     "Matchday 31",
+     "Manchester City FC",
+     "Crystal Palace FC",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-05-15",
+     "Matchday 37",
+     "Aston Villa FC",
+     "Liverpool FC",
+     "no_unique_exact_date"
+    ]
+   ],
+   "first_fixture_date_with_total": "2025-10-19",
+   "last_fixture_date_without_total": "2026-05-15",
+   "fixtures_on_or_after_first_total": 303,
+   "of_which_with_total": 295,
+   "without_total_by_month": {
+    "2025-08": 30,
+    "2025-09": 30,
+    "2025-10": 19,
+    "2026-02": 4,
+    "2026-05": 2
+   },
+   "with_total_by_month": {
+    "2025-10": 11,
+    "2025-11": 40,
+    "2025-12": 56,
+    "2026-01": 49,
+    "2026-02": 38,
+    "2026-03": 32,
+    "2026-04": 30,
+    "2026-05": 39
+   }
+  },
+  "lal": {
+   "fixtures_without_1x2": [
+    [
+     "2026-02-08",
+     "Matchday 23",
+     "Sevilla FC",
+     "Girona FC",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-02-14",
+     "Matchday 24",
+     "Getafe CF",
+     "Villarreal CF",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-02-15",
+     "Matchday 24",
+     "Rayo Vallecano de Madrid",
+     "Club Atlético de Madrid",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-02-18",
+     "Matchday 16",
+     "Levante UD",
+     "Villarreal CF",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-03-04",
+     "Matchday 23",
+     "Rayo Vallecano de Madrid",
+     "Real Oviedo",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-03-06",
+     "Matchday 27",
+     "RC Celta de Vigo",
+     "Real Madrid CF",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-03-07",
+     "Matchday 27",
+     "CA Osasuna",
+     "RCD Mallorca",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-03-07",
+     "Matchday 27",
+     "Athletic Club",
+     "FC Barcelona",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-03-08",
+     "Matchday 27",
+     "Getafe CF",
+     "Real Betis Balompié",
+     "no_unique_exact_date"
+    ]
+   ],
+   "first_fixture_date_with_total": "2025-10-17",
+   "last_fixture_date_without_total": "2026-03-08",
+   "fixtures_on_or_after_first_total": 300,
+   "of_which_with_total": 282,
+   "without_total_by_month": {
+    "2025-08": 31,
+    "2025-09": 39,
+    "2025-10": 19,
+    "2026-02": 4,
+    "2026-03": 5
+   },
+   "with_total_by_month": {
+    "2025-10": 12,
+    "2025-11": 38,
+    "2025-12": 32,
+    "2026-01": 43,
+    "2026-02": 36,
+    "2026-03": 31,
+    "2026-04": 40,
+    "2026-05": 50
+   }
+  },
+  "bun": {
+   "fixtures_without_1x2": [
+    [
+     "2026-01-27",
+     "Matchday 16",
+     "SV Werder Bremen",
+     "TSG 1899 Hoffenheim",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-01-27",
+     "Matchday 16",
+     "FC St. Pauli 1910",
+     "RB Leipzig",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-03-04",
+     "Matchday 17",
+     "Hamburger SV",
+     "Bayer 04 Leverkusen",
+     "no_unique_exact_date"
+    ]
+   ],
+   "first_fixture_date_with_total": "2025-10-18",
+   "last_fixture_date_without_total": "2026-03-04",
+   "fixtures_on_or_after_first_total": 251,
+   "of_which_with_total": 236,
+   "without_total_by_month": {
+    "2025-08": 18,
+    "2025-09": 27,
+    "2025-10": 17,
+    "2025-11": 3,
+    "2026-01": 2,
+    "2026-02": 2,
+    "2026-03": 1
+   },
+   "with_total_by_month": {
+    "2025-10": 11,
+    "2025-11": 32,
+    "2025-12": 27,
+    "2026-01": 40,
+    "2026-02": 33,
+    "2026-03": 30,
+    "2026-04": 36,
+    "2026-05": 27
+   }
+  },
+  "sea": {
+   "fixtures_without_1x2": [
+    [
+     "2025-08-24",
+     "Matchday 1",
+     "Atalanta BC",
+     "AC Pisa 1909",
+     "no_main_for_pair"
+    ],
+    [
+     "2026-04-06",
+     "Matchday 31",
+     "US Lecce",
+     "Atalanta BC",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-05-22",
+     "Matchday 38",
+     "ACF Fiorentina",
+     "Atalanta BC",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-05-23",
+     "Matchday 38",
+     "Bologna FC 1909",
+     "FC Internazionale Milano",
+     "no_unique_exact_date"
+    ],
+    [
+     "2026-05-23",
+     "Matchday 38",
+     "SS Lazio",
+     "AC Pisa 1909",
+     "no_unique_exact_date"
+    ]
+   ],
+   "first_fixture_date_with_total": "2025-10-24",
+   "last_fixture_date_without_total": "2026-05-23",
+   "fixtures_on_or_after_first_total": 310,
+   "of_which_with_total": 300,
+   "without_total_by_month": {
+    "2025-08": 20,
+    "2025-09": 30,
+    "2025-10": 20,
+    "2025-11": 1,
+    "2026-01": 1,
+    "2026-02": 4,
+    "2026-04": 1,
+    "2026-05": 3
+   },
+   "with_total_by_month": {
+    "2025-10": 20,
+    "2025-11": 38,
+    "2025-12": 37,
+    "2026-01": 57,
+    "2026-02": 36,
+    "2026-03": 36,
+    "2026-04": 39,
+    "2026-05": 37
+   }
+  },
+  "fl1": {
+   "fixtures_without_1x2": [
+    [
+     "2025-10-17",
+     "Matchday 8",
+     "Paris Saint-Germain FC",
+     "RC Strasbourg Alsace",
+     "no_main_for_pair"
+    ],
+    [
+     "2025-10-18",
+     "Matchday 8",
+     "OGC Nice",
+     "Olympique Lyonnais",
+     "no_main_for_pair"
+    ],
+    [
+     "2026-05-02",
+     "Matchday 32",
+     "FC Nantes",
+     "Olympique de Marseille",
+     "no_unique_exact_date"
+    ]
+   ],
+   "first_fixture_date_with_total": "2025-10-24",
+   "last_fixture_date_without_total": "2026-05-02",
+   "fixtures_on_or_after_first_total": 234,
+   "of_which_with_total": 224,
+   "without_total_by_month": {
+    "2025-08": 27,
+    "2025-09": 27,
+    "2025-10": 18,
+    "2025-11": 4,
+    "2026-02": 5,
+    "2026-05": 1
+   },
+   "with_total_by_month": {
+    "2025-10": 18,
+    "2025-11": 32,
+    "2025-12": 18,
+    "2026-01": 31,
+    "2026-02": 31,
+    "2026-03": 31,
+    "2026-04": 35,
+    "2026-05": 28
+   }
+  }
+ },
+ "polymarket_json_top_level_keys": [
+  "report",
+  "product_baseline",
+  "observed_utc",
+  "endpoints",
+  "methods",
+  "windows",
+  "season_window",
+  "openfootball_commit",
+  "openfootball_to_gamma_names",
+  "sports_request",
+  "italy_zero_controls",
+  "leagues",
+  "externally_adjudicated_cases",
+  "receipt_columns"
+ ]
+}

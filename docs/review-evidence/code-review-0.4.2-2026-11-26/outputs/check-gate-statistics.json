@@ -1,0 +1,245 @@
+{
+ "news_confirmed_absence_precision": {
+  "wilson_38_of_40": [
+   0.8349612263085903,
+   0.9861793326138516
+  ],
+  "pass_probability_n40_at_most_2_errors": {
+   "0.8": 0.007942137274814885,
+   "0.85": 0.04859866569285471,
+   "0.9": 0.22280812433940309,
+   "0.95": 0.6767357607486464,
+   "0.98": 0.9543297695592833
+  },
+  "rule_wilson_lower_at_least_0_90": {
+   "0": {
+    "n": 35,
+    "wilson_lower": 0.9010990076755959,
+    "point": 1.0,
+    "pass_probability": {
+     "0.85": 0.003385808570618441,
+     "0.9": 0.02503155504993243,
+     "0.95": 0.16608338398760716,
+     "0.98": 0.493074620618078
+    }
+   },
+   "1": {
+    "n": 53,
+    "wilson_lower": 0.9005708794749876,
+    "point": 0.9811320754716981,
+    "pass_probability": {
+     "0.85": 0.00188047173188534,
+     "0.9": 0.025882259091161635,
+     "0.95": 0.24999422467404117,
+     "0.98": 0.7134870639415607
+    }
+   },
+   "2": {
+    "n": 69,
+    "wilson_lower": 0.9003341623693445,
+    "point": 0.9710144927536232,
+    "pass_probability": {
+     "0.85": 0.0011630300156606392,
+     "0.9": 0.026197695810258544,
+     "0.95": 0.32317034020983226,
+     "0.98": 0.8398287883505149
+    }
+   },
+   "3": {
+    "n": 84,
+    "wilson_lower": 0.9001830642748655,
+    "point": 0.9642857142857143,
+    "pass_probability": {
+     "0.85": 0.0007634564574628444,
+     "0.9": 0.02638558053036496,
+     "0.95": 0.38969254192409497,
+     "0.98": 0.9117543284266535
+    }
+   },
+   "4": {
+    "n": 99,
+    "wilson_lower": 0.9006797874974577,
+    "point": 0.9595959595959596,
+    "pass_probability": {
+     "0.85": 0.00048187073494414213,
+     "0.9": 0.025404372854654654,
+     "0.95": 0.44498219204923256,
+     "0.98": 0.9509368948668856
+    }
+   },
+   "5": {
+    "n": 113,
+    "wilson_lower": 0.9005822773378891,
+    "point": 0.9557522123893806,
+    "pass_probability": {
+     "0.85": 0.00033603046226195763,
+     "0.9": 0.025462155787235125,
+     "0.95": 0.5005856110878739,
+     "0.98": 0.9735339689730086
+    }
+   }
+  },
+  "all_five_languages_pass_n40": {
+   "0.9": 0.0005491046395332614,
+   "0.95": 0.14193700355799596,
+   "0.98": 0.7915755248355143
+  }
+ },
+ "source_promotion_20_samples_95pct": {
+  "wilson_19_of_20": [
+   0.763868806553258,
+   0.9911185511992047
+  ],
+  "wilson_20_of_20": [
+   0.8388748419471806,
+   1.0
+  ],
+  "pass_probability_n20_at_least_19": {
+   "0.8": 0.06917529027641088,
+   "0.85": 0.1755578760886826,
+   "0.9": 0.3917469981251679,
+   "0.95": 0.7358395249438496,
+   "0.98": 0.9401010214510513
+  },
+  "pass_probability_n60_at_least_57": {
+   "0.8": 0.0010134584573688757,
+   "0.85": 0.01483484908281391,
+   "0.9": 0.1373985694196578,
+   "0.95": 0.6472810116013383,
+   "0.98": 0.9678058294539199
+  },
+  "wilson_57_of_60": [
+   0.8629948352365147,
+   0.9828504978356043
+  ],
+  "pass_probability_n100_at_least_95": {
+   "0.8": 1.8680066300324318e-05,
+   "0.85": 0.0015526521751373177,
+   "0.9": 0.05757688648703389,
+   "0.95": 0.6159991279561404,
+   "0.98": 0.9845163593582206
+  },
+  "alternative_rules_pass_probability": {
+   "n20_at_least_18": {
+    "0.8": 0.20608471894847402,
+    "0.85": 0.40489627800743533,
+    "0.9": 0.6769268051894661,
+    "0.95": 0.9245163262115035,
+    "0.98": 0.9929313065961859
+   },
+   "n40_at_least_36": {
+    "0.8": 0.07591449544989437,
+    "0.85": 0.26331994768889755,
+    "0.9": 0.629017696534201,
+    "0.95": 0.9519717397457845,
+    "0.98": 0.9988248075454709
+   },
+   "n60_at_least_54": {
+    "0.8": 0.030837283839009196,
+    "0.85": 0.1848413144827345,
+    "0.9": 0.6064514021008609,
+    "0.95": 0.9703058980451166,
+    "0.98": 0.9998046419093204
+   },
+   "n100_at_least_91": {
+    "0.8": 0.0023335609862108267,
+    "0.85": 0.055094631692294324,
+    "0.9": 0.451290165442004,
+    "0.95": 0.9718117058365837,
+    "0.98": 0.999965583193957
+   },
+   "n100_at_least_92": {
+    "0.8": 0.0008553983622184327,
+    "0.85": 0.027475691410310345,
+    "0.9": 0.32087388836283975,
+    "0.95": 0.936910409372551,
+    "0.98": 0.9998106636219498
+   }
+  }
+ },
+ "promotion_gate": {
+  "rounds_34_candidates_1": {
+   "family": 10,
+   "critical_t": 3.0082419901232877,
+   "t_needed_for_80pct_power": 3.849863223696202,
+   "joint_power_if_each_stage_has_80pct": 0.6400000000000001
+  },
+  "rounds_34_candidates_2": {
+   "family": 20,
+   "critical_t": 3.272915990043938,
+   "t_needed_for_80pct_power": 4.1145372236168525,
+   "joint_power_if_each_stage_has_80pct": 0.6400000000000001
+  },
+  "rounds_34_candidates_3": {
+   "family": 30,
+   "critical_t": 3.4239345909256844,
+   "t_needed_for_80pct_power": 4.265555824498598,
+   "joint_power_if_each_stage_has_80pct": 0.6400000000000001
+  },
+  "rounds_38_candidates_1": {
+   "family": 10,
+   "critical_t": 2.985244059716181,
+   "t_needed_for_80pct_power": 3.8268652932890954,
+   "joint_power_if_each_stage_has_80pct": 0.6400000000000001
+  },
+  "rounds_38_candidates_2": {
+   "family": 20,
+   "critical_t": 3.244184013559717,
+   "t_needed_for_80pct_power": 4.085805247132631,
+   "joint_power_if_each_stage_has_80pct": 0.6400000000000001
+  },
+  "rounds_38_candidates_3": {
+   "family": 30,
+   "critical_t": 3.391568842592188,
+   "t_needed_for_80pct_power": 4.233190076165102,
+   "joint_power_if_each_stage_has_80pct": 0.6400000000000001
+  },
+  "five_leagues_each_must_pass_both_stages_if_each_stage_has_80pct": 0.10737418240000006,
+  "five_leagues_each_must_pass_both_stages_if_each_stage_has_95pct": 0.5987369392383787
+ },
+ "coverage_floor": {
+  "380": 361,
+  "306": 291,
+  "290_of_306": 0.9477124183006536
+ },
+ "bankroll": {
+  "fixtures_in_sampled_weekend": 48,
+  "worst_case_at_risk_if_every_fixture_reaches_cap": 7200,
+  "share_of_10000": 0.72,
+  "weekends_of_full_exposure_before_cash_is_exhausted_without_settlement": 1.3888888888888888,
+  "fixtures_until_cash_is_exhausted_at_one_50_intent_each": 200.0
+ },
+ "capacity": {
+  "contracts_per_fixture": 24,
+  "tokens_per_fixture": 48,
+  "tokens_in_a_48_fixture_weekend": 2304,
+  "captures_per_fixture_last_three_hours": 238,
+  "captures_per_fixture_from_T_minus_24h": 322,
+  "token_books_per_fixture_from_T_minus_24h": 15456,
+  "token_books_in_a_48_fixture_weekend_from_T_minus_24h": 741888,
+  "token_books_per_season_1752_fixtures_from_T_minus_24h": 27078912,
+  "batch_requests_per_fixture_from_T_minus_24h": 322,
+  "batch_requests_in_a_48_fixture_weekend": 15456,
+  "batch_requests_per_season_1752_fixtures": 564144,
+  "note": "one batch request per fixture per capture in market_archive._capture; token-book counts are observations, not HTTP requests"
+ },
+ "uncollected_new_league_fixtures": {
+  "fixtures_per_round_of_all_four": 38,
+  "contracts_per_fixture": 24,
+  "after_weeks": {
+   "1": {
+    "fixtures": 38,
+    "contracts": 912
+   },
+   "4": {
+    "fixtures": 152,
+    "contracts": 3648
+   },
+   "7": {
+    "fixtures": 266,
+    "contracts": 6384
+   }
+  },
+  "note": "one round of each league per week is an approximation; midweek rounds and breaks change the count"
+ }
+}

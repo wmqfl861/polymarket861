@@ -1,0 +1,129 @@
+{
+ "report": "news-early-seals-0.4.2.json",
+ "fixtures": 10,
+ "applied_claims": 90,
+ "by_basis": {
+  "epl_season_minutes_and_starts": 84,
+  "neutral": 6
+ },
+ "fallback_reasons": {
+  "team_appearances_do_not_reconcile": 5,
+  "no_unique_player_directory_identity": 1
+ },
+ "fallback_share": 0.0667,
+ "teams_with_fallback": {
+  "Liverpool FC": {
+   "epl_season_minutes_and_starts": 6,
+   "neutral": 1
+  },
+  "Manchester City FC": {
+   "neutral": 1
+  },
+  "Nottingham Forest FC": {
+   "neutral": 4
+  }
+ },
+ "importance_multiplier": {
+  "min": 0.25,
+  "median": 0.3792,
+  "mean": 0.4469,
+  "max": 0.9996,
+  "at_floor_0.25": 27
+ },
+ "duration_multiplier": {
+  "min": 1.0,
+  "max": 1.0
+ },
+ "max_abs_difference_from_published": {
+  "absence": 0.0,
+  "combined": 0.0,
+  "duration": 0.0,
+  "importance": 0.0,
+  "opponent_shift": 0.0,
+  "own_shift": 0.0,
+  "rate": 0.0,
+  "team_shift": 0.0
+ },
+ "per_fixture": [
+  {
+   "fixture": "arsenal/manchester-city",
+   "claims": 4,
+   "log_shift": {
+    "home": -0.014472,
+    "away": 0.004084
+   }
+  },
+  {
+   "fixture": "brighton-hove-albion/newcastle-united",
+   "claims": 10,
+   "log_shift": {
+    "home": -0.012742,
+    "away": 0.010119
+   }
+  },
+  {
+   "fixture": "crystal-palace/hull-city",
+   "claims": 14,
+   "log_shift": {
+    "home": -0.01062,
+    "away": -0.007497
+   }
+  },
+  {
+   "fixture": "everton/liverpool",
+   "claims": 8,
+   "log_shift": {
+    "home": 0.016432,
+    "away": -0.020972
+   }
+  },
+  {
+   "fixture": "fulham/bournemouth",
+   "claims": 6,
+   "log_shift": {
+    "home": 0.007226,
+    "away": -0.001748
+   }
+  },
+  {
+   "fixture": "ipswich-town/aston-villa",
+   "claims": 4,
+   "log_shift": {
+    "home": 0.009225,
+    "away": -0.00091
+   }
+  },
+  {
+   "fixture": "leeds-united/coventry-city",
+   "claims": 8,
+   "log_shift": {
+    "home": 0.01223,
+    "away": -0.015316
+   }
+  },
+  {
+   "fixture": "manchester-united/brentford",
+   "claims": 15,
+   "log_shift": {
+    "home": -0.019836,
+    "away": -0.009203
+   }
+  },
+  {
+   "fixture": "nottingham-forest/chelsea",
+   "claims": 10,
+   "log_shift": {
+    "home": 0.011909,
+    "away": -0.002702
+   }
+  },
+  {
+   "fixture": "sunderland/tottenham-hotspur",
+   "claims": 11,
+   "log_shift": {
+    "home": -0.020486,
+    "away": -0.004726
+   }
+  }
+ ]
+}

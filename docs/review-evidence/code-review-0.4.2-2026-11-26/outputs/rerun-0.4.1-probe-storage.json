@@ -1,0 +1,19 @@
+{
+ "listed_players": 4,
+ "polls": 144,
+ "stream_polls_attempted": 144,
+ "window": "polls 73..144",
+ "new_blob_files_in_window": 0,
+ "rows_added_per_poll": {
+  "news_poll_ticks": 1.0
+ },
+ "sqlite_bytes_added_per_poll_by_table": {
+  "news_poll_ticks": 341.3333333333333
+ },
+ "disk_bytes_added_per_poll": 341.3333333333333,
+ "extrapolation": {
+  "assumption": "60 default streams (20 clubs x 3 sources) x 72 polls a day, every stream growing like this availability stream",
+  "mib_per_day": 1.40625,
+  "gib_per_280_day_season": 0.384521484375
+ }
+}

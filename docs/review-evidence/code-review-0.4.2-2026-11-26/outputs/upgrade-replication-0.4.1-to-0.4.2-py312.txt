@@ -1,0 +1,76 @@
+== old version (ea58105, 0.4.1): initialise, fetch the pinned history, seal one early forecast
+  "model_version": "B1",
+== 0.4.2 on the same data directory, before any baseline: season readiness (release part)
+{
+ "checks.release_executable": false,
+ "state": "approval_required",
+ "ready": false,
+ "active_version": "B1",
+ "approval": null,
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "actions": [
+  "Use the incumbent installation against this data directory to run forecast release-baseline HISTORY.",
+  "Run forecast release-compare HISTORY with the installed build.",
+  "Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON."
+ ]
+}
+== 0.4.2 forecast make before approval (expected: exit 2)
+pm861: a changed builtin requires forecast release-compare and named release-approve
+exit=2
+== 0.4.2 release-compare without a baseline saved by the old version (expected: error)
+pm861: missing frozen study from this physical recipe; run forecast release-baseline before installing its successor
+exit=2
+== the documented order: baseline with the old version, compare with 0.4.2
+  "version": "B1",
+  "recipe": "97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+  "study_sha256": "b7ac7aa4257e6a7c82901e3a39ad98ec56cb6b8245d8fd77b3f2a4402e9d17ae",
+  "matches": 1900,
+  "to_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+    "paired_count": 1900,
+    "rounds": 190,
+    "changed_predictions": 0,
+    "changed_training_views": 0,
+    "candidate_score": 75.44781323408776,
+    "baseline_score": 75.44781323408776,
+      "rounds": 190,
+  "report_sha256": "0d19e16870554e279a86e6078260641323bb6b112055901a41cf9ba8c4be4acb"
+== 0.4.2 readiness after compare, before approval
+{
+ "checks.release_executable": false,
+ "state": "approval_required",
+ "ready": false,
+ "active_version": "B1",
+ "approval": null,
+ "baseline_sha256": "b7ac7aa4257e6a7c82901e3a39ad98ec56cb6b8245d8fd77b3f2a4402e9d17ae",
+ "comparison_sha256": "0d19e16870554e279a86e6078260641323bb6b112055901a41cf9ba8c4be4acb",
+ "actions": [
+  "Review the comparison and run forecast release-approve 0d19e16870554e279a86e6078260641323bb6b112055901a41cf9ba8c4be4acb --reviewer NAME --reason REASON."
+ ]
+}
+== approve in this scratch directory only, then the same forecast succeeds
+  "version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+  "effective_at": "2026-11-26T05:33:03.075083Z",
+  "reviewer": "scratch replication",
+  "model_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+{
+ "checks.release_executable": true,
+ "state": "ready",
+ "ready": true,
+ "active_version": "B1@f38b03cee6351d6fefd7b6d0f2cfadbfd937725f2d458a2bef2cbf5414b92b85",
+ "approval": {
+  "effective_at": "2026-11-26T05:33:03.075083Z",
+  "comparison": "0d19e16870554e279a86e6078260641323bb6b112055901a41cf9ba8c4be4acb",
+  "reviewer": "scratch replication",
+  "reason": "isolated scratch copy; verifies the gate only"
+ },
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "actions": null
+}
+== the seal written by the old version reopens byte-identically under 0.4.2
+identical (6756f23ed997375422d3cde4d6897e1ff0fd335ec0e8cc4e0b9ce2f42bac407a)
+
+real	0m49.018s
+user	2m9.520s
+sys	0m1.887s

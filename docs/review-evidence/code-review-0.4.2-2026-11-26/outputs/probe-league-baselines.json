@@ -1,0 +1,4720 @@
+{
+ "what": "walk-forward B0/B1 at T-60 with results assumed usable 24 h after kickoff; unmodified 0.4.2 fit and scoring functions",
+ "environment": {
+  "python": "3.12.3",
+  "numpy": "2.3.5",
+  "scipy": "1.17.0"
+ },
+ "evaluated_seasons": {
+  "en": [
+   "2021-22",
+   "2022-23",
+   "2023-24",
+   "2024-25",
+   "2025-26"
+  ],
+  "es": [
+   "2021-22",
+   "2022-23",
+   "2023-24",
+   "2024-25"
+  ],
+  "de": [
+   "2021-22",
+   "2022-23",
+   "2023-24",
+   "2024-25"
+  ],
+  "it": [
+   "2021-22",
+   "2022-23",
+   "2023-24",
+   "2024-25"
+  ],
+  "fr": [
+   "2021-22",
+   "2022-23",
+   "2023-24",
+   "2024-25"
+  ]
+ },
+ "holdout_note": "2025-26 is not loaded for es/de/it/fr; the EPL five-season figure repeats a number already published with 0.4.2",
+ "leagues": {
+  "en": {
+   "fixtures_loaded": 3040,
+   "files_used_for_training_or_scoring": {
+    "2018-19": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2019-20": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2020-21": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2021-22": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2022-23": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2023-24": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2024-25": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2025-26": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    }
+   },
+   "fits": 620,
+   "default": {
+    "matches": 1900,
+    "rounds": 190,
+    "b1": 75.4478132340877,
+    "b0": 73.55917205293937,
+    "b1_items": [
+     70.88652029489447,
+     75.65330845488836,
+     77.374981315428,
+     77.87644287113999
+    ],
+    "b0_items": [
+     67.6258541089566,
+     75.2739919975377,
+     74.88935056940598,
+     76.44749153585718
+    ],
+    "fallbacks": {
+     "unseen_team": 5
+    },
+    "fallback_fixtures": [
+     "2021-22/brentford/arsenal",
+     "2022-23/newcastle-united/nottingham-forest",
+     "2023-24/brighton-hove-albion/luton-town",
+     "2024-25/ipswich-town/liverpool",
+     "2025-26/sunderland/west-ham-united"
+    ],
+    "by_season": {
+     "2021-22": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 76.21982669793574,
+      "b0": 73.75,
+      "b1_items": [
+       71.79625005736267,
+       75.59442865906009,
+       78.60779512191371,
+       78.88083295340654
+      ],
+      "b0_items": [
+       67.62457679285934,
+       75.11511234225915,
+       75.38781163434903,
+       76.87249923053247
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2021-22/brentford/arsenal"
+      ]
+     },
+     "2022-23": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 75.41649438009257,
+      "b0": 73.89860341643582,
+      "b1_items": [
+       70.34344220724702,
+       75.77590864742857,
+       77.56569511922167,
+       77.98093154647304
+      ],
+      "b0_items": [
+       68.05863342566944,
+       75.06548168667283,
+       75.01446598953524,
+       77.4558325638658
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2022-23/newcastle-united/nottingham-forest"
+      ]
+     },
+     "2023-24": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 76.01889601350852,
+      "b0": 73.1987919359803,
+      "b1_items": [
+       72.56815247426528,
+       76.26588908719657,
+       77.26997447276696,
+       77.97156801980529
+      ],
+      "b0_items": [
+       68.1024161280394,
+       75.59826100338566,
+       73.81663588796553,
+       75.27785472453063
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2023-24/brighton-hove-albion/luton-town"
+      ]
+     },
+     "2024-25": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 75.0579774259809,
+      "b0": 73.30178516466606,
+      "b1_items": [
+       70.46200012729271,
+       75.66332752996038,
+       77.57410786770204,
+       76.53247417896844
+      ],
+      "b0_items": [
+       67.15620190827947,
+       75.43005540166206,
+       75.2056786703601,
+       75.41520467836258
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2024-25/ipswich-town/liverpool"
+      ]
+     },
+     "2025-26": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 74.52587165292077,
+      "b0": 73.64667974761466,
+      "b1_items": [
+       69.26275660830468,
+       74.96698835079613,
+       75.85733399553564,
+       78.01640765704659
+      ],
+      "b0_items": [
+       67.18744228993538,
+       75.16104955370884,
+       75.02216066481995,
+       77.21606648199446
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2025-26/sunderland/west-ham-united"
+      ]
+     }
+    }
+   },
+   "b1_minus_b0_family10": {
+    "method": "round-cluster-t-v1",
+    "unit": "season_and_official_round",
+    "rounds": 190,
+    "matches": 1900,
+    "degrees_of_freedom": 189,
+    "family_comparisons": 10,
+    "family_confidence": 0.95,
+    "individual_confidence": 0.995,
+    "critical_t": 2.8403659628523235,
+    "intervals": [
+     {
+      "difference": 1.888641181148336,
+      "standard_error": 0.18838792181611586,
+      "lower": 1.3535505402093557,
+      "upper": 2.423731822087316
+     },
+     {
+      "difference": 3.2606661859378714,
+      "standard_error": 0.27821493372714945,
+      "lower": 2.470433957822061,
+      "upper": 4.050898414053681
+     },
+     {
+      "difference": 0.37931645735064723,
+      "standard_error": 0.20069236803448198,
+      "lower": -0.1907233138187271,
+      "upper": 0.9493562285200216
+     },
+     {
+      "difference": 2.485630746022033,
+      "standard_error": 0.3044835856844254,
+      "lower": 1.6207859329967622,
+      "upper": 3.350475559047304
+     },
+     {
+      "difference": 1.4289513352827916,
+      "standard_error": 0.2693683793692748,
+      "lower": 0.6638465590536113,
+      "upper": 2.194056111511972
+     }
+    ]
+   },
+   "b1_minus_b0_single_season_family10": {
+    "2021-22": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 2.469826697935747,
+     "standard_error": 0.3823747746119423,
+     "lower": 1.3283446734401325,
+     "upper": 3.611308722431361
+    },
+    "2022-23": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 1.5178909636567557,
+     "standard_error": 0.38109248184185524,
+     "lower": 0.38023689603586064,
+     "upper": 2.6555450312776507
+    },
+    "2023-24": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 2.8201040775282236,
+     "standard_error": 0.511149409005211,
+     "lower": 1.2941983406679807,
+     "upper": 4.3460098143884665
+    },
+    "2024-25": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 1.7561922613148424,
+     "standard_error": 0.38657011859131946,
+     "lower": 0.6021861111263263,
+     "upper": 2.910198411503359
+    },
+    "2025-26": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 0.8791919053061085,
+     "standard_error": 0.3741312107830915,
+     "lower": -0.2376810692385377,
+     "upper": 1.9960648798507545
+    }
+   },
+   "forward_gate_replay_b1_vs_b0": {
+    "2021-22": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 2.469826697935748,
+      "standard_error": 0.3823747746119423,
+      "lower": 1.3283446734401338,
+      "upper": 3.6113087224313625
+     },
+     "components": {
+      "result": {
+       "difference": 4.171673264503327,
+       "standard_error": 0.5599505247841536,
+       "lower": 2.500084286656474,
+       "upper": 5.84326224235018
+      },
+      "total": {
+       "difference": 0.479316316800941,
+       "standard_error": 0.462501939551682,
+       "lower": -0.90136485085293,
+       "upper": 1.8599974844548122
+      },
+      "home": {
+       "difference": 3.2199834875646705,
+       "standard_error": 0.6974121651668893,
+       "lower": 1.138037964326414,
+       "upper": 5.301929010802927
+      },
+      "away": {
+       "difference": 2.0083337228740614,
+       "standard_error": 0.5156597993784414,
+       "lower": 0.46896336994513144,
+       "upper": 3.5477040758029914
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total"
+     ],
+     "passes_both_conditions": false
+    },
+    "2022-23": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 1.517890963656756,
+      "standard_error": 0.38109248184185524,
+      "lower": 0.38023689603586086,
+      "upper": 2.6555450312776507
+     },
+     "components": {
+      "result": {
+       "difference": 2.2848087815775906,
+       "standard_error": 0.64321380085636,
+       "lower": 0.3646586034436752,
+       "upper": 4.204958959711506
+      },
+      "total": {
+       "difference": 0.7104269607557464,
+       "standard_error": 0.42058360549551077,
+       "lower": -0.545117749163741,
+       "upper": 1.9659716706752337
+      },
+      "home": {
+       "difference": 2.55122912968643,
+       "standard_error": 0.6970364331555192,
+       "lower": 0.47040525820316104,
+       "upper": 4.632053001169698
+      },
+      "away": {
+       "difference": 0.5250989826072477,
+       "standard_error": 0.5471623760047206,
+       "lower": -1.108314250061036,
+       "upper": 2.1585122152755316
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    },
+    "2023-24": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 2.8201040775282236,
+      "standard_error": 0.511149409005211,
+      "lower": 1.2941983406679807,
+      "upper": 4.3460098143884665
+     },
+     "components": {
+      "result": {
+       "difference": 4.465736346225881,
+       "standard_error": 0.7020755517038993,
+       "lower": 2.3698694760298546,
+       "upper": 6.561603216421906
+      },
+      "total": {
+       "difference": 0.6676280838109124,
+       "standard_error": 0.518057035390591,
+       "lower": -0.8788986036830247,
+       "upper": 2.2141547713048495
+      },
+      "home": {
+       "difference": 3.4533385848014304,
+       "standard_error": 0.753073788002562,
+       "lower": 1.2052295326388194,
+       "upper": 5.701447636964041
+      },
+      "away": {
+       "difference": 2.69371329527467,
+       "standard_error": 0.6924875824297185,
+       "lower": 0.6264688533991332,
+       "upper": 4.760957737150207
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total"
+     ],
+     "passes_both_conditions": false
+    },
+    "2024-25": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 1.756192261314843,
+      "standard_error": 0.3865701185913194,
+      "lower": 0.6021861111263271,
+      "upper": 2.910198411503359
+     },
+     "components": {
+      "result": {
+       "difference": 3.3057982190132384,
+       "standard_error": 0.5172537065541328,
+       "lower": 1.7616696641563367,
+       "upper": 4.84992677387014
+      },
+      "total": {
+       "difference": 0.2332721282983422,
+       "standard_error": 0.41848532913831593,
+       "lower": -1.0160087145901864,
+       "upper": 1.4825529711868706
+      },
+      "home": {
+       "difference": 2.3684291973419405,
+       "standard_error": 0.6415955663905235,
+       "lower": 0.4531098440343915,
+       "upper": 4.28374855064949
+      },
+      "away": {
+       "difference": 1.1172695006058513,
+       "standard_error": 0.662624588330035,
+       "lower": -0.8608266155282658,
+       "upper": 3.0953656167399686
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    },
+    "2025-26": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 0.8791919053061086,
+      "standard_error": 0.3741312107830915,
+      "lower": -0.2376810692385376,
+      "upper": 1.9960648798507548
+     },
+     "components": {
+      "result": {
+       "difference": 2.07531431836932,
+       "standard_error": 0.6031184784079079,
+       "lower": 0.274858463397051,
+       "upper": 3.875770173341589
+      },
+      "total": {
+       "difference": -0.1940612029127058,
+       "standard_error": 0.4236197777971915,
+       "lower": -1.4586696281600604,
+       "upper": 1.0705472223346488
+      },
+      "home": {
+       "difference": 0.8351733307156954,
+       "standard_error": 0.5503338880259879,
+       "lower": -0.8077076393743949,
+       "upper": 2.478054300805786
+      },
+      "away": {
+       "difference": 0.8003411750521203,
+       "standard_error": 0.5306709540778386,
+       "lower": -0.7838411382726658,
+       "upper": 2.3845234883769066
+      }
+     },
+     "composite_lower_above_zero": false,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "home",
+      "away"
+     ],
+     "passes_both_conditions": false
+    }
+   },
+   "component_round_correlation_b1_minus_b0": {
+    "order": [
+     "result",
+     "total",
+     "home",
+     "away"
+    ],
+    "matrix": [
+     [
+      1.0,
+      0.1631,
+      0.6002,
+      0.4702
+     ],
+     [
+      0.1631,
+      1.0,
+      0.349,
+      0.3378
+     ],
+     [
+      0.6002,
+      0.349,
+      1.0,
+      0.0934
+     ],
+     [
+      0.4702,
+      0.3378,
+      0.0934,
+      1.0
+     ]
+    ]
+   },
+   "grid": [
+    {
+     "decay_per_day": 0.001,
+     "ridge": 4.0,
+     "score": 75.38068418546774,
+     "by_season": {
+      "2021-22": 76.3280056815163,
+      "2022-23": 75.12441301186985,
+      "2023-24": 75.93724006724875,
+      "2024-25": 74.96216611370957,
+      "2025-26": 74.55159605299427
+     },
+     "minus_default_family30": {
+      "difference": -0.06712904861995289,
+      "standard_error": 0.030666839718228662,
+      "lower": -0.16495159995931288,
+      "upper": 0.0306935027194071,
+      "critical_t": 3.189847804278748,
+      "rounds": 190
+     },
+     "t_statistic_all_outer_seasons": -2.1889783634943885,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.06857313826504978,
+      "half_width": 0.2047075536618362,
+      "difference_needed_for_80pct_power": 0.26242016287843345
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 8.0,
+     "score": 75.40104078504055,
+     "by_season": {
+      "2021-22": 76.33101078591494,
+      "2022-23": 75.18396265855735,
+      "2023-24": 75.9404756947786,
+      "2024-25": 74.96435249587145,
+      "2025-26": 74.58540229008042
+     },
+     "minus_default_family30": {
+      "difference": -0.0467724490471492,
+      "standard_error": 0.02749142787495001,
+      "lower": -0.13446591989054607,
+      "upper": 0.04092102179624766,
+      "critical_t": 3.189847804278748,
+      "rounds": 190
+     },
+     "t_statistic_all_outer_seasons": -1.7013466619450464,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.06147270152692082,
+      "half_width": 0.18351101706794617,
+      "difference_needed_for_80pct_power": 0.23524774795809283
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 16.0,
+     "score": 75.40809396123072,
+     "by_season": {
+      "2021-22": 76.30042589598763,
+      "2022-23": 75.24944365514587,
+      "2023-24": 75.92037417711734,
+      "2024-25": 74.95419733024391,
+      "2025-26": 74.61602874765886
+     },
+     "minus_default_family30": {
+      "difference": -0.03971927285698152,
+      "standard_error": 0.03016253788087976,
+      "lower": -0.13593317808778038,
+      "upper": 0.05649463237381735,
+      "critical_t": 3.189847804278748,
+      "rounds": 190
+     },
+     "t_statistic_all_outer_seasons": -1.316841209245852,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.06744548507555961,
+      "half_width": 0.20134123367649068,
+      "difference_needed_for_80pct_power": 0.25810478602470677
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 4.0,
+     "score": 75.42726627113139,
+     "by_season": {
+      "2021-22": 76.21766570391544,
+      "2022-23": 75.35338891504738,
+      "2023-24": 76.0235389913457,
+      "2024-25": 75.06111490221413,
+      "2025-26": 74.48062284313428
+     },
+     "minus_default_family30": {
+      "difference": -0.02054696295631598,
+      "standard_error": 0.013694931878154805,
+      "lower": -0.06423171133759512,
+      "upper": 0.023137785424963156,
+      "critical_t": 3.189847804278748,
+      "rounds": 190
+     },
+     "t_statistic_all_outer_seasons": -1.5003333451472698,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.030622798626783014,
+      "half_width": 0.09141652769248881,
+      "difference_needed_for_80pct_power": 0.11718932524821687
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 8.0,
+     "score": 75.4478132340877,
+     "by_season": {
+      "2021-22": 76.21982669793574,
+      "2022-23": 75.41649438009257,
+      "2023-24": 76.01889601350852,
+      "2024-25": 75.0579774259809,
+      "2025-26": 74.52587165292077
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 16.0,
+     "score": 75.43984399786005,
+     "by_season": {
+      "2021-22": 76.16976485147565,
+      "2022-23": 75.46729824534088,
+      "2023-24": 75.97319658116874,
+      "2024-25": 75.0283172746982,
+      "2025-26": 74.56064303661675
+     },
+     "minus_default_family30": {
+      "difference": -0.00796923622765855,
+      "standard_error": 0.019997482525213096,
+      "lower": -0.07175816195181217,
+      "upper": 0.05581968949649507,
+      "critical_t": 3.189847804278748,
+      "rounds": 190
+     },
+     "t_statistic_all_outer_seasons": -0.39851197357521523,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.044715730305240634,
+      "half_width": 0.13348736826959043,
+      "difference_needed_for_80pct_power": 0.1711210763692008
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 4.0,
+     "score": 75.37153085133276,
+     "by_season": {
+      "2021-22": 75.98745266472018,
+      "2022-23": 75.57041413175858,
+      "2023-24": 76.013909939186,
+      "2024-25": 75.03345212223901,
+      "2025-26": 74.25242539876004
+     },
+     "minus_default_family30": {
+      "difference": -0.07628238275493678,
+      "standard_error": 0.04136166201498585,
+      "lower": -0.2082197895147591,
+      "upper": 0.05565502400488555,
+      "critical_t": 3.189847804278748,
+      "rounds": 190
+     },
+     "t_statistic_all_outer_seasons": -1.8442775033386885,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.0924874879278793,
+      "half_width": 0.27609772393477366,
+      "difference_needed_for_80pct_power": 0.3539371576146955
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 8.0,
+     "score": 75.40088437878791,
+     "by_season": {
+      "2021-22": 75.99817644503008,
+      "2022-23": 75.63834627846957,
+      "2023-24": 76.00167125740799,
+      "2024-25": 75.03234119041235,
+      "2025-26": 74.33388672261951
+     },
+     "minus_default_family30": {
+      "difference": -0.04692885529979975,
+      "standard_error": 0.037502464757277164,
+      "lower": -0.16655601016084143,
+      "upper": 0.07269829956124194,
+      "critical_t": 3.189847804278748,
+      "rounds": 190
+     },
+     "t_statistic_all_outer_seasons": -1.2513538937649011,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.08385806052106189,
+      "half_width": 0.25033677702982,
+      "difference_needed_for_80pct_power": 0.3209135013705882
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 16.0,
+     "score": 75.36841178430512,
+     "by_season": {
+      "2021-22": 75.91826676649971,
+      "2022-23": 75.64600143113734,
+      "2023-24": 75.91831273203724,
+      "2024-25": 74.97620868805504,
+      "2025-26": 74.38326930379631
+     },
+     "minus_default_family30": {
+      "difference": -0.07940144978257799,
+      "standard_error": 0.047575861938183625,
+      "lower": -0.23116120852276187,
+      "upper": 0.0723583089576059,
+      "critical_t": 3.189847804278748,
+      "rounds": 190
+     },
+     "t_statistic_all_outer_seasons": -1.6689440095850718,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.1063828613819235,
+      "half_width": 0.31757880499599705,
+      "difference_needed_for_80pct_power": 0.40711288002326784
+     }
+    }
+   ],
+   "nested_grid_choice": [
+    {
+     "season": "2022-23",
+     "chosen": [
+      0.001,
+      8.0
+     ],
+     "chosen_score": 75.18396265855735,
+     "default_score": 75.41649438009257,
+     "difference": -0.23253172153522428
+    },
+    {
+     "season": "2023-24",
+     "chosen": [
+      0.002,
+      16.0
+     ],
+     "chosen_score": 75.97319658116874,
+     "default_score": 76.01889601350852,
+     "difference": -0.045699432339787904
+    },
+    {
+     "season": "2024-25",
+     "chosen": [
+      0.002,
+      8.0
+     ],
+     "chosen_score": 75.0579774259809,
+     "default_score": 75.0579774259809,
+     "difference": 0.0
+    },
+    {
+     "season": "2025-26",
+     "chosen": [
+      0.002,
+      8.0
+     ],
+     "chosen_score": 74.52587165292077,
+     "default_score": 74.52587165292077,
+     "difference": 0.0
+    }
+   ],
+   "nested_grid_choice_mean_difference": -0.06955778846875305,
+   "one_forward_season_gate": {
+    "rounds": 38,
+    "round_sd_of_b1_minus_b0": 2.596748298618302,
+    "standard_error_one_season": 0.4212481993207507,
+    "half_width_family10": 1.2575286846884088,
+    "difference_needed_for_80pct_power_family10": 1.612060113841108,
+    "power_for_observed_b1_minus_b0": 0.9329588725430611
+   },
+   "newcomers": {
+    "rule": "exactly one side has fewer than 19 matches in the training window; first-match fallbacks excluded",
+    "matches": 90,
+    "rounds": 90,
+    "expected_goals_for": 1.1395249110337915,
+    "actual_goals_for": 1.0333333333333334,
+    "expected_goals_against": 1.5644693472556943,
+    "actual_goals_against": 1.5555555555555556,
+    "expected_minus_actual_goal_difference": {
+     "difference": 0.09727778600031944,
+     "standard_error": 0.1527144562883993,
+     "lower": -0.206162585751413,
+     "upper": 0.4007181577520519
+    },
+    "b1_score": 74.28506015098932,
+    "b0_score": 73.4284036113676,
+    "b1_minus_b0": {
+     "difference": 0.8566565396217283,
+     "standard_error": 0.9101661916946356,
+     "lower": -0.9518242962862633,
+     "upper": 2.66513737552972
+    }
+   }
+  },
+  "es": {
+   "fixtures_loaded": 2660,
+   "files_used_for_training_or_scoring": {
+    "2018-19": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2019-20": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2020-21": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2021-22": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2022-23": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2023-24": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2024-25": {
+     "regular_rows": 380,
+     "usable_scores": 370,
+     "awarded_excluded": 0,
+     "no_valid_score": 10,
+     "no_clock": 0
+    }
+   },
+   "fits": 840,
+   "default": {
+    "matches": 1510,
+    "rounds": 151,
+    "b1": 76.07648912384036,
+    "b0": 74.32477058656866,
+    "b1_items": [
+     70.60659968306406,
+     75.76553217994375,
+     77.85655218004725,
+     80.07727245230637
+    ],
+    "b0_items": [
+     67.66907443757529,
+     75.09173326892228,
+     75.86874871330761,
+     78.66952592646948
+    ],
+    "fallbacks": {
+     "unseen_team": 4
+    },
+    "fallback_fixtures": [
+     "2022-23/valencia-cf/girona",
+     "2022-23/ud-almeria/real-madrid-cf",
+     "2023-24/ud-las-palmas/rcd-mallorca",
+     "2024-25/ca-osasuna/cd-leganes"
+    ],
+    "by_season": {
+     "2021-22": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 75.66869753470563,
+      "b0": 74.43805786395814,
+      "b1_items": [
+       69.91562054497291,
+       75.31790924962569,
+       77.44122535418099,
+       80.00003499004289
+      ],
+      "b0_items": [
+       67.43367189904586,
+       75.2943213296399,
+       76.02423822714681,
+       78.99999999999999
+      ],
+      "fallbacks": {},
+      "fallback_fixtures": []
+     },
+     "2022-23": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 76.04255368680991,
+      "b0": 74.63527239150507,
+      "b1_items": [
+       70.25099173327304,
+       75.24584080184023,
+       76.84746884439592,
+       81.82591336773042
+      ],
+      "b0_items": [
+       68.10126192674669,
+       74.96714373653431,
+       75.398891966759,
+       80.07379193598031
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2022-23/valencia-cf/girona",
+       "2022-23/ud-almeria/real-madrid-cf"
+      ]
+     },
+     "2023-24": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 76.22904858723523,
+      "b0": 73.93546091104956,
+      "b1_items": [
+       71.28437662608569,
+       76.61792153995492,
+       78.08311094899811,
+       78.93078523390218
+      ],
+      "b0_items": [
+       67.50315481686673,
+       75.15089258233303,
+       75.75223145583256,
+       77.3355647891659
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2023-24/ud-las-palmas/rcd-mallorca"
+      ]
+     },
+     "2024-25": {
+      "matches": 370,
+      "rounds": 37,
+      "b1": 76.37347202614501,
+      "b0": 74.28935930390224,
+      "b1_items": [
+       70.98537766967756,
+       75.88356320804095,
+       79.08677793457524,
+       79.5381692922863
+      ],
+      "b0_items": [
+       67.63737490953557,
+       74.95086845848618,
+       76.31127873025379,
+       78.2579151173334
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2024-25/ca-osasuna/cd-leganes"
+      ]
+     }
+    }
+   },
+   "b1_minus_b0_family10": {
+    "method": "round-cluster-t-v1",
+    "unit": "season_and_official_round",
+    "rounds": 151,
+    "matches": 1510,
+    "degrees_of_freedom": 150,
+    "family_comparisons": 10,
+    "family_confidence": 0.95,
+    "individual_confidence": 0.995,
+    "critical_t": 2.849152430663323,
+    "intervals": [
+     {
+      "difference": 1.7517185372716935,
+      "standard_error": 0.1959138080165407,
+      "lower": 1.1935302349608587,
+      "upper": 2.309906839582528
+     },
+     {
+      "difference": 2.9375252454887635,
+      "standard_error": 0.2938626684378105,
+      "lower": 2.1002657094279655,
+      "upper": 3.7747847815495614
+     },
+     {
+      "difference": 0.6737989110214773,
+      "standard_error": 0.26875833925907,
+      "lower": -0.09193456453953996,
+      "upper": 1.4395323865824945
+     },
+     {
+      "difference": 1.9878034667396454,
+      "standard_error": 0.3319349893314378,
+      "lower": 1.0420700850637754,
+      "upper": 2.9335368484155153
+     },
+     {
+      "difference": 1.4077465258368966,
+      "standard_error": 0.27364160319691155,
+      "lower": 0.6280998869578076,
+      "upper": 2.187393164715986
+     }
+    ]
+   },
+   "b1_minus_b0_single_season_family10": {
+    "2021-22": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 1.2306396707474756,
+     "standard_error": 0.3729083964985479,
+     "lower": 0.11741709528189914,
+     "upper": 2.3438622462130523
+    },
+    "2022-23": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 1.4072812953048326,
+     "standard_error": 0.3929768759504304,
+     "lower": 0.23414941076798756,
+     "upper": 2.5804131798416776
+    },
+    "2023-24": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 2.293587676185669,
+     "standard_error": 0.3361730596129466,
+     "lower": 1.2900290469395064,
+     "upper": 3.2971463054318315
+    },
+    "2024-25": {
+     "rounds": 37,
+     "matches": 370,
+     "critical_t": 2.990486572384287,
+     "difference": 2.0841127222427716,
+     "standard_error": 0.4483379412813399,
+     "lower": 0.7433641289505097,
+     "upper": 3.4248613155350336
+    }
+   },
+   "forward_gate_replay_b1_vs_b0": {
+    "2021-22": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 1.2306396707474756,
+      "standard_error": 0.3729083964985479,
+      "lower": 0.11741709528189914,
+      "upper": 2.3438622462130523
+     },
+     "components": {
+      "result": {
+       "difference": 2.481948645927056,
+       "standard_error": 0.5801838142349207,
+       "lower": 0.7499583609387825,
+       "upper": 4.2139389309153295
+      },
+      "total": {
+       "difference": 0.02358791998579378,
+       "standard_error": 0.4711595540416911,
+       "lower": -1.3829383398956896,
+       "upper": 1.4301141798672772
+      },
+      "home": {
+       "difference": 1.4169871270341683,
+       "standard_error": 0.6322436897075628,
+       "lower": -0.4704145919583742,
+       "upper": 3.304388846026711
+      },
+      "away": {
+       "difference": 1.0000349900429004,
+       "standard_error": 0.5564187884696207,
+       "lower": -0.661010892950509,
+       "upper": 2.66108087303631
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    },
+    "2022-23": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 1.4072812953048328,
+      "standard_error": 0.3929768759504304,
+      "lower": 0.2341494107679878,
+      "upper": 2.5804131798416776
+     },
+     "components": {
+      "result": {
+       "difference": 2.1497298065263517,
+       "standard_error": 0.6863729780283794,
+       "lower": 0.10073895111742726,
+       "upper": 4.198720661935276
+      },
+      "total": {
+       "difference": 0.278697065305924,
+       "standard_error": 0.4447685384014806,
+       "lower": -1.0490455719057443,
+       "upper": 1.6064397025175923
+      },
+      "home": {
+       "difference": 1.4485768776369268,
+       "standard_error": 0.5868984594496837,
+       "lower": -0.30345826209181936,
+       "upper": 3.200612017365673
+      },
+      "away": {
+       "difference": 1.7521214317501215,
+       "standard_error": 0.45134049539023485,
+       "lower": 0.40475989897706444,
+       "upper": 3.0994829645231787
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total"
+     ],
+     "passes_both_conditions": false
+    },
+    "2023-24": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 2.2935876761856684,
+      "standard_error": 0.3361730596129466,
+      "lower": 1.290029046939506,
+      "upper": 3.2971463054318306
+     },
+     "components": {
+      "result": {
+       "difference": 3.781221809218954,
+       "standard_error": 0.43134941945149335,
+       "lower": 2.49353851713936,
+       "upper": 5.068905101298548
+      },
+      "total": {
+       "difference": 1.4670289576218842,
+       "standard_error": 0.5295264772971813,
+       "lower": -0.11373681319196138,
+       "upper": 3.04779472843573
+      },
+      "home": {
+       "difference": 2.3308794931655528,
+       "standard_error": 0.6617305063087263,
+       "lower": 0.3554524300744466,
+       "upper": 4.306306556256659
+      },
+      "away": {
+       "difference": 1.595220444736298,
+       "standard_error": 0.5808434815538578,
+       "lower": -0.13873910819722113,
+       "upper": 3.3291799976698173
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [],
+     "passes_both_conditions": true
+    },
+    "2024-25": {
+     "rounds": 37,
+     "matches": 370,
+     "composite": {
+      "difference": 2.0841127222427716,
+      "standard_error": 0.4483379412813399,
+      "lower": 0.7433641289505097,
+      "upper": 3.4248613155350336
+     },
+     "components": {
+      "result": {
+       "difference": 3.3480027601419904,
+       "standard_error": 0.6089505482944874,
+       "lower": 1.5269443222212769,
+       "upper": 5.169061198062704
+      },
+      "total": {
+       "difference": 0.9326947495547623,
+       "standard_error": 0.6729167707966068,
+       "lower": -1.0796538178446853,
+       "upper": 2.94504331695421
+      },
+      "home": {
+       "difference": 2.7754992043214513,
+       "standard_error": 0.7665815830816486,
+       "lower": 0.4830472734786917,
+       "upper": 5.067951135164211
+      },
+      "away": {
+       "difference": 1.2802541749528937,
+       "standard_error": 0.6047835311762473,
+       "lower": -0.5283428542288275,
+       "upper": 3.088851204134615
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    }
+   },
+   "component_round_correlation_b1_minus_b0": {
+    "order": [
+     "result",
+     "total",
+     "home",
+     "away"
+    ],
+    "matrix": [
+     [
+      1.0,
+      0.2427,
+      0.5297,
+      0.2484
+     ],
+     [
+      0.2427,
+      1.0,
+      0.5464,
+      0.1481
+     ],
+     [
+      0.5297,
+      0.5464,
+      1.0,
+      -0.1676
+     ],
+     [
+      0.2484,
+      0.1481,
+      -0.1676,
+      1.0
+     ]
+    ]
+   },
+   "grid": [
+    {
+     "decay_per_day": 0.001,
+     "ridge": 4.0,
+     "score": 76.07259853746065,
+     "by_season": {
+      "2021-22": 75.63863060997333,
+      "2022-23": 75.99057760094134,
+      "2023-24": 76.29926855920873,
+      "2024-25": 76.36973680788834
+     },
+     "minus_default_family30": {
+      "difference": -0.003890586379710884,
+      "standard_error": 0.030739983961091708,
+      "lower": -0.10231918357320385,
+      "upper": 0.09453801081378208,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -0.12656435945559655,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.061277397460700773,
+      "half_width": 0.18292798676442437,
+      "difference_needed_for_80pct_power": 0.23450034560543714
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 8.0,
+     "score": 76.08604403953686,
+     "by_season": {
+      "2021-22": 75.66955248982455,
+      "2022-23": 76.01976828311774,
+      "2023-24": 76.29502183091643,
+      "2024-25": 76.36723327090361
+     },
+     "minus_default_family30": {
+      "difference": 0.009554915696496864,
+      "standard_error": 0.02549942471095624,
+      "lower": -0.07209355252382865,
+      "upper": 0.0912033839168224,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": 0.37471102994693994,
+     "rounds_needed_for_80pct_power_if_true": 17088,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.050830813217411584,
+      "half_width": 0.15174238320782069,
+      "difference_needed_for_80pct_power": 0.194522674931373
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 16.0,
+     "score": 76.07962367315571,
+     "by_season": {
+      "2021-22": 75.7035918368833,
+      "2022-23": 76.03120773204796,
+      "2023-24": 76.2512505818849,
+      "2024-25": 76.33927753825667
+     },
+     "minus_default_family30": {
+      "difference": 0.0031345493153431127,
+      "standard_error": 0.027402946305249427,
+      "lower": -0.08460894356377685,
+      "upper": 0.09087804219446308,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": 0.11438731005149781,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.05462531257226382,
+      "half_width": 0.16306988986649018,
+      "difference_needed_for_80pct_power": 0.20904371281786488
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 4.0,
+     "score": 76.0624684053184,
+     "by_season": {
+      "2021-22": 75.62649331100805,
+      "2022-23": 76.01248869543626,
+      "2023-24": 76.24000101575322,
+      "2024-25": 76.37922633404249
+     },
+     "minus_default_family30": {
+      "difference": -0.014020718521961371,
+      "standard_error": 0.0153450425613369,
+      "lower": -0.06315512975322848,
+      "upper": 0.03511369270930574,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -0.9136969458323777,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.030588964303708666,
+      "half_width": 0.0913155239805166,
+      "difference_needed_for_80pct_power": 0.11705984585152174
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 8.0,
+     "score": 76.07648912384036,
+     "by_season": {
+      "2021-22": 75.66869753470563,
+      "2022-23": 76.04255368680991,
+      "2023-24": 76.22904858723523,
+      "2024-25": 76.37347202614501
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 16.0,
+     "score": 76.0559957655768,
+     "by_season": {
+      "2021-22": 75.70143455606001,
+      "2022-23": 76.04279310054237,
+      "2023-24": 76.16052890704353,
+      "2024-25": 76.32634084279867
+     },
+     "minus_default_family30": {
+      "difference": -0.02049335826356597,
+      "standard_error": 0.02279461602528045,
+      "lower": -0.09348110223156861,
+      "upper": 0.05249438570443667,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -0.8990438023100603,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.04543902000447119,
+      "half_width": 0.13564656454767232,
+      "difference_needed_for_80pct_power": 0.1738890086161797
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 4.0,
+     "score": 75.93973099790173,
+     "by_season": {
+      "2021-22": 75.48180881306848,
+      "2022-23": 75.93998989711469,
+      "2023-24": 76.01106340813196,
+      "2024-25": 76.33650324830234
+     },
+     "minus_default_family30": {
+      "difference": -0.13675812593862938,
+      "standard_error": 0.04004455422040306,
+      "lower": -0.26497970543398386,
+      "upper": -0.008536546443274923,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -3.415149165749731,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.07982522268736653,
+      "half_width": 0.23829777184298223,
+      "difference_needed_for_80pct_power": 0.30548037423135627
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 8.0,
+     "score": 75.96434545914761,
+     "by_season": {
+      "2021-22": 75.55392963547648,
+      "2022-23": 75.98195680843361,
+      "2023-24": 76.00050482886539,
+      "2024-25": 76.33062962069782
+     },
+     "minus_default_family30": {
+      "difference": -0.11214366469275959,
+      "standard_error": 0.03771884372822354,
+      "lower": -0.23291838209758198,
+      "upper": 0.008631052712062784,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -2.9731469368677086,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.07518912767872277,
+      "half_width": 0.22445789675814865,
+      "difference_needed_for_80pct_power": 0.28773866314638663
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 16.0,
+     "score": 75.91847882749153,
+     "by_season": {
+      "2021-22": 75.58183989300319,
+      "2022-23": 75.96284292092093,
+      "2023-24": 75.89553816304061,
+      "2024-25": 76.24221367098811
+     },
+     "minus_default_family30": {
+      "difference": -0.158010296348836,
+      "standard_error": 0.052397967118432316,
+      "lower": -0.32578716981064315,
+      "upper": 0.009766577112971103,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -3.015580661587382,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.10445064191682413,
+      "half_width": 0.3118106583157412,
+      "difference_needed_for_80pct_power": 0.3997185364132615
+     }
+    }
+   ],
+   "nested_grid_choice": [
+    {
+     "season": "2022-23",
+     "chosen": [
+      0.001,
+      16.0
+     ],
+     "chosen_score": 76.03120773204796,
+     "default_score": 76.04255368680991,
+     "difference": -0.011345954761949884
+    },
+    {
+     "season": "2023-24",
+     "chosen": [
+      0.002,
+      16.0
+     ],
+     "chosen_score": 76.16052890704353,
+     "default_score": 76.22904858723523,
+     "difference": -0.06851968019169874
+    },
+    {
+     "season": "2024-25",
+     "chosen": [
+      0.001,
+      16.0
+     ],
+     "chosen_score": 76.33927753825667,
+     "default_score": 76.37347202614501,
+     "difference": -0.03419448788834245
+    }
+   ],
+   "nested_grid_choice_mean_difference": -0.03802004094733036,
+   "one_forward_season_gate": {
+    "rounds": 38,
+    "round_sd_of_b1_minus_b0": 2.4074291777543193,
+    "standard_error_one_season": 0.3905365824869688,
+    "half_width_family10": 1.165847012971082,
+    "difference_needed_for_80pct_power_family10": 1.494530893279115,
+    "power_for_observed_b1_minus_b0": 0.9332148999045091
+   },
+   "newcomers": {
+    "rule": "exactly one side has fewer than 19 matches in the training window; first-match fallbacks excluded",
+    "matches": 70,
+    "rounds": 53,
+    "expected_goals_for": 1.0548092051816913,
+    "actual_goals_for": 1.0714285714285714,
+    "expected_goals_against": 1.324005649794582,
+    "actual_goals_against": 1.3428571428571427,
+    "expected_minus_actual_goal_difference": {
+     "difference": 0.002232126815680724,
+     "standard_error": 0.1701407349396957,
+     "lower": -0.3391802353619071,
+     "upper": 0.3436444889932686
+    },
+    "b1_score": 76.81073981146281,
+    "b0_score": 75.65980411555203,
+    "b1_minus_b0": {
+     "difference": 1.1509356959107802,
+     "standard_error": 0.9184812990268754,
+     "lower": -0.6921318682904081,
+     "upper": 2.9940032601119686
+    }
+   },
+   "without_alias_table": {
+    "spellings_joined_by_team_key_alone": {},
+    "spellings_joined_only_by_the_alias_table": {
+     "real-valladolid-cf": [
+      "Real Valladolid",
+      "Real Valladolid CF"
+     ],
+     "real-betis-balompie": [
+      "Real Betis",
+      "Real Betis Balompié"
+     ],
+     "rc-celta-de-vigo": [
+      "RC Celta",
+      "RC Celta de Vigo"
+     ],
+     "rcd-espanyol-de-barcelona": [
+      "Espanyol Barcelona",
+      "RCD Espanyol de Barcelona"
+     ],
+     "real-sociedad-de-futbol": [
+      "Real Sociedad",
+      "Real Sociedad de Fútbol"
+     ],
+     "deportivo-alaves": [
+      "CD Alavés",
+      "Deportivo Alavés"
+     ],
+     "rayo-vallecano-de-madrid": [
+      "Rayo Vallecano",
+      "Rayo Vallecano de Madrid"
+     ],
+     "real-madrid-cf": [
+      "Real Madrid",
+      "Real Madrid CF"
+     ],
+     "club-atletico-de-madrid": [
+      "Atlético Madrid",
+      "Club Atlético de Madrid"
+     ]
+    },
+    "clubs_split_in_two_without_the_table": 9,
+    "score": 76.06335478869644,
+    "fallbacks": {
+     "unseen_team": 6
+    },
+    "by_season": {
+     "2021-22": {
+      "b1": 75.60923157768156,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2021-22/ca-osasuna/rcd-espanyol-de-barcelona",
+       "2021-22/sevilla/rayo-vallecano-de-madrid"
+      ],
+      "fallback_fixtures_with_table": [],
+      "difference_vs_aliased": -0.059465957024073646
+     },
+     "2022-23": {
+      "b1": 76.04982794365681,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2022-23/valencia-cf/girona",
+       "2022-23/ud-almeria/real-madrid-cf"
+      ],
+      "fallback_fixtures_with_table": [
+       "2022-23/valencia-cf/girona",
+       "2022-23/ud-almeria/real-madrid-cf"
+      ],
+      "difference_vs_aliased": 0.007274256846898197
+     },
+     "2023-24": {
+      "b1": 76.22904858723523,
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2023-24/ud-las-palmas/rcd-mallorca"
+      ],
+      "fallback_fixtures_with_table": [
+       "2023-24/ud-las-palmas/rcd-mallorca"
+      ],
+      "difference_vs_aliased": 0.0
+     },
+     "2024-25": {
+      "b1": 76.37347202614501,
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2024-25/ca-osasuna/cd-leganes"
+      ],
+      "fallback_fixtures_with_table": [
+       "2024-25/ca-osasuna/cd-leganes"
+      ],
+      "difference_vs_aliased": 0.0
+     }
+    },
+    "difference_vs_aliased": -0.013134335143917042
+   }
+  },
+  "de": {
+   "fixtures_loaded": 2142,
+   "files_used_for_training_or_scoring": {
+    "2018-19": {
+     "regular_rows": 306,
+     "usable_scores": 306,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2019-20": {
+     "regular_rows": 306,
+     "usable_scores": 306,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2020-21": {
+     "regular_rows": 306,
+     "usable_scores": 306,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2021-22": {
+     "regular_rows": 306,
+     "usable_scores": 305,
+     "awarded_excluded": 1,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2022-23": {
+     "regular_rows": 306,
+     "usable_scores": 306,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2023-24": {
+     "regular_rows": 306,
+     "usable_scores": 306,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2024-25": {
+     "regular_rows": 306,
+     "usable_scores": 305,
+     "awarded_excluded": 1,
+     "no_valid_score": 0,
+     "no_clock": 0
+    }
+   },
+   "fits": 427,
+   "default": {
+    "matches": 1222,
+    "rounds": 136,
+    "b1": 75.38854151468358,
+    "b0": 73.62817270371694,
+    "b1_items": [
+     70.13151950946504,
+     76.72876426009775,
+     77.08871693093977,
+     77.60516535823179
+    ],
+    "b0_items": [
+     67.51386890113568,
+     76.04406934623718,
+     74.93760908269961,
+     76.01714348479534
+    ],
+    "fallbacks": {
+     "unseen_team": 6
+    },
+    "fallback_fixtures": [
+     "2021-22/vfb-stuttgart/spvgg-greuther-furth-1903",
+     "2021-22/vfl-wolfsburg/vfl-bochum-1848",
+     "2023-24/vfl-wolfsburg/1-heidenheim-1846",
+     "2023-24/eintracht-frankfurt/sv-darmstadt-98",
+     "2024-25/tsg-1899-hoffenheim/holstein-kiel",
+     "2024-25/st-pauli-1910/1-heidenheim-1846"
+    ],
+    "by_season": {
+     "2021-22": {
+      "matches": 305,
+      "rounds": 34,
+      "b1": 75.5817949018998,
+      "b0": 73.85657505975352,
+      "b1_items": [
+       70.23634442771782,
+       76.73418610983617,
+       77.0847679836576,
+       78.27188108638761
+      ],
+      "b0_items": [
+       67.9294568643558,
+       75.63910195672253,
+       74.99577015705744,
+       76.86197126087836
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2021-22/vfb-stuttgart/spvgg-greuther-furth-1903",
+       "2021-22/vfl-wolfsburg/vfl-bochum-1848"
+      ]
+     },
+     "2022-23": {
+      "matches": 306,
+      "rounds": 34,
+      "b1": 74.91728390043495,
+      "b0": 73.84675671639982,
+      "b1_items": [
+       70.10607507156438,
+       75.83668006188603,
+       76.48908284251378,
+       77.23729762577561
+      ],
+      "b0_items": [
+       67.98032811788352,
+       76.09205133406238,
+       74.86095228643678,
+       76.45369512721663
+      ],
+      "fallbacks": {},
+      "fallback_fixtures": []
+     },
+     "2023-24": {
+      "matches": 306,
+      "rounds": 34,
+      "b1": 76.01779270183893,
+      "b0": 73.80585647230164,
+      "b1_items": [
+       70.72341558875564,
+       77.19980731107059,
+       76.848701455437,
+       79.29924645209248
+      ],
+      "b0_items": [
+       67.48800174654872,
+       76.44638765709652,
+       75.00282128273876,
+       76.28621520282258
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2023-24/vfl-wolfsburg/1-heidenheim-1846",
+       "2023-24/eintracht-frankfurt/sv-darmstadt-98"
+      ]
+     },
+     "2024-25": {
+      "matches": 305,
+      "rounds": 34,
+      "b1": 75.03677654284621,
+      "b0": 73.00220332778567,
+      "b1_items": [
+       69.45838573132592,
+       77.14576402037603,
+       77.93506839154061,
+       75.60788802814227
+      ],
+      "b0_items": [
+       66.65624431161642,
+       75.99726004264534,
+       74.89093012783174,
+       74.46437882904917
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2024-25/tsg-1899-hoffenheim/holstein-kiel",
+       "2024-25/st-pauli-1910/1-heidenheim-1846"
+      ]
+     }
+    }
+   },
+   "b1_minus_b0_family10": {
+    "method": "round-cluster-t-v1",
+    "unit": "season_and_official_round",
+    "rounds": 136,
+    "matches": 1222,
+    "degrees_of_freedom": 135,
+    "family_comparisons": 10,
+    "family_confidence": 0.95,
+    "individual_confidence": 0.995,
+    "critical_t": 2.85390437515805,
+    "intervals": [
+     {
+      "difference": 1.7603688109666396,
+      "standard_error": 0.19941336510509472,
+      "lower": 1.1912621358282203,
+      "upper": 2.329475486105059
+     },
+     {
+      "difference": 2.6176506083293654,
+      "standard_error": 0.34306865776840956,
+      "lower": 1.6385654649445016,
+      "upper": 3.5967357517142293
+     },
+     {
+      "difference": 0.6846949138605751,
+      "standard_error": 0.28881180463835204,
+      "lower": -0.13954635899410972,
+      "upper": 1.50893618671526
+     },
+     {
+      "difference": 2.1511078482401658,
+      "standard_error": 0.3568313285929828,
+      "lower": 1.1327453583751925,
+      "upper": 3.169470338105139
+     },
+     {
+      "difference": 1.5880218734364593,
+      "standard_error": 0.35166488157335707,
+      "lower": 0.584403929324818,
+      "upper": 2.5916398175481006
+     }
+    ]
+   },
+   "b1_minus_b0_single_season_family10": {
+    "2021-22": {
+     "rounds": 34,
+     "matches": 305,
+     "critical_t": 3.0082419901232877,
+     "difference": 1.7252198421462681,
+     "standard_error": 0.3999567786816858,
+     "lower": 0.5220530662815743,
+     "upper": 2.928386618010962
+    },
+    "2022-23": {
+     "rounds": 34,
+     "matches": 306,
+     "critical_t": 3.0082419901232877,
+     "difference": 1.0705271840351251,
+     "standard_error": 0.3837915427295441,
+     "lower": -0.0840106502580853,
+     "upper": 2.2250650183283356
+    },
+    "2023-24": {
+     "rounds": 34,
+     "matches": 306,
+     "critical_t": 3.0082419901232877,
+     "difference": 2.2119362295372853,
+     "standard_error": 0.36114276202907303,
+     "lower": 1.1255314083723258,
+     "upper": 3.298341050702245
+    },
+    "2024-25": {
+     "rounds": 34,
+     "matches": 305,
+     "critical_t": 3.0082419901232877,
+     "difference": 2.0345732150605405,
+     "standard_error": 0.43619947067288584,
+     "lower": 0.7223796513128138,
+     "upper": 3.3467667788082673
+    }
+   },
+   "forward_gate_replay_b1_vs_b0": {
+    "2021-22": {
+     "rounds": 34,
+     "matches": 305,
+     "composite": {
+      "difference": 1.7252198421462681,
+      "standard_error": 0.39995677868168583,
+      "lower": 0.5220530662815741,
+      "upper": 2.928386618010962
+     },
+     "components": {
+      "result": {
+       "difference": 2.306887563362028,
+       "standard_error": 0.6278354032097013,
+       "lower": 0.4182067405406191,
+       "upper": 4.195568386183437
+      },
+      "total": {
+       "difference": 1.095084153113628,
+       "standard_error": 0.769554366336938,
+       "lower": -1.2199216053838682,
+       "upper": 3.410089911611124
+      },
+      "home": {
+       "difference": 2.0889978266001727,
+       "standard_error": 0.7693726038636831,
+       "lower": -0.22546114639304937,
+       "upper": 4.403456799593394
+      },
+      "away": {
+       "difference": 1.4099098255092501,
+       "standard_error": 0.6366688440422111,
+       "lower": -0.5053441249417843,
+       "upper": 3.3251637759602843
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    },
+    "2022-23": {
+     "rounds": 34,
+     "matches": 306,
+     "composite": {
+      "difference": 1.070527184035125,
+      "standard_error": 0.3837915427295441,
+      "lower": -0.08401065025808552,
+      "upper": 2.225065018328335
+     },
+     "components": {
+      "result": {
+       "difference": 2.1257469536808684,
+       "standard_error": 0.7095786786034631,
+       "lower": -0.008837422590266097,
+       "upper": 4.2603313299520025
+      },
+      "total": {
+       "difference": -0.25537127217634226,
+       "standard_error": 0.47454323468849957,
+       "lower": -1.6829121568952168,
+       "upper": 1.172169612542532
+      },
+      "home": {
+       "difference": 1.628130556077005,
+       "standard_error": 0.7002612913506445,
+       "lower": -0.47842486462196154,
+       "upper": 3.7346859767759715
+      },
+      "away": {
+       "difference": 0.7836024985589797,
+       "standard_error": 0.6605740461458496,
+       "lower": -1.2035640846426032,
+       "upper": 2.770769081760563
+      }
+     },
+     "composite_lower_above_zero": false,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    },
+    "2023-24": {
+     "rounds": 34,
+     "matches": 306,
+     "composite": {
+      "difference": 2.2119362295372853,
+      "standard_error": 0.36114276202907303,
+      "lower": 1.1255314083723258,
+      "upper": 3.298341050702245
+     },
+     "components": {
+      "result": {
+       "difference": 3.2354138422069387,
+       "standard_error": 0.6120652456548001,
+       "lower": 1.3941734695330437,
+       "upper": 5.076654214880834
+      },
+      "total": {
+       "difference": 0.7534196539740687,
+       "standard_error": 0.411605796758585,
+       "lower": -0.4847901872132585,
+       "upper": 1.991629495161396
+      },
+      "home": {
+       "difference": 1.8458801726982275,
+       "standard_error": 0.7515446801357615,
+       "lower": -0.4149480915399453,
+       "upper": 4.1067084369364
+      },
+      "away": {
+       "difference": 3.013031249269896,
+       "standard_error": 0.7015988066994161,
+       "lower": 0.9024522587363206,
+       "upper": 5.1236102398034715
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [],
+     "passes_both_conditions": true
+    },
+    "2024-25": {
+     "rounds": 34,
+     "matches": 305,
+     "composite": {
+      "difference": 2.0345732150605405,
+      "standard_error": 0.43619947067288584,
+      "lower": 0.7223796513128138,
+      "upper": 3.3467667788082673
+     },
+     "components": {
+      "result": {
+       "difference": 2.802141419709494,
+       "standard_error": 0.7945636828632923,
+       "lower": 0.4119015850931347,
+       "upper": 5.192381254325854
+      },
+      "total": {
+       "difference": 1.1485039777306967,
+       "standard_error": 0.5837309645701989,
+       "lower": -0.6075000208245449,
+       "upper": 2.904507976285938
+      },
+      "home": {
+       "difference": 3.0441382637088807,
+       "standard_error": 0.6328864552658127,
+       "lower": 1.1402626539979794,
+       "upper": 4.948013873419782
+      },
+      "away": {
+       "difference": 1.1435091990930997,
+       "standard_error": 0.7757421824353856,
+       "lower": -1.1901110076189072,
+       "upper": 3.4771294058051065
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    }
+   },
+   "component_round_correlation_b1_minus_b0": {
+    "order": [
+     "result",
+     "total",
+     "home",
+     "away"
+    ],
+    "matrix": [
+     [
+      1.0,
+      -0.139,
+      0.413,
+      0.3377
+     ],
+     [
+      -0.139,
+      1.0,
+      0.2921,
+      0.0576
+     ],
+     [
+      0.413,
+      0.2921,
+      1.0,
+      -0.1624
+     ],
+     [
+      0.3377,
+      0.0576,
+      -0.1624,
+      1.0
+     ]
+    ]
+   },
+   "grid": [
+    {
+     "decay_per_day": 0.001,
+     "ridge": 4.0,
+     "score": 75.41153920868537,
+     "by_season": {
+      "2021-22": 75.59953396644626,
+      "2022-23": 74.95844912876156,
+      "2023-24": 75.93781255504237,
+      "2024-25": 75.15012123935541
+     },
+     "minus_default_family30": {
+      "difference": 0.022997694001781515,
+      "standard_error": 0.03213551026380091,
+      "lower": -0.08011026284390987,
+      "upper": 0.1261056508474729,
+      "critical_t": 3.208536475670576,
+      "rounds": 136
+     },
+     "t_statistic_all_outer_seasons": 0.7156473886051001,
+     "rounds_needed_for_80pct_power_if_true": 4223,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.06427102052760182,
+      "half_width": 0.1933427826992076,
+      "difference_needed_for_80pct_power": 0.24743463827863793
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 8.0,
+     "score": 75.42872631935198,
+     "by_season": {
+      "2021-22": 75.61880947836151,
+      "2022-23": 74.99906354619456,
+      "2023-24": 75.95703739274107,
+      "2024-25": 75.1396714230608
+     },
+     "minus_default_family30": {
+      "difference": 0.04018480466839024,
+      "standard_error": 0.02728452417751642,
+      "lower": -0.04735858637648692,
+      "upper": 0.12772819571326738,
+      "critical_t": 3.208536475670576,
+      "rounds": 136
+     },
+     "t_statistic_all_outer_seasons": 1.4728057710276723,
+     "rounds_needed_for_80pct_power_if_true": 1001,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.05456904835503284,
+      "half_width": 0.1641569026226779,
+      "difference_needed_for_80pct_power": 0.21008337241414063
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 16.0,
+     "score": 75.42375760889477,
+     "by_season": {
+      "2021-22": 75.6125954375155,
+      "2022-23": 75.05630820806189,
+      "2023-24": 75.94296101472207,
+      "2024-25": 75.08266822116488
+     },
+     "minus_default_family30": {
+      "difference": 0.03521609421118302,
+      "standard_error": 0.031577076659070356,
+      "lower": -0.06610010804449018,
+      "upper": 0.13653229646685622,
+      "critical_t": 3.208536475670576,
+      "rounds": 136
+     },
+     "t_statistic_all_outer_seasons": 1.115242382675325,
+     "rounds_needed_for_80pct_power_if_true": 1742,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.06315415331814071,
+      "half_width": 0.18998297586231483,
+      "difference_needed_for_80pct_power": 0.24313485228318138
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 4.0,
+     "score": 75.36447640035495,
+     "by_season": {
+      "2021-22": 75.5573692207128,
+      "2022-23": 74.85485483070592,
+      "2023-24": 76.00920985289332,
+      "2024-25": 75.0360287073278
+     },
+     "minus_default_family30": {
+      "difference": -0.02406511432862947,
+      "standard_error": 0.016753050381774926,
+      "lower": -0.07781788755730118,
+      "upper": 0.029687658900042248,
+      "critical_t": 3.208536475670576,
+      "rounds": 136
+     },
+     "t_statistic_all_outer_seasons": -1.4364616461017206,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.03350610076354985,
+      "half_width": 0.10079445924221263,
+      "difference_needed_for_80pct_power": 0.12899390509904982
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 8.0,
+     "score": 75.38854151468358,
+     "by_season": {
+      "2021-22": 75.5817949018998,
+      "2022-23": 74.91728390043495,
+      "2023-24": 76.01779270183893,
+      "2024-25": 75.03677654284621
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 16.0,
+     "score": 75.38239824859134,
+     "by_season": {
+      "2021-22": 75.57475917059266,
+      "2022-23": 74.99107710261558,
+      "2023-24": 75.97460462449283,
+      "2024-25": 74.98849345656619
+     },
+     "minus_default_family30": {
+      "difference": -0.006143266092243351,
+      "standard_error": 0.023527354936988622,
+      "lower": -0.08163164258361955,
+      "upper": 0.06934511039913285,
+      "critical_t": 3.208536475670576,
+      "rounds": 136
+     },
+     "t_statistic_all_outer_seasons": -0.26111163404030563,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.047054709873977245,
+      "half_width": 0.1415519540759672,
+      "difference_needed_for_80pct_power": 0.18115419704551952
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 4.0,
+     "score": 75.21801255474755,
+     "by_season": {
+      "2021-22": 75.44889003052003,
+      "2022-23": 74.5375257887016,
+      "2023-24": 76.09972819857201,
+      "2024-25": 74.78524643438415
+     },
+     "minus_default_family30": {
+      "difference": -0.17052895993604017,
+      "standard_error": 0.05051793352062344,
+      "lower": -0.33261759231246174,
+      "upper": -0.008440327559618599,
+      "critical_t": 3.208536475670576,
+      "rounds": 136
+     },
+     "t_statistic_all_outer_seasons": -3.3756123430192058,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.1010358670412469,
+      "half_width": 0.3039403377419924,
+      "difference_needed_for_80pct_power": 0.3889742687963556
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 8.0,
+     "score": 75.26185540991128,
+     "by_season": {
+      "2021-22": 75.48624881160777,
+      "2022-23": 74.65093118243396,
+      "2023-24": 76.08732896552448,
+      "2024-25": 74.82220923965875
+     },
+     "minus_default_family30": {
+      "difference": -0.12668610477231745,
+      "standard_error": 0.043948948368448655,
+      "lower": -0.2676979086798478,
+      "upper": 0.014325699135212894,
+      "critical_t": 3.208536475670576,
+      "rounds": 136
+     },
+     "t_statistic_all_outer_seasons": -2.8825742020090415,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.08789789673689731,
+      "half_width": 0.26441814380745526,
+      "difference_needed_for_80pct_power": 0.3383948800876274
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 16.0,
+     "score": 75.25062034588552,
+     "by_season": {
+      "2021-22": 75.47029030045084,
+      "2022-23": 74.75457806734263,
+      "2023-24": 75.97984346380352,
+      "2024-25": 74.79700502460287
+     },
+     "minus_default_family30": {
+      "difference": -0.13792116879806313,
+      "standard_error": 0.05311085568850054,
+      "lower": -0.3083292865286932,
+      "upper": 0.032486948932566956,
+      "critical_t": 3.208536475670576,
+      "rounds": 136
+     },
+     "t_statistic_all_outer_seasons": -2.5968545791651696,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.10622171137700108,
+      "half_width": 0.3195406124270512,
+      "difference_needed_for_80pct_power": 0.4089390601883889
+     }
+    }
+   ],
+   "nested_grid_choice": [
+    {
+     "season": "2022-23",
+     "chosen": [
+      0.001,
+      8.0
+     ],
+     "chosen_score": 74.99906354619456,
+     "default_score": 74.91728390043495,
+     "difference": 0.08177964575961028
+    },
+    {
+     "season": "2023-24",
+     "chosen": [
+      0.001,
+      16.0
+     ],
+     "chosen_score": 75.94296101472207,
+     "default_score": 76.01779270183893,
+     "difference": -0.0748316871168555
+    },
+    {
+     "season": "2024-25",
+     "chosen": [
+      0.001,
+      16.0
+     ],
+     "chosen_score": 75.08266822116488,
+     "default_score": 75.03677654284621,
+     "difference": 0.04589167831866803
+    }
+   ],
+   "nested_grid_choice_mean_difference": 0.017613212320474265,
+   "one_forward_season_gate": {
+    "rounds": 34,
+    "round_sd_of_b1_minus_b0": 2.3255394782340595,
+    "standard_error_one_season": 0.3988267302101894,
+    "half_width_family10": 1.1997673166018639,
+    "difference_needed_for_80pct_power_family10": 1.5354283612632151,
+    "power_for_observed_b1_minus_b0": 0.9200824959958829
+   },
+   "newcomers": {
+    "rule": "exactly one side has fewer than 19 matches in the training window; first-match fallbacks excluded",
+    "matches": 102,
+    "rounds": 51,
+    "expected_goals_for": 1.2237181806071826,
+    "actual_goals_for": 1.1176470588235294,
+    "expected_goals_against": 2.0230686313941355,
+    "actual_goals_against": 2.0098039215686274,
+    "expected_minus_actual_goal_difference": {
+     "difference": 0.09280641195814483,
+     "standard_error": 0.18191658774865274,
+     "lower": -0.27258380800668935,
+     "upper": 0.458196631922979
+    },
+    "b1_score": 77.01505898247312,
+    "b0_score": 73.65231059092204,
+    "b1_minus_b0": {
+     "difference": 3.362748391551078,
+     "standard_error": 0.8483075848167587,
+     "lower": 1.658872462203188,
+     "upper": 5.066624320898968
+    }
+   },
+   "without_alias_table": {
+    "spellings_joined_by_team_key_alone": {
+     "bayern-munchen": [
+      "Bayern München",
+      "FC Bayern München"
+     ]
+    },
+    "spellings_joined_only_by_the_alias_table": {
+     "tsg-1899-hoffenheim": [
+      "1899 Hoffenheim",
+      "TSG 1899 Hoffenheim"
+     ],
+     "sv-werder-bremen": [
+      "SV Werder Bremen",
+      "Werder Bremen"
+     ],
+     "borussia-monchengladbach": [
+      "Bor. Mönchengladbach",
+      "Borussia Mönchengladbach"
+     ],
+     "bayer-04-leverkusen": [
+      "Bayer 04 Leverkusen",
+      "Bayer Leverkusen"
+     ]
+    },
+    "clubs_split_in_two_without_the_table": 4,
+    "score": 75.37426945738362,
+    "fallbacks": {
+     "unseen_team": 6
+    },
+    "by_season": {
+     "2021-22": {
+      "b1": 75.5381059076142,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2021-22/vfb-stuttgart/spvgg-greuther-furth-1903",
+       "2021-22/vfl-wolfsburg/vfl-bochum-1848"
+      ],
+      "fallback_fixtures_with_table": [
+       "2021-22/vfb-stuttgart/spvgg-greuther-furth-1903",
+       "2021-22/vfl-wolfsburg/vfl-bochum-1848"
+      ],
+      "difference_vs_aliased": -0.04368899428560269
+     },
+     "2022-23": {
+      "b1": 74.90383517244985,
+      "fallbacks": {},
+      "fallback_fixtures": [],
+      "fallback_fixtures_with_table": [],
+      "difference_vs_aliased": -0.013448727985107212
+     },
+     "2023-24": {
+      "b1": 76.01779270183893,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2023-24/vfl-wolfsburg/1-heidenheim-1846",
+       "2023-24/eintracht-frankfurt/sv-darmstadt-98"
+      ],
+      "fallback_fixtures_with_table": [
+       "2023-24/vfl-wolfsburg/1-heidenheim-1846",
+       "2023-24/eintracht-frankfurt/sv-darmstadt-98"
+      ],
+      "difference_vs_aliased": 0.0
+     },
+     "2024-25": {
+      "b1": 75.03677654284621,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2024-25/tsg-1899-hoffenheim/holstein-kiel",
+       "2024-25/st-pauli-1910/1-heidenheim-1846"
+      ],
+      "fallback_fixtures_with_table": [
+       "2024-25/tsg-1899-hoffenheim/holstein-kiel",
+       "2024-25/st-pauli-1910/1-heidenheim-1846"
+      ],
+      "difference_vs_aliased": 0.0
+     }
+    },
+    "difference_vs_aliased": -0.014272057299962171
+   }
+  },
+  "it": {
+   "fixtures_loaded": 2660,
+   "files_used_for_training_or_scoring": {
+    "2018-19": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2019-20": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2020-21": {
+     "regular_rows": 380,
+     "usable_scores": 379,
+     "awarded_excluded": 1,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2021-22": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2022-23": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2023-24": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2024-25": {
+     "regular_rows": 380,
+     "usable_scores": 370,
+     "awarded_excluded": 0,
+     "no_valid_score": 10,
+     "no_clock": 0
+    }
+   },
+   "fits": 695,
+   "default": {
+    "matches": 1510,
+    "rounds": 151,
+    "b1": 75.69467018813258,
+    "b0": 73.63698871462888,
+    "b1_items": [
+     70.55806467996167,
+     75.29279410549994,
+     77.41124578656928,
+     79.51657618049944
+    ],
+    "b0_items": [
+     67.07706263504673,
+     74.67785940139429,
+     75.65722012464002,
+     77.13581269743453
+    ],
+    "fallbacks": {
+     "unseen_team": 7
+    },
+    "fallback_fixtures": [
+     "2021-22/bologna-1909/us-salernitana-1919",
+     "2021-22/ssc-napoli/venezia",
+     "2022-23/ac-monza/torino",
+     "2022-23/acf-fiorentina/us-cremonese",
+     "2023-24/frosinone-calcio/ssc-napoli",
+     "2024-25/parma-calcio-1913/acf-fiorentina",
+     "2024-25/juventus/como-1907"
+    ],
+    "by_season": {
+     "2021-22": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 75.3750938813135,
+      "b0": 73.47704605754555,
+      "b1_items": [
+       70.54375819026235,
+       75.27668917124429,
+       76.50793288443937,
+       79.17199527930799
+      ],
+      "b0_items": [
+       67.04208782641507,
+       75.31652252279079,
+       75.44254254486137,
+       76.10703133611496
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2021-22/bologna-1909/us-salernitana-1919",
+       "2021-22/ssc-napoli/venezia"
+      ]
+     },
+     "2022-23": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 75.38638770785913,
+      "b0": 73.37949446955444,
+      "b1_items": [
+       70.37290537374375,
+       74.74873740959889,
+       77.4875896952929,
+       78.93631835280098
+      ],
+      "b0_items": [
+       67.23789336072689,
+       73.52414199805033,
+       75.61990643146837,
+       77.13603608797223
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2022-23/ac-monza/torino",
+       "2022-23/acf-fiorentina/us-cremonese"
+      ]
+     },
+     "2023-24": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 76.16134101126393,
+      "b0": 73.732771074107,
+      "b1_items": [
+       70.44404061136186,
+       75.89600125380406,
+       77.6137435691578,
+       80.69157861073195
+      ],
+      "b0_items": [
+       67.02449996245298,
+       74.88601368350218,
+       75.68836938015464,
+       77.33220127031824
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2023-24/frosinone-calcio/ssc-napoli"
+      ]
+     },
+     "2024-25": {
+      "matches": 370,
+      "rounds": 37,
+      "b1": 75.86021458355219,
+      "b0": 73.96733662332693,
+      "b1_items": [
+       70.88002724351975,
+       75.24858519497012,
+       78.05259459767944,
+       79.25965129803947
+      ],
+      "b0_items": [
+       67.0017884920932,
+       74.99305399582408,
+       75.88403084524968,
+       77.99047316014075
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2024-25/parma-calcio-1913/acf-fiorentina",
+       "2024-25/juventus/como-1907"
+      ]
+     }
+    }
+   },
+   "b1_minus_b0_family10": {
+    "method": "round-cluster-t-v1",
+    "unit": "season_and_official_round",
+    "rounds": 151,
+    "matches": 1510,
+    "degrees_of_freedom": 150,
+    "family_comparisons": 10,
+    "family_confidence": 0.95,
+    "individual_confidence": 0.995,
+    "critical_t": 2.849152430663323,
+    "intervals": [
+     {
+      "difference": 2.05768147350369,
+      "standard_error": 0.18861567797231438,
+      "lower": 1.52028665614766,
+      "upper": 2.59507629085972
+     },
+     {
+      "difference": 3.4810020449149386,
+      "standard_error": 0.3005407064267176,
+      "lower": 2.624715760685984,
+      "upper": 4.3372883291438935
+     },
+     {
+      "difference": 0.6149347041056469,
+      "standard_error": 0.23411905887532,
+      "lower": -0.05210618155358071,
+      "upper": 1.2819755897648744
+     },
+     {
+      "difference": 1.7540256619292585,
+      "standard_error": 0.31841263104107864,
+      "lower": 0.8468195402446654,
+      "upper": 2.6612317836138515
+     },
+     {
+      "difference": 2.3807634830649125,
+      "standard_error": 0.29395550175274116,
+      "lower": 1.5432394507392333,
+      "upper": 3.2182875153905917
+     }
+    ]
+   },
+   "b1_minus_b0_single_season_family10": {
+    "2021-22": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 1.8980478237679494,
+     "standard_error": 0.3473972779448873,
+     "lower": 0.8609821634214037,
+     "upper": 2.9351134841144955
+    },
+    "2022-23": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 2.0068932383046825,
+     "standard_error": 0.3406327018943284,
+     "lower": 0.9900214884295657,
+     "upper": 3.023764988179799
+    },
+    "2023-24": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 2.4285699371569067,
+     "standard_error": 0.35456670667623835,
+     "lower": 1.3701017822785366,
+     "upper": 3.487038092035277
+    },
+    "2024-25": {
+     "rounds": 37,
+     "matches": 370,
+     "critical_t": 2.990486572384287,
+     "difference": 1.8928779602252621,
+     "standard_error": 0.46572794824792846,
+     "lower": 0.5001247846057479,
+     "upper": 3.2856311358447763
+    }
+   },
+   "forward_gate_replay_b1_vs_b0": {
+    "2021-22": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 1.8980478237679497,
+      "standard_error": 0.34739727794488723,
+      "lower": 0.8609821634214039,
+      "upper": 2.9351134841144955
+     },
+     "components": {
+      "result": {
+       "difference": 3.501670363847273,
+       "standard_error": 0.6241824954670008,
+       "lower": 1.6383332770755867,
+       "upper": 5.365007450618959
+      },
+      "total": {
+       "difference": -0.03983335154651725,
+       "standard_error": 0.2833848004552931,
+       "lower": -0.8858061437195363,
+       "upper": 0.8061394406265018
+      },
+      "home": {
+       "difference": 1.0653903395780084,
+       "standard_error": 0.7085580720398644,
+       "lower": -1.0498284359429466,
+       "upper": 3.1806091150989637
+      },
+      "away": {
+       "difference": 3.064963943193029,
+       "standard_error": 0.5845779884409724,
+       "lower": 1.3198559757587818,
+       "upper": 4.8100719106272765
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "home"
+     ],
+     "passes_both_conditions": false
+    },
+    "2022-23": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 2.006893238304682,
+      "standard_error": 0.3406327018943284,
+      "lower": 0.9900214884295653,
+      "upper": 3.0237649881797988
+     },
+     "components": {
+      "result": {
+       "difference": 3.135012013016845,
+       "standard_error": 0.6333232825641549,
+       "lower": 1.244387445862249,
+       "upper": 5.025636580171441
+      },
+      "total": {
+       "difference": 1.2245954115485733,
+       "standard_error": 0.4487112443471891,
+       "lower": -0.1149171651667289,
+       "upper": 2.5641079882638755
+      },
+      "home": {
+       "difference": 1.8676832638245362,
+       "standard_error": 0.5390006659934109,
+       "lower": 0.2586347274846408,
+       "upper": 3.4767318001644316
+      },
+      "away": {
+       "difference": 1.800282264828759,
+       "standard_error": 0.5972398727467219,
+       "lower": 0.01737548248595977,
+       "upper": 3.583189047171558
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [],
+     "passes_both_conditions": true
+    },
+    "2023-24": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 2.4285699371569063,
+      "standard_error": 0.3545667066762384,
+      "lower": 1.370101782278536,
+      "upper": 3.4870380920352764
+     },
+     "components": {
+      "result": {
+       "difference": 3.4195406489088724,
+       "standard_error": 0.5125163107378884,
+       "lower": 1.8895543767709386,
+       "upper": 4.9495269210468065
+      },
+      "total": {
+       "difference": 1.009987570301881,
+       "standard_error": 0.498139608395477,
+       "lower": -0.47708073657006134,
+       "upper": 2.4970558771738234
+      },
+      "home": {
+       "difference": 1.9253741890031655,
+       "standard_error": 0.6762966837202328,
+       "lower": -0.09353646867841214,
+       "upper": 3.9442848466847433
+      },
+      "away": {
+       "difference": 3.359377340413711,
+       "standard_error": 0.4810461882672929,
+       "lower": 1.923337064439663,
+       "upper": 4.795417616387759
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [],
+     "passes_both_conditions": true
+    },
+    "2024-25": {
+     "rounds": 37,
+     "matches": 370,
+     "composite": {
+      "difference": 1.8928779602252621,
+      "standard_error": 0.46572794824792846,
+      "lower": 0.5001247846057479,
+      "upper": 3.2856311358447763
+     },
+     "components": {
+      "result": {
+       "difference": 3.8782387514265393,
+       "standard_error": 0.6450680105749242,
+       "lower": 1.9491715275275832,
+       "upper": 5.807305975325495
+      },
+      "total": {
+       "difference": 0.2555311991460307,
+       "standard_error": 0.5847621910381199,
+       "lower": -1.493192281191482,
+       "upper": 2.004254679483543
+      },
+      "home": {
+       "difference": 2.1685637524297605,
+       "standard_error": 0.6205846855958574,
+       "lower": 0.31271358312802455,
+       "upper": 4.0244139217314965
+      },
+      "away": {
+       "difference": 1.2691781378987224,
+       "standard_error": 0.6350233149703971,
+       "lower": -0.6298505586712078,
+       "upper": 3.1682068344686525
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    }
+   },
+   "component_round_correlation_b1_minus_b0": {
+    "order": [
+     "result",
+     "total",
+     "home",
+     "away"
+    ],
+    "matrix": [
+     [
+      1.0,
+      -0.0003,
+      0.4899,
+      0.3756
+     ],
+     [
+      -0.0003,
+      1.0,
+      0.2904,
+      0.2697
+     ],
+     [
+      0.4899,
+      0.2904,
+      1.0,
+      -0.0225
+     ],
+     [
+      0.3756,
+      0.2697,
+      -0.0225,
+      1.0
+     ]
+    ]
+   },
+   "grid": [
+    {
+     "decay_per_day": 0.001,
+     "ridge": 4.0,
+     "score": 75.64109001819871,
+     "by_season": {
+      "2021-22": 75.34412024593517,
+      "2022-23": 75.17786651850408,
+      "2023-24": 76.10314882084215,
+      "2024-25": 75.9472821758733
+     },
+     "minus_default_family30": {
+      "difference": -0.0535801699338732,
+      "standard_error": 0.030702142407290214,
+      "lower": -0.15188759949562577,
+      "upper": 0.04472725962787938,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -1.7451606217926539,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.061201963721510814,
+      "half_width": 0.18270279864260536,
+      "difference_needed_for_80pct_power": 0.23421167084698805
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 8.0,
+     "score": 75.66207123196297,
+     "by_season": {
+      "2021-22": 75.35957934176113,
+      "2022-23": 75.2126257223393,
+      "2023-24": 76.10665195212252,
+      "2024-25": 75.97773484891717
+     },
+     "minus_default_family30": {
+      "difference": -0.0325989561696221,
+      "standard_error": 0.02740406527462362,
+      "lower": -0.12034603195841254,
+      "upper": 0.055148119619168344,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -1.1895664326784752,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.05462754313722363,
+      "half_width": 0.1630765486472863,
+      "difference_needed_for_80pct_power": 0.20905224888949403
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 16.0,
+     "score": 75.65891710079389,
+     "by_season": {
+      "2021-22": 75.34544536577219,
+      "2022-23": 75.2406715798494,
+      "2023-24": 76.07696375226429,
+      "2024-25": 75.98106528919496
+     },
+     "minus_default_family30": {
+      "difference": -0.03575308733869492,
+      "standard_error": 0.029564560967050877,
+      "lower": -0.13041801189791286,
+      "upper": 0.05891183722052301,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -1.2093224512463092,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.058934297279469285,
+      "half_width": 0.17593326086708316,
+      "difference_needed_for_80pct_power": 0.22553361684318296
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 4.0,
+     "score": 75.67877146048022,
+     "by_season": {
+      "2021-22": 75.3621853813896,
+      "2022-23": 75.35848137454367,
+      "2023-24": 76.17106689268545,
+      "2024-25": 75.82725978067575
+     },
+     "minus_default_family30": {
+      "difference": -0.015898727652361937,
+      "standard_error": 0.01410459297203549,
+      "lower": -0.061061252850158065,
+      "upper": 0.029263797545434192,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -1.1272021591749293,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.028116239444457108,
+      "half_width": 0.08393383678312337,
+      "difference_needed_for_80pct_power": 0.10759706090779877
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 8.0,
+     "score": 75.69467018813258,
+     "by_season": {
+      "2021-22": 75.3750938813135,
+      "2022-23": 75.38638770785913,
+      "2023-24": 76.16134101126393,
+      "2024-25": 75.86021458355219
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 16.0,
+     "score": 75.6694816639007,
+     "by_season": {
+      "2021-22": 75.34548802165793,
+      "2022-23": 75.3905693104442,
+      "2023-24": 76.09480493479903,
+      "2024-25": 75.85186392180437
+     },
+     "minus_default_family30": {
+      "difference": -0.025188524231879634,
+      "standard_error": 0.020859352463595018,
+      "lower": -0.09197960662004925,
+      "upper": 0.04160255815628999,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -1.2075410430808025,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.04158124588817011,
+      "half_width": 0.12413016728325771,
+      "difference_needed_for_80pct_power": 0.1591258267411581
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 4.0,
+     "score": 75.63088687808207,
+     "by_season": {
+      "2021-22": 75.3396453912109,
+      "2022-23": 75.46386015968449,
+      "2023-24": 76.13750412231782,
+      "2024-25": 75.58123110833219
+     },
+     "minus_default_family30": {
+      "difference": -0.06378331005050546,
+      "standard_error": 0.04641551391859712,
+      "lower": -0.21240453017882954,
+      "upper": 0.08483791007781862,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -1.3741808431199907,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.09252515870966493,
+      "half_width": 0.2762101804123241,
+      "difference_needed_for_80pct_power": 0.35408131862208203
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 8.0,
+     "score": 75.64531096177929,
+     "by_season": {
+      "2021-22": 75.35493560859354,
+      "2022-23": 75.48426609166623,
+      "2023-24": 76.10517597279777,
+      "2024-25": 75.6366379365537
+     },
+     "minus_default_family30": {
+      "difference": -0.04935922635329026,
+      "standard_error": 0.04111044205842555,
+      "lower": -0.18099374987603756,
+      "upper": 0.08227529716945703,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -1.2006493698885956,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.08194997437174288,
+      "half_width": 0.2446406741871387,
+      "difference_needed_for_80pct_power": 0.31361151270915366
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 16.0,
+     "score": 75.58172041299298,
+     "by_season": {
+      "2021-22": 75.29437721043223,
+      "2022-23": 75.44667336918559,
+      "2023-24": 75.96912082335278,
+      "2024-25": 75.6176559202448
+     },
+     "minus_default_family30": {
+      "difference": -0.11294977513959396,
+      "standard_error": 0.051062835639537486,
+      "lower": -0.27645159371839184,
+      "upper": 0.0505520434392039,
+      "critical_t": 3.2019729521679734,
+      "rounds": 151
+     },
+     "t_statistic_all_outer_seasons": -2.211976160840899,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 38,
+      "standard_error": 0.10178917721345652,
+      "half_width": 0.30386553661986876,
+      "difference_needed_for_80pct_power": 0.38953346951063006
+     }
+    }
+   ],
+   "nested_grid_choice": [
+    {
+     "season": "2022-23",
+     "chosen": [
+      0.002,
+      8.0
+     ],
+     "chosen_score": 75.38638770785913,
+     "default_score": 75.38638770785913,
+     "difference": 0.0
+    },
+    {
+     "season": "2023-24",
+     "chosen": [
+      0.004,
+      8.0
+     ],
+     "chosen_score": 76.10517597279777,
+     "default_score": 76.16134101126393,
+     "difference": -0.05616503846616183
+    },
+    {
+     "season": "2024-25",
+     "chosen": [
+      0.004,
+      8.0
+     ],
+     "chosen_score": 75.6366379365537,
+     "default_score": 75.86021458355219,
+     "difference": -0.22357664699849522
+    }
+   ],
+   "nested_grid_choice_mean_difference": -0.09324722848821902,
+   "one_forward_season_gate": {
+    "rounds": 38,
+    "round_sd_of_b1_minus_b0": 2.3177482543452226,
+    "standard_error_one_season": 0.3759884156432261,
+    "half_width_family10": 1.1224171843210393,
+    "difference_needed_for_80pct_power_family10": 1.4388570185038168,
+    "power_for_observed_b1_minus_b0": 0.9935674457091646
+   },
+   "newcomers": {
+    "rule": "exactly one side has fewer than 19 matches in the training window; first-match fallbacks excluded",
+    "matches": 120,
+    "rounds": 71,
+    "expected_goals_for": 1.1400499340772647,
+    "actual_goals_for": 1.0166666666666666,
+    "expected_goals_against": 1.696555731506334,
+    "actual_goals_against": 1.75,
+    "expected_minus_actual_goal_difference": {
+     "difference": 0.17682753590426395,
+     "standard_error": 0.12040422494476438,
+     "lower": -0.06331111873962011,
+     "upper": 0.416966190548148
+    },
+    "b1_score": 75.73980076660608,
+    "b0_score": 73.3334556706962,
+    "b1_minus_b0": {
+     "difference": 2.4063450959098818,
+     "standard_error": 0.6608427331002135,
+     "lower": 1.0883358239705152,
+     "upper": 3.7243543678492483
+    }
+   },
+   "without_alias_table": {
+    "spellings_joined_by_team_key_alone": {
+     "juventus": [
+      "Juventus",
+      "Juventus FC"
+     ],
+     "hellas-verona": [
+      "Hellas Verona",
+      "Hellas Verona FC"
+     ]
+    },
+    "spellings_joined_only_by_the_alias_table": {
+     "ss-lazio": [
+      "Lazio Roma",
+      "SS Lazio"
+     ],
+     "bologna-1909": [
+      "Bologna FC",
+      "Bologna FC 1909"
+     ],
+     "us-sassuolo-calcio": [
+      "Sassuolo Calcio",
+      "US Sassuolo Calcio"
+     ],
+     "internazionale-milano": [
+      "FC Internazionale Milano",
+      "Inter"
+     ],
+     "atalanta-bc": [
+      "Atalanta",
+      "Atalanta BC"
+     ],
+     "uc-sampdoria": [
+      "Sampdoria",
+      "UC Sampdoria"
+     ]
+    },
+    "clubs_split_in_two_without_the_table": 6,
+    "score": 75.68008853807814,
+    "fallbacks": {
+     "unseen_team": 7
+    },
+    "by_season": {
+     "2021-22": {
+      "b1": 75.32797704106696,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2021-22/bologna-1909/us-salernitana-1919",
+       "2021-22/ssc-napoli/venezia"
+      ],
+      "fallback_fixtures_with_table": [
+       "2021-22/bologna-1909/us-salernitana-1919",
+       "2021-22/ssc-napoli/venezia"
+      ],
+      "difference_vs_aliased": -0.047116840246545166
+     },
+     "2022-23": {
+      "b1": 75.37556167552091,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2022-23/ac-monza/torino",
+       "2022-23/acf-fiorentina/us-cremonese"
+      ],
+      "fallback_fixtures_with_table": [
+       "2022-23/ac-monza/torino",
+       "2022-23/acf-fiorentina/us-cremonese"
+      ],
+      "difference_vs_aliased": -0.010826032338215441
+     },
+     "2023-24": {
+      "b1": 76.16134101126393,
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2023-24/frosinone-calcio/ssc-napoli"
+      ],
+      "fallback_fixtures_with_table": [
+       "2023-24/frosinone-calcio/ssc-napoli"
+      ],
+      "difference_vs_aliased": 0.0
+     },
+     "2024-25": {
+      "b1": 75.86021458355219,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2024-25/parma-calcio-1913/acf-fiorentina",
+       "2024-25/juventus/como-1907"
+      ],
+      "fallback_fixtures_with_table": [
+       "2024-25/parma-calcio-1913/acf-fiorentina",
+       "2024-25/juventus/como-1907"
+      ],
+      "difference_vs_aliased": 0.0
+     }
+    },
+    "difference_vs_aliased": -0.014581650054438455
+   }
+  },
+  "fr": {
+   "fixtures_loaded": 2512,
+   "files_used_for_training_or_scoring": {
+    "2018-19": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2019-20": {
+     "regular_rows": 380,
+     "usable_scores": 279,
+     "awarded_excluded": 0,
+     "no_valid_score": 101,
+     "no_clock": 101
+    },
+    "2020-21": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2021-22": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2022-23": {
+     "regular_rows": 380,
+     "usable_scores": 380,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2023-24": {
+     "regular_rows": 306,
+     "usable_scores": 306,
+     "awarded_excluded": 0,
+     "no_valid_score": 0,
+     "no_clock": 0
+    },
+    "2024-25": {
+     "regular_rows": 306,
+     "usable_scores": 305,
+     "awarded_excluded": 1,
+     "no_valid_score": 0,
+     "no_clock": 0
+    }
+   },
+   "fits": 413,
+   "default": {
+    "matches": 1371,
+    "rounds": 144,
+    "b1": 75.22742892575461,
+    "b0": 73.7119757245816,
+    "b1_items": [
+     70.04037577067506,
+     75.33774687219196,
+     77.2527906786232,
+     78.27880238152824
+    ],
+    "b0_items": [
+     67.4827141447509,
+     75.13942835025757,
+     75.3585709091362,
+     76.86718949418177
+    ],
+    "fallbacks": {
+     "unseen_team": 5
+    },
+    "fallback_fixtures": [
+     "2021-22/es-troyes-ac/paris-saint-germain",
+     "2021-22/girondins-bordeaux/clermont-foot-63",
+     "2022-23/olympique-lyonnais/ac-ajaccio",
+     "2022-23/lille-osc/aj-auxerre",
+     "2023-24/montpellier-hsc/le-havre-ac"
+    ],
+    "by_season": {
+     "2021-22": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 74.90278320909158,
+      "b0": 73.71043975069252,
+      "b1_items": [
+       69.54838494427896,
+       74.87429761928058,
+       76.95874601405063,
+       78.22970425875616
+      ],
+      "b0_items": [
+       67.29587950138504,
+       74.99220914127423,
+       75.2380540166205,
+       77.3156163434903
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2021-22/es-troyes-ac/paris-saint-germain",
+       "2021-22/girondins-bordeaux/clermont-foot-63"
+      ]
+     },
+     "2022-23": {
+      "matches": 380,
+      "rounds": 38,
+      "b1": 75.75937952838396,
+      "b0": 73.83219355955679,
+      "b1_items": [
+       70.59710224661077,
+       75.49464481858604,
+       78.2657934926316,
+       78.67997755570742
+      ],
+      "b0_items": [
+       67.47731994459835,
+       75.23251385041551,
+       75.67520775623268,
+       76.94373268698061
+      ],
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2022-23/olympique-lyonnais/ac-ajaccio",
+       "2022-23/lille-osc/aj-auxerre"
+      ]
+     },
+     "2023-24": {
+      "matches": 306,
+      "rounds": 34,
+      "b1": 74.85130112581776,
+      "b0": 73.6007368783155,
+      "b1_items": [
+       68.85632530676895,
+       75.24474268813218,
+       77.02472242188973,
+       78.2794140864802
+      ],
+      "b0_items": [
+       67.05642007495518,
+       75.08221081599768,
+       75.46988213567975,
+       76.79443448662937
+      ],
+      "fallbacks": {
+       "unseen_team": 1
+      },
+      "fallback_fixtures": [
+       "2023-24/montpellier-hsc/le-havre-ac"
+      ]
+     },
+     "2024-25": {
+      "matches": 305,
+      "rounds": 34,
+      "b1": 75.34650843432338,
+      "b0": 73.67571336308889,
+      "b1_items": [
+       71.14765411536428,
+       75.81298876333577,
+       76.58585556313079,
+       77.8395352954627
+      ],
+      "b0_items": [
+       68.1499041312902,
+       75.26427875955983,
+       75.00254855483121,
+       76.2861220066743
+      ],
+      "fallbacks": {},
+      "fallback_fixtures": []
+     }
+    }
+   },
+   "b1_minus_b0_family10": {
+    "method": "round-cluster-t-v1",
+    "unit": "season_and_official_round",
+    "rounds": 144,
+    "matches": 1371,
+    "degrees_of_freedom": 143,
+    "family_comparisons": 10,
+    "family_confidence": 0.95,
+    "individual_confidence": 0.995,
+    "critical_t": 2.8512441482258004,
+    "intervals": [
+     {
+      "difference": 1.5154532011730009,
+      "standard_error": 0.185005730656964,
+      "lower": 0.9879566942490937,
+      "upper": 2.042949708096908
+     },
+     {
+      "difference": 2.5576616259241574,
+      "standard_error": 0.275180236683573,
+      "lower": 1.773055586372729,
+      "upper": 3.3422676654755854
+     },
+     {
+      "difference": 0.19831852193437444,
+      "standard_error": 0.2250229265427227,
+      "lower": -0.4432767805872078,
+      "upper": 0.8399138244559567
+     },
+     {
+      "difference": 1.894219769486992,
+      "standard_error": 0.31848056636663713,
+      "lower": 0.9861539183104793,
+      "upper": 2.802285620663505
+     },
+     {
+      "difference": 1.4116128873464744,
+      "standard_error": 0.2682793779118107,
+      "lower": 0.646682880985766,
+      "upper": 2.176542893707183
+     }
+    ]
+   },
+   "b1_minus_b0_single_season_family10": {
+    "2021-22": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 1.192343458399068,
+     "standard_error": 0.3492703060995212,
+     "lower": 0.14968635188022006,
+     "upper": 2.235000564917916
+    },
+    "2022-23": {
+     "rounds": 38,
+     "matches": 380,
+     "critical_t": 2.985244059716181,
+     "difference": 1.9271859688271706,
+     "standard_error": 0.36054571262678253,
+     "lower": 0.8508690219519308,
+     "upper": 3.0035029157024105
+    },
+    "2023-24": {
+     "rounds": 34,
+     "matches": 306,
+     "critical_t": 3.0082419901232877,
+     "difference": 1.25056424750226,
+     "standard_error": 0.34859907259705586,
+     "lower": 0.20189387959776028,
+     "upper": 2.2992346154067596
+    },
+    "2024-25": {
+     "rounds": 34,
+     "matches": 305,
+     "critical_t": 3.0082419901232877,
+     "difference": 1.6707950712344986,
+     "standard_error": 0.4225355773863261,
+     "lower": 0.39970580501996444,
+     "upper": 2.9418843374490327
+    }
+   },
+   "forward_gate_replay_b1_vs_b0": {
+    "2021-22": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 1.192343458399068,
+      "standard_error": 0.3492703060995212,
+      "lower": 0.14968635188022006,
+      "upper": 2.235000564917916
+     },
+     "components": {
+      "result": {
+       "difference": 2.252505442893915,
+       "standard_error": 0.4883716061255033,
+       "lower": 0.7945970067737058,
+       "upper": 3.7104138790141246
+      },
+      "total": {
+       "difference": -0.1179115219936583,
+       "standard_error": 0.43646095216673325,
+       "lower": -1.4208539867474672,
+       "upper": 1.1850309427601504
+      },
+      "home": {
+       "difference": 1.72069199743013,
+       "standard_error": 0.5928621581391865,
+       "lower": -0.04914623838539178,
+       "upper": 3.490530233245652
+      },
+      "away": {
+       "difference": 0.9140879152658518,
+       "standard_error": 0.5384255775099587,
+       "lower": -0.6932438415950065,
+       "upper": 2.52141967212671
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "away"
+     ],
+     "passes_both_conditions": false
+    },
+    "2022-23": {
+     "rounds": 38,
+     "matches": 380,
+     "composite": {
+      "difference": 1.9271859688271706,
+      "standard_error": 0.36054571262678253,
+      "lower": 0.8508690219519308,
+      "upper": 3.0035029157024105
+     },
+     "components": {
+      "result": {
+       "difference": 3.1197823020124384,
+       "standard_error": 0.5846672562276695,
+       "lower": 1.3744078484482298,
+       "upper": 4.865156755576647
+      },
+      "total": {
+       "difference": 0.26213096817052556,
+       "standard_error": 0.4134307262799731,
+       "lower": -0.9720606515609107,
+       "upper": 1.4963225879019617
+      },
+      "home": {
+       "difference": 2.5905857363989178,
+       "standard_error": 0.5160644514112244,
+       "lower": 1.0500073983928704,
+       "upper": 4.131164074404965
+      },
+      "away": {
+       "difference": 1.7362448687268035,
+       "standard_error": 0.637315736337846,
+       "lower": -0.16629814733939519,
+       "upper": 3.638787884793002
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total"
+     ],
+     "passes_both_conditions": false
+    },
+    "2023-24": {
+     "rounds": 34,
+     "matches": 306,
+     "composite": {
+      "difference": 1.25056424750226,
+      "standard_error": 0.34859907259705586,
+      "lower": 0.20189387959776028,
+      "upper": 2.2992346154067596
+     },
+     "components": {
+      "result": {
+       "difference": 1.7999052318137554,
+       "standard_error": 0.5211136641297188,
+       "lower": 0.2322692257517316,
+       "upper": 3.367541237875779
+      },
+      "total": {
+       "difference": 0.1625318721344935,
+       "standard_error": 0.5524173569751438,
+       "lower": -1.4992732171910599,
+       "upper": 1.8243369614600469
+      },
+      "home": {
+       "difference": 1.554840286209983,
+       "standard_error": 0.4783653766570819,
+       "lower": 0.11580147352900694,
+       "upper": 2.993879098890959
+      },
+      "away": {
+       "difference": 1.4849795998508246,
+       "standard_error": 0.437580405104527,
+       "lower": 0.16863185116022783,
+       "upper": 2.801327348541421
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total"
+     ],
+     "passes_both_conditions": false
+    },
+    "2024-25": {
+     "rounds": 34,
+     "matches": 305,
+     "composite": {
+      "difference": 1.6707950712344986,
+      "standard_error": 0.4225355773863261,
+      "lower": 0.39970580501996444,
+      "upper": 2.9418843374490327
+     },
+     "components": {
+      "result": {
+       "difference": 2.997749984074087,
+       "standard_error": 0.5897586543361326,
+       "lower": 1.223613236061527,
+       "upper": 4.771886732086647
+      },
+      "total": {
+       "difference": 0.5487100037759431,
+       "standard_error": 0.4109022552112034,
+       "lower": -0.6873834141867543,
+       "upper": 1.7848034217386406
+      },
+      "home": {
+       "difference": 1.583307008299588,
+       "standard_error": 0.9360201517025866,
+       "lower": -1.2324681156537027,
+       "upper": 4.399082132252879
+      },
+      "away": {
+       "difference": 1.5534132887883776,
+       "standard_error": 0.44234639685295796,
+       "lower": 0.22272828359556973,
+       "upper": 2.8840982939811854
+      }
+     },
+     "composite_lower_above_zero": true,
+     "components_with_lower_bound_below_minus_half": [
+      "total",
+      "home"
+     ],
+     "passes_both_conditions": false
+    }
+   },
+   "component_round_correlation_b1_minus_b0": {
+    "order": [
+     "result",
+     "total",
+     "home",
+     "away"
+    ],
+    "matrix": [
+     [
+      1.0,
+      0.1568,
+      0.4853,
+      0.5446
+     ],
+     [
+      0.1568,
+      1.0,
+      0.2866,
+      0.1602
+     ],
+     [
+      0.4853,
+      0.2866,
+      1.0,
+      0.0219
+     ],
+     [
+      0.5446,
+      0.1602,
+      0.0219,
+      1.0
+     ]
+    ]
+   },
+   "grid": [
+    {
+     "decay_per_day": 0.001,
+     "ridge": 4.0,
+     "score": 75.19660592445122,
+     "by_season": {
+      "2021-22": 74.83664217617147,
+      "2022-23": 75.70980913300838,
+      "2023-24": 74.91624407718466,
+      "2024-25": 75.28696569611733
+     },
+     "minus_default_family30": {
+      "difference": -0.03082300130338209,
+      "standard_error": 0.03505747707744858,
+      "lower": -0.14317736269130654,
+      "upper": 0.08153136008454237,
+      "critical_t": 3.204861580304609,
+      "rounds": 144
+     },
+     "t_statistic_all_outer_seasons": -0.8792133340139756,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.0721476926093804,
+      "half_width": 0.21703771839804573,
+      "difference_needed_for_80pct_power": 0.27775874845139187
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 8.0,
+     "score": 75.21357157306556,
+     "by_season": {
+      "2021-22": 74.86211273056463,
+      "2022-23": 75.71843609562866,
+      "2023-24": 74.92798008501862,
+      "2024-25": 75.30897103837289
+     },
+     "minus_default_family30": {
+      "difference": -0.013857352689050223,
+      "standard_error": 0.03115951416294195,
+      "lower": -0.11371928249082021,
+      "upper": 0.08600457711271976,
+      "critical_t": 3.204861580304609,
+      "rounds": 144
+     },
+     "t_statistic_all_outer_seasons": -0.4447230023095415,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.06412575111207013,
+      "half_width": 0.19290577714352447,
+      "difference_needed_for_80pct_power": 0.24687537089825456
+     }
+    },
+    {
+     "decay_per_day": 0.001,
+     "ridge": 16.0,
+     "score": 75.21601605219227,
+     "by_season": {
+      "2021-22": 74.87791810981403,
+      "2022-23": 75.69479337489864,
+      "2023-24": 74.9324096421925,
+      "2024-25": 75.32527964870131
+     },
+     "minus_default_family30": {
+      "difference": -0.011412873562330545,
+      "standard_error": 0.03253861442945631,
+      "lower": -0.11569462882364025,
+      "upper": 0.09286888169897915,
+      "critical_t": 3.204861580304609,
+      "rounds": 144
+     },
+     "t_statistic_all_outer_seasons": -0.35074860323489326,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.06696391604579255,
+      "half_width": 0.20144366407204375,
+      "difference_needed_for_80pct_power": 0.25780191769937677
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 4.0,
+     "score": 75.20849840205992,
+     "by_season": {
+      "2021-22": 74.8758586016943,
+      "2022-23": 75.75784760893485,
+      "2023-24": 74.83287532343691,
+      "2024-25": 75.3153544269291
+     },
+     "minus_default_family30": {
+      "difference": -0.018930523694692527,
+      "standard_error": 0.015026259648042542,
+      "lower": -0.06708760593638552,
+      "upper": 0.02922655854700047,
+      "critical_t": 3.204861580304609,
+      "rounds": 144
+     },
+     "t_statistic_all_outer_seasons": -1.2598294012015552,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.03092378723547922,
+      "half_width": 0.09302623525540712,
+      "difference_needed_for_80pct_power": 0.11905235121527749
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 8.0,
+     "score": 75.22742892575461,
+     "by_season": {
+      "2021-22": 74.90278320909158,
+      "2022-23": 75.75937952838396,
+      "2023-24": 74.85130112581776,
+      "2024-25": 75.34650843432338
+     }
+    },
+    {
+     "decay_per_day": 0.002,
+     "ridge": 16.0,
+     "score": 75.2183196194736,
+     "by_season": {
+      "2021-22": 74.91076095246599,
+      "2022-23": 75.71217655510608,
+      "2023-24": 74.853537003726,
+      "2024-25": 75.3521889255107
+     },
+     "minus_default_family30": {
+      "difference": -0.009109306281006488,
+      "standard_error": 0.021550788398980746,
+      "lower": -0.07817660004617416,
+      "upper": 0.05995798748416118,
+      "critical_t": 3.204861580304609,
+      "rounds": 144
+     },
+     "t_statistic_all_outer_seasons": -0.4226901639216743,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.04435115662956949,
+      "half_width": 0.13341901168360576,
+      "difference_needed_for_80pct_power": 0.17074588683656958
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 4.0,
+     "score": 75.1345901672106,
+     "by_season": {
+      "2021-22": 74.82266652829034,
+      "2022-23": 75.7548360052846,
+      "2023-24": 74.61607779090012,
+      "2024-25": 75.2706634507273
+     },
+     "minus_default_family30": {
+      "difference": -0.09283875854400382,
+      "standard_error": 0.050593297352295015,
+      "lower": -0.254983273449301,
+      "upper": 0.06930575636129337,
+      "critical_t": 3.204861580304609,
+      "rounds": 144
+     },
+     "t_statistic_all_outer_seasons": -1.8350011444706216,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.104120146963354,
+      "half_width": 0.31321859811296926,
+      "difference_needed_for_80pct_power": 0.40084832464006037
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 8.0,
+     "score": 75.16352245592789,
+     "by_season": {
+      "2021-22": 74.85823508799831,
+      "2022-23": 75.75258521190028,
+      "2023-24": 74.65855396268216,
+      "2024-25": 75.31659036240964
+     },
+     "minus_default_family30": {
+      "difference": -0.06390646982671433,
+      "standard_error": 0.04618178039909335,
+      "lower": -0.21191268353783305,
+      "upper": 0.08409974388440439,
+      "critical_t": 3.204861580304609,
+      "rounds": 144
+     },
+     "t_statistic_all_outer_seasons": -1.383802644126058,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.09504131997367866,
+      "half_width": 0.2859072895415633,
+      "difference_needed_for_80pct_power": 0.3658960824982088
+     }
+    },
+    {
+     "decay_per_day": 0.004,
+     "ridge": 16.0,
+     "score": 75.13226700919779,
+     "by_season": {
+      "2021-22": 74.85191985558174,
+      "2022-23": 75.6664950425801,
+      "2023-24": 74.65987487451471,
+      "2024-25": 75.28989736625299
+     },
+     "minus_default_family30": {
+      "difference": -0.09516191655682726,
+      "standard_error": 0.054983616644791955,
+      "lower": -0.271376797087918,
+      "upper": 0.08105296397426348,
+      "critical_t": 3.204861580304609,
+      "rounds": 144
+     },
+     "t_statistic_all_outer_seasons": -1.730732213771918,
+     "rounds_needed_for_80pct_power_if_true": null,
+     "one_forward_season_family10": {
+      "rounds": 34,
+      "standard_error": 0.11315534952719902,
+      "half_width": 0.34039867385479744,
+      "difference_needed_for_80pct_power": 0.43563261870925296
+     }
+    }
+   ],
+   "nested_grid_choice": [
+    {
+     "season": "2022-23",
+     "chosen": [
+      0.002,
+      16.0
+     ],
+     "chosen_score": 75.71217655510608,
+     "default_score": 75.75937952838396,
+     "difference": -0.04720297327787648
+    },
+    {
+     "season": "2023-24",
+     "chosen": [
+      0.002,
+      8.0
+     ],
+     "chosen_score": 74.85130112581776,
+     "default_score": 74.85130112581776,
+     "difference": 0.0
+    },
+    {
+     "season": "2024-25",
+     "chosen": [
+      0.002,
+      8.0
+     ],
+     "chosen_score": 75.34650843432338,
+     "default_score": 75.34650843432338,
+     "difference": 0.0
+    }
+   ],
+   "nested_grid_choice_mean_difference": -0.015734324425958828,
+   "one_forward_season_gate": {
+    "rounds": 34,
+    "round_sd_of_b1_minus_b0": 2.2200687678835678,
+    "standard_error_one_season": 0.38073865261110473,
+    "half_width_family10": 1.1453540020476887,
+    "difference_needed_for_80pct_power_family10": 1.465791736527136,
+    "power_for_observed_b1_minus_b0": 0.8344885945329511
+   },
+   "newcomers": {
+    "rule": "exactly one side has fewer than 19 matches in the training window; first-match fallbacks excluded",
+    "matches": 86,
+    "rounds": 53,
+    "expected_goals_for": 1.1593771158809056,
+    "actual_goals_for": 0.9534883720930233,
+    "expected_goals_against": 1.5414538471312986,
+    "actual_goals_against": 1.686046511627907,
+    "expected_minus_actual_goal_difference": {
+     "difference": 0.3504814082844907,
+     "standard_error": 0.17183829772196307,
+     "lower": 0.005662637173474372,
+     "upper": 0.695300179395507
+    },
+    "b1_score": 75.35831710951749,
+    "b0_score": 73.91574498325066,
+    "b1_minus_b0": {
+     "difference": 1.4425721262668232,
+     "standard_error": 0.8246181290464665,
+     "lower": -0.2121452077802155,
+     "upper": 3.0972894603138617
+    }
+   },
+   "without_alias_table": {
+    "spellings_joined_by_team_key_alone": {
+     "as-monaco": [
+      "AS Monaco",
+      "AS Monaco FC"
+     ],
+     "paris-saint-germain": [
+      "Paris Saint-Germain",
+      "Paris Saint-Germain FC"
+     ]
+    },
+    "spellings_joined_only_by_the_alias_table": {
+     "olympique-de-marseille": [
+      "Olympique Marseille",
+      "Olympique de Marseille"
+     ],
+     "stade-rennais-1901": [
+      "Stade Rennais",
+      "Stade Rennais FC 1901"
+     ],
+     "rc-strasbourg-alsace": [
+      "RC Strasbourg",
+      "RC Strasbourg Alsace"
+     ],
+     "racing-club-de-lens": [
+      "RC Lens",
+      "Racing Club de Lens"
+     ]
+    },
+    "clubs_split_in_two_without_the_table": 4,
+    "score": 75.19801898110671,
+    "fallbacks": {
+     "unseen_team": 9
+    },
+    "by_season": {
+     "2021-22": {
+      "b1": 74.90278320905057,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2021-22/estac-troyes/paris-saint-germain",
+       "2021-22/girondins-bordeaux/clermont-foot-63"
+      ],
+      "fallback_fixtures_with_table": [
+       "2021-22/es-troyes-ac/paris-saint-germain",
+       "2021-22/girondins-bordeaux/clermont-foot-63"
+      ],
+      "difference_vs_aliased": -4.101252670807298e-11
+     },
+     "2022-23": {
+      "b1": 75.75937952837002,
+      "fallbacks": {
+       "unseen_team": 2
+      },
+      "fallback_fixtures": [
+       "2022-23/olympique-lyonnais/ac-ajaccio",
+       "2022-23/lille-osc/aj-auxerre"
+      ],
+      "fallback_fixtures_with_table": [
+       "2022-23/olympique-lyonnais/ac-ajaccio",
+       "2022-23/lille-osc/aj-auxerre"
+      ],
+      "difference_vs_aliased": -1.3940848475613166e-11
+     },
+     "2023-24": {
+      "b1": 74.68298325867495,
+      "fallbacks": {
+       "unseen_team": 5
+      },
+      "fallback_fixtures": [
+       "2023-24/olympique-de-marseille/stade-de-reims",
+       "2023-24/stade-brestois-29/racing-club-de-lens",
+       "2023-24/montpellier-hsc/le-havre-ac",
+       "2023-24/stade-rennais-1901/metz",
+       "2023-24/rc-strasbourg-alsace/olympique-lyonnais"
+      ],
+      "fallback_fixtures_with_table": [
+       "2023-24/montpellier-hsc/le-havre-ac"
+      ],
+      "difference_vs_aliased": -0.16831786714280383
+     },
+     "2024-25": {
+      "b1": 75.38317805155064,
+      "fallbacks": {},
+      "fallback_fixtures": [],
+      "fallback_fixtures_with_table": [],
+      "difference_vs_aliased": 0.03666961722726114
+     }
+    },
+    "difference_vs_aliased": -0.02940994464789526
+   }
+  }
+ },
+ "pooled_five_leagues": {
+  "seasons": [
+   "2021-22",
+   "2022-23",
+   "2023-24",
+   "2024-25"
+  ],
+  "matches": 7133,
+  "match_weeks": 151,
+  "match_weeks_per_season": 37.75,
+  "b1_minus_b0_family10": {
+   "difference": 1.8555132990671195,
+   "standard_error": 0.08465675510182556,
+   "lower": 1.6143132994966836,
+   "upper": 2.0967132986375554
+  },
+  "b1_minus_b0_components_family10": {
+   "result": {
+    "difference": 3.056770735080852,
+    "standard_error": 0.12741837250070212,
+    "lower": 2.693736369359312,
+    "upper": 3.419805100802392
+   },
+   "total": {
+    "difference": 0.5396080419493431,
+    "standard_error": 0.1151978587896712,
+    "lower": 0.21139178257154112,
+    "upper": 0.867824301327145
+   },
+   "home": {
+    "difference": 2.1423137011882933,
+    "standard_error": 0.142101364967466,
+    "lower": 1.7374452517906616,
+    "upper": 2.547182150585925
+   },
+   "away": {
+    "difference": 1.6833607180499923,
+    "standard_error": 0.1497089357811779,
+    "lower": 1.25681713977703,
+    "upper": 2.109904296322955
+   }
+  },
+  "one_forward_season": {
+   "standard_error": 0.16931351020365115,
+   "half_width_family10": 0.5056592709547586,
+   "difference_needed_for_80pct_power_family10": 0.6481571162729156
+  },
+  "note": "standard errors of a candidate that changes predictions less than B1 does against B0 are smaller in proportion; the ratio between pooled and per-league widths is what carries over",
+  "forward_gate_replay_b1_vs_b0": {
+   "2021-22": {
+    "match_weeks": 38,
+    "matches": 1825,
+    "composite": {
+     "difference": 1.702311210508331,
+     "standard_error": 0.16045092818106207,
+     "lower": 1.2233260302798676,
+     "upper": 2.181296390736794
+    },
+    "components": {
+     "result": {
+      "difference": 2.9690760763565023,
+      "standard_error": 0.27153265186653536,
+      "lower": 2.158484840352946,
+      "upper": 3.7796673123600586
+     },
+     "total": {
+      "difference": 0.25488286286758854,
+      "standard_error": 0.22037129446547724,
+      "lower": -0.4029792348674427,
+      "upper": 0.9127449606026198
+     },
+     "home": {
+      "difference": 1.894742169163673,
+      "standard_error": 0.25903775361930537,
+      "lower": 1.121451253929418,
+      "upper": 2.668033084397928
+     },
+     "away": {
+      "difference": 1.6905437336455569,
+      "standard_error": 0.31203930923490414,
+      "lower": 0.7590302393541188,
+      "upper": 2.622057227936995
+     }
+    },
+    "composite_lower_above_zero": true,
+    "components_with_lower_bound_below_minus_half": [],
+    "passes_both_conditions": true
+   },
+   "2022-23": {
+    "match_weeks": 37,
+    "matches": 1826,
+    "composite": {
+     "difference": 1.6068438529190892,
+     "standard_error": 0.15659790855892203,
+     "lower": 1.1385399101101705,
+     "upper": 2.075147795728008
+    },
+    "components": {
+     "result": {
+      "difference": 2.5807366215865124,
+      "standard_error": 0.2515880122045752,
+      "lower": 1.8283660493158762,
+      "upper": 3.3331071938571486
+     },
+     "total": {
+      "difference": 0.4724422480343547,
+      "standard_error": 0.21627431353894797,
+      "lower": -0.17432318255549833,
+      "upper": 1.1192076786242078
+     },
+     "home": {
+      "difference": 2.0330101057104883,
+      "standard_error": 0.283949221688647,
+      "lower": 1.1838637710116204,
+      "upper": 2.8821564404093563
+     },
+     "away": {
+      "difference": 1.3411864363449955,
+      "standard_error": 0.2650539345585253,
+      "lower": 0.5485462040901021,
+      "upper": 2.133826668599889
+     }
+    },
+    "composite_lower_above_zero": true,
+    "components_with_lower_bound_below_minus_half": [],
+    "passes_both_conditions": true
+   },
+   "2023-24": {
+    "match_weeks": 39,
+    "matches": 1752,
+    "composite": {
+     "difference": 2.240630472890985,
+     "standard_error": 0.15141016680223673,
+     "lower": 1.7893838661366523,
+     "upper": 2.6918770796453173
+    },
+    "components": {
+     "result": {
+      "difference": 3.409861405425081,
+      "standard_error": 0.24059310086330335,
+      "lower": 2.692823556078595,
+      "upper": 4.126899254771566
+     },
+     "total": {
+      "difference": 0.8420354563061629,
+      "standard_error": 0.1885180302707944,
+      "lower": 0.2801965569222291,
+      "upper": 1.4038743556900968
+     },
+     "home": {
+      "difference": 2.2661332887411914,
+      "standard_error": 0.30396833658672423,
+      "lower": 1.3602186903861497,
+      "upper": 3.172047887096233
+     },
+     "away": {
+      "difference": 2.4444917410915066,
+      "standard_error": 0.30362417099739464,
+      "lower": 1.5396028569115865,
+      "upper": 3.3493806252714267
+     }
+    },
+    "composite_lower_above_zero": true,
+    "components_with_lower_bound_below_minus_half": [],
+    "passes_both_conditions": true
+   },
+   "2024-25": {
+    "match_weeks": 37,
+    "matches": 1730,
+    "composite": {
+     "difference": 1.8895820457415027,
+     "standard_error": 0.19235333361849088,
+     "lower": 1.3143519844020508,
+     "upper": 2.4648121070809546
+    },
+    "components": {
+     "result": {
+      "difference": 3.294150035063225,
+      "standard_error": 0.238671871805587,
+      "lower": 2.580405007222793,
+      "upper": 4.007895062903657
+     },
+     "total": {
+      "difference": 0.6045880197295886,
+      "standard_error": 0.2827060338223706,
+      "lower": -0.24084057834822858,
+      "upper": 1.4500166178074059
+     },
+     "home": {
+      "difference": 2.3934550271389994,
+      "standard_error": 0.292708383144905,
+      "lower": 1.5181145377198457,
+      "upper": 3.268795516558153
+     },
+     "away": {
+      "difference": 1.266135101034204,
+      "standard_error": 0.28098201376623955,
+      "lower": 0.42586216178476766,
+      "upper": 2.10640804028364
+     }
+    },
+    "composite_lower_above_zero": true,
+    "components_with_lower_bound_below_minus_half": [],
+    "passes_both_conditions": true
+   }
+  },
+  "newcomers": {
+   "rule": "exactly one side has fewer than 19 matches in the training window; first-match fallbacks excluded",
+   "matches": 450,
+   "rounds": 77,
+   "expected_goals_for": 1.1454649582804879,
+   "actual_goals_for": 1.0422222222222222,
+   "expected_goals_against": 1.6735223423618895,
+   "actual_goals_against": 1.7244444444444444,
+   "expected_minus_actual_goal_difference": {
+    "difference": 0.15416483814082058,
+    "standard_error": 0.07051743556906767,
+    "lower": 0.013717193215526113,
+    "upper": 0.29461248306611504
+   },
+   "b1_score": 75.88252088534838,
+   "b0_score": 73.9007537128357,
+   "b1_minus_b0": {
+    "difference": 1.9817671725126997,
+    "standard_error": 0.35458847057080134,
+    "lower": 1.2755430279810416,
+    "upper": 2.687991317044358
+   }
+  },
+  "established_pairs": {
+   "matches": 6648,
+   "b1_score": 75.6230724112108,
+   "b0_score": 73.76492450834388
+  }
+ },
+ "nested_grid_choice_all_leagues": {
+  "league_seasons": 16,
+  "mean_difference_vs_default": -0.041649768656132125,
+  "better": 2,
+  "same": 5,
+  "worse": 9
+ },
+ "forward_gate_replay_b1_vs_b0_summary": {
+  "league_seasons": 21,
+  "composite_lower_above_zero": 19,
+  "all_component_lower_bounds_at_least_minus_half": 4,
+  "passes_both_conditions": 4,
+  "failing": [
+   {
+    "league": "en",
+    "season": "2021-22",
+    "composite_lower": 1.3283446734401338,
+    "components_below_minus_half": {
+     "total": -0.90136485085293
+    }
+   },
+   {
+    "league": "en",
+    "season": "2022-23",
+    "composite_lower": 0.38023689603586086,
+    "components_below_minus_half": {
+     "total": -0.545117749163741,
+     "away": -1.108314250061036
+    }
+   },
+   {
+    "league": "en",
+    "season": "2023-24",
+    "composite_lower": 1.2941983406679807,
+    "components_below_minus_half": {
+     "total": -0.8788986036830247
+    }
+   },
+   {
+    "league": "en",
+    "season": "2024-25",
+    "composite_lower": 0.6021861111263271,
+    "components_below_minus_half": {
+     "total": -1.0160087145901864,
+     "away": -0.8608266155282658
+    }
+   },
+   {
+    "league": "en",
+    "season": "2025-26",
+    "composite_lower": -0.2376810692385376,
+    "components_below_minus_half": {
+     "total": -1.4586696281600604,
+     "home": -0.8077076393743949,
+     "away": -0.7838411382726658
+    }
+   },
+   {
+    "league": "es",
+    "season": "2021-22",
+    "composite_lower": 0.11741709528189914,
+    "components_below_minus_half": {
+     "total": -1.3829383398956896,
+     "away": -0.661010892950509
+    }
+   },
+   {
+    "league": "es",
+    "season": "2022-23",
+    "composite_lower": 0.2341494107679878,
+    "components_below_minus_half": {
+     "total": -1.0490455719057443
+    }
+   },
+   {
+    "league": "es",
+    "season": "2024-25",
+    "composite_lower": 0.7433641289505097,
+    "components_below_minus_half": {
+     "total": -1.0796538178446853,
+     "away": -0.5283428542288275
+    }
+   },
+   {
+    "league": "de",
+    "season": "2021-22",
+    "composite_lower": 0.5220530662815741,
+    "components_below_minus_half": {
+     "total": -1.2199216053838682,
+     "away": -0.5053441249417843
+    }
+   },
+   {
+    "league": "de",
+    "season": "2022-23",
+    "composite_lower": -0.08401065025808552,
+    "components_below_minus_half": {
+     "total": -1.6829121568952168,
+     "away": -1.2035640846426032
+    }
+   },
+   {
+    "league": "de",
+    "season": "2024-25",
+    "composite_lower": 0.7223796513128138,
+    "components_below_minus_half": {
+     "total": -0.6075000208245449,
+     "away": -1.1901110076189072
+    }
+   },
+   {
+    "league": "it",
+    "season": "2021-22",
+    "composite_lower": 0.8609821634214039,
+    "components_below_minus_half": {
+     "total": -0.8858061437195363,
+     "home": -1.0498284359429466
+    }
+   },
+   {
+    "league": "it",
+    "season": "2024-25",
+    "composite_lower": 0.5001247846057479,
+    "components_below_minus_half": {
+     "total": -1.493192281191482,
+     "away": -0.6298505586712078
+    }
+   },
+   {
+    "league": "fr",
+    "season": "2021-22",
+    "composite_lower": 0.14968635188022006,
+    "components_below_minus_half": {
+     "total": -1.4208539867474672,
+     "away": -0.6932438415950065
+    }
+   },
+   {
+    "league": "fr",
+    "season": "2022-23",
+    "composite_lower": 0.8508690219519308,
+    "components_below_minus_half": {
+     "total": -0.9720606515609107
+    }
+   },
+   {
+    "league": "fr",
+    "season": "2023-24",
+    "composite_lower": 0.20189387959776028,
+    "components_below_minus_half": {
+     "total": -1.4992732171910599
+    }
+   },
+   {
+    "league": "fr",
+    "season": "2024-25",
+    "composite_lower": 0.39970580501996444,
+    "components_below_minus_half": {
+     "total": -0.6873834141867543,
+     "home": -1.2324681156537027
+    }
+   }
+  ],
+  "note": "EPL 2025-26 is included because its per-match scores were already published with 0.4.2"
+ },
+ "fidelity_check": {
+  "epl_five_seasons_b1": 75.4478132340877,
+  "published_0_4_2": 75.447813,
+  "abs_difference": 2.3408770744026697e-07,
+  "matches": 1900,
+  "rounds": 190,
+  "epl_2024_25_and_2025_26": {
+   "b0": 73.47423245614036,
+   "b1": 74.79192453945083,
+   "published_b0": 73.474232,
+   "published_b1": 74.791925
+  }
+ }
+}

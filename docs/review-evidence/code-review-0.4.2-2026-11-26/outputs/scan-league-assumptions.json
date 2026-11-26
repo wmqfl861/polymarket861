@@ -1,0 +1,993 @@
+{
+ "package_modules": 83,
+ "modules_with_any_hit": 54,
+ "modules_named_in_plan": [
+  "dashboard.py",
+  "datasets.py",
+  "execution_books.py",
+  "football.py",
+  "football_candidates.py",
+  "football_model.py",
+  "forward_window.py",
+  "historical_inputs.py",
+  "independent_results.py",
+  "jobs_research.py",
+  "ledger_terms.py",
+  "market_provider.py",
+  "model_study.py",
+  "news_accumulation.py",
+  "news_evaluation.py",
+  "news_events.py",
+  "news_local_ai.py",
+  "news_minutes.py",
+  "news_model.py",
+  "news_roster.py",
+  "news_scope.py",
+  "news_sources.py",
+  "news_study_plan.py",
+  "opportunity.py",
+  "pipeline.py",
+  "qualification.py",
+  "research_workspace.py",
+  "result_admission.py",
+  "result_feed.py",
+  "runner.py",
+  "schedule_consensus.py",
+  "season.py",
+  "season_readiness.py",
+  "settlement.py",
+  "store.py"
+ ],
+ "named_in_plan_count": 35,
+ "with_hits_and_named": [
+  "datasets.py",
+  "football.py",
+  "football_candidates.py",
+  "football_model.py",
+  "forward_window.py",
+  "historical_inputs.py",
+  "independent_results.py",
+  "jobs_research.py",
+  "ledger_terms.py",
+  "market_provider.py",
+  "model_study.py",
+  "news_accumulation.py",
+  "news_evaluation.py",
+  "news_events.py",
+  "news_minutes.py",
+  "news_model.py",
+  "news_roster.py",
+  "news_scope.py",
+  "news_sources.py",
+  "news_study_plan.py",
+  "opportunity.py",
+  "pipeline.py",
+  "qualification.py",
+  "research_workspace.py",
+  "result_admission.py",
+  "result_feed.py",
+  "runner.py",
+  "schedule_consensus.py",
+  "season.py",
+  "season_readiness.py",
+  "store.py"
+ ],
+ "with_hits_not_named": [
+  "__init__.py",
+  "archive_proof.py",
+  "experiment_statistics.py",
+  "input_manifest.py",
+  "kickoff_proof.py",
+  "ledger.py",
+  "maintenance.py",
+  "market_archive.py",
+  "news.py",
+  "news_ai_benchmark.py",
+  "news_importance.py",
+  "news_market.py",
+  "news_retention.py",
+  "news_wire_identity.py",
+  "paired_proof.py",
+  "result_operations.py",
+  "result_pairings.py",
+  "result_training_review.py",
+  "round_history.py",
+  "season_health.py",
+  "shadow.py",
+  "strategy.py",
+  "trial_evidence.py"
+ ],
+ "with_season_shape_hits_not_named": [
+  "experiment_statistics.py",
+  "maintenance.py",
+  "news_importance.py",
+  "paired_proof.py",
+  "round_history.py",
+  "shadow.py",
+  "strategy.py",
+  "trial_evidence.py"
+ ],
+ "named_without_hits": [
+  "dashboard.py",
+  "execution_books.py",
+  "news_local_ai.py",
+  "settlement.py"
+ ],
+ "modules": {
+  "__init__.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     1
+    ]
+   },
+   "hit_lines": 1
+  },
+  "archive_proof.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     89
+    ]
+   },
+   "hit_lines": 1
+  },
+  "datasets.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     51
+    ],
+    "source_address": [
+     109,
+     114,
+     138,
+     144,
+     146,
+     188,
+     192,
+     241
+    ]
+   },
+   "hit_lines": 9
+  },
+  "experiment_statistics.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     103
+    ],
+    "time_zone": [
+     105
+    ],
+    "season_shape": [
+     110
+    ]
+   },
+   "hit_lines": 3
+  },
+  "football.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     107,
+     241,
+     284,
+     764,
+     1376,
+     1379
+    ],
+    "source_address": [
+     398,
+     400,
+     440,
+     445,
+     1387,
+     1397
+    ],
+    "time_zone": [
+     61,
+     281,
+     594,
+     1165
+    ],
+    "season_shape": [
+     283,
+     544
+    ]
+   },
+   "hit_lines": 19
+  },
+  "football_candidates.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     21,
+     35
+    ],
+    "season_shape": [
+     88,
+     102,
+     124
+    ]
+   },
+   "hit_lines": 6
+  },
+  "football_model.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1
+    ]
+   },
+   "hit_lines": 1
+  },
+  "forward_window.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     10,
+     17
+    ],
+    "time_zone": [
+     67
+    ],
+    "season_shape": [
+     16,
+     17,
+     21,
+     46
+    ]
+   },
+   "hit_lines": 8
+  },
+  "historical_inputs.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     73
+    ]
+   },
+   "hit_lines": 2
+  },
+  "independent_results.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     22,
+     27,
+     30,
+     104,
+     124,
+     143,
+     145,
+     156,
+     259,
+     304,
+     398,
+     402,
+     486,
+     499,
+     538,
+     564
+    ],
+    "time_zone": [
+     187
+    ],
+    "season_shape": [
+     103,
+     412,
+     466
+    ]
+   },
+   "hit_lines": 21
+  },
+  "input_manifest.py": {
+   "named_in_plan": false,
+   "lines": {
+    "source_address": [
+     270,
+     272,
+     382
+    ]
+   },
+   "hit_lines": 3
+  },
+  "jobs_research.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     62,
+     140,
+     183,
+     184,
+     187,
+     191,
+     200,
+     244,
+     302,
+     431,
+     432,
+     459,
+     1066,
+     1269
+    ],
+    "season_shape": [
+     340,
+     345,
+     346,
+     349,
+     495,
+     775,
+     776,
+     793,
+     794,
+     1115,
+     1268
+    ]
+   },
+   "hit_lines": 25
+  },
+  "kickoff_proof.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     1,
+     15,
+     190,
+     329
+    ],
+    "source_address": [
+     16
+    ]
+   },
+   "hit_lines": 5
+  },
+  "ledger.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     175,
+     181,
+     318
+    ]
+   },
+   "hit_lines": 3
+  },
+  "ledger_terms.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     231
+    ]
+   },
+   "hit_lines": 2
+  },
+  "maintenance.py": {
+   "named_in_plan": false,
+   "lines": {
+    "season_shape": [
+     58
+    ]
+   },
+   "hit_lines": 1
+  },
+  "market_archive.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     298,
+     313,
+     357,
+     366,
+     367,
+     369,
+     409,
+     885,
+     1169,
+     1174,
+     1330,
+     1449,
+     1492
+    ]
+   },
+   "hit_lines": 13
+  },
+  "market_provider.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     24,
+     107
+    ]
+   },
+   "hit_lines": 2
+  },
+  "model_study.py": {
+   "named_in_plan": true,
+   "lines": {
+    "source_address": [
+     87
+    ],
+    "season_shape": [
+     108,
+     247,
+     248
+    ]
+   },
+   "hit_lines": 4
+  },
+  "news.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     28,
+     587,
+     746,
+     1138,
+     1695
+    ],
+    "source_address": [
+     323,
+     429,
+     503,
+     907,
+     967,
+     1322,
+     1778,
+     2045,
+     2061,
+     2137,
+     2177,
+     2235,
+     2236
+    ],
+    "time_zone": [
+     713
+    ]
+   },
+   "hit_lines": 19
+  },
+  "news_accumulation.py": {
+   "named_in_plan": true,
+   "lines": {
+    "season_shape": [
+     225
+    ]
+   },
+   "hit_lines": 1
+  },
+  "news_ai_benchmark.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     35,
+     201
+    ]
+   },
+   "hit_lines": 2
+  },
+  "news_evaluation.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     37
+    ],
+    "season_shape": [
+     30,
+     36,
+     37,
+     607,
+     611,
+     621,
+     657,
+     658
+    ]
+   },
+   "hit_lines": 9
+  },
+  "news_events.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     28,
+     83,
+     96,
+     98
+    ]
+   },
+   "hit_lines": 4
+  },
+  "news_importance.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     1,
+     11,
+     16,
+     79,
+     112,
+     143,
+     267
+    ],
+    "source_address": [
+     128,
+     137,
+     143,
+     148
+    ],
+    "season_shape": [
+     80,
+     101,
+     263
+    ]
+   },
+   "hit_lines": 14
+  },
+  "news_market.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     67,
+     140,
+     143,
+     149,
+     152
+    ]
+   },
+   "hit_lines": 5
+  },
+  "news_minutes.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     13,
+     50,
+     55
+    ],
+    "source_address": [
+     13,
+     14
+    ],
+    "season_shape": [
+     62,
+     63,
+     70
+    ]
+   },
+   "hit_lines": 9
+  },
+  "news_model.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     14,
+     147
+    ],
+    "source_address": [
+     35
+    ]
+   },
+   "hit_lines": 3
+  },
+  "news_retention.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     94,
+     103
+    ],
+    "source_address": [
+     16
+    ]
+   },
+   "hit_lines": 3
+  },
+  "news_roster.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     91
+    ],
+    "season_shape": [
+     122,
+     125
+    ]
+   },
+   "hit_lines": 3
+  },
+  "news_scope.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     22,
+     35
+    ]
+   },
+   "hit_lines": 2
+  },
+  "news_sources.py": {
+   "named_in_plan": true,
+   "lines": {
+    "source_address": [
+     27,
+     28,
+     29,
+     88,
+     91,
+     615
+    ]
+   },
+   "hit_lines": 6
+  },
+  "news_study_plan.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     13,
+     46,
+     54,
+     73
+    ],
+    "source_address": [
+     226
+    ]
+   },
+   "hit_lines": 5
+  },
+  "news_wire_identity.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     27,
+     63,
+     155
+    ],
+    "source_address": [
+     155,
+     189,
+     191,
+     256,
+     326,
+     330,
+     465
+    ]
+   },
+   "hit_lines": 10
+  },
+  "opportunity.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     80,
+     397
+    ]
+   },
+   "hit_lines": 2
+  },
+  "paired_proof.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     75,
+     144,
+     346
+    ],
+    "source_address": [
+     118,
+     127,
+     136,
+     143,
+     144
+    ],
+    "season_shape": [
+     341,
+     342,
+     343
+    ]
+   },
+   "hit_lines": 11
+  },
+  "pipeline.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     254,
+     310
+    ]
+   },
+   "hit_lines": 2
+  },
+  "qualification.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     30,
+     85
+    ],
+    "season_shape": [
+     337,
+     405,
+     406,
+     407
+    ]
+   },
+   "hit_lines": 6
+  },
+  "research_workspace.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1060
+    ],
+    "source_address": [
+     1067
+    ],
+    "season_shape": [
+     256,
+     282,
+     288,
+     295,
+     1064,
+     1065,
+     1112
+    ]
+   },
+   "hit_lines": 9
+  },
+  "result_admission.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     698,
+     702,
+     713
+    ],
+    "source_address": [
+     205,
+     350
+    ],
+    "season_shape": [
+     217
+    ]
+   },
+   "hit_lines": 6
+  },
+  "result_feed.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     73,
+     83,
+     86,
+     98,
+     132,
+     229,
+     234,
+     251
+    ],
+    "source_address": [
+     78,
+     82,
+     308
+    ],
+    "season_shape": [
+     101,
+     250,
+     286
+    ]
+   },
+   "hit_lines": 15
+  },
+  "result_operations.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     156,
+     238
+    ]
+   },
+   "hit_lines": 2
+  },
+  "result_pairings.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     1,
+     97
+    ]
+   },
+   "hit_lines": 2
+  },
+  "result_training_review.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     64
+    ]
+   },
+   "hit_lines": 1
+  },
+  "round_history.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     273,
+     287,
+     349
+    ],
+    "season_shape": [
+     272,
+     348
+    ]
+   },
+   "hit_lines": 5
+  },
+  "runner.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     340,
+     391
+    ]
+   },
+   "hit_lines": 3
+  },
+  "schedule_consensus.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     35,
+     37,
+     39,
+     41,
+     43,
+     46,
+     58,
+     76,
+     81,
+     82,
+     84,
+     103,
+     107,
+     125,
+     179,
+     227,
+     243,
+     247,
+     256,
+     443,
+     474,
+     498,
+     503,
+     535,
+     551,
+     562,
+     566,
+     676,
+     681,
+     683,
+     700,
+     709,
+     711,
+     721,
+     812,
+     920,
+     1021,
+     1022,
+     1196,
+     1204,
+     1244,
+     1249,
+     1267,
+     1369,
+     1372,
+     1408
+    ],
+    "source_address": [
+     35,
+     65,
+     137
+    ],
+    "season_shape": [
+     954,
+     961
+    ]
+   },
+   "hit_lines": 51
+  },
+  "season.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     1,
+     596,
+     618
+    ]
+   },
+   "hit_lines": 3
+  },
+  "season_health.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     126,
+     129,
+     133
+    ]
+   },
+   "hit_lines": 3
+  },
+  "season_readiness.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     182,
+     227
+    ],
+    "season_shape": [
+     181,
+     182
+    ]
+   },
+   "hit_lines": 4
+  },
+  "shadow.py": {
+   "named_in_plan": false,
+   "lines": {
+    "season_shape": [
+     568
+    ]
+   },
+   "hit_lines": 1
+  },
+  "store.py": {
+   "named_in_plan": true,
+   "lines": {
+    "identifier": [
+     21,
+     277
+    ],
+    "season_shape": [
+     276,
+     277
+    ]
+   },
+   "hit_lines": 4
+  },
+  "strategy.py": {
+   "named_in_plan": false,
+   "lines": {
+    "identifier": [
+     133,
+     171
+    ],
+    "season_shape": [
+     163,
+     168,
+     1181
+    ]
+   },
+   "hit_lines": 5
+  },
+  "trial_evidence.py": {
+   "named_in_plan": false,
+   "lines": {
+    "season_shape": [
+     42,
+     49
+    ]
+   },
+   "hit_lines": 2
+  }
+ }
+}
