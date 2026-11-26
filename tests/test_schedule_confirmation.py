@@ -1,6 +1,7 @@
 """Fixed EPL kickoff evidence persists by registration, while news checks stay current."""
 
 import json
+import sqlite3
 import unittest
 from concurrent.futures import Future
 from contextlib import closing
@@ -19,6 +20,46 @@ from polymarket861 import (
     season_readiness,
     store,
 )
+
+
+class ScheduleInputVersionTests(unittest.TestCase):
+    def test_legacy_unique_key_and_explicit_rowid_replacements_invalidate_out_of_scope_data(self):
+        with closing(sqlite3.connect(":memory:")) as db:
+            db.execute(
+                "CREATE TABLE observations(source TEXT,observed_at TEXT,sha256 TEXT,metadata TEXT, "
+                "UNIQUE(source,observed_at,sha256))"
+            )
+            schedules.prepare_evidence_version(db)
+            def record(operation):
+                db.execute(
+                    "INSERT OR REPLACE INTO observations VALUES('polymarket.com','t','s',?)",
+                    (json.dumps({"operation": operation}),),
+                )
+            record("event")
+            before = schedules.evidence_version(db)
+            record("book")
+            self.assertNotEqual(before, schedules.evidence_version(db))
+            before = schedules.evidence_version(db)
+            record("book")
+            self.assertEqual(before, schedules.evidence_version(db))
+            record("catalog")
+            rowid = db.execute("SELECT rowid FROM observations").fetchone()[0]
+            before = schedules.evidence_version(db)
+            db.execute("INSERT OR REPLACE INTO observations(rowid,source) VALUES(?,'unrelated')", (rowid,))
+            self.assertNotEqual(before, schedules.evidence_version(db))
+
+    def test_new_optional_table_cannot_supply_an_untracked_snapshot(self):
+        with closing(sqlite3.connect(":memory:")) as db:
+            schedules.prepare_evidence_version(db)
+            before = schedules.evidence_version(db)
+            db.execute("CREATE TABLE ma_requests(id INTEGER PRIMARY KEY, operation TEXT,status TEXT)")
+            with self.assertRaisesRegex(ValueError, "change tracking"):
+                schedules.evidence_version(db)
+            schedules.prepare_evidence_version(db)
+            after = schedules.evidence_version(db)
+            self.assertNotEqual(before, after)
+            db.execute("INSERT INTO ma_requests VALUES(1,'event','ok')")
+            self.assertNotEqual(after, schedules.evidence_version(db))
 
 
 class ConfirmedKickoffTests(unittest.TestCase):
@@ -56,6 +97,94 @@ class ConfirmedKickoffTests(unittest.TestCase):
         self.assertTrue(row["bulk_placeholder"])
         self.assertEqual(row["fixed_confirmation"]["accepted_at"], store.now_utc())
         return row["fixed_confirmation"]
+
+    def test_current_inspections_leave_the_writer_available_during_archive_verification(self):
+        proof = self.record_agreement()
+        events = schedules._events
+
+        def inspect_with_writer(*args, **kwargs):
+            with closing(sqlite3.connect(self.root / "runtime.sqlite3", timeout=0)) as writer:
+                writer.execute("BEGIN IMMEDIATE")
+                writer.rollback()
+            return events(*args, **kwargs)
+
+        with patch.object(schedules, "_events", side_effect=inspect_with_writer):
+            self.assertEqual(self.inspect()["fixed_confirmation"], proof)
+            self.assertGreater(schedules.sync(self.root, native.YEAR)["matched"], 0)
+            row = schedules.review_schedule(
+                self.root, native.YEAR, native.FID, native.OLD, "test reviewer", "verified",
+            )
+            self.assertEqual(row["status"], "unchanged")
+
+    def test_first_admission_reopens_a_witness_changed_after_the_read_snapshot(self):
+        self.feed.ol(native.OLD)
+        slug = self.feed.gamma(native.OLD)
+        promote = schedules._lock_snapshot
+
+        def withdraw_before_writer(*args):
+            with closing(sqlite3.connect(self.root / "runtime.sqlite3", timeout=0)) as other, other:
+                count = other.execute(
+                    "UPDATE ma_requests SET status='partial' WHERE operation='event' AND selector=?",
+                    (slug,),
+                ).rowcount
+                self.assertEqual(count, 1)
+            return promote(*args)
+
+        with patch.object(schedules, "_lock_snapshot", side_effect=withdraw_before_writer) as lock:
+            row = self.inspect()
+        lock.assert_called_once()
+        self.assertIsNone(row["fixed_confirmation"])
+        self.assertTrue(row["fixed_b1_block_reason"])
+
+    def test_first_admission_uses_the_actual_publication_time(self):
+        self.feed.ol(native.OLD)
+        self.feed.gamma(native.OLD)
+        before = store.now_utc()
+        promote = schedules._lock_snapshot
+
+        def advance_before_writer(*args):
+            self.feed.time += timedelta(seconds=15)
+            return promote(*args)
+
+        with patch.object(schedules, "_lock_snapshot", side_effect=advance_before_writer):
+            proof = self.inspect()["fixed_confirmation"]
+        self.assertEqual(proof["accepted_at"], store.now_utc())
+        self.assertIsNone(self.inspect(before)["fixed_confirmation"])
+
+    def test_cached_catalogue_checks_original_and_keeps_ambiguous_or_malformed_pages(self):
+        proof = self.record_agreement()
+        original = json.loads(store.read_blob(self.root, proof["gamma_sha256"]))
+        url = market_provider.GAMMA + "/events"
+
+        def capture_page(entries):
+            with patch.object(market_provider, "get", return_value=native.ex.reply(entries, self.feed.time, url)):
+                _, _, sha = market_archive._fetch(self.root, "catalog", "fixture-test-page", url)
+            return sha
+
+        self.feed.time += timedelta(minutes=31)
+        sha = capture_page([original])
+        self.feed.time += timedelta(seconds=1)
+        self.feed.gamma(native.OLD)
+        self.assertIsNone(self.inspect()["fixed_b1_block_reason"])
+        raw = store.read_blob(self.root, sha)
+        decode = json.loads
+
+        def check_cached(data, *args, **kwargs):
+            if data == raw:
+                self.fail("decoded a fully superseded, already validated catalogue again")
+            return decode(data, *args, **kwargs)
+
+        with patch.object(json, "loads", side_effect=check_cached):
+            self.assertIsNone(self.inspect()["fixed_b1_block_reason"])
+        store.blob_path(self.root, sha).write_bytes(b"changed")
+        report = schedules.readiness(self.root, fixture_ids={native.FID})
+        self.assertTrue(any(error["slug"] is None for error in report["source_errors"]))
+        self.feed.time += timedelta(seconds=1)
+        capture_page([original, original, {"not_slug": "unknown"}])
+        for _ in range(2):
+            report = schedules.readiness(self.root, fixture_ids={native.FID})
+            self.assertTrue(report["fixtures"][0]["fixed_b1_block_reason"])
+            self.assertTrue(any("membership" in error["reason"] for error in report["source_errors"]))
 
     def test_confirms_once_and_survives_silence_but_not_one_sided_disagreement_or_withdrawal(
         self,

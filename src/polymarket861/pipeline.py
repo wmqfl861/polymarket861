@@ -558,19 +558,27 @@ def make_forecast(
             companion = _study_recipe(recipe)
     # The DB clock below is sampled after model computation, before append in an immediate transaction.
     with closing(connect(data_dir)) as db, db:
-        db.execute("BEGIN IMMEDIATE")
-        existing = _existing(db, fixture, horizon, version, mode)
-        if existing:
-            old = _verified_seal(existing)
-            if replay:
-                paired_proof.check_replay_cache(old, proof)
-            return old | {"digest": existing["digest"]}
-        sealed_at = now_utc()
-        if fixed_builtin:
-            fixed_schedules = schedule_consensus.require_fixed(
-                data_dir, current_schedule, sealed_at, fixed_schedules, db=db
-            )
+        for attempt in range(3):
+            db.execute("BEGIN IMMEDIATE")
+            existing = _existing(db, fixture, horizon, version, mode)
+            if existing:
+                old = _verified_seal(existing)
+                if replay:
+                    paired_proof.check_replay_cache(old, proof)
+                return old | {"digest": existing["digest"]}
             sealed_at = now_utc()
+            if not fixed_builtin or schedule_consensus.fixed_inputs_current(
+                data_dir, current_schedule, sealed_at, fixed_schedules, db
+            ):
+                break
+            # Reopen changed source rows and original files without holding the
+            # writer. A concurrent successful seal wins at the top of the loop.
+            db.rollback()
+            if instant(sealed_at) > deadline:
+                raise ValueError("calculation finished after its sealing deadline")
+            if attempt == 2:
+                raise ValueError("schedule evidence changed repeatedly before the fixed B1 decision")
+            fixed_schedules = schedule_consensus.refresh_fixed(data_dir, current_schedule, sealed_at, db)
         if not replay and (
             (horizon != "early" and instant(sealed_at) > deadline)
             or instant(sealed_at) >= kickoff
@@ -644,8 +652,11 @@ def make_forecast(
         if fixed_builtin:
             # The SQLite write lock covers receipt rows, not their archived files.
             dbscope.recheck_originals(fixed_schedules)
-            if instant(now_utc()) > deadline:
+            finished = now_utc()
+            if instant(finished) > deadline:
                 raise ValueError("calculation finished after its sealing deadline")
+            if fixed_schedules.next_input_at and finished >= fixed_schedules.next_input_at:
+                raise ValueError("schedule evidence became effective during sealing")
     return published
 
 

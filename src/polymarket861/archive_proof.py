@@ -13,8 +13,7 @@ def _body(root, sha):
     return dbscope.verified_bytes(root, store.blob_path(root, sha), sha, "exchange response hash mismatch")
 
 
-def original_receipt(db, root, sha, received_at, operations, *, expected_selector=None):
-    """A user-uploaded file or free-form source label is not a collector receipt."""
+def _authenticated_receipt(db, root, sha, received_at, operations, read_body, expected_selector=None):
     if not db.execute(
         "SELECT 1 FROM sqlite_master WHERE name='ma_requests'"
     ).fetchone():
@@ -63,19 +62,38 @@ def original_receipt(db, root, sha, received_at, operations, *, expected_selecto
             "token_id" if operation == "prices" else "event_id"
         ) != [row["selector"]]:
             continue
-        headers = {
-            k: str(v)
-            for k, v in {"date": meta.get("http_date"), "age": meta.get("age")}.items()
-            if v is not None
-        }
-        reply = provider.Reply(
-            _body(root, sha), row["requested_at"], received_at, headers, meta["url"]
-        )
-        if instant(reply.requested_at) <= instant(received_at):
-            return reply, operation, row["selector"], meta
+        body = read_body(root, sha)
+        if instant(row["requested_at"]) <= instant(received_at):
+            return body, row, meta
     raise ValueError(
         "missing authenticated-origin exchange capture at its claimed receipt time"
     )
+
+
+def original_receipt(db, root, sha, received_at, operations, *, expected_selector=None):
+    """A user-uploaded file or free-form source label is not a collector receipt."""
+    body, row, meta = _authenticated_receipt(
+        db, root, sha, received_at, operations, _body, expected_selector
+    )
+    headers = {
+        k: str(v)
+        for k, v in {"date": meta.get("http_date"), "age": meta.get("age")}.items()
+        if v is not None
+    }
+    reply = provider.Reply(body, row["requested_at"], received_at, headers, meta["url"])
+    return reply, row["operation"], row["selector"], meta
+
+
+def _verify_body(root, sha):
+    dbscope.verify_content(root, store.blob_path(root, sha), sha, "exchange response hash mismatch")
+
+
+def verify_membership_receipt(db, root, sha, stamp, operation, *, orphan=False):
+    """Reauthenticate the original before reusing a superseded Gamma page's membership."""
+    if orphan:
+        _verify_body(root, sha)
+    else:
+        _authenticated_receipt(db, root, sha, stamp, {operation}, _verify_body)
 
 
 def _event_capture(db, root, sha, received_at, event_slug, *, require_fresh=False):

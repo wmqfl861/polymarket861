@@ -19,6 +19,7 @@ from polymarket861 import (
     news_roster,
     paired_proof,
     pipeline,
+    schedule_consensus,
     store,
 )
 from test_paired_proof import at, season_data
@@ -323,6 +324,146 @@ class EventNewsTests(unittest.TestCase):
         self.assertEqual(out["deferred"], 1, out)
         self.assertEqual(news_events.list_updates(self.root), [])
         self.assertEqual(store.list_reports(self.root, "news-update"), [])
+
+    def test_schedule_verification_allows_unrelated_writer_without_repeating(self):
+        self.observe()
+        self.story(FIRST, "r1", "Morgan Smith is out.")
+        require = schedule_consensus.require_news
+
+        def verify_with_heartbeat(*args):
+            expires = require(*args)
+            with closing(store.connect(self.root)) as db, db:
+                db.execute("PRAGMA busy_timeout=100")
+                store.put_report(db, "service-heartbeat", "test", {"at": FIRST})
+            return expires
+
+        with patch.object(
+            schedule_consensus, "require_news", side_effect=verify_with_heartbeat
+        ) as verification:
+            event = self.run_event(FIRST)
+        self.assertEqual(event["published"], 1, event)
+        self.assertEqual(verification.call_count, 1)
+
+    def test_schedule_receipt_edit_during_verification_invalidates_snapshot(self):
+        self.observe()
+        self.story(FIRST, "r1", "Morgan Smith is out.")
+        require = schedule_consensus.require_news
+
+        def verify_then_edit(*args):
+            expires = require(*args)
+            with closing(store.connect(self.root)) as db, db:
+                db.execute("PRAGMA busy_timeout=100")
+                db.execute(
+                    "UPDATE schedule_receipts SET precision='date' WHERE fixture_id=?",
+                    (self.fid,),
+                )
+            return expires
+
+        with patch.object(
+            schedule_consensus, "require_news", side_effect=verify_then_edit
+        ) as verification:
+            event = self.run_event(FIRST)
+        self.assertEqual((event["published"], event["deferred"]), (0, 1), event)
+        self.assertEqual(verification.call_count, 2)
+        self.assertIn("date-only registration", event["items"][0]["reason"])
+        self.assertEqual(news_events.list_updates(self.root), [])
+        self.assertEqual(store.list_reports(self.root, "news-update"), [])
+
+    def test_schedule_original_changed_after_read_rolls_back_publication(self):
+        self.observe()
+        self.story(FIRST, "r1", "Morgan Smith is out.")
+        payload = b"native schedule source"
+        sha = hashlib.sha256(payload).hexdigest()
+        original = self.root / "test-original-schedule"
+        original.write_bytes(payload)
+        require = schedule_consensus.require_news
+
+        def verify_then_corrupt(root, *args):
+            expires = require(root, *args)
+            news_events.dbscope.verified_bytes(root, original, sha, "bad source")
+            original.write_bytes(b"changed native schedule source")
+            return expires
+
+        with patch.object(
+            schedule_consensus, "require_news", side_effect=verify_then_corrupt
+        ):
+            event = self.run_event(FIRST)
+        self.assertEqual((event["published"], event["deferred"]), (0, 1), event)
+        self.assertIn("archived original", event["items"][0]["reason"])
+        self.assertEqual(news_events.list_updates(self.root), [])
+        self.assertEqual(store.list_reports(self.root, "news-update"), [])
+
+    def test_existing_future_schedule_review_cannot_cross_publication(self):
+        self.observe()
+        self.story(FIRST, "r1", "Morgan Smith is out.")
+        review_at = store.iso("2023-08-12T08:01Z")
+        with closing(store.connect(self.root)) as db, db:
+            db.execute(
+                "INSERT INTO epl_schedule_reviews VALUES(?,?,?,?,?,?,?)",
+                (self.fid, 1, review_at, "withdrawn", "reviewer", "schedule corrected", None),
+            )
+        clock = [store.iso(FIRST)]
+        require = schedule_consensus.require_news
+
+        def verify_then_cross_review(*args):
+            expires = require(*args)
+            clock[0] = review_at
+            return expires
+
+        with (
+            patch.object(news_events, "_now", side_effect=lambda: clock[0]),
+            patch.object(
+                schedule_consensus, "require_news", side_effect=verify_then_cross_review
+            ),
+        ):
+            event = self.run_event(FIRST)
+        self.assertEqual((event["published"], event["deferred"]), (0, 1), event)
+        self.assertIn("schedule withdrawn", event["items"][0]["reason"])
+        self.assertEqual(news_events.list_updates(self.root), [])
+
+    def test_expired_worker_cannot_publish_without_a_new_owner(self):
+        self.observe()
+        self.story(FIRST, "r1", "Morgan Smith is out.")
+        clock = [store.iso(FIRST)]
+        require = schedule_consensus.require_news
+
+        def expire_lease(*args):
+            expires = require(*args)
+            clock[0] = store.iso(store.instant(FIRST) + news_events.LEASE)
+            return expires
+
+        with (
+            patch.object(news_events, "_now", side_effect=lambda: clock[0]),
+            patch.object(schedule_consensus, "require_news", side_effect=expire_lease),
+        ):
+            event = self.run_event(FIRST)
+        self.assertEqual((event["published"], event["deferred"]), (0, 1), event)
+        self.assertIn("lease expired", event["items"][0]["reason"])
+        self.assertEqual(news_events.list_updates(self.root), [])
+
+    def test_each_batch_fixture_gets_a_fresh_lease_at_start(self):
+        other = self.register("Club 01", "Club 18")
+        self.observe()
+        self.story(FIRST, "r1", "Morgan Smith is out.")
+        self.story(FIRST, "r1", "Alex Stone is out.", team="Club 01")
+        clock = [store.iso(FIRST)]
+        run = news_events._run
+
+        def slow_first(*args):
+            report = run(*args)
+            if report["fixture_id"] == self.fid:
+                clock[0] = store.iso(
+                    store.instant(FIRST) + news_events.LEASE + news_events.RETRY
+                )
+            return report
+
+        with (
+            patch.object(news_events, "_now", side_effect=lambda: clock[0]),
+            patch.object(news_events, "_run", side_effect=slow_first),
+        ):
+            event = self.run_event(FIRST, limit=2)
+        self.assertEqual(event["published"], 2, event)
+        self.assertEqual([item["fixture_id"] for item in event["items"]], [self.fid, other])
 
     def test_roster_withdrawn_during_calculation_cannot_seal_a_stale_event(self):
         self.observe()

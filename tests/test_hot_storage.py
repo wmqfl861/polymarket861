@@ -1,13 +1,50 @@
+import gzip
+import hashlib
 import json
 import unittest
 from contextlib import closing
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from polymarket861 import contract_storage, dbscope, market_archive, operations, store
 
 
 class HotStorageTests(unittest.TestCase):
+    def test_restored_evidence_invalidates_a_snapshot_that_saw_it_missing(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data = b"previously unavailable evidence"
+            sha = hashlib.sha256(data).hexdigest()
+            path = root / sha
+            with closing(store.connect(root)) as db, dbscope.bind(root, db) as batch:
+                with self.assertRaises(FileNotFoundError):
+                    dbscope.verified_bytes(root, path, sha, "bad original")
+                dbscope.recheck_originals(batch)
+                path.with_suffix(".gz").write_bytes(gzip.compress(data))
+                with self.assertRaises(dbscope.EvidenceChanged):
+                    dbscope.recheck_originals(batch)
+
+    def test_superseded_content_checks_the_actual_encoding_and_tracks_changes(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data = b"authenticated older catalogue" * 300
+            sha = hashlib.sha256(data).hexdigest()
+            path = root / (sha + ".gz")
+            path.write_bytes(gzip.compress(data, mtime=0))
+            with closing(store.connect(root)) as db, dbscope.bind(root, db) as batch:
+                dbscope.verify_content(root, path, sha, "bad original")
+                with patch("polymarket861.blob_storage.decoded", side_effect=AssertionError("unnecessary inflate")):
+                    dbscope.verify_content(root, path, sha, "bad original")
+                path.write_bytes(gzip.compress(data, mtime=1))
+                dbscope.verify_content(root, path, sha, "bad original")
+                dbscope.recheck_originals(batch)
+                path.write_bytes(gzip.compress(data + b"x", mtime=1))
+                with self.assertRaisesRegex(ValueError, "bad original"):
+                    dbscope.verify_content(root, path, sha, "bad original")
+                with self.assertRaises(dbscope.EvidenceChanged):
+                    dbscope.recheck_originals(batch)
+
     def test_large_original_remains_verifiable_across_encodings_and_backup_formats(self):
         with TemporaryDirectory() as tmp:
             base = Path(tmp)

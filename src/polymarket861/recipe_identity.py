@@ -157,8 +157,8 @@ _PRIMARY = {
     "ledger_terms.py": ("_interpret",),
     "ledger_rules.py": ("instant", "number"),
     "blob_storage.py": ("read_blob", "decoded"),
-    "archive_proof.py": ("original_receipt", "_body", "_event_capture"),
-    "dbscope.py": ("verified_bytes", "recheck_originals", "bind", "for_connection", "reading", "checked"),
+    "archive_proof.py": ("original_receipt", "verify_membership_receipt", "_body", "_event_capture"),
+    "dbscope.py": ("verified_bytes", "verify_content", "recheck_originals", "bind", "for_connection", "reading", "checked"),
     "store.py": (
         "archive_bytes",
         "register_fixture",

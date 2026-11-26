@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import re
-from collections import Counter, defaultdict
+from collections import Counter, OrderedDict, defaultdict
 from contextlib import ExitStack, closing, contextmanager, nullcontext
 from contextvars import ContextVar
 from dataclasses import dataclass
 from datetime import timedelta
+from functools import partial
 from pathlib import Path
+from threading import Lock
 from urllib.parse import urlsplit
 
 from . import (
@@ -31,6 +32,29 @@ MAX_AGE = timedelta(hours=24)
 REFRESH = timedelta(hours=6)
 DECISION_LEAD = timedelta(hours=1)
 _dispatch_checks = ContextVar("fixed_b1_schedule_checks", default=None)
+_catalog_slugs = OrderedDict()
+_catalog_lock = Lock()
+
+# Transactions publishing a schedule decision must notice edits and deletions
+# as well as new inputs. The other EPL workers can still collect books, news,
+# heartbeats and research reports during the evidence inspection.
+_SCHEDULE_INPUTS = (
+    "fixture_versions", "schedule_receipts", "result_versions", "result_schedule_refs",
+    "result_dispositions", "result_event_times", "rf_native_requests", "epl_schedule_competitions",
+    "epl_schedule_reviews", "epl_schedule_proofs", "epl_schedule_holds",
+    "ma_events", "ma_requests", "observations", "reports",
+)
+_SCHEDULE_FILTERS = {
+    # Reopening a durable Gamma witness can also consult a domestic collector
+    # request that has the same content digest and receipt timestamp.
+    "ma_requests": "({r}.operation IN ('event','catalog','league_event','league_catalog') AND {r}.status='ok')",
+    "ma_events": "{r}.slug={r}.fixture",
+    "observations": """({r}.source IN ('openligadb-results','openligadb-competition-registry')
+        OR ({r}.source='polymarket.com' AND CASE WHEN json_valid({r}.metadata)
+            THEN json_type({r}.metadata)!='object' OR json_extract({r}.metadata,'$.operation')
+                IN ('event','catalog','league_event','league_catalog') ELSE 1 END))""",
+    "reports": "({r}.kind='incident' AND {r}.key LIKE 'epl-schedule-review-%')",
+}
 # The canonical official competition directory confirmed this ID on 2026-11-25.
 KNOWN_EPL = {2026: 5996}
 SCHEMA = """
@@ -51,7 +75,149 @@ CREATE TABLE IF NOT EXISTS epl_schedule_competitions(
 def _db(root):
     db = result_admission.database(root)
     dbscope.prepare(db, "schedule-consensus", SCHEMA)
+    prepare_evidence_version(db)
     return db
+
+
+def prepare_evidence_version(db):
+    """Install change tracking for the input tables present in this database."""
+    tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    statements = [
+        "CREATE TABLE IF NOT EXISTS epl_schedule_epoch(id INTEGER PRIMARY KEY,revision INTEGER NOT NULL);",
+        "INSERT OR IGNORE INTO epl_schedule_epoch VALUES(1,0);",
+    ]
+    bump = "BEGIN UPDATE epl_schedule_epoch SET revision=revision+1 WHERE id=1; END;"
+    for table in _SCHEDULE_INPUTS:
+        if table not in tables:
+            continue
+        predicate = _SCHEDULE_FILTERS.get(table, "1")
+        old, new = (predicate.format(r=r) for r in ("OLD", "NEW"))
+        update = f"({old} OR {new})"
+        if table == "reports":
+            # Routine status publications change the timestamp; schedule checks
+            # depend only on the review key and its incident items.
+            update += """ AND (OLD.kind IS NOT NEW.kind OR OLD.key IS NOT NEW.key OR
+                CASE WHEN json_valid(OLD.payload) THEN json_extract(OLD.payload,'$.items') ELSE OLD.payload END IS NOT
+                CASE WHEN json_valid(NEW.payload) THEN json_extract(NEW.payload,'$.items') ELSE NEW.payload END)"""
+        for op, condition in (("INSERT", new), ("UPDATE", update), ("DELETE", old)):
+            statements.append(f"DROP TRIGGER IF EXISTS epl_schedule_{table}_{op};")
+            statements.append(
+                f"CREATE TRIGGER IF NOT EXISTS epl_schedule_{table}_{op} AFTER {op} ON {table} "
+                f"WHEN {condition} {bump}"
+            )
+        # SQLite can suppress the implicit DELETE trigger of INSERT OR REPLACE.
+        # A transition out of scope must invalidate, also on legacy UNIQUE keys.
+        if table in _SCHEDULE_FILTERS:
+            old_row = predicate.format(r="previous")
+            matches = ["(NEW.rowid!=-1 AND previous.rowid=NEW.rowid)"]
+            for index in db.execute(f"PRAGMA index_list({table})"):
+                if index[2]:
+                    columns = [row[0] for row in db.execute(
+                        "SELECT name FROM pragma_index_info(?) ORDER BY seqno", (index[1],)
+                    )]
+                    if None in columns:
+                        # A site-local unique expression cannot be represented
+                        # as a column comparison. Conservatively invalidate.
+                        matches = ["1"]
+                        break
+                    columns = [column.replace('"', '""') for column in columns]
+                    matches.append("(" + " AND ".join(
+                        f'previous."{column}"=NEW."{column}"' for column in columns
+                    ) + ")")
+            # A normal, new out-of-scope observation need only look up its
+            # declared keys. No scan of the high-frequency book table is needed.
+            statements.append(f"DROP TRIGGER IF EXISTS epl_schedule_{table}_replace;")
+            statements.append(
+                f"CREATE TRIGGER IF NOT EXISTS epl_schedule_{table}_replace BEFORE INSERT ON {table} "
+                f"WHEN NOT coalesce({new},0) AND EXISTS(SELECT 1 FROM {table} previous "
+                f"WHERE ({' OR '.join(matches)}) AND {old_row}) {bump}"
+            )
+    dbscope.prepare(db, "schedule-evidence-version", "\n".join(statements) + "\n")
+
+
+def evidence_version(db):
+    """Identify this database snapshot's schedule inputs, including optional source tables."""
+    placeholders = ",".join("?" for _ in _SCHEDULE_INPUTS)
+    untracked = db.execute(
+        f"SELECT t.name FROM sqlite_master t WHERE t.type='table' AND t.name IN ({placeholders}) "
+        "AND (SELECT count(*) FROM sqlite_master g WHERE g.type='trigger' "
+        "AND g.name IN ('epl_schedule_'||t.name||'_INSERT','epl_schedule_'||t.name||'_UPDATE',"
+        "'epl_schedule_'||t.name||'_DELETE'))<3 LIMIT 1", _SCHEDULE_INPUTS
+    ).fetchone()
+    if untracked:
+        raise _SnapshotChanged("new schedule input table requires change tracking: " + untracked[0])
+    return (
+        db.execute("PRAGMA schema_version").fetchone()[0],
+        db.execute("SELECT revision FROM epl_schedule_epoch WHERE id=1").fetchone()[0],
+    )
+
+
+def next_evidence_time(db, at):
+    """Earliest already-recorded schedule input that becomes visible after this cutoff."""
+    times = {
+        "fixture_versions": "known_at", "schedule_receipts": "recorded_at",
+        "rf_native_requests": "received_at", "epl_schedule_competitions": "received",
+        "epl_schedule_holds": "at", "epl_schedule_reviews": "at",
+        "ma_events": "received_at", "ma_requests": "received_at", "observations": "observed_at",
+    }
+    tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    candidates = []
+    for table, stamp in times.items():
+        if table in tables:
+            condition = _SCHEDULE_FILTERS.get(table, "1").format(r="t")
+            candidate = db.execute(
+                f"SELECT min({stamp}) FROM {table} t WHERE {stamp}>? AND {condition}", (at,)
+            ).fetchone()[0]
+            if candidate:
+                candidates.append(candidate)
+    for query in (
+        "SELECT min(stamp) FROM (SELECT json_extract(proof,'$.confirmed_at') stamp "
+        "FROM epl_schedule_proofs WHERE json_valid(proof)) WHERE stamp>?",
+        "SELECT min(json_extract(item.value,'$.observed_at')) FROM reports, "
+        "json_each(reports.payload,'$.items') item WHERE reports.kind='incident' "
+        "AND reports.key LIKE 'epl-schedule-review-%' AND json_extract(item.value,'$.observed_at')>?",
+    ):
+        candidate = db.execute(query, (at,)).fetchone()[0]
+        if candidate:
+            candidates.append(candidate)
+    return min(candidates, default=None)
+
+
+class _SnapshotChanged(ValueError):
+    pass
+
+
+def _lock_snapshot(db, snapshot, version):
+    db.rollback()
+    db.execute("BEGIN IMMEDIATE")
+    if evidence_version(db) != version:
+        raise _SnapshotChanged("schedule inputs changed during verification")
+    try:
+        dbscope.recheck_originals(snapshot)
+    except dbscope.EvidenceChanged as exc:
+        raise _SnapshotChanged(str(exc)) from exc
+
+
+def _decision_time(at, next_input, ol=None, event=None):
+    """A publication cannot use expired witnesses or skip a new visible input."""
+    now = store.now_utc()
+    if now < at or next_input and now >= next_input:
+        raise _SnapshotChanged("schedule input visibility changed before publication")
+    for witness in (ol, event):
+        if witness and witness.get("received_at") and (
+            store.instant(now) - store.instant(witness["received_at"]) > MAX_AGE
+        ):
+            raise _SnapshotChanged("schedule witness expired before publication")
+    return now
+
+
+def _retry_changed(operation):
+    for _ in range(2):
+        try:
+            return operation()
+        except _SnapshotChanged:
+            continue
+    return operation()
 
 
 def _label(year):
@@ -93,9 +259,9 @@ def _league_id(root, db, year, at):
     ).fetchone()
     if not obs or json.loads(obs[0]).get("url") != registry:
         raise ValueError("unverified competition receipt")
-    raw = store.read_blob(root, config["sha"])
-    if hashlib.sha256(raw).hexdigest() != config["sha"]:
-        raise ValueError("invalid competition directory hash")
+    raw = dbscope.verified_bytes(
+        root, store.blob_path(root, config["sha"]), config["sha"], "invalid competition directory hash"
+    )
     return _competition(json.loads(raw), year)
 
 
@@ -290,6 +456,26 @@ def _main_event(slug):
     return bool(match and not match[5])
 
 
+def _superseded_catalog(sha, stamp, latest):
+    # Only complete, verified JSON pages enter this cache. Recheck the receipt
+    # and the file's content hash before consulting its immutable membership.
+    with _catalog_lock:
+        slugs = _catalog_slugs.get(sha)
+        if slugs is None:
+            return False
+        _catalog_slugs.move_to_end(sha)
+    return all(slug in latest and latest[slug][0] > stamp for slug in slugs)
+
+
+def _remember_catalog(sha, slugs):
+    if len(slugs) <= 512:
+        with _catalog_lock:
+            _catalog_slugs[sha] = frozenset(slugs)
+            _catalog_slugs.move_to_end(sha)
+            if len(_catalog_slugs) > 512:
+                _catalog_slugs.popitem(last=False)
+
+
 def _events(root, db, now, *, since=None):
     """Select the latest original for each main slug, independently of the derived index."""
     by_pair = defaultdict(list)
@@ -351,6 +537,14 @@ def _events(root, db, now, *, since=None):
             continue
 
         try:
+            if (
+                operation == "catalog" and _superseded_catalog(sha, stamp, latest)
+                or operation == "event" and selector in latest and latest[selector][0] > stamp
+            ):
+                archive_proof.verify_membership_receipt(
+                    db, root, sha, stamp, operation, orphan=bool(orphan)
+                )
+                continue
             if orphan:
                 raw = archive_proof._body(root, sha)
             else:
@@ -385,6 +579,8 @@ def _events(root, db, now, *, since=None):
                     issue = "ambiguous native Gamma main event in catalogue"
                 remember(slug, stamp, sha, event, issue)
                 found.add(slug)
+            if operation == "catalog":
+                _remember_catalog(sha, found)
         except (ValueError, OSError, TypeError, KeyError) as exc:
             if operation == "event":
                 remember(selector, stamp, sha, error=str(exc))
@@ -737,6 +933,18 @@ def readiness(
     _connection=None,
 ):
     """Check the currently registered kickoff against local originals without revising it."""
+    inspect = partial(
+        _readiness, root, season=season, round_id=round_id, news_days=news_days,
+        team=team, fixture_ids=fixture_ids, at=at, _with_frontier=_with_frontier,
+        _connection=_connection,
+    )
+    return _retry_changed(inspect) if at is None and _connection is None else inspect()
+
+
+def _readiness(
+    root, *, season, round_id, news_days, team, fixture_ids, at,
+    _with_frontier, _connection,
+):
     from .football import team_key
 
     # Only a current, owned inspection can admit a new receipt. A caller
@@ -749,7 +957,8 @@ def readiness(
         db = stack.enter_context(connection)
         snapshot = dbscope.for_connection(db) or stack.enter_context(dbscope.bind(root, db))
         if not db.in_transaction:
-            db.execute("BEGIN IMMEDIATE" if admit_now else "BEGIN")
+            db.execute("BEGIN")
+        version = evidence_version(db) if admit_now else None
         at = store.iso(at or store.now_utc())
         now = store.instant(at)
         registered = [
@@ -816,6 +1025,7 @@ def readiness(
         events, errors = _events(root, db, now) if targets else ({}, [])
         rounds = {}
         items = []
+        admissions = []
         for f in targets:
             rnd = f["round_id"]
             key = (f["season"], rnd)
@@ -902,11 +1112,7 @@ def readiness(
                         "agreed native kickoff has not been applied to the registered schedule"
                     )
                 if admit_now and bulk and not durable:
-                    _admit_same_time(db, f, ol, markets[0], at)
-                    saved = _proof_at(db, f["fixture_id"], f["version"], at)
-                    item["fixed_confirmation"] = _confirmation_details(
-                        json.loads(saved["proof"]), saved["proof_digest"], at
-                    )
+                    admissions.append((item, f, ol, markets[0]))
                 item.update(status="confirmed", news_eligible=True)
             except (ValueError, OSError, KeyError, TypeError) as exc:
                 if seal_reason is None:
@@ -938,10 +1144,34 @@ def readiness(
                 )
             item["fixed_b1_block_reason"] = seal_reason
             items.append(item)
+        accepted = None
+        if admissions:
+            next_input = next_evidence_time(db, at)
+            _lock_snapshot(db, snapshot, version)
+            for item, f, ol, event in admissions:
+                accepted = _decision_time(at, next_input, ol, event)
+                if accepted >= f["kickoff"]:
+                    raise _SnapshotChanged("fixture started before schedule admission")
+                _admit_same_time(db, f, ol, event, accepted)
+                saved = _proof_at(db, f["fixture_id"], f["version"], accepted)
+                item["fixed_confirmation"] = _confirmation_details(
+                    json.loads(saved["proof"]), saved["proof_digest"], accepted
+                )
         frontier = _frontier(db) if _with_frontier else None
+        if _with_frontier:
+            input_version = evidence_version(db)
+            next_input_at = next_evidence_time(db, at)
         if admit_now:
             dbscope.recheck_originals(snapshot)
             db.commit()
+    if accepted is not None and accepted != at:
+        # The intervening read interval was available to other workers. Publish
+        # the first proof at its real writer time; reconstruct the report as of
+        # that instant rather than backdating it into an earlier forecast.
+        return readiness(
+            root, season=season, round_id=round_id, news_days=news_days, team=team,
+            fixture_ids=fixture_ids, at=accepted, _with_frontier=_with_frontier,
+        )
     confirmed = sum(
         i["status"] == "confirmed" or bool(i["fixed_confirmation"]) for i in items
     )
@@ -982,7 +1212,10 @@ def readiness(
     }
     if _with_frontier:
         report["frontier"] = frontier
+        report["input_version"] = input_version
+        report["next_input_at"] = next_input_at
         report["originals"] = snapshot.originals
+        report["unavailable_originals"] = snapshot.unavailable_originals
     return report
 
 
@@ -1037,6 +1270,9 @@ class FixedSchedules:
     checked: str
     fixtures: dict
     originals: dict
+    input_version: tuple
+    next_input_at: str | None
+    unavailable_originals: dict
 
 
 def fixed_schedules(root, fixture_ids, at, *, db=None):
@@ -1049,6 +1285,9 @@ def fixed_schedules(root, fixture_ids, at, *, db=None):
         report["as_of"],
         {f["fixture_id"]: f for f in report["fixtures"]},
         report["originals"],
+        report["input_version"],
+        report["next_input_at"],
+        report["unavailable_originals"],
     )
 
 
@@ -1061,42 +1300,43 @@ def dispatch_checks(checks):
         _dispatch_checks.reset(token)
 
 
+def fixed_inputs_current(root, fixture, at, checks, db):
+    """Validate a completed native schedule inspection against this transaction."""
+    if not checks or checks.root != Path(root).resolve():
+        return False
+    row = checks.fixtures.get(fixture["fixture_id"])
+    if not row or (row["kickoff"], row["version"]) != (fixture["kickoff"], fixture["version"]):
+        return False
+    at = store.iso(at)
+    if not checks.checked <= at < row["kickoff"] or checks.next_input_at and at >= checks.next_input_at:
+        return False
+    observed, now = store.instant(checks.checked), store.instant(at)
+    if now - observed > timedelta(minutes=5):
+        return False
+    receipts = [r["received_at"] for r in row["gamma"]]
+    if row["openligadb"] and row["openligadb"].get("received_at"):
+        receipts.append(row["openligadb"]["received_at"])
+    if any(observed <= store.instant(stamp) + MAX_AGE < now for stamp in receipts):
+        return False
+    try:
+        if evidence_version(db) != checks.input_version:
+            return False
+        dbscope.recheck_originals(checks)
+    except (_SnapshotChanged, dbscope.EvidenceChanged):
+        return False
+    return True
+
+
 def require_fixed(root, fixture, at, checks=None, *, db=None):
-    """Share preflight reads across dispatch jobs; each writer reopens its own fixture evidence."""
+    """Share authenticated evidence only while its rows, files and cutoff remain valid."""
     at = store.iso(at)
     fid = fixture["fixture_id"]
     checks = checks or _dispatch_checks.get()
-    row = (
-        checks.fixtures.get(fid)
-        if db is None and checks and checks.root == Path(root).resolve()
-        else None
-    )
-    if row and checks.checked <= at <= store.iso(
-        store.instant(checks.checked) + timedelta(minutes=5)
-    ):
-        receipts = [r["received_at"] for r in row["gamma"]]
-        if row["openligadb"] and row["openligadb"].get("received_at"):
-            receipts.append(row["openligadb"]["received_at"])
-        expired = row["bulk_placeholder"] and not row["fixed_confirmation"] and any(
-            store.instant(stamp) + MAX_AGE < store.instant(at) for stamp in receipts
-        )
-        with closing(_db(root)) as connection:
-            current = _frontier(connection)
-        if current != checks.frontier or expired:
-            row = None
-        else:
-            try:
-                dbscope.recheck_originals(checks)
-            except dbscope.EvidenceChanged:
-                row = None
-    else:
-        row = None
-    if row is None:
-        # Counts and max(rowid) schedule dispatch work but cannot attest an
-        # existing request's contents. Reopen original bytes, receipt metadata,
-        # local registration and holds within the actual sealing transaction.
+    with (nullcontext(db) if db is not None else closing(_db(root))) as connection:
+        current = fixed_inputs_current(root, fixture, at, checks, connection)
+    if not current:
         checks = fixed_schedules(root, {fid}, at, db=db)
-        row = checks.fixtures.get(fid)
+    row = checks.fixtures.get(fid)
     if not row or (row["kickoff"], row["version"]) != (
         fixture["kickoff"],
         fixture["version"],
@@ -1110,7 +1350,18 @@ def require_fixed(root, fixture, at, checks=None, *, db=None):
     return checks
 
 
-def _evaluate(root, db, f, ol, events, ambiguous, at, approval=None):
+def refresh_fixed(root, fixture, at, db):
+    """Re-read an invalidated sealing preflight using the same connection without a writer."""
+    def read():
+        prepare_evidence_version(db)
+        with db:
+            db.execute("BEGIN")
+            return require_fixed(root, fixture, at, db=db)
+
+    return _retry_changed(read)
+
+
+def _evaluate(root, db, f, ol, events, ambiguous, at, approval=None, *, latest_errors=None):
     fid, old, version = f["fixture_id"], f["kickoff"], f["schedule_version"]
     source = db.execute(
         "SELECT source FROM fixture_versions WHERE fixture_id=? AND version=?",
@@ -1221,12 +1472,15 @@ def _evaluate(root, db, f, ol, events, ambiguous, at, approval=None):
         if saved and at < old:
             reason = str(exc)
             if not ambiguous and not (reviewed and reviewed["action"] == "withdrawn"):
-                try:
-                    _check_latest(root, db, f, json.loads(saved["proof"]), at)
-                except (ValueError, OSError, TypeError, KeyError) as updated:
-                    reason = str(updated)
+                if latest_errors is None:
+                    try:
+                        _check_latest(root, db, f, json.loads(saved["proof"]), at)
+                    except (ValueError, OSError, TypeError, KeyError) as exc:
+                        reason = str(exc)
+                    else:
+                        reason = None
                 else:
-                    reason = None
+                    reason = latest_errors[fid]
             _hold(db, fid, version, at, reason)
         return row
 
@@ -1234,9 +1488,15 @@ def _evaluate(root, db, f, ol, events, ambiguous, at, approval=None):
 def review_schedule(root, year, fid, kickoff, reviewer, reason, *, withdraw=False):
     if not all(isinstance(v, str) and v.strip() for v in (reviewer, reason)):
         raise ValueError("reviewer and reason are required")
-    proposed = store.iso(kickoff)
-    with closing(_db(root)) as db, db:
-        db.execute("BEGIN IMMEDIATE")
+    return _retry_changed(partial(
+        _review_current, root, year, fid, store.iso(kickoff), reviewer, reason, withdraw,
+    ))
+
+
+def _review_current(root, year, fid, proposed, reviewer, reason, withdraw):
+    with closing(_db(root)) as db, db, dbscope.bind(root, db) as snapshot:
+        db.execute("BEGIN")
+        version = evidence_version(db)
         at = store.now_utc()
         fixtures = store.eligible_fixture_rows(db, season=result_admission.scope(year))
         f = next((x for x in fixtures if x["fixture_id"] == fid), None)
@@ -1256,6 +1516,9 @@ def review_schedule(root, year, fid, kickoff, reviewer, reason, *, withdraw=Fals
             reviewed = _review(db, f, at)
             if reviewed and reviewed["action"] == "withdrawn":
                 return reviewed
+            next_input = next_evidence_time(db, at)
+            _lock_snapshot(db, snapshot, version)
+            at = _decision_time(at, next_input)
             _hold(
                 db,
                 fid,
@@ -1273,11 +1536,15 @@ def review_schedule(root, year, fid, kickoff, reviewer, reason, *, withdraw=Fals
         pair = tuple(opportunity._club(f[k]) for k in ("home", "away"))
         ol = _round(root, db, year, f["round_id"], at)
         events, _ = _events(root, db, store.instant(at))
-        return _evaluate(
+        next_input = next_evidence_time(db, at)
+        _lock_snapshot(db, snapshot, version)
+        event = events.get(pair, [])
+        at = _decision_time(at, next_input, ol.get(pair), event[0] if len(event) == 1 else None)
+        decision = _evaluate(
             root, db,
             f,
             ol.get(pair),
-            events.get(pair, []),
+            event,
             fid not in unique_fixtures(fixtures),
             at,
             {
@@ -1286,6 +1553,8 @@ def review_schedule(root, year, fid, kickoff, reviewer, reason, *, withdraw=Fals
                 "reason": reason.strip(),
             },
         )
+        dbscope.recheck_originals(snapshot)
+        return decision
 
 
 def sync(root, year, *, fetch=False):
@@ -1318,9 +1587,15 @@ def sync(root, year, *, fetch=False):
                 fetches.append({"round": rnd, "status": capture["fetch_status"]})
             except (ValueError, OSError, TypeError, KeyError) as exc:
                 fetches.append({"round": rnd, "error": str(exc)})
-    with closing(_db(root)) as db, db:
-        db.execute("BEGIN IMMEDIATE")
+    return _retry_changed(partial(_sync_current, root, year, fetches))
+
+
+def _sync_current(root, year, fetches):
+    with closing(_db(root)) as db, db, dbscope.bind(root, db) as snapshot:
+        db.execute("BEGIN")
+        version = evidence_version(db)
         now = store.instant(store.now_utc())
+        at = store.iso(now)
         markets, errors = _events(root, db, now)
         forms = _upcoming(db, year, now, markets)
         all_local = store.eligible_fixture_rows(db, season=result_admission.scope(year))
@@ -1335,19 +1610,40 @@ def sync(root, year, *, fetch=False):
         items = []
         for rnd in sorted({f["round_id"] for f in forms}):
             try:
-                rounds[rnd] = _round(root, db, year, rnd, store.iso(now))
+                rounds[rnd] = _round(root, db, year, rnd, at)
             except (ValueError, OSError, KeyError, TypeError) as exc:
                 errors.append({"round": rnd, "reason": str(exc)})
+        # A deferred fixture may need to keep or release an existing hold.
+        # Reopen its historical sources once per round/cutoff, before taking
+        # the writer to publish the updates and both reports atomically.
+        latest_errors = {}
+        for f in forms:
+            fid = f["fixture_id"]
+            saved = _proof_at(db, fid, f["schedule_version"], at)
+            if saved:
+                try:
+                    _check_latest(root, db, f, json.loads(saved["proof"]), at)
+                except (ValueError, OSError, TypeError, KeyError) as exc:
+                    latest_errors[fid] = str(exc)
+                else:
+                    latest_errors[fid] = None
+        next_input = next_evidence_time(db, at)
+        _lock_snapshot(db, snapshot, version)
         for f in forms:
             rnd = f["round_id"]
             pair = clubs(f)
+            witnesses = markets.get(pair, [])
+            ol = rounds.get(rnd, {}).get(pair)
+            decision_time = _decision_time(
+                at, next_input, ol, witnesses[0] if len(witnesses) == 1 else None
+            )
             row = _evaluate(
                 root, db,
                 f,
-                rounds.get(rnd, {}).get(pair),
-                markets.get(pair, []),
+                ol, witnesses,
                 len(groups[(rnd, pair)]) != 1,
-                store.now_utc(),
+                decision_time,
+                latest_errors=latest_errors,
             )
             items.append(row)
         _recheck_early_results(db, store.now_utc())
@@ -1412,4 +1708,5 @@ def sync(root, year, *, fetch=False):
                 "items": list(unresolved.values()),
             },
         )
+        dbscope.recheck_originals(snapshot)
     return report

@@ -54,6 +54,39 @@ def _writer(root):
         yield db
 
 
+@contextmanager
+def _publication(root, task):
+    with news._db(root) as db:
+        for _ in range(3):
+            schedule_consensus.prepare_evidence_version(db)
+            with db:
+                try:
+                    # Keep the costly native receipt and archive reads on a WAL snapshot.
+                    db.execute("BEGIN")
+                    with dbscope.bind(root, db) as originals:
+                        version = schedule_consensus.evidence_version(db)
+                        checked_at = _now()
+                        next_evidence = schedule_consensus.next_evidence_time(db, checked_at)
+                        expires = schedule_consensus.require_news(
+                            root, db, task, checked_at, task["schedule_status"]
+                        )
+                    db.rollback()
+                    db.execute("BEGIN IMMEDIATE")
+                    current = schedule_consensus.evidence_version(db)
+                except schedule_consensus._SnapshotChanged:
+                    continue
+                at = _now()
+                if (
+                    version != current
+                    or at < checked_at
+                    or (next_evidence and at >= next_evidence)
+                ):
+                    continue
+                yield db, at, expires, next_evidence, originals
+                return
+    raise schedule_consensus.NewsScheduleChanged("native news schedule changed before publication")
+
+
 def _catalog(db):
     if not db.execute(
         "SELECT 1 FROM sqlite_master WHERE name='football_input_manifests'"
@@ -156,8 +189,9 @@ def _cursor(db, fixture, at, roster_token):
                          [list(r) for r in rows]])
 
 
-def _claim(root, limit, eligible_schedules):
-    with _writer(root) as db:
+def _due(root, eligible_schedules):
+    with news._db(root) as db:
+        db.execute("BEGIN")
         at = _now()
         games = [
             f for f in news._schedule(db, at)
@@ -189,26 +223,50 @@ def _claim(root, limit, eligible_schedules):
                 )
             ):
                 continue
-            due.append((job["ticket"] if job else 0, f, cursor, roster["next_at"]))
-        due.sort(key=lambda item: (item[0], item[1]["kickoff"], item[1]["fixture_id"]))
+            due.append(
+                (job, f | {
+                    "cursor": cursor,
+                    "roster_expiry": roster["next_at"],
+                    "claimed_manifest": manifest,
+                    "schedule_status": eligible_schedules[
+                        f["fixture_id"], f["kickoff"], f["version"]
+                    ],
+                })
+            )
+        due.sort(
+            key=lambda item: (
+                item[0]["ticket"] if item[0] else 0,
+                item[1]["kickoff"],
+                item[1]["fixture_id"],
+            )
+        )
+        return due, len(games)
+
+
+def _claim(root, previous, fixture):
+    key = fixture["fixture_id"], fixture["kickoff"]
+    with _writer(root) as db:
+        at = _now()
+        current = db.execute(
+            "SELECT * FROM news_event_work WHERE fixture_id=? AND kickoff=?", key
+        ).fetchone()
+        # Claim only this fixture at the moment we start computing it. Any
+        # competing claim or completion invalidates this candidate's queue view.
+        if current != previous or at >= key[1] or (
+            current and current["owner"] and current["lease_until"] > at
+        ):
+            return None
         ticket = db.execute(
-            "SELECT coalesce(max(ticket),0) FROM news_event_work"
+            "SELECT coalesce(max(ticket),0)+1 FROM news_event_work"
         ).fetchone()[0]
-        tasks = []
-        for i, (_, f, cursor, roster_expiry) in enumerate(due[:limit], 1):
-            owner = uuid.uuid4().hex
-            key = (f["fixture_id"], f["kickoff"])
-            db.execute(
-                """INSERT INTO news_event_work(fixture_id,kickoff,ticket,owner,lease_until) VALUES(?,?,?,?,?)
+        owner = uuid.uuid4().hex
+        db.execute(
+            """INSERT INTO news_event_work(fixture_id,kickoff,ticket,owner,lease_until) VALUES(?,?,?,?,?)
                ON CONFLICT(fixture_id,kickoff) DO UPDATE SET ticket=excluded.ticket,owner=excluded.owner,
                lease_until=excluded.lease_until""",
-                (*key, ticket + i, owner, store.iso(store.instant(at) + LEASE)),
-            )
-            tasks.append(
-                f | {"owner": owner, "cursor": cursor, "roster_expiry": roster_expiry, "claimed_manifest": manifest,
-                     "schedule_status": eligible_schedules[f["fixture_id"], f["kickoff"], f["version"]]}
-            )
-        return tasks, len(games), len(due)
+            (*key, ticket, owner, store.iso(store.instant(at) + LEASE)),
+        )
+    return fixture | {"owner": owner}
 
 
 _WEIGHT_FIELDS = {"chance_of_playing": None, "duration_multiplier": 1, "importance_multiplier": 1}
@@ -450,40 +508,36 @@ def _run(root, task, cache, history_root):
             row = _head(db, key[0])
             previous = _verified(row) if row else None
         doc, review = _report(root, task, previous, cache, history_root)
-        with _writer(root) as db, dbscope.bind(root, db) as originals:
-            at = _now()
+        if doc and task["version"] != doc["schedule_version"]:
+            raise schedule_consensus.NewsScheduleChanged("event was computed on a different schedule revision")
+        with _publication(root, task) as (db, at, schedule_expiry, next_evidence, originals):
             own = db.execute(
-                "SELECT owner FROM news_event_work WHERE fixture_id=? AND kickoff=?",
+                "SELECT owner,lease_until FROM news_event_work WHERE fixture_id=? AND kickoff=?",
                 key,
             ).fetchone()
-            if own[0] != task["owner"]:
+            if not own or own["owner"] != task["owner"]:
                 return basis | {
                     "status": "deferred",
                     "reason": "another worker owns this fixture",
                 }
-            if doc and task["version"] != doc["schedule_version"]:
-                raise schedule_consensus.NewsScheduleChanged("event was computed on a different schedule revision")
-            schedule_expiry = schedule_consensus.require_news(
-                root, db, task, at, task["schedule_status"]
-            )
+            if at >= own["lease_until"]:
+                raise ValueError("news event lease expired before publication")
             store.ensure_unfinished_at(db, *key, at)
             roster = news_roster.frontier(db, task["season"], at)
             if _cursor(db, task, at, roster["token"]) != task["cursor"]:
                 raise ValueError("news changed during calculation")
             head = _head(db, key[0])
-            if (head["digest"] if head else None) != (
-                previous["digest"] if previous else None
-            ):
+            if (_verified(head) if head else None) != previous:
                 raise ValueError("previous event changed during calculation")
-            at = _now()
+            created_at = _now()
             item = basis | {"status": "unchanged"}
             if doc:
                 # Computing cannot legitimately cross a validity deadline or go
                 # back in time. Re-evaluate at the new cutoff on the next pass.
-                if not doc["cutoff"] <= at < min(review, key[1]):
+                if not doc["cutoff"] <= created_at < min(review, key[1]):
                     raise ValueError("news validity changed during calculation")
                 doc.update(
-                    created_at=at,
+                    created_at=created_at,
                     # A legacy fixture can have multiple per-kickoff chains
                     # which independently numbered their sealed revisions.
                     revision=db.execute("SELECT coalesce(max(revision),0)+1 FROM news_event_updates WHERE fixture_id=?",
@@ -517,8 +571,12 @@ def _run(root, task, cache, history_root):
             finished = _now()
             if schedule_expiry and finished > schedule_expiry:
                 raise schedule_consensus.NewsScheduleChanged("native news schedule confirmation expired during publication")
-            if finished >= min(review, key[1]):
+            if next_evidence and finished >= next_evidence:
+                raise schedule_consensus.NewsScheduleChanged("native news schedule evidence became available during publication")
+            if not at <= created_at <= finished < min(review, key[1]):
                 raise ValueError("news validity changed during calculation")
+            if finished >= own["lease_until"]:
+                raise ValueError("news event lease expired during publication")
         return item
     except (ValueError, KeyError, OSError, sqlite3.OperationalError) as exc:
         reason = str(exc)
@@ -562,17 +620,23 @@ def refresh(data_dir, *, limit=2, history_root=None):
         (f["fixture_id"], f["kickoff"], f["version"]): f["status"]
         for f in schedule["fixtures"] if f["news_eligible"]
     } if schedule else {}
-    tasks, eligible, due = _claim(data_dir, limit, eligible_schedules)
+    candidates, eligible = _due(data_dir, eligible_schedules)
     cache = {}
-    items = [_run(data_dir, t, cache, history_root) for t in tasks]
+    items = []
+    for previous, fixture in candidates:
+        task = _claim(data_dir, previous, fixture)
+        if task is not None:
+            items.append(_run(data_dir, task, cache, history_root))
+            if len(items) == limit:
+                break
     counts = {
         s: sum(i["status"] == s for i in items)
         for s in ("published", "unchanged", "deferred")
     }
     return {
-        "state": "idle" if not tasks else "partial" if counts["deferred"] else "ok",
+        "state": "idle" if not items else "partial" if counts["deferred"] else "ok",
         "eligible": eligible,
-        "due": due,
+        "due": len(candidates),
         "attempted": len(items),
         **counts,
         "items": items,

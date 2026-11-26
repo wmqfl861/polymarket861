@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "polymarket861"
-version = "0.5.0a3"
+version = "0.5.0a3+eplfix.1"
 description = "Point-in-time football forecasts, five-league research and a paper Polymarket ledger"
 requires-python = ">=3.11"
 dependencies = ["httpx>=0.28,<1", "numpy>=1.24", "scipy>=1.10", "tzdata; platform_system == 'Windows'"]
