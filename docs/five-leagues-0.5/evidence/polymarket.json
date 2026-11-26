@@ -1,0 +1,3237 @@
+{
+  "report": "five-leagues-research/polymarket/v1",
+  "product_baseline": "wmqfl861/polymarket861 8125d579106dad51c694a97fdf6adf342e58adbb",
+  "observed_utc": {
+    "first": "2026-11-26T04:21:46.514Z",
+    "last": "2026-11-26T04:33:28.516Z"
+  },
+  "endpoints": {
+    "sports": "https://gamma-api.polymarket.com/sports",
+    "events": "https://gamma-api.polymarket.com/events",
+    "books": "https://clob.polymarket.com/book?token_id={token_id}",
+    "condition": "https://clob.polymarket.com/markets/{condition_id}"
+  },
+  "methods": {
+    "discovery": "Read /sports, page /events using unfiltered market-closure state, league tag_id, end_date_min/max, order=id, ascending=true, limit=25 (two matched weekends) or 100 (whole season), then offset until a short page. Each archived response reported HTTP 200. Filter by series.id, soccer fixture prefix and team league plus explicit home/away ordering, dates and period. Join only full-game main and -more-markets events with identical normalized fixture slug, de-duplicate condition IDs across them.",
+    "mapping": "The complete 1X2 set needs three separate home win / draw / away win conditions, each with a Yes and a No token. Classify full-time totals and team totals using typed and named period/sides/line; accept only supported X.5 goals. Strict legacy questions on the main event can recover unlabeled moneylines. A condition requires a 32-byte hex ID and two distinct numeric outcome IDs bound to returned labels (declared version v1/clobTokenIds, v2/positionIds).",
+    "windows": "UTC left-closed right-open. Weekend denominators are the number of eligible main Gamma events; require matching slug date and UTC startTime in-window. No official fixture target denominator is implied for those two weekends.",
+    "season": "Anonymously paginate GET /events by the validated tag, limit=100 sorted by id asc across the July 2025-July 2026 delivery window, then join main/aux catalogue pairs to OpenFootball football.json 2025-26 regular league fixtures frozen at commit e6744429ee395bc86f247348c6184bb08d4eb361 by ordered home/away names (two explicit aliases) and event slug date. The stronger tier also requires the Gamma primary event startTime UTC date. Only full-time half-integer threshold contracts whose sides, 32-byte condition ID, and both outcome tokens rebind qualify. 1X2 requires all three distinct binaries. These counts describe post-season discovery at November 26 2026, not pregame availability, rules compatibility, historical executable depth or payout. Archive dates can reflect scheduling corrections. Missing evidence is kept explicit.",
+    "order_books": "First matching main game by UTC start+slug in the upcoming window for each league. Three 1X2 conditions; total at 2.5 and home/away at 1.5. Both outcome tokens individually read once. One call per outcome token. Require bound asset and condition, positive bids/asks and max(bid)<min(ask). Independent retrieval times are retained. Price ladders are not published.",
+    "rules": "Investigation only. In isolated process substitute the observed sport prefix in market_provider.FIXTURE; use unmodified normalized_markets and ledger_terms._interpret with original rule SHA/text, native event_teams and first outcome as token. Count only mapped half-line or full 1X2 contracts with paired token identities. This diagnostic checks recognition of full contract text, independently of depth, fees and authority to execute. No repository source changed.",
+    "timestamps": "Requested / received are UTC client observations. HTTP receipt times and response body SHA256 identify this observation. An identical request later can return different metadata or books. Historical metadata is not a pregame snapshot.",
+    "indices": "One family_group array = [three-condition 1X2, total, home_total, away_total]. All dates and ranges are UTC unless expressly labeled."
+  },
+  "windows": {
+    "next": [
+      "2026-11-27",
+      "2026-12-01"
+    ],
+    "past": [
+      "2025-11-28",
+      "2025-12-02"
+    ]
+  },
+  "season_window": [
+    "2025-07-01T00:00:00Z",
+    "2026-07-01T00:00:00Z"
+  ],
+  "openfootball_commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+  "openfootball_to_gamma_names": {
+    "OpenFootball Borussia Dortmund": "Gamma BV Borussia 09 Dortmund",
+    "OpenFootball AC Pisa 1909": "Gamma Pisa SC"
+  },
+  "sports_request": {
+    "url": "https://gamma-api.polymarket.com/sports",
+    "requested": "2026-11-26T04:21:46.514Z",
+    "received": "2026-11-26T04:21:51.747Z",
+    "response_body_sha256": "1400225ff811fe596b4e3ba10a05ffd219f4716366f14bcbc4c402445dbb49ff"
+  },
+  "italy_zero_controls": [
+    {
+      "url": "https://gamma-api.polymarket.com/events?tag_id=100618&end_date_min=2026-11-27T00%3A00%3A00Z&end_date_max=2026-12-01T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+      "requested": "2026-11-26T04:22:01.002Z",
+      "received": "2026-11-26T04:22:05.869Z",
+      "response_body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "window": "next",
+      "returned": 0
+    },
+    {
+      "url": "https://gamma-api.polymarket.com/events?tag_id=100618&end_date_min=2025-11-28T00%3A00%3A00Z&end_date_max=2025-12-02T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+      "requested": "2026-11-26T04:22:05.869Z",
+      "received": "2026-11-26T04:22:10.204Z",
+      "response_body_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "window": "past",
+      "returned": 0
+    }
+  ],
+  "leagues": {
+    "epl": {
+      "sport": "epl",
+      "series_id": "10188",
+      "series_slug_observed": "premier-league-2025",
+      "primary_tag": "306",
+      "queried_tag": "306",
+      "resolution_url_from_sports": "https://www.premierleague.com/",
+      "games_page": "https://polymarket.com/sports/epl/games",
+      "weekends": {
+        "next": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=306&end_date_min=2026-11-27T00%3A00%3A00Z&end_date_max=2026-12-01T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              25,
+              "2026-11-26T04:21:51.759Z",
+              "2026-11-26T04:21:57.753Z",
+              "10c4da928e2f71465bad74833b293e520007574784643557b077da0e83aca305"
+            ],
+            [
+              25,
+              25,
+              "2026-11-26T04:21:57.801Z",
+              "2026-11-26T04:22:01.389Z",
+              "62a02e6a01c4760dffba10fea6b104f98e841b4c108db710aa81f8dbba8fcf9d"
+            ],
+            [
+              50,
+              11,
+              "2026-11-26T04:22:01.432Z",
+              "2026-11-26T04:22:06.142Z",
+              "19b81ec0211d545f0975016dfd840999a72397da9510e6cc84f41c81a1833903"
+            ]
+          ],
+          "raw_event_count": 61,
+          "accepted_primary": 10,
+          "accepted_aux": 10,
+          "classified_family_fixture_counts": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "verified_unique_contract_counts": [
+            30,
+            90,
+            60,
+            60
+          ],
+          "no_type_recovered_with_strict_question_and_event": 0,
+          "rule_clause_checks": {
+            "with_rule": 240,
+            "mentions_90min_and_stoppage_time": 240,
+            "dated_does_not_start_by": 240,
+            "mentions_awarded_result": 240,
+            "mentions_50_50": 210
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 240,
+            "passed_by_family": {
+              "moneyline": 30,
+              "total": 90,
+              "home_total": 60,
+              "away_total": 60
+            },
+            "rejected": {}
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "epl-not-che-2026-11-27",
+              []
+            ],
+            [
+              "epl-lee-cov-2026-11-28",
+              []
+            ],
+            [
+              "epl-mun-bre-2026-11-28",
+              []
+            ],
+            [
+              "epl-ips-ast-2026-11-28",
+              []
+            ],
+            [
+              "epl-eve-liv-2026-11-29",
+              []
+            ],
+            [
+              "epl-bri-new-2026-11-29",
+              []
+            ],
+            [
+              "epl-cry-hul-2026-11-29",
+              []
+            ],
+            [
+              "epl-ful-bou-2026-11-29",
+              []
+            ],
+            [
+              "epl-sun-tot-2026-11-29",
+              []
+            ],
+            [
+              "epl-ars-mac-2026-11-29",
+              []
+            ]
+          ]
+        },
+        "past": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=306&end_date_min=2025-11-28T00%3A00%3A00Z&end_date_max=2025-12-02T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              20,
+              "2026-11-26T04:21:51.760Z",
+              "2026-11-26T04:21:56.447Z",
+              "acad17ebdce2643a5de06b590bd2aabd5f8d4616534e054bbc0e23041bb3a6e7"
+            ]
+          ],
+          "raw_event_count": 20,
+          "accepted_primary": 10,
+          "accepted_aux": 10,
+          "classified_family_fixture_counts": [
+            10,
+            10,
+            0,
+            0
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            10,
+            10,
+            0,
+            0
+          ],
+          "verified_unique_contract_counts": [
+            30,
+            30,
+            0,
+            0
+          ],
+          "no_type_recovered_with_strict_question_and_event": 30,
+          "rule_clause_checks": {
+            "with_rule": 60,
+            "mentions_90min_and_stoppage_time": 60,
+            "dated_does_not_start_by": 0,
+            "mentions_awarded_result": 0,
+            "mentions_50_50": 0
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 60,
+            "passed_by_family": {
+              "moneyline": 12
+            },
+            "rejected": {
+              "rule text disagrees with archived period, side, participant or line": 18,
+              "unreviewed participant, period or rule header": 30
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "epl-bre-bur-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-mac-lee-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-sun-bou-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-eve-new-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-tot-ful-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-cry-mun-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-ast-wol-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-not-bri-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-wes-liv-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "epl-che-ars-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ]
+          ]
+        }
+      },
+      "book_sample": {
+        "event_slug": "epl-not-che-2026-11-27",
+        "aux_event_slug": "epl-not-che-2026-11-27-more-markets",
+        "main_gamma_id": "1427080",
+        "aux_gamma_id": "1427167",
+        "start_time": "2026-11-27T20:00:00Z",
+        "page": "https://polymarket.com/sports/epl/epl-not-che-2026-11-27",
+        "explicit_pregame_in_main_catalog": false,
+        "book_summary": {
+          "intended_tokens": 12,
+          "http_200": 12,
+          "identities_verified": 12,
+          "two_sided_uncrossed_tokens": 12,
+          "contracts_with_both_outcomes_uncrossed_two_sided": 6
+        },
+        "conditions": [
+          {
+            "family": "moneyline",
+            "side": "home",
+            "line": null,
+            "market_slug": "epl-not-che-2026-11-27-not",
+            "condition_id": "0xe5c7522b2b3276c581932298e8e81e3b81aee4013ec8a2f127dbb909dac224ff",
+            "version": "v1",
+            "rule_sha256": "5204282f2f65e4e02d024bbddfc1e5330468ae32dffab793bf3a418d4fbcea95",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "68615100462982960959959550956177371734619920837911149223024649424715605846978",
+                "2026-11-26T04:24:44.929Z",
+                "2026-11-26T04:24:49.938Z",
+                "38e494e4ff0d6e66def1e1a930ef5cfb70cf5a5cd2f1090e4e1000a7441c0f1e",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "94153563293395290101746265182401081323098689227100536223191050545611492694984",
+                "2026-11-26T04:24:44.929Z",
+                "2026-11-26T04:24:49.938Z",
+                "e0e3050e71c20a493a8747770c900d28cb785be5e474bbe9e3979d645cab14a5",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "draw",
+            "line": null,
+            "market_slug": "epl-not-che-2026-11-27-draw",
+            "condition_id": "0x8459292ab074b2ba99f1530e19f5b8307c0b66eb345bd067276f04aaee4d4da1",
+            "version": "v1",
+            "rule_sha256": "02edd04fd7a3af492a531827e92bf70410195a7c7328cae965452c7307063760",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "19419790643298498840205868613612074671358842622097955237077803207029520756433",
+                "2026-11-26T04:24:44.930Z",
+                "2026-11-26T04:24:49.936Z",
+                "e27ffe41db24602881efa65431a66292befdfbc9674f37b5c38d38f2e07ba00e",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "53338006670927406092860279691349272500085451738939089496025999125708212093031",
+                "2026-11-26T04:24:44.930Z",
+                "2026-11-26T04:24:49.941Z",
+                "e174513ba3d1dd8fe18d5ac573c04ec8110d2fdd5637b8a73df1d59ecbc65513",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "away",
+            "line": null,
+            "market_slug": "epl-not-che-2026-11-27-che",
+            "condition_id": "0x584a645560bd83904de3d527308f6df4f611a8441f05cc6a407968ee34361424",
+            "version": "v1",
+            "rule_sha256": "2aadf579a82cf298b404281ba0d219f37c13ae28a51498f51ca50e6ecb4f6da0",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "70661505073965869565648049816251763869575107840278149856878990398751624224964",
+                "2026-11-26T04:24:44.931Z",
+                "2026-11-26T04:24:49.939Z",
+                "616b4d74d6700baec680b12e16a2b5281ab143a3e247d6e3a3b7158e4f02a99e",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "66862088550029844188762869377237033383734251219274071696996866234677259693253",
+                "2026-11-26T04:24:49.941Z",
+                "2026-11-26T04:24:54.145Z",
+                "bdc5763d6332a98a527623ca4d9384eba6cd5948642777eb3ce9d5a7016746cc",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "total",
+            "side": null,
+            "line": "2.5",
+            "market_slug": "epl-not-che-2026-11-27-total-2pt5",
+            "condition_id": "0x2f83ad5e0e07b8a4625fbf9c58daebb76174acc727ddac32a7167fc342ba0035",
+            "version": "v1",
+            "rule_sha256": "0ffa441ae6e236edbff3bd980087e24fad08454ce2b6743395c000282f4af583",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "102107055254017267772721174464783299467140023942243737562013184665165808766234",
+                "2026-11-26T04:24:49.942Z",
+                "2026-11-26T04:24:54.142Z",
+                "c8d7143c053d7a7d441f1ad01f551e5e0567f937e92f97649471dccc940141e8",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "16112606970433970906783973530157343974888179823576440063945794542542162913160",
+                "2026-11-26T04:24:49.942Z",
+                "2026-11-26T04:24:54.143Z",
+                "28ee9ba0c9f1aac7a0789f2c72c19ab8cae3208c495ef86591f0fc1283d34b02",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "home_total",
+            "side": "home",
+            "line": "1.5",
+            "market_slug": "epl-not-che-2026-11-27-team-total-home-1pt5",
+            "condition_id": "0x010117dcc55ac4d7cbb5184fd5f7e0b488222ad831e14f09e12c5aad2d98a3cb",
+            "version": "v1",
+            "rule_sha256": "d2f34293a55b953d7378a360aec89c047a7febe6c27892eded2ac3dbb5a19fc1",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "85182434198017557969951287409329318124374216368499389409603963774733753871162",
+                "2026-11-26T04:24:49.943Z",
+                "2026-11-26T04:24:54.132Z",
+                "23c2734946c4d00c2061e66fbe6e5f68e6051633e481dfa996338ed278fc05c2",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "4522733596885698194418824123788138929229347303535291970335422980773787729110",
+                "2026-11-26T04:24:49.944Z",
+                "2026-11-26T04:24:54.146Z",
+                "b30ac269fb6d083078a66b0ac92029c165bb01b1c5a868fa4eb1966b7c68c11b",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "away_total",
+            "side": "away",
+            "line": "1.5",
+            "market_slug": "epl-not-che-2026-11-27-team-total-away-1pt5",
+            "condition_id": "0xd9c8cc4e8ab19e0ec1a1321824bee32eda69a3f13852f88448ae8d56f1cde725",
+            "version": "v1",
+            "rule_sha256": "0ababfd08f93ccc67df3477d7e23a2458ae59fb9f6586cfcae4080eeb32aacfa",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "37584135603744594294781619107027338235537758301117829269296470633450262308981",
+                "2026-11-26T04:24:54.136Z",
+                "2026-11-26T04:24:58.488Z",
+                "6b17ab07ae6c17519cdbc8682af758494c8ecf5cb61b4d3daa35c7d9309e158c",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "63750707402992149592970937794123819102036760107373742912168721561122134932876",
+                "2026-11-26T04:24:54.143Z",
+                "2026-11-26T04:24:58.494Z",
+                "0d8c273b543f0b57b71eba124a3bea890ff3bbe06371338cf88cd470c81c3d8d",
+                200,
+                true,
+                true
+              ]
+            ]
+          }
+        ],
+        "observed_six_contracts_parameters": {
+          "fee_schedule_rate": 0.05,
+          "fee_schedule_exponent": 1,
+          "fee_schedule_takerOnly": true,
+          "fees_enabled": true,
+          "minimum_order_size": 5,
+          "seconds_delay": 1
+        }
+      },
+      "full_season": {
+        "league_schedule_source": {
+          "url": "https://raw.githubusercontent.com/openfootball/football.json/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/en.1.json",
+          "requested": "2026-11-26T04:29:06.754Z",
+          "received": "2026-11-26T04:29:12.857Z",
+          "response_body_sha256": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1"
+        },
+        "schedule_fixtures": 380,
+        "score_shapes": {
+          "ft-object": 353,
+          "score-array": 27
+        },
+        "gamma_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=306&end_date_min=2025-07-01T00%3A00%3A00Z&end_date_max=2026-07-01T00%3A00%3A00Z&limit=100&offset=0&order=id&ascending=true",
+        "gamma_page_receipts": [
+          [
+            0,
+            100,
+            "2026-11-26T04:27:32.488Z",
+            "2026-11-26T04:27:38.638Z",
+            "6b6f80ad525c78050ca7173b12198045a936c7370de3bc6ea496d7b77f628fd5"
+          ],
+          [
+            100,
+            100,
+            "2026-11-26T04:27:38.715Z",
+            "2026-11-26T04:27:43.570Z",
+            "2ca4f23c7692c2af736dde217c45f41b62021ba1a974ef9137b7e8c5eed93a71"
+          ],
+          [
+            200,
+            100,
+            "2026-11-26T04:27:43.610Z",
+            "2026-11-26T04:27:48.126Z",
+            "20e591d583c724b89588728e2c6b0d79e427eaf7bc7a653ce67e18184a5b054e"
+          ],
+          [
+            300,
+            100,
+            "2026-11-26T04:27:48.200Z",
+            "2026-11-26T04:27:53.055Z",
+            "ffc821cf53be7844745d4d33fdba6a3ed0aa2e70e2f8d4d760f5cff0c7e843ba"
+          ],
+          [
+            400,
+            100,
+            "2026-11-26T04:27:53.105Z",
+            "2026-11-26T04:27:58.261Z",
+            "f33ef2d1743abad972b8e5bc10fe576cff334e58a8bac56ede6af8280777cbac"
+          ],
+          [
+            500,
+            100,
+            "2026-11-26T04:27:58.343Z",
+            "2026-11-26T04:28:03.286Z",
+            "f30a5dc2c6f309edf36a33d1d83799b08516ae4c38a11e30883f1153dfbf3176"
+          ],
+          [
+            600,
+            100,
+            "2026-11-26T04:28:03.365Z",
+            "2026-11-26T04:28:08.225Z",
+            "4d9ed271baa78bfcc8ef10bc9490bb0f21dc9a2dff716379a97a5b6bdcf982a6"
+          ],
+          [
+            700,
+            100,
+            "2026-11-26T04:28:08.294Z",
+            "2026-11-26T04:28:13.011Z",
+            "d1a4ed952e9229d8fb1a708bebd9d77e162e42b036111887c9ce4c9f65e3ad0a"
+          ],
+          [
+            800,
+            100,
+            "2026-11-26T04:28:13.102Z",
+            "2026-11-26T04:28:18.438Z",
+            "2642865326639fd63c5955d20112eacff7655946342e89fb07f9d41fd47eff72"
+          ],
+          [
+            900,
+            100,
+            "2026-11-26T04:28:18.534Z",
+            "2026-11-26T04:28:23.659Z",
+            "a87cb8ac07ca4680fc5a2ba0532d69ec8f1c57e889765c96896f49a10563155f"
+          ],
+          [
+            1000,
+            79,
+            "2026-11-26T04:28:23.776Z",
+            "2026-11-26T04:28:28.281Z",
+            "2d7fbc98b381cd572dbb09bb45999992105a99869e91f7941cf962600d1128aa"
+          ]
+        ],
+        "raw_catalog_events": 1079,
+        "in_scope_provider_primary_slugs_before_schedule_join": 380,
+        "prejoin_valid_groups_from_these_slugs": [
+          380,
+          297,
+          0,
+          0
+        ],
+        "exact_schedule_matched_primary": 378,
+        "exact_schedule_and_valid_family_fixture_counts": [
+          378,
+          295,
+          0,
+          0
+        ],
+        "diagnostics_before_manually_reconciling_dates": {
+          "no_single_dual_date_match": [
+            [
+              "Manchester City FC",
+              "Crystal Palace FC",
+              "2026-05-13",
+              {
+                "slug": "epl-mac-cry-2026-03-21",
+                "slug_date": "2026-03-21",
+                "start_time": "2026-05-13T19:00:00Z"
+              }
+            ],
+            [
+              "Aston Villa FC",
+              "Liverpool FC",
+              "2026-05-15",
+              {
+                "slug": "epl-ast-liv-2026-05-17",
+                "slug_date": "2026-05-17",
+                "start_time": "2026-05-15T19:00:00Z"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "lal": {
+      "sport": "lal",
+      "series_id": "10193",
+      "series_slug_observed": "la-liga-2025",
+      "primary_tag": "780",
+      "queried_tag": "780",
+      "resolution_url_from_sports": "https://www.laliga.com/en-GB",
+      "games_page": "https://polymarket.com/sports/laliga/games",
+      "weekends": {
+        "next": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=780&end_date_min=2026-11-27T00%3A00%3A00Z&end_date_max=2026-12-01T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              25,
+              "2026-11-26T04:21:51.760Z",
+              "2026-11-26T04:21:57.782Z",
+              "c4a0ab5f46f7a690d989faa24f2094d16c41742d10dff37f65b729ef967c4bb2"
+            ],
+            [
+              25,
+              25,
+              "2026-11-26T04:21:57.843Z",
+              "2026-11-26T04:22:01.086Z",
+              "d5f540e8f62f654da0ae62eb05459a5c125b26bf8a22185812d270a622b807e9"
+            ],
+            [
+              50,
+              11,
+              "2026-11-26T04:22:01.131Z",
+              "2026-11-26T04:22:06.118Z",
+              "0d2355e0ccd5254ef0b0d21f6cfa664009f7b53f901ba3e3ff52b24a58d36185"
+            ]
+          ],
+          "raw_event_count": 61,
+          "accepted_primary": 10,
+          "accepted_aux": 10,
+          "classified_family_fixture_counts": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "verified_unique_contract_counts": [
+            30,
+            90,
+            60,
+            60
+          ],
+          "no_type_recovered_with_strict_question_and_event": 0,
+          "rule_clause_checks": {
+            "with_rule": 240,
+            "mentions_90min_and_stoppage_time": 240,
+            "dated_does_not_start_by": 240,
+            "mentions_awarded_result": 240,
+            "mentions_50_50": 210
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 240,
+            "passed_by_family": {},
+            "rejected": {
+              "unreviewed participant, period or rule header": 240
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "lal-lev-rrc-2026-11-27",
+              []
+            ],
+            [
+              "lal-bet-ray-2026-11-28",
+              []
+            ],
+            [
+              "lal-mala-bil-2026-11-28",
+              []
+            ],
+            [
+              "lal-elc-mad-2026-11-28",
+              []
+            ],
+            [
+              "lal-rea-ala-2026-11-28",
+              []
+            ],
+            [
+              "lal-val-osa-2026-11-29",
+              []
+            ],
+            [
+              "lal-dep-bar-2026-11-29",
+              []
+            ],
+            [
+              "lal-cel-vil-2026-11-29",
+              []
+            ],
+            [
+              "lal-rso-sev-2026-11-29",
+              []
+            ],
+            [
+              "lal-esp-get-2026-11-30",
+              []
+            ]
+          ]
+        },
+        "past": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=780&end_date_min=2025-11-28T00%3A00%3A00Z&end_date_max=2025-12-02T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              20,
+              "2026-11-26T04:21:51.761Z",
+              "2026-11-26T04:21:56.493Z",
+              "8c78b7f746b9f7a2f4aef4ca3575426cf7bccde7d5d2b19695ff5cd8fef200a6"
+            ]
+          ],
+          "raw_event_count": 20,
+          "accepted_primary": 10,
+          "accepted_aux": 10,
+          "classified_family_fixture_counts": [
+            10,
+            10,
+            0,
+            0
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            10,
+            10,
+            0,
+            0
+          ],
+          "verified_unique_contract_counts": [
+            30,
+            30,
+            0,
+            0
+          ],
+          "no_type_recovered_with_strict_question_and_event": 30,
+          "rule_clause_checks": {
+            "with_rule": 60,
+            "mentions_90min_and_stoppage_time": 60,
+            "dated_does_not_start_by": 0,
+            "mentions_awarded_result": 0,
+            "mentions_50_50": 0
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 60,
+            "passed_by_family": {
+              "moneyline": 14
+            },
+            "rejected": {
+              "rule text disagrees with archived period, side, participant or line": 16,
+              "unreviewed participant, period or rule header": 30
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "lal-get-elc-2025-11-28",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-mal-osa-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-bar-ala-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-lev-bil-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-mad-ovi-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-rso-vil-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-sev-bet-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-cel-esp-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-gir-rea-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "lal-ray-val-2025-12-01",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ]
+          ]
+        }
+      },
+      "book_sample": {
+        "event_slug": "lal-lev-rrc-2026-11-27",
+        "aux_event_slug": "lal-lev-rrc-2026-11-27-more-markets",
+        "main_gamma_id": "1426855",
+        "aux_gamma_id": "1426940",
+        "start_time": "2026-11-27T20:00:00Z",
+        "page": "https://polymarket.com/sports/laliga/lal-lev-rrc-2026-11-27",
+        "explicit_pregame_in_main_catalog": false,
+        "book_summary": {
+          "intended_tokens": 12,
+          "http_200": 12,
+          "identities_verified": 12,
+          "two_sided_uncrossed_tokens": 12,
+          "contracts_with_both_outcomes_uncrossed_two_sided": 6
+        },
+        "conditions": [
+          {
+            "family": "moneyline",
+            "side": "home",
+            "line": null,
+            "market_slug": "lal-lev-rrc-2026-11-27-lev",
+            "condition_id": "0x5804a5ecc8de7b57e8ee5402d985770f53e8f067d0cb02b9e20b7dab699a784c",
+            "version": "v1",
+            "rule_sha256": "7e8c48a72572a07e79f1f4fd9aaba65b7d205be69f3b44efc661d3204d072a8b",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "69319776769927154622235316168951377755370019386030410779193389245239756231143",
+                "2026-11-26T04:24:54.144Z",
+                "2026-11-26T04:24:58.450Z",
+                "789c45644dbf550526e4d6f3f8b4a8305d53608d6a72238fa4d8461f7c6c484a",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "3382357137316142313714440127777758766235314246299727023048419269709429444563",
+                "2026-11-26T04:24:54.147Z",
+                "2026-11-26T04:24:58.493Z",
+                "bc098d0e3f1f8d24f279440698666f7ab67abc3991f2873300510ec172391750",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "draw",
+            "line": null,
+            "market_slug": "lal-lev-rrc-2026-11-27-draw",
+            "condition_id": "0xc05b0fd39701b60a96a4a5b17042fb67b24c21777e156d4491650367c9484ccd",
+            "version": "v1",
+            "rule_sha256": "445d3311f189372396a724516b532503fe305212c124a9953538a9fc8c5618c9",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "115233574395531708212202596556147909210661959007459379667413697117881495623710",
+                "2026-11-26T04:24:54.147Z",
+                "2026-11-26T04:24:58.451Z",
+                "431167f897f47d9cc81570ceea87e69268e9f4a63883ccb33ce83e9cbca1ca51",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "54769463259291485918610033921488474235775807933176127749985460056540201460478",
+                "2026-11-26T04:24:58.451Z",
+                "2026-11-26T04:25:02.800Z",
+                "166ba1e074b28e05b779c8b0f347d4004ebf8df3db4415089eae75e000cc428e",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "away",
+            "line": null,
+            "market_slug": "lal-lev-rrc-2026-11-27-rrc",
+            "condition_id": "0xa5ea641cf4123bda66df70260b3ae995afb37a8e142fb9b2efe1e79795da9c1b",
+            "version": "v1",
+            "rule_sha256": "a5030c2253024bf4f6db0b6a3b97b048750470e6032b97d012c58048d2e69177",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "34618916301404629505671550019168217356099679462596240906936420936899480540162",
+                "2026-11-26T04:24:58.452Z",
+                "2026-11-26T04:25:02.804Z",
+                "e1d7219e396b300dd6fc34d3d42b73c42f16a1703d00212fad4c99d2ef8cb6cc",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "3562159108311791673012320273153641368076680837453204580927033843345962148304",
+                "2026-11-26T04:24:58.489Z",
+                "2026-11-26T04:25:02.758Z",
+                "f4ec3f1ea7a0c08c25415c2881a48c90a63124dffb4f8c4e75077a54c3135f0d",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "total",
+            "side": null,
+            "line": "2.5",
+            "market_slug": "lal-lev-rrc-2026-11-27-total-2pt5",
+            "condition_id": "0x8a3692da47f65bd2d1c63b5dd3b15068b58c595246b1c0b8eaead46673025e6f",
+            "version": "v1",
+            "rule_sha256": "5e66a9dbd2e54301e62959f86193dbe0b51d0e1241a5e7de7af60344ffcf91d9",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "39555808827433737591316970585266138650955419930818475520639791406031247709075",
+                "2026-11-26T04:24:58.494Z",
+                "2026-11-26T04:25:02.809Z",
+                "cd3fc26cab53fab0670fa1e99cae9ff60b4b99cf80d4a52fb06b55736910a891",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "113392577515293029281524566421919288200263779585709631791537540707084340956407",
+                "2026-11-26T04:24:58.494Z",
+                "2026-11-26T04:25:02.816Z",
+                "790a4381eef5d99c4f4b24c9282c16502a05d58b9ef8c3e1da3cc6da0c3511dd",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "home_total",
+            "side": "home",
+            "line": "1.5",
+            "market_slug": "lal-lev-rrc-2026-11-27-team-total-home-1pt5",
+            "condition_id": "0xa4a112a46370e4e221f6a195a0e0d48eaca640e2a99979a83ddc44100ad8eb24",
+            "version": "v1",
+            "rule_sha256": "393cb9d0dac2e4ab2b2ce80bae604b8b185e13e480b0eb84a1cf91d84f5bf7e5",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "50710194610581771077195166515932661125058028786348572748486766395336120149477",
+                "2026-11-26T04:25:02.759Z",
+                "2026-11-26T04:25:07.583Z",
+                "53c8a6e9b4ba677ca7fcba4a344c2bb5c93b3f540b8a24f4fbb38617cadf0b2e",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "13178335105346114691329770888892094581963416463432567929578942094406223859699",
+                "2026-11-26T04:25:02.800Z",
+                "2026-11-26T04:25:07.586Z",
+                "ba143c8682c15961bf6ffa3ba4a8c20775afe48aa14086cfd84281fcd0af97ab",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "away_total",
+            "side": "away",
+            "line": "1.5",
+            "market_slug": "lal-lev-rrc-2026-11-27-team-total-away-1pt5",
+            "condition_id": "0xf460684ab418da207f6edba0a8454b4b1a4240c02598d881605d3ea39531b2fd",
+            "version": "v1",
+            "rule_sha256": "407b6ce5a311904e1e6e54dc2a22575ef3d72b4b6c4725599bb8c9c5323c6bd6",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "20020348226120897129343551695635748022486481277717699853606421438577022356054",
+                "2026-11-26T04:25:02.805Z",
+                "2026-11-26T04:25:07.587Z",
+                "ccd2d350600715e14db97d77f06b1b6e29e388d3940d7c14c9301ab005dad320",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "16138735701627365818970802250539346738502080082352757802278142255440421425347",
+                "2026-11-26T04:25:02.809Z",
+                "2026-11-26T04:25:07.585Z",
+                "3f717e15a53038643d7270b5e6b6a44a76398a8f5dfad869e240cd6a9fc8382f",
+                200,
+                true,
+                true
+              ]
+            ]
+          }
+        ],
+        "observed_six_contracts_parameters": {
+          "fee_schedule_rate": 0.05,
+          "fee_schedule_exponent": 1,
+          "fee_schedule_takerOnly": true,
+          "fees_enabled": true,
+          "minimum_order_size": 5,
+          "seconds_delay": 1
+        }
+      },
+      "full_season": {
+        "league_schedule_source": {
+          "url": "https://raw.githubusercontent.com/openfootball/football.json/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/es.1.json",
+          "requested": "2026-11-26T04:29:06.755Z",
+          "received": "2026-11-26T04:29:12.830Z",
+          "response_body_sha256": "b40397d8e62c640138548d57a1a9f76150549213d2a07fcbbb90ed0eabc6ccea"
+        },
+        "schedule_fixtures": 380,
+        "score_shapes": {
+          "ft-object": 365,
+          "score-array": 15
+        },
+        "gamma_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=780&end_date_min=2025-07-01T00%3A00%3A00Z&end_date_max=2026-07-01T00%3A00%3A00Z&limit=100&offset=0&order=id&ascending=true",
+        "gamma_page_receipts": [
+          [
+            0,
+            100,
+            "2026-11-26T04:27:32.490Z",
+            "2026-11-26T04:27:38.775Z",
+            "0b0c2078018818d4baa28292bece4053f6e305d2f447cb6d72654a5d4144100a"
+          ],
+          [
+            100,
+            100,
+            "2026-11-26T04:27:38.821Z",
+            "2026-11-26T04:27:43.760Z",
+            "d853ca50a9e499750cbf703974ee075baec60103a3f6e1521fbfc54c4fbb5e2c"
+          ],
+          [
+            200,
+            100,
+            "2026-11-26T04:27:43.802Z",
+            "2026-11-26T04:27:48.342Z",
+            "b8987a91775552f377f34bab67e7371f9bc89a04e9a6572405eb9d01b7197f9f"
+          ],
+          [
+            300,
+            100,
+            "2026-11-26T04:27:48.391Z",
+            "2026-11-26T04:27:53.235Z",
+            "393405558507c7481cc637d99884bcb16d86fbb0cf67bfed5a3436186b77370d"
+          ],
+          [
+            400,
+            100,
+            "2026-11-26T04:27:53.287Z",
+            "2026-11-26T04:27:58.250Z",
+            "895380585fd0050d7e5f08457bdb2d7fee2997c37b16074ffc8649bca1c146c4"
+          ],
+          [
+            500,
+            100,
+            "2026-11-26T04:27:58.314Z",
+            "2026-11-26T04:28:02.986Z",
+            "edf1b75db816839547c841ac4a39c1d36f3f637b025e05373b9051534fc7e0c2"
+          ],
+          [
+            600,
+            100,
+            "2026-11-26T04:28:03.057Z",
+            "2026-11-26T04:28:08.101Z",
+            "e2d079ac59051aa641859758fb79b0b4b50cc814685fa23c2a1755b4988df91b"
+          ],
+          [
+            700,
+            100,
+            "2026-11-26T04:28:08.188Z",
+            "2026-11-26T04:28:13.189Z",
+            "2d8eef1a3577382d05f03b661238646da1eae7086961df3faeeb7ee347e2a57d"
+          ],
+          [
+            800,
+            100,
+            "2026-11-26T04:28:13.269Z",
+            "2026-11-26T04:28:18.590Z",
+            "af3dbc33a6ee32c6b981930373916c94d4cc28f11b92d6d95b20d88e1edd59d2"
+          ],
+          [
+            900,
+            100,
+            "2026-11-26T04:28:18.673Z",
+            "2026-11-26T04:28:23.646Z",
+            "bd40fd6254c1138bcc217ffe54fdf999bb2d8b051dd3673d130d9a0f8ef3cb64"
+          ],
+          [
+            1000,
+            100,
+            "2026-11-26T04:28:23.737Z",
+            "2026-11-26T04:28:28.162Z",
+            "69ed6fbd4bc7f0dbc4cad63213d35550962e99014ad315fc35a0d557776c88ae"
+          ],
+          [
+            1100,
+            31,
+            "2026-11-26T04:28:28.268Z",
+            "2026-11-26T04:28:32.927Z",
+            "00607418a6989b2b73fec7454058bf7eaf3be551aaca80c15a117599c1f1d737"
+          ]
+        ],
+        "raw_catalog_events": 1131,
+        "in_scope_provider_primary_slugs_before_schedule_join": 381,
+        "prejoin_valid_groups_from_these_slugs": [
+          381,
+          291,
+          0,
+          0
+        ],
+        "exact_schedule_matched_primary": 371,
+        "exact_schedule_and_valid_family_fixture_counts": [
+          371,
+          282,
+          0,
+          0
+        ],
+        "diagnostics_before_manually_reconciling_dates": {
+          "multiple_provider_main_for_same_ordered_pair": [
+            [
+              "Valencia CF",
+              "Real Oviedo",
+              "2025-09-30",
+              "lal-val-ovi-2025-09-29",
+              "lal-val-ovi-2025-09-30"
+            ]
+          ],
+          "no_single_dual_date_match": [
+            [
+              "Sevilla FC",
+              "Girona FC",
+              "2026-02-08",
+              {
+                "slug": "lal-sev-gir-2026-02-07",
+                "slug_date": "2026-02-07",
+                "start_time": "2026-02-07T17:30:00Z"
+              }
+            ],
+            [
+              "Getafe CF",
+              "Villarreal CF",
+              "2026-02-14",
+              {
+                "slug": "lal-get-vil-2026-02-15",
+                "slug_date": "2026-02-15",
+                "start_time": "2026-02-15T15:15:00Z"
+              }
+            ],
+            [
+              "Rayo Vallecano de Madrid",
+              "Club Atlético de Madrid",
+              "2026-02-15",
+              {
+                "slug": "lal-ray-mad-2026-02-14",
+                "slug_date": "2026-02-14",
+                "start_time": "2026-02-14T15:15:00Z"
+              }
+            ],
+            [
+              "Levante UD",
+              "Villarreal CF",
+              "2026-02-18",
+              {
+                "slug": "lal-lev-vil-2025-12-14",
+                "slug_date": "2025-12-14",
+                "start_time": "2025-12-14T17:30:00Z"
+              }
+            ],
+            [
+              "Rayo Vallecano de Madrid",
+              "Real Oviedo",
+              "2026-03-04",
+              {
+                "slug": "lal-ray-ovi-2026-02-07",
+                "slug_date": "2026-02-07",
+                "start_time": "2026-03-04T18:00:00Z"
+              }
+            ],
+            [
+              "RC Celta de Vigo",
+              "Real Madrid CF",
+              "2026-03-06",
+              {
+                "slug": "lal-cel-rea-2026-03-07",
+                "slug_date": "2026-03-07",
+                "start_time": "2026-03-06T20:00:00Z"
+              }
+            ],
+            [
+              "CA Osasuna",
+              "RCD Mallorca",
+              "2026-03-07",
+              {
+                "slug": "lal-osa-mal-2026-03-06",
+                "slug_date": "2026-03-06",
+                "start_time": "2026-03-06T20:00:00Z"
+              }
+            ],
+            [
+              "Athletic Club",
+              "FC Barcelona",
+              "2026-03-07",
+              {
+                "slug": "lal-bil-bar-2026-03-08",
+                "slug_date": "2026-03-08",
+                "start_time": "2026-03-07T20:00:00Z"
+              }
+            ],
+            [
+              "Getafe CF",
+              "Real Betis Balompié",
+              "2026-03-08",
+              {
+                "slug": "lal-get-bet-2026-03-07",
+                "slug_date": "2026-03-07",
+                "start_time": "2026-03-07T13:00:00Z"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "bun": {
+      "sport": "bun",
+      "series_id": "10194",
+      "series_slug_observed": "bundesliga-2025",
+      "primary_tag": "1494",
+      "queried_tag": "1494",
+      "resolution_url_from_sports": "https://www.bundesliga.com/en/bundesliga",
+      "games_page": "https://polymarket.com/sports/bundesliga/games",
+      "weekends": {
+        "next": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=1494&end_date_min=2026-11-27T00%3A00%3A00Z&end_date_max=2026-12-01T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              25,
+              "2026-11-26T04:21:56.456Z",
+              "2026-11-26T04:22:01.481Z",
+              "44fe661797d0b89f4633c78c659ffb1b40df6aec501168d6e75ca5522a35f842"
+            ],
+            [
+              25,
+              25,
+              "2026-11-26T04:22:01.534Z",
+              "2026-11-26T04:22:05.995Z",
+              "7362cc42769f77ef874654f704b875be62dc781f0102a17022cb7d3624ca622d"
+            ],
+            [
+              50,
+              5,
+              "2026-11-26T04:22:06.039Z",
+              "2026-11-26T04:22:10.273Z",
+              "776c4579062d263a9b8f2d08027e8ca4b4321f0fcb1011f18ae2101661f931db"
+            ]
+          ],
+          "raw_event_count": 55,
+          "accepted_primary": 9,
+          "accepted_aux": 9,
+          "classified_family_fixture_counts": [
+            9,
+            9,
+            9,
+            9
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            9,
+            9,
+            9,
+            9
+          ],
+          "verified_unique_contract_counts": [
+            27,
+            81,
+            54,
+            54
+          ],
+          "no_type_recovered_with_strict_question_and_event": 0,
+          "rule_clause_checks": {
+            "with_rule": 216,
+            "mentions_90min_and_stoppage_time": 216,
+            "dated_does_not_start_by": 216,
+            "mentions_awarded_result": 216,
+            "mentions_50_50": 189
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 216,
+            "passed_by_family": {},
+            "rejected": {
+              "unreviewed participant, period or rule header": 216
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "bun-wer-moe-2026-11-27",
+              []
+            ],
+            [
+              "bun-hsv-bay-2026-11-28",
+              []
+            ],
+            [
+              "bun-koe-elv-2026-11-28",
+              []
+            ],
+            [
+              "bun-mai-uni-2026-11-28",
+              []
+            ],
+            [
+              "bun-scp-s04-2026-11-28",
+              []
+            ],
+            [
+              "bun-stu-ein-2026-11-28",
+              []
+            ],
+            [
+              "bun-fre-lei-2026-11-29",
+              []
+            ],
+            [
+              "bun-hof-aug-2026-11-29",
+              []
+            ],
+            [
+              "bun-dor-b04-2026-11-29",
+              []
+            ]
+          ]
+        },
+        "past": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=1494&end_date_min=2025-11-28T00%3A00%3A00Z&end_date_max=2025-12-02T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              15,
+              "2026-11-26T04:21:56.502Z",
+              "2026-11-26T04:22:00.997Z",
+              "e7b9d38306c3cd4a3dadf6c9e677ac2bf5cef305e3452648a7cba6b39dfd23fd"
+            ]
+          ],
+          "raw_event_count": 15,
+          "accepted_primary": 9,
+          "accepted_aux": 6,
+          "classified_family_fixture_counts": [
+            9,
+            6,
+            0,
+            0
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            9,
+            6,
+            0,
+            0
+          ],
+          "verified_unique_contract_counts": [
+            27,
+            18,
+            0,
+            0
+          ],
+          "no_type_recovered_with_strict_question_and_event": 27,
+          "rule_clause_checks": {
+            "with_rule": 45,
+            "mentions_90min_and_stoppage_time": 45,
+            "dated_does_not_start_by": 0,
+            "mentions_awarded_result": 0,
+            "mentions_50_50": 0
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 45,
+            "passed_by_family": {
+              "moneyline": 18
+            },
+            "rejected": {
+              "unreviewed participant, period or rule header": 18,
+              "rule text disagrees with archived period, side, participant or line": 9
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "bun-moe-lei-2025-11-28",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "bun-bay-pau-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "bun-hof-aug-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "bun-uni-hei-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "bun-wer-koe-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "bun-b04-dor-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "bun-hsv-stu-2025-11-30",
+              [
+                "total",
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "bun-ein-wol-2025-11-30",
+              [
+                "total",
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "bun-fre-mai-2025-11-30",
+              [
+                "total",
+                "home_total",
+                "away_total"
+              ]
+            ]
+          ]
+        }
+      },
+      "book_sample": {
+        "event_slug": "bun-wer-moe-2026-11-27",
+        "aux_event_slug": "bun-wer-moe-2026-11-27-more-markets",
+        "main_gamma_id": "1426725",
+        "aux_gamma_id": "1426880",
+        "start_time": "2026-11-27T19:30:00Z",
+        "page": "https://polymarket.com/sports/bundesliga/bun-wer-moe-2026-11-27",
+        "explicit_pregame_in_main_catalog": false,
+        "book_summary": {
+          "intended_tokens": 12,
+          "http_200": 12,
+          "identities_verified": 12,
+          "two_sided_uncrossed_tokens": 12,
+          "contracts_with_both_outcomes_uncrossed_two_sided": 6
+        },
+        "conditions": [
+          {
+            "family": "moneyline",
+            "side": "home",
+            "line": null,
+            "market_slug": "bun-wer-moe-2026-11-27-wer",
+            "condition_id": "0xd0f368a2a4fcdce7e8e18e90ee6aef9c9f1a079de0762a6b8fe1a0bc2f251b16",
+            "version": "v1",
+            "rule_sha256": "e7c10e1e3a9142ff373d3a905610d37c78cbcef2534edb9d2fbb97898a90b0d8",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "56086794476005614509068146708325834969134229997526783982398601128265522164262",
+                "2026-11-26T04:25:02.816Z",
+                "2026-11-26T04:25:07.588Z",
+                "df8fd7b5233f7ae4697146d4cab9910cbbe09a431ddadcc0fa6ec234811251f1",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "82038838241107429311248455028174740733395537397465114318249888962292251111607",
+                "2026-11-26T04:25:07.584Z",
+                "2026-11-26T04:25:11.865Z",
+                "ff7e5f95971b226c3e670dc8bd1407f8dab2e456ab44d3dab40593c7200fcfde",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "draw",
+            "line": null,
+            "market_slug": "bun-wer-moe-2026-11-27-draw",
+            "condition_id": "0xa36b70b3b9eea23f57efc7be7ac2c3836e476fa5a741cd8f058da17437c3cd98",
+            "version": "v1",
+            "rule_sha256": "364fb3f530dd556eabb13b52b2c08fc73c269ce6e5486519c64261948e8bf21d",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "93798128002305714301511177399497565427496675038574457230510040947249806161836",
+                "2026-11-26T04:25:07.586Z",
+                "2026-11-26T04:25:11.859Z",
+                "d96e8074b1a83459983bc02cca4fd869c37c3134236731d8825cf07b4b41b6b9",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "109383212218070248225104918809351633960423181092045244077206853966987005235636",
+                "2026-11-26T04:25:07.587Z",
+                "2026-11-26T04:25:11.905Z",
+                "ad6450a97760841852110a27f2e8221f4181e6661eab2058fdea58949836f4eb",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "away",
+            "line": null,
+            "market_slug": "bun-wer-moe-2026-11-27-moe",
+            "condition_id": "0xbef9ad3c3d67ca34a21288bfe3155df5a4f4e5363e99e5f7114dcc6de812fb79",
+            "version": "v1",
+            "rule_sha256": "66755b9197c7729ca2bd9dae2d3d14982e88a2045dc1a485508f624cee3e91f9",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "28783281701110699762012296580281369642753273836525996032236537982063170005346",
+                "2026-11-26T04:25:07.588Z",
+                "2026-11-26T04:25:11.919Z",
+                "7c17eb4db161414b4d18b1d3c44e42777ec308a0f4d8b516072150ec827dfa5d",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "42753852145034067759493161598128554286844427111550254560989346012207155296120",
+                "2026-11-26T04:25:07.589Z",
+                "2026-11-26T04:25:11.906Z",
+                "02afbfb9f9381223b9dd12cb672512e418474deecd63b33a52a8b6e6552dc2f6",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "total",
+            "side": null,
+            "line": "2.5",
+            "market_slug": "bun-wer-moe-2026-11-27-total-2pt5",
+            "condition_id": "0x467b463104408c59f4d5a7b0465b543af15eb50664b14a6256b07f7f98c4f565",
+            "version": "v1",
+            "rule_sha256": "a6123f741a0f602463dcf7696261a6c0617631526370d39d76d47f778ced68c6",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "12629730717616882884802229190266812205499727944760928460325446877491875629520",
+                "2026-11-26T04:25:11.860Z",
+                "2026-11-26T04:25:16.052Z",
+                "e3401c6c45585501750ae291ae06394e0abb42beb1ca7573e86495ff6bf6fb1d",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "101480072019564634912231976192910760916830866122585906130795440696017183688159",
+                "2026-11-26T04:25:11.866Z",
+                "2026-11-26T04:25:16.058Z",
+                "81664a0c0ec51f205d807c7f996c352ff2ccaf84faf99b835585e95be42e5515",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "home_total",
+            "side": "home",
+            "line": "1.5",
+            "market_slug": "bun-wer-moe-2026-11-27-team-total-home-1pt5",
+            "condition_id": "0x6c5c1dfaed24161d2110b75030834647be8f2b117cba75800d8a6b23843147da",
+            "version": "v1",
+            "rule_sha256": "53fffe3c83d4b0d2a7aae10df7731e3e807e6615a9635ab3740cfd7f3d295fd8",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "96178107403706510930011724539955447475109713447975507296880668729265703847169",
+                "2026-11-26T04:25:11.905Z",
+                "2026-11-26T04:25:16.011Z",
+                "3bf643825f29ddfa2f83064b74015a7ef73d737a0e6014f5a54f1fda693b8e82",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "19003178584421516223704325931365413654166254030849499668154812035076452252623",
+                "2026-11-26T04:25:11.907Z",
+                "2026-11-26T04:25:16.052Z",
+                "20cf0990ad342d4289d26a28f403fc1f8c7331601bf0d2d6c3acf3cc2301c94d",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "away_total",
+            "side": "away",
+            "line": "1.5",
+            "market_slug": "bun-wer-moe-2026-11-27-team-total-away-1pt5",
+            "condition_id": "0x7d2d66e5b74938cbf629ccb83a7d8bc60ce7d41b5d7ee9434b982b77b7b35692",
+            "version": "v1",
+            "rule_sha256": "905d9443184ec3ae09ed8d711c4ef317a8cd1219c12687dd0e1632b3e61d5c7a",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "54318675581800190934249333321768050547101612644713017366921235257414629578111",
+                "2026-11-26T04:25:11.920Z",
+                "2026-11-26T04:25:16.066Z",
+                "b883718c985c4d632045b09b05cb0f95aca14e5cf5ab3409dcb0df107a1e2229",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "82825549388857853945136857770721013072095581101076012586925235120007511309667",
+                "2026-11-26T04:25:16.012Z",
+                "2026-11-26T04:25:20.355Z",
+                "e23416fe31787e5a4eaef065cc49d270dbdc10a15adda4aec3ed4597c1bec7d0",
+                200,
+                true,
+                true
+              ]
+            ]
+          }
+        ],
+        "observed_six_contracts_parameters": {
+          "fee_schedule_rate": 0.05,
+          "fee_schedule_exponent": 1,
+          "fee_schedule_takerOnly": true,
+          "fees_enabled": true,
+          "minimum_order_size": 5,
+          "seconds_delay": 1
+        }
+      },
+      "full_season": {
+        "league_schedule_source": {
+          "url": "https://raw.githubusercontent.com/openfootball/football.json/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/de.1.json",
+          "requested": "2026-11-26T04:29:06.756Z",
+          "received": "2026-11-26T04:29:12.607Z",
+          "response_body_sha256": "17d0999db6281e6365823acdbce41a4f01dd469eac63e1f897e4e47c02906672"
+        },
+        "schedule_fixtures": 306,
+        "score_shapes": {
+          "ft-object": 294,
+          "score-array": 12
+        },
+        "gamma_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=1494&end_date_min=2025-07-01T00%3A00%3A00Z&end_date_max=2026-07-01T00%3A00%3A00Z&limit=100&offset=0&order=id&ascending=true",
+        "gamma_page_receipts": [
+          [
+            0,
+            100,
+            "2026-11-26T04:27:32.490Z",
+            "2026-11-26T04:27:38.633Z",
+            "61926e7354ff629b9c17c1d864a524701a61479988c66e4372ce94166d6686ba"
+          ],
+          [
+            100,
+            100,
+            "2026-11-26T04:27:38.685Z",
+            "2026-11-26T04:27:43.714Z",
+            "69e3717cfcebe60e3be94564a3cc35a4a458ae2d77bb73692242911de1b65517"
+          ],
+          [
+            200,
+            100,
+            "2026-11-26T04:27:43.757Z",
+            "2026-11-26T04:27:48.425Z",
+            "2a1ecd5a2c4e9f8a8b9eb7dfce16fab9da4c9a198847a924e312c85c59a43e79"
+          ],
+          [
+            300,
+            100,
+            "2026-11-26T04:27:48.480Z",
+            "2026-11-26T04:27:53.079Z",
+            "6600f7b968d40a333310db46593c1a3840af9a90fe95fbd6e5ad51d7785a94b3"
+          ],
+          [
+            400,
+            100,
+            "2026-11-26T04:27:53.148Z",
+            "2026-11-26T04:27:58.346Z",
+            "df51cf585365583b801844e37b44b0877991878ddc67c3e27d50a87e681c00f7"
+          ],
+          [
+            500,
+            100,
+            "2026-11-26T04:27:58.443Z",
+            "2026-11-26T04:28:03.158Z",
+            "1a8b720900aaf3efa05a9fe3a939c60cd1d3c19e8c8e182f6cb796f2562ece6d"
+          ],
+          [
+            600,
+            100,
+            "2026-11-26T04:28:03.238Z",
+            "2026-11-26T04:28:08.127Z",
+            "f6394523d667d4ea6b0cd89dcebe7080eb97b72f2bac2cb079b9fe4ee1826636"
+          ],
+          [
+            700,
+            100,
+            "2026-11-26T04:28:08.224Z",
+            "2026-11-26T04:28:13.274Z",
+            "4660bc56006351a3d5845ab6d55b501dd2b4a47692251932e566cb5942f425fe"
+          ],
+          [
+            800,
+            66,
+            "2026-11-26T04:28:13.382Z",
+            "2026-11-26T04:28:18.580Z",
+            "1465031b40e021e4b33c2651d4b8b89ecf5b3a207ac01ad0ba06069ed4f0c577"
+          ]
+        ],
+        "raw_catalog_events": 866,
+        "in_scope_provider_primary_slugs_before_schedule_join": 307,
+        "prejoin_valid_groups_from_these_slugs": [
+          307,
+          239,
+          0,
+          0
+        ],
+        "exact_schedule_matched_primary": 303,
+        "exact_schedule_and_valid_family_fixture_counts": [
+          303,
+          236,
+          0,
+          0
+        ],
+        "diagnostics_before_manually_reconciling_dates": {
+          "accepted_provider_main_outside_regular_schedule": [
+            [
+              "Paderborn",
+              "VfL Wolfsburg",
+              "bun-pad-wol-2026-05-25"
+            ]
+          ],
+          "no_single_dual_date_match": [
+            [
+              "SV Werder Bremen",
+              "TSG 1899 Hoffenheim",
+              "2026-01-27",
+              {
+                "slug": "bun-wer-hof-2026-01-10",
+                "slug_date": "2026-01-10",
+                "start_time": "2026-01-10T14:30:00Z"
+              }
+            ],
+            [
+              "FC St. Pauli 1910",
+              "RB Leipzig",
+              "2026-01-27",
+              {
+                "slug": "bun-pau-lei-2026-01-10",
+                "slug_date": "2026-01-10",
+                "start_time": "2026-01-10T14:30:00Z"
+              }
+            ],
+            [
+              "Hamburger SV",
+              "Bayer 04 Leverkusen",
+              "2026-03-04",
+              {
+                "slug": "bun-hsv-b04-2026-01-13",
+                "slug_date": "2026-01-13",
+                "start_time": "2026-03-04T19:30:00Z"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "sea": {
+      "sport": "sea",
+      "series_id": "10203",
+      "series_slug_observed": "serie-a-2025",
+      "primary_tag": "100618",
+      "queried_tag": "101962",
+      "resolution_url_from_sports": "https://www.legaseriea.it/en",
+      "games_page": "https://polymarket.com/sports/sea/games",
+      "weekends": {
+        "next": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=101962&end_date_min=2026-11-27T00%3A00%3A00Z&end_date_max=2026-12-01T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              25,
+              "2026-11-26T04:22:26.018Z",
+              "2026-11-26T04:22:31.543Z",
+              "a92fab65707f0694c63d0eeae2667619a09d0c702c3a50488f8f27e901037ede"
+            ],
+            [
+              25,
+              25,
+              "2026-11-26T04:22:31.586Z",
+              "2026-11-26T04:22:36.188Z",
+              "a43d6aa560d0b7f5706ba8df7d2de1087b95da2cca52cf46937574f9ab7ae0f6"
+            ],
+            [
+              50,
+              11,
+              "2026-11-26T04:22:36.230Z",
+              "2026-11-26T04:22:40.909Z",
+              "c691ca9aa1a5d96ef02202d5d2c1bf0383076a522d5afe2c8011be57793c7e43"
+            ]
+          ],
+          "raw_event_count": 61,
+          "accepted_primary": 10,
+          "accepted_aux": 10,
+          "classified_family_fixture_counts": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            10,
+            10,
+            10,
+            10
+          ],
+          "verified_unique_contract_counts": [
+            30,
+            90,
+            60,
+            60
+          ],
+          "no_type_recovered_with_strict_question_and_event": 0,
+          "rule_clause_checks": {
+            "with_rule": 240,
+            "mentions_90min_and_stoppage_time": 240,
+            "dated_does_not_start_by": 240,
+            "mentions_awarded_result": 240,
+            "mentions_50_50": 210
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 240,
+            "passed_by_family": {},
+            "rejected": {
+              "unreviewed participant, period or rule header": 240
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "sea-ven-bol-2026-11-27",
+              []
+            ],
+            [
+              "sea-fro-par-2026-11-28",
+              []
+            ],
+            [
+              "sea-tor-laz-2026-11-28",
+              []
+            ],
+            [
+              "sea-int-gen-2026-11-28",
+              []
+            ],
+            [
+              "sea-udi-fio-2026-11-29",
+              []
+            ],
+            [
+              "sea-sas-nap-2026-11-29",
+              []
+            ],
+            [
+              "sea-rom-mon-2026-11-29",
+              []
+            ],
+            [
+              "sea-com-juv-2026-11-29",
+              []
+            ],
+            [
+              "sea-lec-ata-2026-11-30",
+              []
+            ],
+            [
+              "sea-cag-mil-2026-11-30",
+              []
+            ]
+          ]
+        },
+        "past": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=101962&end_date_min=2025-11-28T00%3A00%3A00Z&end_date_max=2025-12-02T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              19,
+              "2026-11-26T04:22:26.019Z",
+              "2026-11-26T04:22:31.523Z",
+              "c85833abbdac4fea03c1579d755226413dc23f930ab3d4ebea3d8d683880d5e5"
+            ]
+          ],
+          "raw_event_count": 19,
+          "accepted_primary": 10,
+          "accepted_aux": 9,
+          "classified_family_fixture_counts": [
+            10,
+            9,
+            0,
+            0
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            10,
+            9,
+            0,
+            0
+          ],
+          "verified_unique_contract_counts": [
+            30,
+            27,
+            0,
+            0
+          ],
+          "no_type_recovered_with_strict_question_and_event": 30,
+          "rule_clause_checks": {
+            "with_rule": 57,
+            "mentions_90min_and_stoppage_time": 57,
+            "dated_does_not_start_by": 0,
+            "mentions_awarded_result": 0,
+            "mentions_50_50": 0
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 57,
+            "passed_by_family": {
+              "moneyline": 30
+            },
+            "rejected": {
+              "unreviewed participant, period or rule header": 27
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "sea-com-sas-2025-11-28",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-gen-ver-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-par-udi-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-juv-cag-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-mil-laz-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-lec-tor-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-pis-int-2025-11-30",
+              [
+                "total",
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-ata-fio-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-rom-nap-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "sea-bol-cre-2025-12-01",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ]
+          ]
+        }
+      },
+      "book_sample": {
+        "event_slug": "sea-ven-bol-2026-11-27",
+        "aux_event_slug": "sea-ven-bol-2026-11-27-more-markets",
+        "main_gamma_id": "1427029",
+        "aux_gamma_id": "1427115",
+        "start_time": "2026-11-27T19:45:00Z",
+        "page": "https://polymarket.com/sports/sea/sea-ven-bol-2026-11-27",
+        "explicit_pregame_in_main_catalog": false,
+        "book_summary": {
+          "intended_tokens": 12,
+          "http_200": 12,
+          "identities_verified": 12,
+          "two_sided_uncrossed_tokens": 12,
+          "contracts_with_both_outcomes_uncrossed_two_sided": 6
+        },
+        "conditions": [
+          {
+            "family": "moneyline",
+            "side": "home",
+            "line": null,
+            "market_slug": "sea-ven-bol-2026-11-27-ven",
+            "condition_id": "0x81c25d84cb437b8b31014763941c628ad3e3701998a125f7d5bb5e724cadb0df",
+            "version": "v1",
+            "rule_sha256": "b79e47845db7eb91fac38c039ce3b5bffc6048b5c5fa29fbc28ee9a9997fdebc",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "57615183646270070456934975782633109155160387435099946098637205518335855158715",
+                "2026-11-26T04:25:16.053Z",
+                "2026-11-26T04:25:20.349Z",
+                "2bd0a4ef088604d0acd01b88fae18d489a90d50d87fbb79022a4fb6d87e740ea",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "11456598698603252062128767545000247457393142613205840266526926501604614223787",
+                "2026-11-26T04:25:16.054Z",
+                "2026-11-26T04:25:20.350Z",
+                "edbabfbb5995096b0895ade388fbc2a629dc68c48f15312fa0c556becb99ae2d",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "draw",
+            "line": null,
+            "market_slug": "sea-ven-bol-2026-11-27-draw",
+            "condition_id": "0x6c23b809e6fb41d2d78061bbff5c3f6b17af86634230da4cc1fef06684bea4b6",
+            "version": "v1",
+            "rule_sha256": "3227a90631b22dbaa5f33c729342ea994348a87d78b5e0dbf29663f1d0964f64",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "102312203579265369142890430633386312090947255450263998586261010753243671390013",
+                "2026-11-26T04:25:16.058Z",
+                "2026-11-26T04:25:20.347Z",
+                "8e375d7afcb1d0283fe644af8e4b5b2ab9dccb1198d4efd8d87e012bfce8fa3c",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "64385970028685923285319150738125651698166420266956869386458497399901053016021",
+                "2026-11-26T04:25:16.067Z",
+                "2026-11-26T04:25:20.353Z",
+                "1d0fbae9acc325140010eba2fdfeb70a110af01c1c4ff5df8f29d1abb2ccd9b5",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "away",
+            "line": null,
+            "market_slug": "sea-ven-bol-2026-11-27-bol",
+            "condition_id": "0x593c5873d5ad59611c5ab284bd1aedb29fe54676718f0d3b9e96674bec96a771",
+            "version": "v1",
+            "rule_sha256": "e6cacb93f9abc76eacd5d27ecc8f2907f3d8e59bb26b42f7ca75bad3359a58f6",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "98359750726540416016654183613708924147121698739932344689999700663307536691544",
+                "2026-11-26T04:25:20.348Z",
+                "2026-11-26T04:25:24.706Z",
+                "0de24f67377add3ae7d8521399da3618004a9e145989c23c9ed2499f3c9bdea6",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "93749204054215170519358398880338707220961990953305603633175184295745700192987",
+                "2026-11-26T04:25:20.350Z",
+                "2026-11-26T04:25:24.715Z",
+                "2ac60a9c0406bf89298a86643ba40d09fb018a64925e6cb88a47bfc6be22c54d",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "total",
+            "side": null,
+            "line": "2.5",
+            "market_slug": "sea-ven-bol-2026-11-27-total-2pt5",
+            "condition_id": "0x17a7966a4dcfd69067b054803af78c1add0a8941e4c9d3acb177c01e5041a760",
+            "version": "v1",
+            "rule_sha256": "7c85af8dedbe0b0348800a5a78f0a8f29a4d8bd14649d5a8ae2ceb49d02cf097",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "75240844645884247409453198944118517994403922029936702137258827905958971040698",
+                "2026-11-26T04:25:20.351Z",
+                "2026-11-26T04:25:24.712Z",
+                "9687ce5e1c8e3347121715b745b6155afb81ef2985f915e3f20a98ad61003a47",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "42044883515942574615287910002974245239170634759522449482190298262212317527737",
+                "2026-11-26T04:25:20.353Z",
+                "2026-11-26T04:25:24.708Z",
+                "1a9e0bea554a73f74275a7daf5075ec62b695577c4bad8fb1e40469b8ccdf50e",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "home_total",
+            "side": "home",
+            "line": "1.5",
+            "market_slug": "sea-ven-bol-2026-11-27-team-total-home-1pt5",
+            "condition_id": "0xcaa270be451099026504be9ac07209adc16c6be1e8c7e7b09e25d4fefaa72d58",
+            "version": "v1",
+            "rule_sha256": "8ea951275ab68fe03aa88c7c1e1bca0ebf6624255540d097760abe1b16817add",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "46959527889188196673607652487090979842089620591028025542655208293505922588950",
+                "2026-11-26T04:25:20.355Z",
+                "2026-11-26T04:25:24.728Z",
+                "fd06fbd6ba439656fb48527a8ad46eceef0b3c9548a32f86c0dceee1f720477c",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "47607199968573479930921303233258933086914938860068868674851095259897231175875",
+                "2026-11-26T04:25:24.707Z",
+                "2026-11-26T04:25:29.773Z",
+                "6afddf7f04fb4e86e27bbfd0d556187eb6a99fd251939ac909b0ad80bfae2415",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "away_total",
+            "side": "away",
+            "line": "1.5",
+            "market_slug": "sea-ven-bol-2026-11-27-team-total-away-1pt5",
+            "condition_id": "0x7a2a2cd6734c004a3a6662740dbd002928b646101ae83881f81c50f2eeccdb26",
+            "version": "v1",
+            "rule_sha256": "9c08aca84eec5cbd6e94ba930f41b7e69b7011d47d05decfdd3227716b7f9fda",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "57727545353011256225723310935669078741506323198632187417647622291636386166545",
+                "2026-11-26T04:25:24.708Z",
+                "2026-11-26T04:25:29.772Z",
+                "ac72cb9582fb4fdaeb61beda69f271c71f25fcf5cea565ad6f4ae8926e17dd90",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "53879042270786685529788566115667953073755278326689093247541695232625933808045",
+                "2026-11-26T04:25:24.713Z",
+                "2026-11-26T04:25:29.773Z",
+                "d81ac31576c7a4ae0948cd38b4648a8e757b649c504a6796fb207c4d1ea0c009",
+                200,
+                true,
+                true
+              ]
+            ]
+          }
+        ],
+        "observed_six_contracts_parameters": {
+          "fee_schedule_rate": 0.05,
+          "fee_schedule_exponent": 1,
+          "fee_schedule_takerOnly": true,
+          "fees_enabled": true,
+          "minimum_order_size": 5,
+          "seconds_delay": 1
+        },
+        "one_top_of_book_example": {
+          "market_slug": "sea-ven-bol-2026-11-27-team-total-home-1pt5",
+          "outcome": "Over",
+          "received_utc": "2026-11-26T04:25:24.728Z",
+          "best_bid_price_and_size": [
+            "0.27",
+            "15"
+          ],
+          "best_ask_price_and_size": [
+            "0.31",
+            "15"
+          ],
+          "response_body_sha256": "fd06fbd6ba439656fb48527a8ad46eceef0b3c9548a32f86c0dceee1f720477c"
+        }
+      },
+      "full_season": {
+        "league_schedule_source": {
+          "url": "https://raw.githubusercontent.com/openfootball/football.json/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/it.1.json",
+          "requested": "2026-11-26T04:29:06.756Z",
+          "received": "2026-11-26T04:29:12.607Z",
+          "response_body_sha256": "28f7773dea86345aeb0cbb4aff2f90231033f7ed855219e70fdd1cf45d4d7e7f"
+        },
+        "schedule_fixtures": 380,
+        "score_shapes": {
+          "score-array": 36,
+          "ft-object": 344
+        },
+        "gamma_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=101962&end_date_min=2025-07-01T00%3A00%3A00Z&end_date_max=2026-07-01T00%3A00%3A00Z&limit=100&offset=0&order=id&ascending=true",
+        "gamma_page_receipts": [
+          [
+            0,
+            100,
+            "2026-11-26T04:27:32.491Z",
+            "2026-11-26T04:27:38.723Z",
+            "5b18d501f1fb3909dc7ec3dd1e9a61f041746be3024ca0fe55a9ee38272b5255"
+          ],
+          [
+            100,
+            100,
+            "2026-11-26T04:27:38.771Z",
+            "2026-11-26T04:27:43.670Z",
+            "ec50b6e8f4145dd02ddbd3c1a6d56923101fb3634dec8c4ef14188263bad9f52"
+          ],
+          [
+            200,
+            100,
+            "2026-11-26T04:27:43.713Z",
+            "2026-11-26T04:27:48.347Z",
+            "23441c50b593826daad5db7a7b0ac056304ca3a727ad36032dbc82c0484b7dec"
+          ],
+          [
+            300,
+            100,
+            "2026-11-26T04:27:48.421Z",
+            "2026-11-26T04:27:53.119Z",
+            "1bf31f81a97a5afd3238e8ba489e64d69320191d97591a3da23819934a607c22"
+          ],
+          [
+            400,
+            100,
+            "2026-11-26T04:27:53.180Z",
+            "2026-11-26T04:27:58.384Z",
+            "c66ee5286e90218b52209b5c1bee1c48f3d725150b9335731eab251a5d25f6f5"
+          ],
+          [
+            500,
+            100,
+            "2026-11-26T04:27:58.468Z",
+            "2026-11-26T04:28:03.182Z",
+            "128c0d1992ac4fb2d3cf818f6032c935acdad6f566de0169b6db1809f04e673f"
+          ],
+          [
+            600,
+            100,
+            "2026-11-26T04:28:03.263Z",
+            "2026-11-26T04:28:08.231Z",
+            "2d86f0cad5e9efe43d96649c2e0b480ba7dd755389f0a8126e48719ec1115ef3"
+          ],
+          [
+            700,
+            100,
+            "2026-11-26T04:28:08.322Z",
+            "2026-11-26T04:28:13.273Z",
+            "c2b562c73ea81b6c3a5715f74c56454115c6a0b67c99650b3101bd4bd639f3cc"
+          ],
+          [
+            800,
+            100,
+            "2026-11-26T04:28:13.347Z",
+            "2026-11-26T04:28:18.454Z",
+            "3f90a067c0b30056011d82c53896f6f5dc8d3153c0c6bc8f3b5def39aeda92c7"
+          ],
+          [
+            900,
+            100,
+            "2026-11-26T04:28:18.563Z",
+            "2026-11-26T04:28:23.885Z",
+            "ebb4fc07ba7043f2faea3d0fbbc1bc1d63e48d2296517232514d63d8bca7e614"
+          ],
+          [
+            1000,
+            40,
+            "2026-11-26T04:28:23.957Z",
+            "2026-11-26T04:28:28.428Z",
+            "d53f73533d77240bcabc1429fe6e7d4b91896d0f2dd045098e622e18f901d613"
+          ]
+        ],
+        "raw_catalog_events": 1040,
+        "in_scope_provider_primary_slugs_before_schedule_join": 379,
+        "prejoin_valid_groups_from_these_slugs": [
+          379,
+          304,
+          0,
+          0
+        ],
+        "exact_schedule_matched_primary": 375,
+        "exact_schedule_and_valid_family_fixture_counts": [
+          375,
+          300,
+          0,
+          0
+        ],
+        "diagnostics_before_manually_reconciling_dates": {
+          "no_provider_main_for_ordered_pair": [
+            [
+              "Atalanta BC",
+              "Pisa SC",
+              "2025-08-24"
+            ]
+          ],
+          "no_single_dual_date_match": [
+            [
+              "US Lecce",
+              "Atalanta BC",
+              "2026-04-06",
+              {
+                "slug": "sea-lec-ata-2026-04-04",
+                "slug_date": "2026-04-04",
+                "start_time": "2026-04-04T13:00:00Z"
+              }
+            ],
+            [
+              "ACF Fiorentina",
+              "Atalanta BC",
+              "2026-05-22",
+              {
+                "slug": "sea-fio-ata-2026-05-24",
+                "slug_date": "2026-05-24",
+                "start_time": "2026-05-22T18:45:00Z"
+              }
+            ],
+            [
+              "Bologna FC 1909",
+              "FC Internazionale Milano",
+              "2026-05-23",
+              {
+                "slug": "sea-bol-int-2026-05-24",
+                "slug_date": "2026-05-24",
+                "start_time": "2026-05-23T16:00:00Z"
+              }
+            ],
+            [
+              "SS Lazio",
+              "Pisa SC",
+              "2026-05-23",
+              {
+                "slug": "sea-laz-pis-2026-05-24",
+                "slug_date": "2026-05-24",
+                "start_time": "2026-05-23T18:45:00Z"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "fl1": {
+      "sport": "fl1",
+      "series_id": "10195",
+      "series_slug_observed": "ligue-1-2025",
+      "primary_tag": "102070",
+      "queried_tag": "102070",
+      "resolution_url_from_sports": "https://ligue1.com/en",
+      "games_page": "https://polymarket.com/sports/ligue-1/games",
+      "weekends": {
+        "next": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=102070&end_date_min=2026-11-27T00%3A00%3A00Z&end_date_max=2026-12-01T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              25,
+              "2026-11-26T04:22:06.153Z",
+              "2026-11-26T04:22:10.466Z",
+              "6bba8ee9a31021948f8b53fe8f1a1828f9aa475b790cd447823cee639d774877"
+            ],
+            [
+              25,
+              25,
+              "2026-11-26T04:22:10.507Z",
+              "2026-11-26T04:22:14.927Z",
+              "437237bbb077d42c8e81625c00b70f330237e5cedc1fd546927e09e3103e70db"
+            ],
+            [
+              50,
+              5,
+              "2026-11-26T04:22:14.958Z",
+              "2026-11-26T04:22:19.377Z",
+              "9ca914498c3c07402e157930926c43385888151188526910c138450853ea4826"
+            ]
+          ],
+          "raw_event_count": 55,
+          "accepted_primary": 9,
+          "accepted_aux": 9,
+          "classified_family_fixture_counts": [
+            9,
+            9,
+            9,
+            9
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            9,
+            9,
+            9,
+            9
+          ],
+          "verified_unique_contract_counts": [
+            27,
+            81,
+            54,
+            54
+          ],
+          "no_type_recovered_with_strict_question_and_event": 0,
+          "rule_clause_checks": {
+            "with_rule": 216,
+            "mentions_90min_and_stoppage_time": 216,
+            "dated_does_not_start_by": 216,
+            "mentions_awarded_result": 216,
+            "mentions_50_50": 189
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 216,
+            "passed_by_family": {},
+            "rejected": {
+              "unreviewed participant, period or rule header": 216
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "fl1-sbr-pfc-2026-11-27",
+              []
+            ],
+            [
+              "fl1-ang-rcl-2026-11-28",
+              []
+            ],
+            [
+              "fl1-hac-str-2026-11-28",
+              []
+            ],
+            [
+              "fl1-lmf-lil-2026-11-28",
+              []
+            ],
+            [
+              "fl1-ogc-tro-2026-11-28",
+              []
+            ],
+            [
+              "fl1-psg-lor-2026-11-28",
+              []
+            ],
+            [
+              "fl1-aja-olm-2026-11-29",
+              []
+            ],
+            [
+              "fl1-tou-ren-2026-11-29",
+              []
+            ],
+            [
+              "fl1-lyo-asm-2026-11-29",
+              []
+            ]
+          ]
+        },
+        "past": {
+          "list_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=102070&end_date_min=2025-11-28T00%3A00%3A00Z&end_date_max=2025-12-02T00%3A00%3A00Z&limit=25&offset=0&order=id&ascending=true",
+          "page_receipts": [
+            [
+              0,
+              14,
+              "2026-11-26T04:22:06.166Z",
+              "2026-11-26T04:22:10.417Z",
+              "23033b01c8e19f1fc9e89f0910b0e5dc977c9fcbff49ea8280c9517de87257ea"
+            ]
+          ],
+          "raw_event_count": 14,
+          "accepted_primary": 9,
+          "accepted_aux": 5,
+          "classified_family_fixture_counts": [
+            9,
+            5,
+            0,
+            0
+          ],
+          "valid_token_condition_family_fixture_counts": [
+            9,
+            5,
+            0,
+            0
+          ],
+          "verified_unique_contract_counts": [
+            27,
+            15,
+            0,
+            0
+          ],
+          "no_type_recovered_with_strict_question_and_event": 27,
+          "rule_clause_checks": {
+            "with_rule": 42,
+            "mentions_90min_and_stoppage_time": 42,
+            "dated_does_not_start_by": 0,
+            "mentions_awarded_result": 0,
+            "mentions_50_50": 0
+          },
+          "original_042_complete_terms_probe": {
+            "examined": 42,
+            "passed_by_family": {
+              "moneyline": 27
+            },
+            "rejected": {
+              "unreviewed participant, period or rule header": 15
+            }
+          },
+          "fixtures_and_missing_groups": [
+            [
+              "fl1-met-ren-2025-11-28",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "fl1-asm-psg-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "fl1-pfc-aja-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "fl1-olm-tou-2025-11-29",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "fl1-str-sbr-2025-11-30",
+              [
+                "total",
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "fl1-ang-rcl-2025-11-30",
+              [
+                "total",
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "fl1-hac-lil-2025-11-30",
+              [
+                "total",
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "fl1-lor-ogc-2025-11-30",
+              [
+                "total",
+                "home_total",
+                "away_total"
+              ]
+            ],
+            [
+              "fl1-lyo-nan-2025-11-30",
+              [
+                "home_total",
+                "away_total"
+              ]
+            ]
+          ]
+        }
+      },
+      "book_sample": {
+        "event_slug": "fl1-sbr-pfc-2026-11-27",
+        "aux_event_slug": "fl1-sbr-pfc-2026-11-27-more-markets",
+        "main_gamma_id": "1426933",
+        "aux_gamma_id": "1427004",
+        "start_time": "2026-11-27T19:45:00Z",
+        "page": "https://polymarket.com/sports/ligue-1/fl1-sbr-pfc-2026-11-27",
+        "explicit_pregame_in_main_catalog": false,
+        "book_summary": {
+          "intended_tokens": 12,
+          "http_200": 12,
+          "identities_verified": 12,
+          "two_sided_uncrossed_tokens": 12,
+          "contracts_with_both_outcomes_uncrossed_two_sided": 6
+        },
+        "conditions": [
+          {
+            "family": "moneyline",
+            "side": "home",
+            "line": null,
+            "market_slug": "fl1-sbr-pfc-2026-11-27-sbr",
+            "condition_id": "0x929ad3b673c7fd995047b0a426871892cf02c0590b375e46e2c0aff8c94161b2",
+            "version": "v1",
+            "rule_sha256": "bb51eea9a19256672cb2b04a4b0186b17be2486f4b37a366f7d157c151fbfd7d",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "42970158184873929460532043117753804785361082058263167003049072939834374476948",
+                "2026-11-26T04:25:24.715Z",
+                "2026-11-26T04:25:29.772Z",
+                "65a4b91eeea73e49fd3e86f219b4c9ecc5643a6eb099e648ff48d2e91424ccd1",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "65537401315570864615407877877164178663969579763613515723123634466372650169649",
+                "2026-11-26T04:25:24.728Z",
+                "2026-11-26T04:25:29.772Z",
+                "27a1f3b412e320602227ff2aede245a613c59b1021c3977a596fd00dfce75ede",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "draw",
+            "line": null,
+            "market_slug": "fl1-sbr-pfc-2026-11-27-draw",
+            "condition_id": "0x66683a62b727f5fc9598f1503d075fa9d6fee9db9087e6107d66c0fc34b281bd",
+            "version": "v1",
+            "rule_sha256": "5449e774ba0a7168d0a32954b59496de3716c9338a649d590cbb6b02b33be363",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "93387708867226570115192976909869300339545697845173086213064379593200129451973",
+                "2026-11-26T04:25:29.775Z",
+                "2026-11-26T04:25:34.432Z",
+                "731f0c8bf945d55fa7ad92d0e81074db91a050934ef3db5ed0802d63e40308ae",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "25572302254396866163084029325124339525811564612123868955288037524252742854507",
+                "2026-11-26T04:25:29.775Z",
+                "2026-11-26T04:25:34.433Z",
+                "a9809759739c68b904a7aaa80b9070b39520f5227dd79623b45d10bb8a842e3a",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "moneyline",
+            "side": "away",
+            "line": null,
+            "market_slug": "fl1-sbr-pfc-2026-11-27-pfc",
+            "condition_id": "0xd6a0d84bd04d1b6bf24c91dd394843f7b858bcc60279f4afbb37206a138e8aef",
+            "version": "v1",
+            "rule_sha256": "0da72aeef31eb692d6cb43f6d70c0cb5f4d88d603ec211c306d5fdc1e8c85ddf",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Yes",
+                "57627621894033370947294423324222245464394818865814265123621056202899737127682",
+                "2026-11-26T04:25:29.776Z",
+                "2026-11-26T04:25:34.426Z",
+                "732579f40c1a3da3773060552e07cca423ad005078eb37c7ae0b91d3d3217a8e",
+                200,
+                true,
+                true
+              ],
+              [
+                "No",
+                "57335467848860301646485309942273353962012137896830865244326448916472782000791",
+                "2026-11-26T04:25:29.777Z",
+                "2026-11-26T04:25:34.446Z",
+                "dd3e26399e70d774474902c5b42e967511ba29cd78886f630fc730a5f478928b",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "total",
+            "side": null,
+            "line": "2.5",
+            "market_slug": "fl1-sbr-pfc-2026-11-27-total-2pt5",
+            "condition_id": "0x4bb2b8f687d905fc23cdd52936015b3eb841f22590681f8ae680f67fad37d0cf",
+            "version": "v1",
+            "rule_sha256": "0d28ca39ba301bc8e94b733e1f1aedec20a58c85fb394d33fe08a16ccb12e433",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "51900558412721200683829128756565832557689102470346563470199835790657115485795",
+                "2026-11-26T04:25:29.777Z",
+                "2026-11-26T04:25:34.431Z",
+                "c6ff9c745b7e8e918dc6fba0fc18ea623a142f3611831b18c2950900bb17e3d1",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "41196072474027588417589132021112441505417073239456141918865187201890097493491",
+                "2026-11-26T04:25:34.427Z",
+                "2026-11-26T04:25:40.318Z",
+                "93dee89e7174ede06bf6a1ab5988ba8e65001494b38719c6fd2bee50f0136ae7",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "home_total",
+            "side": "home",
+            "line": "1.5",
+            "market_slug": "fl1-sbr-pfc-2026-11-27-team-total-home-1pt5",
+            "condition_id": "0xff7bd8189a8788de2731191f1f6979653de34219c3bd9013dc4e26a4762608d0",
+            "version": "v1",
+            "rule_sha256": "07627eaca3bc01344242b9dd10d5f56c8265cb32217bcbf2766401c54a6b397d",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "24494890522621031359370430665924085866041493446231668627599768426544351287923",
+                "2026-11-26T04:25:34.432Z",
+                "2026-11-26T04:25:40.306Z",
+                "bf68fed0fbfb02021fc18d37fe37b00c5eeab1d0ad289df917e9272d0c2e51b3",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "20610066456547832594415713246087440221746171689280232864835560047849250854864",
+                "2026-11-26T04:25:34.433Z",
+                "2026-11-26T04:25:40.308Z",
+                "95d07dcfcec75bc8511f15be60a5e578f8c95b3033cfb26986fd435414dbdb25",
+                200,
+                true,
+                true
+              ]
+            ]
+          },
+          {
+            "family": "away_total",
+            "side": "away",
+            "line": "1.5",
+            "market_slug": "fl1-sbr-pfc-2026-11-27-team-total-away-1pt5",
+            "condition_id": "0xa5a1f7506d10ef66762a014c5589403cddd68af753301ba4ddbb1185698c4882",
+            "version": "v1",
+            "rule_sha256": "d71a9e52fcd41b6d11d111422be1f6834b98049ad3451f459a02fbf9ddee2759",
+            "listed_condition_open": true,
+            "tokens": [
+              [
+                "Over",
+                "108894859631505087720896991922021101435159945823158599442719715276144541761483",
+                "2026-11-26T04:25:34.434Z",
+                "2026-11-26T04:25:40.317Z",
+                "d24fc5087170fa28227a72a42c9fe6d8b54dae311512e5eccf2734d898e0fe24",
+                200,
+                true,
+                true
+              ],
+              [
+                "Under",
+                "24323877878989896802442829878773249057945375201488511404490361433737137070521",
+                "2026-11-26T04:25:34.446Z",
+                "2026-11-26T04:25:40.307Z",
+                "2028c9c5dba4d929571d647fb84173ca6f3f232296b622d00c0d0ebd4e1e86ed",
+                200,
+                true,
+                true
+              ]
+            ]
+          }
+        ],
+        "observed_six_contracts_parameters": {
+          "fee_schedule_rate": 0.05,
+          "fee_schedule_exponent": 1,
+          "fee_schedule_takerOnly": true,
+          "fees_enabled": true,
+          "minimum_order_size": 5,
+          "seconds_delay": 1
+        }
+      },
+      "full_season": {
+        "league_schedule_source": {
+          "url": "https://raw.githubusercontent.com/openfootball/football.json/e6744429ee395bc86f247348c6184bb08d4eb361/2025-26/fr.1.json",
+          "requested": "2026-11-26T04:29:12.611Z",
+          "received": "2026-11-26T04:29:17.065Z",
+          "response_body_sha256": "3e9403445dd96f4bb7f740de22d4ea7e3ea7d640777a12eab621ae4d4dbf3bc7"
+        },
+        "schedule_fixtures": 306,
+        "score_shapes": {
+          "ft-object": 282,
+          "score-array": 23,
+          "absent": 1
+        },
+        "gamma_url_at_offset_0": "https://gamma-api.polymarket.com/events?tag_id=102070&end_date_min=2025-07-01T00%3A00%3A00Z&end_date_max=2026-07-01T00%3A00%3A00Z&limit=100&offset=0&order=id&ascending=true",
+        "gamma_page_receipts": [
+          [
+            0,
+            100,
+            "2026-11-26T04:28:18.643Z",
+            "2026-11-26T04:28:23.779Z",
+            "fc88120a564d20c0c5a8302270b5440006b3576bc5f7bbc02e88afe6875eb4c3"
+          ],
+          [
+            100,
+            100,
+            "2026-11-26T04:28:23.827Z",
+            "2026-11-26T04:28:28.092Z",
+            "9e797a7587439c73cceb9c1237a9f301a147b6ebebe1433df4a3203272ba463f"
+          ],
+          [
+            200,
+            100,
+            "2026-11-26T04:28:28.135Z",
+            "2026-11-26T04:28:33.063Z",
+            "77304b17045d897661844747f2895fb5fb5a568fd4303c2d0faca6f1df2c3afc"
+          ],
+          [
+            300,
+            100,
+            "2026-11-26T04:28:33.111Z",
+            "2026-11-26T04:28:37.831Z",
+            "c61bcbaa297c2616e40bc7bf31b588e0263796eda8500dbdf926b20a8d614b00"
+          ],
+          [
+            400,
+            100,
+            "2026-11-26T04:28:37.902Z",
+            "2026-11-26T04:28:42.781Z",
+            "769e941381c1f2ba2339c8d2b9e5d4cee65d2d19d4f9f445358258b25baf6589"
+          ],
+          [
+            500,
+            100,
+            "2026-11-26T04:28:42.849Z",
+            "2026-11-26T04:28:47.469Z",
+            "ecb297c8b93909042c526f5a914841b099ce5acb22180ac294560751c393e2a6"
+          ],
+          [
+            600,
+            100,
+            "2026-11-26T04:28:47.550Z",
+            "2026-11-26T04:28:52.045Z",
+            "fbc43810b41bcb6bf93c5282e525a772fbc5c255c0ecede209ac9e777afd5ad2"
+          ],
+          [
+            700,
+            100,
+            "2026-11-26T04:28:52.126Z",
+            "2026-11-26T04:28:57.630Z",
+            "4476b845dd94c2a5a3c7ac43180cac6b35a4c0a9e832f863e41fa77824ab53cf"
+          ],
+          [
+            800,
+            95,
+            "2026-11-26T04:28:57.724Z",
+            "2026-11-26T04:29:02.437Z",
+            "df67594265b9fa613b4703c67f85fe3db54f0736c5b3451f292fd752ca2c13e0"
+          ]
+        ],
+        "raw_catalog_events": 895,
+        "in_scope_provider_primary_slugs_before_schedule_join": 305,
+        "prejoin_valid_groups_from_these_slugs": [
+          305,
+          225,
+          0,
+          0
+        ],
+        "exact_schedule_matched_primary": 303,
+        "exact_schedule_and_valid_family_fixture_counts": [
+          303,
+          224,
+          0,
+          0
+        ],
+        "diagnostics_before_manually_reconciling_dates": {
+          "multiple_provider_main_for_same_ordered_pair": [
+            [
+              "Olympique de Marseille",
+              "Paris Saint-Germain FC",
+              "2025-09-22",
+              "fl1-olm-psg-2025-09-21",
+              "fl1-olm-psg-2025-09-22"
+            ]
+          ],
+          "no_provider_main_for_ordered_pair": [
+            [
+              "Paris Saint-Germain FC",
+              "RC Strasbourg Alsace",
+              "2025-10-17"
+            ],
+            [
+              "OGC Nice",
+              "Olympique Lyonnais",
+              "2025-10-18"
+            ]
+          ],
+          "no_single_dual_date_match": [
+            [
+              "FC Nantes",
+              "Olympique de Marseille",
+              "2026-05-02",
+              {
+                "slug": "fl1-nan-olm-2026-05-01",
+                "slug_date": "2026-05-01",
+                "start_time": "2026-05-02T13:00:00Z"
+              }
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "externally_adjudicated_cases": [
+    {
+      "league": "fl1",
+      "regular_fixture": "FC Nantes vs Toulouse FC",
+      "fixture_day": "2026-05-17",
+      "snapshot_status": "canceled, score absent",
+      "dated_official_ruling": "2026-05-27",
+      "official_score_at_interruption_confirmed": [
+        0,
+        0
+      ],
+      "source": "https://www.lfp.fr/article/commission-de-discipline-les-decisions-du-27-mai-2026",
+      "interpretation": "Retain the archive discrepancy; use ruling publication clock and specific market payout rules/resolution for separate ledgers.",
+      "gamma_catalog_page_receipt": {
+        "url": "https://gamma-api.polymarket.com/events?tag_id=102070&end_date_min=2025-07-01T00%3A00%3A00Z&end_date_max=2026-07-01T00%3A00%3A00Z&limit=100&offset=800&order=id&ascending=true",
+        "requested": "2026-11-26T04:28:57.724Z",
+        "received": "2026-11-26T04:29:02.437Z",
+        "response_body_sha256": "df67594265b9fa613b4703c67f85fe3db54f0736c5b3451f292fd752ca2c13e0"
+      },
+      "gamma_event_api": "https://gamma-api.polymarket.com/events/slug/fl1-nan-tou-2026-05-17",
+      "markets": [
+        {
+          "moneyline_side": "home",
+          "condition_id": "0x8e0f285289fd2155250751293b12381195f4cd42e73e4fdcd0cd640495f1aa76",
+          "market_slug": "fl1-nan-tou-2026-05-17-nan",
+          "rule_sha256": "e619c44e7ef316b55fcd6200122e6d075538db76b65de6bc0b4ea3d27bff0a59",
+          "gamma_terminal_outcomes": {
+            "Yes": "0",
+            "No": "1"
+          },
+          "gamma_closed_and_resolved": true,
+          "gamma_closed_time": "2026-05-28 05:59:15+00",
+          "clob_closed_and_winning_token_rebound_to_gamma": true,
+          "clob_winning_outcome": "No",
+          "clob_receipt": {
+            "url": "https://clob.polymarket.com/markets/0x8e0f285289fd2155250751293b12381195f4cd42e73e4fdcd0cd640495f1aa76",
+            "requested": "2026-11-26T04:33:23.030Z",
+            "received": "2026-11-26T04:33:28.516Z",
+            "response_body_sha256": "c7fa85a71c823d810b71b392d858838256ec6b28073c3f76bacdafc97fb0e4cb"
+          }
+        },
+        {
+          "moneyline_side": "draw",
+          "condition_id": "0x12e58193edf19d2d0412dc0769ccf1b6851311621fa28ae56093a4e8837b73c0",
+          "market_slug": "fl1-nan-tou-2026-05-17-draw",
+          "rule_sha256": "d95c560c483f7cfcdf61d3c3c7dad7a9b87673432d3964469cdd6c5e2b124004",
+          "gamma_terminal_outcomes": {
+            "Yes": "1",
+            "No": "0"
+          },
+          "gamma_closed_and_resolved": true,
+          "gamma_closed_time": "2026-05-28 00:31:20+00",
+          "clob_closed_and_winning_token_rebound_to_gamma": true,
+          "clob_winning_outcome": "Yes",
+          "clob_receipt": {
+            "url": "https://clob.polymarket.com/markets/0x12e58193edf19d2d0412dc0769ccf1b6851311621fa28ae56093a4e8837b73c0",
+            "requested": "2026-11-26T04:33:23.031Z",
+            "received": "2026-11-26T04:33:28.469Z",
+            "response_body_sha256": "f06929f187f99f42f77f1f9f4870715abec2079a0dd90e22ce063a186e314370"
+          }
+        },
+        {
+          "moneyline_side": "away",
+          "condition_id": "0x303f1601b482702c0b330a3e7805c9179f06157c690cf97ca55ac2b45af7de53",
+          "market_slug": "fl1-nan-tou-2026-05-17-tou",
+          "rule_sha256": "90c721f195b8b546388c48bdf7eb8704e8eade939ffb8f0bf1b7b7a8dd3d4e11",
+          "gamma_terminal_outcomes": {
+            "Yes": "0",
+            "No": "1"
+          },
+          "gamma_closed_and_resolved": true,
+          "gamma_closed_time": "2026-05-28 00:10:56+00",
+          "clob_closed_and_winning_token_rebound_to_gamma": true,
+          "clob_winning_outcome": "No",
+          "clob_receipt": {
+            "url": "https://clob.polymarket.com/markets/0x303f1601b482702c0b330a3e7805c9179f06157c690cf97ca55ac2b45af7de53",
+            "requested": "2026-11-26T04:33:23.031Z",
+            "received": "2026-11-26T04:33:28.472Z",
+            "response_body_sha256": "97fdb4219a59d27819f2062db234e95f6eb202ec2a2490931079ce0b79af6879"
+          }
+        }
+      ]
+    },
+    {
+      "league": "bun",
+      "clubs": [
+        "VfL Wolfsburg",
+        "SC Paderborn 07"
+      ],
+      "stage": "Promotion/relegation play-off, beyond regular-season core",
+      "source": "https://www.bundesliga.com/en/bundesliga/news/wolfsburg-paderborn-to-contest-play-off-for-place-in-2026-27-bundesliga-37445"
+    }
+  ],
+  "receipt_columns": {
+    "page_receipts": [
+      "offset",
+      "count",
+      "requested_utc",
+      "received_utc",
+      "decompressed_body_sha256"
+    ],
+    "token_receipts": [
+      "outcome",
+      "token_id",
+      "requested_utc",
+      "received_utc",
+      "decompressed_body_sha256",
+      "http_status",
+      "condition_and_token_verified",
+      "uncrossed_two_sided_positive_depth"
+    ],
+    "repeat_page": "Take list_url_at_offset_0 or gamma_url_at_offset_0 and replace offset=0 by that row offset."
+  }
+}

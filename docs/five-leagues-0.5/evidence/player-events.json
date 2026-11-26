@@ -1,0 +1,47 @@
+{
+  "title": "五联赛赛后公开人员字段抽查",
+  "season": "2017/18",
+  "creators": [
+    "Luca Pappalardo",
+    "Emanuele Massucco"
+  ],
+  "dataset_title": "Matches",
+  "collection": "https://figshare.com/collections/Soccer_match_event_dataset/4415000",
+  "paper": "https://doi.org/10.1038/s41597-019-0247-7",
+  "source": "https://api.figshare.com/v2/articles/7770422",
+  "doi": "10.6084/m9.figshare.7770422.v1",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "source_archive": "https://ndownloader.figshare.com/files/14464622",
+  "sha256": "c8f92bb7533e5c127e043cee764c991b5c25b4f5e70a65be931baae0b1765ce9",
+  "read_at": "2026-11-26T04:26:28.631150+00:00",
+  "leagues": {
+    "England": {
+      "matches": 380,
+      "both_starting_11_recorded": 380,
+      "starter_card_field_presence": 380
+    },
+    "Germany": {
+      "matches": 306,
+      "both_starting_11_recorded": 306,
+      "starter_card_field_presence": 306
+    },
+    "Spain": {
+      "matches": 380,
+      "both_starting_11_recorded": 380,
+      "starter_card_field_presence": 380
+    },
+    "Italy": {
+      "matches": 380,
+      "both_starting_11_recorded": 380,
+      "starter_card_field_presence": 380
+    },
+    "France": {
+      "matches": 380,
+      "both_starting_11_recorded": 380,
+      "starter_card_field_presence": 380
+    }
+  },
+  "method": "下载指定版本的 matches.zip。取 matches_England.json、matches_Spain.json、matches_Germany.json、matches_Italy.json、matches_France.json。逐场检查 teamsData 有两队，双方 formation.lineup 各有 11 条，且两队全部首发记录中同时出现 yellowCards 和 redCards 键。仅发布原始文件指纹与自行计算的聚合计数。",
+  "total_matches": 1826,
+  "limits": "按终局档案观察到的首发记录和字段存在性计数。未检验每次纪律事件、处罚适用范围、何时公开首发或当时是否收件；本数据不代表 2026/27 的实时人员覆盖。"
+}

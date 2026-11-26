@@ -1,0 +1,1319 @@
+{
+  "title": "五大联赛历史赛程与赛果冻结盘点",
+  "scope": "研究附件，仅描述固定版本的归档。统计不是公开市场覆盖、当时已知的赛果/阵容或模型收益。",
+  "source": {
+    "repo": "https://github.com/openfootball/football.json",
+    "commit": "e6744429ee395bc86f247348c6184bb08d4eb361",
+    "commit_url": "https://github.com/openfootball/football.json/commit/e6744429ee395bc86f247348c6184bb08d4eb361",
+    "raw_url_template": "https://raw.githubusercontent.com/openfootball/football.json/e6744429ee395bc86f247348c6184bb08d4eb361/{season}/{league}.1.json",
+    "license_url": "https://github.com/openfootball/football.json/blob/e6744429ee395bc86f247348c6184bb08d4eb361/LICENSE.md",
+    "license_title_at_commit": "CC0 1.0 Universal",
+    "git_tree_receipt": {
+      "url": "https://api.github.com/repos/openfootball/football.json/git/trees/e6744429ee395bc86f247348c6184bb08d4eb361?recursive=1",
+      "received_utc": "2026-11-26T04:22:21+00:00",
+      "sha256": "f244c63ab12ed077d0abf3fb55fb18a40f8b8e36cb68fdc090d6a72fb0b95eb4",
+      "bytes": 74163
+    },
+    "git_tree_truncated": false,
+    "archive_receipt": {
+      "url": "https://codeload.github.com/openfootball/football.json/tar.gz/e6744429ee395bc86f247348c6184bb08d4eb361",
+      "received_utc": "2026-11-26T04:22:27+00:00",
+      "sha256": "89b591341fcfa8a1d18b9bc652de3e75d4a34f878dd1b67140470c8b357c32fa",
+      "bytes": 1571001
+    },
+    "integrity": "每个存在的目标文件均核对 Git tree blob SHA-1，算法为 SHA1(b'blob '+ASCII(字节数)+NUL+文件原始字节)；五赛季明细另列 SHA-256。"
+  },
+  "reproduction": {
+    "archive_inventory": "对2010/11至2026/27共17个赛季、五联赛逐项查 {YYYY-YY}/{en,es,de,it,fr}.1.json 是否在固定提交的递归树，缺文件区别于零比赛；2026/27是提交时的在季快照。",
+    "season_scope": "五个已结束赛季 2021/22 至 2025/26；编号常规轮次整串匹配 ^Matchday ([1-9][0-9]?)$。英/西/意为1–38，德为1–34，法在2021/22、2022/23为1–38，2023/24起为1–34。只计上述顶级联赛路径，其他阶段/独立升降级、附加赛不进入。",
+    "schedule_validation": "逐文件验证队数、每轮各俱乐部只出现一次、轮标签集合、全部非自身主客有序对恰好出现一次；不把轮次当作时间顺序。",
+    "raw_score": "score 可为数组，也可为对象内的 ft；合法为两个0至50的整数，等同 v0.4.2 score_bounds.valid_score。空对象、空值不计。0–0必须计入。",
+    "descriptive_set": "从原始合法比分剔除数据源标为 awarded 的2场和 DFB 明确判罚但档案漏标的2022-03-18波鸿1场。此过滤仅覆盖3场已知行政判定，仍须逐场核验正式竞技与时点证据。其他有完整最终场上比分的续赛保留用于无时点的描述，严谨回测需另核首次开球及结果发布。更全面的正式来源审查可能继续缩小可用赛果集。",
+    "metrics": "每场仅计一次，按法定90分钟（含补时）的目标口径理解档案 FT；行政判罚执行前述过滤。分母为各联赛 descriptive_set，百分数是计数/分母乘100；无市场或缺赛前时点也可计入静态描述。进球主客统计独立，O/U阈值为半球。",
+    "raw_clock": "HH:MM 仅指原档有合法钟面字符串；不含时区、赛程首次发布日期、实际开球、独立接收时点。不能取它当历史可下注或 formal-strict 证据。"
+  },
+  "inventory_2010_11_to_2026_27": {
+    "en": {
+      "league": "英超",
+      "present_file_count": 17,
+      "missing_seasons": [],
+      "files_git_blob_sha1": {
+        "2010-11": "9fe7c43945ed5bb7249ae2488397262d0d72ca88",
+        "2011-12": "72c0c8ca26ce53bdafb71a3d12ea4e51fe8790a3",
+        "2012-13": "b9fba456fccee350f06ced85600229dfe8d895d4",
+        "2013-14": "f8f06a0494c657638a6ad055effdf65c33c164c3",
+        "2014-15": "4ac8e36323109731fb60fc3db678a0b358074e12",
+        "2015-16": "d7384b9c162eea51ea0da500b8f6c73a170ee0bd",
+        "2016-17": "b09de9d55b17571e6c9c64fefe83522dfc02ce6f",
+        "2017-18": "c0ccb9c85503d1e24482be7c5117f6277c5a0e2f",
+        "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+        "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+        "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+        "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+        "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+        "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+        "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+        "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665",
+        "2026-27": "60e281f0fcc51cfca1a901353666a688cf62a8ba"
+      }
+    },
+    "es": {
+      "league": "西甲",
+      "present_file_count": 15,
+      "missing_seasons": [
+        "2010-11",
+        "2011-12"
+      ],
+      "files_git_blob_sha1": {
+        "2012-13": "6e56c0fba97a597d0a35132fb9dbe0996efda5c2",
+        "2013-14": "1ea78d531331daa6924b8812a50dbac6033c2d5c",
+        "2014-15": "43f6062f075bdb2af1fac52e7dfe0e2b8e1de4ab",
+        "2015-16": "a044c7400a317796b676aeed506251522a2d29c2",
+        "2016-17": "cfe074dbc3d007dc8bacaab03c2c10e87de70d61",
+        "2017-18": "cbb7495f5edc5bf830de3a23a8994f90d57ebb0c",
+        "2018-19": "16fc0602a202a7757e1cb3dbfa47008d0aaa27af",
+        "2019-20": "64307d5017689bbe5e099e2f1162a05a56bc47c5",
+        "2020-21": "a75987a794ded50077d54d934a0bd951938becea",
+        "2021-22": "0fc4da4c0d441eb9e1068b0dcd13495c54150882",
+        "2022-23": "f777848f48f8ec0528cc0ec67c6c05bba0bca961",
+        "2023-24": "a9d391f61af872bb9f456951d2f71f10d9e10704",
+        "2024-25": "ba4e9bc10b172d6413a92aeba0c04eb70961cd05",
+        "2025-26": "ca95ceb8861f8f1ae876eb066e71148ff773425b",
+        "2026-27": "daf0d8a5ff04578b06ca32927bfcb6609e50797c"
+      }
+    },
+    "de": {
+      "league": "德甲",
+      "present_file_count": 17,
+      "missing_seasons": [],
+      "files_git_blob_sha1": {
+        "2010-11": "c38d76f8f1c9e98b63aa5ac88ccffd1004977719",
+        "2011-12": "86e8adaa31da28182d164251f9f19319606e11cc",
+        "2012-13": "b11c143666fc7bd101011fa083ab1e1def14e42f",
+        "2013-14": "e9d5e480e2d03667d5e57886516d83a7009b1169",
+        "2014-15": "824ba00992446c3971db0a6028ad06556179fff3",
+        "2015-16": "95dc1d0e227b5389e69f278872a2b87d3967c23f",
+        "2016-17": "e35b87581039fe3dee7d75972c195616acd07fbf",
+        "2017-18": "c867ab7e8bb9f09cdcb9791e2483259b2c766d70",
+        "2018-19": "1d54f5ab4e9aa24e9b1f92b9cfaaec03f54cc54a",
+        "2019-20": "d47c58202cbcd4eff7e8898a5b426c80be567b02",
+        "2020-21": "39b187140dd0fe025e029d82dc40b5e59266678d",
+        "2021-22": "716c7bddd678bcac2cfc0988108a4196b1edda8e",
+        "2022-23": "7fc779362c4d775bc7cea2fa3b79ce1941bbc796",
+        "2023-24": "2c41078e751d914f24bfe7e55c5567cea70a4aee",
+        "2024-25": "9921b1d8485429913ff6d161500beb519d8b0e51",
+        "2025-26": "320994ff4b376c0aa7abe7929f9b9740cfc0eff5",
+        "2026-27": "c8696353819299a131f8041513f8c50ee28522a2"
+      }
+    },
+    "it": {
+      "league": "意甲",
+      "present_file_count": 14,
+      "missing_seasons": [
+        "2010-11",
+        "2011-12",
+        "2012-13"
+      ],
+      "files_git_blob_sha1": {
+        "2013-14": "fddf373cb2b73e10b7afd1f927f6005dfb8adf73",
+        "2014-15": "df9bece914d662b681f409db887106bc316f784e",
+        "2015-16": "38eea8524895cadc008c13d19bef3ed9c6055f53",
+        "2016-17": "7e75f9001744ec71369b1c61f2dfa1225ab78f9b",
+        "2017-18": "edd6929e64ea400c89ce81375e7fddc32fae5e0c",
+        "2018-19": "b064ae0c6aa7bc5cc6b1732934a5549bb858e565",
+        "2019-20": "5858e492e536affca47beb6182dea468b5ac7aff",
+        "2020-21": "f2bdbfb26bca5a438763be3d4b3c2c21ff770822",
+        "2021-22": "c214cde31d8186600e41c190f4cd29526d64bc14",
+        "2022-23": "b9bec73a92557da814c959b7c4f12bb501c20c7a",
+        "2023-24": "674079696d1298ce45abab6a1f8953d0675b995f",
+        "2024-25": "5c1cb89a7b676eee1db06d79b65773220b599e96",
+        "2025-26": "00c57db6aa94737d6f965a67d1b89de58fcf3746",
+        "2026-27": "6b8e10596db7df51f98cd81bb4ea03304e784a1f"
+      }
+    },
+    "fr": {
+      "league": "法甲",
+      "present_file_count": 13,
+      "missing_seasons": [
+        "2010-11",
+        "2011-12",
+        "2012-13",
+        "2013-14"
+      ],
+      "files_git_blob_sha1": {
+        "2014-15": "5997a756c652ec8fd8116b1959b57181473578d9",
+        "2015-16": "728dcc2345c33b2f546f871c30ca0e4999cf87e8",
+        "2016-17": "7408be2519a3209d97fa6ef94ad791b260368e49",
+        "2017-18": "34a6ea823257202842e64cb45a220403a0b7a4c0",
+        "2018-19": "35d23884ffc7468eafd832e54e7c2958decf0633",
+        "2019-20": "bdf6dde0982880d1c51bb28e4340f325f84e8e09",
+        "2020-21": "f7fecceedcfc367bc252caf2de2bab0fd7fc95f4",
+        "2021-22": "eff96e594a2651be60e09555a5f70aacf2be4716",
+        "2022-23": "5fae7b79a038f09f1ae982143cdd02dc111eb9f5",
+        "2023-24": "a5c5c479bd14c4581931219a41687d9938e4dc1e",
+        "2024-25": "8bc6ec90c62fa423386ec60473cfa6236419a636",
+        "2025-26": "b6eec1251b125725d32efe85c8a969b68765d26a",
+        "2026-27": "ac75f05d04f914b95d2e70d7e267fd43c32e5d4f"
+      }
+    }
+  },
+  "five_seasons": [
+    {
+      "season": "2021-22",
+      "league": "en",
+      "path": "2021-22/en.1.json",
+      "git_blob_sha1": "5eadd9d91c71d45634f3969192ad908653681b23",
+      "file_sha256": "fbdfd426fa18fa2f8630b77de87c082734da495ac4668d6d72f29f76b73b9564",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2021-22",
+      "league": "es",
+      "path": "2021-22/es.1.json",
+      "git_blob_sha1": "0fc4da4c0d441eb9e1068b0dcd13495c54150882",
+      "file_sha256": "7beb67dd49d7132bf9f7baea540342439b97ed4a7b21ffb90d3231a402c54d02",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2021-22",
+      "league": "de",
+      "path": "2021-22/de.1.json",
+      "git_blob_sha1": "716c7bddd678bcac2cfc0988108a4196b1edda8e",
+      "file_sha256": "f1b9901cffb6b073f389e730213b5f8efe6a9a73b2f86058794f2d0f1dcc54dc",
+      "team_count": 18,
+      "round_count": 34,
+      "expected_regular_pairs": 306,
+      "source_regular_rows": 306,
+      "valid_raw_scores": 306,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 1,
+      "descriptive_n": 305,
+      "raw_clock_HH_MM": 306,
+      "raw_total_rows": 306,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 306,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 306
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2021-22",
+      "league": "it",
+      "path": "2021-22/it.1.json",
+      "git_blob_sha1": "c214cde31d8186600e41c190f4cd29526d64bc14",
+      "file_sha256": "a3e94b23cac768e4191e99312f4d48471c4000c5c2fe766b0325cee935754061",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2021-22",
+      "league": "fr",
+      "path": "2021-22/fr.1.json",
+      "git_blob_sha1": "eff96e594a2651be60e09555a5f70aacf2be4716",
+      "file_sha256": "8abb493061d32faaf413c403b440c043723d9743a9e69d6472bf5410e2d4e039",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2022-23",
+      "league": "en",
+      "path": "2022-23/en.1.json",
+      "git_blob_sha1": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+      "file_sha256": "8d09f0f9846981626cdfec48903e1f21e7c79aabe6f92535c9e092e8e79b808b",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2022-23",
+      "league": "es",
+      "path": "2022-23/es.1.json",
+      "git_blob_sha1": "f777848f48f8ec0528cc0ec67c6c05bba0bca961",
+      "file_sha256": "0204c66c919c2cd5cc3d1ba26be4f68592e4e173843162a9e6755182ccf83778",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2022-23",
+      "league": "de",
+      "path": "2022-23/de.1.json",
+      "git_blob_sha1": "7fc779362c4d775bc7cea2fa3b79ce1941bbc796",
+      "file_sha256": "b0c052dc75836dfc6b0d3781d35b828851db7377c9f6ccb39643dbbe1964f3bd",
+      "team_count": 18,
+      "round_count": 34,
+      "expected_regular_pairs": 306,
+      "source_regular_rows": 306,
+      "valid_raw_scores": 306,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 306,
+      "raw_clock_HH_MM": 306,
+      "raw_total_rows": 306,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 306,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 306
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2022-23",
+      "league": "it",
+      "path": "2022-23/it.1.json",
+      "git_blob_sha1": "b9bec73a92557da814c959b7c4f12bb501c20c7a",
+      "file_sha256": "d775fdd375af6998233fbfcd5b33d176cb9d016a981682626c5ce2f95b0c2f88",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2022-23",
+      "league": "fr",
+      "path": "2022-23/fr.1.json",
+      "git_blob_sha1": "5fae7b79a038f09f1ae982143cdd02dc111eb9f5",
+      "file_sha256": "6301ac1ba1fa0f5b72345759711beac3b3be3c989725cc1c6ef9307ffef692c7",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2023-24",
+      "league": "en",
+      "path": "2023-24/en.1.json",
+      "git_blob_sha1": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+      "file_sha256": "03e13eafbf78dfe00d7e89dd3bf6643986eb6e8fd86c7664aeb8c5bc0bed88d0",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2023-24",
+      "league": "es",
+      "path": "2023-24/es.1.json",
+      "git_blob_sha1": "a9d391f61af872bb9f456951d2f71f10d9e10704",
+      "file_sha256": "e4c1e1a958f224ba3c815c898982ab495b9577315cc58ee7a5e7b532960f738b",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2023-24",
+      "league": "de",
+      "path": "2023-24/de.1.json",
+      "git_blob_sha1": "2c41078e751d914f24bfe7e55c5567cea70a4aee",
+      "file_sha256": "d104edde48a5e254545eac3d3ed379a09801e1ebcef5c6480e28bc36fcfa202d",
+      "team_count": 18,
+      "round_count": 34,
+      "expected_regular_pairs": 306,
+      "source_regular_rows": 306,
+      "valid_raw_scores": 306,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 306,
+      "raw_clock_HH_MM": 306,
+      "raw_total_rows": 306,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 306,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 306
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2023-24",
+      "league": "it",
+      "path": "2023-24/it.1.json",
+      "git_blob_sha1": "674079696d1298ce45abab6a1f8953d0675b995f",
+      "file_sha256": "47734fc8d2ec34c5529ca814c97d1c86ecddc4a2c8095506d9b12f29cb283308",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2023-24",
+      "league": "fr",
+      "path": "2023-24/fr.1.json",
+      "git_blob_sha1": "a5c5c479bd14c4581931219a41687d9938e4dc1e",
+      "file_sha256": "fa328cecf4c12232ac77a5d477059eebe16b68b3712ec87800b89efda8ddfb70",
+      "team_count": 18,
+      "round_count": 34,
+      "expected_regular_pairs": 306,
+      "source_regular_rows": 306,
+      "valid_raw_scores": 306,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 306,
+      "raw_clock_HH_MM": 306,
+      "raw_total_rows": 306,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 306,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 306
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2024-25",
+      "league": "en",
+      "path": "2024-25/en.1.json",
+      "git_blob_sha1": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+      "file_sha256": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 380,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2024-25",
+      "league": "es",
+      "path": "2024-25/es.1.json",
+      "git_blob_sha1": "ba4e9bc10b172d6413a92aeba0c04eb70961cd05",
+      "file_sha256": "da5bfa1b3634e1039d9e71aec50bdc847f8761189e3de235a4e730e0dc64ca38",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 370,
+      "missing_or_invalid_score": 10,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 370,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 370,
+      "missing_by_round": {
+        "Matchday 38": 10
+      },
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2024-25",
+      "league": "de",
+      "path": "2024-25/de.1.json",
+      "git_blob_sha1": "9921b1d8485429913ff6d161500beb519d8b0e51",
+      "file_sha256": "f473d6595e6c29ebedc08b09177aed6a6b2ff0fa8378b82f51dea469139f44c3",
+      "team_count": 18,
+      "round_count": 34,
+      "expected_regular_pairs": 306,
+      "source_regular_rows": 306,
+      "valid_raw_scores": 306,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 1,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 305,
+      "raw_clock_HH_MM": 306,
+      "raw_total_rows": 306,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 306,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "awarded": 1,
+        "unspecified": 305
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2024-25",
+      "league": "it",
+      "path": "2024-25/it.1.json",
+      "git_blob_sha1": "5c1cb89a7b676eee1db06d79b65773220b599e96",
+      "file_sha256": "7d9bb936de3ccaeec54d57371512a58a5eeb21277e7d5f0882911a834d22b659",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 370,
+      "missing_or_invalid_score": 10,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 370,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 370,
+      "missing_by_round": {
+        "Matchday 38": 10
+      },
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2024-25",
+      "league": "fr",
+      "path": "2024-25/fr.1.json",
+      "git_blob_sha1": "8bc6ec90c62fa423386ec60473cfa6236419a636",
+      "file_sha256": "90e9974afe6597452622387ad218f6b0011a5f91f1b426f05152f5b9c105e355",
+      "team_count": 18,
+      "round_count": 34,
+      "expected_regular_pairs": 306,
+      "source_regular_rows": 306,
+      "valid_raw_scores": 306,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 1,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 305,
+      "raw_clock_HH_MM": 306,
+      "raw_total_rows": 306,
+      "outside_regular_rows": 0,
+      "list_form_valid": 0,
+      "object_form_valid": 306,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "awarded": 1,
+        "unspecified": 305
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2025-26",
+      "league": "en",
+      "path": "2025-26/en.1.json",
+      "git_blob_sha1": "41e223ee5954e6b634beb4bc70d7188b3183c665",
+      "file_sha256": "d6070bdf731546ccf97767f062e8af4bd26dd309dee69f6092025bf9c78f43c1",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 27,
+      "object_form_valid": 353,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2025-26",
+      "league": "es",
+      "path": "2025-26/es.1.json",
+      "git_blob_sha1": "ca95ceb8861f8f1ae876eb066e71148ff773425b",
+      "file_sha256": "b40397d8e62c640138548d57a1a9f76150549213d2a07fcbbb90ed0eabc6ccea",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 15,
+      "object_form_valid": 365,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2025-26",
+      "league": "de",
+      "path": "2025-26/de.1.json",
+      "git_blob_sha1": "320994ff4b376c0aa7abe7929f9b9740cfc0eff5",
+      "file_sha256": "17d0999db6281e6365823acdbce41a4f01dd469eac63e1f897e4e47c02906672",
+      "team_count": 18,
+      "round_count": 34,
+      "expected_regular_pairs": 306,
+      "source_regular_rows": 306,
+      "valid_raw_scores": 306,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 306,
+      "raw_clock_HH_MM": 306,
+      "raw_total_rows": 306,
+      "outside_regular_rows": 0,
+      "list_form_valid": 12,
+      "object_form_valid": 294,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 306
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2025-26",
+      "league": "it",
+      "path": "2025-26/it.1.json",
+      "git_blob_sha1": "00c57db6aa94737d6f965a67d1b89de58fcf3746",
+      "file_sha256": "28f7773dea86345aeb0cbb4aff2f90231033f7ed855219e70fdd1cf45d4d7e7f",
+      "team_count": 20,
+      "round_count": 38,
+      "expected_regular_pairs": 380,
+      "source_regular_rows": 380,
+      "valid_raw_scores": 380,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 380,
+      "raw_clock_HH_MM": 380,
+      "raw_total_rows": 380,
+      "outside_regular_rows": 0,
+      "list_form_valid": 36,
+      "object_form_valid": 344,
+      "missing_by_round": {},
+      "source_status_any_score": {
+        "unspecified": 380
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    },
+    {
+      "season": "2025-26",
+      "league": "fr",
+      "path": "2025-26/fr.1.json",
+      "git_blob_sha1": "b6eec1251b125725d32efe85c8a969b68765d26a",
+      "file_sha256": "3e9403445dd96f4bb7f740de22d4ea7e3ea7d640777a12eab621ae4d4dbf3bc7",
+      "team_count": 18,
+      "round_count": 34,
+      "expected_regular_pairs": 306,
+      "source_regular_rows": 306,
+      "valid_raw_scores": 305,
+      "missing_or_invalid_score": 1,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 305,
+      "raw_clock_HH_MM": 306,
+      "raw_total_rows": 306,
+      "outside_regular_rows": 0,
+      "list_form_valid": 23,
+      "object_form_valid": 282,
+      "missing_by_round": {
+        "Matchday 34": 1
+      },
+      "source_status_any_score": {
+        "canceled": 1,
+        "unspecified": 305
+      },
+      "schedule_validation": {
+        "all_planned_rounds": true,
+        "each_team_once_per_round": true,
+        "every_ordered_pair_once": true,
+        "source_team_count_as_expected": true
+      }
+    }
+  ],
+  "league_totals": {
+    "en": {
+      "expected_regular_pairs": 1900,
+      "source_regular_rows": 1900,
+      "valid_raw_scores": 1900,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 1900,
+      "raw_clock_HH_MM": 1900,
+      "descriptive_profile": {
+        "n": 1900,
+        "goals_home": 3035,
+        "goals_away": 2526,
+        "mean_goals_total": 2.9268,
+        "mean_goals_home": 1.5974,
+        "mean_goals_away": 1.3295,
+        "counts": {
+          "home_win": 839,
+          "draw": 454,
+          "away_win": 607,
+          "full_over_2_5": 1075,
+          "home_over_1_5": 896,
+          "away_over_1_5": 718,
+          "score_0_0": 99,
+          "score_0_1": 129,
+          "score_1_0": 156,
+          "score_1_1": 210
+        },
+        "pct": {
+          "home_win": 44.158,
+          "draw": 23.895,
+          "away_win": 31.947,
+          "full_over_2_5": 56.579,
+          "home_over_1_5": 47.158,
+          "away_over_1_5": 37.789,
+          "score_0_0": 5.211,
+          "score_0_1": 6.789,
+          "score_1_0": 8.211,
+          "score_1_1": 11.053
+        }
+      }
+    },
+    "es": {
+      "expected_regular_pairs": 1900,
+      "source_regular_rows": 1900,
+      "valid_raw_scores": 1890,
+      "missing_or_invalid_score": 10,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 1890,
+      "raw_clock_HH_MM": 1900,
+      "descriptive_profile": {
+        "n": 1890,
+        "goals_home": 2793,
+        "goals_away": 2110,
+        "mean_goals_total": 2.5942,
+        "mean_goals_home": 1.4778,
+        "mean_goals_away": 1.1164,
+        "counts": {
+          "home_win": 865,
+          "draw": 494,
+          "away_win": 531,
+          "full_over_2_5": 895,
+          "home_over_1_5": 786,
+          "away_over_1_5": 582,
+          "score_0_0": 135,
+          "score_0_1": 146,
+          "score_1_0": 242,
+          "score_1_1": 255
+        },
+        "pct": {
+          "home_win": 45.767,
+          "draw": 26.138,
+          "away_win": 28.095,
+          "full_over_2_5": 47.354,
+          "home_over_1_5": 41.587,
+          "away_over_1_5": 30.794,
+          "score_0_0": 7.143,
+          "score_0_1": 7.725,
+          "score_1_0": 12.804,
+          "score_1_1": 13.492
+        }
+      }
+    },
+    "de": {
+      "expected_regular_pairs": 1530,
+      "source_regular_rows": 1530,
+      "valid_raw_scores": 1530,
+      "missing_or_invalid_score": 0,
+      "valid_score_source_awarded": 1,
+      "additional_known_award_without_source_status": 1,
+      "descriptive_n": 1528,
+      "raw_clock_HH_MM": 1530,
+      "descriptive_profile": {
+        "n": 1528,
+        "goals_home": 2703,
+        "goals_away": 2152,
+        "mean_goals_total": 3.1774,
+        "mean_goals_home": 1.769,
+        "mean_goals_away": 1.4084,
+        "counts": {
+          "home_win": 674,
+          "draw": 381,
+          "away_win": 473,
+          "full_over_2_5": 933,
+          "home_over_1_5": 776,
+          "away_over_1_5": 607,
+          "score_0_0": 78,
+          "score_0_1": 81,
+          "score_1_0": 93,
+          "score_1_1": 180
+        },
+        "pct": {
+          "home_win": 44.11,
+          "draw": 24.935,
+          "away_win": 30.955,
+          "full_over_2_5": 61.06,
+          "home_over_1_5": 50.785,
+          "away_over_1_5": 39.725,
+          "score_0_0": 5.105,
+          "score_0_1": 5.301,
+          "score_1_0": 6.086,
+          "score_1_1": 11.78
+        }
+      }
+    },
+    "it": {
+      "expected_regular_pairs": 1900,
+      "source_regular_rows": 1900,
+      "valid_raw_scores": 1890,
+      "missing_or_invalid_score": 10,
+      "valid_score_source_awarded": 0,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 1890,
+      "raw_clock_HH_MM": 1900,
+      "descriptive_profile": {
+        "n": 1890,
+        "goals_home": 2635,
+        "goals_away": 2284,
+        "mean_goals_total": 2.6026,
+        "mean_goals_home": 1.3942,
+        "mean_goals_away": 1.2085,
+        "counts": {
+          "home_win": 765,
+          "draw": 517,
+          "away_win": 608,
+          "full_over_2_5": 924,
+          "home_over_1_5": 765,
+          "away_over_1_5": 658,
+          "score_0_0": 136,
+          "score_0_1": 155,
+          "score_1_0": 195,
+          "score_1_1": 243
+        },
+        "pct": {
+          "home_win": 40.476,
+          "draw": 27.354,
+          "away_win": 32.169,
+          "full_over_2_5": 48.889,
+          "home_over_1_5": 40.476,
+          "away_over_1_5": 34.815,
+          "score_0_0": 7.196,
+          "score_0_1": 8.201,
+          "score_1_0": 10.317,
+          "score_1_1": 12.857
+        }
+      }
+    },
+    "fr": {
+      "expected_regular_pairs": 1678,
+      "source_regular_rows": 1678,
+      "valid_raw_scores": 1677,
+      "missing_or_invalid_score": 1,
+      "valid_score_source_awarded": 1,
+      "additional_known_award_without_source_status": 0,
+      "descriptive_n": 1676,
+      "raw_clock_HH_MM": 1678,
+      "descriptive_profile": {
+        "n": 1676,
+        "goals_home": 2586,
+        "goals_away": 2146,
+        "mean_goals_total": 2.8234,
+        "mean_goals_home": 1.543,
+        "mean_goals_away": 1.2804,
+        "counts": {
+          "home_win": 729,
+          "draw": 411,
+          "away_win": 536,
+          "full_over_2_5": 898,
+          "home_over_1_5": 741,
+          "away_over_1_5": 601,
+          "score_0_0": 114,
+          "score_0_1": 115,
+          "score_1_0": 153,
+          "score_1_1": 195
+        },
+        "pct": {
+          "home_win": 43.496,
+          "draw": 24.523,
+          "away_win": 31.981,
+          "full_over_2_5": 53.58,
+          "home_over_1_5": 44.212,
+          "away_over_1_5": 35.859,
+          "score_0_0": 6.802,
+          "score_0_1": 6.862,
+          "score_1_0": 9.129,
+          "score_1_1": 11.635
+        }
+      }
+    }
+  },
+  "exceptions": [
+    {
+      "league": "es",
+      "season": "2024-25",
+      "round": 38,
+      "reason": "10场缺FT，原档 score={}；须单独核对补数与许可。"
+    },
+    {
+      "league": "it",
+      "season": "2024-25",
+      "round": 38,
+      "reason": "10场缺FT，原档 score={}；须单独核对补数与许可。"
+    },
+    {
+      "league": "de",
+      "season": "2021-22",
+      "date": "2022-03-18",
+      "fixture": "VfL Bochum 1848 – Borussia Mönchengladbach",
+      "raw_score": [
+        0,
+        2
+      ],
+      "raw_status": null,
+      "descriptive_included": false,
+      "reason": "DFB在3月24日裁定比赛中断并按0–2判给客队。档案有FT且未标注判罚。",
+      "authority": "https://www.dfb.de/fileadmin/_dfbdam/257416-220324_VfL_Bochum.pdf"
+    },
+    {
+      "league": "de",
+      "season": "2024-25",
+      "date": "2024-12-14",
+      "fixture": "1. FC Union Berlin – VfL Bochum 1848",
+      "raw_score": [
+        0,
+        2
+      ],
+      "raw_status": "awarded",
+      "descriptive_included": false,
+      "reason": "DFB判定行政比分；与场上终局需分开。",
+      "authority": "https://www.dfb.de/news/dfb-sportgericht-wertet-bundesligaspiel-in-berlin-fuer-bochum"
+    },
+    {
+      "league": "fr",
+      "season": "2024-25",
+      "date": "2025-03-16",
+      "fixture": "Montpellier HSC – AS Saint-Étienne",
+      "raw_score": [
+        0,
+        2
+      ],
+      "raw_status": "awarded",
+      "descriptive_included": false,
+      "reason": "LFP决定比赛不恢复，并确认中断时的场上比分有效。",
+      "authority": "https://www.lfp.fr/article/commission-de-discipline-les-decisions-du-2-avril-2025"
+    },
+    {
+      "league": "fr",
+      "season": "2025-26",
+      "date": "2026-05-17",
+      "fixture": "FC Nantes – Toulouse FC",
+      "raw_score": null,
+      "raw_status": "canceled",
+      "descriptive_included": false,
+      "reason": "LFP 2026-05-27 确认中断时0–0最终有效。比赛方行政记录、完整场上总进球与任何具体市场兑付需分别查证。",
+      "authority": "https://www.lfp.fr/article/commission-de-discipline-les-decisions-du-27-mai-2026"
+    },
+    {
+      "league": "fr",
+      "season": "2019-20",
+      "reason": "固定版本有380个编号赛程、279个合法比分、101个状态 cancelled。2020年法甲提前终止。",
+      "authority": "https://www.conseil-etat.fr/fr/arianeweb/CE/decision/2020-10-23/440810"
+    },
+    {
+      "league": "it",
+      "season": "2019-20",
+      "reason": "原档意甲第38轮10场落在2020-08-01/02；套用旧英超 [8月1日,下一年8月1日) 时间窗会拒收。"
+    },
+    {
+      "league": "it",
+      "season": "2022-23",
+      "reason": "原档 it.1 有380个常规轮次赛程，有序主客对完整。2023-06-11 Spezia–Verona 保级附加赛另行举行，不能按同两队/同赛季随意归入。",
+      "authority": "https://img.legaseriea.it/vimages/6481aeb8/2022-23_A_SPARE_UNI_1_SPEVER.pdf"
+    },
+    {
+      "league": "it",
+      "season": "2023-24",
+      "fixture": "Udinese Calcio – AS Roma",
+      "raw_date": "2024-04-25",
+      "descriptive_included": true,
+      "reason": "原档只记录4月25日20:00及最终1–2。球队证实4月14日首次开球，4月25日仅续踢最后阶段。新预测截止必须相对于原赛开始；未复原的时点应隔离。",
+      "authority": "https://www.udinese.it/news/squad/date-confirmed-for-resumption-of-udinese-v-roma"
+    },
+    {
+      "league": "es",
+      "season": "2024-25",
+      "fixture": "UD Las Palmas – Real Madrid CF",
+      "raw_date": "2024-08-29",
+      "reason": "原档无偏移 21:30，马德里俱乐部公布21:30，拉斯帕尔马斯明确为当地20:30。时区需按来源钟面语义识别。",
+      "authority": [
+        "https://www.udlaspalmas.es/en/news/se-inicia-la-venta-de-entradas-para-el-partido-ante-el-real-madrid-declarado-dia-del-club",
+        "https://www.realmadrid.com/es-ES/noticias/futbol/primer-equipo/actualidad/once-inicial-del-real-madrid-contra-la-ud-las-palmas-29-08-2024"
+      ]
+    }
+  ],
+  "league_codes": {
+    "en": "英超",
+    "es": "西甲",
+    "de": "德甲",
+    "it": "意甲",
+    "fr": "法甲"
+  },
+  "all_25_files": {
+    "expected_regular_pairs": 8908,
+    "source_regular_rows": 8908,
+    "valid_raw_scores": 8887,
+    "missing_or_invalid_score": 21,
+    "valid_score_source_awarded": 2,
+    "additional_known_award_without_source_status": 1,
+    "descriptive_n": 8884,
+    "raw_clock_HH_MM": 8908,
+    "scheduled_file_count": 25,
+    "all_17_year_file_query_count": 85,
+    "available_files_in_17_year_query": 76
+  },
+  "running_2026_27_at_source_commit": {
+    "en": {
+      "path": "2026-27/en.1.json",
+      "git_blob_sha1": "60e281f0fcc51cfca1a901353666a688cf62a8ba",
+      "raw_regular_rows": 380,
+      "supplied_HH_MM": 380,
+      "valid_score_rows_at_frozen_commit": 50
+    },
+    "es": {
+      "path": "2026-27/es.1.json",
+      "git_blob_sha1": "daf0d8a5ff04578b06ca32927bfcb6609e50797c",
+      "raw_regular_rows": 380,
+      "supplied_HH_MM": 90,
+      "valid_score_rows_at_frozen_commit": 69
+    },
+    "de": {
+      "path": "2026-27/de.1.json",
+      "git_blob_sha1": "c8696353819299a131f8041513f8c50ee28522a2",
+      "raw_regular_rows": 306,
+      "supplied_HH_MM": 108,
+      "valid_score_rows_at_frozen_commit": 36
+    },
+    "it": {
+      "path": "2026-27/it.1.json",
+      "git_blob_sha1": "6b8e10596db7df51f98cd81bb4ea03304e784a1f",
+      "raw_regular_rows": 380,
+      "supplied_HH_MM": 120,
+      "valid_score_rows_at_frozen_commit": 50
+    },
+    "fr": {
+      "path": "2026-27/fr.1.json",
+      "git_blob_sha1": "ac75f05d04f914b95d2e70d7e267fd43c32e5d4f",
+      "raw_regular_rows": 306,
+      "supplied_HH_MM": 114,
+      "valid_score_rows_at_frozen_commit": 45
+    }
+  }
+}
