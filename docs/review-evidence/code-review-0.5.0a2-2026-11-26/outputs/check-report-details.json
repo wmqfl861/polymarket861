@@ -1,0 +1,172 @@
+{
+ "settlement_receipts": {
+  "all_match": true,
+  "receipts": [
+   {
+    "receipt": "gamma",
+    "source": "https://gamma-api.polymarket.com/markets/2162604",
+    "bytes": 3659,
+    "recorded_sha256": "c656d03fcf1f39560b09bff6a1d11fdfad69051101d987cbc6819197eb3bcff1",
+    "sha256_of_decoded_body": "c656d03fcf1f39560b09bff6a1d11fdfad69051101d987cbc6819197eb3bcff1",
+    "matches": true,
+    "terminal_state_in_original": {
+     "outcomes": "[\"Over\", \"Under\"]",
+     "outcomePrices": "[\"0\", \"1\"]",
+     "closed": true,
+     "umaResolutionStatus": "resolved"
+    }
+   },
+   {
+    "receipt": "clob",
+    "source": "https://clob.polymarket.com/markets/0xfe50e7696c8622d68a44510368b6e67ca991543fab3bd107130e489e7fb3fe78",
+    "bytes": 2353,
+    "recorded_sha256": "d4eae4d04eb6bf7a5598009fd796a2972d3df83f6bd2367fe49ecd95d766fd6b",
+    "sha256_of_decoded_body": "d4eae4d04eb6bf7a5598009fd796a2972d3df83f6bd2367fe49ecd95d766fd6b",
+    "matches": true,
+    "terminal_state_in_original": {
+     "closed": true,
+     "accepting_orders": false,
+     "tokens": [
+      {
+       "outcome": "Over",
+       "price": 0,
+       "winner": false
+      },
+      {
+       "outcome": "Under",
+       "price": 1,
+       "winner": true
+      }
+     ]
+    }
+   },
+   {
+    "receipt": "data-0",
+    "source": "https://data-api.polymarket.com/v2/tokens",
+    "bytes": 663,
+    "recorded_sha256": "633677bc9f3e0d5b8a53d17a1ea85fab286497e99f4ec2b571c90409051093cc",
+    "sha256_of_decoded_body": "633677bc9f3e0d5b8a53d17a1ea85fab286497e99f4ec2b571c90409051093cc",
+    "matches": true,
+    "terminal_state_in_original": [
+     {
+      "outcome": "Over",
+      "resolved": true,
+      "closed": true,
+      "final_price": 0.0
+     }
+    ]
+   },
+   {
+    "receipt": "data-1",
+    "source": "https://data-api.polymarket.com/v2/tokens",
+    "bytes": 664,
+    "recorded_sha256": "85fb8dc82f5b6469cc17ec489014a2ef9fde441feb867db69e51d58484b23f2b",
+    "sha256_of_decoded_body": "85fb8dc82f5b6469cc17ec489014a2ef9fde441feb867db69e51d58484b23f2b",
+    "matches": true,
+    "terminal_state_in_original": [
+     {
+      "outcome": "Under",
+      "resolved": true,
+      "closed": true,
+      "final_price": 1.0
+     }
+    ]
+   }
+  ]
+ },
+ "round_12_suspensions": {
+  "applied_items": 90,
+  "events": {
+   "injury": 84,
+   "suspension": 6
+  },
+  "combined_weight_all_items": 15.126477,
+  "combined_weight_suspensions": 1.944545,
+  "suspension_share_of_combined_weight": 0.1286,
+  "suspensions": [
+   {
+    "fixture_id": "epl/2026-27/everton/liverpool",
+    "player": "James Tarkowski",
+    "team": "Everton FC",
+    "role": "defence",
+    "combined_weight": 0.441307,
+    "importance_multiplier": 0.9807
+   },
+   {
+    "fixture_id": "epl/2026-27/manchester-united/brentford",
+    "player": "Igor Thiago",
+    "team": "Brentford FC",
+    "role": "forward",
+    "combined_weight": 0.406364,
+    "importance_multiplier": 0.903
+   },
+   {
+    "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+    "player": "Yeremy Pino",
+    "team": "Crystal Palace FC",
+    "role": "forward",
+    "combined_weight": 0.395795,
+    "importance_multiplier": 0.8795
+   },
+   {
+    "fixture_id": "epl/2026-27/manchester-united/brentford",
+    "player": "Leny Yoro",
+    "team": "Manchester United FC",
+    "role": "defence",
+    "combined_weight": 0.280739,
+    "importance_multiplier": 0.6239
+   },
+   {
+    "fixture_id": "epl/2026-27/brighton-hove-albion/newcastle-united",
+    "player": "Costinha",
+    "team": "Brighton & Hove Albion FC",
+    "role": "defence",
+    "combined_weight": 0.233864,
+    "importance_multiplier": 0.5197
+   },
+   {
+    "fixture_id": "epl/2026-27/crystal-palace/hull-city",
+    "player": "Jean-Philippe Mateta",
+    "team": "Crystal Palace FC",
+    "role": "forward",
+    "combined_weight": 0.186477,
+    "importance_multiplier": 0.4144
+   }
+  ],
+  "same_six_as_developer_audit": true,
+  "developer_classification_under_new_rule": [
+   "scope_unverified"
+  ]
+ },
+ "release_comparison": {
+  "published": "reports/five-leagues-0.5/release-comparison-0.4.2.json",
+  "leaf_fields": 68,
+  "identical": 62,
+  "different": {
+   "/candidate_execution/python": {
+    "this_run": "3.12.3",
+    "published": "3.12.14"
+   },
+   "/candidate_execution/release_provenance_sha256": {
+    "this_run": "9c5d38e9d73dd5a3fddde396e2d2b1bcea49bc163d4fb2b75091a6915665beee",
+    "published": "01d89fbe9a3699666b0b283673a29eac9041d2a58806eb04a20bb7b06f05cbe0"
+   },
+   "/comparison/candidate_recipe": {
+    "this_run": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+    "published": "826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc"
+   },
+   "/comparison/candidate_sha256": {
+    "this_run": "a5c74813bf893b11ac6cac5576ca6fd1dc7143b8ba8b29d35e3b49ce12c3789b",
+    "published": "17a5fc74226e6c2759be396d6ae1d95214d98b87776a3a4dc22f3661f65e8137"
+   },
+   "/report_sha256": {
+    "this_run": "4468f72d71462a55c46c18848d03bee8bbae7283e30ff705ed65f32a1a63a2ff",
+    "published": "700ef99b5e82aeac620ac2e9840277ca6c94975bf648bec30d40f61c9470a460"
+   },
+   "/to_version": {
+    "this_run": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+    "published": "B1@826eccba6086c96e0dc8fcf6f803d083f1618ced35be4fbf3be39369f53ab3cc"
+   }
+  }
+ }
+}

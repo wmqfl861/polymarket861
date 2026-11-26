@@ -1,0 +1,195 @@
+{
+ "opened_with": "0.5.0a2",
+ "arms": {
+  "对照：live=false 且 ended=false": {
+   "books_before": 28,
+   "weekly_report": {
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 2,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 1,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+   },
+   "watch_continued": {
+    "complete": 1
+   },
+   "slot_records": [
+    {
+     "slot": "closing",
+     "success": true,
+     "state": "complete"
+    },
+    {
+     "slot": "t1_decision",
+     "success": true,
+     "state": "complete"
+    },
+    {
+     "slot": "t1_execution",
+     "success": true,
+     "state": "complete"
+    }
+   ],
+   "books_after": 42
+  },
+  "两个标记都没有": {
+   "books_before": 28,
+   "weekly_report": {
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 0,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 2,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 0,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 1,
+    "t1_pairs_unclassified": 0
+   },
+   "watch_continued": {
+    "complete": 1
+   },
+   "slot_records": [
+    {
+     "slot": "closing",
+     "success": true,
+     "state": "complete"
+    },
+    {
+     "slot": "t1_decision",
+     "success": false,
+     "state": "partial"
+    },
+    {
+     "slot": "t1_execution",
+     "success": false,
+     "state": "partial"
+    }
+   ],
+   "books_after": 42
+  },
+  "两个标记都是 null": {
+   "books_before": 28,
+   "weekly_report": {
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 0,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 2,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 0,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 1,
+    "t1_pairs_unclassified": 0
+   },
+   "watch_continued": {
+    "complete": 1
+   },
+   "slot_records": [
+    {
+     "slot": "closing",
+     "success": true,
+     "state": "complete"
+    },
+    {
+     "slot": "t1_decision",
+     "success": false,
+     "state": "partial"
+    },
+    {
+     "slot": "t1_execution",
+     "success": false,
+     "state": "partial"
+    }
+   ],
+   "books_after": 42
+  },
+  "只有 live=false": {
+   "books_before": 28,
+   "weekly_report": {
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 0,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 2,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 0,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 1,
+    "t1_pairs_unclassified": 0
+   },
+   "watch_continued": {
+    "complete": 1
+   },
+   "slot_records": [
+    {
+     "slot": "closing",
+     "success": true,
+     "state": "complete"
+    },
+    {
+     "slot": "t1_decision",
+     "success": false,
+     "state": "partial"
+    },
+    {
+     "slot": "t1_execution",
+     "success": false,
+     "state": "partial"
+    }
+   ],
+   "books_after": 42
+  },
+  "只有 ended=false": {
+   "books_before": 28,
+   "weekly_report": {
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 0,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 2,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 0,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 1,
+    "t1_pairs_unclassified": 0
+   },
+   "watch_continued": {
+    "complete": 1
+   },
+   "slot_records": [
+    {
+     "slot": "closing",
+     "success": true,
+     "state": "complete"
+    },
+    {
+     "slot": "t1_decision",
+     "success": false,
+     "state": "partial"
+    },
+    {
+     "slot": "t1_execution",
+     "success": false,
+     "state": "partial"
+    }
+   ],
+   "books_after": 42
+  }
+ }
+}

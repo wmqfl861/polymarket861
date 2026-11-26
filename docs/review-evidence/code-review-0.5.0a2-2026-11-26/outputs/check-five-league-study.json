@@ -1,0 +1,1777 @@
+{
+ "what": "review walk-forward (0.4.2 probe, no league-aware code) against the 0.5.0a1 product study, fixture by fixture",
+ "environment": {
+  "python": "3.12.3",
+  "numpy": "2.3.5",
+  "scipy": "1.17.0"
+ },
+ "leagues": {
+  "epl": {
+   "scored_by_both": 1899,
+   "scored_only_by_review": [
+    "epl/2023-24/bournemouth/luton-town"
+   ],
+   "why_product_excludes_them": {
+    "epl/2023-24/bournemouth/luton-town": "replayed"
+   },
+   "scored_only_by_product": [],
+   "max_abs_per_fixture_difference": {
+    "b1": 0.0,
+    "b0": 0.0,
+    "any_endpoint_b1_minus_b0": 0.0
+   },
+   "match_week_label_mismatches": [],
+   "round_mismatches": [],
+   "fallback_flag_mismatches": [],
+   "product_audit": {
+    "omissions_in_graded_fixtures": {
+     "registered_replayed": 1
+    },
+    "excluded_fixtures": [
+     {
+      "fixture_id": "epl/2023-24/bournemouth/luton-town",
+      "round": 17,
+      "reason": "registered_replayed",
+      "regulation_result_versions": 1
+     }
+    ],
+    "missing_score_without_exception": []
+   },
+   "development": {
+    "published": {
+     "matches": 1519,
+     "clusters": 152,
+     "mean_b1": 75.67669474898176,
+     "mean_b0": 73.53991862285676,
+     "composite": {
+      "difference": 2.136776126125005,
+      "standard_error": 0.21172238371145757,
+      "lower": 1.5336066503522554,
+      "upper": 2.7399456018977544
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 1519,
+     "clusters": 152,
+     "mean_b1": 75.67669474898176,
+     "mean_b0": 73.53991862285676,
+     "intervals": {
+      "composite": {
+       "difference": 2.136776126125005,
+       "standard_error": 0.21172238371145757,
+       "lower": 1.5336066503522554,
+       "upper": 2.7399456018977544
+      },
+      "result": {
+       "difference": 3.558599600612885,
+       "standard_error": 0.3099349135391045,
+       "lower": 2.675635428162291,
+       "upper": 4.4415637730634785
+      },
+      "total": {
+       "difference": 0.5162083992316138,
+       "standard_error": 0.22721406787204645,
+       "lower": -0.13109486556324457,
+       "upper": 1.1635116640264722
+      },
+      "home": {
+       "difference": 2.892205968969169,
+       "standard_error": 0.3471552315664426,
+       "lower": 1.90320596167156,
+       "upper": 3.881205976266778
+      },
+      "away": {
+       "difference": 1.5800905356863495,
+       "standard_error": 0.30907639695196915,
+       "lower": 0.699572165095376,
+       "upper": 2.460608906277323
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 1519,
+     "clusters": 152,
+     "mean_b1": 75.67669474898176,
+     "mean_b0": 73.53991862285676,
+     "intervals": {
+      "composite": {
+       "difference": 2.136776126125005,
+       "standard_error": 0.21172238371145757,
+       "lower": 1.5336066503522554,
+       "upper": 2.7399456018977544
+      },
+      "result": {
+       "difference": 3.558599600612885,
+       "standard_error": 0.3099349135391045,
+       "lower": 2.675635428162291,
+       "upper": 4.4415637730634785
+      },
+      "total": {
+       "difference": 0.5162083992316138,
+       "standard_error": 0.22721406787204645,
+       "lower": -0.13109486556324457,
+       "upper": 1.1635116640264722
+      },
+      "home": {
+       "difference": 2.892205968969169,
+       "standard_error": 0.3471552315664426,
+       "lower": 1.90320596167156,
+       "upper": 3.881205976266778
+      },
+      "away": {
+       "difference": 1.5800905356863495,
+       "standard_error": 0.30907639695196915,
+       "lower": 0.699572165095376,
+       "upper": 2.460608906277323
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 1520,
+     "clusters": 152,
+     "mean_b1": 75.67829862937943,
+     "mean_b0": 73.53729512927055,
+     "intervals": {
+      "composite": {
+       "difference": 2.1410035001088925,
+       "standard_error": 0.2117620797245475,
+       "lower": 1.5377209355687391,
+       "upper": 2.744286064649046
+      },
+      "result": {
+       "difference": 3.557004152830008,
+       "standard_error": 0.30969759352618875,
+       "lower": 2.6747160741644525,
+       "upper": 4.439292231495563
+      },
+      "total": {
+       "difference": 0.5226608724164854,
+       "standard_error": 0.22659087398681252,
+       "lower": -0.12286699422503633,
+       "upper": 1.168188739058007
+      },
+      "home": {
+       "difference": 2.898245099848617,
+       "standard_error": 0.34765078323049503,
+       "lower": 1.9078333304492165,
+       "upper": 3.8886568692480177
+      },
+      "away": {
+       "difference": 1.5861038753404575,
+       "standard_error": 0.30895838438528384,
+       "lower": 0.7059217071704769,
+       "upper": 2.466286043510438
+      }
+     }
+    }
+   },
+   "holdout": {
+    "published": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 74.52587165292077,
+     "mean_b0": 73.64667974761466,
+     "composite": {
+      "difference": 0.8791919053061086,
+      "standard_error": 0.3741312107830915,
+      "lower": -0.2376810692385376,
+      "upper": 1.9960648798507548
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 74.52587165292077,
+     "mean_b0": 73.64667974761466,
+     "intervals": {
+      "composite": {
+       "difference": 0.8791919053061086,
+       "standard_error": 0.3741312107830915,
+       "lower": -0.2376810692385376,
+       "upper": 1.9960648798507548
+      },
+      "result": {
+       "difference": 2.07531431836932,
+       "standard_error": 0.6031184784079079,
+       "lower": 0.274858463397051,
+       "upper": 3.875770173341589
+      },
+      "total": {
+       "difference": -0.1940612029127058,
+       "standard_error": 0.4236197777971915,
+       "lower": -1.4586696281600604,
+       "upper": 1.0705472223346488
+      },
+      "home": {
+       "difference": 0.8351733307156954,
+       "standard_error": 0.5503338880259879,
+       "lower": -0.8077076393743949,
+       "upper": 2.478054300805786
+      },
+      "away": {
+       "difference": 0.8003411750521203,
+       "standard_error": 0.5306709540778387,
+       "lower": -0.783841138272666,
+       "upper": 2.3845234883769066
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 74.52587165292077,
+     "mean_b0": 73.64667974761466,
+     "intervals": {
+      "composite": {
+       "difference": 0.8791919053061086,
+       "standard_error": 0.3741312107830915,
+       "lower": -0.2376810692385376,
+       "upper": 1.9960648798507548
+      },
+      "result": {
+       "difference": 2.07531431836932,
+       "standard_error": 0.6031184784079079,
+       "lower": 0.274858463397051,
+       "upper": 3.875770173341589
+      },
+      "total": {
+       "difference": -0.1940612029127058,
+       "standard_error": 0.4236197777971915,
+       "lower": -1.4586696281600604,
+       "upper": 1.0705472223346488
+      },
+      "home": {
+       "difference": 0.8351733307156954,
+       "standard_error": 0.5503338880259879,
+       "lower": -0.8077076393743949,
+       "upper": 2.478054300805786
+      },
+      "away": {
+       "difference": 0.8003411750521203,
+       "standard_error": 0.5306709540778387,
+       "lower": -0.783841138272666,
+       "upper": 2.3845234883769066
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 74.52587165292077,
+     "mean_b0": 73.64667974761466,
+     "intervals": {
+      "composite": {
+       "difference": 0.8791919053061086,
+       "standard_error": 0.3741312107830915,
+       "lower": -0.2376810692385376,
+       "upper": 1.9960648798507548
+      },
+      "result": {
+       "difference": 2.07531431836932,
+       "standard_error": 0.6031184784079079,
+       "lower": 0.274858463397051,
+       "upper": 3.875770173341589
+      },
+      "total": {
+       "difference": -0.1940612029127058,
+       "standard_error": 0.4236197777971915,
+       "lower": -1.4586696281600604,
+       "upper": 1.0705472223346488
+      },
+      "home": {
+       "difference": 0.8351733307156954,
+       "standard_error": 0.5503338880259879,
+       "lower": -0.8077076393743949,
+       "upper": 2.478054300805786
+      },
+      "away": {
+       "difference": 0.8003411750521203,
+       "standard_error": 0.5306709540778387,
+       "lower": -0.783841138272666,
+       "upper": 2.3845234883769066
+      }
+     }
+    }
+   }
+  },
+  "lal": {
+   "scored_by_both": 1889,
+   "scored_only_by_review": [
+    "lal/2023-24/granada-cf/athletic-club"
+   ],
+   "why_product_excludes_them": {
+    "lal/2023-24/granada-cf/athletic-club": "resumed"
+   },
+   "scored_only_by_product": [],
+   "max_abs_per_fixture_difference": {
+    "b1": 0.0,
+    "b0": 0.0,
+    "any_endpoint_b1_minus_b0": 0.0
+   },
+   "match_week_label_mismatches": [],
+   "round_mismatches": [],
+   "fallback_flag_mismatches": [],
+   "product_audit": {
+    "omissions_in_graded_fixtures": {
+     "registered_resumed": 1
+    },
+    "excluded_fixtures": [
+     {
+      "fixture_id": "lal/2023-24/granada-cf/athletic-club",
+      "round": 16,
+      "reason": "registered_resumed",
+      "regulation_result_versions": 1
+     }
+    ],
+    "missing_score_without_exception": [
+     "lal/2024-25/real-betis-balompie/valencia-cf",
+     "lal/2024-25/real-madrid-cf/real-sociedad-de-futbol",
+     "lal/2024-25/cd-leganes/real-valladolid-cf",
+     "lal/2024-25/rcd-espanyol-de-barcelona/ud-las-palmas",
+     "lal/2024-25/deportivo-alaves/ca-osasuna",
+     "lal/2024-25/getafe-cf/rc-celta-de-vigo",
+     "lal/2024-25/rayo-vallecano-de-madrid/rcd-mallorca",
+     "lal/2024-25/girona/club-atletico-de-madrid",
+     "lal/2024-25/villarreal-cf/sevilla",
+     "lal/2024-25/athletic-club/barcelona"
+    ]
+   },
+   "development": {
+    "published": {
+     "matches": 1509,
+     "clusters": 151,
+     "mean_b1": 76.07987242051323,
+     "mean_b0": 74.32203277972465,
+     "composite": {
+      "difference": 1.757839640788576,
+      "standard_error": 0.19661476414984397,
+      "lower": 1.197654207606752,
+      "upper": 2.3180250739704
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 1509,
+     "clusters": 151,
+     "mean_b1": 76.07987242051323,
+     "mean_b0": 74.32203277972465,
+     "intervals": {
+      "composite": {
+       "difference": 1.757839640788576,
+       "standard_error": 0.19661476414984397,
+       "lower": 1.197654207606752,
+       "upper": 2.3180250739704
+      },
+      "result": {
+       "difference": 2.9414562611922745,
+       "standard_error": 0.2938509098425383,
+       "lower": 2.1042302271617777,
+       "upper": 3.7786822952227714
+      },
+      "total": {
+       "difference": 0.6825842113302389,
+       "standard_error": 0.27045076542248814,
+       "lower": -0.0879712443479993,
+       "upper": 1.453139667008477
+      },
+      "home": {
+       "difference": 1.9871286368430812,
+       "standard_error": 0.33204451208127916,
+       "lower": 1.0410832081582875,
+       "upper": 2.933174065527875
+      },
+      "away": {
+       "difference": 1.420189453788716,
+       "standard_error": 0.2732713736259552,
+       "lower": 0.6415976553916207,
+       "upper": 2.198781252185811
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 1509,
+     "clusters": 151,
+     "mean_b1": 76.07987242051323,
+     "mean_b0": 74.32203277972465,
+     "intervals": {
+      "composite": {
+       "difference": 1.757839640788576,
+       "standard_error": 0.19661476414984397,
+       "lower": 1.197654207606752,
+       "upper": 2.3180250739704
+      },
+      "result": {
+       "difference": 2.9414562611922745,
+       "standard_error": 0.2938509098425383,
+       "lower": 2.1042302271617777,
+       "upper": 3.7786822952227714
+      },
+      "total": {
+       "difference": 0.6825842113302389,
+       "standard_error": 0.27045076542248814,
+       "lower": -0.0879712443479993,
+       "upper": 1.453139667008477
+      },
+      "home": {
+       "difference": 1.9871286368430812,
+       "standard_error": 0.33204451208127916,
+       "lower": 1.0410832081582875,
+       "upper": 2.933174065527875
+      },
+      "away": {
+       "difference": 1.420189453788716,
+       "standard_error": 0.2732713736259552,
+       "lower": 0.6415976553916207,
+       "upper": 2.198781252185811
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 1510,
+     "clusters": 151,
+     "mean_b1": 76.07648912384036,
+     "mean_b0": 74.32477058656866,
+     "intervals": {
+      "composite": {
+       "difference": 1.7517185372716935,
+       "standard_error": 0.1959138080165407,
+       "lower": 1.1935302349608587,
+       "upper": 2.309906839582528
+      },
+      "result": {
+       "difference": 2.9375252454887635,
+       "standard_error": 0.2938626684378105,
+       "lower": 2.1002657094279655,
+       "upper": 3.7747847815495614
+      },
+      "total": {
+       "difference": 0.6737989110214773,
+       "standard_error": 0.26875833925907,
+       "lower": -0.09193456453953996,
+       "upper": 1.4395323865824945
+      },
+      "home": {
+       "difference": 1.9878034667396454,
+       "standard_error": 0.33193498933143784,
+       "lower": 1.042070085063775,
+       "upper": 2.9335368484155158
+      },
+      "away": {
+       "difference": 1.4077465258368966,
+       "standard_error": 0.27364160319691155,
+       "lower": 0.6280998869578076,
+       "upper": 2.187393164715986
+      }
+     }
+    }
+   },
+   "holdout": {
+    "published": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 75.86949646093588,
+     "mean_b0": 74.26969355955679,
+     "composite": {
+      "difference": 1.5998029013790935,
+      "standard_error": 0.39810940400355727,
+      "lower": 0.41134916796032495,
+      "upper": 2.788256634797862
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 75.86949646093588,
+     "mean_b0": 74.26969355955679,
+     "intervals": {
+      "composite": {
+       "difference": 1.5998029013790935,
+       "standard_error": 0.39810940400355727,
+       "lower": 0.41134916796032495,
+       "upper": 2.788256634797862
+      },
+      "result": {
+       "difference": 2.436409538117042,
+       "standard_error": 0.57128649039719,
+       "lower": 0.7309799362627252,
+       "upper": 4.141839139971358
+      },
+      "total": {
+       "difference": 0.6141952976164151,
+       "standard_error": 0.5543684811724392,
+       "lower": -1.0407299176974907,
+       "upper": 2.269120512930321
+      },
+      "home": {
+       "difference": 2.622013464189729,
+       "standard_error": 0.5070113578484208,
+       "lower": 1.1084608199640957,
+       "upper": 4.135566108415362
+      },
+      "away": {
+       "difference": 0.7265933055932017,
+       "standard_error": 0.5484969069544398,
+       "lower": -0.9108038276652386,
+       "upper": 2.363990438851642
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 75.86949646093588,
+     "mean_b0": 74.26969355955679,
+     "intervals": {
+      "composite": {
+       "difference": 1.5998029013790935,
+       "standard_error": 0.39810940400355727,
+       "lower": 0.41134916796032495,
+       "upper": 2.788256634797862
+      },
+      "result": {
+       "difference": 2.436409538117042,
+       "standard_error": 0.57128649039719,
+       "lower": 0.7309799362627252,
+       "upper": 4.141839139971358
+      },
+      "total": {
+       "difference": 0.6141952976164151,
+       "standard_error": 0.5543684811724392,
+       "lower": -1.0407299176974907,
+       "upper": 2.269120512930321
+      },
+      "home": {
+       "difference": 2.622013464189729,
+       "standard_error": 0.5070113578484208,
+       "lower": 1.1084608199640957,
+       "upper": 4.135566108415362
+      },
+      "away": {
+       "difference": 0.7265933055932017,
+       "standard_error": 0.5484969069544398,
+       "lower": -0.9108038276652386,
+       "upper": 2.363990438851642
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 75.86949646093588,
+     "mean_b0": 74.26969355955679,
+     "intervals": {
+      "composite": {
+       "difference": 1.5998029013790935,
+       "standard_error": 0.39810940400355727,
+       "lower": 0.41134916796032495,
+       "upper": 2.788256634797862
+      },
+      "result": {
+       "difference": 2.436409538117042,
+       "standard_error": 0.57128649039719,
+       "lower": 0.7309799362627252,
+       "upper": 4.141839139971358
+      },
+      "total": {
+       "difference": 0.6141952976164151,
+       "standard_error": 0.5543684811724392,
+       "lower": -1.0407299176974907,
+       "upper": 2.269120512930321
+      },
+      "home": {
+       "difference": 2.622013464189729,
+       "standard_error": 0.5070113578484208,
+       "lower": 1.1084608199640957,
+       "upper": 4.135566108415362
+      },
+      "away": {
+       "difference": 0.7265933055932017,
+       "standard_error": 0.5484969069544398,
+       "lower": -0.9108038276652386,
+       "upper": 2.363990438851642
+      }
+     }
+    }
+   }
+  },
+  "bun": {
+   "scored_by_both": 1528,
+   "scored_only_by_review": [],
+   "why_product_excludes_them": {},
+   "scored_only_by_product": [],
+   "max_abs_per_fixture_difference": {
+    "b1": 0.0,
+    "b0": 0.0,
+    "any_endpoint_b1_minus_b0": 0.0
+   },
+   "match_week_label_mismatches": [],
+   "round_mismatches": [],
+   "fallback_flag_mismatches": [],
+   "product_audit": {
+    "omissions_in_graded_fixtures": {},
+    "excluded_fixtures": [
+     {
+      "fixture_id": "bun/2021-22/vfl-bochum-1848/borussia-monchengladbach",
+      "round": 27,
+      "reason": "registered_awarded",
+      "regulation_result_versions": 0
+     },
+     {
+      "fixture_id": "bun/2024-25/1-union-berlin/vfl-bochum-1848",
+      "round": 14,
+      "reason": "registered_awarded",
+      "regulation_result_versions": 0
+     }
+    ],
+    "missing_score_without_exception": []
+   },
+   "development": {
+    "published": {
+     "matches": 1222,
+     "clusters": 136,
+     "mean_b1": 75.38854151468358,
+     "mean_b0": 73.62817270371694,
+     "composite": {
+      "difference": 1.7603688109666396,
+      "standard_error": 0.19941336510509472,
+      "lower": 1.1912621358282203,
+      "upper": 2.329475486105059
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 1222,
+     "clusters": 136,
+     "mean_b1": 75.38854151468358,
+     "mean_b0": 73.62817270371694,
+     "intervals": {
+      "composite": {
+       "difference": 1.7603688109666396,
+       "standard_error": 0.19941336510509472,
+       "lower": 1.1912621358282203,
+       "upper": 2.329475486105059
+      },
+      "result": {
+       "difference": 2.6176506083293654,
+       "standard_error": 0.34306865776840956,
+       "lower": 1.6385654649445016,
+       "upper": 3.5967357517142293
+      },
+      "total": {
+       "difference": 0.6846949138605751,
+       "standard_error": 0.28881180463835204,
+       "lower": -0.13954635899410972,
+       "upper": 1.50893618671526
+      },
+      "home": {
+       "difference": 2.1511078482401658,
+       "standard_error": 0.3568313285929828,
+       "lower": 1.1327453583751925,
+       "upper": 3.169470338105139
+      },
+      "away": {
+       "difference": 1.5880218734364593,
+       "standard_error": 0.35166488157335707,
+       "lower": 0.584403929324818,
+       "upper": 2.5916398175481006
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 1222,
+     "clusters": 136,
+     "mean_b1": 75.38854151468358,
+     "mean_b0": 73.62817270371694,
+     "intervals": {
+      "composite": {
+       "difference": 1.7603688109666396,
+       "standard_error": 0.19941336510509472,
+       "lower": 1.1912621358282203,
+       "upper": 2.329475486105059
+      },
+      "result": {
+       "difference": 2.6176506083293654,
+       "standard_error": 0.34306865776840956,
+       "lower": 1.6385654649445016,
+       "upper": 3.5967357517142293
+      },
+      "total": {
+       "difference": 0.6846949138605751,
+       "standard_error": 0.28881180463835204,
+       "lower": -0.13954635899410972,
+       "upper": 1.50893618671526
+      },
+      "home": {
+       "difference": 2.1511078482401658,
+       "standard_error": 0.3568313285929828,
+       "lower": 1.1327453583751925,
+       "upper": 3.169470338105139
+      },
+      "away": {
+       "difference": 1.5880218734364593,
+       "standard_error": 0.35166488157335707,
+       "lower": 0.584403929324818,
+       "upper": 2.5916398175481006
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 1222,
+     "clusters": 136,
+     "mean_b1": 75.38854151468358,
+     "mean_b0": 73.62817270371694,
+     "intervals": {
+      "composite": {
+       "difference": 1.7603688109666396,
+       "standard_error": 0.19941336510509472,
+       "lower": 1.1912621358282203,
+       "upper": 2.329475486105059
+      },
+      "result": {
+       "difference": 2.6176506083293654,
+       "standard_error": 0.34306865776840956,
+       "lower": 1.6385654649445016,
+       "upper": 3.5967357517142293
+      },
+      "total": {
+       "difference": 0.6846949138605751,
+       "standard_error": 0.28881180463835204,
+       "lower": -0.13954635899410972,
+       "upper": 1.50893618671526
+      },
+      "home": {
+       "difference": 2.1511078482401658,
+       "standard_error": 0.3568313285929828,
+       "lower": 1.1327453583751925,
+       "upper": 3.169470338105139
+      },
+      "away": {
+       "difference": 1.5880218734364593,
+       "standard_error": 0.35166488157335707,
+       "lower": 0.584403929324818,
+       "upper": 2.5916398175481006
+      }
+     }
+    }
+   },
+   "holdout": {
+    "published": {
+     "matches": 306,
+     "clusters": 34,
+     "mean_b1": 75.62217313616095,
+     "mean_b0": 73.8439395143097,
+     "composite": {
+      "difference": 1.778233621851258,
+      "standard_error": 0.5073808907030618,
+      "lower": 0.25190912145215294,
+      "upper": 3.304558122250363
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 306,
+     "clusters": 34,
+     "mean_b1": 75.62217313616095,
+     "mean_b0": 73.8439395143097,
+     "intervals": {
+      "composite": {
+       "difference": 1.778233621851258,
+       "standard_error": 0.5073808907030618,
+       "lower": 0.25190912145215294,
+       "upper": 3.304558122250363
+      },
+      "result": {
+       "difference": 3.584360627988426,
+       "standard_error": 0.7363566835083322,
+       "lower": 1.369221532950737,
+       "upper": 5.7994997230261145
+      },
+      "total": {
+       "difference": 0.013187738971957965,
+       "standard_error": 0.5117118480343177,
+       "lower": -1.5261653291284634,
+       "upper": 1.5525408070723792
+      },
+      "home": {
+       "difference": 0.8066632398165617,
+       "standard_error": 0.6927135932384599,
+       "lower": -1.2771868784925569,
+       "upper": 2.89051335812568
+      },
+      "away": {
+       "difference": 2.708722880628092,
+       "standard_error": 0.731518348305908,
+       "lower": 0.5081386687086269,
+       "upper": 4.909307092547557
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 306,
+     "clusters": 34,
+     "mean_b1": 75.62217313616095,
+     "mean_b0": 73.8439395143097,
+     "intervals": {
+      "composite": {
+       "difference": 1.778233621851258,
+       "standard_error": 0.5073808907030618,
+       "lower": 0.25190912145215294,
+       "upper": 3.304558122250363
+      },
+      "result": {
+       "difference": 3.584360627988426,
+       "standard_error": 0.7363566835083322,
+       "lower": 1.369221532950737,
+       "upper": 5.7994997230261145
+      },
+      "total": {
+       "difference": 0.013187738971957965,
+       "standard_error": 0.5117118480343177,
+       "lower": -1.5261653291284634,
+       "upper": 1.5525408070723792
+      },
+      "home": {
+       "difference": 0.8066632398165617,
+       "standard_error": 0.6927135932384599,
+       "lower": -1.2771868784925569,
+       "upper": 2.89051335812568
+      },
+      "away": {
+       "difference": 2.708722880628092,
+       "standard_error": 0.731518348305908,
+       "lower": 0.5081386687086269,
+       "upper": 4.909307092547557
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 306,
+     "clusters": 34,
+     "mean_b1": 75.62217313616095,
+     "mean_b0": 73.8439395143097,
+     "intervals": {
+      "composite": {
+       "difference": 1.778233621851258,
+       "standard_error": 0.5073808907030618,
+       "lower": 0.25190912145215294,
+       "upper": 3.304558122250363
+      },
+      "result": {
+       "difference": 3.584360627988426,
+       "standard_error": 0.7363566835083322,
+       "lower": 1.369221532950737,
+       "upper": 5.7994997230261145
+      },
+      "total": {
+       "difference": 0.013187738971957965,
+       "standard_error": 0.5117118480343177,
+       "lower": -1.5261653291284634,
+       "upper": 1.5525408070723792
+      },
+      "home": {
+       "difference": 0.8066632398165617,
+       "standard_error": 0.6927135932384599,
+       "lower": -1.2771868784925569,
+       "upper": 2.89051335812568
+      },
+      "away": {
+       "difference": 2.708722880628092,
+       "standard_error": 0.731518348305908,
+       "lower": 0.5081386687086269,
+       "upper": 4.909307092547557
+      }
+     }
+    }
+   }
+  },
+  "sea": {
+   "scored_by_both": 1888,
+   "scored_only_by_review": [
+    "sea/2023-24/udinese-calcio/as-roma",
+    "sea/2024-25/acf-fiorentina/internazionale-milano"
+   ],
+   "why_product_excludes_them": {
+    "sea/2023-24/udinese-calcio/as-roma": "resumed",
+    "sea/2024-25/acf-fiorentina/internazionale-milano": "resumed"
+   },
+   "scored_only_by_product": [],
+   "max_abs_per_fixture_difference": {
+    "b1": 0.0,
+    "b0": 0.0,
+    "any_endpoint_b1_minus_b0": 0.0
+   },
+   "match_week_label_mismatches": [],
+   "round_mismatches": [],
+   "fallback_flag_mismatches": [],
+   "product_audit": {
+    "omissions_in_graded_fixtures": {
+     "registered_resumed": 2
+    },
+    "excluded_fixtures": [
+     {
+      "fixture_id": "sea/2023-24/udinese-calcio/as-roma",
+      "round": 32,
+      "reason": "registered_resumed",
+      "regulation_result_versions": 1
+     },
+     {
+      "fixture_id": "sea/2024-25/acf-fiorentina/internazionale-milano",
+      "round": 14,
+      "reason": "registered_resumed",
+      "regulation_result_versions": 1
+     }
+    ],
+    "missing_score_without_exception": [
+     "sea/2024-25/como-1907/internazionale-milano",
+     "sea/2024-25/ssc-napoli/cagliari-calcio",
+     "sea/2024-25/bologna-1909/genoa-cfc",
+     "sea/2024-25/ac-milan/ac-monza",
+     "sea/2024-25/atalanta-bc/parma-calcio-1913",
+     "sea/2024-25/empoli/hellas-verona",
+     "sea/2024-25/ss-lazio/us-lecce",
+     "sea/2024-25/torino/as-roma",
+     "sea/2024-25/udinese-calcio/acf-fiorentina",
+     "sea/2024-25/venezia/juventus"
+    ]
+   },
+   "development": {
+    "published": {
+     "matches": 1508,
+     "clusters": 151,
+     "mean_b1": 75.7009074210221,
+     "mean_b0": 73.6367896793069,
+     "composite": {
+      "difference": 2.0641177417152017,
+      "standard_error": 0.18862992116819494,
+      "lower": 1.5266823433230081,
+      "upper": 2.601553140107395
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 1508,
+     "clusters": 151,
+     "mean_b1": 75.7009074210221,
+     "mean_b0": 73.6367896793069,
+     "intervals": {
+      "composite": {
+       "difference": 2.0641177417152017,
+       "standard_error": 0.18862992116819494,
+       "lower": 1.5266823433230081,
+       "upper": 2.601553140107395
+      },
+      "result": {
+       "difference": 3.491880553422627,
+       "standard_error": 0.30121045615883885,
+       "lower": 2.633686050116463,
+       "upper": 4.350075056728791
+      },
+      "total": {
+       "difference": 0.6143610156944268,
+       "standard_error": 0.23494604942179956,
+       "lower": -0.05503609209043858,
+       "upper": 1.2837581234792923
+      },
+      "home": {
+       "difference": 1.7595406641315972,
+       "standard_error": 0.31838951370363566,
+       "lower": 0.8524004072651703,
+       "upper": 2.666680920998024
+      },
+      "away": {
+       "difference": 2.3906887336121514,
+       "standard_error": 0.2936520088140247,
+       "lower": 1.5540293989305054,
+       "upper": 3.2273480682937974
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 1508,
+     "clusters": 151,
+     "mean_b1": 75.7009074210221,
+     "mean_b0": 73.6367896793069,
+     "intervals": {
+      "composite": {
+       "difference": 2.0641177417152017,
+       "standard_error": 0.18862992116819494,
+       "lower": 1.5266823433230081,
+       "upper": 2.601553140107395
+      },
+      "result": {
+       "difference": 3.491880553422627,
+       "standard_error": 0.30121045615883885,
+       "lower": 2.633686050116463,
+       "upper": 4.350075056728791
+      },
+      "total": {
+       "difference": 0.6143610156944268,
+       "standard_error": 0.23494604942179956,
+       "lower": -0.05503609209043858,
+       "upper": 1.2837581234792923
+      },
+      "home": {
+       "difference": 1.7595406641315972,
+       "standard_error": 0.31838951370363566,
+       "lower": 0.8524004072651703,
+       "upper": 2.666680920998024
+      },
+      "away": {
+       "difference": 2.3906887336121514,
+       "standard_error": 0.2936520088140247,
+       "lower": 1.5540293989305054,
+       "upper": 3.2273480682937974
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 1510,
+     "clusters": 151,
+     "mean_b1": 75.69467018813258,
+     "mean_b0": 73.63698871462888,
+     "intervals": {
+      "composite": {
+       "difference": 2.05768147350369,
+       "standard_error": 0.18861567797231438,
+       "lower": 1.52028665614766,
+       "upper": 2.59507629085972
+      },
+      "result": {
+       "difference": 3.4810020449149386,
+       "standard_error": 0.3005407064267176,
+       "lower": 2.624715760685984,
+       "upper": 4.3372883291438935
+      },
+      "total": {
+       "difference": 0.6149347041056469,
+       "standard_error": 0.23411905887532,
+       "lower": -0.05210618155358071,
+       "upper": 1.2819755897648744
+      },
+      "home": {
+       "difference": 1.7540256619292585,
+       "standard_error": 0.31841263104107864,
+       "lower": 0.8468195402446654,
+       "upper": 2.6612317836138515
+      },
+      "away": {
+       "difference": 2.3807634830649125,
+       "standard_error": 0.29395550175274116,
+       "lower": 1.5432394507392333,
+       "upper": 3.2182875153905917
+      }
+     }
+    }
+   },
+   "holdout": {
+    "published": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 75.43443486970091,
+     "mean_b0": 73.94455505540166,
+     "composite": {
+      "difference": 1.489879814299235,
+      "standard_error": 0.28290230689557694,
+      "lower": 0.64534738315921,
+      "upper": 2.3344122454392604
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 75.43443486970091,
+     "mean_b0": 73.94455505540166,
+     "intervals": {
+      "composite": {
+       "difference": 1.489879814299235,
+       "standard_error": 0.28290230689557694,
+       "lower": 0.64534738315921,
+       "upper": 2.3344122454392604
+      },
+      "result": {
+       "difference": 3.3469620333821006,
+       "standard_error": 0.5389332394186748,
+       "lower": 1.7381147818239033,
+       "upper": 4.9558092849402975
+      },
+      "total": {
+       "difference": -0.5353397012668694,
+       "standard_error": 0.4980354713874492,
+       "lower": -2.0220971337542,
+       "upper": 0.9514177312204614
+      },
+      "home": {
+       "difference": 2.040495876709545,
+       "standard_error": 0.6177645292367407,
+       "lower": 0.19631798550220148,
+       "upper": 3.8846737679168886
+      },
+      "away": {
+       "difference": 1.107401048372161,
+       "standard_error": 0.5014235415058534,
+       "lower": -0.3894706003100379,
+       "upper": 2.60427269705436
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 75.43443486970091,
+     "mean_b0": 73.94455505540166,
+     "intervals": {
+      "composite": {
+       "difference": 1.489879814299235,
+       "standard_error": 0.28290230689557694,
+       "lower": 0.64534738315921,
+       "upper": 2.3344122454392604
+      },
+      "result": {
+       "difference": 3.3469620333821006,
+       "standard_error": 0.5389332394186748,
+       "lower": 1.7381147818239033,
+       "upper": 4.9558092849402975
+      },
+      "total": {
+       "difference": -0.5353397012668694,
+       "standard_error": 0.4980354713874492,
+       "lower": -2.0220971337542,
+       "upper": 0.9514177312204614
+      },
+      "home": {
+       "difference": 2.040495876709545,
+       "standard_error": 0.6177645292367407,
+       "lower": 0.19631798550220148,
+       "upper": 3.8846737679168886
+      },
+      "away": {
+       "difference": 1.107401048372161,
+       "standard_error": 0.5014235415058534,
+       "lower": -0.3894706003100379,
+       "upper": 2.60427269705436
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 380,
+     "clusters": 38,
+     "mean_b1": 75.43443486970091,
+     "mean_b0": 73.94455505540166,
+     "intervals": {
+      "composite": {
+       "difference": 1.489879814299235,
+       "standard_error": 0.28290230689557694,
+       "lower": 0.64534738315921,
+       "upper": 2.3344122454392604
+      },
+      "result": {
+       "difference": 3.3469620333821006,
+       "standard_error": 0.5389332394186748,
+       "lower": 1.7381147818239033,
+       "upper": 4.9558092849402975
+      },
+      "total": {
+       "difference": -0.5353397012668694,
+       "standard_error": 0.4980354713874492,
+       "lower": -2.0220971337542,
+       "upper": 0.9514177312204614
+      },
+      "home": {
+       "difference": 2.040495876709545,
+       "standard_error": 0.6177645292367407,
+       "lower": 0.19631798550220148,
+       "upper": 3.8846737679168886
+      },
+      "away": {
+       "difference": 1.107401048372161,
+       "standard_error": 0.5014235415058534,
+       "lower": -0.3894706003100379,
+       "upper": 2.60427269705436
+      }
+     }
+    }
+   }
+  },
+  "fl1": {
+   "scored_by_both": 1673,
+   "scored_only_by_review": [
+    "fl1/2021-22/ogc-nice/olympique-de-marseille",
+    "fl1/2021-22/olympique-lyonnais/olympique-de-marseille",
+    "fl1/2023-24/montpellier-hsc/clermont-foot-63"
+   ],
+   "why_product_excludes_them": {
+    "fl1/2021-22/ogc-nice/olympique-de-marseille": "replayed",
+    "fl1/2021-22/olympique-lyonnais/olympique-de-marseille": "replayed",
+    "fl1/2023-24/montpellier-hsc/clermont-foot-63": "replayed"
+   },
+   "scored_only_by_product": [],
+   "max_abs_per_fixture_difference": {
+    "b1": 0.0,
+    "b0": 0.0,
+    "any_endpoint_b1_minus_b0": 0.0
+   },
+   "match_week_label_mismatches": [],
+   "round_mismatches": [],
+   "fallback_flag_mismatches": [],
+   "product_audit": {
+    "omissions_in_graded_fixtures": {
+     "registered_replayed": 3
+    },
+    "excluded_fixtures": [
+     {
+      "fixture_id": "fl1/2021-22/ogc-nice/olympique-de-marseille",
+      "round": 3,
+      "reason": "registered_replayed",
+      "regulation_result_versions": 1
+     },
+     {
+      "fixture_id": "fl1/2021-22/olympique-lyonnais/olympique-de-marseille",
+      "round": 14,
+      "reason": "registered_replayed",
+      "regulation_result_versions": 1
+     },
+     {
+      "fixture_id": "fl1/2023-24/montpellier-hsc/clermont-foot-63",
+      "round": 8,
+      "reason": "registered_replayed",
+      "regulation_result_versions": 1
+     },
+     {
+      "fixture_id": "fl1/2024-25/montpellier-hsc/as-saint-etienne",
+      "round": 26,
+      "reason": "registered_awarded",
+      "regulation_result_versions": 0
+     },
+     {
+      "fixture_id": "fl1/2025-26/nantes/toulouse",
+      "round": 34,
+      "reason": "registered_abandoned",
+      "regulation_result_versions": 0
+     }
+    ],
+    "missing_score_without_exception": []
+   },
+   "development": {
+    "published": {
+     "matches": 1368,
+     "clusters": 144,
+     "mean_b1": 75.2255704215872,
+     "mean_b0": 73.70782441124173,
+     "composite": {
+      "difference": 1.5177460103454692,
+      "standard_error": 0.1855479725454226,
+      "lower": 0.9887034394101715,
+      "upper": 2.046788581280767
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 1368,
+     "clusters": 144,
+     "mean_b1": 75.2255704215872,
+     "mean_b0": 73.70782441124173,
+     "intervals": {
+      "composite": {
+       "difference": 1.5177460103454692,
+       "standard_error": 0.1855479725454226,
+       "lower": 0.9887034394101715,
+       "upper": 2.046788581280767
+      },
+      "result": {
+       "difference": 2.56015307116745,
+       "standard_error": 0.2758080835167241,
+       "lower": 1.7737568870070173,
+       "upper": 3.3465492553278824
+      },
+      "total": {
+       "difference": 0.19789784803652652,
+       "standard_error": 0.22518180864661363,
+       "lower": -0.44415046615403253,
+       "upper": 0.8399461622270856
+      },
+      "home": {
+       "difference": 1.9014568122499924,
+       "standard_error": 0.31948797730108885,
+       "lower": 0.9905185865417655,
+       "upper": 2.812395037958219
+      },
+      "away": {
+       "difference": 1.4114763099279037,
+       "standard_error": 0.26895716259817876,
+       "lower": 0.6446137739464315,
+       "upper": 2.178338845909376
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 1368,
+     "clusters": 144,
+     "mean_b1": 75.2255704215872,
+     "mean_b0": 73.70782441124173,
+     "intervals": {
+      "composite": {
+       "difference": 1.5177460103454692,
+       "standard_error": 0.1855479725454226,
+       "lower": 0.9887034394101715,
+       "upper": 2.046788581280767
+      },
+      "result": {
+       "difference": 2.56015307116745,
+       "standard_error": 0.2758080835167241,
+       "lower": 1.7737568870070173,
+       "upper": 3.3465492553278824
+      },
+      "total": {
+       "difference": 0.19789784803652652,
+       "standard_error": 0.22518180864661363,
+       "lower": -0.44415046615403253,
+       "upper": 0.8399461622270856
+      },
+      "home": {
+       "difference": 1.9014568122499924,
+       "standard_error": 0.31948797730108885,
+       "lower": 0.9905185865417655,
+       "upper": 2.812395037958219
+      },
+      "away": {
+       "difference": 1.4114763099279037,
+       "standard_error": 0.26895716259817876,
+       "lower": 0.6446137739464315,
+       "upper": 2.178338845909376
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 1371,
+     "clusters": 144,
+     "mean_b1": 75.22742892575461,
+     "mean_b0": 73.7119757245816,
+     "intervals": {
+      "composite": {
+       "difference": 1.5154532011730009,
+       "standard_error": 0.185005730656964,
+       "lower": 0.9879566942490937,
+       "upper": 2.042949708096908
+      },
+      "result": {
+       "difference": 2.5576616259241574,
+       "standard_error": 0.275180236683573,
+       "lower": 1.773055586372729,
+       "upper": 3.3422676654755854
+      },
+      "total": {
+       "difference": 0.19831852193437444,
+       "standard_error": 0.2250229265427227,
+       "lower": -0.4432767805872078,
+       "upper": 0.8399138244559567
+      },
+      "home": {
+       "difference": 1.894219769486992,
+       "standard_error": 0.31848056636663713,
+       "lower": 0.9861539183104793,
+       "upper": 2.802285620663505
+      },
+      "away": {
+       "difference": 1.4116128873464744,
+       "standard_error": 0.2682793779118107,
+       "lower": 0.646682880985766,
+       "upper": 2.176542893707183
+      }
+     }
+    }
+   },
+   "holdout": {
+    "published": {
+     "matches": 305,
+     "clusters": 34,
+     "mean_b1": 74.6266553042808,
+     "mean_b0": 73.89296108442592,
+     "composite": {
+      "difference": 0.733694219854878,
+      "standard_error": 0.41287049020655414,
+      "lower": -0.5083201252672637,
+      "upper": 1.9757085649770199
+     }
+    },
+    "product_recomputed_here": {
+     "matches": 305,
+     "clusters": 34,
+     "mean_b1": 74.6266553042808,
+     "mean_b0": 73.89296108442592,
+     "intervals": {
+      "composite": {
+       "difference": 0.733694219854878,
+       "standard_error": 0.41287049020655414,
+       "lower": -0.5083201252672637,
+       "upper": 1.9757085649770199
+      },
+      "result": {
+       "difference": 2.3434079848786196,
+       "standard_error": 0.6600840824505456,
+       "lower": 0.35771533103888586,
+       "upper": 4.329100638718353
+      },
+      "total": {
+       "difference": 0.14379266823940945,
+       "standard_error": 0.554117228118317,
+       "lower": -1.5231260448368362,
+       "upper": 1.8107113813156552
+      },
+      "home": {
+       "difference": 0.364332385671265,
+       "standard_error": 0.8277009902222894,
+       "lower": -2.1255924883820505,
+       "upper": 2.854257259724581
+      },
+      "away": {
+       "difference": 0.08324384063022292,
+       "standard_error": 0.6717575113567689,
+       "lower": -1.9375653122139307,
+       "upper": 2.1040529934743764
+      }
+     }
+    },
+    "review_on_common_fixtures": {
+     "matches": 305,
+     "clusters": 34,
+     "mean_b1": 74.6266553042808,
+     "mean_b0": 73.89296108442592,
+     "intervals": {
+      "composite": {
+       "difference": 0.733694219854878,
+       "standard_error": 0.41287049020655414,
+       "lower": -0.5083201252672637,
+       "upper": 1.9757085649770199
+      },
+      "result": {
+       "difference": 2.3434079848786196,
+       "standard_error": 0.6600840824505456,
+       "lower": 0.35771533103888586,
+       "upper": 4.329100638718353
+      },
+      "total": {
+       "difference": 0.14379266823940945,
+       "standard_error": 0.554117228118317,
+       "lower": -1.5231260448368362,
+       "upper": 1.8107113813156552
+      },
+      "home": {
+       "difference": 0.364332385671265,
+       "standard_error": 0.8277009902222894,
+       "lower": -2.1255924883820505,
+       "upper": 2.854257259724581
+      },
+      "away": {
+       "difference": 0.08324384063022292,
+       "standard_error": 0.6717575113567689,
+       "lower": -1.9375653122139307,
+       "upper": 2.1040529934743764
+      }
+     }
+    },
+    "review_on_its_own_fixtures": {
+     "matches": 305,
+     "clusters": 34,
+     "mean_b1": 74.6266553042808,
+     "mean_b0": 73.89296108442592,
+     "intervals": {
+      "composite": {
+       "difference": 0.733694219854878,
+       "standard_error": 0.41287049020655414,
+       "lower": -0.5083201252672637,
+       "upper": 1.9757085649770199
+      },
+      "result": {
+       "difference": 2.3434079848786196,
+       "standard_error": 0.6600840824505456,
+       "lower": 0.35771533103888586,
+       "upper": 4.329100638718353
+      },
+      "total": {
+       "difference": 0.14379266823940945,
+       "standard_error": 0.554117228118317,
+       "lower": -1.5231260448368362,
+       "upper": 1.8107113813156552
+      },
+      "home": {
+       "difference": 0.364332385671265,
+       "standard_error": 0.8277009902222894,
+       "lower": -2.1255924883820505,
+       "upper": 2.854257259724581
+      },
+      "away": {
+       "difference": 0.08324384063022292,
+       "standard_error": 0.6717575113567689,
+       "lower": -1.9375653122139307,
+       "upper": 2.1040529934743764
+      }
+     }
+    }
+   }
+  }
+ },
+ "pooled": {
+  "development": {
+   "published": {
+    "matches": 7126,
+    "clusters": 151,
+    "intervals": {
+     "composite": {
+      "difference": 1.8577715039565255,
+      "standard_error": 0.08503958934756191,
+      "lower": 1.6154807512643086,
+      "upper": 2.100062256648742
+     },
+     "result": {
+      "difference": 3.060761242038591,
+      "standard_error": 0.12774013526680775,
+      "lower": 2.696810125149904,
+      "upper": 3.4247123589272777
+     },
+     "total": {
+      "difference": 0.5399969107281695,
+      "standard_error": 0.11573528428552074,
+      "lower": 0.21024944419256736,
+      "upper": 0.8697443772637716
+     },
+     "home": {
+      "difference": 2.143568904164791,
+      "standard_error": 0.142677932231435,
+      "lower": 1.7370577267455813,
+      "upper": 2.5500800815840012
+     },
+     "away": {
+      "difference": 1.6867589588945526,
+      "standard_error": 0.14992503577085575,
+      "lower": 1.2595996788107333,
+      "upper": 2.113918238978372
+     }
+    }
+   },
+   "product_recomputed_here": {
+    "matches": 7126,
+    "clusters": 151,
+    "mean_b1": 75.6311778367715,
+    "mean_b0": 73.77340633281497,
+    "intervals": {
+     "composite": {
+      "difference": 1.8577715039565255,
+      "standard_error": 0.08503958934756191,
+      "lower": 1.6154807512643086,
+      "upper": 2.100062256648742
+     },
+     "result": {
+      "difference": 3.0607612420385912,
+      "standard_error": 0.12774013526680775,
+      "lower": 2.6968101251499044,
+      "upper": 3.424712358927278
+     },
+     "total": {
+      "difference": 0.5399969107281697,
+      "standard_error": 0.11573528428552075,
+      "lower": 0.21024944419256758,
+      "upper": 0.8697443772637719
+     },
+     "home": {
+      "difference": 2.143568904164791,
+      "standard_error": 0.142677932231435,
+      "lower": 1.7370577267455813,
+      "upper": 2.5500800815840012
+     },
+     "away": {
+      "difference": 1.686758958894553,
+      "standard_error": 0.14992503577085575,
+      "lower": 1.2595996788107338,
+      "upper": 2.113918238978372
+     }
+    }
+   },
+   "review_on_common_fixtures": {
+    "matches": 7126,
+    "clusters": 151,
+    "mean_b1": 75.6311778367715,
+    "mean_b0": 73.77340633281497,
+    "intervals": {
+     "composite": {
+      "difference": 1.8577715039565255,
+      "standard_error": 0.08503958934756191,
+      "lower": 1.6154807512643086,
+      "upper": 2.100062256648742
+     },
+     "result": {
+      "difference": 3.0607612420385912,
+      "standard_error": 0.12774013526680775,
+      "lower": 2.6968101251499044,
+      "upper": 3.424712358927278
+     },
+     "total": {
+      "difference": 0.5399969107281697,
+      "standard_error": 0.11573528428552075,
+      "lower": 0.21024944419256758,
+      "upper": 0.8697443772637719
+     },
+     "home": {
+      "difference": 2.143568904164791,
+      "standard_error": 0.142677932231435,
+      "lower": 1.7370577267455813,
+      "upper": 2.5500800815840012
+     },
+     "away": {
+      "difference": 1.686758958894553,
+      "standard_error": 0.14992503577085575,
+      "lower": 1.2595996788107338,
+      "upper": 2.113918238978372
+     }
+    }
+   }
+  },
+  "holdout": {
+   "published": {
+    "matches": 1751,
+    "clusters": 37,
+    "intervals": {
+     "composite": {
+      "difference": 1.2998792583188512,
+      "standard_error": 0.17375197796566283,
+      "lower": 0.7802763012873261,
+      "upper": 1.8194822153503765
+     },
+     "result": {
+      "difference": 2.7400653487735314,
+      "standard_error": 0.25586375170641473,
+      "lower": 1.974908234935631,
+      "upper": 3.5052224626114317
+     },
+     "total": {
+      "difference": 0.002349561076206812,
+      "standard_error": 0.24518940839075917,
+      "lower": -0.7308860724072057,
+      "upper": 0.7355851945596192
+     },
+     "home": {
+      "difference": 1.3975326923057059,
+      "standard_error": 0.2880601861620181,
+      "lower": 0.5360925735496728,
+      "upper": 2.258972811061739
+     },
+     "away": {
+      "difference": 1.0595694311199646,
+      "standard_error": 0.27048177664638545,
+      "lower": 0.2506973099843032,
+      "upper": 1.868441552255626
+     }
+    }
+   },
+   "product_recomputed_here": {
+    "matches": 1751,
+    "clusters": 37,
+    "mean_b1": 75.22378068602099,
+    "mean_b0": 73.92390142770215,
+    "intervals": {
+     "composite": {
+      "difference": 1.2998792583188512,
+      "standard_error": 0.17375197796566283,
+      "lower": 0.7802763012873261,
+      "upper": 1.8194822153503765
+     },
+     "result": {
+      "difference": 2.740065348773532,
+      "standard_error": 0.25586375170641473,
+      "lower": 1.9749082349356315,
+      "upper": 3.505222462611432
+     },
+     "total": {
+      "difference": 0.0023495610762068607,
+      "standard_error": 0.24518940839075917,
+      "lower": -0.7308860724072056,
+      "upper": 0.7355851945596193
+     },
+     "home": {
+      "difference": 1.3975326923057059,
+      "standard_error": 0.28806018616201806,
+      "lower": 0.5360925735496729,
+      "upper": 2.2589728110617386
+     },
+     "away": {
+      "difference": 1.0595694311199646,
+      "standard_error": 0.27048177664638545,
+      "lower": 0.2506973099843032,
+      "upper": 1.868441552255626
+     }
+    }
+   },
+   "review_on_common_fixtures": {
+    "matches": 1751,
+    "clusters": 37,
+    "mean_b1": 75.22378068602099,
+    "mean_b0": 73.92390142770215,
+    "intervals": {
+     "composite": {
+      "difference": 1.2998792583188512,
+      "standard_error": 0.17375197796566283,
+      "lower": 0.7802763012873261,
+      "upper": 1.8194822153503765
+     },
+     "result": {
+      "difference": 2.740065348773532,
+      "standard_error": 0.25586375170641473,
+      "lower": 1.9749082349356315,
+      "upper": 3.505222462611432
+     },
+     "total": {
+      "difference": 0.0023495610762068607,
+      "standard_error": 0.24518940839075917,
+      "lower": -0.7308860724072056,
+      "upper": 0.7355851945596193
+     },
+     "home": {
+      "difference": 1.3975326923057059,
+      "standard_error": 0.28806018616201806,
+      "lower": 0.5360925735496729,
+      "upper": 2.2589728110617386
+     },
+     "away": {
+      "difference": 1.0595694311199646,
+      "standard_error": 0.27048177664638545,
+      "lower": 0.2506973099843032,
+      "upper": 1.868441552255626
+     }
+    }
+   }
+  }
+ },
+ "largest_per_fixture_difference_any_league": 0.0,
+ "published_gate": {
+  "protocol": "initial-local-B1-research-v1",
+  "per_league": {
+   "epl": {
+    "history_lower_positive": true,
+    "holdout_point_positive": true,
+    "holdout_coverage": true,
+    "holdout_every_round_represented": true
+   },
+   "lal": {
+    "history_lower_positive": true,
+    "holdout_point_positive": true,
+    "holdout_coverage": true,
+    "holdout_every_round_represented": true
+   },
+   "bun": {
+    "history_lower_positive": true,
+    "holdout_point_positive": true,
+    "holdout_coverage": true,
+    "holdout_every_round_represented": true
+   },
+   "sea": {
+    "history_lower_positive": true,
+    "holdout_point_positive": true,
+    "holdout_coverage": true,
+    "holdout_every_round_represented": true
+   },
+   "fl1": {
+    "history_lower_positive": true,
+    "holdout_point_positive": true,
+    "holdout_coverage": true,
+    "holdout_every_round_represented": true
+   }
+  },
+  "pooled_holdout_lower_positive": true,
+  "research_criteria_met": true,
+  "formal_promotion": false
+ }
+}

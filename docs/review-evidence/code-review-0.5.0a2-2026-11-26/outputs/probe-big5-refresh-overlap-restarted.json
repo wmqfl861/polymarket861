@@ -1,0 +1,245 @@
+{
+ "package_version": "0.5.0a2",
+ "python": "3.12.3",
+ "fixtures": 10,
+ "simulated_minutes_per_run": 150,
+ "upstream_latency": "none",
+ "runs": 10,
+ "runs_in_which_watch_raised": 10,
+ "background_refreshes_attempted": 260,
+ "share_of_background_refreshes_that_ended_the_loop": 0.6423,
+ "restarted_after_each_exit": true,
+ "restarts": 167,
+ "sampling_slots": {
+  "complete": 5676,
+  "not_complete": 114
+ },
+ "errors": [
+  "sqlite3.OperationalError: database is locked"
+ ],
+ "raised_in": [
+  "big5_market.py:catalog > big5_market.py:_catalog_one > big5_market.py:_record > market_archive.py:_ingest"
+ ],
+ "per_run": [
+  {
+   "run": 0,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 154
+   },
+   "restarts": 15,
+   "sampling_slots": {
+    "complete": 566,
+    "not_complete": 14
+   },
+   "catalogue_refreshes_finished": 27,
+   "sampling_jobs_finished": 580,
+   "wall_seconds": 13.6
+  },
+  {
+   "run": 1,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 154
+   },
+   "restarts": 19,
+   "sampling_slots": {
+    "complete": 564,
+    "not_complete": 12
+   },
+   "catalogue_refreshes_finished": 27,
+   "sampling_jobs_finished": 576,
+   "wall_seconds": 13.3
+  },
+  {
+   "run": 2,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 144
+   },
+   "restarts": 15,
+   "sampling_slots": {
+    "complete": 562,
+    "not_complete": 14
+   },
+   "catalogue_refreshes_finished": 27,
+   "sampling_jobs_finished": 576,
+   "wall_seconds": 13.8
+  },
+  {
+   "run": 3,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 154
+   },
+   "restarts": 16,
+   "sampling_slots": {
+    "complete": 565,
+    "not_complete": 11
+   },
+   "catalogue_refreshes_finished": 27,
+   "sampling_jobs_finished": 576,
+   "wall_seconds": 12.9
+  },
+  {
+   "run": 4,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 149
+   },
+   "restarts": 15,
+   "sampling_slots": {
+    "complete": 574,
+    "not_complete": 6
+   },
+   "catalogue_refreshes_finished": 27,
+   "sampling_jobs_finished": 580,
+   "wall_seconds": 12.7
+  },
+  {
+   "run": 5,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 144
+   },
+   "restarts": 17,
+   "sampling_slots": {
+    "complete": 565,
+    "not_complete": 15
+   },
+   "catalogue_refreshes_finished": 27,
+   "sampling_jobs_finished": 580,
+   "wall_seconds": 12.7
+  },
+  {
+   "run": 6,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 154
+   },
+   "restarts": 20,
+   "sampling_slots": {
+    "complete": 572,
+    "not_complete": 9
+   },
+   "catalogue_refreshes_finished": 27,
+   "sampling_jobs_finished": 581,
+   "wall_seconds": 16.2
+  },
+  {
+   "run": 7,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 154
+   },
+   "restarts": 20,
+   "sampling_slots": {
+    "complete": 572,
+    "not_complete": 9
+   },
+   "catalogue_refreshes_finished": 26,
+   "sampling_jobs_finished": 581,
+   "wall_seconds": 12.7
+  },
+  {
+   "run": 8,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 149
+   },
+   "restarts": 14,
+   "sampling_slots": {
+    "complete": 566,
+    "not_complete": 14
+   },
+   "catalogue_refreshes_finished": 28,
+   "sampling_jobs_finished": 580,
+   "wall_seconds": 13.6
+  },
+  {
+   "run": 9,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 154
+   },
+   "restarts": 16,
+   "sampling_slots": {
+    "complete": 570,
+    "not_complete": 10
+   },
+   "catalogue_refreshes_finished": 27,
+   "sampling_jobs_finished": 580,
+   "wall_seconds": 13.3
+  }
+ ]
+}

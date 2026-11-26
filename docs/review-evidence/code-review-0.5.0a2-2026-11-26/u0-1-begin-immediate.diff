@@ -1,0 +1,12 @@
+diff --git a/src/polymarket861/big5_market.py b/src/polymarket861/big5_market.py
+index 7e783a8..6201a1b 100644
+--- a/src/polymarket861/big5_market.py
++++ b/src/polymarket861/big5_market.py
+@@ -235,6 +235,7 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
+                 }
+             )
+             with closing(_db(root)) as db, db:
++                db.execute("BEGIN IMMEDIATE")
+                 for event in events:
+                     event_id = (
+                         str(event.get("id", "")) if isinstance(event, dict) else ""

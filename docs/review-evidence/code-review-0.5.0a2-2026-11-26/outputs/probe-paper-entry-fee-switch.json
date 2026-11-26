@@ -1,0 +1,432 @@
+{
+ "package_version": "0.5.0a2",
+ "python": "3.12.3",
+ "reviewed_fee_policies": 0,
+ "fee_switch_used_when_on": {
+  "rate": 0.05,
+  "exponent": 1,
+  "takerOnly": true
+ },
+ "entries_filled": {
+  "fee_switch_off": {
+   "default_tier": 4,
+   "research_tier": 8,
+   "of": 8
+  },
+  "fee_switch_on": {
+   "default_tier": 0,
+   "research_tier": 0,
+   "of": 8
+  }
+ },
+ "rows": [
+  {
+   "league": "lal",
+   "event_flags": "live=false, ended=false",
+   "fee_switch_in_gamma": false,
+   "product_terms_refused_with": null,
+   "fee_in_intent": {
+    "enabled": false
+   },
+   "default_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   },
+   "research_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   }
+  },
+  {
+   "league": "lal",
+   "event_flags": "live=false, ended=false",
+   "fee_switch_in_gamma": true,
+   "product_terms_refused_with": "fee-enabled market lacks one reviewed effective charging asset and rounding policy",
+   "fee_in_intent": {
+    "policy": "research-gamma-shares-cent-ceiling-v1",
+    "enabled": true,
+    "rate": "0.05",
+    "exponent": 1,
+    "research_assumption": true
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   }
+  },
+  {
+   "league": "lal",
+   "event_flags": "absent",
+   "fee_switch_in_gamma": false,
+   "product_terms_refused_with": null,
+   "fee_in_intent": {
+    "enabled": false
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "missing freshly captured verified first book or fee authority": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   }
+  },
+  {
+   "league": "lal",
+   "event_flags": "absent",
+   "fee_switch_in_gamma": true,
+   "product_terms_refused_with": "fee-enabled market lacks one reviewed effective charging asset and rounding policy",
+   "fee_in_intent": {
+    "policy": "research-gamma-shares-cent-ceiling-v1",
+    "enabled": true,
+    "rate": "0.05",
+    "exponent": 1,
+    "research_assumption": true
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   }
+  },
+  {
+   "league": "bun",
+   "event_flags": "live=false, ended=false",
+   "fee_switch_in_gamma": false,
+   "product_terms_refused_with": null,
+   "fee_in_intent": {
+    "enabled": false
+   },
+   "default_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   },
+   "research_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   }
+  },
+  {
+   "league": "bun",
+   "event_flags": "live=false, ended=false",
+   "fee_switch_in_gamma": true,
+   "product_terms_refused_with": "fee-enabled market lacks one reviewed effective charging asset and rounding policy",
+   "fee_in_intent": {
+    "policy": "research-gamma-shares-cent-ceiling-v1",
+    "enabled": true,
+    "rate": "0.05",
+    "exponent": 1,
+    "research_assumption": true
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   }
+  },
+  {
+   "league": "bun",
+   "event_flags": "absent",
+   "fee_switch_in_gamma": false,
+   "product_terms_refused_with": null,
+   "fee_in_intent": {
+    "enabled": false
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "missing freshly captured verified first book or fee authority": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   }
+  },
+  {
+   "league": "bun",
+   "event_flags": "absent",
+   "fee_switch_in_gamma": true,
+   "product_terms_refused_with": "fee-enabled market lacks one reviewed effective charging asset and rounding policy",
+   "fee_in_intent": {
+    "policy": "research-gamma-shares-cent-ceiling-v1",
+    "enabled": true,
+    "rate": "0.05",
+    "exponent": 1,
+    "research_assumption": true
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   }
+  },
+  {
+   "league": "sea",
+   "event_flags": "live=false, ended=false",
+   "fee_switch_in_gamma": false,
+   "product_terms_refused_with": null,
+   "fee_in_intent": {
+    "enabled": false
+   },
+   "default_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   },
+   "research_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   }
+  },
+  {
+   "league": "sea",
+   "event_flags": "live=false, ended=false",
+   "fee_switch_in_gamma": true,
+   "product_terms_refused_with": "fee-enabled market lacks one reviewed effective charging asset and rounding policy",
+   "fee_in_intent": {
+    "policy": "research-gamma-shares-cent-ceiling-v1",
+    "enabled": true,
+    "rate": "0.05",
+    "exponent": 1,
+    "research_assumption": true
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   }
+  },
+  {
+   "league": "sea",
+   "event_flags": "absent",
+   "fee_switch_in_gamma": false,
+   "product_terms_refused_with": null,
+   "fee_in_intent": {
+    "enabled": false
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "missing freshly captured verified first book or fee authority": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   }
+  },
+  {
+   "league": "sea",
+   "event_flags": "absent",
+   "fee_switch_in_gamma": true,
+   "product_terms_refused_with": "fee-enabled market lacks one reviewed effective charging asset and rounding policy",
+   "fee_in_intent": {
+    "policy": "research-gamma-shares-cent-ceiling-v1",
+    "enabled": true,
+    "rate": "0.05",
+    "exponent": 1,
+    "research_assumption": true
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   }
+  },
+  {
+   "league": "fl1",
+   "event_flags": "live=false, ended=false",
+   "fee_switch_in_gamma": false,
+   "product_terms_refused_with": null,
+   "fee_in_intent": {
+    "enabled": false
+   },
+   "default_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   },
+   "research_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   }
+  },
+  {
+   "league": "fl1",
+   "event_flags": "live=false, ended=false",
+   "fee_switch_in_gamma": true,
+   "product_terms_refused_with": "fee-enabled market lacks one reviewed effective charging asset and rounding policy",
+   "fee_in_intent": {
+    "policy": "research-gamma-shares-cent-ceiling-v1",
+    "enabled": true,
+    "rate": "0.05",
+    "exponent": 1,
+    "research_assumption": true
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   }
+  },
+  {
+   "league": "fl1",
+   "event_flags": "absent",
+   "fee_switch_in_gamma": false,
+   "product_terms_refused_with": null,
+   "fee_in_intent": {
+    "enabled": false
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "missing freshly captured verified first book or fee authority": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "filled": 1
+    },
+    "proof_gaps": {}
+   }
+  },
+  {
+   "league": "fl1",
+   "event_flags": "absent",
+   "fee_switch_in_gamma": true,
+   "product_terms_refused_with": "fee-enabled market lacks one reviewed effective charging asset and rounding policy",
+   "fee_in_intent": {
+    "policy": "research-gamma-shares-cent-ceiling-v1",
+    "enabled": true,
+    "rate": "0.05",
+    "exponent": 1,
+    "research_assumption": true
+   },
+   "default_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   },
+   "research_tier": {
+    "outcomes": {
+     "skipped_unverified_entry": 1
+    },
+    "proof_gaps": {
+     "fee-enabled market lacks one reviewed effective charging asset and rounding policy": 1
+    }
+   }
+  }
+ ]
+}

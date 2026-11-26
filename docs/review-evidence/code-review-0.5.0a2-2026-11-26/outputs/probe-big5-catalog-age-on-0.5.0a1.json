@@ -1,0 +1,282 @@
+[
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 2,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1
+  },
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 9.5,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1
+  },
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 10,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "partial": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "unverified main event or observed live/ended"
+      }
+    ],
+    "archived_books": 14,
+    "fixed_windows_complete": 1,
+    "fixed_windows_due": 2,
+    "t1_pairs_complete": 0,
+    "t1_pairs_due": 1
+  },
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 12,
+    "watch_states_decision_then_execution": [
+      {
+        "partial": 1
+      },
+      {
+        "partial": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "unverified main event or observed live/ended"
+      },
+      {
+        "slot": "t1_execution",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "unverified main event or observed live/ended"
+      }
+    ],
+    "archived_books": 0,
+    "fixed_windows_complete": 0,
+    "fixed_windows_due": 2,
+    "t1_pairs_complete": 0,
+    "t1_pairs_due": 1
+  },
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 30,
+    "watch_states_decision_then_execution": [
+      {
+        "partial": 1
+      },
+      {
+        "partial": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "unverified main event or observed live/ended"
+      },
+      {
+        "slot": "t1_execution",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "unverified main event or observed live/ended"
+      }
+    ],
+    "archived_books": 0,
+    "fixed_windows_complete": 0,
+    "fixed_windows_due": 2,
+    "t1_pairs_complete": 0,
+    "t1_pairs_due": 1
+  },
+  {
+    "mode": "Gamma 中断",
+    "last_good_catalogue_minutes_before_T-60m": 4,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1
+  },
+  {
+    "mode": "Gamma 中断",
+    "last_good_catalogue_minutes_before_T-60m": 9.5,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1
+  },
+  {
+    "mode": "Gamma 中断",
+    "last_good_catalogue_minutes_before_T-60m": 12,
+    "watch_states_decision_then_execution": [
+      {
+        "partial": 1
+      },
+      {
+        "partial": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "unverified main event or observed live/ended"
+      },
+      {
+        "slot": "t1_execution",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "unverified main event or observed live/ended"
+      }
+    ],
+    "archived_books": 0,
+    "fixed_windows_complete": 0,
+    "fixed_windows_due": 2,
+    "t1_pairs_complete": 0,
+    "t1_pairs_due": 1
+  }
+]

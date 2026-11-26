@@ -1,0 +1,80 @@
+{
+ "对照：只有值守进程": {
+  "second_process": false,
+  "watch": "returned",
+  "watch_states": {
+   "complete": 3
+  },
+  "slots": [
+   {
+    "slot": "periodic@2030-01-12T13:00:00.000000Z",
+    "success": true,
+    "state": "complete"
+   },
+   {
+    "slot": "t1_decision@2030-01-12T12:59:35.000000Z",
+    "success": true,
+    "state": "complete"
+   },
+   {
+    "slot": "t1_execution@2030-01-12T13:00:05.000000Z",
+    "success": true,
+    "state": "complete"
+   }
+  ],
+  "event_states": [
+   [
+    0,
+    0,
+    2
+   ]
+  ],
+  "archived_books": 40,
+  "fixed_windows_due": 2,
+  "fixed_windows_complete": 2,
+  "t1_pairs_due": 1,
+  "t1_pairs_complete": 1
+ },
+ "值守期间第二个进程不停地出周报和查询": {
+  "second_process": true,
+  "watch": "returned",
+  "watch_states": {
+   "complete": 3
+  },
+  "second_process_exit": 0,
+  "second_process_counts": {
+   "weekly_report_ok": 8283,
+   "sql_ok": 8283,
+   "errors": {}
+  },
+  "slots": [
+   {
+    "slot": "periodic@2030-01-12T13:00:00.000000Z",
+    "success": true,
+    "state": "complete"
+   },
+   {
+    "slot": "t1_decision@2030-01-12T12:59:35.000000Z",
+    "success": true,
+    "state": "complete"
+   },
+   {
+    "slot": "t1_execution@2030-01-12T13:00:05.000000Z",
+    "success": true,
+    "state": "complete"
+   }
+  ],
+  "event_states": [
+   [
+    0,
+    0,
+    2
+   ]
+  ],
+  "archived_books": 40,
+  "fixed_windows_due": 2,
+  "fixed_windows_complete": 2,
+  "t1_pairs_due": 1,
+  "t1_pairs_complete": 1
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "package_version": "0.5.0a2",
+ "python": "3.12.3",
+ "fixtures": 10,
+ "simulated_minutes_per_run": 150,
+ "upstream_latency": "real",
+ "runs": 6,
+ "runs_in_which_watch_raised": 3,
+ "background_refreshes_attempted": 116,
+ "share_of_background_refreshes_that_ended_the_loop": 0.0259,
+ "errors": [
+  "sqlite3.OperationalError: database is locked"
+ ],
+ "raised_in": [
+  "big5_market.py:catalog > big5_market.py:_catalog_one > big5_market.py:_record > market_archive.py:_ingest"
+ ],
+ "per_run": [
+  {
+   "run": 0,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 144
+   },
+   "catalogue_refreshes_finished": 3,
+   "sampling_jobs_finished": 61,
+   "wall_seconds": 6.4
+  },
+  {
+   "run": 1,
+   "raised": null,
+   "job_states": {
+    "complete": 574
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 574,
+   "wall_seconds": 59.6
+  },
+  {
+   "run": 2,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 39
+   },
+   "catalogue_refreshes_finished": 24,
+   "sampling_jobs_finished": 457,
+   "wall_seconds": 48.1
+  },
+  {
+   "run": 3,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 149
+   },
+   "catalogue_refreshes_finished": 2,
+   "sampling_jobs_finished": 42,
+   "wall_seconds": 4.9
+  },
+  {
+   "run": 4,
+   "raised": null,
+   "job_states": {
+    "complete": 574
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 574,
+   "wall_seconds": 58.5
+  },
+  {
+   "run": 5,
+   "raised": null,
+   "job_states": {
+    "complete": 574
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 574,
+   "wall_seconds": 59.8
+  }
+ ]
+}

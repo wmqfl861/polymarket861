@@ -1,0 +1,87 @@
+{
+ "package_version": "0.5.0a2",
+ "python": "3.12.3",
+ "fixtures": 10,
+ "simulated_minutes_per_run": 150,
+ "upstream_latency": "real",
+ "runs": 3,
+ "runs_in_which_watch_raised": 3,
+ "background_refreshes_attempted": 87,
+ "share_of_background_refreshes_that_ended_the_loop": 0.0575,
+ "restarted_after_each_exit": true,
+ "restarts": 5,
+ "sampling_slots": {
+  "complete": 1731
+ },
+ "errors": [
+  "sqlite3.OperationalError: database is locked"
+ ],
+ "raised_in": [
+  "big5_market.py:catalog > big5_market.py:_catalog_one > big5_market.py:_record > market_archive.py:_ingest"
+ ],
+ "per_run": [
+  {
+   "run": 0,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 114
+   },
+   "restarts": 1,
+   "sampling_slots": {
+    "complete": 577
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 577,
+   "wall_seconds": 59.4
+  },
+  {
+   "run": 1,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 104
+   },
+   "restarts": 3,
+   "sampling_slots": {
+    "complete": 577
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 577,
+   "wall_seconds": 61.2
+  },
+  {
+   "run": 2,
+   "raised": {
+    "type": "sqlite3.OperationalError",
+    "message": "database is locked",
+    "raised_in": [
+     "big5_market.py:catalog",
+     "big5_market.py:_catalog_one",
+     "big5_market.py:_record",
+     "market_archive.py:_ingest"
+    ],
+    "minutes_before_kickoff": 134
+   },
+   "restarts": 1,
+   "sampling_slots": {
+    "complete": 577
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 577,
+   "wall_seconds": 59.3
+  }
+ ]
+}

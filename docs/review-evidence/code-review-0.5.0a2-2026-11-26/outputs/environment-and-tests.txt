@@ -1,0 +1,60 @@
+审核环境与测试结果 · polymarket861 0.5.0a2 · 2026-11-26
+
+审核对象
+  main 分支提交 63350473ecb62d288301b90d2f59349280f26052（版本 0.5.0a2）
+  上一份审核稿所在提交 821c54f 已经并入 main；它之后的五个提交：ceac8c9 115605f eb96430 4ba9547 6335047
+  821c54f..6335047：92 个文件，+15,956 / −247 行；其中 src 28 个文件，+2,666 / −213 行
+  src 新增 8 个模块和 1 个数据文件，修改 19 个文件；全包 103 个模块、5 个数据文件
+  tests 新增 10 个文件，修改 2 个文件，+3,021 行
+  git rev-parse HEAD:src     = 0a0bd93fa0002418ae0d2a004d1b38c4dd46419c
+  git rev-parse HEAD:tests   = 7eab2d876a7a25b45a25f7dd0e442909bfba863e
+  git rev-parse HEAD:scripts = e020e2df7b74621c44da5eb1c3867dd2face2fcd
+  （4ba9547 与 6335047 的这三棵树相同；4ba9547 的整棵树是 9db513500f35ec0bb42c159048116deceace37e4，
+    与 docs/five-leagues-0.5/INDEPENDENT-REVIEW-0.5.0a2.md 记录的一致）
+
+解释器与数值库（三个独立虚拟环境，依赖按 constraints/research.txt 安装）
+  CPython 3.11.18   NumPy 2.3.5   SciPy 1.17.0   httpx 0.28.1
+  CPython 3.12.3    NumPy 2.3.5   SciPy 1.17.0   httpx 0.28.1
+  CPython 3.13.18   NumPy 2.3.5   SciPy 1.17.0   httpx 0.28.1
+  浏览器测试接的是 Google Chrome for Testing 158.0.8127.36（PM861_TEST_CHROMIUM）
+
+全部测试：python -m unittest discover -s tests
+  3.11.18   Ran 629 tests in 242.103s   OK   跳过 0
+  3.12.3    Ran 629 tests in 231.795s   OK   跳过 0
+  3.13.18   Ran 629 tests in 237.725s   OK   跳过 0
+
+静态检查（三个解释器结果相同）
+  ruff check src tests scripts                         All checks passed!
+  mypy --strict --follow-imports=silent（3 个模块）      Success: no issues found in 3 source files
+  python scripts/check_league_boundaries.py            退出码 0，无新增命中
+  python scripts/check_recipe_references.py            退出码 0；已登记的跨文件引用 B0 60、B1 60、B2 59、B3 60，
+                                                       未登记 0，已过时 0；三个解释器的输出逐字节相同
+  git diff --check 49313f4..6335047                    无输出
+
+配方身份：python scripts/check_recipe_identity.py（三个解释器各一次）
+  package_files_sha256      27481dcc3a8a5549c5846523cafb131868a7918f0a5c10e4aa8fb51a49b1d563
+  B1 primary                3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261
+  B1 paired                 0114ab7a46b2f9be30dff30f2ac5f5b0c866f5db211b3298c9a15aae620661b3
+  probability_source        7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a（与 0.5.0a1 相同）
+  frozen_feature_source     fbd0e9880f9e981ef46d10460d242fbdd09715d93dc9b6d66b32a566604422f7（0.5.0a1 是 d7cb2fd5…）
+  三个解释器的输出除 python 字段外完全相同，--compare 给出的各项数值一致
+  合并输出见 recipe-digest-by-python.json
+
+发行包与独立安装
+  从 GitHub 重新克隆 6335047，在全新的虚拟环境里按 WATCH-SERVICE.md 的写法安装
+  （python -m pip install -c 源码/constraints/research.txt 源码，不是可编辑安装）：pm861 --version 给出 0.5.0a2
+  装好的 polymarket861/ 共 108 个文件（103 个模块，5 个数据文件），与源码树逐字节相同
+  版本切换演练用的三套安装（0.4.2、0.5.0a1、0.5.0a2）都是这样各自独立安装的，互不共用源码目录
+
+GitHub Actions（读取运行记录）
+  工作流 Football regression，提交 6335047，运行 45819670056，2026-11-26T12:26:31Z 触发
+  unittest (3.11)  success
+  unittest (3.12)  success
+  unittest (3.13)  success
+  recipe-identity  success
+  五个提交是一次推送，只有 6335047 有运行记录
+
+网络
+  审核环境访问不了 Polymarket（代理返回 403），也访问不了 Touchline Wire、OpenLigaDB 等来源。
+  能访问 GitHub，用来取固定版本的 OpenFootball 文件和读取 Actions 记录。
+  审核环境没有 systemd，三个服务单元没有真正装载过；心跳和看门狗是用一个仿造的通知套接字测的。

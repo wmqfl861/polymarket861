@@ -1,0 +1,25 @@
+== 副本未改动
+{"exit": 0, "unreviewed": [], "obsolete": []}
+== 配方内的 football._club_key 新增一处对 league_registry.leagues 的调用（排除表里没有）
+{"exit": 1, "unreviewed": ["football._club_key -> league_registry.leagues"], "obsolete": []}
+== 同一处改成用拼出来的名字间接调用
+{"exit": 1, "unreviewed": ["football._club_key -> league_registry.<dynamic>"], "obsolete": []}
+== 删掉一处已登记的调用（league_registry.club_key）
+{"exit": 1, "unreviewed": [], "obsolete": ["football._club_key -> league_registry.club_key"]}
+== 复原
+{"exit": 0, "unreviewed": [], "obsolete": []}
+== 只删掉西甲的一条写法对照 "RC Celta"，重新生成五国回测
+{
+ "research_recipe_published": "7dab5bcc0b471fa97afd87cb2deae096e41b759e5e28473fb8dca81e8893f2ca",
+ "research_recipe_after_deletion": "61dae2d3e285ef926d6d1362a7361e6bb47ef89862b0fb9753f6f8cddf93c086",
+ "leagues_whose_club_keys_changed": [
+  "lal"
+ ],
+ "package_files_changed": [
+  "league_registry.py"
+ ],
+ "report_values_changed": 87,
+ "leagues_with_changed_results": [
+  "lal"
+ ]
+}

@@ -1,0 +1,137 @@
+{
+ "definition_taken_from": "0.5.0a1 (news_study_plan._MODEL_FILES, _SYMBOLS; recipe_identity._PRIMARY)",
+ "python": "3.12.3",
+ "era_files": 41,
+ "whole_module_files": [
+  "football_model.py",
+  "score_bounds.py",
+  "news_model.py",
+  "news_importance.py",
+  "news_wire_identity.py",
+  "news_ai.py",
+  "news_ai_corpus.py",
+  "news_scope.py",
+  "news_local_ai.py"
+ ],
+ "news_symbol_files": 18,
+ "b1_primary_files": 28,
+ "releases": {
+  "0.3.0": "12d1717",
+  "0.4.1": "ea58105",
+  "0.4.2": "8125d57",
+  "0.5.0a1": "49313f4",
+  "0.5.0a2": "6335047"
+ },
+ "steps": [
+  {
+   "from": "0.3.0",
+   "to": "0.4.1",
+   "era_files_with_text_changes": 20,
+   "era_files_with_digest_changes": 17,
+   "whole_module_files_changed": [
+    "news_ai.py",
+    "news_ai_corpus.py",
+    "news_importance.py",
+    "news_local_ai.py",
+    "news_model.py",
+    "news_scope.py",
+    "score_bounds.py"
+   ],
+   "news_symbol_files_changed": [
+    "blob_storage.py",
+    "evidence.py",
+    "news.py",
+    "news_minutes.py",
+    "news_roster.py",
+    "news_sources.py",
+    "pipeline.py",
+    "result_freshness.py",
+    "schedule_consensus.py"
+   ],
+   "b1_primary_files_changed": [
+    "blob_storage.py",
+    "evidence.py",
+    "pipeline.py",
+    "schedule_consensus.py",
+    "score_bounds.py",
+    "store.py"
+   ],
+   "text_changed_but_no_digest_changed": [
+    "jobs_research.py",
+    "market_archive.py",
+    "result_admission.py"
+   ],
+   "would_start_a_new_probability_era": true
+  },
+  {
+   "from": "0.4.1",
+   "to": "0.4.2",
+   "era_files_with_text_changes": 9,
+   "era_files_with_digest_changes": 9,
+   "whole_module_files_changed": [
+    "news_importance.py",
+    "news_model.py",
+    "news_wire_identity.py"
+   ],
+   "news_symbol_files_changed": [
+    "football.py",
+    "news.py",
+    "news_minutes.py",
+    "news_poll_archive.py",
+    "pipeline.py",
+    "schedule_consensus.py"
+   ],
+   "b1_primary_files_changed": [
+    "football.py",
+    "pipeline.py",
+    "schedule_consensus.py"
+   ],
+   "text_changed_but_no_digest_changed": [],
+   "would_start_a_new_probability_era": true
+  },
+  {
+   "from": "0.4.2",
+   "to": "0.5.0a1",
+   "era_files_with_text_changes": 14,
+   "era_files_with_digest_changes": 14,
+   "whole_module_files_changed": [
+    "news_importance.py",
+    "news_model.py",
+    "news_scope.py"
+   ],
+   "news_symbol_files_changed": [
+    "football.py",
+    "news.py",
+    "news_minutes.py",
+    "news_poll_archive.py",
+    "news_sources.py"
+   ],
+   "b1_primary_files_changed": [
+    "archive_proof.py",
+    "datasets.py",
+    "football.py",
+    "ledger_terms.py",
+    "market_archive.py",
+    "market_provider.py",
+    "pipeline.py"
+   ],
+   "text_changed_but_no_digest_changed": [],
+   "would_start_a_new_probability_era": true
+  },
+  {
+   "from": "0.5.0a1",
+   "to": "0.5.0a2",
+   "era_files_with_text_changes": 3,
+   "era_files_with_digest_changes": 3,
+   "whole_module_files_changed": [],
+   "news_symbol_files_changed": [],
+   "b1_primary_files_changed": [
+    "archive_proof.py",
+    "market_archive.py",
+    "market_provider.py"
+   ],
+   "text_changed_but_no_digest_changed": [],
+   "would_start_a_new_probability_era": true
+  }
+ ]
+}

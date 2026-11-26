@@ -1,0 +1,45 @@
+{
+ "package_version": "0.5.0a2",
+ "python": "3.12.3",
+ "fixtures": 10,
+ "simulated_minutes_per_run": 150,
+ "upstream_latency": "real",
+ "runs": 3,
+ "runs_in_which_watch_raised": 0,
+ "background_refreshes_attempted": 87,
+ "share_of_background_refreshes_that_ended_the_loop": 0.0,
+ "errors": [],
+ "raised_in": [],
+ "per_run": [
+  {
+   "run": 0,
+   "raised": null,
+   "job_states": {
+    "complete": 574
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 574,
+   "wall_seconds": 58.9
+  },
+  {
+   "run": 1,
+   "raised": null,
+   "job_states": {
+    "complete": 574
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 574,
+   "wall_seconds": 59.0
+  },
+  {
+   "run": 2,
+   "raised": null,
+   "job_states": {
+    "complete": 574
+   },
+   "catalogue_refreshes_finished": 30,
+   "sampling_jobs_finished": 574,
+   "wall_seconds": 58.4
+  }
+ ]
+}

@@ -1,0 +1,80 @@
+{
+  "what": "default_sources() and poll() of polymarket861 0.4.2 fed a synthetic empty availability reply",
+  "season": "2026-27",
+  "reading": "status ok with zero rows is the input from which news._side_coverage sets availability_observed for the side (state ok or degraded, not the rumour feed, not baseline_only)",
+  "rows": [
+    {
+      "club": "Arsenal",
+      "in_wire_club_table": false,
+      "registered_default_sources": [
+        "touchline-availability",
+        "touchline-rumours",
+        "wikipedia-season-news"
+      ],
+      "availability_url": "https://touchlinewire.com/api/v1/injuries?club=arsenal",
+      "poll": {
+        "status": "ok",
+        "player_rows": 0,
+        "invalid_entries": 0,
+        "provider_state_as_of": "2026-11-26T13:06:00.000000Z",
+        "cursor_complete": true
+      }
+    },
+    {
+      "club": "FC Bayern München",
+      "in_wire_club_table": false,
+      "registered_default_sources": [
+        "touchline-availability",
+        "touchline-rumours",
+        "wikipedia-season-news"
+      ],
+      "availability_url": "https://touchlinewire.com/api/v1/injuries?club=bayern-munchen",
+      "poll": {
+        "status": "rejected",
+        "reason": "source_not_covered: Touchline Wire has no domestic season membership for this club"
+      }
+    },
+    {
+      "club": "Paris Saint-Germain FC",
+      "in_wire_club_table": false,
+      "registered_default_sources": [
+        "touchline-availability",
+        "touchline-rumours",
+        "wikipedia-season-news"
+      ],
+      "availability_url": "https://touchlinewire.com/api/v1/injuries?club=paris-saint-germain",
+      "poll": {
+        "status": "rejected",
+        "reason": "source_not_covered: Touchline Wire has no domestic season membership for this club"
+      }
+    },
+    {
+      "club": "Venezia FC",
+      "in_wire_club_table": false,
+      "registered_default_sources": [
+        "touchline-availability",
+        "touchline-rumours",
+        "wikipedia-season-news"
+      ],
+      "availability_url": "https://touchlinewire.com/api/v1/injuries?club=venezia",
+      "poll": {
+        "status": "rejected",
+        "reason": "source_not_covered: Touchline Wire has no domestic season membership for this club"
+      }
+    },
+    {
+      "club": "Levante UD",
+      "in_wire_club_table": false,
+      "registered_default_sources": [
+        "touchline-availability",
+        "touchline-rumours",
+        "wikipedia-season-news"
+      ],
+      "availability_url": "https://touchlinewire.com/api/v1/injuries?club=levante-ud",
+      "poll": {
+        "status": "rejected",
+        "reason": "source_not_covered: Touchline Wire has no domestic season membership for this club"
+      }
+    }
+  ]
+}

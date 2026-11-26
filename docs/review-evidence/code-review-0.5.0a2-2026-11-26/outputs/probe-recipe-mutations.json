@@ -1,0 +1,192 @@
+{
+ "fixture": "epl/2026-27/nottingham-forest/chelsea",
+ "arms": [
+  {
+   "arm": "对照：不改",
+   "file": null,
+   "change": "不改",
+   "why": "基准",
+   "release_state": "ready",
+   "release_ready": true,
+   "forecast_make_exit": 0,
+   "recipe_digest": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+   "news_recipe_sha256": "0114ab7a46b2f9be30dff30f2ac5f5b0c866f5db211b3298c9a15aae620661b3",
+   "release_provenance_sha256": "9c5d38e9d73dd5a3fddde396e2d2b1bcea49bc163d4fb2b75091a6915665beee",
+   "probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "with_news_probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "baseline_study_exit": 0,
+   "baseline_study_sha256": "b7c5f56daf1fc0c2d3b6e8a5290731818e47458230726441f94d0ec3fcdc15ce"
+  },
+  {
+   "arm": "配方内：岭惩罚 8.0 改 8.5",
+   "file": "football_model.py",
+   "change": "RIDGE = 8.0 改为 RIDGE = 8.5",
+   "why": "球队强度拟合的超参数，被 fit_team_model 按名字引用",
+   "release_state": "approval_required",
+   "release_ready": false,
+   "forecast_make_exit": 2,
+   "forecast_make_message": "pm861: a changed builtin requires forecast release-compare and named release-approve",
+   "baseline_study_exit": 0,
+   "baseline_study_sha256": "a3f24449f95d9d8bac634153b669fbdfb12634783eb0495e4b0d1ab11aae1fae",
+   "same_recipe_as_control": null,
+   "same_probabilities_as_control": null,
+   "same_news_recipe_as_control": null,
+   "same_provenance_as_control": null,
+   "same_baseline_study_as_control": false
+  },
+  {
+   "arm": "配方内：只加一行注释",
+   "file": "football_model.py",
+   "change": "RIDGE = 8.0 改为 RIDGE = 8.0\n# 审核试验：只加注释，不改语法树",
+   "why": "语法树不变",
+   "release_state": "ready",
+   "release_ready": true,
+   "forecast_make_exit": 0,
+   "recipe_digest": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+   "news_recipe_sha256": "0114ab7a46b2f9be30dff30f2ac5f5b0c866f5db211b3298c9a15aae620661b3",
+   "release_provenance_sha256": "27f234ce6d9bb358f182c990d495d2dcf777f2065599a134ff5f69e13a16d04d",
+   "probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "with_news_probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "baseline_study_exit": 0,
+   "baseline_study_sha256": "a81f95e06a9f2c6d09f7d51cfc2f549f38f744c79f3790a5a9b507b58de20fb3",
+   "same_recipe_as_control": true,
+   "same_probabilities_as_control": true,
+   "same_news_recipe_as_control": true,
+   "same_provenance_as_control": false,
+   "same_baseline_study_as_control": false
+  },
+  {
+   "arm": "配方外：看板文字",
+   "file": "dashboard.py",
+   "change": "文件末尾增加一个模块级常量",
+   "why": "看板模块不参与概率计算",
+   "release_state": "ready",
+   "release_ready": true,
+   "forecast_make_exit": 0,
+   "recipe_digest": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+   "news_recipe_sha256": "0114ab7a46b2f9be30dff30f2ac5f5b0c866f5db211b3298c9a15aae620661b3",
+   "release_provenance_sha256": "739d33fe3edbdee92d4d63a71b25014b908b813d5374a2656314258c5d717217",
+   "probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "with_news_probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "baseline_study_exit": 0,
+   "baseline_study_sha256": "b7c5f56daf1fc0c2d3b6e8a5290731818e47458230726441f94d0ec3fcdc15ce",
+   "same_recipe_as_control": true,
+   "same_probabilities_as_control": true,
+   "same_news_recipe_as_control": true,
+   "same_provenance_as_control": false,
+   "same_baseline_study_as_control": true
+  },
+  {
+   "arm": "配方外：联赛登记表删掉一条别名",
+   "file": "league_registry.py",
+   "change": "删掉西甲的一条写法对照：\"RC Celta\": \"RC Celta de Vigo\",",
+   "why": "football.py 在显式联赛路径上调用 league_registry，但这个文件不在配方清单里",
+   "release_state": "ready",
+   "release_ready": true,
+   "forecast_make_exit": 0,
+   "recipe_digest": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+   "news_recipe_sha256": "0114ab7a46b2f9be30dff30f2ac5f5b0c866f5db211b3298c9a15aae620661b3",
+   "release_provenance_sha256": "4cfb5da0ba9990fa4a70dc7fcf3e7d7e7213e50594ee29ed9dc12bf239754312",
+   "probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "with_news_probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "baseline_study_exit": 0,
+   "baseline_study_sha256": "fd41154795d1929e2cde96ad9090384bb19b4bb3f6827deec9f16d0f8cb91d9c",
+   "same_recipe_as_control": true,
+   "same_probabilities_as_control": true,
+   "same_news_recipe_as_control": true,
+   "same_provenance_as_control": false,
+   "same_baseline_study_as_control": false
+  },
+  {
+   "arm": "配方外：新闻调整上限 0.12 改 0.13",
+   "file": "news_model.py",
+   "change": "\"max_abs_log_adjustment_per_team\": 0.12 改为 0.13",
+   "why": "新闻对照臂的策略常数；主臂 B1 不用它",
+   "release_state": "ready",
+   "release_ready": true,
+   "forecast_make_exit": 0,
+   "recipe_digest": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+   "news_recipe_sha256": "26552be072a6628b435a4690135e52b2128290c21b3f55a86f3d050f6884bd5c",
+   "release_provenance_sha256": "179f10c84f12c5dccc742a5ce08a9fedfdcb25da5245bd2f068c91c891701054",
+   "probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "with_news_probabilities": {
+    "home_win": 0.3774791780078548,
+    "draw": 0.2732180866251138,
+    "away_win": 0.3493027353670312,
+    "total_over_2_5": 0.5412324798970355,
+    "home_over_1_5": 0.42661139440030016,
+    "away_over_1_5": 0.4051506371097009
+   },
+   "baseline_study_exit": 0,
+   "baseline_study_sha256": "b7c5f56daf1fc0c2d3b6e8a5290731818e47458230726441f94d0ec3fcdc15ce",
+   "same_recipe_as_control": true,
+   "same_probabilities_as_control": true,
+   "same_news_recipe_as_control": false,
+   "same_provenance_as_control": false,
+   "same_baseline_study_as_control": true
+  }
+ ]
+}

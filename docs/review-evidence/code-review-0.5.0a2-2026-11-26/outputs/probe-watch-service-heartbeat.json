@@ -1,0 +1,342 @@
+{
+ "path socket, SIGINT": {
+  "notify_socket_form": "path",
+  "sigint_disposition_at_start": "default",
+  "stopped_with": "SIGINT",
+  "still_running_seconds_after_the_signal": null,
+  "first_message": {
+   "at_second": 0.9,
+   "message": "READY=1 | WATCHDOG=1"
+  },
+  "watchdog_messages": 3,
+  "longest_gap_between_watchdog_messages_seconds": 15.0,
+  "stopping_message_received": true,
+  "exit_status": 130,
+  "exited_at_second": 40.9,
+  "stderr_tail": [],
+  "watchdog_command": [
+   {
+    "when": "running",
+    "exit": 0,
+    "healthy": true,
+    "state": "running",
+    "ticks": 16,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   },
+   {
+    "when": "just after SIGINT",
+    "exit": 1,
+    "healthy": false,
+    "state": "stopped",
+    "ticks": 31,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   }
+  ],
+  "messages": [
+   {
+    "at_second": 0.9,
+    "message": "READY=1 | WATCHDOG=1"
+   },
+   {
+    "at_second": 15.9,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 30.9,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 40.4,
+    "message": "STOPPING=1"
+   }
+  ]
+ },
+ "abstract socket, SIGKILL": {
+  "notify_socket_form": "abstract (@name)",
+  "sigint_disposition_at_start": "default",
+  "stopped_with": "SIGKILL",
+  "still_running_seconds_after_the_signal": null,
+  "first_message": {
+   "at_second": 0.9,
+   "message": "READY=1 | WATCHDOG=1"
+  },
+  "watchdog_messages": 3,
+  "longest_gap_between_watchdog_messages_seconds": 15.0,
+  "stopping_message_received": false,
+  "exit_status": -9,
+  "exited_at_second": 40.9,
+  "stderr_tail": [],
+  "watchdog_command": [
+   {
+    "when": "running",
+    "exit": 0,
+    "healthy": true,
+    "state": "running",
+    "ticks": 16,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   },
+   {
+    "when": "just after SIGKILL",
+    "exit": 0,
+    "healthy": true,
+    "state": "running",
+    "ticks": 31,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   },
+   {
+    "when": "6 s later, --max-age 5",
+    "exit": 1,
+    "healthy": false,
+    "state": "stale",
+    "ticks": 31,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   }
+  ],
+  "messages": [
+   {
+    "at_second": 0.9,
+    "message": "READY=1 | WATCHDOG=1"
+   },
+   {
+    "at_second": 15.9,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 30.9,
+    "message": "WATCHDOG=1"
+   }
+  ]
+ },
+ "path socket, upstream unreachable from the start, SIGINT": {
+  "notify_socket_form": "path",
+  "sigint_disposition_at_start": "default",
+  "stopped_with": "SIGINT",
+  "still_running_seconds_after_the_signal": null,
+  "first_message": {
+   "at_second": 1.5,
+   "message": "READY=1 | WATCHDOG=1"
+  },
+  "watchdog_messages": 3,
+  "longest_gap_between_watchdog_messages_seconds": 15.0,
+  "stopping_message_received": true,
+  "exit_status": 130,
+  "exited_at_second": 40.5,
+  "stderr_tail": [],
+  "watchdog_command": [
+   {
+    "when": "running",
+    "exit": 0,
+    "healthy": true,
+    "state": "running",
+    "ticks": 16,
+    "catalog_complete_by_league": {
+     "sea": false
+    }
+   },
+   {
+    "when": "just after SIGINT",
+    "exit": 1,
+    "healthy": false,
+    "state": "stopped",
+    "ticks": 31,
+    "catalog_complete_by_league": {
+     "sea": false
+    }
+   }
+  ],
+  "messages": [
+   {
+    "at_second": 1.5,
+    "message": "READY=1 | WATCHDOG=1"
+   },
+   {
+    "at_second": 16.5,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 31.5,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 40.0,
+    "message": "STOPPING=1"
+   }
+  ]
+ },
+ "path socket, SIGINT already ignored when the process starts (as under nohup or a script's &), SIGINT": {
+  "notify_socket_form": "path",
+  "sigint_disposition_at_start": "ignored",
+  "stopped_with": "SIGINT, then SIGTERM",
+  "still_running_seconds_after_the_signal": 15,
+  "first_message": {
+   "at_second": 0.9,
+   "message": "READY=1 | WATCHDOG=1"
+  },
+  "watchdog_messages": 4,
+  "longest_gap_between_watchdog_messages_seconds": 15.0,
+  "stopping_message_received": false,
+  "exit_status": -15,
+  "exited_at_second": 55.5,
+  "stderr_tail": [],
+  "watchdog_command": [
+   {
+    "when": "running",
+    "exit": 0,
+    "healthy": true,
+    "state": "running",
+    "ticks": 16,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   },
+   {
+    "when": "just after SIGINT, then SIGTERM",
+    "exit": 0,
+    "healthy": true,
+    "state": "running",
+    "ticks": 46,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   }
+  ],
+  "messages": [
+   {
+    "at_second": 0.9,
+    "message": "READY=1 | WATCHDOG=1"
+   },
+   {
+    "at_second": 15.9,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 30.9,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 45.9,
+    "message": "WATCHDOG=1"
+   }
+  ]
+ },
+ "path socket, the first background catalogue refresh raises 'database is locked', no signal sent": {
+  "notify_socket_form": "path",
+  "sigint_disposition_at_start": "default",
+  "stopped_with": "the process exited by itself",
+  "still_running_seconds_after_the_signal": null,
+  "first_message": {
+   "at_second": 0.9,
+   "message": "READY=1 | WATCHDOG=1"
+  },
+  "watchdog_messages": 2,
+  "longest_gap_between_watchdog_messages_seconds": 15.1,
+  "stopping_message_received": true,
+  "exit_status": 2,
+  "exited_at_second": 31.5,
+  "stderr_tail": [
+   "pm861: database is locked"
+  ],
+  "watchdog_command": [
+   {
+    "when": "running",
+    "exit": 0,
+    "healthy": true,
+    "state": "running",
+    "ticks": 16,
+    "catalog_complete_by_league": {
+     "sea": false
+    }
+   },
+   {
+    "when": "just after the process exited by itself",
+    "exit": 1,
+    "healthy": false,
+    "state": "stopped",
+    "ticks": 16,
+    "catalog_complete_by_league": {
+     "sea": false
+    }
+   }
+  ],
+  "messages": [
+   {
+    "at_second": 0.9,
+    "message": "READY=1 | WATCHDOG=1"
+   },
+   {
+    "at_second": 16.0,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 31.0,
+    "message": "STOPPING=1"
+   }
+  ]
+ },
+ "the same data directory started again 5 s after that exit, SIGINT": {
+  "notify_socket_form": "path",
+  "sigint_disposition_at_start": "default",
+  "stopped_with": "SIGINT",
+  "still_running_seconds_after_the_signal": null,
+  "first_message": {
+   "at_second": 0.7,
+   "message": "READY=1 | WATCHDOG=1"
+  },
+  "watchdog_messages": 3,
+  "longest_gap_between_watchdog_messages_seconds": 15.1,
+  "stopping_message_received": true,
+  "exit_status": 130,
+  "exited_at_second": 40.8,
+  "stderr_tail": [],
+  "watchdog_command": [
+   {
+    "when": "running",
+    "exit": 0,
+    "healthy": true,
+    "state": "running",
+    "ticks": 16,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   },
+   {
+    "when": "just after SIGINT",
+    "exit": 1,
+    "healthy": false,
+    "state": "stopped",
+    "ticks": 31,
+    "catalog_complete_by_league": {
+     "sea": true
+    }
+   }
+  ],
+  "messages": [
+   {
+    "at_second": 0.7,
+    "message": "READY=1 | WATCHDOG=1"
+   },
+   {
+    "at_second": 15.7,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 30.8,
+    "message": "WATCHDOG=1"
+   },
+   {
+    "at_second": 40.3,
+    "message": "STOPPING=1"
+   }
+  ]
+ }
+}

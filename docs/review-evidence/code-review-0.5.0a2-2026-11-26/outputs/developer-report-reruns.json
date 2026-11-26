@@ -1,0 +1,71 @@
+{
+ "commit": "6335047",
+ "python": "3.12.3",
+ "numpy": "2.3.5",
+ "scipy": "1.17.0",
+ "rows": [
+  {
+   "report": "leagues baseline-study",
+   "command": "pm861 leagues baseline-study HISTORY --workers 4 --output OUT",
+   "published": "reports/five-leagues-0.5.0a2/baseline-study.json",
+   "published_sha256": "b7c5f56daf1fc0c2d3b6e8a5290731818e47458230726441f94d0ec3fcdc15ce",
+   "rerun_sha256": "b7c5f56daf1fc0c2d3b6e8a5290731818e47458230726441f94d0ec3fcdc15ce",
+   "byte_identical": true,
+   "differing_json_paths": []
+  },
+  {
+   "report": "leagues inventory",
+   "command": "pm861 leagues inventory HISTORY > OUT",
+   "published": "reports/five-leagues-0.5/history-inventory.json",
+   "published_sha256": "ee2a687eabc86a9dc3575969f42cd6265c3e33fdf5089b7aae72705d4a2619e4",
+   "rerun_sha256": "ee2a687eabc86a9dc3575969f42cd6265c3e33fdf5089b7aae72705d4a2619e4",
+   "byte_identical": true,
+   "differing_json_paths": []
+  },
+  {
+   "report": "paper-risk stress",
+   "command": "pm861 paper-risk stress --write-input scenario.json --output OUT",
+   "published": "reports/five-leagues-0.5/capital-stress.json",
+   "published_sha256": "b750f9339b2ab8c4e118d4f73d5642b5ea6b44880b8bc27b7d78ec39a7345ed6",
+   "rerun_sha256": "b750f9339b2ab8c4e118d4f73d5642b5ea6b44880b8bc27b7d78ec39a7345ed6",
+   "byte_identical": true,
+   "differing_json_paths": []
+  },
+  {
+   "report": "news market study",
+   "command": "PYTHONPATH=src python scripts/reproduce_news_market_study.py reports/news-early-seals-0.4.2.json",
+   "published": "reports/news-market-study-0.4.2.json",
+   "published_sha256": "38b347a39e8d06e66323e63e49839e973de6ae58e2a23461eadebb8495fdc22e",
+   "rerun_sha256": "38b347a39e8d06e66323e63e49839e973de6ae58e2a23461eadebb8495fdc22e",
+   "byte_identical": true,
+   "differing_json_paths": []
+  },
+  {
+   "report": "news absorption",
+   "command": "PYTHONPATH=src python scripts/reproduce_news_absorption.py",
+   "published": "reports/news-absorption-0.4.2.json",
+   "published_sha256": "917d6c5b7f091ba44747e4d7b9041da5894e749fb721d18ef0f79c0c4c987b14",
+   "rerun_sha256": "16ee53d740576891f073df0fb7cf1655538d2133d7f446bcae4c906f1e584921",
+   "byte_identical": false,
+   "differing_json_paths": [
+    "/news_policy"
+   ]
+  },
+  {
+   "report": "news endpoint power v2",
+   "command": "PYTHONPATH=src python scripts/reproduce_news_endpoint_power.py OUT",
+   "published": "reports/five-leagues-0.5.0a2/news-endpoint-power-v2.json",
+   "published_sha256": "709373f440c2071fb41a0aa82d4a3c5e42cab8498264968f58cf6e3c2a74a7d9",
+   "rerun_sha256": "709373f440c2071fb41a0aa82d4a3c5e42cab8498264968f58cf6e3c2a74a7d9",
+   "byte_identical": true,
+   "differing_json_paths": []
+  }
+ ],
+ "published_baseline_study_0.5.0a1_vs_0.5.0a2": {
+  "0.5.0a1": "reports/five-leagues-0.5/baseline-study.json",
+  "0.5.0a2": "reports/five-leagues-0.5.0a2/baseline-study.json",
+  "differing_top_level_keys": [
+   "/research_recipe"
+  ]
+ }
+}

@@ -1,0 +1,390 @@
+{
+ "package_version": "0.5.0a1",
+ "python": "3.12.3",
+ "times": "seconds relative to the T-60m target; decision window [-25, 0), execution window [+5, +10)",
+ "arms": [
+  {
+   "arm": "对照：没有故障",
+   "loop_started_at": -640,
+   "gamma_failing_during": [],
+   "catalogue_refreshes": [
+    {
+     "at": -640,
+     "succeeded": true
+    },
+    {
+     "at": -340,
+     "succeeded": true
+    },
+    {
+     "at": -40,
+     "succeeded": true
+    }
+   ],
+   "fixed_windows": [
+    {
+     "slot": "t1_decision",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    },
+    {
+     "slot": "t1_execution",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    }
+   ],
+   "fixed_windows_complete": 2,
+   "fixed_windows_due": 2,
+   "t1_pairs_complete": 1,
+   "t1_pairs_due": 1,
+   "routine_one_minute_samples": {
+    "complete": 12,
+    "not_complete": 0
+   },
+   "archived_books": 172,
+   "runs_abandoned_because_the_loop_raised_database_is_locked": 0
+  },
+  {
+   "arm": "一次定时刷新失败（−340 那一次）",
+   "loop_started_at": -640,
+   "gamma_failing_during": [
+    [
+     -345,
+     -335
+    ]
+   ],
+   "catalogue_refreshes": [
+    {
+     "at": -640,
+     "succeeded": true
+    },
+    {
+     "at": -340,
+     "succeeded": false
+    },
+    {
+     "at": -40,
+     "succeeded": true
+    },
+    {
+     "at": -10,
+     "succeeded": true
+    }
+   ],
+   "fixed_windows": [
+    {
+     "slot": "t1_decision",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    },
+    {
+     "slot": "t1_execution",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    }
+   ],
+   "fixed_windows_complete": 2,
+   "fixed_windows_due": 2,
+   "t1_pairs_complete": 1,
+   "t1_pairs_due": 1,
+   "routine_one_minute_samples": {
+    "complete": 12,
+    "not_complete": 0
+   },
+   "archived_books": 172,
+   "runs_abandoned_because_the_loop_raised_database_is_locked": 0
+  },
+  {
+   "arm": "相隔 5 分钟的两次定时刷新各失败一次（−340 和 −40）",
+   "loop_started_at": -640,
+   "gamma_failing_during": [
+    [
+     -345,
+     -335
+    ],
+    [
+     -45,
+     -35
+    ]
+   ],
+   "catalogue_refreshes": [
+    {
+     "at": -640,
+     "succeeded": true
+    },
+    {
+     "at": -340,
+     "succeeded": false
+    },
+    {
+     "at": -40,
+     "succeeded": false
+    },
+    {
+     "at": -10,
+     "succeeded": true
+    }
+   ],
+   "fixed_windows": [
+    {
+     "slot": "t1_decision",
+     "attempts": 3,
+     "success": false,
+     "state": "partial",
+     "received": 0,
+     "expected": 0,
+     "error": "unverified main event or observed live/ended"
+    },
+    {
+     "slot": "t1_execution",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    }
+   ],
+   "fixed_windows_complete": 1,
+   "fixed_windows_due": 2,
+   "t1_pairs_complete": 0,
+   "t1_pairs_due": 1,
+   "routine_one_minute_samples": {
+    "complete": 12,
+    "not_complete": 0
+   },
+   "archived_books": 158,
+   "runs_abandoned_because_the_loop_raised_database_is_locked": 0
+  },
+  {
+   "arm": "Gamma 连续中断 5 分 10 秒（−345 到 −35）",
+   "loop_started_at": -640,
+   "gamma_failing_during": [
+    [
+     -345,
+     -35
+    ]
+   ],
+   "catalogue_refreshes": [
+    {
+     "at": -640,
+     "succeeded": true
+    },
+    {
+     "at": -340,
+     "succeeded": false
+    },
+    {
+     "at": -40,
+     "succeeded": false
+    },
+    {
+     "at": -10,
+     "succeeded": true
+    }
+   ],
+   "fixed_windows": [
+    {
+     "slot": "t1_decision",
+     "attempts": 3,
+     "success": false,
+     "state": "partial",
+     "received": 0,
+     "expected": 0,
+     "error": "unverified main event or observed live/ended"
+    },
+    {
+     "slot": "t1_execution",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    }
+   ],
+   "fixed_windows_complete": 1,
+   "fixed_windows_due": 2,
+   "t1_pairs_complete": 0,
+   "t1_pairs_due": 1,
+   "routine_one_minute_samples": {
+    "complete": 12,
+    "not_complete": 0
+   },
+   "archived_books": 158,
+   "runs_abandoned_because_the_loop_raised_database_is_locked": 0
+  },
+  {
+   "arm": "换一个相位：定时刷新落在 −600 和 −300，Gamma 连续中断 5 分 10 秒（−605 到 −295）",
+   "loop_started_at": -900,
+   "gamma_failing_during": [
+    [
+     -605,
+     -295
+    ]
+   ],
+   "catalogue_refreshes": [
+    {
+     "at": -900,
+     "succeeded": true
+    },
+    {
+     "at": -600,
+     "succeeded": false
+    },
+    {
+     "at": -300,
+     "succeeded": false
+    },
+    {
+     "at": -270,
+     "succeeded": true
+    },
+    {
+     "at": -240,
+     "succeeded": true
+    }
+   ],
+   "fixed_windows": [
+    {
+     "slot": "t1_decision",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    },
+    {
+     "slot": "t1_execution",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    }
+   ],
+   "fixed_windows_complete": 2,
+   "fixed_windows_due": 2,
+   "t1_pairs_complete": 1,
+   "t1_pairs_due": 1,
+   "routine_one_minute_samples": {
+    "complete": 16,
+    "not_complete": 0
+   },
+   "archived_books": 220,
+   "runs_abandoned_because_the_loop_raised_database_is_locked": 0
+  },
+  {
+   "arm": "同一相位，Gamma 连续中断 10 分钟（−605 到 −5）",
+   "loop_started_at": -900,
+   "gamma_failing_during": [
+    [
+     -605,
+     -5
+    ]
+   ],
+   "catalogue_refreshes": [
+    {
+     "at": -900,
+     "succeeded": true
+    },
+    {
+     "at": -600,
+     "succeeded": false
+    },
+    {
+     "at": -300,
+     "succeeded": false
+    },
+    {
+     "at": -270,
+     "succeeded": false
+    },
+    {
+     "at": -240,
+     "succeeded": false
+    },
+    {
+     "at": -210,
+     "succeeded": false
+    },
+    {
+     "at": -180,
+     "succeeded": false
+    },
+    {
+     "at": -150,
+     "succeeded": false
+    },
+    {
+     "at": -120,
+     "succeeded": false
+    },
+    {
+     "at": -90,
+     "succeeded": false
+    },
+    {
+     "at": -60,
+     "succeeded": false
+    },
+    {
+     "at": -30,
+     "succeeded": false
+    },
+    {
+     "at": 0,
+     "succeeded": true
+    }
+   ],
+   "fixed_windows": [
+    {
+     "slot": "t1_decision",
+     "attempts": 3,
+     "success": false,
+     "state": "partial",
+     "received": 0,
+     "expected": 0,
+     "error": "unverified main event or observed live/ended"
+    },
+    {
+     "slot": "t1_execution",
+     "attempts": 1,
+     "success": true,
+     "state": "complete",
+     "received": 14,
+     "expected": 14,
+     "error": null
+    }
+   ],
+   "fixed_windows_complete": 1,
+   "fixed_windows_due": 2,
+   "t1_pairs_complete": 0,
+   "t1_pairs_due": 1,
+   "routine_one_minute_samples": {
+    "complete": 12,
+    "not_complete": 4
+   },
+   "archived_books": 158,
+   "runs_abandoned_because_the_loop_raised_database_is_locked": 0
+  }
+ ]
+}
