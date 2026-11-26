@@ -1,0 +1,74 @@
+== 0.4.0: initialise, fetch the pinned history, seal one early forecast
+  "model_version": "B1",
+== 0.4.1 on the same data directory, before any baseline: season readiness (release part)
+{
+ "checks.release_executable": false,
+ "state": "approval_required",
+ "ready": false,
+ "active_version": "B1",
+ "approval": null,
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "actions": [
+  "Use the incumbent installation against this data directory to run forecast release-baseline HISTORY.",
+  "Run forecast release-compare HISTORY with the installed build.",
+  "Review the comparison and run forecast release-approve REPORT_SHA256 --reviewer NAME --reason REASON."
+ ]
+}
+== 0.4.1 forecast make before approval (expected: exit 2)
+pm861: a changed builtin requires forecast release-compare and named release-approve
+exit=2
+== 0.4.1 release-compare without a baseline saved by 0.4.0 (expected: error)
+pm861: missing frozen study from this physical recipe; run forecast release-baseline before installing its successor
+exit=2
+== the documented order: baseline with 0.4.0, compare with 0.4.1
+  "version": "B1",
+  "recipe": "2733403a2e905a82a20b9fbb248260b8f9869673cb84b533693f5dd24720b0d1",
+  "study_sha256": "1d7ebd4aff4aa9e82ceb16702b4df1481202bc142dacaef7d171a684b7cf0bb3",
+  "matches": 1900,
+  "to_version": "B1@97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+    "paired_count": 1900,
+    "rounds": 190,
+    "changed_predictions": 0,
+    "changed_training_views": 0,
+    "candidate_score": 75.44781323408776,
+    "baseline_score": 75.44781323408776,
+      "rounds": 190,
+  "report_sha256": "42934811dd519a7da24a025c0c9ea7cc726347cd2ba6acae7a3af2ce955b23c7"
+== 0.4.1 readiness after compare, before approval
+{
+ "checks.release_executable": false,
+ "state": "approval_required",
+ "ready": false,
+ "active_version": "B1",
+ "approval": null,
+ "baseline_sha256": "1d7ebd4aff4aa9e82ceb16702b4df1481202bc142dacaef7d171a684b7cf0bb3",
+ "comparison_sha256": "42934811dd519a7da24a025c0c9ea7cc726347cd2ba6acae7a3af2ce955b23c7",
+ "actions": [
+  "Review the comparison and run forecast release-approve 42934811dd519a7da24a025c0c9ea7cc726347cd2ba6acae7a3af2ce955b23c7 --reviewer NAME --reason REASON."
+ ]
+}
+== approve in this scratch directory only, then the same forecast succeeds
+  "version": "B1@97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+  "effective_at": "2026-11-26T01:09:58.193679Z",
+  "reviewer": "scratch replication",
+  "model_version": "B1@97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+{
+ "checks.release_executable": true,
+ "state": "ready",
+ "ready": true,
+ "active_version": "B1@97db0393e9b6df7ade73b4ac3cd529da38ba5e1fb9a77897e3c31aa2cdbce176",
+ "approval": {
+  "effective_at": "2026-11-26T01:09:58.193679Z",
+  "comparison": "42934811dd519a7da24a025c0c9ea7cc726347cd2ba6acae7a3af2ce955b23c7",
+  "reviewer": "scratch replication",
+  "reason": "isolated scratch copy; verifies the gate only"
+ },
+ "baseline_sha256": null,
+ "comparison_sha256": null,
+ "actions": null
+}
+
+real	0m44.443s
+user	0m37.659s
+sys	0m1.145s

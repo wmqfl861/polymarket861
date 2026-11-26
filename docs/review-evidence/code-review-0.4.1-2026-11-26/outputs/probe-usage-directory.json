@@ -1,0 +1,351 @@
+{
+ "part_1_directory_gating": {
+  "A_baseline": {
+   "directory_capture": "captured",
+   "at": "2026-11-25T12:00:01.000000Z",
+   "weights": {
+    "cutoff": "2026-11-25T12:00:01.000000Z",
+    "players": {
+     "Morgan Smith": {
+      "basis": "epl_season_minutes_and_starts",
+      "reason": null,
+      "starts": 3,
+      "minutes": 260,
+      "importance_multiplier": 0.9861,
+      "absence_weight": 0.45
+     },
+     "River Stone": {
+      "basis": "epl_season_minutes_and_starts",
+      "reason": null,
+      "starts": 0,
+      "minutes": 10,
+      "importance_multiplier": 0.2639,
+      "absence_weight": 0.45
+     },
+     "Taylor Lake": {
+      "basis": "epl_season_minutes_and_starts",
+      "reason": null,
+      "starts": 0,
+      "minutes": 0,
+      "importance_multiplier": 0.25,
+      "absence_weight": 0.45
+     }
+    },
+    "team_log_goal_shifts": {
+     "home": 0.0,
+     "away": 0.03037
+    },
+    "excluded": {}
+   }
+  },
+  "B_same_score_confirmed_again": {
+   "reconfirmation": {
+    "fixture_id": "past3",
+    "score": [
+     2,
+     0
+    ],
+    "old_received_at": "2026-11-18T17:00:00.000000Z",
+    "new_version": 2,
+    "new_received_at": "2026-11-25T13:00:01.000000Z"
+   },
+   "weights_right_after": {
+    "cutoff": "2026-11-25T13:00:02.000000Z",
+    "players": {
+     "Morgan Smith": {
+      "basis": "neutral",
+      "reason": "prior_results_incomplete_at_directory_snapshot",
+      "starts": null,
+      "minutes": null,
+      "importance_multiplier": 1.0,
+      "absence_weight": 0.45
+     },
+     "River Stone": {
+      "basis": "neutral",
+      "reason": "prior_results_incomplete_at_directory_snapshot",
+      "starts": null,
+      "minutes": null,
+      "importance_multiplier": 1.0,
+      "absence_weight": 0.45
+     },
+     "Taylor Lake": {
+      "basis": "neutral",
+      "reason": "prior_results_incomplete_at_directory_snapshot",
+      "starts": null,
+      "minutes": null,
+      "importance_multiplier": 1.0,
+      "absence_weight": 0.45
+     }
+    },
+    "team_log_goal_shifts": {
+     "home": 0.0,
+     "away": 0.06075
+    },
+    "excluded": {}
+   },
+   "at_T-24h": {
+    "cutoff": "2026-11-26T20:00:00.000000Z",
+    "basis": {
+     "Morgan Smith": [
+      "neutral",
+      "prior_results_incomplete_at_directory_snapshot"
+     ],
+     "River Stone": [
+      "neutral",
+      "prior_results_incomplete_at_directory_snapshot"
+     ],
+     "Taylor Lake": [
+      "neutral",
+      "prior_results_incomplete_at_directory_snapshot"
+     ],
+     "Squad Member 0": [
+      "neutral",
+      "prior_results_incomplete_at_directory_snapshot"
+     ]
+    }
+   },
+   "at_T-60m": {
+    "cutoff": "2026-11-27T19:00:00.000000Z",
+    "basis": {
+     "Morgan Smith": [
+      "neutral",
+      "prior_results_incomplete_at_directory_snapshot"
+     ],
+     "River Stone": [
+      "neutral",
+      "prior_results_incomplete_at_directory_snapshot"
+     ],
+     "Taylor Lake": [
+      "neutral",
+      "prior_results_incomplete_at_directory_snapshot"
+     ],
+     "Squad Member 0": [
+      "neutral",
+      "prior_results_incomplete_at_directory_snapshot"
+     ]
+    }
+   },
+   "timeline": [
+    {
+     "at": "2026-11-25T13:00:01.000000Z",
+     "hours_after_reconfirmation": 0,
+     "directory_recheck": "(not re-checked yet)",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-26T01:00:01.000000Z",
+     "hours_after_reconfirmation": 12,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-26T13:00:01.000000Z",
+     "hours_after_reconfirmation": 24,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-27T01:00:01.000000Z",
+     "hours_after_reconfirmation": 36,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-27T13:00:01.000000Z",
+     "hours_after_reconfirmation": 48,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-28T01:00:01.000000Z",
+     "hours_after_reconfirmation": 60,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-28T13:00:01.000000Z",
+     "hours_after_reconfirmation": 72,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-29T01:00:01.000000Z",
+     "hours_after_reconfirmation": 84,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-29T13:00:01.000000Z",
+     "hours_after_reconfirmation": 96,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-30T01:00:01.000000Z",
+     "hours_after_reconfirmation": 108,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-11-30T13:00:01.000000Z",
+     "hours_after_reconfirmation": 120,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-12-01T01:00:01.000000Z",
+     "hours_after_reconfirmation": 132,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "neutral",
+     "reason": "prior_results_incomplete_at_directory_snapshot"
+    },
+    {
+     "at": "2026-12-01T13:00:01.000000Z",
+     "hours_after_reconfirmation": 144,
+     "directory_recheck": "captured",
+     "regular_keeper_basis": "epl_season_minutes_and_starts",
+     "reason": null
+    },
+    {
+     "at": "2026-12-02T01:00:01.000000Z",
+     "hours_after_reconfirmation": 156,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "epl_season_minutes_and_starts",
+     "reason": null
+    },
+    {
+     "at": "2026-12-02T13:00:01.000000Z",
+     "hours_after_reconfirmation": 168,
+     "directory_recheck": "unchanged",
+     "regular_keeper_basis": "epl_season_minutes_and_starts",
+     "reason": null
+    }
+   ],
+   "usable_again_at": "2026-12-01T13:00:01.000000Z",
+   "kickoff": "2026-11-27T20:00:00Z"
+  },
+  "C_held_score": {
+   "after_hold": {
+    "Morgan Smith": [
+     "neutral",
+     "prior_results_incomplete_at_directory_snapshot"
+    ],
+    "River Stone": [
+     "neutral",
+     "prior_results_incomplete_at_directory_snapshot"
+    ],
+    "Taylor Lake": [
+     "neutral",
+     "prior_results_incomplete_at_directory_snapshot"
+    ],
+    "Squad Member 0": [
+     "neutral",
+     "prior_results_incomplete_at_directory_snapshot"
+    ]
+   },
+   "new_directory_state": "captured",
+   "after_new_directory": {
+    "Morgan Smith": [
+     "neutral",
+     "prior_results_incomplete_at_directory_snapshot"
+    ],
+    "River Stone": [
+     "neutral",
+     "prior_results_incomplete_at_directory_snapshot"
+    ],
+    "Taylor Lake": [
+     "neutral",
+     "prior_results_incomplete_at_directory_snapshot"
+    ],
+    "Squad Member 0": [
+     "neutral",
+     "prior_results_incomplete_at_directory_snapshot"
+    ]
+   }
+  },
+  "D_departed_starter": {
+   "directory_state": "captured",
+   "listed_players": 12,
+   "sum_of_starts": 30,
+   "required": 33,
+   "basis": {
+    "Morgan Smith": [
+     "neutral",
+     "team_appearances_do_not_reconcile"
+    ],
+    "River Stone": [
+     "neutral",
+     "team_appearances_do_not_reconcile"
+    ],
+    "Taylor Lake": [
+     "neutral",
+     "team_appearances_do_not_reconcile"
+    ],
+    "Squad Member 0": [
+     "neutral",
+     "team_appearances_do_not_reconcile"
+    ]
+   }
+  }
+ },
+ "part_2_real_result_path": {
+  "before_primary_final": {
+   "at": "2026-08-23T12:32:00.000000Z",
+   "coverage": {
+    "repeated_independent_final": 1
+   },
+   "versions": [
+    {
+     "version": 1,
+     "home_goals": 2,
+     "away_goals": 1,
+     "received_at": "2026-08-23T12:32:00.000000Z",
+     "source": "verified-result-pairing"
+    }
+   ],
+   "received_used_by_importance": "2026-08-23T12:32:00.000000Z"
+  },
+  "after_primary_final": {
+   "at": "2026-08-24T09:17:00.000000Z",
+   "coverage": {
+    "two_providers": 1
+   },
+   "versions": [
+    {
+     "version": 1,
+     "home_goals": 2,
+     "away_goals": 1,
+     "received_at": "2026-08-23T12:32:00.000000Z",
+     "source": "verified-result-pairing"
+    },
+    {
+     "version": 2,
+     "home_goals": 2,
+     "away_goals": 1,
+     "received_at": "2026-08-24T08:32:00.000000Z",
+     "source": "verified-result-pairing"
+    }
+   ],
+   "received_used_by_importance": "2026-08-24T08:32:00.000000Z"
+  }
+ },
+ "squad_average_multiplier": {
+  "neutral_multiplier": 1.0,
+  "mean_multiplier_by_squad_size_upper_bound": {
+   "25": 0.58,
+   "28": 0.5446,
+   "31": 0.5161
+  }
+ }
+}

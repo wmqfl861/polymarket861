@@ -1,0 +1,322 @@
+{
+ "fixture": "epl/2026-27/northbridge/southbank",
+ "registered_kickoff": "2026-11-28T15:00:00.000000Z",
+ "T-24h_cutoff": "2026-11-27T15:00:00.000000Z",
+ "max_source_age_hours": 24.0,
+ "scenarios": [
+  {
+   "refreshed_before_window": [],
+   "fixed_seals_for_this_fixture": [],
+   "steps": [
+    {
+     "step": "both sources confirm the kickoff (32 h before the cutoff)",
+     "at": "2026-11-26T07:00:00.000000Z",
+     "status": "confirmed",
+     "bulk_placeholder": true,
+     "reason": null,
+     "fixed_b1_block_reason": null,
+     "openligadb_received_at": "2026-11-26T07:00:00.000000Z",
+     "gamma_received_at": [
+      "2026-11-26T07:00:00.000000Z"
+     ]
+    },
+    {
+     "step": "25 h later, nothing new received (7 h before the cutoff)",
+     "at": "2026-11-27T08:00:00.000000Z",
+     "status": "deferred",
+     "bulk_placeholder": true,
+     "reason": "stale OpenLigaDB matchweek request",
+     "fixed_b1_block_reason": "unconfirmed bulk placeholder kickoff for this EPL round",
+     "openligadb_received_at": null,
+     "gamma_received_at": [],
+     "forecast_service": {
+      "at": "2026-11-27T08:00:00.000000Z",
+      "counts": {},
+      "next_window_opens": "2026-11-27T14:55:00.000000Z",
+      "this_fixture_T-24h": []
+     }
+    },
+    {
+     "step": "3 h before the cutoff, refreshed: nothing",
+     "at": "2026-11-27T12:00:00.000000Z",
+     "status": "deferred",
+     "bulk_placeholder": true,
+     "reason": "stale OpenLigaDB matchweek request",
+     "fixed_b1_block_reason": "unconfirmed bulk placeholder kickoff for this EPL round",
+     "openligadb_received_at": null,
+     "gamma_received_at": []
+    },
+    {
+     "step": "window open (4 min before the cutoff)",
+     "forecast_service": {
+      "at": "2026-11-27T14:56:00.000000Z",
+      "counts": {
+       "waiting_schedule": 10
+      },
+      "next_window_opens": "2026-11-28T13:55:00.000000Z",
+      "this_fixture_T-24h": [
+       {
+        "state": "waiting_schedule",
+        "error": "unconfirmed bulk placeholder kickoff for this EPL round"
+       }
+      ]
+     }
+    },
+    {
+     "step": "1 s after the cutoff",
+     "forecast_service": {
+      "at": "2026-11-27T15:00:01.000000Z",
+      "counts": {
+       "missed": 10
+      },
+      "next_window_opens": "2026-11-28T13:55:00.000000Z",
+      "this_fixture_T-24h": [
+       {
+        "state": "missed",
+        "error": "elapsed without a timely seal: unconfirmed bulk placeholder kickoff for this EPL round"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "refreshed_before_window": [
+    "openligadb"
+   ],
+   "fixed_seals_for_this_fixture": [],
+   "steps": [
+    {
+     "step": "both sources confirm the kickoff (32 h before the cutoff)",
+     "at": "2026-11-26T07:00:00.000000Z",
+     "status": "confirmed",
+     "bulk_placeholder": true,
+     "reason": null,
+     "fixed_b1_block_reason": null,
+     "openligadb_received_at": "2026-11-26T07:00:00.000000Z",
+     "gamma_received_at": [
+      "2026-11-26T07:00:00.000000Z"
+     ]
+    },
+    {
+     "step": "25 h later, nothing new received (7 h before the cutoff)",
+     "at": "2026-11-27T08:00:00.000000Z",
+     "status": "deferred",
+     "bulk_placeholder": true,
+     "reason": "stale OpenLigaDB matchweek request",
+     "fixed_b1_block_reason": "unconfirmed bulk placeholder kickoff for this EPL round",
+     "openligadb_received_at": null,
+     "gamma_received_at": [],
+     "forecast_service": {
+      "at": "2026-11-27T08:00:00.000000Z",
+      "counts": {},
+      "next_window_opens": "2026-11-27T14:55:00.000000Z",
+      "this_fixture_T-24h": []
+     }
+    },
+    {
+     "step": "3 h before the cutoff, refreshed: ['openligadb']",
+     "at": "2026-11-27T12:00:00.000000Z",
+     "status": "deferred",
+     "bulk_placeholder": true,
+     "reason": "missing or ambiguous native Gamma main event",
+     "fixed_b1_block_reason": "unconfirmed bulk placeholder kickoff for this EPL round",
+     "openligadb_received_at": "2026-11-27T12:00:00.000000Z",
+     "gamma_received_at": []
+    },
+    {
+     "step": "window open (4 min before the cutoff)",
+     "forecast_service": {
+      "at": "2026-11-27T14:56:00.000000Z",
+      "counts": {
+       "waiting_schedule": 10
+      },
+      "next_window_opens": "2026-11-28T13:55:00.000000Z",
+      "this_fixture_T-24h": [
+       {
+        "state": "waiting_schedule",
+        "error": "unconfirmed bulk placeholder kickoff for this EPL round"
+       }
+      ]
+     }
+    },
+    {
+     "step": "1 s after the cutoff",
+     "forecast_service": {
+      "at": "2026-11-27T15:00:01.000000Z",
+      "counts": {
+       "missed": 10
+      },
+      "next_window_opens": "2026-11-28T13:55:00.000000Z",
+      "this_fixture_T-24h": [
+       {
+        "state": "missed",
+        "error": "elapsed without a timely seal: unconfirmed bulk placeholder kickoff for this EPL round"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "refreshed_before_window": [
+    "gamma"
+   ],
+   "fixed_seals_for_this_fixture": [],
+   "steps": [
+    {
+     "step": "both sources confirm the kickoff (32 h before the cutoff)",
+     "at": "2026-11-26T07:00:00.000000Z",
+     "status": "confirmed",
+     "bulk_placeholder": true,
+     "reason": null,
+     "fixed_b1_block_reason": null,
+     "openligadb_received_at": "2026-11-26T07:00:00.000000Z",
+     "gamma_received_at": [
+      "2026-11-26T07:00:00.000000Z"
+     ]
+    },
+    {
+     "step": "25 h later, nothing new received (7 h before the cutoff)",
+     "at": "2026-11-27T08:00:00.000000Z",
+     "status": "deferred",
+     "bulk_placeholder": true,
+     "reason": "stale OpenLigaDB matchweek request",
+     "fixed_b1_block_reason": "unconfirmed bulk placeholder kickoff for this EPL round",
+     "openligadb_received_at": null,
+     "gamma_received_at": [],
+     "forecast_service": {
+      "at": "2026-11-27T08:00:00.000000Z",
+      "counts": {},
+      "next_window_opens": "2026-11-27T14:55:00.000000Z",
+      "this_fixture_T-24h": []
+     }
+    },
+    {
+     "step": "3 h before the cutoff, refreshed: ['gamma']",
+     "at": "2026-11-27T12:00:00.000000Z",
+     "status": "deferred",
+     "bulk_placeholder": true,
+     "reason": "stale OpenLigaDB matchweek request",
+     "fixed_b1_block_reason": "unconfirmed bulk placeholder kickoff for this EPL round",
+     "openligadb_received_at": null,
+     "gamma_received_at": [
+      "2026-11-27T12:00:00.000000Z"
+     ]
+    },
+    {
+     "step": "window open (4 min before the cutoff)",
+     "forecast_service": {
+      "at": "2026-11-27T14:56:00.000000Z",
+      "counts": {
+       "waiting_schedule": 10
+      },
+      "next_window_opens": "2026-11-28T13:55:00.000000Z",
+      "this_fixture_T-24h": [
+       {
+        "state": "waiting_schedule",
+        "error": "unconfirmed bulk placeholder kickoff for this EPL round"
+       }
+      ]
+     }
+    },
+    {
+     "step": "1 s after the cutoff",
+     "forecast_service": {
+      "at": "2026-11-27T15:00:01.000000Z",
+      "counts": {
+       "missed": 10
+      },
+      "next_window_opens": "2026-11-28T13:55:00.000000Z",
+      "this_fixture_T-24h": [
+       {
+        "state": "missed",
+        "error": "elapsed without a timely seal: unconfirmed bulk placeholder kickoff for this EPL round"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "refreshed_before_window": [
+    "gamma",
+    "openligadb"
+   ],
+   "fixed_seals_for_this_fixture": [
+    "T-24h"
+   ],
+   "steps": [
+    {
+     "step": "both sources confirm the kickoff (32 h before the cutoff)",
+     "at": "2026-11-26T07:00:00.000000Z",
+     "status": "confirmed",
+     "bulk_placeholder": true,
+     "reason": null,
+     "fixed_b1_block_reason": null,
+     "openligadb_received_at": "2026-11-26T07:00:00.000000Z",
+     "gamma_received_at": [
+      "2026-11-26T07:00:00.000000Z"
+     ]
+    },
+    {
+     "step": "25 h later, nothing new received (7 h before the cutoff)",
+     "at": "2026-11-27T08:00:00.000000Z",
+     "status": "deferred",
+     "bulk_placeholder": true,
+     "reason": "stale OpenLigaDB matchweek request",
+     "fixed_b1_block_reason": "unconfirmed bulk placeholder kickoff for this EPL round",
+     "openligadb_received_at": null,
+     "gamma_received_at": [],
+     "forecast_service": {
+      "at": "2026-11-27T08:00:00.000000Z",
+      "counts": {},
+      "next_window_opens": "2026-11-27T14:55:00.000000Z",
+      "this_fixture_T-24h": []
+     }
+    },
+    {
+     "step": "3 h before the cutoff, refreshed: ['gamma', 'openligadb']",
+     "at": "2026-11-27T12:00:00.000000Z",
+     "status": "confirmed",
+     "bulk_placeholder": true,
+     "reason": null,
+     "fixed_b1_block_reason": null,
+     "openligadb_received_at": "2026-11-27T12:00:00.000000Z",
+     "gamma_received_at": [
+      "2026-11-27T12:00:00.000000Z"
+     ]
+    },
+    {
+     "step": "window open (4 min before the cutoff)",
+     "forecast_service": {
+      "at": "2026-11-27T14:56:00.000000Z",
+      "counts": {
+       "done": 1,
+       "waiting_schedule": 9
+      },
+      "next_window_opens": "2026-11-28T13:55:00.000000Z",
+      "this_fixture_T-24h": [
+       {
+        "state": "done",
+        "error": null
+       }
+      ]
+     }
+    },
+    {
+     "step": "1 s after the cutoff",
+     "forecast_service": {
+      "at": "2026-11-27T15:00:01.000000Z",
+      "counts": {
+       "already_done": 1,
+       "missed": 9
+      },
+      "next_window_opens": "2026-11-28T13:55:00.000000Z",
+      "this_fixture_T-24h": []
+     }
+    }
+   ]
+  }
+ ]
+}

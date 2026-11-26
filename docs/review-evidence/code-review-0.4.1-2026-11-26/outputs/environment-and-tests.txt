@@ -1,0 +1,42 @@
+# Review environment, 2026-11-26 (UTC). Commit under review: ea58105149a9d733fe8d8c5ffd8512de7cf2e952
+== Python 3.11.18 / numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+   PYTHONPATH=src:tests PM861_TEST_CHROMIUM=<Chrome for Testing 158.0.8127.36> python -m unittest discover -s tests
+   Ran 416 tests in 217.057s
+   OK
+== Python 3.12.3 / numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+   PYTHONPATH=src:tests PM861_TEST_CHROMIUM=<Chrome for Testing 158.0.8127.36> python -m unittest discover -s tests
+   Ran 416 tests in 219.000s
+   OK
+== Python 3.13.18 / numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+   PYTHONPATH=src:tests PM861_TEST_CHROMIUM=<Chrome for Testing 158.0.8127.36> python -m unittest discover -s tests
+   Ran 416 tests in 201.307s
+   OK
+== ruff 0.17.6: ruff check .
+   All checks passed!
+== mypy 1.18.2 (compiled: yes): mypy --strict --follow-imports=silent src/polymarket861/{blob_storage,score_bounds,experiment_statistics}.py
+   Success: no issues found in 3 source files
+== git diff --check 50ce6d6 ea58105: 0 lines of output
+== signed tree objects (git rev-parse <commit>^{tree})
+   4b88273 tree b87b85e514ad2a907d39243850a8987fe40d1ed7 src 2f9478bcb2e8be92c00ddbd87bdb7961b610d510 tests 26ba7d6278563db6e1d054e0862490cbebd10d2a reports d4270f7662894d9009325d9a004fe4ab739baa08
+   5a519aa tree d39bbed6bb213edbaafb6ca27e2c768db465d658 src 2f9478bcb2e8be92c00ddbd87bdb7961b610d510 tests fb8b0a353601776ab828b1d0b53aa048dbd0caed reports 9c881f3a470a11894585c01785e9c2c7387a12ad
+   95497c3 tree cc74c9d8f5a69ae377a1a39e881157c2f0b49fb3 src ec0aa361a0c65900de3438e461cd956027967299 tests 8fdab9bcd514ada8a8d18d64944c0b4a9f7a5b27 reports 9c881f3a470a11894585c01785e9c2c7387a12ad
+   86ed004 tree 98eaa3cc355a2efb8f00a412caa08e30f6cf5411 src ec0aa361a0c65900de3438e461cd956027967299 tests 8fdab9bcd514ada8a8d18d64944c0b4a9f7a5b27 reports 225a4194ebdd90e019019fc413dda6a454a81cf8
+   ea58105 tree fdcd0eda2ce9fc684f532daf5937e4fde465a7f1 src ec0aa361a0c65900de3438e461cd956027967299 tests 8fdab9bcd514ada8a8d18d64944c0b4a9f7a5b27 reports 225a4194ebdd90e019019fc413dda6a454a81cf8
+== GitHub Actions check runs for ea58105
+   unittest (3.13) completed success
+   unittest (3.11) completed success
+   unittest (3.12) completed success
+== wheel built from a clean export of ea58105: git archive ea58105 | tar -x -C DIR; uv build --wheel (uv 0.11.32, setuptools backend)
+   package files in wheel: 82 (79 modules, dashboard.css, dashboard.js, release-benchmark-0.2.0.json.gz); byte-identical to src/polymarket861: 82; different: 0; missing: 0
+== published reports regenerated in the review environment and compared with cmp
+   python -m polymarket861.news_ai --club-prose reports/research/club-prose-0.4.1.json --published-wire reports/news-language-0.4.0.json
+      identical to reports/news-language-0.4.1.json (sha256 9ee2f5f9b4c1e54c...)
+   PYTHONPATH=src python scripts/reproduce_news_history.py "$HISTORY" --output history-041.json (pinned OpenFootball history, fixed inputs for 2025/26 rounds 1 to 3)
+      identical to reports/news-history-0.4.1.json (sha256 8710df3259aa87cf...)
+   python scripts/replay_news_probabilities.py reconstruct
+      identical to reports/news-probability-reconstruction-0.4.0-supplement.json
+== the developer's own verifier: python scripts/replay_news_probabilities.py verify <report>
+   reports/news-early-seals-0.4.1.json: 10 records, 20 arms, 600 values, max absolute error 3.19e-16, recipe 97db0393... x10, policy b973656b... x10
+   reports/news-event-probabilities-0.4.1.json: 10 records, 20 arms, 600 values, max absolute error 3.19e-16, recipes 5ac04268... x8 and d9d8a4bc... x2, policy f72a095b... x10
+   reconstructed 0.4.0 supplement: 600 values (120 copied, 480 reconstructed), max absolute error 2.78e-16; separate early seal 60 values, 2.50e-16
+== new outbound hosts in the source diff 50ce6d6..ea58105 (added lines only): touchlinewire.com; added lines matching private_key|secret|wallet|place_order|post_order|api_key|mnemonic: 0

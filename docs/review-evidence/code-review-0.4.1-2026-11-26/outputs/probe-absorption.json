@@ -1,0 +1,94 @@
+{
+ "training_matches": 1250,
+ "decay_per_day": 0.002,
+ "half_life_days": 346.6,
+ "ridge": 8.0,
+ "duration_steps_days": [
+  [
+   0,
+   1.0
+  ],
+  [
+   7,
+   0.75
+  ],
+  [
+   14,
+   0.5
+  ],
+  [
+   28,
+   0.25
+  ],
+  [
+   42,
+   0.0
+  ]
+ ],
+ "rows": [
+  {
+   "absent_for_days": 7,
+   "matches_already_played_without_him": 1,
+   "b1_has_absorbed_share": 0.0186,
+   "share_b1_has_not_absorbed": 0.9814,
+   "news_policy_duration_multiplier": 0.75,
+   "simple_exponential_rule_exp(-0.002*days)": 0.9861
+  },
+  {
+   "absent_for_days": 14,
+   "matches_already_played_without_him": 2,
+   "b1_has_absorbed_share": 0.0396,
+   "share_b1_has_not_absorbed": 0.9604,
+   "news_policy_duration_multiplier": 0.5,
+   "simple_exponential_rule_exp(-0.002*days)": 0.9724
+  },
+  {
+   "absent_for_days": 28,
+   "matches_already_played_without_him": 4,
+   "b1_has_absorbed_share": 0.0654,
+   "share_b1_has_not_absorbed": 0.9346,
+   "news_policy_duration_multiplier": 0.25,
+   "simple_exponential_rule_exp(-0.002*days)": 0.9455
+  },
+  {
+   "absent_for_days": 42,
+   "matches_already_played_without_him": 6,
+   "b1_has_absorbed_share": 0.1052,
+   "share_b1_has_not_absorbed": 0.8948,
+   "news_policy_duration_multiplier": 0.0,
+   "simple_exponential_rule_exp(-0.002*days)": 0.9194
+  },
+  {
+   "absent_for_days": 63,
+   "matches_already_played_without_him": 9,
+   "b1_has_absorbed_share": 0.1479,
+   "share_b1_has_not_absorbed": 0.8521,
+   "news_policy_duration_multiplier": 0.0,
+   "simple_exponential_rule_exp(-0.002*days)": 0.8816
+  },
+  {
+   "absent_for_days": 91,
+   "matches_already_played_without_him": 11,
+   "b1_has_absorbed_share": 0.1832,
+   "share_b1_has_not_absorbed": 0.8168,
+   "news_policy_duration_multiplier": 0.0,
+   "simple_exponential_rule_exp(-0.002*days)": 0.8336
+  },
+  {
+   "absent_for_days": 182,
+   "matches_already_played_without_him": 14,
+   "b1_has_absorbed_share": 0.2336,
+   "share_b1_has_not_absorbed": 0.7664,
+   "news_policy_duration_multiplier": 0.0,
+   "simple_exponential_rule_exp(-0.002*days)": 0.6949
+  },
+  {
+   "absent_for_days": 364,
+   "matches_already_played_without_him": 40,
+   "b1_has_absorbed_share": 0.4919,
+   "share_b1_has_not_absorbed": 0.5081,
+   "news_policy_duration_multiplier": 0.0,
+   "simple_exponential_rule_exp(-0.002*days)": 0.4829
+  }
+ ]
+}

@@ -1,0 +1,57 @@
+{
+ "assumptions": {
+  "matches_per_round": 10,
+  "family_comparisons": 10,
+  "critical_t_38_rounds": 2.985244059716181,
+  "truth": "results drawn from the with-news probabilities (best case for the news arm)",
+  "all_matches_changed": true
+ },
+ "published_effect_sizes": {
+  "expected_gain_per_match_points": 0.02127784668006537,
+  "sd_of_paired_difference_per_match_points": 0.9163621583476749,
+  "expected_t_statistic_one_season": 0.45263937145751854,
+  "matches_for_50pct_power": 14615,
+  "matches_for_80pct_power": 24692,
+  "seasons_for_80pct_power": 64.97894736842105,
+  "one_season_38_rounds": {
+   "p_higher_score_verdict": 0.01,
+   "p_lower_score_verdict": 0.0005,
+   "mean_observed_difference": 0.022568541919408713,
+   "sd_of_season_difference": 0.048451478575782754
+  },
+  "one_season_if_news_has_no_real_effect": {
+   "p_higher_score_verdict": 0.0015,
+   "p_lower_score_verdict": 0.0075,
+   "mean_observed_difference": -0.021480479358966947,
+   "sd_of_season_difference": 0.047480722137431076
+  }
+ },
+ "effects_twice_as_large": {
+  "expected_gain_per_match_points": 0.08558277244589003,
+  "sd_of_paired_difference_per_match_points": 1.8418740675285445,
+  "expected_t_statistic_one_season": 0.9057705922402819,
+  "matches_for_50pct_power": 3650,
+  "matches_for_80pct_power": 6167,
+  "seasons_for_80pct_power": 16.228947368421053,
+  "one_season_38_rounds": {
+   "p_higher_score_verdict": 0.0195,
+   "p_lower_score_verdict": 0.0,
+   "mean_observed_difference": 0.08410569558089973,
+   "sd_of_season_difference": 0.09371322886791819
+  }
+ },
+ "effects_four_times_as_large": {
+  "expected_gain_per_match_points": 0.34554922709522684,
+  "sd_of_paired_difference_per_match_points": 3.710368035445965,
+  "expected_t_statistic_one_season": 1.815451847541615,
+  "matches_for_50pct_power": 909,
+  "matches_for_80pct_power": 1535,
+  "seasons_for_80pct_power": 4.0394736842105265,
+  "one_season_38_rounds": {
+   "p_higher_score_verdict": 0.1375,
+   "p_lower_score_verdict": 0.0,
+   "mean_observed_difference": 0.34685308696210804,
+   "sd_of_season_difference": 0.1904174072100664
+  }
+ }
+}
