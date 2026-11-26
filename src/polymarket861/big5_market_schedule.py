@@ -96,8 +96,24 @@ def pregame_flags(event):
         return "not_pregame"
     if any(
         event.get(k) is not None and type(event[k]) is not bool
-        for k in ("live", "ended", "cancelled", "canceled")
+        for k in (
+            "live",
+            "ended",
+            "cancelled",
+            "canceled",
+            "closed",
+            "archived",
+            "active",
+        )
     ):
+        return "unclassified"
+    if (
+        event.get("closed") is True
+        or event.get("archived") is True
+        or event.get("active") is False
+    ):
+        # The whole listing may be unavailable despite open child contracts.
+        # Its venue state does not establish the time of a sporting kickoff.
         return "unclassified"
     if any(
         event.get(k) not in (None, "") and _status(event[k]) not in _PLANNED
@@ -109,21 +125,37 @@ def pregame_flags(event):
     return "schedule_only"
 
 
-def _record_play(db, fixture, slug, received, sha, started):
-    if started is not False:
-        db.execute(
-            "INSERT OR IGNORE INTO big5_play_evidence VALUES(?,?,?,?,?)",
-            (fixture, iso(received), slug, sha, "started" if started else "unverified"),
-        )
+def _record_play(db, fixture, slug, received, sha, event, *, indexed_started=False):
+    if indexed_started or event is not None and has_started(event):
+        state = "started"
+    elif event is None:
+        state = "unverified"
+    elif pregame_flags(event) == "unclassified":
+        state = "unclassified_at_receipt"
+    else:
+        return
+    db.execute(
+        "INSERT OR IGNORE INTO big5_play_evidence VALUES(?,?,?,?,?)",
+        (fixture, iso(received), slug, sha, state),
+    )
 
 
-def play_history(db, fixture, through):
+def play_history(db, fixture, first, through):
     for state, grade in (("started", "not_pregame"), ("unverified", "unclassified")):
         if db.execute(
             "SELECT 1 FROM big5_play_evidence WHERE fixture=? AND state=? AND received<=? LIMIT 1",
             (fixture, state, through),
         ).fetchone():
             return grade
+    # An inactive parent listing can reopen. Use its latest snapshot at the
+    # first instant and any intervening receipt, never a superseded older status.
+    if db.execute(
+        "SELECT 1 FROM big5_play_evidence p WHERE fixture=? AND state='unclassified_at_receipt' "
+        "AND received<=? AND received>=COALESCE((SELECT MAX(h.received) FROM big5_schedule_receipts h "
+        "WHERE h.slug=p.slug AND h.received<=?),?) LIMIT 1",
+        (fixture, through, first, first),
+    ).fetchone():
+        return "unclassified"
     return None
 
 
@@ -140,7 +172,7 @@ def consistent_during(db, fixture, kickoff, first, last):
     return conflict is None
 
 
-def record(db, fields, received, sha, waits, stop, origin, *, started):
+def record(db, fields, received, sha, waits, stop, origin, *, event):
     slug, fixture, sport, kickoff = fields[:4]
     db.execute(
         "INSERT OR IGNORE INTO big5_schedule_receipts VALUES(?,?,?,?,?,?,?,?,?)",
@@ -156,7 +188,7 @@ def record(db, fields, received, sha, waits, stop, origin, *, started):
             origin,
         ),
     )
-    _record_play(db, fixture, slug, received, sha, started)
+    _record_play(db, fixture, slug, received, sha, event)
 
 
 def _original_events(root, sha):
@@ -215,7 +247,7 @@ def recover(root, db, validate):
                         [],
                         True,
                         "legacy_unverified",
-                        started=None,
+                        event=None,
                     )
                     continue
                 record(
@@ -226,7 +258,7 @@ def recover(root, db, validate):
                     delays(event),
                     stopped(event),
                     "recovered_original",
-                    started=has_started(event),
+                    event=event,
                 )
         # An incomplete old installation may have the current index only. State before the
         # latest observed receipt, or a receipt without original evidence, is unknown.
@@ -242,7 +274,7 @@ def recover(root, db, validate):
                 [],
                 True,
                 "legacy_unverified",
-                started=None,
+                event=None,
             )
         db.execute("INSERT INTO big5_schedule_recovery VALUES(1)")
 
@@ -268,13 +300,15 @@ def recover_play(root, db, validate):
                 originals = {}
             for r in rows:
                 native = originals.get(r["slug"])
-                if r["live"] or r["ended"]:
-                    started = True
-                elif native is None or r["origin"] == "legacy_unverified":
-                    started = None
-                else:
-                    started = has_started(native)
-                _record_play(db, r["fixture"], r["slug"], r["received"], sha, started)
+                _record_play(
+                    db,
+                    r["fixture"],
+                    r["slug"],
+                    r["received"],
+                    sha,
+                    None if r["origin"] == "legacy_unverified" else native,
+                    indexed_started=r["live"] or r["ended"],
+                )
         # Older direct refreshes archived the auxiliary but rejected its divergent
         # clock before indexing it. Recover that interruption at its own receipt time.
         from .archive_proof import original_receipt
@@ -310,7 +344,7 @@ def recover_play(root, db, validate):
                     delays(event),
                     True,
                     "conflicting_aux_schedule",
-                    started=has_started(event),
+                    event=event,
                 )
             except (OSError, KeyError, TypeError, ValueError):
                 continue
@@ -471,7 +505,7 @@ def _count_state(counter, prefix, state):
         counter[prefix + "_" + name] += state == name
 
 
-def _pair_state(decision, executions):
+def _pair_state(db, fixture, decision, executions):
     from .big5_market_receipts import combined_state
 
     if not _pair_matches(
@@ -480,6 +514,10 @@ def _pair_state(decision, executions):
     ):
         return None
     grades = [decision["exchange_state"]]
+    last = max(item["finished"] for item in executions.values())
+    history = play_history(db, fixture, decision["first_request"], last)
+    if history:
+        grades.append(history)
     for side, (delay, _) in decision["bindings"].items():
         grades.append(executions[delay]["contract_exchange_states"][side])
     return combined_state(grades)
@@ -576,7 +614,9 @@ def count_windows(root, db, counts, start, end, now):
                     c = counts[league]
                     c[f"t{hours}_pairs_due"] += 1
                     _count_state(
-                        c, f"t{hours}_pairs", _pair_state(decision, executions)
+                        c,
+                        f"t{hours}_pairs",
+                        _pair_state(db, fixture, decision, executions),
                     )
             if (
                 iso(kick - timedelta(seconds=120)) >= end

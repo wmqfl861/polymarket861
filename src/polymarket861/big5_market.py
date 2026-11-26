@@ -162,7 +162,7 @@ def _record(db, event, identity, reply, sha):
         delays,
         schedule.stopped(event),
         "validated_receipt",
-        started=schedule.has_started(event),
+        event=event,
     )
     db.execute(
         "INSERT INTO big5_event_delays VALUES(?,?,?,?) ON CONFLICT(slug) DO UPDATE SET "
@@ -377,7 +377,7 @@ def _refresh(root, main):
                             schedule.delays(event),
                             True,
                             "conflicting_aux_schedule",
-                            started=schedule.has_started(event),
+                            event=event,
                         )
                     gaps.append(
                         {

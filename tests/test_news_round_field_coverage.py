@@ -15,7 +15,7 @@ from polymarket861 import (
     store,
 )
 from test_news_ingest import registered_squad
-from test_news_matchday import AWAY, FID, HOME, SEASON, seed_fixture
+from test_news_matchday import AWAY, FID, HOME, SEASON, add_club_feed, rss, seed_fixture
 from test_news_sources import availability, run, wire_row
 from test_paired_proof import at
 
@@ -30,14 +30,19 @@ class NewsRoundFieldTests(unittest.TestCase):
             def sync(team, rows):
                 source = news_sources.default_sources(team, SEASON)[0]
                 stamp = store.now_utc()
+
+                def poll(src, *_):
+                    if src["id"] == news_sources.WIRE:
+                        return run(src, availability(rows, stamp), at=stamp)
+                    story = "Morgan Smith is suspended for Arsenal FC's next match."
+                    return run(src, rss(src, story).decode(), at=stamp)
+
                 news.sync(
                     root,
                     team=team,
                     force=True,
                     defaults=lambda *_: [source],
-                    poller=lambda src, *_: run(
-                        src, availability(rows, stamp), at=stamp
-                    ),
+                    poller=poll,
                     roster_refresh=lambda *_: {"status": "cached"},
                 )
 
@@ -50,6 +55,11 @@ class NewsRoundFieldTests(unittest.TestCase):
                 no_seal = round_history.publish_round(root, SEASON, 1, mode="technical")
                 self.assertIsNone(
                     no_seal["news_availability_fields"]["suspensions"]["scope_excluded"]
+                )
+                self.assertIsNone(
+                    no_seal["news_availability_fields"]["all_source_suspensions"][
+                        "scope_excluded_players"
+                    ]
                 )
                 self.assertEqual(
                     no_seal["news_availability_fields"]["unobserved_team_fixtures"], 20
@@ -70,6 +80,9 @@ class NewsRoundFieldTests(unittest.TestCase):
                     (1, 19),
                 )
                 self.assertEqual(earlier["suspensions"]["observed"], 0)
+                self.assertEqual(
+                    earlier["all_source_suspensions"]["scope_excluded_players"], 0
+                )
             ban = wire_row() | {
                 "team": "Arsenal",
                 "display_name": "Morgan Smith",
@@ -83,6 +96,8 @@ class NewsRoundFieldTests(unittest.TestCase):
                 "display_name": "Leo James",
                 "injury_date": "2026-08-05",
             }
+            with at("2026-08-12T12:10Z"):
+                bulletin = add_club_feed(root, HOME)
             for stamp in ("2026-08-12T12:15Z", "2026-08-12T12:35Z"):
                 with at(stamp):
                     sync(HOME, [ban])
@@ -108,6 +123,28 @@ class NewsRoundFieldTests(unittest.TestCase):
                     (0, 1),
                 )
                 self.assertEqual(later["injuries"]["observed"], 1)
+                all_sources = later["all_source_suspensions"]
+                self.assertEqual(
+                    (
+                        all_sources["evaluated_players"],
+                        all_sources["scope_excluded_players"],
+                    ),
+                    (1, 1),
+                )
+                self.assertEqual(
+                    all_sources["by_source"][bulletin["id"]]["scope_excluded_players"],
+                    1,
+                )
+                self.assertEqual(
+                    all_sources["by_source"][news_sources.WIRE][
+                        "scope_excluded_players"
+                    ],
+                    1,
+                )
+                self.assertEqual(
+                    {c["source"] for c in all_sources["excluded_players"][0]["claims"]},
+                    {bulletin["id"], news_sources.WIRE},
+                )
                 base = next(p for p in later["players"] if p["event"] == "suspension")
                 self.assertEqual(
                     (base["player"], base["status"], base["source"]),
@@ -232,6 +269,17 @@ class NewsRoundFieldTests(unittest.TestCase):
             "injury_started_at": "2026-08-01T09:00:00Z",
         }
         undated = base | {"id": "undated", "player_id": "p5", "event": "injury"}
+        for observed in ({}, coverage):
+            partial_injury = summarize([undated], applied=["undated"], sources=observed)
+            self.assertIsNone(partial_injury["suspensions"]["applied"])
+            self.assertIsNone(
+                partial_injury["all_source_suspensions"]["scope_excluded_players"]
+            )
+            partial_ban = summarize([unknown], excluded=["unknown"], sources=observed)
+            self.assertIsNone(partial_ban["injuries"]["no_native_onset"])
+            self.assertEqual(
+                partial_ban["all_source_suspensions"]["scope_excluded_players"], 1
+            )
         future = base | {
             "id": "future",
             "player_id": "p6",
@@ -276,6 +324,10 @@ class NewsRoundFieldTests(unittest.TestCase):
             [unknown | legacy, undated | legacy], ["unknown", "undated"], sources={}
         )
         self.assertEqual(old["status"], "legacy_fields_unverified")
+        self.assertIsNone(old["all_source_suspensions"]["scope_excluded_players"])
+        self.assertEqual(
+            old["all_source_suspensions"]["scope_format_unverified_fixtures"], 1
+        )
         self.assertEqual(
             (
                 old["suspensions"]["applied"],

@@ -193,12 +193,11 @@ def witness(db, root, report, fixture, kickoff, window):
                     db, root, markets, events, *state_key
                 )
             grade = states[state_key]
-            if received_last not in histories:
-                histories[received_last] = schedule.play_history(
-                    db, fixture, received_last
-                )
-            if histories[received_last]:
-                grade = combined_state((grade, histories[received_last]))
+            interval = (min(t["requested_at"] for t in tokens.values()), received_last)
+            if interval not in histories:
+                histories[interval] = schedule.play_history(db, fixture, *interval)
+            if histories[interval]:
+                grade = combined_state((grade, histories[interval]))
             for token in tokens.values():
                 sha, received = token["source_sha256"], token["received_at"]
                 key = (sha, received)

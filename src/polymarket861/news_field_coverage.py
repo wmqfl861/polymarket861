@@ -177,13 +177,20 @@ def summarize(db, records, expected, *, details=True):
             record = sealed[digest]
             snapshot = json.loads(raw or "{}")
             witnesses = {}
+            complete_wire_sides = set()
             for side in ("home", "away"):
                 state, at = _coverage(record, side, snapshot)
                 sides[state] += 1
+                if state == "observed":
+                    complete_wire_sides.add(side)
                 if at:
                     witnesses[football.team_key(record[side])] = at
             applied, excluded = json.loads(applied), json.loads(excluded)
-            suspension_fixtures.append(news_suspension_audit.fixture(record, snapshot, applied, excluded))
+            suspension_fixtures.append(
+                news_suspension_audit.fixture(
+                    record, snapshot, applied, excluded, complete_wire_sides
+                )
+            )
             decisions = {a.get("id"): a.get("reason") for a in excluded}
             decisions.update((a.get("id"), "applied") for a in applied)
             players.extend(_players(record, snapshot, witnesses, decisions))
@@ -262,7 +269,9 @@ def summarize(db, records, expected, *, details=True):
     if not complete and not injuries:
         injury_counts = dict.fromkeys(injury_counts)
     return {
-        "all_source_suspensions": news_suspension_audit.summarize(suspension_fixtures, expected, details=details),
+        "all_source_suspensions": news_suspension_audit.summarize(
+            suspension_fixtures, expected, details=details
+        ),
         "source": news_sources.WIRE,
         "status": status,
         "basis": "latest_grounded_wire_facts_in_selected_seals",

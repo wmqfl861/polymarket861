@@ -55,6 +55,38 @@ def _event_rows(db, fixture, *, through=None, after=None):
     )
 
 
+def entry_parents(source, market, snapshots):
+    """Require usable parent-event evidence at both books, also when a submarket stays open."""
+    root, db = source
+    first, second = (b["received_at"] for b in snapshots)
+    rows = list(_event_rows(db, market["fixture"], through=second))
+    heads = {r["slug"]: r["received_at"] for r in rows if r["received_at"] <= first}
+    # A symbol can have a newer Gamma event with identical normalized contract terms.
+    # Both the native event bound to each book and outstanding revisions govern the order.
+    receipts = {
+        (market["event_slug"], b["contract_recorded_at"], b["contract_source_sha256"])
+        for b in snapshots
+    }
+    receipts.update(
+        (r["slug"], r["received_at"], r["sha"])
+        for r in rows
+        if r["received_at"] >= heads.get(r["slug"], "")
+    )
+    for slug, at, sha in sorted(receipts):
+        flags = dbscope.checked(
+            root,
+            ("paper_parent_flags", slug, at, sha),
+            lambda: big5_market_schedule.pregame_flags(
+                archive_proof._event_capture(db, root, sha, at, slug, require_fresh=True)
+            ),
+        )
+        if flags not in {"explicit_pregame", "schedule_only"}:
+            raise ValueError(
+                "unavailable or contrary Gamma parent event at paper entry"
+            )
+    return rows, heads
+
+
 def _later_early_start(root, db, fixture, market_slug, ids, execution, as_of):
     # A later live/final flag records the state on its own receipt date. It cannot
     # place the start before our buy. A native revision placing kickoff at or
@@ -127,14 +159,13 @@ def _actual_whistle(source, fixture, teams, kickoff, execution, as_of):
             raise ValueError("verified actual kickoff precedes or equals paper entry")
 
 
-def attest(source, fixture, market, kickoff, snapshots, as_of, football=None):
+def attest(source, fixture, market, kickoff, snapshots, timeline, as_of, football=None):
     """Bind both entries to the same ordered, uninterrupted domestic event clock."""
     root, db = source
     league, _, home, away = fixture.split("/")
     main = market["fixture"]
-    first, second = (b["received_at"] for b in snapshots)
-    rows = list(_event_rows(db, main, through=second))
-    heads = {r["slug"]: r["received_at"] for r in rows if r["received_at"] <= first}
+    second = snapshots[1]["received_at"]
+    rows, heads = timeline
     if main not in heads:
         raise ValueError("missing native main event at first paper book")
     ids = {market["event_slug"]: market["event_id"]}
@@ -155,10 +186,6 @@ def attest(source, fixture, market, kickoff, snapshots, as_of, football=None):
         ):
             raise ValueError(
                 "Gamma schedule or fixture changed across paper entry books"
-            )
-        if flags not in {"explicit_pregame", "schedule_only"}:
-            raise ValueError(
-                "unavailable or contrary Gamma event state across paper entry books"
             )
         if slug == market["event_slug"]:
             original, _, _ = archive_proof._gamma_markets(

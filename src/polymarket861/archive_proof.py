@@ -78,14 +78,20 @@ def original_receipt(db, root, sha, received_at, operations, *, expected_selecto
     )
 
 
-def _event_capture(db, root, sha, received_at, event_slug):
-    return _event_with_operation(db, root, sha, received_at, event_slug)[0]
+def _event_capture(db, root, sha, received_at, event_slug, *, require_fresh=False):
+    return _event_with_operation(
+        db, root, sha, received_at, event_slug, require_fresh=require_fresh
+    )[0]
 
 
-def _event_with_operation(db, root, sha, received_at, event_slug, *, allow_undated=False):
+def _event_with_operation(
+    db, root, sha, received_at, event_slug, *, allow_undated=False, require_fresh=False
+):
     reply, operation, selector, _ = original_receipt(
         db, root, sha, received_at, {"event", "catalog", "league_event", "league_catalog"}
     )
+    if require_fresh and not provider.fresh_observation(reply):
+        raise ValueError("Gamma parent event lacks a fresh HTTP observation at its receipt time")
     body = json.loads(reply.body)
     if operation in {"event", "league_event"} and isinstance(body, dict) and selector == event_slug:
         events = [body]

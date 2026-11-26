@@ -81,6 +81,16 @@ class TestDomesticReceiptGrades(unittest.TestCase):
             ({"live": "false"}, "unclassified"),
             ({**STRONG, "gameStatus": "unknown"}, "unclassified"),
             ({**STRONG, "cancelled": "false"}, "unclassified"),
+            ({**STRONG, "closed": True}, "unclassified"),
+            ({**STRONG, "archived": True}, "unclassified"),
+            ({**STRONG, "active": False}, "unclassified"),
+            ({**STRONG, "closed": 0}, "unclassified"),
+            ({"archived": "false"}, "unclassified"),
+            ({"active": 1}, "unclassified"),
+            (
+                {**STRONG, "closed": False, "archived": False, "active": True},
+                "explicit_pregame",
+            ),
             ({"live": True, "ended": "no"}, "not_pregame"),
             ({"ended": True}, "not_pregame"),
             ({**STRONG, "gameStatus": "HT"}, "not_pregame"),
@@ -92,6 +102,9 @@ class TestDomesticReceiptGrades(unittest.TestCase):
                 self.assertEqual(schedule.pregame_flags(event), grade)
         self.assertTrue(schedule.has_started({"gameStatus": "in-play"}))
         self.assertFalse(schedule.has_started({"status": "postponed"}))
+        self.assertFalse(
+            schedule.has_started({"closed": True, "archived": True, "active": False})
+        )
 
     def test_weakest_sibling_and_each_leg(self):
         self._leg(-10, STRONG, STRONG)
@@ -183,6 +196,33 @@ class TestDomesticReceiptGrades(unittest.TestCase):
         counts = self._counts()
         self.assertEqual(counts["t1_pairs_schedule_only"], 1)
         self.assertEqual(counts["fixed_windows_not_pregame"], 0)
+
+    def test_unavailable_parent_listing_can_reopen_without_implying_a_kickoff(self):
+        parent = self.base
+        for key, value in (("closed", True), ("archived", True), ("active", False)):
+            for when in ("before", "during", "between"):
+                with self.subTest(key=key, when=when):
+                    self.base = parent / (key + when)
+                    at = {"before": -20, "during": -10, "between": 1}[when]
+                    for stamp in sorted({at, -10, 6, 3}):
+                        self._leg(
+                            stamp,
+                            STRONG,
+                            STRONG | ({key: value} if stamp == at else {}),
+                            watch=stamp in (-10, 6),
+                        )
+                    counts = self._counts()
+                    self.assertEqual(counts["fixed_windows_complete"], 2)
+                    self.assertEqual(
+                        counts["fixed_windows_unclassified"], int(when == "during")
+                    )
+                    self.assertEqual(
+                        counts["t1_pairs_unclassified"], int(when != "before")
+                    )
+                    self.assertEqual(
+                        counts["t1_pairs_explicit_pregame"], int(when == "before")
+                    )
+                    self.assertEqual(counts["t1_pairs_not_pregame"], 0)
 
     def test_schedule_disagreement_breaks_only_pairs_across_that_receipt(self):
         parent = self.base

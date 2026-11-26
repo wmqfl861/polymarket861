@@ -744,22 +744,23 @@ def _retrospective_clock(db, root, fixture, scheduled, *, as_of=None):
         pass
     if proof and store.instant(proof["actual_kickoff"]) < scheduled:
         raise ValueError("early_actual_kickoff_observed")
-    revised = db.execute(
-        "SELECT 1 FROM fixture_versions f JOIN schedule_receipts s USING(fixture_id,version) "
-        "WHERE f.fixture_id=? AND f.version>? AND f.known_at<=? AND s.recorded_at<=? "
-        "AND (f.kickoff!=? OR f.home!=? OR f.away!=?) LIMIT 1",
-        (
-            fixture["fixture_id"],
-            fixture["version"],
-            now,
-            now,
-            fixture["kickoff"],
-            fixture["home"],
-            fixture["away"],
-        ),
-    ).fetchone()
-    if revised:
-        raise ValueError("retrospective_fixture_revision")
+    # A version number counts local inserts. At each receipt, only the latest
+    # publication visible then can change the schedule. A genuine change still
+    # disqualifies the weak clock if another publication later restores it.
+    effective = fixture["known_at"]
+    revisions = db.execute(
+        "SELECT f.known_at,f.kickoff,f.home,f.away FROM fixture_versions f "
+        "JOIN schedule_receipts s USING(fixture_id,version) WHERE f.fixture_id=? "
+        "AND f.known_at>? AND f.known_at<=? AND s.recorded_at<=? "
+        "ORDER BY max(f.known_at,s.recorded_at), f.known_at DESC",
+        (fixture["fixture_id"], effective, now, now),
+    )
+    for revision in revisions:
+        if revision["known_at"] <= effective:
+            continue
+        effective = revision["known_at"]
+        if any(revision[key] != fixture[key] for key in ("kickoff", "home", "away")):
+            raise ValueError("retrospective_fixture_revision")
     for table, field, blocked in (
         ("epl_schedule_holds", "reason", lambda reason: bool(reason)),
         ("epl_schedule_reviews", "action", lambda action: action == "withdrawn"),
@@ -796,10 +797,13 @@ def _retrospective_clock(db, root, fixture, scheduled, *, as_of=None):
 
 
 def _schedule_only_frame(db, root, fixture, cutoff, scheduled, *, as_of=None):
+    from . import schedule_consensus
+
     version = _scheduled_revision(db, fixture, cutoff, scheduled)
-    if version != fixture["version"]:
-        raise ValueError("retrospective_fixture_revision")
-    retrospective = _retrospective_clock(db, root, fixture, scheduled, as_of=as_of)
+    # Bind the proof to the schedule actually held at both pregame clocks.
+    # A later publication may reaffirm the same kickoff under another version.
+    registered = schedule_consensus._registration(db, fixture["fixture_id"], version)
+    retrospective = _retrospective_clock(db, root, registered, scheduled, as_of=as_of)
     slug, _ = comparisons._catalog(db, root, fixture, store.iso(cutoff), True)
     # A correction published after kickoff can still invalidate a weak clock.
     rows = db.execute(

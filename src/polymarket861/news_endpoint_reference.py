@@ -24,9 +24,6 @@ def observe(db, root, fixture, entry, pair, *, as_of):
         return scope | {"reason": "seal_outside_pregame_window"}
     if store.instant(as_of) <= scheduled:
         return scope | {"reason": "awaiting_postmatch_clock_check"}
-    fixture = dict(fixture)
-    if "version" not in fixture:
-        fixture["version"] = fixture["schedule_version"]
     try:
         after = news_market._schedule_only_frame(
             db, root, fixture, cutoff, scheduled, as_of=as_of
@@ -37,7 +34,7 @@ def observe(db, root, fixture, entry, pair, *, as_of):
                 db,
                 root,
                 fixture,
-                fixture["version"],
+                after["schedule_version"],
                 received_at,
                 scheduled,
                 decision=True,

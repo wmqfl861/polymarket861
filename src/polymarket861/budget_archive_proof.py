@@ -197,9 +197,10 @@ def entry(source, op, candidates, *, scheduled=False, as_of=None, football=None)
         "decision_at": rules.iso(decision),
         "budget_fixture_id": op["fixture_id"],
     }
+    timeline = budget_schedule.entry_parents(source, market, snapshots)
     if scheduled:
         result["entry_evidence"] = budget_schedule.attest(
-            source, op["fixture_id"], market, kickoff, snapshots, as_of, football
+            source, op["fixture_id"], market, kickoff, snapshots, timeline, as_of, football
         )
     return result
 

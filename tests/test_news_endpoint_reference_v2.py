@@ -21,6 +21,7 @@ from polymarket861 import (
     market_provider,
     news_endpoint_power,
     news_endpoint_reference,
+    news_endpoint_study,
     news_market,
     result_admission,
     result_feed,
@@ -133,6 +134,7 @@ class DualScheduleEndpoints(unittest.TestCase):
                     scheduled_proxy=True,
                     as_of=when,
                 )
+            news_endpoint_study._scope_fixture_history(db, store.iso(when))
             fixture = next(
                 row
                 for row in store.eligible_fixture_rows(db)
@@ -142,14 +144,112 @@ class DualScheduleEndpoints(unittest.TestCase):
                 db, self.root, fixture, entry, pair, as_of=when
             )
 
-    def test_both_horizons_use_native_signatures_missing_flags_and_asof_early_proof(
-        self,
-    ):
+    def capture_both_horizons(self):
         self.batch(self.stamps[0])
         self.schedules(self.kick - timedelta(hours=2))
         self.batch(self.stamps[1])
         self.batch(self.close, shift=2)
         self.scores()
+
+    def calendar(self, public, received, kickoff):
+        self.clock.time = received
+        base = {
+            key: self.fixture[key]
+            for key in ("fixture_id", "season", "round_id", "home", "away")
+        }
+        return store.register_fixture(
+            self.root,
+            base
+            | {
+                "known_at": store.iso(public),
+                "kickoff": store.iso(kickoff),
+                "source": "archived calendar",
+                "locator": "test://calendar/" + store.iso(public),
+            },
+        )
+
+    def test_late_superseded_calendar_keeps_both_native_books_and_end_boundary(self):
+        self.capture_both_horizons()
+        published = store.instant(self.fixture["known_at"])
+        end = store.instant(news_endpoint_study.END)
+        first = end - timedelta(hours=4)
+        alternate = self.kick + timedelta(days=1)
+        for received, public, kickoff in (
+            (first, published - timedelta(days=7), alternate),
+            (first + timedelta(minutes=5), published + timedelta(hours=2), self.kick),
+            (first + timedelta(minutes=10), published + timedelta(hours=1), alternate),
+            # At a simultaneous receipt only the latest publication is observable.
+            (first + timedelta(minutes=20), published + timedelta(hours=3), alternate),
+            (first + timedelta(minutes=20), published + timedelta(hours=4), self.kick),
+        ):
+            self.calendar(public, received, kickoff)
+
+        for cutoff in self.cutoffs:
+            initial = self.observation(cutoff, self.post)
+            self.assertEqual(len(initial["endpoints"]), 2)
+            for snapshot in (
+                first - timedelta(seconds=1),
+                first,
+                first + timedelta(minutes=10),
+                end - timedelta(microseconds=1),
+            ):
+                observed = self.observation(cutoff, snapshot)
+                self.assertEqual(
+                    observed.get("endpoints"), initial["endpoints"], observed
+                )
+                self.assertEqual(observed["receipts"], initial["receipts"])
+                self.assertEqual(observed["schedule_version"], self.fixture["version"])
+
+        # A matching later confirmation cannot erase a change that actually
+        # became visible. Its first receipt is exactly at the exclusive trial end.
+        self.calendar(published + timedelta(hours=5), end, alternate)
+        restored = end + timedelta(minutes=5)
+        self.calendar(published + timedelta(hours=6), restored, self.kick)
+        for cutoff in self.cutoffs:
+            self.assertEqual(
+                len(
+                    self.observation(cutoff, end - timedelta(microseconds=1))[
+                        "endpoints"
+                    ]
+                ),
+                2,
+            )
+            self.assertFalse(self.observation(cutoff, end).get("endpoints"))
+            self.assertEqual(
+                self.observation(cutoff, restored)["reason"],
+                "retrospective_fixture_revision",
+            )
+
+    def test_effective_revision_and_restoration_before_end_exclude_both_horizons(self):
+        self.capture_both_horizons()
+        published = store.instant(self.fixture["known_at"])
+        end = store.instant(news_endpoint_study.END)
+        changed = end - timedelta(days=2)
+        self.calendar(
+            published + timedelta(days=2), changed, self.kick - timedelta(hours=3)
+        )
+        self.calendar(
+            published + timedelta(days=3), changed + timedelta(hours=1), self.kick
+        )
+        for cutoff in self.cutoffs:
+            self.assertEqual(
+                len(
+                    self.observation(cutoff, changed - timedelta(microseconds=1))[
+                        "endpoints"
+                    ]
+                ),
+                2,
+            )
+            self.assertFalse(self.observation(cutoff, changed).get("endpoints"))
+            self.assertEqual(
+                self.observation(cutoff, end - timedelta(microseconds=1))["reason"],
+                "retrospective_fixture_revision",
+            )
+
+    def test_both_horizons_use_native_signatures_missing_flags_and_asof_early_proof(
+        self,
+    ):
+        self.capture_both_horizons()
         for cutoff in self.cutoffs:
             self.assertEqual(
                 self.observation(cutoff, self.kick + timedelta(hours=1))["reason"],
