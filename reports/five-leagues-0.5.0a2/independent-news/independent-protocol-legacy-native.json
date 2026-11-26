@@ -1,0 +1,16 @@
+{
+  "release": "49313f4417873ddc7174f891eb90cb9cac0cbfdf",
+  "fixture": "epl/2026-27/arsenal/chelsea",
+  "data_dir": "temporary test database (local path omitted)",
+  "as_of": "2026-11-26T16:11:08.748441Z",
+  "report_hash": "b4f96694b99e40588db260f5af740a5b83cc365788367f6f12f72cf8df9ec89f",
+  "certificate": "629deeeaced2e40b933910fea14f8c78ee866abeb0621a4076f9de9c21a71ef0",
+  "trigger_sha": "cd01d0e82775647c97c98ee1ac9fe85d60aee0849c7b5e3131cbed4c9f0fe4ce",
+  "native_seal": "49cdaa20013e3ef1a7bdf4857825b90a7d76869dc0fab20e0ec6159b0dea3935",
+  "bound_at": "2026-11-26T12:09:10.574000Z",
+  "input_cutoff": "2026-11-26T12:09:03.748441Z",
+  "deadline": "2026-11-26T12:11:08.748441Z",
+  "late_seals_bound": 0,
+  "v1_originals": 2,
+  "v1_pairs": 1
+}

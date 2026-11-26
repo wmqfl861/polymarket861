@@ -1,0 +1,93 @@
+{
+  "calendar": {
+    "known_at": "2026-11-23T07:00:00.000000Z",
+    "kickoff": "2026-11-28T15:00:00.000000Z",
+    "version": 1,
+    "source": "openfootball"
+  },
+  "baseline": [
+    {
+      "reason": null,
+      "endpoints": [
+        "home_win",
+        "total_over_2_5"
+      ],
+      "missing": {}
+    },
+    {
+      "reason": null,
+      "endpoints": [
+        "home_win",
+        "total_over_2_5"
+      ],
+      "missing": {}
+    }
+  ],
+  "superseded": {
+    "known_at": "2026-11-16T07:00:00.000000Z",
+    "recorded_at": "2028-06-30T23:00:00.000000Z",
+    "kickoff": "2026-11-29T15:00:00.000000Z",
+    "version": 2,
+    "source": "prior calendar"
+  },
+  "winner_after_receipt": {
+    "known_at": "2026-11-23T07:00:00.000000Z",
+    "kickoff": "2026-11-28T15:00:00.000000Z",
+    "version": 1,
+    "source": "openfootball"
+  },
+  "pre_receipt": [
+    {
+      "reason": null,
+      "endpoints": [
+        "home_win",
+        "total_over_2_5"
+      ],
+      "missing": {}
+    },
+    {
+      "reason": null,
+      "endpoints": [
+        "home_win",
+        "total_over_2_5"
+      ],
+      "missing": {}
+    }
+  ],
+  "after_receipt": [
+    {
+      "reason": null,
+      "endpoints": [
+        "home_win",
+        "total_over_2_5"
+      ],
+      "missing": {}
+    },
+    {
+      "reason": null,
+      "endpoints": [
+        "home_win",
+        "total_over_2_5"
+      ],
+      "missing": {}
+    }
+  ],
+  "end": [
+    {
+      "reason": null,
+      "endpoints": [
+        "home_win",
+        "total_over_2_5"
+      ],
+      "missing": {}
+    },
+    {
+      "reason": null,
+      "endpoints": [
+        "home_win",
+        "total_over_2_5"
+      ],
+      "missing": {}
+    }
+  ]
+}

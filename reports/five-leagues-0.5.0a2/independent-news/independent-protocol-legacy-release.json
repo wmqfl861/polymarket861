@@ -1,0 +1,27 @@
+{
+  "a1_report_equal_after_upgrade": true,
+  "old_pairs": 1,
+  "old_cert": "629deeeaced2e40b933910fea14f8c78ee866abeb0621a4076f9de9c21a71ef0",
+  "a1_trigger": "cd01d0e82775647c97c98ee1ac9fe85d60aee0849c7b5e3131cbed4c9f0fe4ce",
+  "v2_plan": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+  "v2_before_registration": "not_registered",
+  "historical_bindings_for_v2": 0,
+  "historical_originals_for_v2": 0,
+  "unmodified_v2_trigger_sha": "581a42171c75d44962a51ebbcb10e7048efdfe2a65df4039082e6217f51c3745",
+  "fresh_bound": [
+    {
+      "fixture_id": "epl/2026-27/new-formal/away",
+      "mode": "formal",
+      "bound_at": "2026-11-26T12:13:42.885000Z",
+      "cutoff": "2026-11-26T12:14:02.868993Z"
+    },
+    {
+      "fixture_id": "epl/2026-27/new-technical/away",
+      "mode": "technical",
+      "bound_at": "2026-11-26T12:13:42.885000Z",
+      "cutoff": "2026-11-26T12:14:02.868993Z"
+    }
+  ],
+  "late_bound": 0,
+  "default_after_new_enrollment": "v2"
+}

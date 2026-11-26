@@ -1,0 +1,25 @@
+{
+  "artifact": "reports/news-early-seals-0.4.2.json",
+  "samples": 10,
+  "with_applied_touchline": 10,
+  "by_origin": {
+    "touchlinewire.com": 90
+  },
+  "weights_per_seal": [
+    4,
+    10,
+    14,
+    8,
+    6,
+    4,
+    8,
+    15,
+    10,
+    11
+  ],
+  "automatically_retains_native_response": {
+    "touchline-availability": false,
+    "touchline-rumours": false,
+    "wikipedia-season-news": true
+  }
+}

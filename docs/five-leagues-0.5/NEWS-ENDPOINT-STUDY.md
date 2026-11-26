@@ -1,11 +1,13 @@
 # 英超新闻调整与全场大 2.5 的前瞻研究
 
+本页为保留的 v1 登记口径。0.5.0a2 新研究默认为 v2。使用旧库时可显式查询 v1 的历史登记与结果。[v2 预登记和统计说明](NEWS-ENDPOINT-V2.md)
+
 本研究回答两个问题。赛前新闻将主胜概率上调或下调时，合格临近开球的 Polymarket 概率平均跟随多少？相同的关系能否在全场大 2.5 球上观察到？两个端点允许给出不同方向的答案。登记版本为 `epl-news-home-and-full-over-v1`，限男子英超常规赛。每个部署选择一个模式，一次登记覆盖两个决策窗。
 
 ```sh
-pm861 leagues news-endpoints plan
-pm861 --data-dir /srv/pm861 leagues news-endpoints register --mode technical
-pm861 --data-dir /srv/pm861 leagues news-endpoints report
+pm861 leagues news-endpoints plan --version v1
+pm861 --data-dir /srv/pm861 leagues news-endpoints register --version v1 --mode technical
+pm861 --data-dir /srv/pm861 leagues news-endpoints report --version v1
 ```
 
 默认立即登记。如需预约，给 `register` 加 `--starts-at` 和一个带时区的未来时刻。首次登记选择的开始时间、`technical` 或 `formal` 模式、协议摘要、本机登记时间一起生成登记摘要。相同设置可重复运行。不同设置会报错。选择日期要求早于 2028-07-01 00:00 UTC。安装后可先看 `report`，空库会显示 `not_registered` 和每一格实际的 0。

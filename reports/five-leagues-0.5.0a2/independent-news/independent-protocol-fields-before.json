@@ -1,0 +1,92 @@
+{
+  "missing_None": {
+    "status": "unobserved",
+    "observed_team_fixtures": 0,
+    "partial_team_fixtures": 0,
+    "unobserved_team_fixtures": 20,
+    "injuries": null,
+    "suspensions": null,
+    "applied_suspensions": null,
+    "injuries_verified_without_onset": null
+  },
+  "missing_injury": {
+    "status": "partial",
+    "observed_team_fixtures": 0,
+    "partial_team_fixtures": 0,
+    "unobserved_team_fixtures": 20,
+    "injuries": 1,
+    "suspensions": 0,
+    "applied_suspensions": 0,
+    "injuries_verified_without_onset": 1
+  },
+  "missing_suspension": {
+    "status": "partial",
+    "observed_team_fixtures": 0,
+    "partial_team_fixtures": 0,
+    "unobserved_team_fixtures": 20,
+    "injuries": 0,
+    "suspensions": 1,
+    "applied_suspensions": 0,
+    "injuries_verified_without_onset": 0
+  },
+  "partial_None": {
+    "status": "partial",
+    "observed_team_fixtures": 0,
+    "partial_team_fixtures": 1,
+    "unobserved_team_fixtures": 19,
+    "injuries": null,
+    "suspensions": null,
+    "applied_suspensions": null,
+    "injuries_verified_without_onset": null
+  },
+  "partial_injury": {
+    "status": "partial",
+    "observed_team_fixtures": 0,
+    "partial_team_fixtures": 1,
+    "unobserved_team_fixtures": 19,
+    "injuries": 1,
+    "suspensions": 0,
+    "applied_suspensions": 0,
+    "injuries_verified_without_onset": 1
+  },
+  "partial_suspension": {
+    "status": "partial",
+    "observed_team_fixtures": 0,
+    "partial_team_fixtures": 1,
+    "unobserved_team_fixtures": 19,
+    "injuries": 0,
+    "suspensions": 1,
+    "applied_suspensions": 0,
+    "injuries_verified_without_onset": 0
+  },
+  "complete_None": {
+    "status": "partial",
+    "observed_team_fixtures": 1,
+    "partial_team_fixtures": 0,
+    "unobserved_team_fixtures": 19,
+    "injuries": 0,
+    "suspensions": 0,
+    "applied_suspensions": 0,
+    "injuries_verified_without_onset": 0
+  },
+  "complete_injury": {
+    "status": "partial",
+    "observed_team_fixtures": 1,
+    "partial_team_fixtures": 0,
+    "unobserved_team_fixtures": 19,
+    "injuries": 1,
+    "suspensions": 0,
+    "applied_suspensions": 0,
+    "injuries_verified_without_onset": 1
+  },
+  "complete_suspension": {
+    "status": "partial",
+    "observed_team_fixtures": 1,
+    "partial_team_fixtures": 0,
+    "unobserved_team_fixtures": 19,
+    "injuries": 0,
+    "suspensions": 1,
+    "applied_suspensions": 0,
+    "injuries_verified_without_onset": 0
+  }
+}

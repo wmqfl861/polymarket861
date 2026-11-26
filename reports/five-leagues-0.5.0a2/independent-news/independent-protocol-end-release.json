@@ -1,0 +1,151 @@
+{
+  "physical_order": [
+    {
+      "mode": "formal",
+      "bound_at": "2026-08-12T12:59:15.000000Z"
+    },
+    {
+      "mode": "technical",
+      "bound_at": "2026-08-12T12:59:05.000000Z"
+    }
+  ],
+  "before_capture": {
+    "when": "2026-08-12T12:58:00.000000Z",
+    "state": "prospective_collection",
+    "bound": 0,
+    "duplicate": 0,
+    "due": 0,
+    "qualified": 0,
+    "modes": [],
+    "verified_finals": 0,
+    "report_sha": "330762962f651f4362c66d7a3ff1aa420a9fd4aeca71f1ce27d020a2ff11a33c"
+  },
+  "both_captured_before_due": {
+    "when": "2026-08-12T12:59:50.000000Z",
+    "state": "prospective_collection",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 0,
+    "qualified": 0,
+    "modes": [],
+    "verified_finals": 0,
+    "report_sha": "50f0f2b50071b9d67ed484932c0fffcb305373a1ee47e00f422c7f31b888aaac"
+  },
+  "window_due": {
+    "when": "2026-08-12T13:00:00.000000Z",
+    "state": "prospective_collection",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 0,
+    "report_sha": "47104ec54f3e6c3f15f668254b420b01b2a98f8c8369003edba4cf61c37b96cf"
+  },
+  "asof_before_second_final": {
+    "when": "2028-06-30T22:40:59.000000Z",
+    "state": "prospective_collection",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 0,
+    "report_sha": "00a5927cb1f7fc6be418ae36a1959fe200ad2d7db1523a12c9965897f7c13f7b"
+  },
+  "asof_with_second_final": {
+    "when": "2028-06-30T22:41:01.000000Z",
+    "state": "prospective_collection",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 1,
+    "report_sha": "977d7fc0f87dec6b4354ca1c1b6e334d58f94330fc4e672c20ba1c3a97bdca4e"
+  },
+  "end_minus_us": {
+    "when": "2028-06-30T23:59:59.999999Z",
+    "state": "prospective_collection",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 1,
+    "report_sha": "977d7fc0f87dec6b4354ca1c1b6e334d58f94330fc4e672c20ba1c3a97bdca4e"
+  },
+  "end_frozen": {
+    "when": "2028-07-01T00:00:00.000000Z",
+    "state": "window_ended",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 1,
+    "report_sha": "b08091d15ecea4ebba61723b8edc6f007ddde2a9e4c2b3bff9f6bced631dd9ae"
+  },
+  "correction_at_end": {
+    "when": "2028-07-01T00:00:00.000000Z",
+    "state": "window_ended",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 1,
+    "report_sha": "b08091d15ecea4ebba61723b8edc6f007ddde2a9e4c2b3bff9f6bced631dd9ae"
+  },
+  "verified_after_end": {
+    "when": "2028-07-01T01:00:00.000000Z",
+    "state": "window_ended",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 1,
+    "report_sha": "b08091d15ecea4ebba61723b8edc6f007ddde2a9e4c2b3bff9f6bced631dd9ae"
+  },
+  "after_late_early_whistle": {
+    "when": "2028-07-01T02:00:00.000000Z",
+    "state": "window_ended",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 1,
+    "report_sha": "b08091d15ecea4ebba61723b8edc6f007ddde2a9e4c2b3bff9f6bced631dd9ae"
+  },
+  "after_late_schedule": {
+    "when": "2028-07-01T03:00:00.000000Z",
+    "state": "window_ended",
+    "bound": 2,
+    "duplicate": 1,
+    "due": 1,
+    "qualified": 1,
+    "modes": [
+      "formal"
+    ],
+    "verified_finals": 1,
+    "report_sha": "b08091d15ecea4ebba61723b8edc6f007ddde2a9e4c2b3bff9f6bced631dd9ae"
+  }
+}

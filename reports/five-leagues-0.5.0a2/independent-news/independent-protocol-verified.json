@@ -1,0 +1,31 @@
+{
+  "commit": "a068b65c824476eb330523992d7858ff36f6e451",
+  "src": "0a0bd93fa0002418ae0d2a004d1b38c4dd46419c",
+  "tests": "7eab2d876a7a25b45a25f7dd0e442909bfba863e",
+  "interpreter": "project sibling five05-validation/venv/bin/python, 3.12.14",
+  "fixture_cutoff": "2026-08-12T13:00:00.000000Z",
+  "duplicate_bindings_ignored": 1,
+  "asof_verified_before_after": [
+    0,
+    1
+  ],
+  "closed_sha256": "b08091d15ecea4ebba61723b8edc6f007ddde2a9e4c2b3bff9f6bced631dd9ae",
+  "a1_report_sha256": "b4f96694b99e40588db260f5af740a5b83cc365788367f6f12f72cf8df9ec89f",
+  "v2_plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+  "cross_category_negative_controls": 9,
+  "clock_endpoint_pairs_after_obsolete_calendar": 4,
+  "usable_power_designs": 108,
+  "power_at_650_matches": {
+    "home_win": 0.0845,
+    "full_over_2_5": 0.0315
+  },
+  "planning_input_actual_weight_sources": {
+    "touchlinewire.com": 90
+  },
+  "as_of_sample_seals": 10,
+  "retains_native_default": {
+    "touchline-availability": false,
+    "touchline-rumours": false,
+    "wikipedia-season-news": true
+  }
+}

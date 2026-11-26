@@ -1,5 +1,7 @@
 # 五联赛 0.5.0a1 首批开发交接
 
+本页记录 0.5.0a1 的首次发布。安装当前 0.5.0a2 时，请结合[最新交接](CLAUDE-REVIEW-RESPONSE-0.5.0a2.md)和[四国采集服务说明](WATCH-SERVICE.md)选用相应的实收、模拟入场与新闻协议。
+
 2026-11-26。适用于全新安装的研究实例。Claude 本轮的两份原审、冻结后的执行计划及完整模块清单都在这次提交历史里。[计划审核](../polymarket861-five-leagues-0.5-plan-review.md) · [英超审核](../polymarket861-EPL-code-review-0.4.2.md) · [实施计划](IMPLEMENTATION-PLAN.md) · [模块覆盖](MODULE-BOUNDARIES.md)
 
 ## 从安装到第一份逐轮报告

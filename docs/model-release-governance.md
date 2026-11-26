@@ -63,3 +63,22 @@ python3.12 scripts/check_recipe_identity.py --compare recipe-3.11.json recipe-3.
 ```sh
 python scripts/compare_news_reproduction.py reports/news-history-0.4.2.json /tmp/history-rerun.json
 ```
+
+### 本机报告摘要与已批准后的回退
+
+`report_sha256` 同时标识五季比较结果和执行环境。Claude 用 CPython 3.12.3 对照 0.4.2→0.5.0a1，与 3.12.14 发布演练的 68 个叶字段中 65 个相同，区别为解释器补丁号、运行来源摘要和整份报告摘要。在相同 3.12.14 环境再次演练时 68 项全部相同。负责人在本机比较 1,900 场／190 轮的训练输入、四项概率评分和所有已登记球线，再从**本机本次** `forecast release-compare` 输出复制 `report_sha256` 签署。[Claude 的逐字段对照](review-evidence/code-review-0.5.0a1-2026-11-26/outputs/) · [本次演练](../reports/five-leagues-0.5.0a2/release-rehearsal.json)
+
+准备回退时，先停止该实例的调度并保存数据目录备份，保留两个版本各自的非可编辑安装与同一份固定历史。可在两边运行 `season readiness --year 年份 --round 轮次` 查看实际生效指针。新包只打开过数据库、且尚未批准时，仍生效的旧安装可直接继续封存。
+
+若已经在新包批准过，此时旧程序会报告 `approval_required`。要保留切换后收到的原件和封存，请在同一个数据目录反向执行正式比较。下例的 `ACTIVE` 和 `RETURN_TO` 分别指向当前生效版本与目标旧版本的 CPython 3.12 安装中 `pm861` 的绝对路径。由该实例负责人复核并填写本次报告摘要及理由。
+
+```sh
+"$ACTIVE" --data-dir "$STATE" forecast release-baseline "$HISTORY"
+"$RETURN_TO" --data-dir "$STATE" forecast release-compare "$HISTORY"
+"$RETURN_TO" --data-dir "$STATE" forecast release-approve "$REVERSE_REPORT_SHA256" \
+  --reviewer "$REVIEWER" --reason "$REVIEW_REASON"
+"$RETURN_TO" --data-dir "$STATE" season readiness --year 2026 --round 12
+"$RETURN_TO" --data-dir "$STATE" forecast get "$SAVED_PREDICTION_SHA256"
+```
+
+核对 readiness 中的 active_version 及已保存预测后，恢复旧安装的原调度。恢复整个旧备份是另一种选择，前提是明确它所覆盖的最后收件时刻，并另外保存之后的数据库和原件。四国行情服务另有自己的安装、状态目录和日志。[独立部署说明](five-leagues-0.5/WATCH-SERVICE.md)
