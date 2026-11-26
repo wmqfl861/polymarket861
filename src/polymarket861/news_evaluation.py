@@ -429,12 +429,14 @@ def _score_one(fixture, entry, payload, prior, db, cache, mode, verified, policy
         pair = payload["news_pair"]
         root = Path(db.execute("PRAGMA database_list").fetchone()[2]).parent
         if reopen_news:
-            from . import news
+            from . import news, news_endpoint_originals
 
             sealed_news = payload["context"]["player_news"]
             reopened = news.snapshot(root, fixture["fixture_id"], pair["input_cutoff"])
             if store.digest(reopened) != store.digest(sealed_news):
                 return record | {"reason": "news_originals_do_not_match_sealed_snapshot"}
+            if not news_endpoint_originals.verify(db, root, fixture, reopened):
+                return record | {"reason": "missing_or_invalid_news_dependency_original"}
         applied_status = {fact["status"] for fact in pair["applied"]}
         if len(applied_status) > 1:
             news_slice = "confirmed_and_reported"

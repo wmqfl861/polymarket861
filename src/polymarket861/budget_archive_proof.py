@@ -14,6 +14,7 @@ from . import (
     league_registry,
     ledger_rules as rules,
     ledger_terms,
+    market_provider,
     settlement,
 )
 
@@ -141,7 +142,12 @@ def entry(source, op, candidates):
         raise ValueError(
             "execution requires an independently observed fresh venue book"
         )
-    return market
+    return {
+        **market,
+        "entry_terms": terms,
+        "decision_at": rules.iso(decision),
+        "budget_fixture_id": op["fixture_id"],
+    }
 
 
 def _terminal(source, market, token, kickoff, at):
@@ -159,10 +165,11 @@ def _terminal(source, market, token, kickoff, at):
         if selector != token:
             raise ValueError("resolution capture requested a different token")
         payload = json.loads(reply.body)
-        native = [r for r in payload["data"] if str(r.get("token_id")) == token]
-        if len(native) != 1:
-            raise ValueError("ambiguous resolution response")
-        row = native[0]
+        row = market_provider.resolution_row(payload, token)
+        if row is None:
+            if terminal:
+                raise ValueError("venue withdrew an observed terminal state")
+            continue
         if row.get("resolved") is False and row.get("final_price") is None:
             if terminal:
                 raise ValueError("venue withdrew an observed terminal state")
@@ -186,7 +193,8 @@ def _terminal(source, market, token, kickoff, at):
     return terminal
 
 
-def redemption(source, market, event, kickoff):
+def terminal_pair(source, market, event, kickoff):
+    """Attest only the venue's payout vector. This does not authorize any credit."""
     if source is None or market is None:
         return None, "missing_verified_entry"
     token, at = event["token_id"], rules.instant(event["at"])
@@ -200,6 +208,34 @@ def redemption(source, market, event, kickoff):
     if event.get("original_sha256") not in held[1] or held[0] + other[0] != rules.ONE:
         return None, "unverified_terminal_pair"
     return held[0], None
+
+
+def redemption(source, market, event, kickoff):
+    if source is None or not market or "entry_terms" not in market:
+        return None, "missing_verified_entry"
+    amount, gap = terminal_pair(source, market, event, kickoff)
+    if gap:
+        return None, gap
+    root, db = source
+    frozen = market["entry_terms"]
+    decision = market["decision_at"]
+    original = archive_proof.original_market(
+        db,
+        root,
+        event["condition_id"],
+        decision,
+        receipt_at=frozen["rule_received_at"],
+        sha=frozen["rule_source_sha256"],
+    )
+    if event["fixture_id"] != market["budget_fixture_id"]:
+        raise ValueError("redemption fixture differs from sealed entry")
+    _gamma_identity(source, original, event["fixture_id"], kickoff)
+    terms = ledger_terms.from_original(root, original, event["token_id"], decision)
+    if terms != frozen or original["rule_sha256"] != market["rule_sha256"]:
+        raise ValueError("redemption rules or terms no longer match the frozen outcome")
+    if amount == rules.D("0.5"):
+        settlement.require_reviewed_equal_split(terms)
+    return amount, None
 
 
 def audit_redemption(source, market, event, kickoff, cutoff, expected):

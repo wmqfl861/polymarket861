@@ -1415,12 +1415,10 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
     if task["network_due"]:
         try:
             local_start = _utc()
-            result = poll(
-                task["config"],
-                task["team"],
-                task["season"],
-                json.loads(cursor) if cursor else None,
-            )
+            from . import news_endpoint_originals
+
+            input_cursor = json.loads(cursor) if cursor else None
+            result, raw_reply = news_endpoint_originals.collect(root, task, poll, input_cursor, local_start)
             received = _utc()
             if not isinstance(result, dict) or result.get("status") in {
                 "error",
@@ -1464,6 +1462,14 @@ def _poll_stream(root, task, poll, roster, roster_issue, extract, settings, deci
             if len(candidate_cursor) > 2_000_000:
                 raise ValueError("news cursor exceeds the storage bound")
             proof_id, proof = _poll_proof(root, task, result, local_start, received, stage_feed)
+            from sqlite3 import DatabaseError
+
+            try:
+                news_endpoint_originals.save(root, task, proof_id, proof, result, raw_reply, input_cursor)
+            except (OSError, ValueError, DatabaseError) as exc:
+                # The optional study will reject the missing original. Ordinary
+                # collection retains its existing evidence and status.
+                detail["endpoint_original_issue"] = str(exc)[:240]
             detail["source_observed_at"] = received
             detail["response_sha256"] = proof["response_sha256"]
             detail["response_hash_basis"] = proof["hash_basis"]

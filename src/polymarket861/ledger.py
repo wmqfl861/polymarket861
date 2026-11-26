@@ -8,7 +8,7 @@ from datetime import timedelta
 from decimal import ROUND_DOWN
 from pathlib import Path
 
-from . import dbscope, kickoff_proof, store
+from . import dbscope, kickoff_proof, market_provider, store
 from .archive_proof import eligible_book, research_tier
 from .ledger_rules import (
     MAX_GAP,
@@ -1639,24 +1639,24 @@ def capture_resolution(data_dir, token):
     raw, reply, sha = _fetch(
         data_dir, "resolution", str(token), url, {"token_id": str(token)}
     )
-    rows = [r for r in raw.get("data", []) if str(r.get("token_id")) == str(token)]
-    if len(rows) != 1:
-        raise ValueError("token not found or ambiguous in exchange response")
-    r = rows[0]
-    if not isinstance(r.get("resolved"), bool) or (
-        r["resolved"] != (r.get("final_price") is not None)
-    ):
-        raise ValueError("unrecognized exchange token resolution")
+    r = market_provider.resolution_row(raw, str(token))
+    resolved = r is not None and r["resolved"]
+    if not resolved:
+        # Empty/pending can precede the first result. After a terminal receipt
+        # the same response is a withdrawal and must be reported as a dispute.
+        from .settlement import _records
+
+        _records(data_dir, str(token))
     return {
-        "condition_id": r["condition_id"],
+        "condition_id": r["condition_id"] if r is not None else None,
         "token_id": str(token),
         "resolution_id": sha,
         "source": reply.url,
         "source_sha256": sha,
         "resolved_at": reply.received_at,
         "time_basis": "first verified by this capture",
-        "status": "resolved" if r["resolved"] else "pending",
-        "payout": fmt(unit(r["final_price"])) if r["resolved"] else None,
+        "status": "resolved" if resolved else "pending",
+        "payout": fmt(unit(r["final_price"])) if resolved else None,
     }
 
 
@@ -1676,16 +1676,12 @@ def _attest_resolution(db, data_dir, event, amount):
         or url.split("?")[0] != "https://data-api.polymarket.com/v2/tokens"
     ):
         raise ValueError("unverified international token resolution source")
-    values = [
-        r
-        for r in doc.get("data", [])
-        if str(r.get("token_id")) == str(event["token_id"])
-        and r.get("condition_id") == event["condition_id"]
-    ]
+    native = market_provider.resolution_row(doc, str(event["token_id"]))
     if (
-        len(values) != 1
-        or values[0].get("resolved") is not True
-        or unit(values[0].get("final_price")) != amount
+        not native
+        or native["condition_id"] != event["condition_id"]
+        or native["resolved"] is not True
+        or unit(native["final_price"]) != amount
     ):
         raise ValueError("payout not confirmed by archived exchange token")
 

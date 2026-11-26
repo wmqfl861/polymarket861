@@ -13,7 +13,7 @@ def _body(root, sha):
     return dbscope.verified_bytes(root, store.blob_path(root, sha), sha, "exchange response hash mismatch")
 
 
-def original_receipt(db, root, sha, received_at, operations):
+def original_receipt(db, root, sha, received_at, operations, *, expected_selector=None):
     """A user-uploaded file or free-form source label is not a collector receipt."""
     if not db.execute(
         "SELECT 1 FROM sqlite_master WHERE name='ma_requests'"
@@ -26,6 +26,9 @@ def original_receipt(db, root, sha, received_at, operations):
         (sha, received_at),
     )
     for row in hits:
+        # Two token queries may return identical bytes at the same receive instant.
+        if expected_selector is not None and row["selector"] != expected_selector:
+            continue
         meta = json.loads(row["metadata"])
         operation = row["operation"]
         if (

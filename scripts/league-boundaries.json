@@ -238,6 +238,11 @@
     "(\"official\", \"An update from the club confirms Mikkel Dahl is suspended for the Premier League game.\", [(\"dahl\", \"suspension\", \"confirmed\", \"out\")]),",
     "if corpus[\"protocol\"] != \"epl-official-club-prose-excerpts-v1\":"
   ],
+  "news_endpoint_originals.py": [
+    "\"\"\"Physical dependencies of prospectively declared EPL news-endpoint observations.\"\"\"",
+    ".startswith(f\"epl/{task['season']}/\")",
+    "BODY_SOURCE = \"epl-endpoint-news-response\""
+  ],
   "news_endpoint_study.py": [
     "\"\"\"Prospective EPL news price-gap study; opt-in registration never retrofits existing seals.\"\"\"",
     "\"population\": \"EPL primary seals using the named native declaration and timely study-qualified news for both clubs. Include zero news changes. Only the first bound probability era is eligible, selected by capture order without reference to news movement, outcomes, coverage or available books. Capture starts at the real local clock immediately following enrollment.\",",

@@ -11,6 +11,7 @@ from . import (
     dbscope,
     ledger,
     market_archive,
+    market_provider,
     opportunity,
     shadow,
     shadow_market,
@@ -59,37 +60,34 @@ def _records_from_db(db, root, token):
         (token, store.now_utc()),
     ).fetchall()
     items = []
+    saw_terminal = False
     for r in rows:
         reply, _, selector, _ = archive_proof.original_receipt(
-            db, root, r["sha"], r["received_at"], {"resolution"}
+            db, root, r["sha"], r["received_at"], {"resolution"}, expected_selector=token
         )
         if selector != token:
             raise ValueError("resolution request selector differs from token")
-        body = json.loads(reply.body)
-        res = [v for v in body.get("data", []) if str(v.get("token_id")) == token]
-        if not res:
-            raise ValueError("official token absent from its resolution response")
-        if (
-            len(res) != 1
-            or type(res[0].get("resolved")) != bool
-            or (res[0]["resolved"] != (res[0].get("final_price") is not None))
-        ):
-            raise ValueError("unrecognized official token resolution")
-        native = res[0]
-        amount = unit(native["final_price"]) if native["resolved"] else None
+        native = market_provider.resolution_row(json.loads(reply.body), token)
+        resolved = native is not None and native["resolved"]
+        if saw_terminal and not resolved:
+            raise ValueError("venue withdrew an observed terminal token state")
+        saw_terminal = saw_terminal or resolved
+        amount = unit(native["final_price"]) if resolved else None
         items.append(
             {
-                "condition_id": native["condition_id"],
+                "condition_id": native["condition_id"] if native is not None else None,
                 "token_id": token,
                 "resolution_id": r["sha"],
                 "source": reply.url,
                 "source_sha256": r["sha"],
                 "resolved_at": reply.received_at,
-                "status": "resolved" if native["resolved"] else "pending",
+                "status": "resolved" if resolved else "pending",
                 "payout": fmt(amount) if amount is not None else None,
                 "row": native,
             }
         )
+    if len({item["condition_id"] for item in items if item["row"] is not None}) > 1:
+        raise ValueError("official token changed its condition identity")
     terminal = [i for i in items if i["status"] == "resolved"]
     if terminal:
         identity = (
@@ -284,6 +282,12 @@ def _verify_token(market, official, token_id):
     return tokens[1 - index]["token_id"]
 
 
+def require_reviewed_equal_split(contract):
+    """Only a reviewed split clause in this outcome's entry-time contract permits 0.5."""
+    if not any(v == "0.5" for v in contract["special"].values()):
+        raise ValueError("frozen entry rules have no reviewed equal-split payout clause")
+
+
 def _split_event(root, db, intent, seal, mode, official, opposite):
     """A witnessed exchange redemption records no inference about the football result."""
     c = intent["contract"]
@@ -294,10 +298,7 @@ def _split_event(root, db, intent, seal, mode, official, opposite):
     _verify_token(market, opposite, other_id)
     if any(number(r["payout"]) != number("0.5") for r in (official, opposite)):
         raise ValueError("terminal payout vector is not the supported equal split")
-    if not any(v == "0.5" for v in c["special"].values()):
-        raise ValueError(
-            "frozen entry rules have no reviewed equal-split payout clause"
-        )
+    require_reviewed_equal_split(c)
     if min(instant(r["resolved_at"]) for r in (official, opposite)) < seal:
         raise ValueError("terminal exchange receipt predates the entry seal")
     receipts = {r["token_id"]: r for r in (official, opposite)}
@@ -349,6 +350,10 @@ def _binary_history(db, root, market, token, amount):
         if not record:
             continue
         row = record["row"]
+        if row is None:
+            if side == 0:
+                raise ValueError("held token resolution has not arrived")
+            continue
         slot = index if side == 0 else 1 - index
         # Sparse older binary receipts still bind token, condition and price. Any
         # additional identity the exchange actually published must also agree.
@@ -403,7 +408,7 @@ def attest_ledger_split(db, root, account, event):
     if not rows:
         raise ValueError("missing held position for split payout")
     held = _records_from_db(db, root, token)
-    if not held:
+    if not held or held["status"] != "resolved":
         raise ValueError("held token has no terminal receipt")
     other = _records_from_db(db, root, str(held["row"].get("opposite_token_id")))
     expected = None
@@ -688,6 +693,12 @@ def sync(data_dir, *, account=None, limit=50, cached_only=False):
             official = lookup(p["token"])
             event = None
             already = p["status"] == "settled"
+            if (
+                official
+                and official["row"] is not None
+                and official["condition_id"] != p["condition_id"]
+            ):
+                raise ValueError("official token condition differs from held market")
             if not official or official["status"] != "resolved":
                 why = "waiting for official token payout"
             elif number(official["payout"]) not in (0, 1):

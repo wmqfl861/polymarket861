@@ -83,6 +83,34 @@ def get(url: str, params: dict | None = None, *, timeout: float = 25) -> Reply:
     )
 
 
+def resolution_row(payload: Any, token: str) -> dict | None:
+    """A successful single-token feed may return an empty list before it knows the token."""
+    rows = payload.get("data") if isinstance(payload, dict) else None
+    if (
+        not isinstance(rows, list)
+        or payload.get("error")
+        or payload.get("success") is False
+    ):
+        raise ValueError("unrecognized official token resolution envelope")
+    if not rows:
+        return None
+    if (
+        len(rows) != 1
+        or not isinstance(rows[0], dict)
+        or str(rows[0].get("token_id")) != str(token)
+    ):
+        raise ValueError("wrong or ambiguous token in official resolution response")
+    row = rows[0]
+    if (
+        not isinstance(row.get("condition_id"), str)
+        or not row["condition_id"]
+        or type(row.get("resolved")) is not bool
+        or row["resolved"] != (row.get("final_price") is not None)
+    ):
+        raise ValueError("unrecognized official token resolution")
+    return row
+
+
 def sequence(raw: Any) -> list:
     if isinstance(raw, str):
         try:

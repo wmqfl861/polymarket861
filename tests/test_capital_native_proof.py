@@ -33,11 +33,43 @@ def record_terminal(root, token, raw, when, url=None):
     return sha
 
 
-def received_entry(root):
+def received_entry(root, market_type="total"):
     kickoff = store.instant("2025-02-01T18:00:00Z")
     decision = kickoff - timedelta(hours=1)
     rule_at = store.iso(decision - timedelta(minutes=3))
     native = event(store.iso(kickoff))
+    if market_type in {"moneyline", "home_total"}:
+        from test_round_comparisons import catalog
+
+        schedule = catalog()
+        source_teams = provider.teams(schedule)
+        raw = next(
+            m
+            for m in schedule["markets"]
+            if (
+                m["sportsMarketType"] == "moneyline"
+                and m["groupItemTitle"] == source_teams["home"]["name"]
+                and market_type == "moneyline"
+            )
+            or (
+                m["slug"].endswith("team-total-home-1pt5")
+                and market_type == "home_total"
+            )
+        )
+        market = native["markets"][0]
+        desc = raw["description"]
+        for side in ("home", "away"):
+            desc = desc.replace(source_teams[side]["name"], side.capitalize())
+        desc = desc.replace("March 1, 2026", "February 1, 2025")
+        market.update(
+            description=desc,
+            sportsMarketType=raw["sportsMarketType"],
+            outcomes=raw["outcomes"],
+            line=raw["line"],
+            groupItemTitle=("Home" if market_type == "moneyline" else "Home O/U 1.5"),
+            slug=SLUG
+            + ("-hom" if market_type == "moneyline" else "-team-total-home-1pt5"),
+        )
     series, tag = provider.SPORT_MARKETS["epl"]
     native.update(
         sport={"sport": "epl", "series": series},
@@ -91,7 +123,11 @@ def received_entry(root):
         "execution_book": "b",
         "shares": "100",
         "limit_price": "0.50",
-        "selection": {"family": "total", "line": terms["line"], "side": "over"},
+        "selection": {
+            k: terms[k]
+            for k in ("family", "selection", "team", "line", "side")
+            if k in terms
+        },
         "rule_sha256": terms["rule_sha256"],
         "fee": terms["fee_schedule"],
     }
@@ -262,6 +298,64 @@ class NativeCapital(unittest.TestCase):
                         {"unverified_terminal_pair": 1},
                     )
 
+    def test_frozen_rule_decides_split_after_verified_purchases_and_originals(self):
+        cases = [
+            ("moneyline", "0.5", "0.5", False),
+            ("moneyline", "1", "0", True),
+            ("total", "0.5", "0.5", True),
+            ("home_total", "0.5", "0.5", True),
+        ]
+        for kind, payout, opposite, eligible in cases:
+            with (
+                self.subTest(kind=kind, payout=payout),
+                tempfile.TemporaryDirectory() as temp,
+            ):
+                root = Path(temp)
+                doc, market = received_entry(root, kind)
+                op = doc["intents"][0]
+                early = store.iso("2025-02-01T19:00Z")
+                at = store.iso("2025-02-02T12:00Z")
+                # A genuine empty response before publication may be retried.
+                record_terminal(root, TOKEN, b'{"data":[]}', early)
+                held = terminal_row(market, 0, payout)
+                other = terminal_row(market, 1, opposite)
+                sha = record_terminal(
+                    root, TOKEN, json.dumps({"data": [held]}).encode(), at
+                )
+                record_terminal(
+                    root, other["token_id"], json.dumps({"data": [other]}).encode(), at
+                )
+                doc["redemptions"] = [
+                    {
+                        "id": "r",
+                        "fixture_id": op["fixture_id"],
+                        "token_id": TOKEN,
+                        "condition_id": CONDITION,
+                        "at": at,
+                        "original_sha256": sha,
+                    }
+                ]
+                result = risk.replay(doc, data_dir=root)
+                league = result["leagues"]["epl"]
+                self.assertEqual(league["outcomes"], {"filled": 1})
+                self.assertEqual(
+                    float(league["unredeemed_cost"]), 0 if eligible else 50
+                )
+                self.assertEqual(
+                    float(league["cash_from_redemptions"]),
+                    float(payout) * 100 if eligible else 0,
+                )
+                if not eligible:
+                    self.assertIn(
+                        "frozen entry rules have no reviewed equal-split payout clause",
+                        result["proof_gaps"],
+                    )
+                if kind == "home_total":
+                    later = store.iso("2025-02-03T00:00Z")
+                    record_terminal(root, TOKEN, b'{"data":[]}', later)
+                    with self.assertRaisesRegex(ValueError, "withdrew"):
+                        risk.replay(doc, data_dir=root)
+
     def test_published_nantes_toulouse_originals_verified_by_both_collectors(self):
         path = (
             Path(__file__).resolve().parents[1]
@@ -306,13 +400,13 @@ class NativeCapital(unittest.TestCase):
                 "original_sha256": receipts["data-1"]["sha256"],
             }
             with proof.read_archive(root) as source:
-                value, gap = proof.redemption(
+                value, gap = proof.terminal_pair(
                     source, market, event_record, store.instant("2026-05-17T00:00:00Z")
                 )
                 self.assertIsNone(gap)
                 self.assertEqual(value, 1)
                 with self.assertRaisesRegex(ValueError, "predates"):
-                    proof.redemption(
+                    proof.terminal_pair(
                         source,
                         market,
                         event_record,
