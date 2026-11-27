@@ -16,6 +16,39 @@ CHECK = runpy.run_path(
 
 
 class RecipeReferences(unittest.TestCase):
+    def test_same_caller_and_callee_still_detect_changed_reviewed_implementations(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(
+            recipe_identity, "_PRIMARY", {"entry.py": ("decide",)}
+        ):
+            root = Path(temp)
+            (root / "entry.py").write_text("from . import schedule\ndef decide(): return schedule.refresh()\n")
+            schedule = root / "schedule.py"
+            source = "def refresh(): return prepare()\ndef prepare(): return 1\n"
+            schedule.write_text(source)
+            original = CHECK["Package"](root)
+            pins = {name: original.binding_digest(name) for name in ("schedule.refresh", "schedule.prepare")}
+            policy = {
+                "schedule.refresh": {
+                    "callers": ["entry.decide"],
+                    "reason": "Reopens the reviewed schedule snapshot.",
+                    "reviewed_bindings": pins,
+                }
+            }
+            self.assertEqual(CHECK["audit"](original, policy)["changed_reviewed_bindings"], {})
+
+            for name, change in (
+                ("schedule.refresh", source.replace("return prepare()", "return 1")),
+                ("schedule.prepare", source.replace("return 1", "return 0")),
+                ("schedule.prepare", source.split("def prepare")[0]),
+            ):
+                with self.subTest(name=name, change=change):
+                    schedule.write_text(change)
+                    result = CHECK["audit"](CHECK["Package"](root), policy)
+                    self.assertEqual(result["unreviewed"], [])
+                    self.assertEqual(result["obsolete"], [])
+                    self.assertEqual(list(result["changed_reviewed_bindings"]), [name])
+                    self.assertEqual(result["changed_reviewed_bindings"][name]["expected"], pins[name])
+
     def test_new_caller_alias_reexport_and_context_are_checked(self):
         with (
             tempfile.TemporaryDirectory() as temp,

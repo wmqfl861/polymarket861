@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from polymarket861 import recipe_identity  # noqa: E402
+from polymarket861 import recipe_identity, store  # noqa: E402
 
 
 def import_names(node):
@@ -83,6 +83,15 @@ class Package:
                     if qualified is not None and qualified[:1] != ("@importlib",):
                         imports[local] = (name, "<dynamic>")
         return recipe_identity.bindings(tree), imports
+
+    def binding_digest(self, qualified_name):
+        module, symbol = qualified_name.split(".", 1)
+        if module in self.modules:
+            definitions, _ = self.module(module)
+            node = definitions.get(symbol)
+            if isinstance(node, ast.AST):
+                return store.digest(recipe_identity._tree(node))
+        return None
 
     def route(self, module, symbol):
         """The re-export itself and its final destination must both be identified."""
@@ -244,11 +253,16 @@ class Package:
 
 def audit(package, policy):
     expected = set()
+    changed_bindings = {}
     for target, decision in policy.items():
         if target.endswith(".<dynamic>"):
             raise ValueError(f"Use a named package reference for {target}")
         if not decision["reason"].strip():
             raise ValueError(f"Missing rationale for {target}")
+        for name, digest in decision.get("reviewed_bindings", {}).items():
+            actual_digest = package.binding_digest(name)
+            if actual_digest is None or actual_digest != digest:
+                changed_bindings[name] = {"expected": digest, "actual": actual_digest}
         for family in decision.get("families", ["B0", "B1", "B2", "B3"]):
             for caller in decision["callers"]:
                 expected.add((family, caller, target))
@@ -265,6 +279,7 @@ def audit(package, policy):
         },
         "unreviewed": sorted(actual - expected),
         "obsolete": sorted(expected - actual),
+        "changed_reviewed_bindings": changed_bindings,
     }
 
 
@@ -279,7 +294,7 @@ def main():
         Package(args.src / "polymarket861"), json.loads(args.policy.read_text())
     )
     print(json.dumps(result, indent=2))
-    return int(bool(result["unreviewed"] or result["obsolete"]))
+    return int(bool(result["unreviewed"] or result["obsolete"] or result["changed_reviewed_bindings"]))
 
 
 if __name__ == "__main__":

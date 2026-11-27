@@ -182,6 +182,16 @@
       "result_admission.review_pairing"
     ]
   },
+  "schedule_consensus.refresh_fixed": {
+    "reason": "The reviewed wrapper opens a read snapshot and retries through the signed require_fixed path. Its version setup installs the triggers that invalidate a preflight when schedule evidence changes. Material changes to either implementation belong in the primary recipe and require a new five-season comparison.",
+    "callers": [
+      "pipeline.make_forecast"
+    ],
+    "reviewed_bindings": {
+      "schedule_consensus.refresh_fixed": "d20bfaa71f051ec1e51bbcaaf85f851db35fde5f6aa06e35fc0f3efb7b8ea20d",
+      "schedule_consensus.prepare_evidence_version": "feceb8415da938acca01de29f5b61dda5c294ff97f65de01371a0a6667b1c5d4"
+    }
+  },
   "store.connect": {
     "reason": "Opens or initializes SQLite. Identity, value and as-of predicates are in the signed transaction and input selectors.",
     "callers": [
@@ -197,13 +207,13 @@
     ]
   },
   "store.put_report": {
-    "reason": "Stores generated diagnostics and derived reports; the forecast, source evidence and probability recipe have their own records.",
+    "reason": "Upserts the caller's report by kind and key. The signed schedule caller determines the evidence and timing in the incident payload consulted by readiness.",
     "callers": [
       "pipeline.make_forecast",
       "result_admission.reconcile",
       "result_operations.manual",
       "result_operations.rollback",
-      "schedule_consensus.sync"
+      "schedule_consensus._sync_current"
     ]
   },
   "store.save_report": {
