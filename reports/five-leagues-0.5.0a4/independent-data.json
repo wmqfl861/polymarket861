@@ -1,0 +1,285 @@
+{
+  "api_registry": {
+    "provider": "free_season_unavailable",
+    "changed": false,
+    "applied_sources": []
+  },
+  "rights_at_receipt": {
+    "source_at_reported_receipt": "disabled",
+    "source_at_import": "active",
+    "changed": false
+  },
+  "in_current_squad": {
+    "changed": false,
+    "applied": [],
+    "excluded": [
+      "listed_on_published_bench"
+    ]
+  },
+  "keeper_majority": {
+    "changed": false,
+    "starts": 2,
+    "observed_matches": 3,
+    "scheduled": 4,
+    "reason": "no_verified_majority_of_goalkeeper_starts"
+  },
+  "continued_episode": {
+    "first": "2026-11-21T19:30:00.000000Z",
+    "computed": "2026-11-21T19:30:00.000000Z",
+    "same": true,
+    "duration_multiplier": 0.7477455203172317
+  },
+  "equal_receipt_adjudication": [
+    {
+      "latest_score": null,
+      "basis": "neutral",
+      "multiplier": 0.55
+    },
+    {
+      "latest_score": [
+        2,
+        1
+      ],
+      "basis": "domestic_season_minutes_and_starts",
+      "multiplier": 1.0
+    }
+  ],
+  "native_roles_and_cutoffs": {
+    "bun": [
+      [],
+      [
+        "defence"
+      ],
+      []
+    ],
+    "sea": [
+      [],
+      [
+        "defence"
+      ],
+      []
+    ],
+    "lal": [
+      [],
+      [
+        "defence"
+      ],
+      []
+    ],
+    "fl1": [
+      [],
+      [
+        "defence"
+      ],
+      []
+    ]
+  },
+  "press_titles": [
+    {
+      "cutoff": "2026-11-27T12:01:00Z",
+      "titles": [],
+      "digest": null
+    },
+    {
+      "cutoff": "2026-11-27T12:10:00Z",
+      "titles": [
+        {
+          "title": "Sevilla FC coach on the match",
+          "record_id": "20261127120000-0",
+          "received_at": "2026-11-27T12:05:00.000000Z",
+          "title_record_id": null,
+          "title_received_at": null
+        }
+      ],
+      "digest": "95be296a0716f1d42d35db07d12cb166c711ec430cf1036a959e08eb99f0e44c"
+    },
+    {
+      "cutoff": "2026-11-27T12:25:00Z",
+      "titles": [
+        {
+          "title": "Sevilla FC coach on the match",
+          "record_id": "20261127121500-0",
+          "received_at": "2026-11-27T12:20:00.000000Z",
+          "title_record_id": "20261127120000-0",
+          "title_received_at": "2026-11-27T12:05:00.000000Z"
+        }
+      ],
+      "digest": "95be296a0716f1d42d35db07d12cb166c711ec430cf1036a959e08eb99f0e44c"
+    },
+    {
+      "health_latest_link": {
+        "title": "Sevilla FC coach on the match",
+        "title_received_at": "2026-11-27T12:05:00.000000Z",
+        "title_record_id": "20261127120000-0"
+      }
+    }
+  ],
+  "press_legacy": {
+    "old": [
+      "https://publisher.example/football/lille-osc-vs-le-mans-team-news",
+      "https://publisher.example/motorsport/24-hours-of-le-mans-qualifying"
+    ],
+    "before_receipt": 0,
+    "current": [
+      {
+        "url": "https://publisher.example/football/lille-osc-vs-le-mans-team-news",
+        "title": null,
+        "rechecked": true
+      }
+    ],
+    "unchanged_database_bytes": true
+  },
+  "wiki_after_move": {
+    "full": {
+      "status": null,
+      "conflict": true,
+      "kept": 2
+    },
+    "cached": {
+      "status": null,
+      "conflict": true,
+      "kept": 2
+    }
+  },
+  "wiki_replay": {
+    "seed": 861,
+    "generation_schedules": 180,
+    "exact_full_replay_comparisons": 1080
+  },
+  "wiki_bytes": {
+    "warm": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ]
+    ],
+    "before_changed_original": [
+      [
+        1,
+        0
+      ]
+    ],
+    "visible_mismatched_blob_rejected": true
+  },
+  "moved_upcoming": [
+    {
+      "cutoff": "10:10",
+      "game_status": "completed",
+      "kickoff": "2026-11-20T08:00:00.000000Z",
+      "upcoming": 0,
+      "withheld": [],
+      "versions": [
+        [
+          "2026-11-20T08:00:00.000000Z",
+          [
+            1,
+            0
+          ]
+        ]
+      ]
+    },
+    {
+      "cutoff": "10:21",
+      "game_status": "scheduled",
+      "kickoff": "2026-11-20T14:00:00.000000Z",
+      "upcoming": 0,
+      "withheld": [
+        {
+          "fixture": "bun/2026-27/1-koln/1-union-berlin",
+          "stage": "schedule",
+          "error": "replacement received after original kickoff; no pre-kickoff cancellation",
+          "previous_kickoff": "2026-11-20T08:00:00.000000Z",
+          "replacement_kickoff": "2026-11-20T14:00:00.000000Z",
+          "observed_at": "2026-11-20T10:20:00.000000Z"
+        }
+      ],
+      "versions": [
+        [
+          "2026-11-20T08:00:00.000000Z",
+          [
+            1,
+            0
+          ]
+        ],
+        [
+          "2026-11-20T08:00:00.000000Z",
+          null
+        ]
+      ]
+    },
+    {
+      "cutoff": "10:46",
+      "game_status": "scheduled",
+      "kickoff": "2026-11-20T14:00:00.000000Z",
+      "upcoming": 0,
+      "withheld": [
+        {
+          "fixture": "bun/2026-27/1-koln/1-union-berlin",
+          "stage": "schedule",
+          "error": "replacement received after original kickoff; no pre-kickoff cancellation",
+          "previous_kickoff": "2026-11-20T08:00:00.000000Z",
+          "replacement_kickoff": "2026-11-20T14:00:00.000000Z",
+          "observed_at": "2026-11-20T10:20:00.000000Z"
+        }
+      ],
+      "versions": [
+        [
+          "2026-11-20T08:00:00.000000Z",
+          [
+            1,
+            0
+          ]
+        ],
+        [
+          "2026-11-20T08:00:00.000000Z",
+          null
+        ]
+      ]
+    }
+  ],
+  "gamma_projection": [
+    {
+      "original_kickoff": "2026-11-27T20:00:00.000000Z",
+      "replacement_received": "2026-11-27T19:50:00.000000Z",
+      "upcoming": 1,
+      "seal_check": true,
+      "withheld": []
+    },
+    {
+      "original_kickoff": "2026-11-27T20:00:00.000000Z",
+      "replacement_received": "2026-11-27T20:10:00.000000Z",
+      "upcoming": 0,
+      "seal_check": null,
+      "withheld": [
+        {
+          "fixture": "lal/2026-27/levante-ud/real-racing-club-de-santander",
+          "stage": "schedule",
+          "error": "replacement received after original kickoff; no pre-kickoff cancellation",
+          "previous_kickoff": "2026-11-27T20:00:00.000000Z",
+          "replacement_kickoff": "2026-11-29T20:00:00.000000Z",
+          "observed_at": "2026-11-27T20:10:00.000000Z"
+        }
+      ]
+    }
+  ],
+  "commit": "769208cceed8a0b0fe31873ec8bbd8be77617f76",
+  "source_sha256": {
+    "league_player_evidence.py": "7c44791d5df83a02c05f5a96e973dd1ae324829d42f5a2a99e463ca25b2f98cc",
+    "league_player_status.py": "b12611684fc7feea68760f86165d4f805efc1e616b6ef62cd0958a29edf0dfd4",
+    "league_press.py": "34442a322d0e9ed5caea87c59ddbf147a3cad3dc20946b9d1510b1e7544dc928",
+    "league_press_labels.py": "eaa3a65430a9a838d1831c9c2a88df9f5be52190255e2b746eff795e936eb12b",
+    "league_wiki_cache.py": "ebcb29e7018087e10456b23ed658e0abb4d54a2436c4aa4cae960b73277af014",
+    "league_live_inputs.py": "1c9ef1d7d888e1c6b66f5c5cf4b976fd1f7dabe59c9d087de67c1550a8dad269",
+    "league_catalog.py": "040d0295aeb0724d7ae039a429537023bc782a9a216a7f3c1db898b0ffc49881",
+    "football.py": "18471d515bb3953708b7fc323295ab105951bd4eaddc850e7a5592bd85f13e1b",
+    "evidence.py": "5e7127c406def7228a63ebb4e1dffdda7e77da8332ace7539766729e61bd29d7",
+    "evidence_sources.py": "933724d5e2263724f32d1a24857b6f2ab2272e1497576ed9b9a255d546e08409",
+    "league_rosters.py": "8dc2adfa9c8a1969f69cc82543c706e3ceb74078d898ffa11e24892a9157051d",
+    "news_importance.py": "69681a9ef7233a0fc68657c2d8f8754e267aa7c1a62123ca23f08a1871294cf7",
+    "news_model.py": "abdfb9564c0fcbfb8aee85ab8c06d1be1d30521f292742e3d352e618a3234397"
+  }
+}

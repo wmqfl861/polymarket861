@@ -91,3 +91,15 @@ systemctl --user enable --now polymarket861-five-watch.service polymarket861-fiv
 ```
 
 回退时先暂停切换的调度、保留新增收件与全部 SQLite 状态。英超已批准新版时，由当前版本在同一数据目录冻结基准，旧版本执行反向比较和具名批准后再启动。四国旧程序可读取原有预测、比分和名单。若回退到 fiveauto.1，应同时停用新版预测看门狗并恢复原预测服务单元，旧版会恢复原有的重复新闻封存行为。保留新增证据表供日后审计。[历史实收与数据目录](LIVE-AUTOMATION.md)
+
+## 首个完整比赛周末
+
+四国盘口目录和预测目录各自产生指标。赛后用实际 UTC 起止时间导出盘口报告，核对每个联赛的应到/实收时窗、收盘参照、HTTP 429、请求量及磁盘占用。预测侧查看各时点独立场数和缺件原因，和英超的部署记录一起保存，供下一轮对照。首次运行期间没有现场回执的窗口继续保留为漏窗。[周报字段与采集范围](WATCH-SERVICE.md)
+
+```sh
+"$NEW_PM" --data-dir "$MARKET" market league-report --start "${START_UTC:?}" --end "${END_UTC:?}"
+"$NEW_PM" --data-dir "$FIVE" big5-scheduler status
+"$NEW_PM" --data-dir "$EPL" leagues news-endpoints preflight --version v2
+```
+
+最后一条只读检查列出本机英超新闻研究缺件。四国赛前资料从各自首次实收开始累积；新闻带来的预测增益、能否优于收盘参照及扣费后的表现，均待前向样本验证。

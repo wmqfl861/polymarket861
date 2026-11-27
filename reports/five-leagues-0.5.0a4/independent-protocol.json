@@ -1,0 +1,401 @@
+{
+  "verdict": "pass_with_deployment_reservations",
+  "review_scope": "EPL fixed windows and source chronology, native/normalized receipt isolation, formal vs research fee evidence, v2 opt-in, deployment and rollback",
+  "candidate": {
+    "commit": "769208cceed8a0b0fe31873ec8bbd8be77617f76",
+    "tree": "6088cc7b264e2549486831bab9b09e6cdcf4a598",
+    "src": "435a2d7410591c6790ea3344f8f72eebb0fcebd2",
+    "tests": "92ef024f5172bd54fa076cd9caa69358997035b0",
+    "deploy": "d727867d5f43f2dbb5f0ea31915fa3b3db13442a",
+    "github": "6598c48ce4e969e05c02d94d6cd522d0ef6043a3",
+    "python": "3.12.14"
+  },
+  "official_source_notes": {
+    "match_report": "https://touchlinewire.com/docs",
+    "fixture_index": "https://touchlinewire.com/api/v1/fixtures",
+    "fees": "https://docs.polymarket.com/trading/fees"
+  },
+  "targeted_regression": {
+    "passed": 75,
+    "skipped": 0,
+    "elapsed_seconds": 36.198
+  },
+  "epl": {
+    "phase_cases": {
+      "control": "reported",
+      "index_native_score": "unavailable",
+      "index_native_penalty": "unavailable",
+      "missing_current_both_sides": "unavailable",
+      "native_completed_statistics": "unavailable",
+      "normal_pregame_empty_result_objects": "reported",
+      "normal_pregame_zero_statistics": "reported",
+      "native_status_long_match_finished": "unavailable",
+      "native_halftime_and_fulltime_score": "unavailable",
+      "native_home_winner_and_score": "unavailable",
+      "native_match_event": "unavailable",
+      "other_broken_game_index": "reported",
+      "contradicting_second_index_row": "unavailable"
+    },
+    "chronology_and_concurrency": {
+      "normal": {
+        "checked": 1,
+        "HTTP_requests": 2,
+        "observations": 1
+      },
+      "revision": {
+        "first_received": "2026-11-27T18:46:00.000000Z",
+        "rescheduled_read": null,
+        "restored_schedule_version": 3,
+        "restored_before_any_new_poll": null,
+        "restored_receipt": null
+      },
+      "index_clock": {
+        "index_received": "2026-11-27T18:54:00.000000Z",
+        "match_received": "2026-11-27T18:46:00.000000Z",
+        "at_match_cutoff": "reported",
+        "visible": false
+      },
+      "backoff": {
+        "first": {
+          "checked": 1,
+          "observations": [
+            {
+              "fixture_id": "epl/forest-chelsea",
+              "state": "unavailable"
+            }
+          ]
+        },
+        "second": {
+          "checked": 0,
+          "observations": []
+        },
+        "new_requests_before_global_retry_after": 0
+      },
+      "late": {
+        "state_after_kickoff": "unavailable",
+        "visible_before_kickoff": false
+      }
+    },
+    "edition_selection": {
+      "at_issue": {
+        "state": "reported",
+        "received": "2026-11-27T18:46:00.000000Z",
+        "provider_snapshot": "2026-11-27T18:46:00.000000Z",
+        "first_home": 1,
+        "reason": null
+      },
+      "after_provider_correction": {
+        "state": "reported",
+        "received": "2026-11-27T18:50:00.000000Z",
+        "provider_snapshot": "2026-11-27T18:50:00.000000Z",
+        "first_home": 900,
+        "reason": null
+      },
+      "replayed_old_snapshot_at_later_receipt": {
+        "state": "source_conflict",
+        "received": "2026-11-27T18:54:00.000000Z",
+        "provider_snapshot": "2026-11-27T18:46:00.000000Z",
+        "first_home": null,
+        "reason": "reversed or contradictory publisher snapshot"
+      },
+      "same_provider_snapshot_different_xi": {
+        "state": "source_conflict",
+        "received": "2026-11-27T18:58:00.000000Z",
+        "provider_snapshot": "2026-11-27T18:46:00.000000Z",
+        "first_home": null,
+        "reason": "reversed or contradictory publisher snapshot"
+      },
+      "transient_outage_after_confirmed_xi": {
+        "checked": 1,
+        "observations": [
+          {
+            "fixture_id": "epl/forest-chelsea",
+            "state": "unavailable"
+          }
+        ]
+      },
+      "display_immediately_after_outage": {
+        "fixture_id": "epl/forest-chelsea",
+        "formal_eligible": false,
+        "kickoff": "2026-11-27T20:00:00.000000Z",
+        "reason": "upstream outage",
+        "received_at": "2026-11-27T19:02:00.000000Z",
+        "recorded_at": "2026-11-27T19:02:00.000000Z",
+        "schedule_version": 1,
+        "state": "unavailable"
+      }
+    },
+    "damaged_sheet_index": {
+      "first_error": "invalid local team sheet identity, clocks or fingerprint",
+      "second_error": "invalid local team sheet identity, clocks or fingerprint",
+      "requested_as_of": "2026-11-27T18:46:00.000000Z",
+      "original_received": "2026-11-27T18:52:00.000000Z",
+      "future_visible": null,
+      "second_fixture": "epl/other",
+      "returned_source_fixture": null
+    },
+    "damaged_forecast_index": {
+      "reconciled_after_crash": {
+        "reader": "sealed forecast identity or clock mismatch",
+        "scheduler": "error",
+        "seal_margin": null,
+        "scheduler_error": "ValueError: sealed forecast identity or clock mismatch"
+      },
+      "live_finish_observed_index_changed": {
+        "reader": "sealed forecast identity or clock mismatch",
+        "scheduler": "rejected",
+        "seal_margin": null,
+        "scheduler_error": "sealed forecast identity or clock mismatch"
+      }
+    },
+    "independent_fixed_window_churn": {
+      "added_real_check_seconds": 0.25,
+      "clock": "simulated decision clock",
+      "results": [
+        {
+          "seconds_between_evidence_commits": null,
+          "unique_timely_seals": 2,
+          "misses": 0,
+          "dispatch_attempts": [
+            1,
+            1
+          ],
+          "writer_busy": 0,
+          "miss_reasons": []
+        },
+        {
+          "seconds_between_evidence_commits": 0.9,
+          "unique_timely_seals": 2,
+          "misses": 0,
+          "dispatch_attempts": [
+            1,
+            1
+          ],
+          "writer_busy": 0,
+          "miss_reasons": []
+        },
+        {
+          "seconds_between_evidence_commits": 0.1,
+          "unique_timely_seals": 0,
+          "misses": 2,
+          "dispatch_attempts": [
+            7,
+            7
+          ],
+          "writer_busy": 0,
+          "miss_reasons": [
+            "elapsed without a timely seal: ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+          ]
+        }
+      ]
+    },
+    "sealed_b1_with_and_without_timely_research_xi": {
+      "technical": {
+        "identical_prediction": true,
+        "seal_sha256": "00ce56502f4212f53a137e0a609c1b2b583968b437e6f9899dc7bc56281e06a4",
+        "core_probabilities_sha256": "554d0061a98c99645ea71fc4677301dffcc0f8c3844c0832388b41b3fc07323b",
+        "news_pair_sha256": "a916a0f468c3fcc80d6927e9224368da1954684413c943d4ac519bbadc2dbd6a",
+        "research_xi_counts": {
+          "away": 11,
+          "home": 11
+        },
+        "confirmed_in_primary": {
+          "home": false,
+          "away": false
+        },
+        "v2_bindings": 0
+      },
+      "formal": {
+        "identical_prediction": true,
+        "seal_sha256": "2c261c991df2cde6f91ffe1e742ecea26b1d84c34c01ae9b675debae8348336f",
+        "core_probabilities_sha256": "554d0061a98c99645ea71fc4677301dffcc0f8c3844c0832388b41b3fc07323b",
+        "news_pair_sha256": "a916a0f468c3fcc80d6927e9224368da1954684413c943d4ac519bbadc2dbd6a",
+        "research_xi_counts": {
+          "away": 11,
+          "home": 11
+        },
+        "confirmed_in_primary": {
+          "home": false,
+          "away": false
+        },
+        "v2_bindings": 0
+      }
+    }
+  },
+  "fee_gates": {
+    "reviewed_policies": 0,
+    "fills": {
+      "fee_switch_off": {
+        "default_tier": 4,
+        "research_tier": 8,
+        "of": 8
+      },
+      "fee_switch_on": {
+        "default_tier": 0,
+        "research_tier": 8,
+        "of": 8
+      }
+    }
+  },
+  "v2": {
+    "clean_preflight": "insufficient_local_evidence",
+    "clean_registration": "not_registered",
+    "preflight_created_clean_dir": false,
+    "old_and_new_return_identical_local_registration": true,
+    "registered_preflight": "existing_registration",
+    "main_db_sha_unchanged_by_preflight": true,
+    "conflicting_reattempt_exit": 2,
+    "conflicting_reattempt_error": "pm861: v2 already has an immutable local start",
+    "plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+    "start_and_end": [
+      "2026-11-27T06:34:24.455992Z",
+      "2028-07-01T00:00:00.000000Z"
+    ]
+  },
+  "release_round_trip": {
+    "before": {
+      "candidate_ready": {
+        "state": "approval_required",
+        "ready": false,
+        "active_version": "B1",
+        "active_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+        "installed_recipe_sha256": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a"
+      },
+      "old_ready": {
+        "state": "ready",
+        "ready": true,
+        "active_version": "B1",
+        "active_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+        "installed_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1"
+      },
+      "count": 1,
+      "read_sha256": "bbb5ababe031989f5cdc6bf7df70e23b2cecac8efbaad731cf72de67544a1475",
+      "candidate_attempt": "pm861: a changed builtin requires forecast release-compare and named release-approve",
+      "count_after_attempt": 1
+    },
+    "forward": {
+      "paired_count": 1900,
+      "rounds": 190,
+      "changed_training_views": 0,
+      "changed_predictions": 0,
+      "candidate_recipe": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+      "baseline_recipe": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+      "from_version": "B1",
+      "to_version": "B1@e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+      "report": "de6b5e024fbd3536ea43bbab2e5a0b41d14398f824a8d0e5e8eb57ca178433fa"
+    },
+    "forward_approval_in_temp_copy_only": {
+      "version": "B1@e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+      "effective_at": "2026-11-27T06:35:09.635680Z",
+      "reviewer": "isolated regression fixture",
+      "comparison": "de6b5e024fbd3536ea43bbab2e5a0b41d14398f824a8d0e5e8eb57ca178433fa"
+    },
+    "post_forward": {
+      "candidate_ready": {
+        "state": "ready",
+        "ready": true,
+        "active_version": "B1@e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+        "active_recipe_sha256": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+        "installed_recipe_sha256": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a"
+      },
+      "old_ready": {
+        "state": "approval_required",
+        "ready": false,
+        "active_version": "B1@e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+        "active_recipe_sha256": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+        "installed_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1"
+      },
+      "read_sha256": "bbb5ababe031989f5cdc6bf7df70e23b2cecac8efbaad731cf72de67544a1475",
+      "new_seal": "a8e845a503317f19dae781fa96874f6eccb14e646e5ba77d993f2c6254d4f9a7",
+      "old_rejected": "pm861: a changed builtin requires forecast release-compare and named release-approve"
+    },
+    "reverse": {
+      "paired_count": 1900,
+      "rounds": 190,
+      "changed_training_views": 0,
+      "changed_predictions": 0,
+      "candidate_recipe": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+      "baseline_recipe": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+      "from_version": "B1@e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+      "to_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+      "report": "f691c3708acdd06fef3b39796e408ace97be28ff11f74d503c52dfffc0b52717"
+    },
+    "reverse_approval_in_temp_copy_only": {
+      "version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+      "effective_at": "2026-11-27T06:35:47.440270Z",
+      "reviewer": "isolated regression fixture",
+      "comparison": "f691c3708acdd06fef3b39796e408ace97be28ff11f74d503c52dfffc0b52717"
+    },
+    "post_reverse": {
+      "old_ready": {
+        "state": "ready",
+        "ready": true,
+        "active_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+        "active_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+        "installed_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1"
+      },
+      "candidate_ready": {
+        "state": "approval_required",
+        "ready": false,
+        "active_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+        "active_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+        "installed_recipe_sha256": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a"
+      },
+      "old_forecast_sha256": "bbb5ababe031989f5cdc6bf7df70e23b2cecac8efbaad731cf72de67544a1475",
+      "candidate_seal_read_old": "e128813375a9c73a555c913e3facc35aaf55775f2edfd5a1306004520ae6e373",
+      "candidate_seal_read_candidate": "e128813375a9c73a555c913e3facc35aaf55775f2edfd5a1306004520ae6e373",
+      "different_fixture_new_seal": "f3c4349ee1beec7098106ea12d452a16cf197ec77682fb05c9f233985bd409ba",
+      "seals": 3
+    }
+  },
+  "wheel_daemon_process": {
+    "cli_from_wheel": "polymarket861-0.5.0a4-py3-none-any.whl",
+    "unix_notify_socket_available": false,
+    "initial": {
+      "code": 1,
+      "state": {
+        "lal": "not_started",
+        "bun": "not_started",
+        "sea": "not_started",
+        "fl1": "not_started"
+      }
+    },
+    "startup": null,
+    "outage": {
+      "code": 1,
+      "state": {
+        "lal": "ok",
+        "bun": "ok",
+        "sea": "retry",
+        "fl1": "ok"
+      }
+    },
+    "without_restart_recovery": {
+      "code": 0,
+      "state": {
+        "lal": "ok",
+        "bun": "ok",
+        "sea": "ok",
+        "fl1": "ok"
+      }
+    },
+    "heartbeat_notification": null,
+    "stop": null,
+    "service_exit": 130,
+    "after_stop": {
+      "code": 1,
+      "state": {
+        "lal": "stopped",
+        "bun": "stopped",
+        "sea": "stopped",
+        "fl1": "stopped"
+      }
+    }
+  },
+  "limits": [
+    "No access to or changes on the deployed c613a70 host. Source samples and timing tests do not establish that a live 22-player XI or fixed-window seal was received.",
+    "Test signoffs and v2 enrollment only in disposable copies. Live deployments require their own named B1 decision.",
+    "The local runtime lacks a systemd user manager and AF_UNIX datagram access. The packaged process test covers outage isolation, same-process recovery, SIGINT 130 and stopped status. Actual timer, READY/WATCHDOG and manager restarts require CI evidence.",
+    "Sustained evidence writes faster than native verification can still exhaust a window."
+  ]
+}

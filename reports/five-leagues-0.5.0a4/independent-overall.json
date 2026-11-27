@@ -1,0 +1,523 @@
+{
+  "project": "polymarket861",
+  "version": "0.5.0a4",
+  "review_date_utc": "2026-11-27",
+  "reviewer": {
+    "role": "Independent project-wide release reviewer",
+    "model": "gpt-6.2-astra",
+    "reasoning_effort": "max",
+    "product_authorship": false
+  },
+  "verdict": "PASS",
+  "product_release_blockers": [],
+  "frozen_git": {
+    "commit": "769208cceed8a0b0fe31873ec8bbd8be77617f76",
+    "tree": "6088cc7b264e2549486831bab9b09e6cdcf4a598",
+    "src_tree": "435a2d7410591c6790ea3344f8f72eebb0fcebd2",
+    "tests_tree": "92ef024f5172bd54fa076cd9caa69358997035b0",
+    "review_baseline_commit": "ac64dabe0d5322094e49e7b94ea823d0eb36e2b1",
+    "deployed_ancestor_commit": "c613a70a352b68507a329bf74dcc5f0f3f98307e",
+    "worktree_clean": true
+  },
+  "method": "Read-only frozen checkout, isolated runtime databases, original publisher index archives, candidate/deployed replays, native CLI subprocesses and separately constructed failure controls.",
+  "validation": {
+    "test_matrix": [
+      {
+        "cpython": "3.11.18",
+        "discovered": 800,
+        "passed": 799,
+        "failed": 0,
+        "skipped": 1,
+        "elapsed_seconds": 266.032
+      },
+      {
+        "cpython": "3.12.14",
+        "discovered": 800,
+        "passed": 799,
+        "failed": 0,
+        "skipped": 1,
+        "elapsed_seconds": 247.683
+      },
+      {
+        "cpython": "3.13.5",
+        "discovered": 800,
+        "passed": 799,
+        "failed": 0,
+        "skipped": 1,
+        "elapsed_seconds": 262.987
+      }
+    ],
+    "shared_host_skip": {
+      "test": "test_market_watch_health.WatchHealthTests.test_notify_reports_readiness_only_after_first_tick",
+      "reason": "Unix domain datagram sockets denied by the review host"
+    },
+    "chromium_smoke_tests": "executed on each interpreter",
+    "code_boundaries": {
+      "league_boundary_checker_exit": 0,
+      "recipe_references": {
+        "scope": "primary football probability and input admission; B3 news is signed separately",
+        "reviewed_edges_by_family": {
+          "B0": 61,
+          "B1": 61,
+          "B2": 60,
+          "B3": 61
+        },
+        "unreviewed": [],
+        "obsolete": [],
+        "changed_reviewed_bindings": {}
+      },
+      "cross_interpreter_recipe_differences": [],
+      "package_files_sha256": "8844b60049fde78c15aaa24d9282fd386d9c3aee032e374976b58abe1913ea47"
+    },
+    "distribution": {
+      "wheel": "polymarket861-0.5.0a4-py3-none-any.whl",
+      "independently_built_wheel_sha256": "f6f1d4d1b6cce70e2ba310a806fb747ae9a27d0a539722ea94dda8a768c65e5b",
+      "installed_cli_version": "0.5.0a4",
+      "new_modules_equal_to_frozen_source": [
+        "domestic_editions",
+        "league_player_evidence",
+        "league_press_labels",
+        "league_wiki_cache",
+        "wire_match_sheets"
+      ],
+      "fresh_install_watchdog_exit": 1,
+      "fresh_install_leagues_not_started": 4
+    },
+    "editions_and_evaluation": {
+      "link_only_replays": [
+        {
+          "links_per_day": 0,
+          "deployed_news_update_seals": 0,
+          "candidate_evidence_only_changes": 0,
+          "candidate_dynamic_seals": 0,
+          "candidate_fixed_and_preview_seals": 3
+        },
+        {
+          "links_per_day": 2,
+          "deployed_news_update_seals": 13,
+          "candidate_evidence_only_changes": 13,
+          "candidate_dynamic_seals": 0,
+          "candidate_fixed_and_preview_seals": 3
+        },
+        {
+          "links_per_day": 6,
+          "deployed_news_update_seals": 39,
+          "candidate_evidence_only_changes": 39,
+          "candidate_dynamic_seals": 0,
+          "candidate_fixed_and_preview_seals": 3
+        },
+        {
+          "links_per_day": 24,
+          "deployed_news_update_seals": 115,
+          "candidate_evidence_only_changes": 115,
+          "candidate_dynamic_seals": 0,
+          "candidate_fixed_and_preview_seals": 3
+        }
+      ],
+      "legacy_upgrade": {
+        "unchanged_original_journals": true,
+        "counts": {
+          "domestic_jobs": 118,
+          "domestic_scores": 118
+        },
+        "sha": "414f3f2cf4d8fd4b4b30b3ba242bd9a2b4d31251caeef6534cdbf790933ec41d",
+        "display_before": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "display_after": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "old_news_updates": {
+          "sealed": 115
+        },
+        "production_eligible": false
+      },
+      "concurrency": {
+        "worker_count": 8,
+        "waves": [
+          [
+            "ok"
+          ],
+          [
+            "ok"
+          ],
+          [
+            "ok"
+          ]
+        ],
+        "evidence_counts": [
+          1,
+          1
+        ],
+        "full_updates": 2,
+        "unique_revisions": 2,
+        "updates": [
+          [
+            "sealed",
+            1,
+            [
+              "baseline"
+            ]
+          ],
+          [
+            "sealed",
+            1,
+            [
+              "baseline"
+            ]
+          ]
+        ]
+      },
+      "simultaneous_result_conflict": {
+        "visible_result_editions": [
+          [
+            "2026-11-28T03:03:00.000000Z",
+            [
+              2,
+              1
+            ]
+          ],
+          [
+            "2026-11-28T03:03:00.000000Z",
+            null
+          ]
+        ],
+        "scored_samples_by_horizon": {}
+      },
+      "rescheduled_fixture": {
+        "unchanged_neighbour_forecast": "B0",
+        "without_new_result_receipt": {
+          "gaps": {},
+          "status": "scheduled",
+          "upcoming": false,
+          "versions": [
+            [
+              "2026-11-27T22:00:00.000000Z",
+              [
+                2,
+                1
+              ],
+              "2026-11-27T20:00:00.000000Z"
+            ],
+            [
+              "2026-11-28T00:00:00.000000Z",
+              null,
+              "2026-11-27T20:00:00.000000Z"
+            ]
+          ],
+          "schedule_versions": [
+            [
+              "2026-11-26T12:00:00.000000Z",
+              "2026-11-27T20:00:00.000000Z"
+            ],
+            [
+              "2026-11-28T00:00:00.000000Z",
+              "2026-11-29T20:00:00.000000Z"
+            ]
+          ]
+        },
+        "prior_explicit_withdrawal": {
+          "gaps": {},
+          "status": "scheduled",
+          "upcoming": false,
+          "versions": [
+            [
+              "2026-11-27T22:00:00.000000Z",
+              [
+                2,
+                1
+              ],
+              "2026-11-27T20:00:00.000000Z"
+            ],
+            [
+              "2026-11-27T22:03:00.000000Z",
+              null,
+              "2026-11-27T20:00:00.000000Z"
+            ]
+          ],
+          "schedule_versions": [
+            [
+              "2026-11-26T12:00:00.000000Z",
+              "2026-11-27T20:00:00.000000Z"
+            ],
+            [
+              "2026-11-28T00:00:00.000000Z",
+              "2026-11-29T20:00:00.000000Z"
+            ]
+          ]
+        }
+      }
+    },
+    "health": {
+      "missing_market_database": {
+        "state": "partial",
+        "watchdog_exit": 1
+      },
+      "actual_roster_collector_http_failure": {
+        "teams": [
+          [
+            "bayern-munchen",
+            "failed",
+            "OSError: acceptance-upstream-source-unavailable"
+          ],
+          [
+            "sv-werder-bremen",
+            "failed",
+            "OSError: acceptance-upstream-source-unavailable"
+          ]
+        ],
+        "fixture_poll_state": "retry",
+        "watchdog_exit": 1
+      },
+      "bound_market_identity_failure": {
+        "state": "partial",
+        "watchdog_exit": 1,
+        "errors": [
+          {
+            "error": "Gamma participant does not match a registered club",
+            "fixture": "lal/2026-27/levante-ud/real-racing-club-de-santander",
+            "stage": "market_schedule"
+          }
+        ]
+      },
+      "foreground_process": {
+        "one_source_down": {
+          "watchdog_exit": 1,
+          "leagues": {
+            "lal": "ok",
+            "bun": "ok",
+            "sea": "retry",
+            "fl1": "ok"
+          }
+        },
+        "all_recovered": {
+          "watchdog_exit": 0,
+          "leagues": {
+            "lal": "ok",
+            "bun": "ok",
+            "sea": "ok",
+            "fl1": "ok"
+          }
+        },
+        "killed": {
+          "watchdog_exit": 1,
+          "leagues": {
+            "lal": "exited",
+            "bun": "exited",
+            "sea": "exited",
+            "fl1": "exited"
+          }
+        },
+        "restarted": {
+          "watchdog_exit": 0,
+          "leagues": {
+            "lal": "ok",
+            "bun": "ok",
+            "sea": "ok",
+            "fl1": "ok"
+          }
+        },
+        "normal_exit": 130,
+        "after_stop": {
+          "watchdog_exit": 1,
+          "leagues": {
+            "lal": "stopped",
+            "bun": "stopped",
+            "sea": "stopped",
+            "fl1": "stopped"
+          }
+        }
+      },
+      "systemd_analyze_verify": {
+        "exit_code": 0,
+        "test_substitution": "The staged units resolve ExecStart to the independently installed wheel CLI."
+      }
+    },
+    "press": {
+      "verified_original_gdelt_zips": 20,
+      "real_index_rows": 17562,
+      "windows": {
+        "thursday_european_competitions": {
+          "editions": 12,
+          "scanned_rows": 11472,
+          "distinct_club_url_pairs": 41,
+          "pairs_with_indexed_title": 41,
+          "deployed_distinct_club_url_pairs": 23
+        },
+        "separate_saturday_window": {
+          "editions": 8,
+          "scanned_rows": 6090,
+          "distinct_club_url_pairs": 56,
+          "pairs_with_indexed_title": 56,
+          "deployed_distinct_club_url_pairs": 26
+        }
+      },
+      "all_candidate_and_baseline_report_fields_reproduced": true,
+      "verification_scope": "Unique club and URL pairs in the published sample windows. The source supplies index metadata and titles. Article contents and population precision/recall were outside this replay."
+    },
+    "wiki_result_cache": {
+      "leagues": {
+        "bun": {
+          "cold": {
+            "visible_revisions": 2000,
+            "original_decompressions": 2000,
+            "page_parses": 2000
+          },
+          "warm": {
+            "visible_revisions": 2000,
+            "original_decompressions": 0,
+            "page_parses": 0
+          },
+          "append_one": {
+            "visible_revisions": 2001,
+            "original_decompressions": 1,
+            "page_parses": 1
+          },
+          "rewind": {
+            "visible_revisions": 2000,
+            "original_decompressions": 0,
+            "page_parses": 0
+          }
+        },
+        "sea": {
+          "cold": {
+            "visible_revisions": 2000,
+            "original_decompressions": 2000,
+            "page_parses": 2000
+          },
+          "warm": {
+            "visible_revisions": 2000,
+            "original_decompressions": 0,
+            "page_parses": 0
+          },
+          "append_one": {
+            "visible_revisions": 2001,
+            "original_decompressions": 1,
+            "page_parses": 1
+          },
+          "rewind": {
+            "visible_revisions": 2000,
+            "original_decompressions": 0,
+            "page_parses": 0
+          }
+        }
+      },
+      "revision_matrices_and_metadata_match_deployed_replay": true,
+      "fixture_chronologies_match_deployed_replay": true,
+      "full_actual_kickoff_fields_match_direct_candidate_replay": true
+    },
+    "players": {
+      "explicit_source_admission": {
+        "current_with_key_only": "free_season_unavailable",
+        "free_historical_without_grant": "rights_unverified",
+        "external_requests": 0,
+        "no_manifest": "no registered source currently in force: never-registered",
+        "backdated_cutoff_effect": false,
+        "positive_on_admission": true,
+        "after_revocation": false,
+        "prior_cutoff_replays": true,
+        "registered_alias_of_restricted_source": false
+      },
+      "named_matchday_substitute": {
+        "listed": "Jonas Reuter",
+        "changed": false,
+        "reason": "listed_on_published_bench"
+      },
+      "goalkeeper_partial_coverage": {
+        "season_window_matches": 4,
+        "verified_completed_lineups_naming_player": 3,
+        "verified_starts": 2,
+        "changed": false,
+        "reason": "no_verified_majority_of_goalkeeper_starts"
+      }
+    },
+    "epl": {
+      "governance_comparison": {
+        "method": "T60-final-schedule-result-lag24h-v1",
+        "seasons": [
+          "2021-22",
+          "2022-23",
+          "2023-24",
+          "2024-25",
+          "2025-26"
+        ],
+        "paired_count": 1900,
+        "rounds": 190,
+        "changed_predictions": 0,
+        "changed_training_views": 0,
+        "baseline_recipe": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+        "candidate_recipe": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a"
+      },
+      "retained_comparison_sha256": "de6b5e024fbd3536ea43bbab2e5a0b41d14398f824a8d0e5e8eb57ca178433fa",
+      "fixed_T60m_isolated_WAL_probes": [
+        {
+          "seconds_between_evidence_commits": null,
+          "runs": 1,
+          "sealed_before_cutoff": 1,
+          "missed": 0,
+          "seals": 1,
+          "evidence_version_commits": 0,
+          "bumper_busy_errors": 0
+        },
+        {
+          "seconds_between_evidence_commits": 0.05,
+          "runs": 1,
+          "sealed_before_cutoff": 1,
+          "missed": 0,
+          "seals": 1,
+          "evidence_version_commits": 8,
+          "bumper_busy_errors": 0
+        }
+      ]
+    },
+    "news_endpoint_v2": {
+      "preflight_decision": "insufficient_local_evidence",
+      "initial_report_state": "not_registered",
+      "plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61",
+      "data_directory_created_by_readonly_commands": false
+    }
+  },
+  "retained_conditions": [
+    {
+      "subject": "Linux service acceptance",
+      "condition": "Confirm the reviewed release content in GitHub Actions including the native systemd watchdog and timer jobs. The review host had no live systemd manager and denied AF_UNIX datagram sockets."
+    },
+    {
+      "subject": "Production changeover",
+      "condition": "The operator should compare against the installed incumbent, verify retained production forecast digests, give the required named B1 approval, and coordinate service changes around fixed windows. Production services and outcomes were not observed in this review."
+    },
+    {
+      "subject": "Forecast eligibility",
+      "condition": "Domestic player scenarios and editions remain prospective technical research. The five-season B1 compatibility comparison has no archived contemporaneous news or lineups. Live lineup coverage, weekend HTTP load and predictive improvement require separate evidence."
+    },
+    {
+      "subject": "External provider rights",
+      "condition": "API-Football restricts its 2026 free plan to 2022–2024 seasons and says betting-platform use may need rights-holder licenses. No project-specific commercial or long-term modelling permission was established. Independent admissions checks made zero outbound provider requests."
+    }
+  ],
+  "source_references": {
+    "api_football_2026_free_coverage": "https://www.api-football.com/news/post/how-to-get-all-data-from-a-league-with-api-football",
+    "api_football_terms": "https://www.api-football.com/terms",
+    "gdelt_replay": "reports/five-leagues-0.5.0a4/verify-press-links.py",
+    "wiki_replay": "docs/review-evidence/five-leagues-0.5.0a4/probe_wiki_replay_cache.py"
+  },
+  "isolated_run_output_sha256": {
+    "frozen-suite-311.log": "1c25ea57021338982016e410b2fd7b6f040057a55e8f282527cbdb3c37278307",
+    "frozen-suite-312.log": "95e7178287d00da6c8c29f85ae7fdc64b4828f3e9541d26a388393ba90146c46",
+    "frozen-suite-313.log": "5cc4909db48f35b5e998e1f2035493a83cb39c1f6093eaa56fef037b117f3b07",
+    "frozen-blackbox.log": "07fe65965f6ca112591d8cbd35a39fabf406695ac434385ca69460a02f27a5b0",
+    "frozen-recipe-comparison.json": "48eb3b090f8de63ca48abb6be12adc14a70639e16fe8d2f5c35276bede15639a",
+    "frozen-five-season.json": "005adc78e19a16a10887febc77cce1838bb22d0ab320ed1d90fae5da52dc8771",
+    "frozen-epl-countertest.json": "5efd1a80b096dc02fda47a6132be8ad288a4ada6ca1d0638ac03b02556585778",
+    "legacy-trigger-old.json": "8685876b04e0dd7f300597277f06dffaa8040398892800ebe37078523a95797d",
+    "legacy-trigger-frozen.json": "8860171233374ea3262d91af7846dd6921712ff45f649228184bfd5c85667f36",
+    "replayed-gdelt-base.json": "4825801a86fc0037b5aaabc99e3688016537fe5678b1a92304dd1bfc433e630e",
+    "frozen-gdelt.json": "b7f243f4767d3e83318dbdc83f55bf7ee950be472ea9f7aedccd4be464e7ef86",
+    "wiki-deployed.json": "57030958f287879603029346ff0cb29f163bc89ef48dae3db8f36e009f133e8e",
+    "frozen-wiki.json": "1f835c48ff6f29e2bc3cf3fe50da7da6d851707c82b80ec7509618890724631d"
+  }
+}

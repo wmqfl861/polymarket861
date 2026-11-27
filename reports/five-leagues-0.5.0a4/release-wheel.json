@@ -1,0 +1,184 @@
+{
+  "run_at_utc": "2026-11-27T06:34:45.123598+00:00",
+  "test_scope": "Two non-editable wheel installations, pinned eight-season OpenFootball inputs, isolated incumbent SQLite archive. No production access or release approval.",
+  "baseline_commit": "c613a70a352b68507a329bf74dcc5f0f3f98307e",
+  "frozen_executable_objects": {
+    "src": "435a2d7410591c6790ea3344f8f72eebb0fcebd2",
+    "pyproject.toml": "571a4dc6b6c0d0ce2c5135847e8952ce8f44d464",
+    "README.md": "15849697ccc8cb112b67aff817861c5c08e01ca7",
+    "constraints/research.txt": "87859557fe5ac1f6ca39810f742ef1a6711485df"
+  },
+  "wheel_build": "python -m pip wheel --no-deps --no-build-isolation; SOURCE_DATE_EPOCH=1700000000; setuptools and wheel versions shown below. Wheels installed using python -m pip install --no-deps; pinned Python numeric runtime verified in the active site-packages.",
+  "build_tools": {
+    "setuptools": "84.2.1",
+    "wheel": "0.48.0",
+    "pip": "25.0.1"
+  },
+  "packages": {
+    "incumbent": {
+      "package_version": "0.5.0a3+fiveauto.1",
+      "wheel": "polymarket861-0.5.0a3+fiveauto.1-py3-none-any.whl",
+      "wheel_sha256": "db9955d6b4047a6293f1618a3322e1e741996bab597afcd9a434c032249820d2",
+      "size_bytes": 1004455,
+      "installed_files_equal_git": 117,
+      "package_files_sha256": "49b9fa22415f266d2251776bbddd887fb0a8df2a660a2e3cd560840172588696",
+      "release_provenance_sha256": "84a8097e2538867a59084b2cbb0e210fcfd1a015f63a82177b7315cb06a99e22",
+      "wheel_files": 122
+    },
+    "candidate": {
+      "package_version": "0.5.0a4",
+      "wheel": "polymarket861-0.5.0a4-py3-none-any.whl",
+      "wheel_sha256": "b5f746aa30c5dd1be3fe3ece62b0b9fe06add5a966915b2a4a495af1007861ae",
+      "size_bytes": 1039289,
+      "installed_files_equal_git": 122,
+      "package_files_sha256": "8844b60049fde78c15aaa24d9282fd386d9c3aee032e374976b58abe1913ea47",
+      "release_provenance_sha256": "1157b78dff6e59d36944ff2eb36d5726518af36530e838fb79e6426b95767cb8",
+      "wheel_files": 127
+    }
+  },
+  "local_test_report_sha256": "de6b5e024fbd3536ea43bbab2e5a0b41d14398f824a8d0e5e8eb57ca178433fa",
+  "candidate_execution": {
+    "reference_python": "3.12",
+    "release_provenance_sha256": "1157b78dff6e59d36944ff2eb36d5726518af36530e838fb79e6426b95767cb8",
+    "python": "3.12.14",
+    "numeric_runtime": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0"
+    }
+  },
+  "comparison": {
+    "method": "T60-final-schedule-result-lag24h-v1",
+    "history_quality": "24h_lag_sensitivity_final_archive_schedule",
+    "historical_context": "no_archived_news_or_lineups",
+    "formal_eligibility": false,
+    "candidate_recipe": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+    "baseline_recipe": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+    "candidate_sha256": "e16576a364b3501b3cd988aabd189b14d74fa03e4c31a4c726191f814ea0bc1a",
+    "baseline_sha256": "463423d805176bfde00a7c62e601035604c78bd4976b05b96eaae0780ce86519",
+    "input_blobs": {
+      "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+      "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+      "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+      "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+      "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+      "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+      "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+      "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+    },
+    "seasons": [
+      "2021-22",
+      "2022-23",
+      "2023-24",
+      "2024-25",
+      "2025-26"
+    ],
+    "denominator": 1900,
+    "paired_count": 1900,
+    "rounds": 190,
+    "changed_predictions": 0,
+    "changed_training_views": 0,
+    "candidate_score": 75.44781323408776,
+    "baseline_score": 75.44781323408776,
+    "candidate_count": 1900,
+    "baseline_count": 1900,
+    "comparison_rejections": {},
+    "inference": {
+      "method": "round-cluster-t-v1",
+      "unit": "season_and_official_round",
+      "rounds": 190,
+      "matches": 1900,
+      "degrees_of_freedom": 189,
+      "family_comparisons": 10,
+      "family_confidence": 0.95,
+      "individual_confidence": 0.995,
+      "critical_t": 2.8403659628523235
+    },
+    "intervals": {
+      "overall": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "result": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "total": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "home": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "away": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      }
+    }
+  },
+  "active_release_gate": {
+    "old_wheel_state": "ready",
+    "new_wheel_state": "approval_required",
+    "active_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+    "installed_recipe_sha256": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+    "approval_written": false,
+    "new_fixture": "epl/2026-27/bournemouth/brighton-hove-albion",
+    "new_forecast_exit_code": 2,
+    "new_forecast_stderr": "pm861: a changed builtin requires forecast release-compare and named release-approve",
+    "sealed_rows_before": 1,
+    "sealed_rows_after": 1
+  },
+  "retained_seals_read_by_both_wheels": [
+    {
+      "fixture_id": "epl/2026-27/aston-villa/everton",
+      "mode": "technical",
+      "fixture_scope": "pinned OpenFootball; old wheel",
+      "horizon": "early",
+      "seal_sha256": "bce9f86296dd3829843d5767834b0e49a24cfe15840d77cd8690968b22f3127a",
+      "both_cli_outputs_sha256": "da3e41463144d0759cc3fc121bc13fbebdb62ddc78c7affd7208ed8a7460b3b0",
+      "output_bytes": 20124
+    },
+    {
+      "fixture_id": "epl/2026-27/aston-villa/everton",
+      "mode": "technical",
+      "fixture_scope": "pinned OpenFootball; earlier source rehearsal",
+      "horizon": "early",
+      "seal_sha256": "7b0df1ce6fe9a2b5e08ce1f1c5b21026ab7a0682239cfb463bda92ffb542c637",
+      "both_cli_outputs_sha256": "bbb5ababe031989f5cdc6bf7df70e23b2cecac8efbaad731cf72de67544a1475",
+      "output_bytes": 20124
+    },
+    {
+      "fixture_id": "epl/2025-26/northbridge/southbank",
+      "mode": "formal",
+      "fixture_scope": "old wheel, synthetic EPL fixture and clock from tests/test_opportunity.py::Opportunities.seal",
+      "horizon": "T-60m",
+      "seal_sha256": "7c30d17517f61e4275c1e0994eddc4aa5608ba23b735f23f48ce7526382de519",
+      "both_cli_outputs_sha256": "54dd0873d31c0fd8e0c548f09a8f14dd94581f2ea237e856675b827e5d4235ac",
+      "output_bytes": 14601
+    }
+  ],
+  "operator_note": "Check the actual deployment’s own five-season release-compare output before an identified operator authorizes this version. Historical data for this benchmark contain no contemporaneous lineups or player news.",
+  "frozen_checkout_commit": "769208cceed8a0b0fe31873ec8bbd8be77617f76",
+  "frozen_checkout_tree": "6088cc7b264e2549486831bab9b09e6cdcf4a598",
+  "benchmark_input_note": "Eight content-addressed OpenFootball English Premier League en.1.json files, seasons 2018-19 to 2025-26. Five completed test seasons (2021-22 to 2025-26), 380 fixtures and 38 official rounds each. Three earlier seasons supply training history. Both builds calculate each game prospectively at T-60m under the final-archive-schedule, 24-hour result-lag sensitivity protocol; archived contemporaneous lineups and news are unavailable.",
+  "reproduction": [
+    "Use CPython 3.12 with constraints/research.txt; build and separately install both checkouts with python -m pip wheel plus python -m pip install. On the isolated archive use each environment’s pm861 executable. The documented normal deployment installs dependencies from the constraints.",
+    "OLD_PM --data-dir STATE forecast release-baseline HISTORY",
+    "OLD_PM --data-dir STATE data observe HISTORY --register-season 2026-27",
+    "OLD_PM --data-dir STATE forecast make REGISTERED_FUTURE_FIXTURE --horizon early",
+    "NEW_PM --data-dir STATE forecast release-compare HISTORY",
+    "NEW_PM --data-dir STATE season readiness --year 2026 --round 12",
+    "OLD_PM --data-dir STATE forecast get SEALED_DIGEST",
+    "NEW_PM --data-dir STATE forecast get SEALED_DIGEST"
+  ]
+}

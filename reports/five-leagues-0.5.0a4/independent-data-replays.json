@@ -1,0 +1,16 @@
+{
+  "seeds": [
+    17,
+    51,
+    97,
+    433,
+    928,
+    1597,
+    2468,
+    2861,
+    7949,
+    11329
+  ],
+  "additional_full_replay_comparisons": 10800,
+  "git_commit": "769208cceed8a0b0fe31873ec8bbd8be77617f76"
+}

@@ -1,0 +1,145 @@
+{
+  "version": "0.5.0a4",
+  "incumbent": "c613a70a352b68507a329bf74dcc5f0f3f98307e",
+  "claude_review": "ac64dabe0d5322094e49e7b94ea823d0eb36e2b1",
+  "reviewed_local_commit": "769208cceed8a0b0fe31873ec8bbd8be77617f76",
+  "candidate_commit_on_github": "910e6f0613930e9cce6aa8139f641c5223cca03e",
+  "reviewed_tree": "6088cc7b264e2549486831bab9b09e6cdcf4a598",
+  "component_git_objects": {
+    "src": "435a2d7410591c6790ea3344f8f72eebb0fcebd2",
+    "tests": "92ef024f5172bd54fa076cd9caa69358997035b0",
+    "scripts": "61e98de8799e6957a76c5580738a5d8386f2d3f7",
+    ".github": "6598c48ce4e969e05c02d94d6cd522d0ef6043a3",
+    "deploy": "d727867d5f43f2dbb5f0ea31915fa3b3db13442a",
+    "pyproject.toml": "571a4dc6b6c0d0ce2c5135847e8952ce8f44d464",
+    "constraints": "4baaee36ec6a885ea052524619d71bccd3b0e8c1",
+    "README.md": "15849697ccc8cb112b67aff817861c5c08e01ca7"
+  },
+  "reviewer_model": "gpt-6.2-astra",
+  "reasoning_effort": "max",
+  "local_regression": {
+    "3.11.18": {
+      "total": 800,
+      "passed": 799,
+      "skipped": 1,
+      "skip_test": "test_notify_reports_readiness_only_after_first_tick",
+      "skip_reason": "host prohibits Unix datagram sockets",
+      "duration_seconds": 261.669
+    },
+    "3.12.14": {
+      "total": 800,
+      "passed": 799,
+      "skipped": 1,
+      "skip_test": "test_notify_reports_readiness_only_after_first_tick",
+      "skip_reason": "host prohibits Unix datagram sockets",
+      "duration_seconds": 242.259
+    },
+    "3.13.5": {
+      "total": 800,
+      "passed": 799,
+      "skipped": 1,
+      "skip_test": "test_notify_reports_readiness_only_after_first_tick",
+      "skip_reason": "host prohibits Unix datagram sockets",
+      "duration_seconds": 258.403
+    }
+  },
+  "candidate_github_actions": {
+    "id": 45953404817,
+    "branch": "release/0.5.0a4",
+    "sha": "910e6f0613930e9cce6aa8139f641c5223cca03e",
+    "url": "https://github.com/wmqfl861/polymarket861/actions/runs/45953404817",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "systemd-deploy",
+        "status": "completed",
+        "conclusion": "success",
+        "id": 140354232109,
+        "url": "https://github.com/wmqfl861/polymarket861/actions/runs/45953404817/job/140354232109",
+        "environment": "Ubuntu GitHub-hosted runner, actual systemd user manager and installed wheel",
+        "upstreams": "controlled Gamma and football input responses",
+        "services": {
+          "market_watch": {
+            "ci_watchdog_seconds": 35,
+            "release_watchdog_seconds": 180,
+            "checks": [
+              "missing_catalogue_exit_1",
+              "one_minute_timer_accelerated",
+              "fresh_catalogues_for_four_leagues",
+              "kill_restart",
+              "stop_signal_watchdog_restart",
+              "clean_shutdown"
+            ]
+          },
+          "forecast": {
+            "ci_watchdog_seconds": 50,
+            "release_watchdog_seconds": 180,
+            "checks": [
+              "italy_source_down_exit_1_other_three_healthy",
+              "scheduled_health_failure",
+              "source_recovery",
+              "kill_restart",
+              "stop_signal_watchdog_restart",
+              "two_or_more_restarts",
+              "clean_shutdown_then_watchdog_exit_1"
+            ]
+          }
+        }
+      },
+      {
+        "name": "unittest (3.11)",
+        "status": "completed",
+        "conclusion": "success",
+        "id": 140354232286,
+        "url": "https://github.com/wmqfl861/polymarket861/actions/runs/45953404817/job/140354232286",
+        "ran": 800,
+        "duration_seconds": 226.872,
+        "skipped": 0
+      },
+      {
+        "name": "unittest (3.13)",
+        "status": "completed",
+        "conclusion": "success",
+        "id": 140354232391,
+        "url": "https://github.com/wmqfl861/polymarket861/actions/runs/45953404817/job/140354232391",
+        "ran": 800,
+        "duration_seconds": 290.597,
+        "skipped": 0
+      },
+      {
+        "name": "unittest (3.12)",
+        "status": "completed",
+        "conclusion": "success",
+        "id": 140354232406,
+        "url": "https://github.com/wmqfl861/polymarket861/actions/runs/45953404817/job/140354232406",
+        "ran": 800,
+        "duration_seconds": 189.656,
+        "skipped": 0
+      },
+      {
+        "name": "recipe-identity",
+        "status": "completed",
+        "conclusion": "success",
+        "id": 140356271384,
+        "url": "https://github.com/wmqfl861/polymarket861/actions/runs/45953404817/job/140356271384"
+      }
+    ]
+  },
+  "evidence_sha256": {
+    "independent-data.json": "007c11be33239ac93dfe8ba3673184bd543895af4b22ca4fa675ea68b0484549",
+    "independent-data-replays.json": "80719febae81dc5e2b1f807487caf7e21f5d4365114447ac3c6a5c137f32607e",
+    "independent-protocol.json": "ea273c46448f1f8f7d26b2244ea6314c42e6daf9d97e4b50c3648b680670c724",
+    "independent-overall.json": "5e94f69a18feb44585cad60a739b32d7b5edf90bf76d7a4dda2971b872188378",
+    "release-wheel.json": "0566d4eda1eca607fd2bd3eb4674717274aab92b264a3b34a958042813e2cf76"
+  },
+  "recipe_reference_counts": {
+    "B0": 61,
+    "B1": 61,
+    "B2": 60,
+    "B3": 61
+  },
+  "unreviewed_or_obsolete_references": 0,
+  "recipe_cross_python_differences": [],
+  "production_operation": "none; named EPL approval, timed switch and live receipts belong to the deployed instance"
+}
