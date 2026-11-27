@@ -1,0 +1,150 @@
+{
+ "structure": {
+  "sha256": "45a4902fb2ac92a0f3ac2d8916dc8656f3c3c85cb3a1bb9fc6b923b5ccc20406",
+  "data_rows": 110,
+  "events": 11,
+  "conditions": 55,
+  "tokens": 110,
+  "conditions_with_exactly_two_tokens": 55,
+  "events_with_all_five_families": 11,
+  "lines_not_on_half_point": [],
+  "accepting_orders_but_empty_book_tokens": 28,
+  "mirrored_level_counts": 55,
+  "crossed_or_locked_books": 0,
+  "book_timestamp_minutes": [
+   "13:10",
+   "13:25"
+  ],
+  "outcome_order": {
+   "moneyline_first_team_matches_first_slug_code_note": "胜负盘第一行与赛事 slug 的第一个队码都是客队（计划 POLYMARKET.md 的说明）",
+   "spread_first_outcome_is_moneyline_first_team": [
+    "nba-den-uta-2026-11-27: Nuggets -9.5",
+    "nba-phi-ind-2026-11-27: 76ers -3.5"
+   ],
+   "spread_first_outcome_is_moneyline_second_team": [
+    "nba-atl-bos-2026-11-27: Celtics -9.5",
+    "nba-bkn-tor-2026-11-27: Raptors -8.5",
+    "nba-dal-phx-2026-11-27: Suns -2.5",
+    "nba-gsw-por-2026-11-27: Trail Blazers -8.5",
+    "nba-lal-sas-2026-11-27: Spurs -6.5",
+    "nba-mem-min-2026-11-27: Timberwolves -3.5",
+    "nba-mia-nyk-2026-11-27: Knicks -4.5",
+    "nba-mil-det-2026-11-27: Pistons -10.5",
+    "nba-nop-lac-2026-11-27: Clippers -3.5"
+   ]
+  }
+ },
+ "families": {
+  "win": {
+   "tokens": 22,
+   "tokens_with_asks": 22,
+   "tokens_two_sided": 22,
+   "tokens_all_asks_usd_ge_50": 22,
+   "empty_book_tokens": 0,
+   "conditions_with_both_asks": 11,
+   "median_ask_levels_when_quoted": 31.0,
+   "median_best_ask_usd": 7519.21,
+   "ask_sum_min_median_max": [
+    1.01,
+    1.01,
+    1.01
+   ],
+   "median_bid_ask_spread": 0.01,
+   "median_fee_per_share": 0.0113,
+   "median_cost_over_normalised_probability": 0.01639,
+   "max_cost_over_normalised_probability": 0.01794,
+   "sampled_lines_with_mid_at_least_0.08_from_even": null
+  },
+  "full.total": {
+   "tokens": 22,
+   "tokens_with_asks": 22,
+   "tokens_two_sided": 22,
+   "tokens_all_asks_usd_ge_50": 22,
+   "empty_book_tokens": 0,
+   "conditions_with_both_asks": 11,
+   "median_ask_levels_when_quoted": 28.0,
+   "median_best_ask_usd": 1660.17,
+   "ask_sum_min_median_max": [
+    1.01,
+    1.01,
+    1.03
+   ],
+   "median_bid_ask_spread": 0.01,
+   "median_fee_per_share": 0.01247,
+   "median_cost_over_normalised_probability": 0.01763,
+   "max_cost_over_normalised_probability": 0.02948,
+   "sampled_lines_with_mid_at_least_0.08_from_even": [
+    {
+     "event": "nba-phi-ind-2026-11-27",
+     "line": "234.5",
+     "first_outcome_mid": 0.39
+    },
+    {
+     "event": "nba-mil-det-2026-11-27",
+     "line": "222.5",
+     "first_outcome_mid": 0.415
+    }
+   ]
+  },
+  "full.team_total.home": {
+   "tokens": 22,
+   "tokens_with_asks": 4,
+   "tokens_two_sided": 4,
+   "tokens_all_asks_usd_ge_50": 4,
+   "empty_book_tokens": 18,
+   "conditions_with_both_asks": 2,
+   "median_ask_levels_when_quoted": 1.5,
+   "median_best_ask_usd": 124.23,
+   "ask_sum_min_median_max": [
+    1.06,
+    1.06,
+    1.06
+   ],
+   "median_bid_ask_spread": 0.06,
+   "median_fee_per_share": 0.01245,
+   "median_cost_over_normalised_probability": 0.04245,
+   "max_cost_over_normalised_probability": 0.04351,
+   "sampled_lines_with_mid_at_least_0.08_from_even": []
+  },
+  "full.team_total.away": {
+   "tokens": 22,
+   "tokens_with_asks": 10,
+   "tokens_two_sided": 8,
+   "tokens_all_asks_usd_ge_50": 8,
+   "empty_book_tokens": 10,
+   "conditions_with_both_asks": 4,
+   "median_ask_levels_when_quoted": 2.0,
+   "median_best_ask_usd": 105.0,
+   "ask_sum_min_median_max": [
+    1.05,
+    1.065,
+    1.08
+   ],
+   "median_bid_ask_spread": 0.065,
+   "median_fee_per_share": 0.01242,
+   "median_cost_over_normalised_probability": 0.045,
+   "max_cost_over_normalised_probability": 0.05242,
+   "sampled_lines_with_mid_at_least_0.08_from_even": []
+  },
+  "full.spread": {
+   "tokens": 22,
+   "tokens_with_asks": 22,
+   "tokens_two_sided": 22,
+   "tokens_all_asks_usd_ge_50": 22,
+   "empty_book_tokens": 0,
+   "conditions_with_both_asks": 11,
+   "median_ask_levels_when_quoted": 26.5,
+   "median_best_ask_usd": 2150.46,
+   "ask_sum_min_median_max": [
+    1.01,
+    1.01,
+    1.01
+   ],
+   "median_bid_ask_spread": 0.01,
+   "median_fee_per_share": 0.01248,
+   "median_cost_over_normalised_probability": 0.0175,
+   "max_cost_over_normalised_probability": 0.0179,
+   "sampled_lines_with_mid_at_least_0.08_from_even": []
+  }
+ }
+}

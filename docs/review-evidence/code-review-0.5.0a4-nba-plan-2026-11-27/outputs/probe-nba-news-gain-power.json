@@ -1,0 +1,372 @@
+{
+ "assumptions": {
+  "base_home_win_logit_mean_sd": [
+   0.58,
+   0.9
+  ],
+  "mean_p_times_1_minus_p": 0.2016,
+  "news_arm": "perfect: N4 equals the true probability; N3 calibrated but uninformed",
+  "games_independent": true,
+  "mcid": 0.002,
+  "one_season_games": 1230
+ },
+ "what_0.002_means": [
+  {
+   "share_of_games_with_news": 0.05,
+   "shift_in_an_even_game": 0.241,
+   "mean_absolute_shift_in_news_games": 0.1943
+  },
+  {
+   "share_of_games_with_news": 0.1,
+   "shift_in_an_even_game": 0.1704,
+   "mean_absolute_shift_in_news_games": 0.1374
+  },
+  {
+   "share_of_games_with_news": 0.2,
+   "shift_in_an_even_game": 0.1205,
+   "mean_absolute_shift_in_news_games": 0.0971
+  },
+  {
+   "share_of_games_with_news": 0.5,
+   "shift_in_an_even_game": 0.0762,
+   "mean_absolute_shift_in_news_games": 0.0614
+  },
+  {
+   "share_of_games_with_news": 1.0,
+   "shift_in_an_even_game": 0.0539,
+   "mean_absolute_shift_in_news_games": 0.0434
+  }
+ ],
+ "outcome_target": [
+  {
+   "true_mean_improvement": 0.0002,
+   "per_game_sd": 0.01327,
+   "n1230": {
+    "plan_rule": 0.0,
+    "interval_only": 0.076
+   },
+   "n1730": {
+    "plan_rule": 0.0,
+    "interval_only": 0.091
+   },
+   "n2460": {
+    "plan_rule": 0.0,
+    "interval_only": 0.113
+   },
+   "n3690": {
+    "plan_rule": 0.0,
+    "interval_only": 0.148
+   },
+   "games_for_80_plan_rule": null,
+   "games_for_80_interval_only": 34576
+  },
+  {
+   "true_mean_improvement": 0.0005,
+   "per_game_sd": 0.02092,
+   "n1230": {
+    "plan_rule": 0.006,
+    "interval_only": 0.131
+   },
+   "n1730": {
+    "plan_rule": 0.001,
+    "interval_only": 0.167
+   },
+   "n2460": {
+    "plan_rule": 0.0,
+    "interval_only": 0.219
+   },
+   "n3690": {
+    "plan_rule": 0.0,
+    "interval_only": 0.306
+   },
+   "games_for_80_plan_rule": null,
+   "games_for_80_interval_only": 13744
+  },
+  {
+   "true_mean_improvement": 0.001,
+   "per_game_sd": 0.02943,
+   "n1230": {
+    "plan_rule": 0.117,
+    "interval_only": 0.221
+   },
+   "n1730": {
+    "plan_rule": 0.079,
+    "interval_only": 0.292
+   },
+   "n2460": {
+    "plan_rule": 0.046,
+    "interval_only": 0.392
+   },
+   "n3690": {
+    "plan_rule": 0.02,
+    "interval_only": 0.541
+   },
+   "games_for_80_plan_rule": null,
+   "games_for_80_interval_only": 6800
+  },
+  {
+   "true_mean_improvement": 0.002,
+   "per_game_sd": 0.04118,
+   "n1230": {
+    "plan_rule": 0.399,
+    "interval_only": 0.399
+   },
+   "n1730": {
+    "plan_rule": 0.5,
+    "interval_only": 0.524
+   },
+   "n2460": {
+    "plan_rule": 0.5,
+    "interval_only": 0.673
+   },
+   "n3690": {
+    "plan_rule": 0.5,
+    "interval_only": 0.839
+   },
+   "games_for_80_plan_rule": null,
+   "games_for_80_interval_only": 3328
+  },
+  {
+   "true_mean_improvement": 0.003,
+   "per_game_sd": 0.04988,
+   "n1230": {
+    "plan_rule": 0.559,
+    "interval_only": 0.559
+   },
+   "n1730": {
+    "plan_rule": 0.706,
+    "interval_only": 0.706
+   },
+   "n2460": {
+    "plan_rule": 0.84,
+    "interval_only": 0.847
+   },
+   "n3690": {
+    "plan_rule": 0.888,
+    "interval_only": 0.955
+   },
+   "games_for_80_plan_rule": 2171,
+   "games_for_80_interval_only": 2171
+  },
+  {
+   "true_mean_improvement": 0.004,
+   "per_game_sd": 0.05696,
+   "n1230": {
+    "plan_rule": 0.693,
+    "interval_only": 0.693
+   },
+   "n1730": {
+    "plan_rule": 0.832,
+    "interval_only": 0.832
+   },
+   "n2460": {
+    "plan_rule": 0.936,
+    "interval_only": 0.936
+   },
+   "n3690": {
+    "plan_rule": 0.984,
+    "interval_only": 0.989
+   },
+   "games_for_80_plan_rule": 1592,
+   "games_for_80_interval_only": 1592
+  },
+  {
+   "true_mean_improvement": 0.006,
+   "per_game_sd": 0.06815,
+   "n1230": {
+    "plan_rule": 0.87,
+    "interval_only": 0.87
+   },
+   "n1730": {
+    "plan_rule": 0.956,
+    "interval_only": 0.956
+   },
+   "n2460": {
+    "plan_rule": 0.992,
+    "interval_only": 0.992
+   },
+   "n3690": {
+    "plan_rule": 1.0,
+    "interval_only": 1.0
+   },
+   "games_for_80_plan_rule": 1013,
+   "games_for_80_interval_only": 1013
+  }
+ ],
+ "closing_target": [
+  {
+   "closing_noise_sd": 0.03,
+   "true_mean_improvement": 0.0001,
+   "per_game_sd": 0.00064,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 321
+  },
+  {
+   "closing_noise_sd": 0.03,
+   "true_mean_improvement": 0.0002,
+   "per_game_sd": 0.00096,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 180
+  },
+  {
+   "closing_noise_sd": 0.03,
+   "true_mean_improvement": 0.0005,
+   "per_game_sd": 0.00173,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 95
+  },
+  {
+   "closing_noise_sd": 0.03,
+   "true_mean_improvement": 0.001,
+   "per_game_sd": 0.0029,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 67
+  },
+  {
+   "closing_noise_sd": 0.03,
+   "true_mean_improvement": 0.002,
+   "per_game_sd": 0.00514,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 52
+  },
+  {
+   "closing_noise_sd": 0.05,
+   "true_mean_improvement": 0.0001,
+   "per_game_sd": 0.00102,
+   "n1230_interval_only": 0.929,
+   "games_for_80_interval_only": 823
+  },
+  {
+   "closing_noise_sd": 0.05,
+   "true_mean_improvement": 0.0002,
+   "per_game_sd": 0.00148,
+   "n1230_interval_only": 0.997,
+   "games_for_80_interval_only": 431
+  },
+  {
+   "closing_noise_sd": 0.05,
+   "true_mean_improvement": 0.0005,
+   "per_game_sd": 0.00249,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 195
+  },
+  {
+   "closing_noise_sd": 0.05,
+   "true_mean_improvement": 0.001,
+   "per_game_sd": 0.00385,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 117
+  },
+  {
+   "closing_noise_sd": 0.05,
+   "true_mean_improvement": 0.002,
+   "per_game_sd": 0.00626,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 78
+  },
+  {
+   "closing_noise_sd": 0.08,
+   "true_mean_improvement": 0.0001,
+   "per_game_sd": 0.00161,
+   "n1230_interval_only": 0.584,
+   "games_for_80_interval_only": 2048
+  },
+  {
+   "closing_noise_sd": 0.08,
+   "true_mean_improvement": 0.0002,
+   "per_game_sd": 0.0023,
+   "n1230_interval_only": 0.861,
+   "games_for_80_interval_only": 1043
+  },
+  {
+   "closing_noise_sd": 0.08,
+   "true_mean_improvement": 0.0005,
+   "per_game_sd": 0.00374,
+   "n1230_interval_only": 0.997,
+   "games_for_80_interval_only": 440
+  },
+  {
+   "closing_noise_sd": 0.08,
+   "true_mean_improvement": 0.001,
+   "per_game_sd": 0.00551,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 239
+  },
+  {
+   "closing_noise_sd": 0.08,
+   "true_mean_improvement": 0.002,
+   "per_game_sd": 0.00839,
+   "n1230_interval_only": 1.0,
+   "games_for_80_interval_only": 139
+  }
+ ],
+ "share_sensitivity_at_0.002": [
+  {
+   "share_of_games_with_news": 0.05,
+   "per_game_sd": 0.03856,
+   "n1230_plan_rule": 0.444,
+   "n1230_interval_only": 0.444
+  },
+  {
+   "share_of_games_with_news": 0.1,
+   "per_game_sd": 0.04032,
+   "n1230_plan_rule": 0.413,
+   "n1230_interval_only": 0.413
+  },
+  {
+   "share_of_games_with_news": 0.2,
+   "per_game_sd": 0.04118,
+   "n1230_plan_rule": 0.399,
+   "n1230_interval_only": 0.399
+  },
+  {
+   "share_of_games_with_news": 0.5,
+   "per_game_sd": 0.04168,
+   "n1230_plan_rule": 0.391,
+   "n1230_interval_only": 0.391
+  }
+ ],
+ "effect_needed_for_80_percent": {
+  "n1230_plan_rule": 0.00505,
+  "n1230_interval_only": 0.00505,
+  "n1730_plan_rule": 0.0037,
+  "n1730_interval_only": 0.0037,
+  "n1230_closing_sd_0.05_interval_only": 6.6e-05,
+  "n1230_closing_sd_0.08_interval_only": 0.000169
+ },
+ "simulation_check": {
+  "outcome_0.002_n1230": {
+   "formula": {
+    "plan_rule": 0.399,
+    "interval_only": 0.399
+   },
+   "simulated": {
+    "seasons": 4000,
+    "plan_rule": 0.399,
+    "interval_only": 0.399
+   }
+  },
+  "outcome_0.004_n1230": {
+   "formula": {
+    "plan_rule": 0.693,
+    "interval_only": 0.693
+   },
+   "simulated": {
+    "seasons": 4000,
+    "plan_rule": 0.7,
+    "interval_only": 0.7
+   }
+  },
+  "closing_sd_0.05_0.0005_n1230": {
+   "formula": {
+    "plan_rule": 0.0,
+    "interval_only": 1.0
+   },
+   "simulated": {
+    "seasons": 4000,
+    "plan_rule": 0.0,
+    "interval_only": 1.0
+   }
+  }
+ }
+}

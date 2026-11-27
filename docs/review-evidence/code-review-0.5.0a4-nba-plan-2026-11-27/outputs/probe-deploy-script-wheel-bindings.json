@@ -1,0 +1,83 @@
+{
+ "script_lines": {
+  "build_calibration.py": 134,
+  "discover.py": 1019,
+  "espn_clubs.py": 63,
+  "notify.py": 210,
+  "account_engine.py": 118,
+  "monitor.py": 458,
+  "open-portfolio.py": 109,
+  "prepare-slate.py": 116,
+  "watch-picks.py": 1088
+ },
+ "script_lines_total": 3315,
+ "package_attributes_used": 76,
+ "missing_in_this_source": [],
+ "private_names_used": 20,
+ "private_names": {
+  "big5_market._db": [
+   "prepare-slate.py"
+  ],
+  "big5_market._identity": [
+   "discover.py",
+   "prepare-slate.py"
+  ],
+  "big5_market._record": [
+   "prepare-slate.py"
+  ],
+  "big5_market._selection": [
+   "discover.py",
+   "prepare-slate.py"
+  ],
+  "budget_archive_proof._terms": [
+   "open-portfolio.py"
+  ],
+  "evidence._collect": [
+   "watch-picks.py"
+  ],
+  "evidence._selected_lineup": [
+   "watch-picks.py"
+  ],
+  "five_league_budget._books": [
+   "account_engine.py"
+  ],
+  "five_league_budget._indexed": [
+   "account_engine.py"
+  ],
+  "five_league_budget._scope": [
+   "account_engine.py"
+  ],
+  "league_study._snapshot": [
+   "build_calibration.py"
+  ],
+  "ledger_terms._terms_with_fee": [
+   "discover.py",
+   "watch-picks.py"
+  ],
+  "market_archive._book_value": [
+   "open-portfolio.py"
+  ],
+  "market_archive._fetch": [
+   "monitor.py"
+  ],
+  "news_events._verified": [
+   "watch-picks.py"
+  ],
+  "opportunity._club": [
+   "discover.py"
+  ],
+  "pipeline._verified_seal": [
+   "watch-picks.py"
+  ],
+  "settlement._outcome_slot": [
+   "monitor.py"
+  ],
+  "settlement._verify_token": [
+   "monitor.py"
+  ],
+  "shadow_market._fee": [
+   "discover.py",
+   "watch-picks.py"
+  ]
+ }
+}

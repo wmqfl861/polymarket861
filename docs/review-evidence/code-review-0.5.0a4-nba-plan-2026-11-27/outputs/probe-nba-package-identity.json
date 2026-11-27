@@ -1,0 +1,101 @@
+{
+ "b1_recipe_modules": [
+  "archive_proof",
+  "blob_storage",
+  "datasets",
+  "dbscope",
+  "evidence",
+  "evidence_sources",
+  "football",
+  "football_model",
+  "independent_results",
+  "input_manifest",
+  "jobs",
+  "jobs_research",
+  "ledger_rules",
+  "ledger_terms",
+  "market_archive",
+  "market_http",
+  "market_provider",
+  "opportunity",
+  "paired_proof",
+  "pipeline",
+  "result_admission",
+  "result_feed",
+  "result_operations",
+  "result_pairings",
+  "result_training_review",
+  "schedule_consensus",
+  "score_bounds",
+  "store"
+ ],
+ "b1_recipe_module_count": 28,
+ "variants": {
+  "baseline": {
+   "football_recipes_changed": [],
+   "b1_primary": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+   "package_files": 122,
+   "package_files_changed": false,
+   "decision_modules": 112,
+   "decision_implementation_changed": false
+  },
+  "add_nba_package": {
+   "football_recipes_changed": [],
+   "b1_primary": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+   "package_files": 124,
+   "package_files_changed": true,
+   "decision_modules": 114,
+   "decision_implementation_changed": true
+  },
+  "add_unused_helper": {
+   "football_recipes_changed": [],
+   "b1_primary": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+   "package_files": 124,
+   "package_files_changed": true,
+   "decision_modules": 114,
+   "decision_implementation_changed": true
+  },
+  "edit_shared_read": {
+   "football_recipes_changed": [
+    "B0.paired",
+    "B0.primary",
+    "B1.paired",
+    "B1.primary",
+    "B2.paired",
+    "B2.primary",
+    "B3.paired",
+    "B3.primary"
+   ],
+   "b1_primary": "ea254997c655f369dd3a9efa49be6ef9c4ba1a5d55f51b4bde226986ff500e9c",
+   "package_files": 124,
+   "package_files_changed": true,
+   "decision_modules": 114,
+   "decision_implementation_changed": true
+  },
+  "edit_store_connect": {
+   "football_recipes_changed": [],
+   "b1_primary": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+   "package_files": 124,
+   "package_files_changed": true,
+   "decision_modules": 114,
+   "decision_implementation_changed": true
+  },
+  "edit_store_digest": {
+   "football_recipes_changed": [
+    "B0.paired",
+    "B0.primary",
+    "B1.paired",
+    "B1.primary",
+    "B2.paired",
+    "B2.primary",
+    "B3.paired",
+    "B3.primary"
+   ],
+   "b1_primary": "99d511a1cc27e345cd9b016cd84ebabcefe003e7e1408d1cac3c707ac5a838e5",
+   "package_files": 124,
+   "package_files_changed": true,
+   "decision_modules": 114,
+   "decision_implementation_changed": true
+  }
+ }
+}

@@ -1,0 +1,162 @@
+{
+ "package_version": "0.5.0a4",
+ "python": "3.12.3",
+ "fixture": "FC Bayern München v SV Werder Bremen",
+ "simulated_span": "2026-11-27T00:00:00.000000Z to 2026-12-01T22:30:00.000000Z, one tick per 15 minutes",
+ "news_update_seals": [
+  {
+   "links_per_day_for_the_two_clubs": 0.0,
+   "synthetic_links_published": 0,
+   "sealed_by_horizon": {
+    "T-24h": 1,
+    "T-60m": 1,
+    "preview": 1
+   },
+   "news_updates_sealed": 0,
+   "news_updates_whose_probabilities_differ_from_the_preview": 0,
+   "news_updates_with_pair_changed": 0,
+   "news_updates_with_player_scenario_changed": 0,
+   "distinct_probability_vectors_across_all_seals": 1,
+   "pair_status": [
+    "no_applicable_news"
+   ],
+   "roster_state": [
+    "unknown"
+   ],
+   "player_status_configured": [
+    false
+   ],
+   "payload_bytes_total": 17693,
+   "payload_bytes_largest": 5899,
+   "score_rows_by_horizon": {
+    "T-24h": 1,
+    "T-60m": 1,
+    "preview": 1
+   },
+   "status_three_days_after_the_last_cycle": {
+    "state": "stale",
+    "last_cycle_finished": "2026-12-01T22:30:00.000000Z",
+    "clock_now": "2026-12-04T22:30:00.000000Z",
+    "fields": [
+     "consecutive_incomplete_cycles",
+     "dispatch",
+     "eligible_upcoming",
+     "evidence_changes",
+     "evidence_only_changes",
+     "healthy",
+     "last_cycle",
+     "last_cycle_age_seconds",
+     "last_successful_cycle",
+     "match_weighted_scores",
+     "news_poll_batch",
+     "news_poll_failures",
+     "news_polls",
+     "score_revisions",
+     "scored_samples_by_horizon",
+     "service",
+     "state"
+    ]
+   }
+  },
+  {
+   "links_per_day_for_the_two_clubs": 2.0,
+   "synthetic_links_published": 10,
+   "sealed_by_horizon": {
+    "T-24h": 1,
+    "T-60m": 1,
+    "preview": 1
+   },
+   "news_updates_sealed": 0,
+   "news_updates_whose_probabilities_differ_from_the_preview": 0,
+   "news_updates_with_pair_changed": 0,
+   "news_updates_with_player_scenario_changed": 0,
+   "distinct_probability_vectors_across_all_seals": 1,
+   "pair_status": [
+    "no_applicable_news"
+   ],
+   "roster_state": [
+    "unknown"
+   ],
+   "player_status_configured": [
+    false
+   ],
+   "payload_bytes_total": 24385,
+   "payload_bytes_largest": 8895,
+   "score_rows_by_horizon": {
+    "T-24h": 1,
+    "T-60m": 1,
+    "preview": 1
+   }
+  },
+  {
+   "links_per_day_for_the_two_clubs": 6.0,
+   "synthetic_links_published": 29,
+   "sealed_by_horizon": {
+    "T-24h": 1,
+    "T-60m": 1,
+    "preview": 1
+   },
+   "news_updates_sealed": 0,
+   "news_updates_whose_probabilities_differ_from_the_preview": 0,
+   "news_updates_with_pair_changed": 0,
+   "news_updates_with_player_scenario_changed": 0,
+   "distinct_probability_vectors_across_all_seals": 1,
+   "pair_status": [
+    "no_applicable_news"
+   ],
+   "roster_state": [
+    "unknown"
+   ],
+   "player_status_configured": [
+    false
+   ],
+   "payload_bytes_total": 35504,
+   "payload_bytes_largest": 14457,
+   "score_rows_by_horizon": {
+    "T-24h": 1,
+    "T-60m": 1,
+    "preview": 1
+   }
+  },
+  {
+   "links_per_day_for_the_two_clubs": 24.0,
+   "synthetic_links_published": 116,
+   "sealed_by_horizon": {
+    "T-24h": 1,
+    "T-60m": 1,
+    "preview": 1
+   },
+   "news_updates_sealed": 0,
+   "news_updates_whose_probabilities_differ_from_the_preview": 0,
+   "news_updates_with_pair_changed": 0,
+   "news_updates_with_player_scenario_changed": 0,
+   "distinct_probability_vectors_across_all_seals": 1,
+   "pair_status": [
+    "no_applicable_news"
+   ],
+   "roster_state": [
+    "unknown"
+   ],
+   "player_status_configured": [
+    false
+   ],
+   "payload_bytes_total": 46636,
+   "payload_bytes_largest": 20028,
+   "score_rows_by_horizon": {
+    "T-24h": 1,
+    "T-60m": 1,
+    "preview": 1
+   }
+  }
+ ],
+ "poll_exception": {
+  "cycles_run": 3,
+  "roster_collect_calls_that_raised": 1,
+  "run_loop_raised": null,
+  "status_state": "stale",
+  "status_last_cycle_error": null,
+  "status_news_polls": {
+   "retry": 1
+  }
+ }
+}
