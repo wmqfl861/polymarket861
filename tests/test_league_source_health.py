@@ -21,7 +21,7 @@ GDELT = context_feeds.GKG
 ROSTER = league_rosters._ROSTER_SOURCE
 EARLY_EDITION = "20261125100000"
 LAST_EDITION = "20261126100000"
-LINK = "https://example.org/bayern-squad"
+LINK = "https://example.org/football/bayern-squad"
 
 
 class LeagueSourceHealth(unittest.TestCase):
@@ -97,6 +97,19 @@ class LeagueSourceHealth(unittest.TestCase):
         self.assertEqual((barca["collector_state"], barca["observed_links"]), ("checked_no_links", 0))
         self.assertIsNone(barca["latest_link"])
         self.assertFalse(barca["has_observation"])
+
+    def test_rejected_legacy_press_claim_does_not_count_as_a_current_observation(self):
+        with closing(self.database(self.press, "index.sqlite3", league_press.SCHEMA)) as db, db:
+            db.execute("INSERT INTO press_releases VALUES(?,?,?,?,?,?)",
+                       (LAST_EDITION, "checksum", SECOND, SEASON, '["fl1"]', 12))
+            url = "https://example.org/cars/ford-unveils-le-mans-hypercar"
+            doc = {"url": url, "club_label": "le mans", "matched_via": "article_url"}
+            db.execute("INSERT INTO press_clubs VALUES(?,?,?,?,?)",
+                       (LAST_EDITION, "fl1", "Le Mans FC", url, json.dumps(doc)))
+        report = self.health()
+        team = next(v[GDELT] for k, v in report["clubs"].items() if k.startswith("fl1/le-mans") and GDELT in v)
+        self.assertEqual(team["historical_index_links"], 1)
+        self.assertEqual((team["observed_links"], team["has_observation"], team["latest_link"]), (0, False, None))
 
     def test_roster_receipt_survives_later_failed_check_and_requires_archived_original(self):
         original = b"an archived first-team page"

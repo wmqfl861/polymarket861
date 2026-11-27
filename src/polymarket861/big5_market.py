@@ -54,6 +54,8 @@ CREATE TABLE IF NOT EXISTS big5_catalog_http(
  slug TEXT PRIMARY KEY,fixture TEXT NOT NULL,sport TEXT NOT NULL,kickoff TEXT NOT NULL,
  received TEXT NOT NULL,sha TEXT NOT NULL,fresh INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS big5_catalog_http_fixture ON big5_catalog_http(fixture);
+CREATE TABLE IF NOT EXISTS big5_identity_conflicts(
+ slug TEXT NOT NULL,received TEXT NOT NULL,sha TEXT NOT NULL,PRIMARY KEY(slug,received,sha));
 """
 
 
@@ -158,12 +160,22 @@ def _http_check(db, identity, reply, sha, fresh):
     )
 
 
+class _ChangedIdentity(ValueError):
+    pass
+
+
+def _record_conflict(db, identity, reply, sha):
+    if identity[0] == identity[1] and provider.fresh_observation(reply):
+        db.execute("INSERT OR IGNORE INTO big5_identity_conflicts VALUES(?,?,?)",
+                   (identity[0], reply.received_at, sha))
+
+
 def _record(db, event, identity, reply, sha):
     previous = db.execute(
         "SELECT home_id,away_id,event_id FROM big5_events WHERE slug=?", (identity[0],)
     ).fetchone()
     if previous and tuple(previous) != identity[4:7]:
-        raise ValueError("existing event ID or domestic participant IDs changed")
+        raise _ChangedIdentity("existing event ID or domestic participant IDs changed")
     listings = event.get("markets") or []
     if not isinstance(listings, list) or any(
         not isinstance(m, dict) or not isinstance(m.get("slug"), str) or not m["slug"]
@@ -324,6 +336,8 @@ def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
                         else:
                             rejected["known_fixture_moved_outside_window"] += 1
                     except (TypeError, ValueError, KeyError) as exc:
+                        if isinstance(exc, _ChangedIdentity):
+                            _record_conflict(db, fields, reply, sha)
                         rejected[str(exc)] += 1
             for fixture, slug in page_fixtures:
                 domestic[fixture].add(slug)
@@ -463,6 +477,9 @@ def _refresh(root, main, *, fresh_required=False):
             events.append(slug)
             bindings[slug] = (reply.received_at, sha)
         except (ValueError, TypeError, KeyError, OSError) as exc:
+            if isinstance(exc, _ChangedIdentity):
+                with closing(_db(root)) as db, db:
+                    _record_conflict(db, identity, reply, sha)
             if not market_watch_failures.recoverable(exc):
                 raise
             gaps.append({"slug": slug, **_error(exc)})

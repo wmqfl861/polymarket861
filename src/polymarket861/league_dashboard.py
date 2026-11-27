@@ -8,18 +8,25 @@ from contextlib import closing
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 from . import big5_scheduler, dashboard, football, league_registry, news_events, news_model, news_roster, news_scope
-from . import news_sources, store
+from . import news_sources, store, wire_match_sheets
 
 NAMES = {code: {"en": "英超", "es": "西甲", "de": "德甲", "it": "意甲", "fr": "法甲"}[p.archive_code]
          for code, p in league_registry.PROFILES.items()}
-HORIZONS = {"preview": "首次预览", "early": "提前预测", "news_update": "新闻更新",
+HORIZONS = {"preview": "首次预览", "early": "提前预测", "news_update": "历史新闻封存",
+            "forecast_update": "预测或伤停情景更新",
             "T-24h": "距开球 24 小时", "T-60m": "距开球 60 分钟"}
 STATES = {"not_started": "尚无运行记录", "pending": "等待观测", "unknown": "缺少观测",
           "rate_limited": "来源限流", "not_configured": "未配置数据源", "provider_backoff": "等待来源重试",
           "no_published_players": "来源未列出球员", "fixture_identity_unmatched": "尚未匹配本场",
           "fixture_identity_ambiguous": "比赛标识待核实", "subscription_or_access_denied": "来源访问受限",
           "unavailable": "来源暂不可用", "network_error": "来源暂不可达", "reported": "已获报告",
-          "published": "已公布", "retry": "等待重试", "ok": "运行中", "partial": "部分数据可用"}
+          "published": "已公布", "retry": "等待重试", "ok": "运行中", "partial": "部分数据可用",
+          "stale": "超过两分钟未完成调度", "exited": "调度进程已退出", "stopped": "调度进程已停止",
+          "starting": "调度正在启动", "one_shot": "仅完成单次运行",
+          "free_season_unavailable": "免费方案未覆盖本赛季", "rights_unverified": "来源使用权限待核实",
+          "unpublished": "来源尚未公布", "unmonitored": "尚无常驻进程心跳",
+          "initializing": "正在完成首次调度", "clock_conflict": "系统时间与收件时间冲突",
+          "source_conflict": "来源修订冲突，等待复核"}
 
 
 def _e(value):
@@ -44,6 +51,19 @@ def _time(timestamp):
 def _probabilities(values):
     return [f"{100 * values[key]:.1f}%" if isinstance(values.get(key), (int, float)) else "—"
             for key in ("home_win", "draw", "away_win")]
+
+
+def _total_lines(totals, match):
+    rows = []
+    for group, label in (("total", "全场"), ("home", match["home"]), ("away", match["away"])):
+        for line, values in sorted(totals.get(group, {}).items(), key=lambda v: float(v[0])):
+            rows.append(f"<tr><td>{_e(label)}</td><td>{_e(line)}</td>"
+                        f"<td>{values['over']:.1%}</td><td>{values['under']:.1%}</td></tr>")
+    if not rows:
+        return ""
+    return ("<details><summary>全场和单队大小球概率</summary><div class='table-wrap'><table>"
+            "<thead><tr><th>进球范围</th><th>球数线</th><th>大球</th><th>小球</th></tr></thead>"
+            "<tbody>" + "".join(rows) + "</tbody></table></div></details>")
 
 
 def _season_matches(data_dir, code, fixture_id=None):
@@ -77,13 +97,19 @@ def _season_matches(data_dir, code, fixture_id=None):
                             "home": payload["home"], "away": payload["away"],
                             "kickoff": payload["kickoff"], "latest_seal": {"horizon": payload["horizon"],
                             "sealed": row["sealed_at"], "digest": row["digest"], "lineups": payload.get("lineups", {}),
-                            "probabilities": payload["probabilities"],
+                            "probabilities": payload["probabilities"], "totals": payload.get("totals", {}),
                             "model": payload.get("model", "—"), "mode": payload.get("mode", "—")}})
         return results
 
 
 def _link(value, label):
-    if isinstance(value, str) and urlsplit(value).scheme in {"https", "http"} and urlsplit(value).netloc:
+    try:
+        parsed = urlsplit(value) if isinstance(value, str) else None
+        valid = parsed and parsed.scheme in {"https", "http"} and parsed.hostname and not (
+            parsed.username is not None or parsed.password is not None)
+    except ValueError:
+        valid = False
+    if valid:
         return f'<a rel="noreferrer" href="{_e(value)}">{_e(label)}</a>'
     return _e(label)
 
@@ -159,8 +185,9 @@ def _team_fields(fixture, side, news):
                                  if r.get("reason") or r.get("provider_type") else "") for r in rows)
             else:
                 text = _people(rows)
+            source = "已登记的免费来源" if snapshot.get("source") == "registered-free-evidence" else "API-Football"
             out.append(f"<p><strong>{title}</strong>　{text}</p>"
-                       f"<small>API-Football · 本机收件于 {_time(snapshot.get('received_at'))}</small>")
+                       f"<small>{source} · 本机收件于 {_time(snapshot.get('received_at'))}</small>")
         else:
             state = snapshot.get("state", "unknown")
             out.append(f"<p><strong>{title}</strong>　{_e(STATES.get(state, '缺少本队本场记录'))}</p>")
@@ -168,16 +195,27 @@ def _team_fields(fixture, side, news):
 
 
 def _headlines(press, match):
-    out = []
+    out = ["<p>索引按俱乐部匹配，报道与本场的关联待核实。</p>"]
     for side in ("home", "away"):
         team = press.get("teams", {}).get(side, {})
         stories = []
         for item in team.get("items", ()):
             url = item.get("url")
-            title = item.get("title") or item.get("headline") or item.get("domain") or "来源链接"
+            title = item.get("title") or item.get("headline")
+            domain = item.get("domain") or "来源链接"
+            label = title or domain
             seen = item.get("index_seen_at") or item.get("received_at")
-            date = (" · " + _e(_time(seen))) if seen else ""
-            stories.append("<li>" + _link(url, title) + date + "</li>")
+            metadata = [domain] if title and item.get("domain") else []
+            if not title:
+                metadata.append("索引未提供标题")
+            if seen:
+                metadata.append(("索引时间 " if item.get("index_seen_at") else "本机收件 ") + _time(seen))
+            if item.get("title_received_at"):
+                metadata.append("标题收件 " + _time(item["title_received_at"]))
+            if item.get("club_label"):
+                metadata.append("命中球队名 " + item["club_label"])
+            details = " · ".join(_e(field) for field in metadata)
+            stories.append("<li>" + _link(url, label) + (f" <small>{details}</small>" if details else "") + "</li>")
         out.append(f'<h3>{_e(match[side])}</h3>')
         out.append("<ul>" + "".join(stories) + "</ul>" if stories else "<p>尚无可显示的已匹配报道。</p>")
     if press.get("attribution"):
@@ -275,6 +313,13 @@ def _season_fields(fixture, evidence, side):
         out.append("<p>来源覆盖有缺项，其他球员状态待核实。</p>")
     lineup = fixture.get("latest_seal", {}).get("lineups", {}).get(side, {})
     out.append("<p>预测封存时的首发　" + ("已确认" if lineup.get("confirmed") else "缺少确认名单") + "</p>")
+    sheet = evidence.get("match_sheet")
+    if sheet:
+        players = sheet.get("teams", {}).get(side, [])
+        label = _people(players) or _e(STATES.get(sheet["state"], "尚无本队逐场名单"))
+        out.append("<p>逐场首发观测（研究）　" + label + "</p><small>" +
+                   _link(sheet.get("source_url"), "Tactical Data by Touchline Wire") +
+                   " · 本机收件 " + _e(_time(sheet["received_at"])) + "</small>")
     return "".join(out) + "</section>"
 
 
@@ -288,10 +333,16 @@ def _match(data_dir, root, code, fid):
         at = store.now_utc()
         current = league_press.fixture_news_as_of(root, match, at)
         evidence = _season_people(data_dir, match, at)
+        try:
+            evidence["match_sheet"] = wire_match_sheets.latest(data_dir, match, at)
+        except (ValueError, sqlite3.Error):
+            evidence["sheet_integrity_error"] = True
         link = (f'<p><a href="{evidence["report_link"]}">打开本场英超原始预测报告</a></p>'
                 if evidence["report_link"] else "")
-        return (f'<h1>{_e(match["home"])} – {_e(match["away"])}</h1>' + _table([match], code) + link +
-                "<h2>本场球队名单与伤停</h2>" +
+        sheet_notice = "<p>逐场首发资料校验失败，已暂缓展示。</p>" if evidence.get("sheet_integrity_error") else ""
+        return (f'<h1>{_e(match["home"])} – {_e(match["away"])}</h1>' + _table([match], code) +
+                _total_lines(match["latest_seal"].get("totals", {}), match) + link +
+                "<h2>本场球队名单与伤停</h2>" + sheet_notice +
                 "".join(_season_fields(match, evidence, side) for side in ("home", "away")) +
                 "<h2>球队新闻</h2>" +
                 _headlines(current, match))
@@ -312,11 +363,16 @@ def _match(data_dir, root, code, fid):
         paired = "新闻候选调整了概率。" if pair.get("changed") else "本次新闻候选与基准概率一致。"
         out.append(f"<p>本场基准使用 {base['evidence']['training_matches']} 场已收赛果。"
                    f"输入截止于 {_time(payload['input_cutoff'])}，封存于 {_time(current['sealed'])}。{paired}</p>")
+        out.append(_total_lines(base.get("totals", {}), match))
         scenario = payload.get("player_scenario", {})
         if scenario.get("changed"):
             h, d, a = _probabilities(scenario.get("probabilities", {}))
             out.append(f"<h2>伤停情景（未校准）</h2><p>按逐场伤停报告与名单身份匹配，"
                        f"主胜 {h}，平局 {d}，客胜 {a}。采用的报告涉及 {_people(scenario['applied'])}。</p>")
+        if payload.get("changed_outputs"):
+            labels = {"baseline": "攻防基准概率", "paired_news": "新闻对照概率", "player_scenario": "伤停情景"}
+            out.append("<p>本次封存更新了" + "、".join(
+                _e(labels.get(key, key)) for key in payload["changed_outputs"]) + "。</p>")
         out.append("<details><summary>赛程来源与预测指纹</summary><p>Polymarket Gamma · " +
                    _e(payload["schedule_evidence"].get("slug")) + " · " +
                    _time(payload["schedule_evidence"].get("receipt")) + "</p><code>" +
@@ -360,8 +416,23 @@ def render(data_dir, root, query):
             else:
                 report = reports[league]
                 sections.append(_table(report.get("eligible_upcoming", []), league))
-                if report["state"] != "ok":
-                    sections.append(f"<small>调度状态　{_e(STATES.get(report['state'], report['state']))}</small>")
+                state = STATES.get(report["state"], report["state"])
+                finished = (report.get("last_cycle") or {}).get("finished")
+                when = " · 最近完成 " + _e(_time(finished)) if finished else ""
+                sections.append(f"<p><small>调度状态　{_e(state)}{when}</small></p>")
+                if report.get("evidence_only_changes") is not None:
+                    sections.append(f"<p>仅资料变化 {_e(report['evidence_only_changes'])} 次。</p>")
+                scores = report.get("match_weighted_scores", {})
+                if scores:
+                    lines = "".join(
+                        f"<tr><td>{_e(HORIZONS.get(key, key))}</td><td>{_e(item['fixtures'])}</td>"
+                        f"<td>{item['mean_no_news']:.2f}</td><td>{item['mean_with_news']:.2f}</td></tr>"
+                        for key, item in scores.items())
+                    sections.append("<details><summary>已完赛的逐时点评分</summary>"
+                                    "<p>每场比赛在同一时点只计一次。</p><div class='table-wrap'><table>"
+                                    "<thead><tr><th>预测时点</th><th>比赛数</th><th>基准平均分</th>"
+                                    "<th>新闻对照平均分</th></tr></thead><tbody>" + lines +
+                                    "</tbody></table></div></details>")
             sections.append("</section>")
         content = "".join(sections)
     css = (dashboard.ASSETS / "dashboard.css").read_text(encoding="utf-8")

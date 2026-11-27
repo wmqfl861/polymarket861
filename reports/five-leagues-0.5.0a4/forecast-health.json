@@ -1,0 +1,211 @@
+{
+  "scope": "synthetic Bundesliga schedule, including real scheduler SQL and CLI; no production data",
+  "audit_base": "ac64dabe0d5322094e49e7b94ea823d0eb36e2b1",
+  "probe": "docs/review-evidence/code-review-0.5.0a3-fiveauto.1-2026-11-27/probe_big5_scheduler_news_updates.py",
+  "probe_sha256": "da4d490ea092c9ec592332b70253c432ea764cd5fc7a05f5aa81da645bbbf48f",
+  "probe_arguments": [
+    "--src",
+    "<revision>/src",
+    "<new-empty-directory>",
+    "--links-per-day",
+    "0"
+  ],
+  "stale_clock": "2026-12-04T22:30:00.000000Z",
+  "checks": {
+    "deployed_code": {
+      "package_version": "0.5.0a3+fiveauto.1",
+      "status_three_days_after_last_cycle": {
+        "exit_code": 0,
+        "state": "ok",
+        "last_cycle_finished": "2026-12-01T22:30:00.000000Z",
+        "last_cycle_age_seconds": null
+      },
+      "news_fault": {
+        "exception": "TypeError: unexpected source structure",
+        "source_called": true,
+        "main_loop_raised": null,
+        "persisted_fixture_poll_state": "running",
+        "persisted_error": null
+      },
+      "fixed_seals": {
+        "T-24h": 1,
+        "T-60m": 1
+      }
+    },
+    "corrected_code": {
+      "package_version": "0.5.0a4",
+      "status_three_days_after_last_cycle": {
+        "exit_code": 1,
+        "state": "stale",
+        "last_cycle_finished": "2026-12-01T22:30:00.000000Z",
+        "last_cycle_age_seconds": 259200.0
+      },
+      "news_fault": {
+        "exception": "TypeError: unexpected source structure",
+        "source_called": true,
+        "main_loop_raised": null,
+        "persisted_fixture_poll_state": "retry",
+        "persisted_error": "rosters: TypeError: unexpected source structure"
+      },
+      "fixed_seals": {
+        "T-24h": 1,
+        "T-60m": 1
+      }
+    }
+  },
+  "fault_regressions": {
+    "commands": [
+      "python -m unittest tests.test_big5_scheduler_health",
+      "python -m unittest tests.test_big5_scheduler.DomesticSchedulerTest.test_fixture_binding_and_input_failure_do_not_block_healthy_fixed_window tests.test_big5_scheduler.DomesticSchedulerTest.test_unexpected_roster_failure_is_visible_and_does_not_block_player_collection tests.test_big5_scheduler.DomesticSchedulerTest.test_shared_input_outage_closes_known_window_without_a_late_seal tests.test_league_live_inputs.LiveFootballInputsTests.test_unregistered_new_fixture_is_quarantined_and_independent_schedule_survives"
+    ],
+    "tested": {
+      "Python 3.12.14": 10,
+      "Python 3.11.18": 10,
+      "Python 3.13.5": 10
+    },
+    "native_manager": "See the independent Ubuntu systemd CI job for installed-wheel watchdog and timer acceptance."
+  },
+  "structured_source_regressions": {
+    "scope": "Actual adapters against temporary, disposable SQLite databases; simulated upstream outages and recovery.",
+    "reproduce": "python -m unittest tests.test_league_live_inputs.LiveFootballInputsTests.test_market_source_outage_and_fresh_empty_catalog_have_different_health tests.test_league_rosters.LeagueRosters.test_collector_failure_and_cooldown_reach_the_fixture_watchdog_until_recovery tests.test_league_player_status.PrivatePlayerSourceTest.test_provider_outage_is_not_a_withdrawal_or_an_expected_empty_report",
+    "checks": {
+      "before": {
+        "missing_market": {
+          "health": "ok",
+          "watchdog_exit": 0,
+          "gaps": {
+            "market database unavailable": 1
+          },
+          "eligible_upcoming": 0
+        },
+        "structured_roster_failure": {
+          "health": "ok",
+          "watchdog_exit": 0,
+          "source_polls": [
+            [
+              "bayern-munchen",
+              "failed",
+              "OSError: acceptance-upstream-source-unavailable"
+            ],
+            [
+              "sv-werder-bremen",
+              "failed",
+              "OSError: acceptance-upstream-source-unavailable"
+            ]
+          ],
+          "fixture_poll": [
+            "checked",
+            null
+          ]
+        }
+      },
+      "after": {
+        "missing_market": {
+          "health": "partial",
+          "watchdog_exit": 1,
+          "gaps": {
+            "market database unavailable": 1
+          },
+          "eligible_upcoming": 0
+        },
+        "structured_roster_failure": {
+          "health": "partial",
+          "watchdog_exit": 1,
+          "source_polls": [
+            [
+              "bayern-munchen",
+              "failed",
+              "OSError: acceptance-upstream-source-unavailable"
+            ],
+            [
+              "sv-werder-bremen",
+              "failed",
+              "OSError: acceptance-upstream-source-unavailable"
+            ]
+          ],
+          "fixture_poll": [
+            "retry",
+            "rosters/bayern-munchen: OSError: acceptance-upstream-source-unavailable / rosters/sv-werder-bremen: OSError: acceptance-upstream-source-unavailable"
+          ]
+        }
+      }
+    },
+    "tested_interpreters": {
+      "Python 3.11": 3,
+      "Python 3.12": 3,
+      "Python 3.13": 3
+    },
+    "covered_recovery": [
+      "A complete recent rolling catalog may confirm zero events; an empty unobserved catalog and an absent database keep the watchdog nonzero without withdrawing old fixtures.",
+      "Both rosters recover after the publisher retry interval; a retry before that interval preserves the failure without another upstream request.",
+      "A saved API network/rate-limit failure marks the input unavailable for an output revision. A later published empty report and optional unconfigured, free-season and rights states are independently recognized."
+    ],
+    "integration_run": {
+      "command": "python -m unittest tests.test_big5_scheduler tests.test_big5_scheduler_health tests.test_league_live_inputs tests.test_league_rosters tests.test_league_player_status tests.test_market_watch_health",
+      "python": "3.12.14",
+      "total": 53,
+      "passed": 52,
+      "skipped": 1,
+      "skip": "AF_UNIX datagram access on this host; installed native systemd validation is tracked separately."
+    }
+  },
+  "registered_market_identity": {
+    "reproduce": "PYTHONPATH=src:tests python -m unittest tests.test_league_live_inputs.LiveFootballInputsTests.test_registered_market_identity_fault_is_per_fixture_and_correctable_before_deadline tests.test_big5_catalog_recovery.TestCatalogRecovery.test_stale_http_or_changed_domestic_participant_never_reaches_books",
+    "signed_current_fixture_checks": {
+      "normal_sibling_sealed_during_fault": 1,
+      "sealed_after_valid_correction_before_deadline": 2,
+      "numeric_conflict_quarantined_until_new_valid_receipt": true
+    },
+    "tested_interpreters": {
+      "Python 3.11": 2,
+      "Python 3.12": 2,
+      "Python 3.13": 2
+    },
+    "before": {
+      "initial": [
+        "ok",
+        1
+      ],
+      "invalid": [
+        "ok",
+        0
+      ],
+      "watchdog_exit": 0,
+      "health": "ok",
+      "gaps": {
+        "Gamma participant does not match a registered club": 1
+      },
+      "fixture_errors": []
+    },
+    "after": {
+      "initial": [
+        "ok",
+        1
+      ],
+      "invalid": [
+        "partial",
+        0
+      ],
+      "watchdog_exit": 1,
+      "health": "partial",
+      "gaps": {
+        "Gamma participant does not match a registered club": 1
+      },
+      "fixture_errors": [
+        {
+          "error": "Gamma participant does not match a registered club",
+          "fixture": "lal/2026-27/levante-ud/real-racing-club-de-santander",
+          "stage": "market_schedule"
+        }
+      ]
+    },
+    "integration_run": {
+      "python": "3.12.14",
+      "total": 70,
+      "passed": 69,
+      "skipped": 1,
+      "command": "PYTHONPATH=src:tests python -m unittest tests.test_big5_scheduler tests.test_big5_scheduler_health tests.test_league_live_inputs tests.test_league_rosters tests.test_league_player_status tests.test_market_watch_health tests.test_big5_catalog_recovery",
+      "skip": "AF_UNIX datagram access on this host; the installed Ubuntu systemd job verifies native notifications separately."
+    }
+  }
+}

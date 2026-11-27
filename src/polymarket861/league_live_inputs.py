@@ -13,13 +13,14 @@ from dataclasses import dataclass, replace
 from datetime import timedelta
 from email.utils import parsedate_to_datetime
 from functools import lru_cache
+from heapq import merge
 from pathlib import Path
 from urllib.parse import parse_qs, urlencode, urlsplit
 from zoneinfo import ZoneInfo
 
 from . import archive_proof, big5_market, big5_market_schedule, football
 from . import independent_results as wiki
-from . import league_openfootball_refresh, league_registry as registry
+from . import league_openfootball_refresh, league_registry as registry, league_wiki_cache
 from . import market_provider, store
 from .score_bounds import valid_score
 
@@ -37,6 +38,18 @@ CREATE TABLE IF NOT EXISTS pinned_receipts(
 CREATE TABLE IF NOT EXISTS wiki_receipts(
  league TEXT, season TEXT, revision INTEGER, published TEXT, seen TEXT, title TEXT,
  sha TEXT, body BLOB, PRIMARY KEY(league,season,revision));
+CREATE INDEX IF NOT EXISTS wiki_receipt_timeline ON wiki_receipts(league,season,title,seen,revision,published,sha);
+CREATE TABLE IF NOT EXISTS wiki_archive_generation(
+ singleton INTEGER PRIMARY KEY CHECK(singleton=1), token BLOB NOT NULL);
+CREATE TRIGGER IF NOT EXISTS wiki_archive_insert AFTER INSERT ON wiki_receipts BEGIN
+ INSERT INTO wiki_archive_generation VALUES(1,randomblob(16)) ON CONFLICT(singleton) DO UPDATE SET token=excluded.token;
+END;
+CREATE TRIGGER IF NOT EXISTS wiki_archive_update AFTER UPDATE ON wiki_receipts BEGIN
+ INSERT INTO wiki_archive_generation VALUES(1,randomblob(16)) ON CONFLICT(singleton) DO UPDATE SET token=excluded.token;
+END;
+CREATE TRIGGER IF NOT EXISTS wiki_archive_delete AFTER DELETE ON wiki_receipts BEGIN
+ INSERT INTO wiki_archive_generation VALUES(1,randomblob(16)) ON CONFLICT(singleton) DO UPDATE SET token=excluded.token;
+END;
 CREATE TABLE IF NOT EXISTS wiki_checks(
  league TEXT, season TEXT, attempted TEXT, status TEXT, detail TEXT, PRIMARY KEY(league,season));
 CREATE TABLE IF NOT EXISTS gamma_bindings(
@@ -97,6 +110,15 @@ def _market_db(root):
     return db
 
 
+def _identity_conflicted(db, slug, at):
+    if not db.execute("SELECT 1 FROM sqlite_master WHERE name='big5_identity_conflicts'").fetchone():
+        return False
+    return db.execute(
+        "SELECT 1 FROM big5_identity_conflicts WHERE slug=? AND received<=? AND received>=COALESCE(("
+        "SELECT MAX(received) FROM big5_schedule_receipts WHERE slug=? AND received<=? "
+        "AND origin='validated_receipt'),'') LIMIT 1", (slug, at, slug, at)).fetchone() is not None
+
+
 def _eligible_market(db, binding, at):
     slug, kick = binding["slug"], store.iso(binding["kickoff"])
     start = store.iso(binding["receipt"])
@@ -123,7 +145,7 @@ def still_pregame(market_state_dir, binding, as_of):
         with closing(_market_db(root)) as db:
             db.execute("BEGIN")
             at = store.iso(as_of)
-            if not _eligible_market(db, binding, at):
+            if _identity_conflicted(db, binding["slug"], at) or not _eligible_market(db, binding, at):
                 return False
             row = db.execute(
                 "SELECT * FROM big5_schedule_receipts WHERE slug=? AND received<=? AND origin='validated_receipt' "
@@ -199,15 +221,14 @@ def _poll_wiki(db, league, season):
     try:
         raw = wiki._get(wiki._url([title]))
         seen = store.now_utc()
-        rev, published, _ = _wiki_scores(raw, league, season)
+        rev, published, sha, packed = league_wiki_cache.prepare_receipt(raw, league, season, _wiki_scores)
         latest = db.execute("SELECT max(revision) FROM wiki_receipts WHERE league=? AND season=? AND title=?",
                             (league, season, title)).fetchone()[0]
         if published > seen or latest is not None and rev < latest:
             raise ValueError("stale or future Wikimedia revision")
         with db:
             db.execute("INSERT OR IGNORE INTO wiki_receipts VALUES(?,?,?,?,?,?,?,?)",
-                       (league, season, rev, published, seen, title, hashlib.sha256(raw).hexdigest(),
-                        zlib.compress(raw)))
+                       (league, season, rev, published, seen, title, sha, packed))
         status, detail = "observed", str(rev)
     except (OSError, ValueError, TypeError, KeyError) as exc:
         status, detail = "unavailable", str(exc)
@@ -271,15 +292,13 @@ def _observe_moves(db):
 
 
 def _schedule_moves(db, league, season, at):
-    if (league, season) != ("lal", "2026-27"):
+    if (league, season) != ("lal", "2026-27") or not _MOVED:
         return {}
     result = {}
-    for row in db.execute("SELECT revision,title,seen,body,sha FROM wiki_receipts "
-                          "WHERE league=? AND season=? AND seen<=?", (league, season, at)):
-        review = _MOVED.get(row["revision"])
-        if review is None:
-            continue
-        title, home, away, kick, sha, report = review
+    placeholders = ",".join("?" for _ in _MOVED)
+    for row in db.execute("SELECT revision,title,seen,body,sha FROM wiki_receipts WHERE league=? AND season=? "
+                          f"AND seen<=? AND revision IN ({placeholders})", (league, season, at, *_MOVED)):
+        title, home, away, kick, sha, report = _MOVED[row["revision"]]
         if (row["title"] != title or row["sha"] != sha
                 or hashlib.sha256(zlib.decompress(row["body"])).hexdigest() != sha):
             raise ValueError("changed archived schedule reference")
@@ -401,10 +420,29 @@ def _binding(row):
             "home_id": row["home_id"], "away_id": row["away_id"], "event_id": row["event_id"]}
 
 
+def _recent_rolling_catalog(root, league, at):
+    """A complete rolling catalog can legitimately contain no upcoming events for a league."""
+    path = root / "watch-health.sqlite3"
+    if not path.is_file():
+        return False
+    with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=3)) as db:
+        if not db.execute("SELECT 1 FROM sqlite_master WHERE name='watch_catalog_success'").fetchone():
+            return False
+        since = store.iso(football.utc(at) - timedelta(minutes=10))
+        for (raw,) in db.execute("SELECT scope FROM watch_catalog_success WHERE league=? "
+                                 "AND received_at BETWEEN ? AND ?", (league, since, at)):
+            scope = json.loads(raw)
+            if (scope.get("start") == scope.get("end") == "rolling" and scope.get("discover") is True
+                    and league in scope.get("leagues", ())):
+                return True
+    return False
+
+
 def _market_schedules(local, market_state_dir, league, season, by_id, at, pin_seen, *, replay):
     market_root = _market_root(market_state_dir)
     schedules, active, gaps = {}, {}, Counter()
     cache = {}
+    source = {"state": "available"}
     moves = _schedule_moves(local, league, season, at)
     if (market_root / "runtime.sqlite3").is_file():
         with closing(_market_db(market_root)) as db:
@@ -419,6 +457,15 @@ def _market_schedules(local, market_state_dir, league, season, by_id, at, pin_se
                 events = db.execute(
                     "SELECT * FROM big5_events WHERE slug=fixture AND sport=? AND kickoff>?", (league, at)
                 ).fetchall()
+            source["candidate_events"] = len(events)
+            now = football.utc(at)
+            end = now + timedelta(days=7)
+            end_stamp = store.iso(end)
+            if (not replay and not any(at < event["kickoff"] <= end_stamp for event in events)
+                    and any(now < f.kickoff <= end and f.status in {"scheduled", "timed"}
+                            and not f.quarantine_reason for f in by_id.values())
+                    and not _recent_rolling_catalog(market_root, league, at)):
+                source.update(state="unobserved", error="no upcoming market events or recent complete league catalog")
             for head in events:
                 rows = db.execute(
                     "SELECT * FROM big5_schedule_receipts WHERE fixture=? AND slug=fixture AND received<=? "
@@ -426,8 +473,10 @@ def _market_schedules(local, market_state_dir, league, season, by_id, at, pin_se
                 )
                 current = None
                 latest_row = None
+                latest_error = None
                 for row in rows:
                     latest_row = row
+                    latest_error = None
                     if row["stopped"]:
                         current = None
                         continue
@@ -443,7 +492,8 @@ def _market_schedules(local, market_state_dir, league, season, by_id, at, pin_se
                             if tuple(value[6:]) != tuple(head[k] for k in ("home_id", "away_id", "event_id")):
                                 raise ValueError("changed Gamma event or participant IDs")
                         except (KeyError, TypeError, ValueError, OSError) as exc:
-                            gaps[str(exc)] += 1
+                            latest_error = str(exc)
+                            gaps[latest_error] += 1
                             continue
                         with local:
                             local.execute("INSERT OR IGNORE INTO gamma_bindings VALUES(?,?,?,?,?,?,?,?,?)", value)
@@ -452,14 +502,28 @@ def _market_schedules(local, market_state_dir, league, season, by_id, at, pin_se
                     "SELECT * FROM gamma_bindings WHERE league=? AND slug=? AND seen<=? ORDER BY seen DESC LIMIT 1",
                     (league, head["slug"], at),
                 ).fetchone()
-                if current and known and latest_row and _eligible_market(db, _binding(known), at):
+                if not known or not latest_row or latest_row["stopped"]:
+                    continue
+                ids = ("home_id", "away_id", "event_id")
+                if _identity_conflicted(db, head["slug"], at):
+                    latest_error = "registered Gamma event or participant IDs changed"
+                    gaps[latest_error] += 1
+                elif head["receipt"] <= at:
+                    first = local.execute("SELECT home_id,away_id,event_id FROM gamma_bindings "
+                                          "WHERE league=? AND slug=? AND seen<=? ORDER BY seen,sha LIMIT 1",
+                                          (league, head["slug"], at)).fetchone()
+                    if tuple(first) != tuple(head[k] for k in ids):
+                        latest_error = "registered Gamma event or participant IDs changed"
+                        gaps[latest_error] += 1
+                if current and not latest_error and _eligible_market(db, _binding(known), at):
                     try:
                         verified = _bind_event(db, market_root, league, season, latest_row, by_id, cache, moves)
+                        if verified[4:] != tuple(known[k] for k in ("fixture_id", "kickoff", *ids)):
+                            raise ValueError("latest Gamma original disagrees with registered fixture identity")
                     except (KeyError, TypeError, ValueError, OSError) as exc:
-                        gaps[str(exc)] += 1
-                        continue
-                    if verified[4:] == tuple(known[k] for k in
-                                             ("fixture_id", "kickoff", "home_id", "away_id", "event_id")):
+                        latest_error = str(exc)
+                        gaps[latest_error] += 1
+                    else:
                         binding = _binding(known)
                         fixture = by_id[known["fixture_id"]]
                         binding.update(last_verified=latest_row["received"], last_sha256=latest_row["sha"],
@@ -469,8 +533,15 @@ def _market_schedules(local, market_state_dir, league, season, by_id, at, pin_se
                             binding["reschedule_source"] = move
                         binding["known_at"] = max(pin_seen, known["seen"], (move or {}).get("observed_at", ""))
                         active.setdefault(known["fixture_id"], []).append(binding)
+                fixture = by_id.get(known["fixture_id"])
+                if (latest_error and fixture and not fixture.quarantine_reason and fixture.status in {"scheduled", "timed"}
+                        and at < head["kickoff"] <= end_stamp and at < known["kickoff"] <= end_stamp
+                        and big5_market_schedule.play_history(db, head["slug"], known["seen"], at) != "not_pregame"):
+                    source.setdefault("fixture_errors", []).append(
+                        {"fixture": known["fixture_id"], "stage": "market_schedule", "error": latest_error})
     else:
         gaps["market database unavailable"] += 1
+        source = {"state": "unavailable", "error": "market database unavailable"}
     for r in local.execute("SELECT * FROM gamma_bindings WHERE league=? AND seen<=? ORDER BY seen,sha", (league, at)):
         if r["fixture_id"] not in by_id:
             continue
@@ -483,33 +554,42 @@ def _market_schedules(local, market_state_dir, league, season, by_id, at, pin_se
         elif not timeline or timeline[-1][1] != kick:
             timeline.append((stamp, kick))
     active = {fid: rows[0] for fid, rows in active.items() if len(rows) == 1}
-    return schedules, active, dict(gaps)
+    return schedules, active, dict(gaps), source
 
 
 def _wiki_history(db, league, season, at):
     revisions = []
     metadata = []
-    for row in db.execute(
-        "SELECT * FROM wiki_receipts WHERE league=? AND season=? AND seen<=? AND title=? ORDER BY seen,revision",
-        (league, season, at, _wiki_title(league, season) if league in _WIKI_PAGES else ""),
-    ):
-        raw = zlib.decompress(row["body"])
-        if hashlib.sha256(raw).hexdigest() != row["sha"]:
-            raise ValueError("Wikimedia receipt hash mismatch")
-        rev, published, scores = _wiki_scores(raw, league, season)
-        if (rev, published) != (row["revision"], row["published"]) or published > row["seen"]:
-            raise ValueError("Wikimedia receipt has inconsistent revision or time")
+    title = _wiki_title(league, season) if league in _WIKI_PAGES else ""
+    verified = league_wiki_cache.verified_rows(db, league, season, title, at, _wiki_scores)
+    for rev, published, seen, sha, scores in verified:
         link = f"https://en.wikipedia.org/w/index.php?oldid={rev}"
-        revisions.append((row["seen"], "wikipedia", f"{link}#{row['sha']}", published, scores))
-        metadata.append({"revision": rev, "title": row["title"], "url": link, "sha256": row["sha"],
-                         "observed_at": row["seen"], "published_at": published})
+        revisions.append((seen, "wikipedia", f"{link}#{sha}", published, scores))
+        metadata.append({"revision": rev, "title": title, "url": link, "sha256": sha,
+                         "observed_at": seen, "published_at": published})
     return revisions, metadata
 
 
 def _score_versions(fixture, observations, schedule):
     state, versions, published_scores = {}, [], set()
     ever_confirmed = set()
-    for seen, source, locator, published, value in observations:
+    active_kickoff = None
+    # These are already-observed schedule receipts, not a later kickoff read back
+    # into history. Invalidate the old sporting label as soon as the accepted
+    # replacement is known, even if neither score publisher polls again.
+    moves = ((store.iso(stamp), "schedule", f"schedule changed to {store.iso(kick)}", None, kick)
+             for stamp, kick in schedule)
+    for seen, source, locator, published, value in merge(moves, observations, key=lambda row: row[0]):
+        if source == "schedule":
+            if active_kickoff != value:
+                if versions and versions[-1].score is not None:
+                    versions.append(football.ResultVersion(football.utc(seen), None, "archived_upper_bound",
+                                                           locator, actual_kickoff=versions[-1].actual_kickoff))
+                state.clear()
+                ever_confirmed.clear()
+                published_scores.clear()
+                active_kickoff = value
+            continue
         result = None
         forbidden = False
         if source == "openfootball":
@@ -520,8 +600,10 @@ def _score_versions(fixture, observations, schedule):
                 result = (value.home_goals, value.away_goals)
         else:
             result = value
-        kick = next((k for stamp, k in reversed(schedule) if stamp <= football.utc(seen)), fixture.kickoff)
-        earliest = kick + timedelta(minutes=90)
+        if active_kickoff is None:
+            active_kickoff = fixture.kickoff
+        kick = active_kickoff
+        earliest = kick + league_wiki_cache.MATCH_DURATION
         if result is not None and (football.utc(published) < earliest or football.utc(seen) < earliest):
             result = None
         if result is not None:
@@ -530,10 +612,17 @@ def _score_versions(fixture, observations, schedule):
         published_scores = {score for score, _ in state.values() if score is not None}
         held = any(blocked for _, blocked in state.values()) or len(published_scores) > 1
         score = None if held or not published_scores else next(iter(published_scores))
-        if score != (versions[-1].score if versions else None):
+        previous = versions[-1] if versions else None
+        # A withdrawal invalidates the sporting result for the kickoff it was
+        # attached to, even if a new schedule already advertises a future date.
+        event_kickoff = previous.actual_kickoff if score is None and previous else kick
+        previous_score = previous.score if previous else None
+        moved_score = previous is not None and score is not None and event_kickoff != previous.actual_kickoff
+        if score != previous_score or moved_score:
             if held:
                 locator = f"withheld on {source} receipt {locator}"
-            versions.append(football.ResultVersion(football.utc(seen), score, "archived_upper_bound", locator))
+            versions.append(football.ResultVersion(football.utc(seen), score, "archived_upper_bound", locator,
+                                                   actual_kickoff=event_kickoff))
     return tuple(versions), len(published_scores) > 1
 
 
@@ -545,7 +634,7 @@ def load_inputs(state_root, *, league, football_root, market_state_dir, as_of=No
     root = Path(state_root)
     folder = root / "sources" / "domestic-live-inputs"
     folder.mkdir(parents=True, exist_ok=True)
-    with closing(sqlite3.connect(folder / "receipts.sqlite3", timeout=8)) as db:
+    with closing(league_wiki_cache.connect(folder / "receipts.sqlite3")) as db:
         db.row_factory = sqlite3.Row
         db.executescript(_SCHEMA)
         pins = _pins(db, football_root, league, season, live)
@@ -583,8 +672,11 @@ def load_inputs(state_root, *, league, football_root, market_state_dir, as_of=No
             last_blob = blob
             fixtures = _read_file(path, league, blob)
             latest = {f.fixture_id: f for f in fixtures}
-            if not latest.keys() <= current.keys():
-                raise ValueError("updated OpenFootball edition added an unregistered fixture")
+            # Keep independently registered games usable. A new oriented fixture cannot
+            # join market evidence, training or scoring until a reviewed schedule admits it.
+            provenance["unregistered_fixtures"] = sorted(latest.keys() - current.keys())
+            for fid in provenance["unregistered_fixtures"]:
+                del latest[fid]
             for fid, f in current.items():
                 revised = latest.get(fid)
                 if revised is not None and revised.round != f.round:
@@ -594,18 +686,20 @@ def load_inputs(state_root, *, league, football_root, market_state_dir, as_of=No
                 observations[fid].append((max(pins[season][0], seen), "openfootball", f"{url}#{blob}",
                                           seen, revised))
         wiki_history, provenance["wikimedia_revisions"] = _wiki_history(db, league, season, at)
-        for seen, source, locator, published, scores in wiki_history:
-            for fid, score in scores.items():
-                if fid in current:
-                    observations[fid].append((max(pins[season][0], seen), source, locator, published, score))
         check = db.execute("SELECT attempted,status,detail FROM wiki_checks WHERE league=? AND season=? "
                            "AND attempted<=?", (league, season, at)).fetchone()
         provenance["wikimedia"] = {"poll": dict(check) if check else None,
                                     "attribution": "English Wikipedia contributors", "license": wiki.LICENSE}
-        schedules, active, gaps = _market_schedules(db, market_state_dir, league, season, latest,
-                                                    at, pins[season][0], replay=not live)
+        schedules, active, gaps, market_source = _market_schedules(db, market_state_dir, league, season, latest,
+                                                                   at, pins[season][0], replay=not live)
     provenance["market_gaps"] = gaps
-    fixtures, upcoming, conflicts, current_scores = [], [], [], 0
+    provenance["market_source"] = market_source
+    wiki_changes = league_wiki_cache.score_observations(
+        league, season, _wiki_scores, wiki_history,
+        {fid: latest.get(fid, f) for fid, f in current.items()}, schedules, pins[season][0])
+    for fid, changes in wiki_changes.items():
+        observations[fid].extend(changes)
+    fixtures, upcoming, conflicts, withheld, current_scores = [], [], [], [], 0
     for fid, f in rows.items():
         if f.season == season:
             f = latest.get(fid) or replace(f, status="quarantined", quarantine_reason="removed_from_source",
@@ -633,9 +727,18 @@ def load_inputs(state_root, *, league, football_root, market_state_dir, as_of=No
         fixtures.append(f)
         if f.season == season and score is not None:
             current_scores += 1
-        if fid in active and timeline and not f.quarantine_reason and not versions and f.kickoff > football.utc(at):
-            upcoming.append(f)
-            provenance["market_fixtures"][fid] = active[fid]
-    provenance.update(status="observed", current_season_scores=current_scores, conflicting_scores=conflicts)
+        if fid in active and timeline and not f.quarantine_reason and score is None and f.kickoff > football.utc(at):
+            if football._late_replacement(timeline):
+                changed, old, new = next((stamp, prev, current) for (_, prev), (stamp, current)
+                                          in zip(timeline, timeline[1:]) if current != prev and stamp >= prev)
+                withheld.append({"fixture": fid, "stage": "schedule",
+                                 "error": "replacement received after original kickoff; no pre-kickoff cancellation",
+                                 "previous_kickoff": store.iso(old), "replacement_kickoff": store.iso(new),
+                                 "observed_at": store.iso(changed)})
+            elif all(v.actual_kickoff != f.kickoff for v in versions):
+                upcoming.append(f)
+                provenance["market_fixtures"][fid] = active[fid]
+    provenance.update(status="observed", current_season_scores=current_scores, conflicting_scores=conflicts,
+                      withheld_fixtures=withheld)
     return LeagueInputs(tuple(fixtures), tuple(sorted(upcoming, key=lambda f: (f.kickoff, f.fixture_id))),
                         provenance)

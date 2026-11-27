@@ -455,9 +455,11 @@ def _refresh_local_roster(root, scope, getter):
     with closing(_roster_db(root)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         _ensure_parser_version(db, started)
-        old = db.execute("SELECT next_at FROM local_roster_polls WHERE league=? AND season=? AND club=?", key).fetchone()
+        poll = ("SELECT state,reason,attempted_at,next_at FROM local_roster_polls "
+                "WHERE league=? AND season=? AND club=?")
+        old = db.execute(poll, key).fetchone()
         if old and old["next_at"] > started:
-            return
+            return dict(old)
         next_at = store.iso(store.instant(started) + timedelta(minutes=5))
         db.execute("INSERT INTO local_roster_polls VALUES(?,?,?,?,?,'running',NULL) "
                    "ON CONFLICT(league,season,club) DO UPDATE SET attempted_at=excluded.attempted_at,"
@@ -509,6 +511,7 @@ def _refresh_local_roster(root, scope, getter):
             db.execute("INSERT OR IGNORE INTO local_roster_projections VALUES(?,?)",
                        (sha, store.canonical(projection)))
             db.execute("INSERT OR IGNORE INTO local_roster_receipts VALUES(?,?,?,?,?)", (*key, ready, sha))
+        return dict(db.execute(poll, key).fetchone())
 
 
 def _roster_fixture(fixture):
@@ -522,17 +525,22 @@ def _roster_fixture(fixture):
     return league, season, teams
 
 
-def collect_fixture_rosters(state_dir, fixture, *, getter=None):
+def collect_fixture_rosters(state_dir, fixture, *, getter=None, include_poll_status=False):
     """Refresh the two league-scoped rosters through the normal publisher permission checks."""
     league, season, teams = _roster_fixture(fixture)
     root = Path(state_dir) / "five-league-rosters"
     scopes = [scope for team in teams.values()
               if (scope := roster_coverage(team, season, league))]
     with ThreadPoolExecutor(max_workers=2) as pool:
-        tasks = [pool.submit(_refresh_local_roster, root, scope, getter or news_sources._get) for scope in scopes]
-        for task in tasks:
-            task.result()
-    return fixture_rosters_as_of(state_dir, fixture, store.now_utc())
+        tasks = {scope["club"]: pool.submit(_refresh_local_roster, root, scope, getter or news_sources._get)
+                 for scope in scopes}
+        polls = {club: task.result() for club, task in tasks.items()}
+    # A recent valid roster may coexist with a failed refresh. Keep operational poll results
+    # outside the historical roster view used to construct the actual forecast.
+    snapshot = fixture_rosters_as_of(state_dir, fixture, store.now_utc())
+    if include_poll_status:
+        snapshot["collection_polls"] = polls
+    return snapshot
 
 
 def _local_roster_as_of(db, root, scope, cutoff):

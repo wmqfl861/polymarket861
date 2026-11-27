@@ -1,0 +1,146 @@
+{
+  "observed_at": "2026-11-27T06:05:58.421290Z",
+  "scope": "Live metadata and normalized field counts; no raw payload retained",
+  "requests": {
+    "https://touchlinewire.com/api/v1/fixtures": {
+      "provider_snapshot": "2026-11-27T06:06:08.183903Z",
+      "observed_at": "2026-11-27T06:06:08.243302Z",
+      "sha256": "e4ec391d180d489a0f18f4953d31b273fe01671bc1356665a9a38a05e1032d80"
+    },
+    "https://touchlinewire.com/api/v1/matches/1557485": {
+      "provider_snapshot": "2026-11-27T06:06:13.626748Z",
+      "observed_at": "2026-11-27T06:06:13.679967Z",
+      "sha256": "93f116796aaa22fc9ac8f42c3a316608bfc1087ab4f645dc46cada9d2e109855"
+    },
+    "https://touchlinewire.com/api/v1/injuries": {
+      "provider_snapshot": "2026-11-27T06:06:18.429281Z",
+      "observed_at": "2026-11-27T06:06:18.485464Z",
+      "sha256": "a564428bbf68d565b450c3b2a6d67eb34d6b2c73e6aad3d544e9044ad1708daa"
+    },
+    "https://touchlinewire.com/api/v1/players?club=man-city&limit=65": {
+      "provider_snapshot": "2026-11-27T06:06:22.199160Z",
+      "observed_at": "2026-11-27T06:06:22.257433Z",
+      "sha256": "5b390e8b28e34523bdcfe87da9668d7378e028571ef91c8ebfcbaf9d2e94363f"
+    },
+    "https://touchlinewire.com/api/v1/players?club=nott-m-forest&limit=65": {
+      "provider_snapshot": "2026-11-27T06:06:26.021756Z",
+      "observed_at": "2026-11-27T06:06:26.115494Z",
+      "sha256": "d8d2db356274835995a21e7ce3c90e061d9a4303d08d6b53ee9fd5c0accf1930"
+    }
+  },
+  "upcoming_match": {
+    "locator": "https://touchlinewire.com/api/v1/matches/1557485",
+    "kickoff": "2026-11-27T20:00:00+00:00",
+    "phase": "NS",
+    "home": "Nottingham Forest",
+    "away": "Chelsea",
+    "lineups": {
+      "home": 0,
+      "away": 0
+    }
+  },
+  "availability": {
+    "suspension": {
+      "rows": 6,
+      "with_field": 0
+    },
+    "injury": {
+      "rows": 82,
+      "with_field": 0
+    }
+  },
+  "player_directories": {
+    "Manchester City": {
+      "identity_checked_rows": 26,
+      "raw_available_fields": [
+        "assists",
+        "chance_of_playing",
+        "clean_sheets",
+        "club",
+        "club_short",
+        "club_slug",
+        "code",
+        "corners_order",
+        "cost_change_event",
+        "cost_change_start",
+        "direct_freekicks_order",
+        "display_name",
+        "ep_next",
+        "form",
+        "goals_scored",
+        "id",
+        "league",
+        "minutes",
+        "name",
+        "news",
+        "now_cost",
+        "number",
+        "penalties_order",
+        "points_per_game",
+        "points_per_million",
+        "position",
+        "price",
+        "red_cards",
+        "saves",
+        "selected_by_percent",
+        "slug",
+        "starts",
+        "status",
+        "sub_position",
+        "team_id",
+        "total_points",
+        "transfers_in_event",
+        "transfers_out_event",
+        "web_name",
+        "yellow_cards"
+      ],
+      "historical_completed_fixture_denominator": "requires deployed database"
+    },
+    "Nottingham Forest": {
+      "identity_checked_rows": 25,
+      "raw_available_fields": [
+        "assists",
+        "chance_of_playing",
+        "clean_sheets",
+        "club",
+        "club_short",
+        "club_slug",
+        "code",
+        "corners_order",
+        "cost_change_event",
+        "cost_change_start",
+        "direct_freekicks_order",
+        "display_name",
+        "ep_next",
+        "form",
+        "goals_scored",
+        "id",
+        "league",
+        "minutes",
+        "name",
+        "news",
+        "now_cost",
+        "number",
+        "penalties_order",
+        "points_per_game",
+        "points_per_million",
+        "position",
+        "price",
+        "red_cards",
+        "saves",
+        "selected_by_percent",
+        "slug",
+        "starts",
+        "status",
+        "sub_position",
+        "team_id",
+        "total_points",
+        "transfers_in_event",
+        "transfers_out_event",
+        "web_name",
+        "yellow_cards"
+      ],
+      "historical_completed_fixture_denominator": "requires deployed database"
+    }
+  }
+}

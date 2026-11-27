@@ -65,6 +65,7 @@ jobs:
           cache: pip
           cache-dependency-path: constraints/research.txt
       - run: bash .github/scripts/verify-watch-deployment.sh
+      - run: bash .github/scripts/verify-forecast-deployment.sh
       - uses: actions/upload-artifact@v4
         if: success()
         with:
@@ -72,3 +73,4 @@ jobs:
           path: |
             ${{ runner.temp }}/watch-dist/*.whl
             ${{ runner.temp }}/watch-*.json
+            ${{ runner.temp }}/forecast-*.json

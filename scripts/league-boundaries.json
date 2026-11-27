@@ -138,6 +138,17 @@
     "paths[legacy] = [\"epl\"]",
     "paths[root / \"runtime.sqlite3\"].remove(\"epl\")"
   ],
+  "league_player_status.py": [
+    "\"policy_sha256\": SCENARIO_POLICY_SHA256, \"epl_policy_sha256\": news_model.POLICY_SHA256,",
+    "\"scope\": \"domestic_private_absence_sensitivity_v2\", \"epl_policy\": news_model.POLICY_SHA256,"
+  ],
+  "league_press.py": [
+    "_COMPETITION_HOSTS = {\"bundesliga.com\", \"laliga.com\", \"legaseriea.it\", \"ligue1.com\", \"premierleague.com\"}",
+    "r\"premier league|epl|bundesliga|laliga|la liga|serie a|ligue 1|uefa|\""
+  ],
+  "league_press_labels.py": [
+    "# Premier League (same discovery index)"
+  ],
   "league_registry.py": [
     "\"epl\": {},",
     "\"https://www.premierleague.com/en/media/publications\",",
@@ -475,6 +486,8 @@
   ],
   "runner.py": [
     "\"\"\"Dispatch live EPL forecasts into their real decision windows from a local timer.\"\"\"",
+    "_journal(\"epl_fixed_schedule_attempt\", {",
+    "_journal(\"epl_fixed_schedule_preflight_failed\", batch)",
     "data_dir, \"model\", \"epl\", default=\"B1\", at=at",
     "jobs.active_version(data_dir, \"model\", \"epl\", default=\"B1\", at=observed)"
   ],
@@ -581,5 +594,12 @@
   "trial_evidence.py": [
     "by_season[s].get(\"eligible_completed\") != 380 for s in seasons",
     "expected = 380 * len(seasons)"
+  ],
+  "wire_match_sheets.py": [
+    "\"\"\"Point-in-time EPL research observations from Touchline's match-specific team sheets.\"\"\"",
+    "if (not isinstance(row, dict) or row.get(\"competition\") != \"epl\" or not all(",
+    "news_scope.competition(g) == \"epl\" and g[\"precision\"] in {\"minute\", \"second\"}",
+    "or row.get(\"competition\") != \"epl\" or row[\"league\"].get(\"id\") != 39",
+    "raise ValueError(\"no unique scheduled Touchline EPL match with the same clubs and kickoff\")"
   ]
 }

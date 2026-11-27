@@ -214,6 +214,8 @@ class TestCatalogRecovery(unittest.TestCase):
         self.assertEqual(sum(url.endswith("-more-markets") for _, url in self.calls), 3)
 
     def test_stale_http_or_changed_domestic_participant_never_reaches_books(self):
+        from polymarket861 import league_live_inputs
+
         self.catalog()
 
         def invalid(url, reply):
@@ -229,6 +231,14 @@ class TestCatalogRecovery(unittest.TestCase):
         self.assertIn("fresh Gamma", self.watch(-20)["last_jobs"][0]["error"])
         self.assertIn("participant IDs changed", self.watch(-18)["last_jobs"][0]["error"])
         self.assertEqual(self.book_calls(), [])
+        root = big5.research_root(self.data)
+        with closing(big5._db(root)) as db:
+            self.assertTrue(league_live_inputs._identity_conflicted(db, fixture.BASE, self.now()))
+        self.offset = -16
+        self.change = None
+        self.catalog()
+        with closing(big5._db(root)) as db:
+            self.assertFalse(league_live_inputs._identity_conflicted(db, fixture.BASE, self.now()))
 
     def test_main_and_auxiliary_schedule_changes_do_not_capture_old_kickoff(self):
         base = self.data

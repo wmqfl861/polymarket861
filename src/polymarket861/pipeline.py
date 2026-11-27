@@ -567,8 +567,9 @@ def make_forecast(
                     paired_proof.check_replay_cache(old, proof)
                 return old | {"digest": existing["digest"]}
             sealed_at = now_utc()
-            if not fixed_builtin or schedule_consensus.fixed_inputs_current(
-                data_dir, current_schedule, sealed_at, fixed_schedules, db
+            if not fixed_builtin or schedule_consensus.timed_check(
+                "seal_snapshot", schedule_consensus.fixed_inputs_current,
+                data_dir, current_schedule, sealed_at, fixed_schedules, db,
             ):
                 break
             # Reopen changed source rows and original files without holding the
@@ -578,7 +579,10 @@ def make_forecast(
                 raise ValueError("calculation finished after its sealing deadline")
             if attempt == 2:
                 raise ValueError("schedule evidence changed repeatedly before the fixed B1 decision")
-            fixed_schedules = schedule_consensus.refresh_fixed(data_dir, current_schedule, sealed_at, db)
+            fixed_schedules = schedule_consensus.timed_check(
+                "reverification", schedule_consensus.refresh_fixed,
+                data_dir, current_schedule, sealed_at, db,
+            )
         if not replay and (
             (horizon != "early" and instant(sealed_at) > deadline)
             or instant(sealed_at) >= kickoff

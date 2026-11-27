@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from collections import Counter, OrderedDict, defaultdict
 from contextlib import ExitStack, closing, contextmanager, nullcontext
 from contextvars import ContextVar
@@ -32,6 +33,7 @@ MAX_AGE = timedelta(hours=24)
 REFRESH = timedelta(hours=6)
 DECISION_LEAD = timedelta(hours=1)
 _dispatch_checks = ContextVar("fixed_b1_schedule_checks", default=None)
+_check_timings = ContextVar("fixed_b1_check_timings", default=None)
 _catalog_slugs = OrderedDict()
 _catalog_lock = Lock()
 
@@ -938,6 +940,8 @@ def readiness(
         team=team, fixture_ids=fixture_ids, at=at, _with_frontier=_with_frontier,
         _connection=_connection,
     )
+    if _with_frontier:
+        inspect = partial(timed_check, "native_read", inspect)
     return _retry_changed(inspect) if at is None and _connection is None else inspect()
 
 
@@ -1300,6 +1304,35 @@ def dispatch_checks(checks):
         _dispatch_checks.reset(token)
 
 
+@contextmanager
+def collect_check_timings():
+    """Collect this worker's fixed-window inspections without writing to its evidence transaction."""
+    entries = []
+    token = _check_timings.set(entries)
+    try:
+        yield entries
+    finally:
+        _check_timings.reset(token)
+
+
+def timed_check(phase, operation, *args, **kwargs):
+    entries = _check_timings.get()
+    if entries is None:
+        return operation(*args, **kwargs)
+    started = time.perf_counter_ns()
+    outcome = "error"
+    try:
+        value = operation(*args, **kwargs)
+        outcome = "invalidated" if value is False else "ok"
+        return value
+    finally:
+        entries.append({
+            "phase": phase,
+            "elapsed_ms": round((time.perf_counter_ns() - started) / 1_000_000, 3),
+            "outcome": outcome,
+        })
+
+
 def fixed_inputs_current(root, fixture, at, checks, db):
     """Validate a completed native schedule inspection against this transaction."""
     if not checks or checks.root != Path(root).resolve():
@@ -1335,7 +1368,7 @@ def require_fixed(root, fixture, at, checks=None, *, db=None):
     with (nullcontext(db) if db is not None else closing(_db(root))) as connection:
         current = fixed_inputs_current(root, fixture, at, checks, connection)
     if not current:
-        checks = fixed_schedules(root, {fid}, at, db=db)
+        checks = timed_check("full_verification", fixed_schedules, root, {fid}, at, db=db)
     row = checks.fixtures.get(fid)
     if not row or (row["kickoff"], row["version"]) != (
         fixture["kickoff"],

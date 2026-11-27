@@ -1,0 +1,530 @@
+{
+  "scope": "EPL fixed B1 scheduling; isolated SQLite WAL state and pinned historical OpenFootball files. No production database or current match-window result was read.",
+  "baseline": {
+    "package_version": "0.5.0a3+fiveauto.1",
+    "deployed_source_commit": "c613a70a352b68507a329bf74dcc5f0f3f98307e",
+    "review_checkout": "ac64dabe0d5322094e49e7b94ea823d0eb36e2b1"
+  },
+  "candidate_package": "0.5.0a4",
+  "probe": {
+    "path": "docs/review-evidence/code-review-0.5.0a3-fiveauto.1-2026-11-27/probe_epl_fixed_seal_under_evidence_churn.py",
+    "sha256": "56a318a0bb83b3c9cc1021b72b988b41978163774b427050bcc7654ccd284f48",
+    "python": "CPython 3.12.14",
+    "command": "python -I PROBE --src CHECKOUT/src --tests CHECKOUT/tests EMPTY_TEMP_DIR --intervals INTERVALS --runs RUNS --verify-seconds EXTRA_SECONDS",
+    "fixture": "Synthetic formal T-60m, first poll 180 seconds before the deadline. Both normal and delayed runs use an actual WAL writer on an independent connection. Evidence commit intervals and verification delays are wall-clock seconds; match time is simulated.",
+    "arms": [
+      {
+        "seconds_between_independent_commits": null,
+        "added_check_seconds": 0.0,
+        "runs_per_version": 5,
+        "baseline": {
+          "unique_timely_seals": 5,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 5,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        }
+      },
+      {
+        "seconds_between_independent_commits": 0.05,
+        "added_check_seconds": 0.0,
+        "runs_per_version": 5,
+        "baseline": {
+          "unique_timely_seals": 5,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            2,
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 5,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        }
+      },
+      {
+        "seconds_between_independent_commits": 0.01,
+        "added_check_seconds": 0.0,
+        "runs_per_version": 5,
+        "baseline": {
+          "unique_timely_seals": 5,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 5,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            2,
+            2,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        }
+      },
+      {
+        "seconds_between_independent_commits": 0.002,
+        "added_check_seconds": 0.0,
+        "runs_per_version": 5,
+        "baseline": {
+          "unique_timely_seals": 4,
+          "missed": 1,
+          "dispatch_attempts": [
+            7,
+            7,
+            7,
+            1,
+            1
+          ],
+          "miss_reasons": [
+            "elapsed without a timely seal"
+          ],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 1,
+          "missed": 4,
+          "dispatch_attempts": [
+            7,
+            7,
+            7,
+            7,
+            7
+          ],
+          "miss_reasons": [
+            "elapsed without a timely seal: ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+          ],
+          "writer_busy_errors": 0
+        }
+      },
+      {
+        "seconds_between_independent_commits": null,
+        "added_check_seconds": 1.0,
+        "runs_per_version": 3,
+        "baseline": {
+          "unique_timely_seals": 3,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 3,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        }
+      },
+      {
+        "seconds_between_independent_commits": 3.0,
+        "added_check_seconds": 1.0,
+        "runs_per_version": 3,
+        "baseline": {
+          "unique_timely_seals": 3,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 3,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        }
+      },
+      {
+        "seconds_between_independent_commits": 1.5,
+        "added_check_seconds": 1.0,
+        "runs_per_version": 3,
+        "baseline": {
+          "unique_timely_seals": 3,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 3,
+          "missed": 0,
+          "dispatch_attempts": [
+            1,
+            1,
+            1
+          ],
+          "miss_reasons": [],
+          "writer_busy_errors": 0
+        }
+      },
+      {
+        "seconds_between_independent_commits": 0.8,
+        "added_check_seconds": 1.0,
+        "runs_per_version": 3,
+        "baseline": {
+          "unique_timely_seals": 0,
+          "missed": 3,
+          "dispatch_attempts": [
+            7,
+            7,
+            7
+          ],
+          "miss_reasons": [
+            "elapsed without a timely seal"
+          ],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 0,
+          "missed": 3,
+          "dispatch_attempts": [
+            7,
+            7,
+            7
+          ],
+          "miss_reasons": [
+            "elapsed without a timely seal: ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+          ],
+          "writer_busy_errors": 0
+        }
+      },
+      {
+        "seconds_between_independent_commits": 0.3,
+        "added_check_seconds": 1.0,
+        "runs_per_version": 3,
+        "baseline": {
+          "unique_timely_seals": 0,
+          "missed": 3,
+          "dispatch_attempts": [
+            7,
+            7,
+            7
+          ],
+          "miss_reasons": [
+            "elapsed without a timely seal"
+          ],
+          "writer_busy_errors": 0
+        },
+        "candidate": {
+          "unique_timely_seals": 0,
+          "missed": 3,
+          "dispatch_attempts": [
+            7,
+            7,
+            7
+          ],
+          "miss_reasons": [
+            "elapsed without a timely seal: ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+          ],
+          "writer_busy_errors": 0
+        }
+      }
+    ],
+    "interpretation": "A full extra second of verification was compatible with 1.5 s spacing on both builds (3/3); sustained 0.8 s or 0.3 s spacing exhausted the window on both (0/3). Without the extra delay the 2 ms stress arm was sensitive to OS scheduling: this run sealed 4/5 on the baseline and 1/5 on the candidate. This probe measures a synthetic competition between evidence churn and verification, not production latency, a throughput limit or an improvement in scheduling capacity."
+  },
+  "deterministic_trace": {
+    "method": "The ordinary runner is called for one time-controlled technical B1 fixture. An independent connection invalidates the completed evidence check and adds 12 ms on each call during the first dispatch. The second dispatch proceeds at its recorded available time without interference. Tests in tests/test_runner.py assert both retry levels, deadline accounting, journal and database agreement, and one immutable seal.",
+    "journal": [
+      {
+        "checks": [
+          {
+            "elapsed_ms": 1.688,
+            "outcome": "ok",
+            "phase": "native_read"
+          },
+          {
+            "elapsed_ms": 14.444,
+            "outcome": "ok",
+            "phase": "full_verification"
+          },
+          {
+            "elapsed_ms": 0.287,
+            "outcome": "invalidated",
+            "phase": "seal_snapshot"
+          },
+          {
+            "elapsed_ms": 0.919,
+            "outcome": "ok",
+            "phase": "native_read"
+          },
+          {
+            "elapsed_ms": 13.648,
+            "outcome": "ok",
+            "phase": "full_verification"
+          },
+          {
+            "elapsed_ms": 14.146,
+            "outcome": "ok",
+            "phase": "reverification"
+          },
+          {
+            "elapsed_ms": 0.37,
+            "outcome": "invalidated",
+            "phase": "seal_snapshot"
+          },
+          {
+            "elapsed_ms": 0.502,
+            "outcome": "ok",
+            "phase": "native_read"
+          },
+          {
+            "elapsed_ms": 13.321,
+            "outcome": "ok",
+            "phase": "full_verification"
+          },
+          {
+            "elapsed_ms": 13.77,
+            "outcome": "ok",
+            "phase": "reverification"
+          },
+          {
+            "elapsed_ms": 0.418,
+            "outcome": "invalidated",
+            "phase": "seal_snapshot"
+          }
+        ],
+        "cutoff": "2030-08-19T15:00:00.000000Z",
+        "dispatch_attempt": 1,
+        "dispatch_retries": 0,
+        "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision",
+        "event": "epl_fixed_schedule_attempt",
+        "finish_margin_seconds": 120.0,
+        "finished_at": "2030-08-19T14:58:00.000000Z",
+        "fixture_id": "epl/2030-31/home-0/away-0",
+        "horizon": "T-24h",
+        "invalidated_snapshots": 3,
+        "mode": "technical",
+        "model_version": "B1",
+        "next_retry_at": "2030-08-19T14:58:02.000000Z",
+        "reverifications": 2,
+        "seal_margin_seconds": null,
+        "shared_preflight": {
+          "checks": [
+            {
+              "elapsed_ms": 4.683,
+              "outcome": "ok",
+              "phase": "native_read"
+            },
+            {
+              "elapsed_ms": 17.541,
+              "outcome": "ok",
+              "phase": "preflight"
+            }
+          ],
+          "finished_at": "2030-08-19T14:58:00.000000Z",
+          "fixture_count": 1,
+          "started_at": "2030-08-19T14:58:00.000000Z"
+        },
+        "state": "error"
+      },
+      {
+        "checks": [
+          {
+            "elapsed_ms": 0.287,
+            "outcome": "ok",
+            "phase": "seal_snapshot"
+          }
+        ],
+        "cutoff": "2030-08-19T15:00:00.000000Z",
+        "dispatch_attempt": 2,
+        "dispatch_retries": 1,
+        "error": null,
+        "event": "epl_fixed_schedule_attempt",
+        "finish_margin_seconds": 118.0,
+        "finished_at": "2030-08-19T14:58:02.000000Z",
+        "fixture_id": "epl/2030-31/home-0/away-0",
+        "horizon": "T-24h",
+        "invalidated_snapshots": 0,
+        "mode": "technical",
+        "model_version": "B1",
+        "next_retry_at": null,
+        "reverifications": 0,
+        "seal_margin_seconds": 118.0,
+        "shared_preflight": {
+          "checks": [
+            {
+              "elapsed_ms": 2.252,
+              "outcome": "ok",
+              "phase": "native_read"
+            },
+            {
+              "elapsed_ms": 2.309,
+              "outcome": "ok",
+              "phase": "preflight"
+            }
+          ],
+          "finished_at": "2030-08-19T14:58:02.000000Z",
+          "fixture_count": 1,
+          "started_at": "2030-08-19T14:58:02.000000Z"
+        },
+        "state": "done"
+      }
+    ],
+    "persisted_attempts": 2,
+    "sealed_rows": 1,
+    "journal_and_history_agree": true
+  },
+  "operational_semantics": {
+    "shared_preflight": "The fixture_count and clocks refer to the entire batch. native_read entries include each attempted original-evidence read, even if the batch retries; preflight measures the whole batch.",
+    "checks": "During the worker attempt seal_snapshot checks the authenticated inputs in the write transaction. An invalidated snapshot is rolled back before reverification. full_verification measures a full check and native_read measures each underlying inspection. These timings are nested and must not be added together.",
+    "clock": "Positive finish_margin_seconds means dispatch completion preceded the cutoff; seal_margin_seconds is based on the verified seal timestamp and stays null if there was no seal. Monotonic elapsed times measure actual work; the decision and deadline continue to use the application clock.",
+    "historical_rows": "Old attempts have null schedule_verification. Missed windows remain missed. A late superseded worker can record its own attempt observations without overwriting the new owner."
+  },
+  "release_validation": {
+    "python": "3.12.14",
+    "historical_method": "T60-final-schedule-result-lag24h-v1",
+    "pinned_input_blobs": {
+      "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+      "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+      "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+      "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+      "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+      "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+      "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+      "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+    },
+    "seasons": [
+      "2021-22",
+      "2022-23",
+      "2023-24",
+      "2024-25",
+      "2025-26"
+    ],
+    "historical_context": "no_archived_news_or_lineups",
+    "active_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+    "candidate_recipe_sha256": "e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a",
+    "paired_matches": 1900,
+    "official_rounds": 190,
+    "changed_predictions": 0,
+    "changed_training_views": 0,
+    "scores": {
+      "baseline": 75.44781323408776,
+      "candidate": 75.44781323408776
+    },
+    "intervals": {
+      "overall": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "result": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "total": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "home": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "away": {
+        "difference": 0.0,
+        "standard_error": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      }
+    },
+    "approval": {
+      "baseline": "ready",
+      "candidate_before_local_signoff": "approval_required",
+      "candidate_new_forecast_attempt": {
+        "fixture": "epl/2026-27/bournemouth/brighton-hove-albion",
+        "exit_code": 2,
+        "diagnostic": "pm861: a changed builtin requires forecast release-compare and named release-approve",
+        "seals_before": 1,
+        "seals_after": 1
+      },
+      "approval_written": false
+    },
+    "old_seal_readback": {
+      "fixture_id": "epl/2026-27/aston-villa/everton",
+      "horizon": "early",
+      "mode": "technical",
+      "seal_sha256": "7b0df1ce6fe9a2b5e08ce1f1c5b21026ab7a0682239cfb463bda92ffb542c637",
+      "command_output_bytes": 20124,
+      "both_cli_outputs_sha256": "bbb5ababe031989f5cdc6bf7df70e23b2cecac8efbaad731cf72de67544a1475"
+    },
+    "commands": [
+      "OLD_PM --data-dir STATE forecast release-baseline HISTORY",
+      "NEW_PM --data-dir STATE forecast release-compare HISTORY",
+      "NEW_PM --data-dir STATE season readiness --year 2026 --round 12",
+      "OLD_PM --data-dir STATE forecast get OLD_SEAL_SHA256",
+      "NEW_PM --data-dir STATE forecast get OLD_SEAL_SHA256"
+    ],
+    "approval_note": "The report SHA to sign is generated by release-compare on the operator’s own instance. This isolated rehearsal did not create any approval."
+  }
+}

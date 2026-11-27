@@ -1,0 +1,155 @@
+{
+  "scope": "V1-2 synthetic prospective replay, isolated local databases, no network or production state",
+  "audit_commit": "ac64dabe0d5322094e49e7b94ea823d0eb36e2b1",
+  "deployed_code_under_review": "c613a70a352b68507a329bf74dcc5f0f3f98307e",
+  "candidate_version": "0.5.0a4",
+  "probe": "docs/review-evidence/code-review-0.5.0a3-fiveauto.1-2026-11-27/probe_big5_scheduler_news_updates.py",
+  "reproduce": "python -I <probe> --src <checkout>/src <empty-scratch-path> --links-per-day 0,2,6,24",
+  "inspect_evidence_sql": "SELECT disposition,count(*) FROM domestic_evidence_changes GROUP BY disposition",
+  "fixture": "FC Bayern München v SV Werder Bremen (synthetic), Bundesliga",
+  "interval": "2026-11-27T00:00Z through 2026-12-01T22:30Z. Poll every 15 minutes, add a poll in each five-minute fixed window.",
+  "definition": "Forecast payload size is serialized full forecasts only. Evidence rows and SQLite overhead are excluded. The original probe uses an empty roster, synthetic GDELT URLs and a single known historical score.",
+  "cohorts": [
+    {
+      "links_per_day": 0,
+      "before": {
+        "sealed_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "score_rows_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "distinct_probability_vectors_across_all_seals": 1,
+        "payload_bytes_total": 17318
+      },
+      "after": {
+        "sealed_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "score_rows_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "distinct_probability_vectors_across_all_seals": 1,
+        "payload_bytes_total": 17693,
+        "evidence_changes_by_disposition": {}
+      }
+    },
+    {
+      "links_per_day": 2,
+      "before": {
+        "sealed_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "news_update": 13,
+          "preview": 1
+        },
+        "score_rows_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "news_update": 13,
+          "preview": 1
+        },
+        "distinct_probability_vectors_across_all_seals": 1,
+        "payload_bytes_total": 122910
+      },
+      "after": {
+        "sealed_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "score_rows_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "distinct_probability_vectors_across_all_seals": 1,
+        "payload_bytes_total": 24385,
+        "evidence_changes_by_disposition": {
+          "evidence_only": 13
+        }
+      }
+    },
+    {
+      "links_per_day": 6,
+      "before": {
+        "sealed_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "news_update": 39,
+          "preview": 1
+        },
+        "score_rows_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "news_update": 39,
+          "preview": 1
+        },
+        "distinct_probability_vectors_across_all_seals": 1,
+        "payload_bytes_total": 446531
+      },
+      "after": {
+        "sealed_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "score_rows_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "distinct_probability_vectors_across_all_seals": 1,
+        "payload_bytes_total": 35504,
+        "evidence_changes_by_disposition": {
+          "evidence_only": 39
+        }
+      }
+    },
+    {
+      "links_per_day": 24,
+      "before": {
+        "sealed_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "news_update": 115,
+          "preview": 1
+        },
+        "score_rows_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "news_update": 115,
+          "preview": 1
+        },
+        "distinct_probability_vectors_across_all_seals": 1,
+        "payload_bytes_total": 1692558
+      },
+      "after": {
+        "sealed_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "score_rows_by_horizon": {
+          "T-24h": 1,
+          "T-60m": 1,
+          "preview": 1
+        },
+        "distinct_probability_vectors_across_all_seals": 1,
+        "payload_bytes_total": 46636,
+        "evidence_changes_by_disposition": {
+          "evidence_only": 115
+        }
+      }
+    }
+  ],
+  "regressions": "tests/test_big5_scheduler.py exercises corrections, withdrawal, historical rows, conflicting concurrent evaluators, unchanged inputs, a genuine baseline revision, scenario arrival/expiry, single-team total lines and a coincident fixed window."
+}

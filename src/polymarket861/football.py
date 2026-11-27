@@ -885,6 +885,15 @@ def history_kickoff(fixture, cutoff):
     return verified_event_kickoff(fixture, cutoff) or _known_schedule(fixture, cutoff) or fixture.kickoff
 
 
+def result_as_of(fixture, as_of, *, grades=None):
+    """Latest visible adjudication. At an equal receipt clock the last revision supersedes earlier ones."""
+    return max(
+        (v for v in reversed(fixture.result_versions) if (as_of is None or v.available <= as_of)
+         and (grades is None or v.grade in grades)),
+        key=lambda v: v.available, default=None,
+    )
+
+
 def _result_at(fixture, as_of):
     if as_of is None:
         return (
@@ -892,8 +901,8 @@ def _result_at(fixture, as_of):
             if fixture.home_goals is not None
             else None
         )
-    versions = [v for v in fixture.result_versions if v.available <= as_of]
-    return max(versions, key=lambda v: v.available).score if versions else None
+    version = result_as_of(fixture, as_of)
+    return version.score if version else None
 
 
 def _per_line(totals, hg, ag):
@@ -1003,8 +1012,8 @@ def score_round(
                 row.update(status="pending", reason=f.quarantine_reason)
             continue
         if league is not None and as_of is not None and not allow_archive_schedule:
-            receipts = [v for v in f.result_versions if v.available <= as_of and v.grade in RECEIPT_GRADES]
-            truth = max(receipts, key=lambda v: v.available).score if receipts else None
+            receipt = result_as_of(f, as_of, grades=RECEIPT_GRADES)
+            truth = receipt.score if receipt else None
         else:
             truth = _result_at(f, as_of)
         if truth is None:

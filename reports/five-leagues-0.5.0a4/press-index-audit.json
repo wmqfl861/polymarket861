@@ -1,0 +1,252 @@
+{
+  "season": "2026-27",
+  "baseline_source": "c613a70a352b68507a329bf74dcc5f0f3f98307e",
+  "candidate_matcher_version": "gdelt-club-links-v2",
+  "method": "Same public English GKG ZIPs for both implementations. Thursday 18:00–20:45 UTC, November 26 was used for development. A separate Saturday 16:00–17:45 UTC, November 21 was replayed after the rules were written. Count distinct club/URL pairs per window. The raw archives and their article bodies are not redistributed. Source receipt times in this replay are simulated and do not form retrospective forecast evidence.",
+  "limits": "Record-level spot checks concern index title, organization, and URL metadata only. They do not validate story contents or relevance to a specific fixture. The unselected universe is not labelled, so results do not estimate recall, population precision or betting accuracy. Deployment's earlier 33 editions are a different sample.",
+  "sources": {
+    "GDELT_title_field": "https://blog.gdeltproject.org/unescaping-article-titles-in-the-gkg-2-0/",
+    "GDELT_theme_lookup": "https://data.gdeltproject.org/api/v2/guides/LOOKUP-GKGTHEMES.TXT",
+    "GDELT_index": "https://data.gdeltproject.org/gdeltv2/",
+    "Premier_League": "https://www.premierleague.com/en/news/4675097/all-380-fixtures-for-2026-27",
+    "LaLiga": "https://www.laliga.com/laliga-easports/clubes",
+    "Bundesliga": "https://www.bundesliga.com/en/bundesliga/table",
+    "Serie_A": "https://en.legaseriea.it/serie-a/standings",
+    "Ligue_1": "https://www.lfp.fr/article/ligue-1-mc-donald-s-le-calendrier-de-la-saison-2026-2027"
+  },
+  "archive_sha256": {
+    "thursday_european_competitions": {
+      "20261126180000": "600746fccc0eb0651f04820b7a750f7b9a84664e41539f72d175bb5552f51b7a",
+      "20261126181500": "6169d3d19715e240679fab0acc32482a9fa965b5f03136eafae369d07ffeadb0",
+      "20261126183000": "2253b9f5b9002adf3e7f1d6c602b26c899b131a551f3bb99d510c20803119a1a",
+      "20261126184500": "021a611d29be379d9b971e248f05e270b2ccfee94be3237fef8f061ded7483b2",
+      "20261126190000": "3cca7d888831b465459e14d037e3c2f72b82672f28421d34b051fc0b1f593459",
+      "20261126191500": "8c37409910d2aade9553f11d469e9a82a03857d22a90afc797ce340574901246",
+      "20261126193000": "b5a385f711c5e20511a3de8f216500cefade725b138e35aa23c8b50568a3be48",
+      "20261126194500": "622f641eccfb587a1b2daa5ca47255fa005ef873ad32e9c6095ff8b9f89a18dd",
+      "20261126200000": "ca26a7582380a93064e03573592e65909dd8ccde113ef5ac53ddab1844616b6a",
+      "20261126201500": "1d91d6046c2cbbf077af093657d87088d1658fff2409d1479a83784b412ed515",
+      "20261126203000": "9f8498adba173a94184d63bc1df919310f4450a833d4e03054e15785c8df06a3",
+      "20261126204500": "ac823d75881ba67fdb1e9012119c2640760b1a6c38ece2af4e2e188f7f2209fb"
+    },
+    "separate_saturday_window": {
+      "20261121160000": "dd82c2e689e48fa90f88914f48dd424594cc5e98060bffc705b2e4bad408b967",
+      "20261121161500": "a4457f756a9ba86f159b76ca3fc56aad81abe908531bcbae1e82664710041e36",
+      "20261121163000": "e7a94bb740023ee73a0ac766e8236593d26701f82c79e9943c68930582e096bf",
+      "20261121164500": "4524ef3746ce8ca12df3c29d93f05b30a78df0880517a163e3ef305e25ad9b76",
+      "20261121170000": "41fdb47b3073cb1013a2a47f1603fd6108a8aa64a015af97cf23890724cfebdc",
+      "20261121171500": "ed161e48156acd16977b8d9cd16e7a2f18614d06a5511f5e27853ff43c56c639",
+      "20261121173000": "eb7bdc156c3a3fa5a7ede62fdb35ee49c09b0c6a0e122d2caa6e3ee0a5d2d77b",
+      "20261121174500": "f5c88ebb30c151c2b477e88bf86a85e9a5fbaf03cdc7b6b26a99df73e4ff0d46"
+    }
+  },
+  "spot_checks": {
+    "20261126183000-500": "Leverkusen, Europa League",
+    "20261126183000-670": "Le Mans endurance motor racing",
+    "20261126183000-937": "LOSC Lille versus FC Bayern",
+    "20261126184500-362": "Le Mans endurance motor racing",
+    "20261126191500-828": "Le Mans endurance motor racing",
+    "20261126193000-189": "Le Mans endurance motor racing",
+    "20261126201500-212": "Angers vs Lens",
+    "20261126201500-254": "Le Mans endurance motor racing",
+    "20261126201500-331": "Leeds under-21 squad",
+    "20261126201500-360": "VfB Stuttgart versus Eintracht Frankfurt",
+    "20261126201500-492": "Real Madrid vs Real Sociedad",
+    "20261126201500-525": "Le Havre sailing race",
+    "20261126204500-600": "Le Mans endurance motor racing"
+  },
+  "original_claude_probe": {
+    "path": "docs/review-evidence/code-review-0.5.0a3-fiveauto.1-2026-11-27/probe_league_press_labels.py",
+    "registered_clubs": 96,
+    "old_only_formal_name": 60,
+    "new_only_formal_name": 0,
+    "expected_club_url_pairs_in_seven_positive_examples": 11,
+    "baseline_recovered": 3,
+    "candidate_recovered": 10,
+    "baseline_wrong_negatives_attributed_to_clubs": 6,
+    "candidate_wrong_negatives_attributed_to_clubs": 0,
+    "abstention": "The unqualified /sport/real-madrid-injury-list-grows carries no sport-specific index field, title or opponent. The men's football identity cannot be distinguished from its basketball team."
+  },
+  "replay": "python -I reports/five-leagues-0.5.0a4/verify-press-links.py --src PATH_TO_CHECKOUT/src --archives PATH_TO_CACHE --download",
+  "baseline": {
+    "label_count": 136,
+    "single_word_labels": 0,
+    "samples": {
+      "thursday_european_competitions": {
+        "editions": 12,
+        "scanned_rows": 11472,
+        "distinct_club_url_pairs": 23,
+        "pairs_with_indexed_title": 0,
+        "distinct_urls": 20,
+        "by_league": {
+          "epl": {
+            "club_url_pairs": 12,
+            "clubs": 8
+          },
+          "lal": {
+            "club_url_pairs": 0,
+            "clubs": 0
+          },
+          "bun": {
+            "club_url_pairs": 3,
+            "clubs": 3
+          },
+          "sea": {
+            "club_url_pairs": 1,
+            "clubs": 1
+          },
+          "fl1": {
+            "club_url_pairs": 7,
+            "clubs": 2
+          }
+        },
+        "matched_spot_checks": {
+          "20261126183000-670": [
+            "Le Mans FC"
+          ],
+          "20261126184500-362": [
+            "Le Mans FC"
+          ],
+          "20261126191500-828": [
+            "Le Mans FC"
+          ],
+          "20261126193000-189": [
+            "Le Mans FC"
+          ],
+          "20261126201500-212": [
+            "Angers SCO"
+          ],
+          "20261126201500-254": [
+            "Le Mans FC"
+          ],
+          "20261126201500-331": [
+            "Leeds United FC"
+          ],
+          "20261126201500-360": [
+            "Eintracht Frankfurt",
+            "VfB Stuttgart"
+          ],
+          "20261126204500-600": [
+            "Le Mans FC"
+          ]
+        }
+      },
+      "separate_saturday_window": {
+        "editions": 8,
+        "scanned_rows": 6090,
+        "distinct_club_url_pairs": 26,
+        "pairs_with_indexed_title": 0,
+        "distinct_urls": 23,
+        "by_league": {
+          "epl": {
+            "club_url_pairs": 14,
+            "clubs": 9
+          },
+          "lal": {
+            "club_url_pairs": 9,
+            "clubs": 3
+          },
+          "bun": {
+            "club_url_pairs": 3,
+            "clubs": 3
+          },
+          "sea": {
+            "club_url_pairs": 0,
+            "clubs": 0
+          },
+          "fl1": {
+            "club_url_pairs": 0,
+            "clubs": 0
+          }
+        },
+        "matched_spot_checks": {}
+      }
+    }
+  },
+  "candidate": {
+    "label_count": 272,
+    "single_word_labels": 93,
+    "samples": {
+      "thursday_european_competitions": {
+        "editions": 12,
+        "scanned_rows": 11472,
+        "distinct_club_url_pairs": 41,
+        "pairs_with_indexed_title": 41,
+        "distinct_urls": 28,
+        "by_league": {
+          "epl": {
+            "club_url_pairs": 25,
+            "clubs": 11
+          },
+          "lal": {
+            "club_url_pairs": 3,
+            "clubs": 3
+          },
+          "bun": {
+            "club_url_pairs": 6,
+            "clubs": 4
+          },
+          "sea": {
+            "club_url_pairs": 2,
+            "clubs": 1
+          },
+          "fl1": {
+            "club_url_pairs": 5,
+            "clubs": 4
+          }
+        },
+        "matched_spot_checks": {
+          "20261126183000-500": [
+            "Bayer 04 Leverkusen"
+          ],
+          "20261126183000-937": [
+            "FC Bayern München",
+            "Lille OSC"
+          ],
+          "20261126201500-212": [
+            "Angers SCO",
+            "Racing Club de Lens"
+          ],
+          "20261126201500-360": [
+            "Eintracht Frankfurt",
+            "VfB Stuttgart"
+          ],
+          "20261126201500-492": [
+            "Real Madrid CF",
+            "Real Sociedad de Fútbol"
+          ]
+        }
+      },
+      "separate_saturday_window": {
+        "editions": 8,
+        "scanned_rows": 6090,
+        "distinct_club_url_pairs": 56,
+        "pairs_with_indexed_title": 56,
+        "distinct_urls": 37,
+        "by_league": {
+          "epl": {
+            "club_url_pairs": 42,
+            "clubs": 12
+          },
+          "lal": {
+            "club_url_pairs": 6,
+            "clubs": 4
+          },
+          "bun": {
+            "club_url_pairs": 3,
+            "clubs": 3
+          },
+          "sea": {
+            "club_url_pairs": 2,
+            "clubs": 2
+          },
+          "fl1": {
+            "club_url_pairs": 3,
+            "clubs": 3
+          }
+        },
+        "matched_spot_checks": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "scope": "Synthetic Gamma, real rolling scheduler and receipt archive, ten fixtures, original Claude probe.",
+  "probe": "docs/review-evidence/code-review-0.5.0a3-fiveauto.1-2026-11-27/probe_big5_rolling_day_boundary.py",
+  "before": {
+    "distinct_windows": [
+      [
+        "2029-12-28T00:00:00.000000Z",
+        "2030-01-19T00:00:00.000000Z"
+      ],
+      [
+        "2029-12-29T00:00:00.000000Z",
+        "2030-01-20T00:00:00.000000Z"
+      ]
+    ],
+    "synchronous_catalogue_calls": 2,
+    "pooled_catalogue_calls": 9,
+    "complete_samples_in_the_five_minutes_before_midnight": 23,
+    "complete_samples_in_the_five_minutes_from_midnight": 20,
+    "raised": null
+  },
+  "after": {
+    "distinct_windows": [
+      [
+        "2029-12-28T00:00:00.000000Z",
+        "2030-01-19T00:00:00.000000Z"
+      ],
+      [
+        "2029-12-29T00:00:00.000000Z",
+        "2030-01-20T00:00:00.000000Z"
+      ]
+    ],
+    "synchronous_catalogue_calls": 2,
+    "pooled_catalogue_calls": 9,
+    "complete_samples_in_the_five_minutes_before_midnight": 23,
+    "complete_samples_in_the_five_minutes_from_midnight": 20,
+    "raised": null
+  }
+}

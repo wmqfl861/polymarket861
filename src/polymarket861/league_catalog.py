@@ -347,25 +347,52 @@ def _press_health(db, tables, season, teams, clubs, at):
         state = "checked_no_links" if "press_clubs" in tables else "link_table_unavailable"
         for key in teams[league].values():
             _source_check(clubs, key, source, "news_links", last_scan, state, latest_shared_edition=edition,
-                          observed_links=0 if "press_clubs" in tables else None, latest_link=None)
+                          observed_links=0 if "press_clubs" in tables else None, latest_link=None,
+                          historical_index_links=0 if "press_clubs" in tables else None)
     if batches and "press_clubs" in tables:
+        def recheck(league, team, document):
+            article = league_press._visible_article(json.loads(document), league, season, team)
+            return store.canonical(article) if article else None
+
+        db.create_function("pm861_recheck_press", 3, recheck, deterministic=True)
         query = """WITH links AS (
-              SELECT c.league,c.team,c.edition,c.url,c.document,r.received,
-                     row_number() OVER (PARTITION BY c.league,c.team ORDER BY c.edition DESC,c.url) AS position
+              SELECT c.league,c.team,c.edition,c.url,r.received,
+                     CASE WHEN NOT json_valid(c.document) THEN NULL
+                          WHEN json_extract(c.document,'$.matcher_version')=? THEN c.document
+                          ELSE pm861_recheck_press(c.league,c.team,c.document) END AS reviewed
               FROM press_clubs c JOIN press_releases r USING(edition)
               WHERE r.season=? AND r.received<=? AND c.league IN (SELECT value FROM json_each(r.leagues))
-            ), totals AS (SELECT league,team,count(DISTINCT url) AS total FROM links GROUP BY league,team)
-            SELECT l.league,l.team,l.edition,l.url,l.document,l.received,t.total
-            FROM links l JOIN totals t USING(league,team) WHERE l.position=1"""
-        for league, raw_name, edition, url, document, received, total in db.execute(query, (season, at)):
+            ), ranked AS (
+              SELECT *,row_number() OVER (
+                PARTITION BY league,team ORDER BY (reviewed IS NOT NULL) DESC,edition DESC,url) AS position
+              FROM links
+            ), totals(league,team,historical,current) AS (
+              SELECT league,team,count(DISTINCT url),count(DISTINCT CASE WHEN reviewed IS NOT NULL THEN url END)
+              FROM links GROUP BY league,team
+            )
+            SELECT l.league,l.team,l.edition,l.url,l.reviewed,l.received,t.historical,t.current
+            FROM ranked l JOIN totals t USING(league,team) WHERE l.position=1"""
+        for league, raw_name, edition, url, document, received, historical, current in db.execute(
+                query, (league_press.MATCHER_VERSION, season, at)):
             key = teams.get(league, {}).get(raw_name)
             if key is None:
                 continue
+            record = clubs[key][source]
+            record["historical_index_links"] = historical
+            if not current:
+                continue
             link = json.loads(document)
-            clubs[key][source].update(collector_state="links_observed", has_observation=True, observed_links=total,
-                                      latest_link={"edition": edition, "url": url, "received_at": received,
-                                                   "index_seen_at": link.get("index_seen_at"),
-                                                   "matched_via": link.get("matched_via"), "club_label": link.get("club_label")})
+            league_press._fill_known_titles(db, league, season, raw_name, at, [link])
+            record.update(collector_state="links_observed", has_observation=True, observed_links=current,
+                          latest_link={"edition": edition, "url": url, "received_at": received,
+                                       "index_seen_at": link.get("index_seen_at"),
+                                       "matched_via": link.get("matched_via"), "club_label": link.get("club_label"),
+                                       "title": link.get("title"), "title_source": link.get("title_source"),
+                                       "title_record_id": link.get("title_record_id") or (link.get("record_id") if link.get("title") else None),
+                                       "title_received_at": link.get("title_received_at") or (received if link.get("title") else None),
+                                       "matcher_version": link["matcher_version"],
+                                       "football_context": link.get("football_context"),
+                                       "match_relevance": "unverified"})
     return batches
 
 

@@ -5,10 +5,8 @@ from __future__ import annotations
 import json
 import math
 import os
-import re
 import sqlite3
 import time
-import unicodedata
 from contextlib import closing
 from datetime import timedelta
 from email.utils import parsedate_to_datetime
@@ -16,11 +14,19 @@ from pathlib import Path
 
 import httpx
 
-from . import dbscope, football, football_model, league_registry, news_model, store
+from . import dbscope, evidence, football, football_model, league_player_evidence as usage, league_registry, news_model, store
 
 API = "https://v3.football.api-sports.io"
 SOURCE = "api-football-v3"
 LEAGUES = {"lal": 140, "bun": 78, "sea": 135, "fl1": 61}
+SCENARIO_POLICY_SHA256 = store.digest({
+    "scope": "domestic_private_absence_sensitivity_v2", "epl_policy": news_model.POLICY_SHA256,
+    "provider_transcripts": "dedicated_season_and_rights_channel",
+    "lineup_contradiction": "confirmed_start_or_named_substitute",
+    "onset": "verified_injury_start_or_continuous_claim_first_local_observation",
+    "absence_age_hours": 6, "roster_age_days": 14,
+    "goalkeeper_requires_verified_majority_of_entire_completed_window": True,
+})
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS player_api_budget (
  id INTEGER PRIMARY KEY CHECK(id=1), next_request TEXT NOT NULL, reason TEXT);
@@ -69,6 +75,28 @@ class Unavailable(Exception):
 
 def _key():
     return os.environ.get("PM861_API_FOOTBALL_KEY", "").strip()
+
+
+def _provider_state(root, fixture, *, at=None):
+    if not _key():
+        return "not_configured"
+    checked_at = store.instant(at or store.now_utc())
+    year = checked_at.year
+    # The publisher documents Year-4 through Year-2 for the Free plan. A key
+    # for a paid account does not extend this application's free-only coverage.
+    if not year - 4 <= league_registry.season_start_year(fixture["season"]) <= year - 2:
+        return "free_season_unavailable"
+    path = Path(root) / "runtime.sqlite3"
+    if path.is_file():
+        with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=3)) as db:
+            if db.execute("SELECT 1 FROM sqlite_master WHERE name='ev_source_versions'").fetchone():
+                at = evidence.utc(checked_at)
+                manifest = evidence.source_at(db, SOURCE, at, recorded_by=at)
+                if (manifest and manifest.get("status") == "active" and manifest.get("free") is True
+                        and manifest.get("retain_private_observations") is True
+                        and all("prediction" in evidence.granted(manifest, f, "auto") for f in ("injury", "lineup"))):
+                    return "available"
+    return "rights_unverified"
 
 
 def _path(root):
@@ -240,15 +268,20 @@ def _players(field, rows, identity, fixture):
                 starters = row.get("startXI")
                 if not isinstance(starters, list) or len(starters) != 11:
                     continue
-                players = []
-                for starter in starters:
-                    p = starter["player"]
-                    if (not _id(p["id"]) or not isinstance(p["name"], str) or not p["name"].strip()
-                            or p["id"] in seen_players):
+                def members(entries):
+                    if not isinstance(entries, list):
                         raise ValueError
-                    seen_players.add(p["id"])
-                    players.append({"player_id": p["id"], "name": p["name"], "position": p.get("pos")})
-                data[side] = {"state": "published", "players": players}
+                    group = []
+                    for entry in entries:
+                        p = entry["player"]
+                        if (not _id(p["id"]) or not isinstance(p["name"], str) or not p["name"].strip()
+                                or p["id"] in seen_players):
+                            raise ValueError
+                        seen_players.add(p["id"])
+                        group.append({"player_id": p["id"], "name": p["name"], "position": p.get("pos")})
+                    return sorted(group, key=lambda p: p["player_id"])
+                data[side] = {"state": "published", "players": members(starters),
+                              "bench": members(row.get("substitutes", []))}
         except (KeyError, ValueError, TypeError):
             raise Unavailable("player_data_identity_mismatch") from None
     for side in data.values():
@@ -264,8 +297,9 @@ def _save(db, fixture, field, body, received):
 
 
 def collect(root, fixture):
-    if not _key():
-        return {"state": "not_configured"}
+    access = _provider_state(root, fixture)
+    if access != "available":
+        return {"state": access}
     code = fixture["league"]
     if code not in LEAGUES:
         raise ValueError("unsupported league for player status")
@@ -309,57 +343,81 @@ def collect(root, fixture):
 
 
 def as_of(root, fixture, cutoff):
+    access = _provider_state(root, fixture)
     configured = bool(_key())
-    default = "pending" if configured else "not_configured"
-    result = {"source": SOURCE, "scope": "private_research", "configured": configured}
+    default = "pending" if access == "available" else access
+    result = {"source": SOURCE, "scope": "private_research", "configured": configured, "api_football_state": access}
     for field in ("injuries", "lineup"):
         result[field] = {"state": default, "teams": _empty()}
     dbpath = _path(root) / "runtime.sqlite3"
-    if dbpath.is_file():
+    if access == "available" and dbpath.is_file():
         with closing(sqlite3.connect(dbpath.resolve().as_uri() + "?mode=ro", uri=True, timeout=5)) as db:
             db.execute("BEGIN")
             if db.execute("SELECT 1 FROM sqlite_master WHERE name='player_api_observations'").fetchone():
                 for field in ("injuries", "lineup"):
-                    row = db.execute("SELECT body FROM player_api_observations WHERE fixture=? AND kickoff=? AND "
+                    row = db.execute("SELECT body,digest FROM player_api_observations WHERE fixture=? AND kickoff=? AND "
                                      "field=? AND received<=? AND received<? ORDER BY received DESC,digest DESC LIMIT 1",
                                      (fixture["fixture_id"], store.iso(fixture["kickoff"]), field,
                                       store.iso(cutoff), store.iso(fixture["kickoff"]))).fetchone()
                     if row:
-                        result[field] = json.loads(row[0])
+                        saved = json.loads(row[0])
+                        if store.digest(saved) != row[1]:
+                            result[field]["state"] = "observation_digest_mismatch"
+                        elif _provider_state(root, fixture, at=saved["received_at"]) == "available":
+                            result[field] = saved
+                        else:
+                            result[field]["state"] = "rights_unverified"
+    local = usage.local_records(root, fixture, cutoff)
+    result.update(local)
+    if local:
+        result["source"] = usage.SOURCE
     semantic = {k: {"state": result[k]["state"], "teams": result[k]["teams"]}
                 for k in ("injuries", "lineup") if result[k]["state"] in {"observed", "no_published_players"}}
+    if local.get("lineup_ambiguity"):
+        semantic["lineup_ambiguity"] = local["lineup_ambiguity"]
+    for field in ("usage", "prior_lineups"):
+        if local.get(field):
+            semantic[field] = {side: [item["evidence_id"] for item in items] for side, items in local[field].items()}
     result["evidence_sha256"] = store.digest(semantic) if semantic else None
     return result
 
 
-def _player_identity(name):
-    if not isinstance(name, str):
-        return ""
-    # Preserve full given and family names. A provider's abbreviated name cannot
-    # identify an independent club roster entry simply by matching a family name.
-    words = re.findall(r"[^\W\d_]+", unicodedata.normalize("NFKC", name).casefold())
-    if len(words) < 2 or any(len(w) == 1 for w in words):
-        return ""
-    return " ".join(words)
+# The positions persisted by the existing roster parsers are source-native.
+# A single letter has a different meaning across language templates.
+_ROLES = {
+    "lal": {"por": "goalkeeper", "portero": "goalkeeper", "arq": "goalkeeper", "def": "defence",
+            "med": "midfield", "cen": "midfield", "del": "forward"},
+    "sea": {"p": "goalkeeper", "portiere": "goalkeeper", "d": "defence", "c": "midfield", "a": "forward"},
+    "fl1": {"g": "goalkeeper", "gb": "goalkeeper", "gardien": "goalkeeper", "d": "defence",
+            "déf": "defence", "m": "midfield", "mil": "midfield", "a": "forward", "att": "forward"},
+    "bun": {"torwart": "goalkeeper", "abwehr": "defence", "mittelfeld": "midfield", "sturm": "forward"},
+}
 
 
-def absence_scenario(base, snapshot, *, cutoff):
-    """Sensitivity to a reported match absence using an independent club roster identity."""
+def absence_scenario(base, snapshot, *, cutoff, engine=None):
+    """Point-in-time absence sensitivity with a verified independent club roster."""
     out = {"scope": "uncalibrated_private_research", "changed": False, "applied": [],
            "status": "no_qualified_match_absences", "excluded": [],
-           "policy_sha256": news_model.POLICY_SHA256, "probabilities": base["probabilities"]}
+           "policy_sha256": SCENARIO_POLICY_SHA256, "epl_policy_sha256": news_model.POLICY_SHA256,
+           "probabilities": base["probabilities"]}
     if base["model"] != "B1" or not base.get("rates"):
         return dict(out, status="no_fitted_team_rates")
     status = snapshot.get("player_status", {})
     injuries = status.get("injuries", {})
     field_at = injuries.get("received_at")
-    if status.get("source") != SOURCE or injuries.get("state") != "observed" or not field_at:
+    origin = injuries.get("source", status.get("source"))
+    if origin not in (SOURCE, usage.SOURCE) or injuries.get("state") != "observed" or not field_at:
         return out
     when = store.instant(cutoff)
     received = store.instant(field_at)
     if not when - timedelta(hours=6) <= received <= when < store.instant(base["kickoff"]):
         return dict(out, status="outdated_match_observation")
+    # Full-scope native forecasts must match the roster receipt even after a fixture moves.
+    for key in ("fixture_id", "league", "season"):
+        if key in base and snapshot.get(key) != base[key]:
+            return dict(out, status="fixture_scope_mismatch")
     shifts = {"home": 0.0, "away": 0.0}
+    training = None
     starters = status.get("lineup", {})
     start_receipt = starters.get("received_at")
     if starters.get("state") != "observed" or not start_receipt or store.instant(start_receipt) > when:
@@ -369,28 +427,64 @@ def absence_scenario(base, snapshot, *, cutoff):
         verified = roster.get("ready_at")
         members = roster.get("players", ()) if (roster.get("evidence") and verified and
                     when - timedelta(days=14) <= store.instant(verified) <= when) else ()
-        starting = starters.get("teams", {}).get(side, {}).get("players", ())
+        matchday = starters.get("teams", {}).get(side, {})
+        starting, bench = matchday.get("players", ()), matchday.get("bench", ())
         for p in injuries.get("teams", {}).get(side, {}).get("players", ()):
-            pid, name = p.get("player_id"), _player_identity(p.get("name"))
-            matching = [m for m in members if name and _player_identity(m.get("name")) == name]
+            pid, name = p.get("player_id"), usage.full_name(p.get("name"))
+            matching = [m for m in members if name and usage.full_name(m.get("name")) == name]
             reason = None
-            if str(p.get("provider_type", "")).strip().casefold() != "missing fixture":
+            if side in status.get("lineup_ambiguity", ()):
+                reason = "published_matchday_squad_identity_unresolved"
+            elif str(p.get("provider_type", "")).strip().casefold() != "missing fixture":
                 reason = "no_explicit_fixture_absence"
-            elif len(matching) != 1 or not _id(pid):
+            elif len(matching) != 1 or (origin == SOURCE and not _id(pid)):
                 reason = "independent_full_name_identity_missing"
-            elif any(s.get("player_id") == pid or _player_identity(s.get("name")) == name for s in starting):
+            elif origin == usage.SOURCE and (pid != name or not p.get("evidence_id")):
+                reason = "registered_player_evidence_missing"
+            elif any(s.get("player_id") == pid or usage.full_name(s.get("name")) == name for s in starting):
                 reason = "listed_in_published_starting_eleven"
+            elif any(s.get("player_id") == pid or usage.full_name(s.get("name")) == name for s in bench):
+                reason = "listed_on_published_bench"
             if reason:
                 out["excluded"].append({"side": side, "player_id": pid, "reason": reason})
                 continue
-            role = news_model._role(matching[0].get("source_position"))
-            weight = news_model.POLICY["absence_weight"]["reported"]["out"]
+            position = matching[0].get("source_position")
+            role = _ROLES.get(base.get("league"), {}).get(str(position).casefold(), news_model._role(position))
+            multiplier, history = usage.importance(status.get("usage", {}).get(side), engine, base, side, name, role, when)
+            if history["basis"] == "neutral" and status.get("prior_lineups", {}).get(side):
+                multiplier, history = usage.from_lineups(status["prior_lineups"][side], engine, base, side,
+                                                         name, when, history)
+            if role == "unknown" and history.get("position"):
+                role = news_model._role(history["position"])
+            if role == "unknown":
+                out["excluded"].append({"side": side, "player_id": pid, "reason": "position_unconfirmed"})
+                continue
+            keeper_window = history.get("scheduled_matches", history["matches"])
+            if role == "goalkeeper" and (not keeper_window or 2 * history["starts"] <= keeper_window):
+                out["excluded"].append({"side": side, "player_id": pid, "role": role,
+                                        "reason": "no_verified_majority_of_goalkeeper_starts",
+                                        "importance_multiplier": multiplier, "player_importance": history})
+                continue
+            confidence = p.get("certainty") if origin == usage.SOURCE else "reported"
+            if confidence not in ("reported", "confirmed"):
+                continue
+            absence_weight = news_model.POLICY["absence_weight"][confidence]["out"]
+            onset = p.get("injury_started_at") or p.get("absence_first_seen_at") or p.get("first_recorded_at") or field_at
+            if engine and training is None:
+                training = engine.fit(base["season"], when, base["fixture_id"]).team_kickoffs
+            club = league_registry.club_key(base["league"], base["season"], base[side]) if training else None
+            duration = news_model.duration_evidence((training or {}).get(club), store.instant(onset))
+            weight = absence_weight * multiplier * duration["duration_multiplier"]
             own, opponent = news_model.POLICY["role_log_rate_effects"][role]
             shifts[side] += weight * own
             shifts["away" if side == "home" else "home"] += weight * opponent
             out["applied"].append({"side": side, "player_id": pid, "name": p["name"], "role": role,
-                                   "weight": weight, "evidence_grade": "provider_reported_fixture_absence",
-                                   "provider_fixture_id": injuries.get("provider_fixture_id")})
+                                   "weight": weight, "absence_weight": absence_weight,
+                                   "importance_multiplier": multiplier, "player_importance": history, **duration,
+                                   "onset_at": onset, "onset_basis": ("documented_injury_onset"
+                                                                     if p.get("injury_started_at") else "local_observation"),
+                                   "evidence_grade": confidence + "_fixture_absence", "source_id": p.get("source_id", SOURCE),
+                                   "evidence_id": p.get("evidence_id"), "provider_fixture_id": injuries.get("provider_fixture_id")})
     if not out["applied"]:
         return out
     bound = news_model.POLICY["max_abs_log_adjustment_per_team"]

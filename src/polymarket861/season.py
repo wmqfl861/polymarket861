@@ -1,6 +1,7 @@
 """One durable EPL matchday coordinator for collection, forecasts and paper accounts."""
 
 import json
+import sqlite3
 import sys
 import time
 import uuid
@@ -637,7 +638,13 @@ def _service(root, name, now, options):
 
         return sync_season(root, year_of(now))
     if name == "news":
-        return sync_news(root, history_root=options.get("football_root"))
+        from . import wire_match_sheets
+
+        try:
+            sheets = wire_match_sheets.collect(root)
+        except (OSError, sqlite3.Error, ValueError) as exc:
+            sheets = {"state": "error", "reason": str(exc)}
+        return sync_news(root, history_root=options.get("football_root")) | {"match_sheets": sheets}
     if name == "settlements":
         from .settlement import sync
 

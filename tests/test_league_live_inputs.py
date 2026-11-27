@@ -117,6 +117,46 @@ class LiveFootballInputsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unverified domestic archive bytes"):
             self.inputs()
 
+    def test_registered_market_identity_fault_is_per_fixture_and_correctable_before_deadline(self):
+        from polymarket861 import big5_scheduler as scheduler
+
+        second = dict(self.target, team1="FC Barcelona", team2="Athletic Club")
+        self.path.write_text(json.dumps({"matches": [self.target, second, self.prior]}))
+        event = self.event()
+        event.update(slug="lal-bar-ath-2026-11-27", id="444")
+        for native, (club, abbr, identity) in zip(event["teams"], (("FC Barcelona", "bar", "20"),
+                                                                  ("Athletic Club", "ath", "21"))):
+            native.update(name=club, abbreviation=abbr, id=identity)
+        self.record_event(self.event(), SEEN)
+        self.record_event(event, SEEN)
+        clock = football.utc(SEEN)
+        with patch.object(store, "now_utc", side_effect=lambda: store.iso(clock)), \
+             patch.object(registry, "source_blob", return_value=registry.git_blob(self.path.read_bytes())):
+            def cycle():
+                return scheduler.tick(self.state, leagues=["lal"], market_state_dir=self.market,
+                                      football_root=self.history, collect_news=False)["leagues"]["lal"]
+
+            self.assertEqual(cycle()["eligible_upcoming"], 2)
+            clock = football.utc(KICK) - timedelta(hours=24, minutes=3)
+            invalid = self.event()
+            invalid["teams"][1]["name"] = "Arsenal FC"
+            self.record_event(invalid, store.iso(clock))
+            bad = cycle()
+            fid = football.fixture_id(SEASON, self.home, self.away, league="lal")
+            self.assertEqual((bad["state"], bad["eligible_upcoming"], bad["fixture_errors"][0]["fixture"]),
+                             ("partial", 1, fid))
+            with closing(scheduler._database(self.state, "lal")) as db:
+                seals = db.execute("SELECT fixture FROM domestic_jobs WHERE horizon='T-24h' AND sealed IS NOT NULL")
+                self.assertEqual([r[0] for r in seals], [football.fixture_id(SEASON, second["team1"],
+                                                                            second["team2"], league="lal")])
+            clock += timedelta(minutes=1)
+            self.record_event(self.event(), store.iso(clock))
+            fixed = cycle()
+            self.assertEqual((fixed["state"], fixed["eligible_upcoming"], fixed["fixture_errors"]), ("ok", 2, []))
+            with closing(scheduler._database(self.state, "lal")) as db:
+                self.assertEqual(db.execute("SELECT count(*) FROM domestic_jobs WHERE horizon='T-24h' "
+                                            "AND sealed IS NOT NULL").fetchone()[0], 2)
+
     def test_large_schedule_move_needs_a_matching_dated_source_and_native_clock(self):
         self.path.write_text(json.dumps({"matches": [self.target | {"date": "2027-02-07",
                                                                     "round": "Matchday 23"}, self.prior]}))
@@ -163,6 +203,87 @@ class LiveFootballInputsTests(unittest.TestCase):
         self.assertEqual(engine.fit(SEASON, football.utc(mid), "another").evidence["training_matches"], 1)
         with self.assertRaisesRegex(ValueError, "no eligible historical results"):
             engine.fit(SEASON, football.utc(end), "another")
+
+    def test_late_replacement_retracts_a_score_with_no_new_score_publication(self):
+        self.record_event(self.event(), SEEN)
+        initial = self.inputs()
+        fid = initial.upcoming[0].fixture_id
+        received = "2026-11-27T22:00:00.000000Z"
+        moved = "2026-11-28T00:00:00.000000Z"
+        new_kick = "2026-11-29T20:00:00.000000Z"
+        self.record_event(self.event() | {"startTime": new_kick}, moved)
+        archived = [(received, "wikipedia", "wiki:old-final", received, {fid: (2, 1)})]
+        with patch.object(live, "_wiki_history", return_value=(archived, [])):
+            before = next(f for f in self.inputs(received).fixtures if f.fixture_id == fid)
+            self.assertEqual((before.status, before.home_goals, before.away_goals), ("completed", 2, 1))
+            after = self.inputs(moved)
+        result = next(f for f in after.fixtures if f.fixture_id == fid)
+        self.assertEqual((result.status, result.home_goals, result.away_goals), ("scheduled", None, None))
+        self.assertEqual([(store.iso(v.available), store.iso(v.actual_kickoff), v.score) for v in result.result_versions],
+                         [(received, store.iso(KICK), (2, 1)), (moved, store.iso(KICK), None)])
+        self.assertNotIn(fid, {f.fixture_id for f in after.upcoming})
+        held, = after.provenance["withheld_fixtures"]
+        self.assertEqual((held["fixture"], held["observed_at"], held["replacement_kickoff"]), (fid, moved, new_kick))
+        self.assertIn("no pre-kickoff cancellation", held["error"])
+
+    def test_unregistered_new_fixture_is_quarantined_and_independent_schedule_survives(self):
+        self.record_event(self.event(), SEEN)
+        self.inputs()
+        late = store.iso(football.utc(SEEN) + timedelta(hours=1))
+        fixed = store.iso(football.utc(late) + timedelta(hours=1))
+        extra = dict(self.target, team2=next(team for team in registry.members("lal", SEASON)
+                                             if team not in (self.home, self.away)))
+        bad_id = football.fixture_id(SEASON, self.home, extra["team2"], league="lal")
+        snapshots = []
+        for at, revision, matches in ((late, "b", [self.prior, self.target, extra]),
+                                      (fixed, "c", [self.prior, self.target])):
+            path = self.root / revision / SEASON / "es.1.json"
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({"matches": matches}))
+            snapshots.append((at, revision * 40, registry.git_blob(path.read_bytes()), path))
+        with patch.object(live.league_openfootball_refresh, "snapshots",
+                          side_effect=lambda root, league, season, at: [row for row in snapshots if row[0] <= at]):
+            partial = self.inputs(late)
+            self.assertEqual(partial.provenance["unregistered_fixtures"], [bad_id])
+            self.assertNotIn(bad_id, {f.fixture_id for f in partial.fixtures})
+            self.assertEqual(len(partial.upcoming), 1)
+            valid_id = partial.upcoming[0].fixture_id
+            self.assertEqual(set(partial.provenance["market_fixtures"]), {valid_id})
+            self.assertEqual(self.inputs(fixed).provenance["unregistered_fixtures"], [])
+            self.assertEqual(self.inputs(late).provenance["unregistered_fixtures"], [bad_id])
+
+    def test_market_source_outage_and_fresh_empty_catalog_have_different_health(self):
+        from polymarket861 import big5_scheduler as scheduler, market_watch_health as watch
+
+        def cycle():
+            return scheduler.tick(self.state, leagues=["lal"], market_state_dir=self.market,
+                                  football_root=self.history, collect_news=False)["leagues"]["lal"]
+
+        with watch.monitor(scheduler._directory(self.state, "lal"), ["lal"], None, None,
+                           continuous=True, discover=False, notify_systemd=False) as heartbeat:
+            self.assertEqual(cycle()["source_errors"]["market"]["state"], "unavailable")
+            heartbeat(1, None)
+            self.assertFalse(scheduler.status(self.state, leagues=["lal"], health_only=True)["healthy"])
+            market_root = big5_market.research_root(self.market)
+            with closing(big5_market._db(market_root)):
+                pass
+            self.assertEqual(cycle()["source_errors"]["market"]["state"], "unobserved")
+            # A completed rolling traversal with a genuine empty response is enough to resume.
+            with watch.monitor(market_root, ["lal"], None, None, continuous=True, discover=True,
+                               rolling=True, notify_systemd=False) as capture:
+                capture(1, {"leagues": {"lal": {"page_walk_complete": True, "gaps": [], "pages": [
+                    {"rows": 0, "http_fresh": True, "received_at": SEEN}
+                ]}}})
+            self.assertEqual((cycle()["state"], cycle()["eligible_upcoming"]), ("ok", 0))
+            self.assertTrue(scheduler.status(self.state, leagues=["lal"], health_only=True)["healthy"])
+            self.record_event(self.event(), SEEN)
+            self.assertEqual(cycle()["eligible_upcoming"], 1)
+            self.market = self.root / "missing-again"
+            self.assertEqual(cycle()["state"], "partial")
+            # The unseen new schedule cannot withdraw the earlier verified match or its open windows.
+            detail = scheduler.status(self.state, leagues=["lal"])["leagues"]["lal"]
+            self.assertEqual(len(detail["eligible_upcoming"]), 1)
+            self.assertEqual(detail["dispatch"]["T-24h"], {"pending": 1})
 
     def test_wikipedia_revision_scope_and_administrative_scores(self):
         for league in live._WIKI_PAGES:

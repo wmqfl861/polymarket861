@@ -85,7 +85,7 @@ def _last_page_receipt(report):
 
 
 @contextmanager
-def monitor(root, leagues, start, end, *, continuous, discover, rolling=False):
+def monitor(root, leagues, start, end, *, continuous, discover, rolling=False, notify_systemd=True):
     """Only a continuously running collector advancing real ticks emits heartbeats."""
     if not continuous:
         yield None
@@ -176,9 +176,10 @@ def monitor(root, leagues, start, end, *, continuous, discover, rolling=False):
             if new_walk:
                 last_discovery = discovery
             if heartbeat_due:
-                _notify(
-                    "READY=1\nWATCHDOG=1" if next_heartbeat is None else "WATCHDOG=1"
-                )
+                if notify_systemd:
+                    _notify(
+                        "READY=1\nWATCHDOG=1" if next_heartbeat is None else "WATCHDOG=1"
+                    )
                 next_heartbeat = monotonic + 15
 
         try:
@@ -189,7 +190,8 @@ def monitor(root, leagues, start, end, *, continuous, discover, rolling=False):
                     "UPDATE watches SET state='stopped',updated=? WHERE id=?",
                     (store.iso(store.now_utc()), run),
                 )
-            _notify("STOPPING=1")
+            if notify_systemd:
+                _notify("STOPPING=1")
 
 
 def _catalog_status(leagues, receipts, now, max_age):

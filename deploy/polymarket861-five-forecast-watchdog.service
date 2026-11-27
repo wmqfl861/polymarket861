@@ -1,0 +1,10 @@
+[Unit]
+Description=Check the four domestic forecast workers and their outstanding source failures
+
+[Service]
+Type=oneshot
+Environment=PM861_DATA_DIR=%h/.local/share/polymarket861-five/research
+ExecStart=%h/.local/share/polymarket861-five/venv/bin/pm861 big5-scheduler watchdog
+TimeoutStartSec=30s
+NoNewPrivileges=yes
+UMask=0077

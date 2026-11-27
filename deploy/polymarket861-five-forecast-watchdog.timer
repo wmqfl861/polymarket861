@@ -1,0 +1,11 @@
+[Unit]
+Description=Check four-league forecast health every minute
+
+[Timer]
+OnStartupSec=3min
+OnUnitActiveSec=1min
+AccuracySec=2s
+Unit=polymarket861-five-forecast-watchdog.service
+
+[Install]
+WantedBy=timers.target

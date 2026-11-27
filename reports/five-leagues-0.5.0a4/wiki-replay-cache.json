@@ -1,0 +1,234 @@
+{
+  "finding": "V2-3",
+  "recorded_at_utc": "2026-11-27T06:26:14+00:00",
+  "baseline": {
+    "review_checkout": "ac64dabe0d5322094e49e7b94ea823d0eb36e2b1",
+    "deployed_source": "c613a70a352b68507a329bf74dcc5f0f3f98307e",
+    "version": "0.5.0a3+fiveauto.1"
+  },
+  "candidate_version": "0.5.0a4",
+  "python": "3.12.14",
+  "benchmark_scope": "Offline synthetic Wikipedia responses, 2,000 revisions of the Bundesliga template and 2,000 of a Serie A article with 150 KB of text padding. Every revision contains the complete registered 2026–27 fixture matrix (306 / 380 matches). Wall times depend on hardware and system activity.",
+  "stages": [
+    "cold process and existing archive",
+    "same process, fresh SQLite connection and same eligible rows",
+    "append one changed revision per league",
+    "replay earlier local observation cutoff"
+  ],
+  "evidence_comparison": "Equal SHA-256 values on the frozen parent and candidate for every visible matrix, receipt metadata and fixture sporting chronology (score, availability, grade, provenance). On the candidate, each optimized timeline was also compared with direct, uncompressed reconciliation using every result-version field, including actual kickoff, for all 306 Bundesliga and 380 Serie A fixtures at all four stages. Timings exclude this direct control and per-revision matrix digest.",
+  "retention": "Only original receipts and the SQLite index / change token are durable. Per-process, per-league, per-season and per-parser caches hold at most 9,000 pages and 32,768 score transitions per scope (12 scopes). After a restart, original eligible pages are verified again. An SQLite write, WAL or file change rechecks the compressed representations. An unchanged physical archive needs only indexed headers. Earliest eligible kickoff time, corrections and withdrawals are retained even when page contents repeat.",
+  "reproduce": [
+    "git worktree add --detach /tmp/pm861-wiki-baseline ac64dabe0d5322094e49e7b94ea823d0eb36e2b1",
+    "mkdir -p /tmp/pm861-wiki-pages",
+    "python -I docs/review-evidence/code-review-0.5.0a3-fiveauto.1-2026-11-27/probe_league_inputs_revision_replay_cost.py --src /tmp/pm861-wiki-baseline/src /tmp/pm861-wiki-pages --counts 2000",
+    "python -I docs/review-evidence/five-leagues-0.5.0a4/probe_wiki_replay_cache.py --src /tmp/pm861-wiki-baseline/src --archives /tmp/pm861-wiki-pages",
+    "python -I docs/review-evidence/five-leagues-0.5.0a4/probe_wiki_replay_cache.py --src src --archives /tmp/pm861-wiki-pages"
+  ],
+  "regressions": {
+    "module": "tests/test_league_wiki_replay.py",
+    "passing_python_versions": [
+      "3.11",
+      "3.12",
+      "3.13"
+    ],
+    "cases": 7,
+    "checks": [
+      "as-of selection and parser identity",
+      "stored and in-transaction tamper, including WAL rollback and concurrent readers",
+      "steady SQL read denies BLOB access; physical replacement preserves headers while corrupting original",
+      "hourly polling and fresh reader share verified original",
+      "live load_inputs preserves corrected, withdrawn and reinstated results with receipt provenance",
+      "full replay equivalence across shifted kickoff and receipt cutoff",
+      "first empty / unchanged score after a schedule receipt is retained; a move and reversal between two Wikipedia revisions also start a new evidence epoch"
+    ]
+  },
+  "measurements": {
+    "bun": {
+      "cold": {
+        "visible_revisions": 2000,
+        "revision_matrices_metadata_sha256": "fc748f496306e7410216dd501d991dfd6eba81846f8066022283ae085c3808b7",
+        "fixture_chronology_sha256": "09ac22eecb3e3be3961ac81ac961df942e3c77bd3f031a7b8ff654cf3add95b7",
+        "baseline": {
+          "standalone_replay_seconds": 1.8687,
+          "result_timeline_seconds": 1.4028,
+          "original_decompressions": 2000,
+          "page_parses": 2000
+        },
+        "candidate": {
+          "standalone_replay_seconds": 1.6119,
+          "result_timeline_seconds": 0.3035,
+          "original_decompressions": 2000,
+          "page_parses": 2000,
+          "all_version_fields_sha256": "1be9998be025f2c36fb0a49087f1faae02dd99d703f3f0936a94e3357cb31976",
+          "equal_to_direct_replay_including_actual_kickoff": true
+        }
+      },
+      "warm": {
+        "visible_revisions": 2000,
+        "revision_matrices_metadata_sha256": "fc748f496306e7410216dd501d991dfd6eba81846f8066022283ae085c3808b7",
+        "fixture_chronology_sha256": "09ac22eecb3e3be3961ac81ac961df942e3c77bd3f031a7b8ff654cf3add95b7",
+        "baseline": {
+          "standalone_replay_seconds": 1.697,
+          "result_timeline_seconds": 1.5308,
+          "original_decompressions": 2000,
+          "page_parses": 2000
+        },
+        "candidate": {
+          "standalone_replay_seconds": 0.0039,
+          "result_timeline_seconds": 0.0471,
+          "original_decompressions": 0,
+          "page_parses": 0,
+          "all_version_fields_sha256": "1be9998be025f2c36fb0a49087f1faae02dd99d703f3f0936a94e3357cb31976",
+          "equal_to_direct_replay_including_actual_kickoff": true
+        }
+      },
+      "append_one": {
+        "visible_revisions": 2001,
+        "revision_matrices_metadata_sha256": "533f51d3947723437729ffd46b90ac012f17fb67cbba7deaa38afd17b7c8d6cf",
+        "fixture_chronology_sha256": "7f904c73dd20dc8a6ed0a73639db2b05dc5910e7f077ff4d140fa955afe9de95",
+        "baseline": {
+          "standalone_replay_seconds": 1.6106,
+          "result_timeline_seconds": 1.564,
+          "original_decompressions": 2001,
+          "page_parses": 2001
+        },
+        "candidate": {
+          "standalone_replay_seconds": 0.0094,
+          "result_timeline_seconds": 0.0409,
+          "original_decompressions": 1,
+          "page_parses": 1,
+          "all_version_fields_sha256": "c6fab61daa87b17d6d877aeb0094317f6a27b56582a3731daaea98d09cde78ee",
+          "equal_to_direct_replay_including_actual_kickoff": true
+        }
+      },
+      "rewind": {
+        "visible_revisions": 2000,
+        "revision_matrices_metadata_sha256": "fc748f496306e7410216dd501d991dfd6eba81846f8066022283ae085c3808b7",
+        "fixture_chronology_sha256": "09ac22eecb3e3be3961ac81ac961df942e3c77bd3f031a7b8ff654cf3add95b7",
+        "baseline": {
+          "standalone_replay_seconds": 1.6967,
+          "result_timeline_seconds": 2.1577,
+          "original_decompressions": 2000,
+          "page_parses": 2000
+        },
+        "candidate": {
+          "standalone_replay_seconds": 0.0033,
+          "result_timeline_seconds": 0.194,
+          "original_decompressions": 0,
+          "page_parses": 0,
+          "all_version_fields_sha256": "1be9998be025f2c36fb0a49087f1faae02dd99d703f3f0936a94e3357cb31976",
+          "equal_to_direct_replay_including_actual_kickoff": true
+        }
+      }
+    },
+    "sea": {
+      "cold": {
+        "visible_revisions": 2000,
+        "revision_matrices_metadata_sha256": "230fc4ba2b3dc720bd62f0e143e77b41c209897de3681a250fabfb47e051e357",
+        "fixture_chronology_sha256": "cae9de26525455648b90f0472627aa69ed9fb2b827f87f4a556fd78eaf721971",
+        "baseline": {
+          "standalone_replay_seconds": 9.0966,
+          "result_timeline_seconds": 1.8242,
+          "original_decompressions": 2000,
+          "page_parses": 2000
+        },
+        "candidate": {
+          "standalone_replay_seconds": 7.0205,
+          "result_timeline_seconds": 0.1968,
+          "original_decompressions": 2000,
+          "page_parses": 2000,
+          "all_version_fields_sha256": "74662b7ca08a860ee6ef9bc29eb8b58a0248323dd65338010f370ed53d426929",
+          "equal_to_direct_replay_including_actual_kickoff": true
+        }
+      },
+      "warm": {
+        "visible_revisions": 2000,
+        "revision_matrices_metadata_sha256": "230fc4ba2b3dc720bd62f0e143e77b41c209897de3681a250fabfb47e051e357",
+        "fixture_chronology_sha256": "cae9de26525455648b90f0472627aa69ed9fb2b827f87f4a556fd78eaf721971",
+        "baseline": {
+          "standalone_replay_seconds": 7.2384,
+          "result_timeline_seconds": 1.6476,
+          "original_decompressions": 2000,
+          "page_parses": 2000
+        },
+        "candidate": {
+          "standalone_replay_seconds": 0.0039,
+          "result_timeline_seconds": 0.0386,
+          "original_decompressions": 0,
+          "page_parses": 0,
+          "all_version_fields_sha256": "74662b7ca08a860ee6ef9bc29eb8b58a0248323dd65338010f370ed53d426929",
+          "equal_to_direct_replay_including_actual_kickoff": true
+        }
+      },
+      "append_one": {
+        "visible_revisions": 2001,
+        "revision_matrices_metadata_sha256": "342142d4e7cc71a942421f4e4894cc223799de5fa4412d1a08f980b43a49e0c3",
+        "fixture_chronology_sha256": "c96f81656287b2e70554256b00f79d71a9ef6daa6b587cccb6877adea0bad01a",
+        "baseline": {
+          "standalone_replay_seconds": 6.7643,
+          "result_timeline_seconds": 1.5729,
+          "original_decompressions": 2001,
+          "page_parses": 2001
+        },
+        "candidate": {
+          "standalone_replay_seconds": 0.0145,
+          "result_timeline_seconds": 0.0389,
+          "original_decompressions": 1,
+          "page_parses": 1,
+          "all_version_fields_sha256": "cdc9ec5c9a8eb9451c1bec55fa5ec2cfe738361ebd5554565c0921a1628990d5",
+          "equal_to_direct_replay_including_actual_kickoff": true
+        }
+      },
+      "rewind": {
+        "visible_revisions": 2000,
+        "revision_matrices_metadata_sha256": "230fc4ba2b3dc720bd62f0e143e77b41c209897de3681a250fabfb47e051e357",
+        "fixture_chronology_sha256": "cae9de26525455648b90f0472627aa69ed9fb2b827f87f4a556fd78eaf721971",
+        "baseline": {
+          "standalone_replay_seconds": 6.7881,
+          "result_timeline_seconds": 1.627,
+          "original_decompressions": 2000,
+          "page_parses": 2000
+        },
+        "candidate": {
+          "standalone_replay_seconds": 0.0045,
+          "result_timeline_seconds": 0.1935,
+          "original_decompressions": 0,
+          "page_parses": 0,
+          "all_version_fields_sha256": "74662b7ca08a860ee6ef9bc29eb8b58a0248323dd65338010f370ed53d426929",
+          "equal_to_direct_replay_including_actual_kickoff": true
+        }
+      }
+    }
+  },
+  "reschedule_control": {
+    "before_fix": "Seed 861, generated schedule 62, cutoff 17: the direct reconciliation withdrew the score at 11:45 UTC; the previous projection selected 2–1.",
+    "after_fix": {
+      "seed": 861,
+      "generation_schedules": 180,
+      "exact_full_replay_comparisons": 1080
+    },
+    "changed_original": {
+      "warm": [
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      "before_changed_original": [
+        [
+          1,
+          0
+        ]
+      ],
+      "visible_mismatched_blob_rejected": true
+    },
+    "tested_source_sha256": {
+      "league_wiki_cache.py": "ebcb29e7018087e10456b23ed658e0abb4d54a2436c4aa4cae960b73277af014",
+      "league_live_inputs.py": "937fe52dbf34c9b48514ad1b8d5e1806ef91268bda7c8fd9bbb83dd839887528"
+    }
+  }
+}

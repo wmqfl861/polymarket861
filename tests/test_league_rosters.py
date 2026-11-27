@@ -79,6 +79,42 @@ class LeagueRosters(unittest.TestCase):
         self.assertIsNone(rosters.roster_coverage("Real Madrid CF B", SEASON, "lal"))
         self.assertIsNone(rosters.roster_coverage("FC Barcelona", "2025-26", "lal"))
 
+    def test_collector_failure_and_cooldown_reach_the_fixture_watchdog_until_recovery(self):
+        from polymarket861 import big5_scheduler as scheduler, league_player_status, market_watch_health as watch
+
+        fid, kick = self.fixture["fixture_id"], self.fixture["kickoff"]
+        with closing(scheduler._database(self.state, "lal")) as db, db:
+            db.execute("INSERT INTO domestic_matches VALUES(?,?,?,1,'{}',?)",
+                       (fid, kick, store.canonical(self.fixture), CLOCK))
+            db.execute("INSERT INTO domestic_news_polls(fixture,kickoff,due,state) VALUES(?,?,?,'pending')",
+                       (fid, kick, CLOCK))
+        with watch.monitor(scheduler._directory(self.state, "lal"), ["lal"], None, None, continuous=True,
+                           discover=False, notify_systemd=False) as heartbeat, \
+             patch.object(league_player_status, "_provider_state", return_value="free_season_unavailable"):
+            def health():
+                # The independent forecast lane keeps progressing throughout the roster outage.
+                with closing(scheduler._database(self.state, "lal")) as db:
+                    scheduler._record_cycle(db, store.now_utc(), "ok", {})
+                heartbeat(1, None)
+                return scheduler.status(self.state, leagues=["lal"], health_only=True)["leagues"]["lal"]
+
+            with patch.object(rosters.news_sources, "_get", side_effect=OSError("roster relay down")) as fetch:
+                _, error = scheduler._poll_batch(self.state, "lal")
+                self.assertIn("OSError: roster relay down", error)
+                self.assertEqual(health()["news_poll_failures"][0]["state"], "retry")
+                self.clock += timedelta(minutes=5)
+                _, error = scheduler._poll_batch(self.state, "lal")
+                self.assertIn("OSError: roster relay down", error)
+                self.assertEqual(fetch.call_count, 2)
+            self.clock += timedelta(minutes=11)
+            self.page("FC Barcelona", self.spanish())
+            self.page("Athletic Club", self.spanish())
+            with patch.object(rosters.news_sources, "_get", side_effect=self.get), \
+                 patch.object(watch.time, "monotonic", return_value=self.clock.timestamp()):
+                self.assertEqual(scheduler._poll_batch(self.state, "lal"), (1, None))
+                row = health()
+                self.assertEqual((row["state"], row["news_poll_failures"]), ("ok", []))
+
     def test_receipts_exclude_late_or_damaged_sources_and_qualify_roster_markers(self):
         before = store.iso(self.clock - timedelta(microseconds=1))
         self.assertEqual(rosters.fixture_rosters_as_of(self.state, self.fixture, before)["state"], "unknown")

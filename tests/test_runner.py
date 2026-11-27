@@ -1,15 +1,17 @@
 """Real forecast entry point driven by a controlled clock and synthetic EPL fixtures."""
 
+import io
 import json
 import tempfile
 import threading
+import time
 import unittest
-from contextlib import ExitStack, closing, contextmanager
+from contextlib import ExitStack, closing, contextmanager, redirect_stderr
 from datetime import timedelta
 from pathlib import Path
 from unittest.mock import patch
 
-from polymarket861 import datasets, football, input_manifest, pipeline, runner, store
+from polymarket861 import datasets, football, input_manifest, pipeline, runner, schedule_consensus, store
 
 
 @contextmanager
@@ -52,6 +54,102 @@ class RunnerTests(unittest.TestCase):
 
     def dispatch(self, **kwargs):
         return runner.run_due(self.data,self.root,evidence_path=self.evidence,**kwargs)
+
+    def test_evidence_churn_retains_two_retry_levels_and_seal_margin(self):
+        self.fixtures()
+        original = schedule_consensus.fixed_schedules
+
+        def invalidate_after_read(*args, **kwargs):
+            checks = original(*args, **kwargs)
+            with closing(store.connect(self.data)) as other_writer, other_writer:
+                other_writer.execute("UPDATE epl_schedule_epoch SET revision=revision+1 WHERE id=1")
+            time.sleep(.012)
+            return checks
+
+        log = io.StringIO()
+        with clock("2030-08-19T14:58Z"), redirect_stderr(log), patch.object(
+            schedule_consensus, "fixed_schedules", side_effect=invalidate_after_read
+        ):
+            failed = self.dispatch()["jobs"][0]
+        self.assertEqual(failed["state"], "error")
+        timing = failed["schedule_verification"]
+        self.assertEqual((timing["dispatch_retries"], timing["invalidated_snapshots"], timing["reverifications"]), (0, 3, 2))
+        retried = [row for row in timing["checks"] if row["phase"] == "reverification"]
+        self.assertTrue(all(row["elapsed_ms"] >= 10 for row in retried))
+        self.assertEqual(timing["finish_margin_seconds"], 120)
+        self.assertIsNone(timing["seal_margin_seconds"])
+        self.assertEqual(timing["next_retry_at"], store.iso("2030-08-19T14:58:02Z"))
+        with clock(timing["next_retry_at"]), redirect_stderr(log):
+            success = self.dispatch()["jobs"][0]
+        self.assertEqual(success["state"], "done")
+        self.assertEqual(success["schedule_verification"]["dispatch_retries"], 1)
+        self.assertEqual(success["schedule_verification"]["seal_margin_seconds"], 118)
+        self.assertIsNone(success["schedule_verification"]["next_retry_at"])
+        journal = [json.loads(line) for line in log.getvalue().splitlines()]
+        self.assertEqual([row["event"] for row in journal], ["epl_fixed_schedule_attempt"] * 2)
+        self.assertEqual([row["state"] for row in journal], ["error", "done"])
+        status = runner.runner_status(self.data)
+        self.assertEqual(status["attempts"][1]["schedule_verification"], timing)
+        self.assertEqual(status["last_schedule_preflight"]["fixture_count"], 1)
+        with closing(store.connect(self.data)) as db:
+            sealed = db.execute("SELECT digest,data_json FROM forecast_seals").fetchall()
+        self.assertEqual(len(sealed), 1)
+        self.assertEqual(store.digest(json.loads(sealed[0]["data_json"])), success["digest"])
+        self.assertNotIn("schedule_verification", json.loads(sealed[0]["data_json"]))
+
+    def test_expired_window_keeps_last_error_and_late_worker_diagnosis(self):
+        games = self.fixtures(2)
+        slots = [runner._slot(g, "T-24h", "technical", "B1") for g in games]
+        error = "schedule evidence changed repeatedly before the fixed B1 decision"
+        with clock("2030-08-19T14:59:55Z"):
+            claims = [runner._claim(self.data, s) for s in slots]
+            self.assertEqual(runner._finish(self.data, slots[0], claims[0], None, error)["state"], "error")
+        with clock("2030-08-19T15:00:02Z"), redirect_stderr(io.StringIO()):
+            missed = runner._claim(self.data, slots[0])
+            self.assertIn(error, missed["error"])
+            late = runner._finish(
+                self.data, slots[1], claims[1], None, "calculation finished after its sealing deadline",
+                {"shared_preflight": None, "checks": []},
+            )
+            self.assertEqual((late["state"], late["schedule_verification"]["finish_margin_seconds"]), ("missed", -2))
+            self.assertEqual(runner._claim(self.data, slots[1])["state"], "already_missed")
+        with closing(store.connect(self.data)) as db:
+            self.assertEqual(db.execute("SELECT count(*) FROM forecast_seals").fetchone()[0], 0)
+
+    def test_shared_preflight_error_survives_failed_dispatch(self):
+        game = self.fixtures()[0]
+        log = io.StringIO()
+        with clock("2030-08-19T14:58Z"), redirect_stderr(log), patch.object(
+            schedule_consensus, "fixed_schedules", side_effect=OSError("raw receipt is unavailable")
+        ), self.assertRaisesRegex(OSError, "raw receipt"):
+            self.dispatch()
+        last = runner.runner_status(self.data)["last_schedule_preflight"]
+        self.assertEqual(last["fixture_ids"], [game["fixture_id"]])
+        self.assertEqual(last["checks"][-1]["outcome"], "error")
+        self.assertIn("raw receipt", last["error"])
+        self.assertEqual(json.loads(log.getvalue())["event"], "epl_fixed_schedule_preflight_failed")
+        with clock("2030-08-19T15:00:01Z"):
+            missed = self.dispatch()["jobs"][0]
+        self.assertEqual(missed["state"], "missed")
+        self.assertIn("schedule preflight failed: OSError: raw receipt", missed["error"])
+
+    def test_late_obsolete_attempt_cannot_replace_another_workers_lease(self):
+        slot = runner._slot(self.fixtures()[0], "T-24h", "technical", "B1")
+        with clock("2030-08-19T14:58Z"):
+            first = runner._claim(self.data, slot)
+        with clock("2030-08-19T14:59Z"):
+            second = runner._claim(self.data, slot)
+        self.assertEqual(second["attempt"], 2)
+        with clock("2030-08-19T15:00:01Z"), redirect_stderr(io.StringIO()):
+            previous = runner._finish(self.data, slot, first, None, "first worker finished late",
+                                      {"shared_preflight": None, "checks": []})
+            self.assertEqual(previous["state"], "stale_attempt")
+            current = runner.runner_status(self.data)
+            self.assertEqual(current["jobs"][0]["state"], "running")
+            self.assertEqual(current["attempts"][1]["state"], "expired")
+            self.assertEqual(current["attempts"][1]["schedule_verification"]["state"], "stale_attempt")
+            finished = runner._finish(self.data, slot, second, None, "second worker finished late")
+            self.assertEqual((finished["state"], finished["error"]), ("missed", "second worker finished late"))
 
     def test_actual_technical_seal_each_horizon_idempotent_and_late_miss(self):
         self.fixtures()
@@ -108,6 +206,21 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(retry["counts"]["already_done"],1)
         attempts=runner.runner_status(self.data)["attempts"]
         self.assertCountEqual([r["state"] for r in attempts],["done","done","error"])
+
+    def test_recovery_and_current_worker_reject_a_mismatched_seal_clock(self):
+        game = self.fixtures()[0]
+        with clock("2030-08-19T14:58Z"):
+            slot = runner._slot(game, "T-24h", "technical", "B1")
+            claim = runner._claim(self.data, slot)
+            seal = pipeline.make_forecast(self.data, game["fixture_id"], self.root, version="B1",
+                                          mode="technical", horizon="T-24h", evidence_path=self.evidence)
+            with closing(store.connect(self.data)) as db, db:
+                db.execute("UPDATE forecast_seals SET sealed_at=? WHERE digest=?",
+                           (store.iso("2030-08-19T15:01Z"), seal["digest"]))
+            with self.assertRaisesRegex(ValueError, "identity or clock mismatch"):
+                runner._finish(self.data, slot, claim, seal["digest"], None, {"checks": [], "shared_preflight": None})
+            with self.assertRaisesRegex(ValueError, "identity or clock mismatch"):
+                runner._claim(self.data, slot)
 
     def test_reconcile_existing_seal_after_crash_and_select_formal_after_activation(self):
         game=self.fixtures()[0]

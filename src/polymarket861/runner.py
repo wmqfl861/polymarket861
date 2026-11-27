@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 import threading
 import time
 import uuid
@@ -28,6 +29,9 @@ CREATE TABLE IF NOT EXISTS forecast_dispatch (
 CREATE TABLE IF NOT EXISTS forecast_dispatch_attempts (
  key TEXT NOT NULL, attempt INTEGER NOT NULL, started TEXT NOT NULL, ended TEXT, state TEXT NOT NULL,
  error TEXT, PRIMARY KEY(key,attempt)
+);
+CREATE TABLE IF NOT EXISTS forecast_schedule_diagnostics (
+ key TEXT NOT NULL, attempt INTEGER NOT NULL, payload TEXT NOT NULL, PRIMARY KEY(key,attempt)
 );
 CREATE TABLE IF NOT EXISTS forecast_runner_seen (
  fixture_id TEXT NOT NULL, kickoff TEXT NOT NULL, first_seen TEXT NOT NULL, PRIMARY KEY(fixture_id,kickoff)
@@ -58,7 +62,7 @@ def _slot(fixture, horizon, mode, version):
 
 def _existing_seal(db, s):
     seal = db.execute(
-        "SELECT data_json,digest FROM forecast_seals WHERE fixture_id=? AND kickoff=? AND horizon=? "
+        "SELECT * FROM forecast_seals WHERE fixture_id=? AND kickoff=? AND horizon=? "
         "AND model_version=? AND mode=? AND protocol=?",
         (
             s["fixture_id"],
@@ -69,9 +73,7 @@ def _existing_seal(db, s):
             store.PROTOCOL,
         ),
     ).fetchone()
-    if seal and store.digest(json.loads(seal["data_json"])) != seal["digest"]:
-        raise ValueError("Forecast seal failed its independent hash check")
-    return seal["digest"] if seal else None
+    return pipeline._verified_seal(seal) if seal is not None else None
 
 
 def _claim(data_dir, slot, schedule_reason=None):
@@ -96,17 +98,17 @@ def _claim(data_dir, slot, schedule_reason=None):
         ).fetchone()
         if row["state"] in {"done", "missed"}:
             return {"state": "already_" + row["state"], "digest": row["digest"]}
-        digest = _existing_seal(db, slot)
-        if digest:
+        seal = _existing_seal(db, slot)
+        if seal:
             db.execute(
                 "UPDATE forecast_dispatch SET state='done',digest=?,updated_at=?,lease=NULL,valid_until=NULL WHERE key=?",
-                (digest, now, slot["key"]),
+                (seal["digest"], now, slot["key"]),
             )
             db.execute(
                 "UPDATE forecast_dispatch_attempts SET state='reconciled',ended=? WHERE key=? AND state='running'",
                 (now, slot["key"]),
             )
-            return {"state": "reconciled", "digest": digest}
+            return {"state": "reconciled", "digest": seal["digest"]}
         if row["state"] == "running" and now < row["valid_until"]:
             return {"state": "in_progress"}
         if row["state"] == "running":
@@ -116,8 +118,9 @@ def _claim(data_dir, slot, schedule_reason=None):
             )
         if clock > until:
             reason = "elapsed without a timely seal"
-            if row["state"] == "waiting_schedule" and row["error"]:
-                reason += ": " + row["error"]
+            latest_error = row["error"] or schedule_reason
+            if latest_error:
+                reason += ": " + latest_error
             db.execute(
                 "UPDATE forecast_dispatch SET state='missed',lease=NULL,valid_until=NULL,updated_at=?,error=? WHERE key=?",
                 (now, reason, slot["key"]),
@@ -161,7 +164,15 @@ def _heartbeat(data_dir, slot, lease, stopped):
                 return
 
 
-def _finish(data_dir, slot, claim, digest, error):
+def _journal(event, payload):
+    # Keep stdout as the CLI JSON response. systemd captures stderr from both service modes.
+    try:
+        print(store.canonical({"event": event, **payload}), file=sys.stderr, flush=True)
+    except OSError:
+        pass  # The dispatch and its diagnostics are already committed.
+
+
+def _finish(data_dir, slot, claim, digest, error, verification=None):
     with closing(_open(data_dir)) as db, db:
         db.execute("BEGIN IMMEDIATE")
         now = store.now_utc()
@@ -170,10 +181,10 @@ def _finish(data_dir, slot, claim, digest, error):
         # The forecaster validates schedule, hash and the wall clock in its own sealing transaction.
         # Reconcile a timely seal even when the worker's report arrives just after the deadline.
         valid_seal = _existing_seal(db, slot)
-        if valid_seal and digest and valid_seal != digest:
+        if valid_seal and digest and valid_seal["digest"] != digest:
             raise ValueError("Dispatch result differed from the immutable forecast")
         if valid_seal:
-            digest, error = valid_seal, None
+            digest, error = valid_seal["digest"], None
         elif not error:
             digest, error = (
                 None,
@@ -188,7 +199,7 @@ def _finish(data_dir, slot, claim, digest, error):
         )
         accepted = db.execute(
             "UPDATE forecast_dispatch SET state=?,lease=NULL,valid_until=NULL,updated_at=?,available=?,digest=?,error=? "
-            "WHERE key=? AND lease=? AND current_schedule=1 AND (valid_until>? OR ? IS NOT NULL)",
+            "WHERE key=? AND lease=? AND current_schedule=1 AND (valid_until>? OR ? OR ?)",
             (
                 state,
                 now,
@@ -198,35 +209,65 @@ def _finish(data_dir, slot, claim, digest, error):
                 slot["key"],
                 claim["lease"],
                 now,
-                valid_seal,
+                valid_seal is not None,
+                clock > cutoff,
             ),
         ).rowcount
-        if not accepted:
-            return {"state": "stale_attempt"}
-        db.execute(
-            "UPDATE forecast_dispatch_attempts SET state=?,ended=?,error=? WHERE key=? AND attempt=?",
-            (state, now, error, slot["key"], claim["attempt"]),
-        )
-        return {
-            "state": state,
-            "digest": digest,
-            "error": error,
-            "attempt": claim["attempt"],
-        }
+        if accepted:
+            db.execute(
+                "UPDATE forecast_dispatch_attempts SET state=?,ended=?,error=? WHERE key=? AND attempt=?",
+                (state, now, error, slot["key"], claim["attempt"]),
+            )
+            result = {"state": state, "digest": digest, "error": error, "attempt": claim["attempt"]}
+        else:
+            result = {"state": "stale_attempt"}
+        if verification is not None:
+            checks = verification["checks"]
+            diagnostic = {
+                **verification,
+                "state": result["state"],
+                "dispatch_attempt": claim["attempt"],
+                "dispatch_retries": claim["attempt"] - 1,
+                "invalidated_snapshots": sum(c["outcome"] == "invalidated" for c in checks),
+                "reverifications": sum(c["phase"] == "reverification" for c in checks),
+                "cutoff": slot["cutoff"],
+                "finished_at": now,
+                "finish_margin_seconds": (cutoff - clock).total_seconds(),
+                "seal_margin_seconds": (
+                    (cutoff - store.instant(valid_seal["sealed_at"])).total_seconds() if valid_seal else None
+                ),
+                "next_retry_at": retry if accepted else None,
+                "error": error,
+            }
+            db.execute(
+                "INSERT OR IGNORE INTO forecast_schedule_diagnostics(key,attempt,payload) VALUES(?,?,?)",
+                (slot["key"], claim["attempt"], store.canonical(diagnostic)),
+            )
+            result["schedule_verification"] = diagnostic
+    if verification is not None:
+        _journal("epl_fixed_schedule_attempt", {
+            "fixture_id": slot["fixture_id"], "horizon": slot["horizon"], "mode": slot["mode"],
+            "model_version": slot["version"], **diagnostic,
+        })
+    return result
 
 
-def _run_one(data_dir, root, evidence_path, slot, release, schedules):
+def _run_one(data_dir, root, evidence_path, slot, release, schedules, batch):
     try:
         claim = _claim(data_dir, slot, slot.get("schedule_reason"))
         if claim["state"] != "claimed":
             return slot | claim
         active = release["active_version"]
         version = slot["version"]
+        verification = (
+            {"shared_preflight": batch, "checks": []}
+            if version == "B1" or version.startswith("B1@") else None
+        )
         if not release["ready"] and (
             version == active
             or (active is None and (version == "B1" or version.startswith("B1@")))
         ):
-            return slot | _finish(data_dir, slot, claim, None, release["reason"])
+            return slot | _finish(data_dir, slot, claim, None, release["reason"], verification)
         stopped = threading.Event()
         monitor = threading.Thread(
             target=_heartbeat,
@@ -235,7 +276,9 @@ def _run_one(data_dir, root, evidence_path, slot, release, schedules):
         )
         monitor.start()
         try:
-            with schedule_consensus.dispatch_checks(schedules):
+            with schedule_consensus.dispatch_checks(schedules), schedule_consensus.collect_check_timings() as timings:
+                if verification is not None:
+                    verification["checks"] = timings
                 forecast = pipeline.make_forecast(
                     data_dir,
                     slot["fixture_id"],
@@ -253,7 +296,7 @@ def _run_one(data_dir, root, evidence_path, slot, release, schedules):
         finally:
             stopped.set()
             monitor.join()
-        return slot | _finish(data_dir, slot, claim, digest, error)
+        return slot | _finish(data_dir, slot, claim, digest, error, verification)
     except Exception as exc:
         return slot | {"state": "error", "error": f"{type(exc).__name__}: {exc}"[:800]}
 
@@ -264,16 +307,49 @@ def runner_status(data_dir):
             dict(r)
             for r in db.execute(
                 "SELECT key,fixture_id,kickoff,horizon,version,mode,cutoff,state,attempts,"
-                "current_schedule,updated_at,digest,error FROM forecast_dispatch ORDER BY updated_at DESC,key"
+                "current_schedule,updated_at,available,digest,error FROM forecast_dispatch ORDER BY updated_at DESC,key"
             )
         ]
-        attempts = [
-            dict(r)
-            for r in db.execute(
-                "SELECT * FROM forecast_dispatch_attempts ORDER BY started DESC,key"
+        attempts = []
+        for row in db.execute(
+            "SELECT a.*,d.payload AS schedule_verification FROM forecast_dispatch_attempts a "
+            "LEFT JOIN forecast_schedule_diagnostics d USING(key,attempt) ORDER BY a.started DESC,a.key,a.attempt DESC"
+        ):
+            attempt = dict(row)
+            if attempt["schedule_verification"]:
+                attempt["schedule_verification"] = json.loads(attempt["schedule_verification"])
+            attempts.append(attempt)
+        preflight = db.execute(
+            "SELECT payload FROM reports WHERE kind='jobs' AND key='schedule-preflight'"
+        ).fetchone()
+        return {
+            "jobs": records,
+            "attempts": attempts,
+            "last_schedule_preflight": json.loads(preflight[0]) if preflight else None,
+        }
+
+
+def _verify_batch(data_dir, upcoming, checking):
+    fixture_ids = {s["fixture_id"] for s in checking + upcoming}
+    batch = {"started_at": store.now_utc(), "fixture_count": len(fixture_ids)}
+    with schedule_consensus.collect_check_timings() as checks:
+        try:
+            schedules = schedule_consensus.timed_check(
+                "preflight", schedule_consensus.fixed_schedules, data_dir, fixture_ids, None
             )
-        ]
-        return {"jobs": records, "attempts": attempts}
+        except Exception as exc:
+            batch.update(error=f"{type(exc).__name__}: {exc}"[:800], fixture_ids=sorted(fixture_ids))
+            # Keep the cause on the affected open slots even if a newer preflight
+            # replaces the service-level diagnosis after the window expires.
+            for slot in checking:
+                _claim(data_dir, slot, "schedule preflight failed: " + batch["error"])
+            raise
+        finally:
+            batch.update(finished_at=store.now_utc(), checks=checks)
+            store.save_report(data_dir, "jobs", "schedule-preflight", batch)
+            if "error" in batch:
+                _journal("epl_fixed_schedule_preflight_failed", batch)
+    return schedules, batch
 
 
 def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
@@ -454,12 +530,11 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
         if s["cutoff"] >= observed
         and (s["version"] == "B1" or s["version"].startswith("B1@"))
     ]
-    schedules = None
+    schedules = batch = None
     preflight = {"lead_hours": _SCHEDULE_NOTICE // timedelta(hours=1), "checked": len(upcoming), "blocked": []}
     if checking or upcoming:
-        schedules = schedule_consensus.fixed_schedules(
-            data_dir, {s["fixture_id"] for s in checking + upcoming}, None
-        )
+        schedules, batch = _verify_batch(data_dir, upcoming, checking)
+        preflight["verification"] = batch
         for slot in checking + upcoming:
             match = schedules.fixtures.get(slot["fixture_id"])
             if not match or match["kickoff"] != slot["kickoff"]:
@@ -493,7 +568,7 @@ def run_due(data_dir, root=None, *, evidence_path=None, versions=(), workers=2):
         records = list(
             pool.map(
                 lambda s: _run_one(
-                    data_dir, root, evidence_path, s, release, schedules
+                    data_dir, root, evidence_path, s, release, schedules, batch
                 ),
                 due,
             )

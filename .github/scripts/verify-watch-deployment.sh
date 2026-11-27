@@ -41,7 +41,11 @@ diagnostics() {
 trap diagnostics EXIT
 systemctl --user daemon-reload
 systemd-analyze --user verify "$units"/polymarket861-five-*.service "$units"/polymarket861-five-*.timer
-"$base/venv/bin/pm861" --data-dir "$base/research" big5-scheduler status > "$RUNNER_TEMP/forecast-initial.json"
+if "$base/venv/bin/pm861" --data-dir "$base/research" big5-scheduler status > "$RUNNER_TEMP/forecast-initial.json"; then
+    exit 1
+else
+    [[ $? == 1 ]]
+fi
 python - "$RUNNER_TEMP/forecast-initial.json" <<'PY'
 import json, sys
 d = json.load(open(sys.argv[1]))["leagues"]

@@ -39,18 +39,64 @@ class PrivatePlayerSourceTest(unittest.TestCase):
         return self.rows[name], {"received_at": store.iso(self.now), "provider_http_date": store.iso(self.now)}
 
     def collect(self):
-        with patch.object(source, "_issue", side_effect=self.issue):
+        # Exercise the provider contract independently of the real free-season and rights gates.
+        with patch.object(source, "_provider_state", return_value="available"), patch.object(source, "_issue", side_effect=self.issue):
             return source.collect(self.root, self.fixture)
 
     def snapshot(self, at=None):
-        return source.as_of(self.root, self.fixture, at or self.now)
+        with patch.object(source, "_provider_state", return_value="available"):
+            return source.as_of(self.root, self.fixture, at or self.now)
+
+    def test_provider_outage_is_not_a_withdrawal_or_an_expected_empty_report(self):
+        from polymarket861 import big5_scheduler as scheduler
+
+        first = self.now
+        self.collect()
+        with patch.object(source, "_provider_state", return_value="available"):
+            self.assertNotIn("source_errors", scheduler._news(self.root, self.fixture, first))
+            for error in ("network_error", "rate_limited"):
+                self.now += timedelta(minutes=1)
+                with patch.object(source, "_issue", side_effect=source.Unavailable(error)):
+                    result = source.collect(self.root, self.fixture)
+                self.assertIn(error, scheduler._player_poll_errors(result)[0])
+                snapshot = scheduler._news(self.root, self.fixture, self.now)
+                self.assertIn(error, snapshot["source_errors"]["player_status"])
+                self.assertNotIn("source_errors", scheduler._news(self.root, self.fixture, first))
+            self.now += timedelta(minutes=1)
+            self.rows["injuries"] = []
+            self.rows["fixtures/lineups"] = []
+            self.collect()
+            corrected = scheduler._news(self.root, self.fixture, self.now)
+            self.assertEqual(corrected["player_status"]["injuries"]["state"], "no_published_players")
+            self.assertNotIn("source_errors", corrected)
+        for reason in ("free_season_unavailable", "rights_unverified", "not_configured"):
+            with patch.object(source, "_provider_state", return_value=reason):
+                self.assertEqual(scheduler._player_poll_errors(source.collect(self.root, self.fixture)), [])
+                self.assertNotIn("source_errors", scheduler._news(self.root, self.fixture, self.now))
 
     def test_no_key_never_connects_or_creates_source_state(self):
         with patch.dict(os.environ, {"PM861_API_FOOTBALL_KEY": ""}), patch.object(source, "_issue") as network:
-            self.assertEqual(self.collect()["state"], "not_configured")
-            self.assertEqual(self.snapshot()["injuries"]["state"], "not_configured")
+            self.assertEqual(source.collect(self.root, self.fixture)["state"], "not_configured")
+            self.assertEqual(source.as_of(self.root, self.fixture, self.now)["injuries"]["state"], "not_configured")
             network.assert_not_called()
         self.assertFalse((self.root / "player-status").exists())
+
+    def test_key_alone_never_enables_paid_seasons_or_unlicensed_retention(self):
+        with patch.object(source, "_issue") as network:
+            for season, state in (("2026-27", "free_season_unavailable"), ("2024-25", "rights_unverified")):
+                match = dict(self.fixture, season=season)
+                self.assertEqual(source.collect(self.root, match), {"state": state})
+                report = source.as_of(self.root, match, self.now)
+                self.assertEqual(report["lineup"]["state"], state)
+                self.assertIsNone(report["evidence_sha256"])
+            network.assert_not_called()
+        self.assertFalse((self.root / "player-status").exists())
+        # A pre-fix projection is preserved on disk, but cannot start a newly sealed
+        # scenario when its local rights/season are outside present permission.
+        self.collect()
+        scoped = source.as_of(self.root, self.fixture, self.now)
+        self.assertEqual(scoped["injuries"]["teams"]["away"]["players"], [])
+        self.assertEqual(self.snapshot()["injuries"]["state"], "observed")
 
     def test_exacts_private_receipt_injuries_and_starting_eleven_have_separate_states(self):
         self.collect()
