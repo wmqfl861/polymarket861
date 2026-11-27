@@ -1,0 +1,11 @@
+[Unit]
+Description=Poll the football news index every 15 minutes
+
+[Timer]
+OnCalendar=*-*-* *:04,19,34,49:00 UTC
+Persistent=true
+AccuracySec=15s
+Unit=polymarket861-five-press.service
+
+[Install]
+WantedBy=timers.target

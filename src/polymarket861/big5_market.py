@@ -215,6 +215,23 @@ def _args(leagues, start, end):
     return selected, first, last
 
 
+def rolling_window(now):
+    # Keep recently played fixtures available for delayed token resolution.
+    midnight = provider.moment(now).replace(hour=0, minute=0, second=0, microsecond=0)
+    return iso(midnight - timedelta(days=14)), iso(midnight + timedelta(days=8))
+
+
+def _watch_scope(leagues, start, end, rolling):
+    if rolling:
+        if start is not None or end is not None:
+            raise ValueError("--rolling cannot be combined with --start or --end")
+        selected, _, _ = _args(leagues, *rolling_window(now_utc()))
+        return selected, None, None
+    if start is None or end is None:
+        raise ValueError("specify --rolling or both --start and --end")
+    return _args(leagues, start, end)
+
+
 def _catalog_one(root, league, start, end, pages, page_size, offset, sports):
     initial_offset = offset
     identity = _sports_row(sports, league)
@@ -1308,8 +1325,9 @@ def watch(
     pages=10,
     page_size=25,
     discover=True,
+    rolling=False,
 ):
-    selected, start, end = _args(leagues, start, end)
+    selected, start, end = _watch_scope(leagues, start, end, rolling)
     if cycles < 0 or not 1 <= workers <= 8 or not 1 <= interval <= 60:
         raise ValueError("cycles >= 0, workers 1..8 and interval 1..60 required")
     if discover and not (1 <= pages <= 10000 and 1 <= page_size <= 100):
@@ -1322,22 +1340,28 @@ def watch(
     pending, active = {}, set()
     with (
         market_watch_health.monitor(
-            root, selected, start, end, continuous=cycles == 0, discover=discover
+            root, selected, start, end, continuous=cycles == 0, discover=discover,
+            rolling=rolling
         ) as heartbeat,
         ThreadPoolExecutor(max_workers=workers) as pool,
     ):
         while cycles == 0 or count < cycles:
+            if rolling:
+                start, end = rolling_window(now_utc())
             for task in list(pending):
                 if task.done():
-                    key, work = pending.pop(task)
+                    key, work, first, last = pending.pop(task)
                     active.discard(key)
-                    result = _watch_result(task, data_dir, selected, start, end, work)
+                    result = _watch_result(task, data_dir, selected, first, last, work)
                     if key == "catalog":
-                        discovery = result
-                        next_catalog = _next_catalog(discovery, selected)
+                        if (first, last) == (start, end):
+                            discovery = result
+                            next_catalog = _next_catalog(discovery, selected)
                     else:
                         states[result["state"]] += 1
             now = provider.moment(now_utc())
+            if rolling and discovery and discovery.get("window") != [start, end]:
+                discovery, next_catalog = None, None
             if discover and "catalog" not in active and (next_catalog is None or now >= next_catalog):
                 # Startup discovery establishes the initial cohort. Later refreshes run in the pool.
                 if discovery is None:
@@ -1355,7 +1379,7 @@ def watch(
                         pages=pages,
                         page_size=page_size,
                     )
-                    pending[task] = ("catalog", None)
+                    pending[task] = ("catalog", None, start, end)
                     active.add("catalog")
             jobs = _ranked_jobs(root, selected, start, end, provider.moment(now_utc()))
             for _, _, event, job in jobs:
@@ -1365,7 +1389,7 @@ def watch(
                 if key not in active:
                     task = pool.submit(_job, data_dir, event, job, 1)
                     active.add(key)
-                    pending[task] = (key, (event, job))
+                    pending[task] = (key, (event, job), start, end)
             count += 1
             if heartbeat is not None:
                 heartbeat(count, discovery)
@@ -1379,8 +1403,8 @@ def watch(
                         remaining = (next_catalog - provider.moment(now_utc())).total_seconds()
                         wait = min(wait, max(0, remaining))
                 time.sleep(wait)
-        for task, (key, work) in pending.items():
-            result = _watch_result(task, data_dir, selected, start, end, work)
+        for task, (key, work, first, last) in pending.items():
+            result = _watch_result(task, data_dir, selected, first, last, work)
             if key == "catalog":
                 discovery = result
             else:
@@ -1570,19 +1594,31 @@ def weekly_report(data_dir, start, end):
     }
 
 
-def _window_args(parser):
+def _watch_window_args(parser):
+    parser.add_argument(
+        "--rolling", action="store_true",
+        help="automatically advance the kickoff window each UTC day",
+    )
+    parser.add_argument("--start", help="inclusive UTC timestamp of scheduled kickoff")
+    parser.add_argument("--end", help="exclusive UTC timestamp of scheduled kickoff")
+
+
+def _window_args(parser, *, watch_mode=False):
     parser.add_argument(
         "--league",
         action="append",
         choices=MARKETS,
         help="repeat to select; default: four new leagues",
     )
-    parser.add_argument(
-        "--start", required=True, help="inclusive UTC timestamp of scheduled kickoff"
-    )
-    parser.add_argument(
-        "--end", required=True, help="exclusive UTC timestamp of scheduled kickoff"
-    )
+    if watch_mode:
+        _watch_window_args(parser)
+    else:
+        parser.add_argument(
+            "--start", required=True, help="inclusive UTC timestamp of scheduled kickoff"
+        )
+        parser.add_argument(
+            "--end", required=True, help="exclusive UTC timestamp of scheduled kickoff"
+        )
     parser.add_argument("--pages", type=int, default=10)
     parser.add_argument("--page-size", type=int, default=25)
 
@@ -1600,6 +1636,7 @@ def _watch_command(args):
             discover=not args.local_catalog,
             pages=args.pages,
             page_size=args.page_size,
+            rolling=args.rolling,
         )
 
 
@@ -1633,7 +1670,7 @@ def register(commands):
         "league-watch",
         help="foreground tiered collection, with postgame token resolution follow-up",
     )
-    _window_args(p)
+    _window_args(p, watch_mode=True)
     p.add_argument(
         "--cycles", type=int, default=1, help="0 for an ongoing foreground process"
     )
@@ -1652,8 +1689,7 @@ def register(commands):
         help="check the scheduler heartbeat and each selected league's catalog age",
     )
     p.add_argument("--league", action="append", choices=MARKETS)
-    p.add_argument("--start", required=True)
-    p.add_argument("--end", required=True)
+    _watch_window_args(p)
     p.add_argument(
         "--max-age",
         type=int,
@@ -1674,10 +1710,11 @@ def register(commands):
     p.set_defaults(
         func=lambda a: market_watch_health.status(
             research_root(a.data_dir),
-            *_args(a.league, a.start, a.end),
+            *_watch_scope(a.league, a.start, a.end, a.rolling),
             discover=not a.local_catalog,
             max_age=a.max_age,
             max_catalog_age=a.max_catalog_age,
+            rolling=a.rolling,
         ),
         result_exit_code=lambda result: 0 if result["healthy"] else 1,
     )

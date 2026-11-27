@@ -12,6 +12,7 @@ from . import __version__
 
 def main(argv=None):
     from . import (
+        big5_scheduler,
         dashboard,
         datasets,
         evidence,
@@ -49,6 +50,7 @@ def main(argv=None):
     for module in (
         datasets,
         league_catalog,
+        big5_scheduler,
         news_market,
         maintenance,
         market_archive,

@@ -30,7 +30,7 @@ def _asset_hash(text: str) -> str:
     return "'sha256-" + base64.b64encode(digest).decode("ascii") + "'"
 
 
-def render_dashboard(reports: Iterable[Mapping]) -> str:
+def render_dashboard(reports: Iterable[Mapping], *, five_leagues=False) -> str:
     """Build a self-contained dashboard. Report values remain inert JSON."""
     records = []
     for report in reports:
@@ -59,6 +59,7 @@ def render_dashboard(reports: Iterable[Mapping]) -> str:
         f'<a class="nav-link" data-page="{page}" href="#{page}"><span>{label}</span>'
         '<span class="nav-count"></span></a>' for page, label in PAGES
     )
+    five_link = '<a class="nav-link" href="/leagues">五大联赛赛前预测</a>' if five_leagues else ""
     plain_index = "".join(
         f'<li>{html.escape(row["kind"])} · {html.escape(row["key"])}</li>' for row in records
     ) or "<li>尚无本地报告。</li>"
@@ -81,6 +82,7 @@ def render_dashboard(reports: Iterable[Mapping]) -> str:
     <span>polymarket<b>861</b></span>
   </a>
   <div class="product">英超预测工作台</div>
+  {five_link}
   <nav id="main-nav" aria-label="工作区">{nav}</nav>
   <div class="side-foot"><i aria-hidden="true"></i>模拟买入 · 持有至结算</div>
 </aside>
@@ -151,6 +153,8 @@ def make_server(data_dir: Path, port: int) -> ThreadingHTTPServer:
     if not 0 <= port <= 65535:
         raise ValueError("端口范围为 0 至 65535")
 
+    five_state = os.environ.get("PM861_FIVE_STATE_DIR", "").strip()
+
     class DashboardHandler(BaseHTTPRequestHandler):
         def _respond(self, *, body: bool) -> None:
             host = self.headers.get("Host", "")
@@ -160,10 +164,21 @@ def make_server(data_dir: Path, port: int) -> ThreadingHTTPServer:
             if host.lower() not in allowed_hosts:
                 self.send_error(403, "Local host required")
                 return
-            if urlsplit(self.path).path not in ("/", "/index.html"):
+            location = urlsplit(self.path)
+            if location.path in ("/", "/index.html"):
+                page = render_dashboard(_report_rows(data_dir), five_leagues=bool(five_state))
+            elif five_state and location.path == "/leagues":
+                from . import league_dashboard
+
+                try:
+                    page = league_dashboard.render(Path(data_dir), Path(five_state), location.query)
+                except ValueError:
+                    self.send_error(404)
+                    return
+            else:
                 self.send_error(404)
                 return
-            page = render_dashboard(_report_rows(data_dir)).encode("utf-8")
+            page = page.encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(page)))

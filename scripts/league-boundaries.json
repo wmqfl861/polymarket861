@@ -122,8 +122,21 @@
     "{\"url\": url, \"method\": \"GET\", \"parser\": \"espn-epl-summary-v1\"}"
   ],
   "league_catalog.py": [
+    "and document.get(\"team\") in teams[\"epl\"] and teams[\"epl\"][document[\"team\"]] == key",
     "audit.add_argument(\"history\", type=Path, help=\"包含 YYYY-YY/de.1.json 等文件的根目录\")",
-    "if league == \"epl\" and season == \"2019-20\" and (day.year, day.month) == (2019, 7):"
+    "def local_source_health(data_dir: Path, season: str, leagues=None, *, epl_data_dir=None) -> dict:",
+    "epl_data_dir=a.epl_data_dir))",
+    "health.add_argument(\"--epl-data-dir\", type=Path, help=\"另读原英超运行目录，合并其逐队收件\")",
+    "if \"epl\" in competitions:",
+    "if \"epl\" not in teams or not tables.intersection({\"news_roster_checks\", \"news_roster_receipts\"}):",
+    "if epl_data_dir is not None and \"epl\" in teams:",
+    "if league == \"epl\" and season == \"2019-20\" and (day.year, day.month) == (2019, 7):",
+    "key = f\"epl/{club}\"",
+    "key = f\"epl/{club}\"",
+    "legacy = Path(epl_data_dir).expanduser() / \"runtime.sqlite3\"",
+    "params = (season, at, f\"{league}/{season}/*\", league == \"epl\", news_sources.WIRE, news_sources.RUMOURS)",
+    "paths[legacy] = [\"epl\"]",
+    "paths[root / \"runtime.sqlite3\"].remove(\"epl\")"
   ],
   "league_registry.py": [
     "\"epl\": {},",

@@ -1,0 +1,21 @@
+[Unit]
+Description=Domestic football forecast and team news scheduler
+Wants=network-online.target
+After=network-online.target polymarket861-five-watch.service
+
+[Service]
+Environment=PM861_DATA_DIR=%h/.local/share/polymarket861-five/research
+Environment=OPENBLAS_NUM_THREADS=1
+Environment=OMP_NUM_THREADS=1
+EnvironmentFile=-%h/.config/polymarket861-five/player-api.env
+ExecStart=%h/.local/share/polymarket861-five/venv/bin/pm861 big5-scheduler run --repeat --football-root %h/.local/share/polymarket861-five/openfootball --market-state-dir %h/.local/share/polymarket861-five/state
+Restart=on-failure
+RestartSec=8s
+KillSignal=SIGINT
+SuccessExitStatus=130
+TimeoutStopSec=90s
+NoNewPrivileges=yes
+UMask=0077
+
+[Install]
+WantedBy=default.target

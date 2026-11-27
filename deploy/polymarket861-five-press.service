@@ -1,0 +1,13 @@
+[Unit]
+Description=Collect public GDELT news links for the five domestic leagues
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+Environment=PM861_DATA_DIR=%h/.local/share/polymarket861-five/research
+Environment=OPENBLAS_NUM_THREADS=1
+ExecStart=%h/.local/share/polymarket861-five/venv/bin/pm861 feeds league-press
+TimeoutStartSec=6min
+NoNewPrivileges=yes
+UMask=0077

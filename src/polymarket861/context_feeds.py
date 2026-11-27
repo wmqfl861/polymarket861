@@ -351,6 +351,10 @@ def collect_weather(data_dir, fixture_id, *, latitude, longitude, venue, venue_l
 def register(subparsers):
     feed = subparsers.add_parser("feeds", help="采集免费新闻索引与定次开球天气预报")
     commands = feed.add_subparsers(dest="feed_op", required=True)
+    from . import league_press
+
+    league_press.register_feeds(commands)
+
     def bind(command, function):
         command.set_defaults(func=function, handler=function)
     bind(commands.add_parser("providers"), lambda _: providers())

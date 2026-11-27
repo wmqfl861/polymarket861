@@ -30,11 +30,11 @@ def _notify(message):
             logging.getLogger(__name__).warning("systemd notification failed: %s", exc)
 
 
-def _scope(leagues, start, end, discover):
+def _scope(leagues, start, end, discover, rolling=False):
     return {
         "leagues": sorted(leagues),
-        "start": start,
-        "end": end,
+        "start": "rolling" if rolling else start,
+        "end": "rolling" if rolling else end,
         "discover": discover,
     }
 
@@ -85,7 +85,7 @@ def _last_page_receipt(report):
 
 
 @contextmanager
-def monitor(root, leagues, start, end, *, continuous, discover):
+def monitor(root, leagues, start, end, *, continuous, discover, rolling=False):
     """Only a continuously running collector advancing real ticks emits heartbeats."""
     if not continuous:
         yield None
@@ -94,7 +94,7 @@ def monitor(root, leagues, start, end, *, continuous, discover):
     root.mkdir(mode=0o700, parents=True, exist_ok=True)
     with closing(sqlite3.connect(root / "watch-health.sqlite3")) as db:
         run = uuid4().hex
-        selected = _scope(leagues, start, end, discover)
+        selected = _scope(leagues, start, end, discover, rolling)
         scope = store.canonical(selected)
         started = store.iso(store.now_utc())
         db.execute("PRAGMA foreign_keys=ON")
@@ -214,12 +214,13 @@ def _catalog_status(leagues, receipts, now, max_age):
 
 
 def status(
-    root, leagues, start, end, *, discover=True, max_age=180, max_catalog_age=600
+    root, leagues, start, end, *, discover=True, max_age=180, max_catalog_age=600,
+    rolling=False
 ):
     if max_age <= 0 or max_catalog_age <= 0:
         raise ValueError("heartbeat and catalog maximum ages must be positive")
     path = (Path(root) / "watch-health.sqlite3").resolve()
-    scope = _scope(leagues, start, end, discover)
+    scope = _scope(leagues, start, end, discover, rolling)
     key = store.canonical(scope)
     watches = []
     receipts = {}
@@ -263,6 +264,7 @@ def status(
     )
     result = {
         "scope": scope,
+        "rolling": rolling,
         "observed_at": now,
         "max_age_seconds": max_age,
         "max_catalog_age_seconds": max_catalog_age if discover else None,

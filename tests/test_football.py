@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from polymarket861 import football as fb
+from polymarket861 import league_registry
 from polymarket861.football_model import _goals_matrix, apply_context, probabilities
 
 SEASON = "2021-22"
@@ -38,6 +39,35 @@ def fixture(name, home, away, kickoff, score=None, observed_at=None, **kw):
 
 
 class FootballTests(unittest.TestCase):
+    def test_registered_forecasts_require_home_and_away_from_the_selected_league(self):
+        season = "2026-27"
+        for league in league_registry.PROFILES:
+            with self.subTest(league=league):
+                home, away = league_registry.members(league, season)[:2]
+                kickoff = fb.utc("2026-11-29T15:00Z")
+                key = fb.fixture_id(season, home, away, league=league)
+                prior = kickoff - timedelta(days=14)
+                observed = prior + timedelta(hours=3)
+                earlier = fb.Fixture(fb.fixture_id(season, away, home, league=league), season, 1,
+                                     prior, away, home, 0, 2,
+                                     (fb.ResultVersion(observed, (0, 2), "observed", "test"),))
+                match = fb.Fixture(key, season, 2, kickoff, home, away,
+                                   schedule_versions=((prior, kickoff),))
+                engine = fb.FootballEngine([earlier, match], league=league)
+                pred = engine.forecast(home, away, kickoff, kickoff - timedelta(days=1))
+                self.assertEqual((pred["league"], pred["fixture_id"], pred["evidence"]["training_matches"]),
+                                 (league, key, 1))
+                foreign = "FC Barcelona" if league == "epl" else "Arsenal FC"
+                with self.assertRaisesRegex(ValueError, "fixture is not registered"):
+                    engine.forecast(foreign, away, kickoff, kickoff - timedelta(days=1))
+                with tempfile.TemporaryDirectory() as tmp:
+                    path = Path(tmp) / season / league_registry.profile(league).source_file
+                    path.parent.mkdir()
+                    path.write_text(json.dumps({"matches": [{"team1": foreign, "team2": away,
+                        "date": "2026-11-29", "round": "Matchday 2"}]}))
+                    with self.assertRaisesRegex(ValueError, "unknown OpenFootball member"):
+                        fb.load_fixtures(path, league=league)
+
     def test_grade_protocol_direction_and_range(self):
         p = dict(zip(fb.PROB_KEYS, (0.5, 0.3, 0.2, 0.4, 0.6, 0.25)))
         grade = fb.score_probabilities(p, 2, 0)

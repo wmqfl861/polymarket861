@@ -1,3 +1,3 @@
 """Pre-match football forecasts and the Polymarket research ledger."""
 
-__version__ = "0.5.0a3+eplfix.1"
+__version__ = "0.5.0a3+fiveauto.1"

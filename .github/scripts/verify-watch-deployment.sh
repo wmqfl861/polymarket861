@@ -2,25 +2,21 @@
 # Run on a disposable Ubuntu Actions runner with a real systemd user manager.
 set -euo pipefail
 base="$HOME/.local/share/polymarket861-five"
-config="$HOME/.config/polymarket861-five"
 units="$HOME/.config/systemd/user"
 watch=polymarket861-five-watch.service
 health=polymarket861-five-watchdog.service
 timer=polymarket861-five-watchdog.timer
-window_start=2030-01-12T00:00:00Z
-window_end=2030-01-14T00:00:00Z
 
 sudo loginctl enable-linger "$(id -un)"
 sudo systemctl start "user@$(id -u).service"
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
 
-mkdir -p "$base" "$config" "$units/$watch.d" "$units/$timer.d" "$RUNNER_TEMP/watch-dist"
+mkdir -p "$base" "$units/$watch.d" "$units/$timer.d" "$RUNNER_TEMP/watch-dist"
 python -m pip wheel --no-deps --wheel-dir "$RUNNER_TEMP/watch-dist" .
 python -m venv "$base/venv"
 "$base/venv/bin/python" -m pip install -c constraints/research.txt "$RUNNER_TEMP"/watch-dist/*.whl
 "$base/venv/bin/pm861" --version
-printf 'PM861_KICKOFF_START=%s\nPM861_KICKOFF_END=%s\n' "$window_start" "$window_end" > "$config/window.env"
 install -m 0644 deploy/polymarket861-five-*.* "$units/"
 cat > "$units/$watch.d/acceptance.conf" <<EOF
 [Service]
@@ -44,10 +40,16 @@ diagnostics() {
 }
 trap diagnostics EXIT
 systemctl --user daemon-reload
-systemd-analyze --user verify "$units/$watch" "$units/$health" "$units/$timer"
+systemd-analyze --user verify "$units"/polymarket861-five-*.service "$units"/polymarket861-five-*.timer
+"$base/venv/bin/pm861" --data-dir "$base/research" big5-scheduler status > "$RUNNER_TEMP/forecast-initial.json"
+python - "$RUNNER_TEMP/forecast-initial.json" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))["leagues"]
+assert set(d) == {"lal", "bun", "sea", "fl1"} and all(v["state"] == "not_started" for v in d.values()), d
+PY
 sctl() { systemctl --user "$@"; }
 read_health() {
-    "$base/venv/bin/pm861" --data-dir "$base/state" market league-watchdog --start "$window_start" --end "$window_end"
+    "$base/venv/bin/pm861" --data-dir "$base/state" market league-watchdog --rolling
 }
 await_condition() {
     local deadline=$((SECONDS + 115))

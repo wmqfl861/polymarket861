@@ -4,21 +4,16 @@
 
 ## 首次安装
 
-在部署机执行下列命令，示例中的源码目录供跟随主分支的全新安装使用。按本次发布的固定提交安装、新装英超与四国两个服务，请使用部署手册。若该目录已经存在，先核对它的远端和目标提交。把时间换成打算跟踪的比赛开球窗口，右端不含。采集从启动那一刻开始，故要早于第一场比赛的 T−24h。[0.5.0a3 部署手册](DEPLOY-0.5.0a3.md)
+在部署机执行下列命令，示例中的源码目录供跟随主分支的全新安装使用。按本次发布的固定提交安装、新装英超与四国两个服务，请使用部署手册。若该目录已经存在，先核对它的远端和目标提交。当前服务按 UTC 每日滚动，包含前 14 天至第 8 天零时之前的开球。采集从启动那一刻开始，故要早于第一场比赛的 T−24h。[0.5.0a3 部署手册](DEPLOY-0.5.0a3.md)
 
 ```sh
 BASE="$HOME/.local/share/polymarket861-five"
-CONF="$HOME/.config/polymarket861-five"
 UNITS="$HOME/.config/systemd/user"
-mkdir -p "$BASE" "$CONF" "$UNITS"
+mkdir -p "$BASE" "$UNITS"
 git clone --single-branch --branch main https://github.com/wmqfl861/polymarket861.git "$BASE/source"
 python3.12 -m venv "$BASE/venv"
 "$BASE/venv/bin/python" -m pip install -c "$BASE/source/constraints/research.txt" "$BASE/source"
 "$BASE/venv/bin/pm861" --version
-cat > "$CONF/window.env" <<'EOF'
-PM861_KICKOFF_START=2026-11-27T00:00:00Z
-PM861_KICKOFF_END=2026-12-01T00:00:00Z
-EOF
 install -m 0644 "$BASE/source"/deploy/polymarket861-five-*.* "$UNITS/"
 systemctl --user daemon-reload
 systemctl --user enable --now polymarket861-five-watch.service polymarket861-five-watchdog.timer
@@ -34,7 +29,7 @@ systemctl --user status polymarket861-five-watch.service polymarket861-five-watc
 ```sh
 PM="$HOME/.local/share/polymarket861-five/venv/bin/pm861"
 STATE="$HOME/.local/share/polymarket861-five/state"
-"$PM" --data-dir "$STATE" market league-watchdog --start 2026-11-27T00:00:00Z --end 2026-12-01T00:00:00Z
+"$PM" --data-dir "$STATE" market league-watchdog --rolling
 "$PM" --data-dir "$STATE" market league-report --start 2026-11-26T19:00:00Z --end 2026-11-26T20:30:00Z
 journalctl --user -u polymarket861-five-watch -u polymarket861-five-watchdog --since today
 ```
@@ -50,7 +45,7 @@ journalctl --user -u polymarket861-five-watch -u polymarket861-five-watchdog --s
 
 四国服务按上面的命令查询。单联赛参数对应另一个采集范围。以 `--local-catalog` 手工运行的连续进程须用相同参数查询，它只验证调度心跳，返回 `catalog_state=local_only`、`catalog_by_league=null`、`catalog_healthy=null`。手工 `--cycles 1` 只执行一次，无法提供持续服务心跳。旧健康库在首次新版值守时自动补充记录表，旧版的完成标记缺少逐联赛收件时间，须等到一次新的完整遍历才能确认目录新鲜。固定窗实收和成对可用性请看周报，例如 03:31 起查看首批 T−24h 收件。
 
-更换赛程范围时更新 `window.env` 并执行 `systemctl --user restart polymarket861-five-watch.service`。原窗口仍有未兑付市场时可用 `market league-terminal --fixture 赛事slug` 补收终态。在没有 systemd 的系统上，可由自己的进程管理器运行相同的 `market league-watch --start … --end … --cycles 0`，并独立执行上述 CLI 心跳检查。手工后台启动时可以用 SIGINT 或 SIGTERM 正常收尾。值守器等待已派发任务收尾、写入停止状态并发送 STOPPING，CLI 返回 130，服务单元把 130 视为正常停止。强杀不会触发收尾，同机可验证的 Linux 进程按 PID 与启动身份识别退出，其他环境在心跳超时后识别失联。
+需要单独审计固定窗口时，在独立状态目录运行带 `--start`、`--end` 的采集器并以同一参数执行看门狗。原窗口仍有未兑付市场时可用 `market league-terminal --fixture 赛事slug` 补收终态。在没有 systemd 的系统上，可由自己的进程管理器运行相同的 `market league-watch --start … --end … --cycles 0`，并独立执行上述 CLI 心跳检查。手工后台启动时可以用 SIGINT 或 SIGTERM 正常收尾。值守器等待已派发任务收尾、写入停止状态并发送 STOPPING，CLI 返回 130，服务单元把 130 视为正常停止。强杀不会触发收尾，同机可验证的 Linux 进程按 PID 与启动身份识别退出，其他环境在心跳超时后识别失联。
 
 ## 可选的本机桌面通知
 

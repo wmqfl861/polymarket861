@@ -7,13 +7,13 @@ import json
 import re
 import sqlite3
 from collections import Counter, defaultdict
-from contextlib import closing
+from contextlib import closing, contextmanager
 from dataclasses import asdict
-from datetime import UTC, date, datetime
+from datetime import date
 from itertools import permutations
 from pathlib import Path
 
-from . import league_registry as registry
+from . import context_feeds, league_press, league_registry as registry, league_rosters, news_roster, news_sources, store
 from .score_bounds import valid_score
 
 AUDITED_START = "2018-19"
@@ -181,35 +181,244 @@ def inventory(history: Path, *, first: str = AUDITED_START, last: str = AUDITED_
             "alias_audit": joins, "dispositions": dict(totals), "files": records}
 
 
-def local_source_health(data_dir: Path, season: str, leagues=None) -> dict:
-    """Latest local collector observations, including failures; no implicit field approval."""
+@contextmanager
+def _health_database(path):
+    """Read one coherent snapshot without initializing a collector or running migrations."""
+    if not path.is_file():
+        yield None, set()
+        return
+    with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=5)) as db:
+        db.execute("PRAGMA query_only=ON")
+        db.execute("BEGIN")
+        relations = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type IN ('table','view')")}
+        yield db, relations
+
+
+def _source_check(clubs, key, source, kind, at, state, **fields):
+    clubs[key][source] = {"last_check_utc": at, "collector_state": state, "kind": kind,
+                          "has_observation": False, **fields}
+    return clubs[key][source]
+
+
+def _stored_checks(db, tables, season, leagues, clubs, at):
+    relation = next((r for r in ("news_check_history", "news_checks") if r in tables), None)
+    if relation is None:
+        return False
+    columns = {r[1] for r in db.execute(f"PRAGMA table_info({relation})")}
+    # Pre-receipt databases recorded the attempts alone.
+    detail = ("CASE WHEN json_valid(detail) THEN CASE WHEN json_type(detail)='object' THEN detail END END"
+              if "detail" in columns else "NULL")
+    for league in leagues:
+        query = f"""WITH checks AS (
+              SELECT team_key,source,fixture_id,checked_at,state,id,{detail} AS report
+              FROM {relation} WHERE season=? AND fixture_id GLOB ? AND checked_at<=?
+            ), ranked AS (
+              SELECT *,row_number() OVER (PARTITION BY team_key,source ORDER BY checked_at DESC,id DESC) AS position,
+                max(CASE WHEN json_extract(report,'$.articles_added')>0 OR json_extract(report,'$.claims_added')>0
+                    THEN checked_at END) OVER (PARTITION BY team_key,source) AS last_item
+              FROM checks)
+            SELECT team_key,source,fixture_id,checked_at,state,report,last_item FROM ranked WHERE position=1"""
+        for club, source, fixture, checked, state, raw, last_item in db.execute(query, (season, f"{league}/{season}/*", at)):
+            key = f"{league}/{club}"
+            if key not in clubs:
+                continue
+            report = json.loads(raw) if raw else {}
+            _source_check(clubs, key, source, "team_news", checked, state, fixture=fixture,
+                          response_sha256=report.get("response_sha256"), provider_counts=report.get("provider_counts"),
+                          latest_observation_utc=last_item, has_observation=bool(last_item))
+        if "news_articles" not in tables:
+            continue
+        # The legacy wire also stores season/club articles without a fixture. Its reviewed
+        # provider scope is English clubs only. All other rows need an explicit fixture.
+        query = """WITH revisions AS (
+             SELECT *,row_number() OVER (PARTITION BY team_key,source,external_id
+                        ORDER BY updated_at DESC,seq DESC) AS revision_rank FROM news_articles
+             WHERE season=? AND recorded_at<=? AND (fixture_id GLOB ? OR
+               (fixture_id IS NULL AND ? AND source IN (?,?)))
+           ), active AS (
+             SELECT *,row_number() OVER (PARTITION BY team_key,source ORDER BY recorded_at DESC,seq DESC) AS position,
+                    count(*) OVER (PARTITION BY team_key,source) AS total
+             FROM revisions WHERE revision_rank=1 AND retracted=0)
+           SELECT team_key,source,fixture_id,recorded_at,url,total FROM active WHERE position=1"""
+        params = (season, at, f"{league}/{season}/*", league == "epl", news_sources.WIRE, news_sources.RUMOURS)
+        for club, source, fixture, received, url, total in db.execute(query, params):
+            key = f"{league}/{club}"
+            if key not in clubs:
+                continue
+            row = clubs[key].get(source)
+            if row is None:
+                row = _source_check(clubs, key, source, "team_news", None, "article_received", fixture=fixture)
+            row.update(has_observation=True, latest_observation_utc=max(row.get("latest_observation_utc") or "", received),
+                       article_count=total, latest_article={"recorded_at": received, "url": url})
+    return True
+
+
+def _legacy_rosters(db, tables, season, teams, clubs, at):
+    if "epl" not in teams or not tables.intersection({"news_roster_checks", "news_roster_receipts"}):
+        return False
+    source = news_roster.SOURCE
+    for club, status, raw in (db.execute("SELECT club,status,report FROM news_roster_checks WHERE season=?", (season,))
+                              if "news_roster_checks" in tables else ()):
+        key = f"epl/{club}"
+        if key in clubs:
+            report = json.loads(raw)
+            # Failed and running checks in this schema have no attempt timestamp.
+            checked = report.get("seen_at") if report.get("status") == status else None
+            _source_check(clubs, key, source, "roster", checked, status, has_roster=False,
+                          roster_players=0, latest_receipt_utc=None)
+    if "news_roster_receipts" not in tables:
+        return True
+    for club, seen, digest in news_roster._latest(db, season, at):
+        key = f"epl/{club}"
+        if key not in clubs:
+            continue
+        row = clubs[key].get(source)
+        if row is None:
+            row = _source_check(clubs, key, source, "roster", None, "receipt_only")
+        record = db.execute("SELECT document FROM news_roster_content WHERE digest=?", (digest,)).fetchone() if (
+            "news_roster_content" in tables) else None
+        document = json.loads(record[0]) if record else {}
+        valid = (document.get("source") == source and document.get("season") == season
+                 and document.get("team") in teams["epl"] and teams["epl"][document["team"]] == key
+                 and store.digest(document) == digest and not document.get("withheld"))
+        count = len(document.get("players", [])) if valid else 0
+        row.update(latest_receipt_utc=seen, has_roster=bool(count), roster_players=count, has_observation=bool(count),
+                   roster_state=("expired" if at >= news_roster._expiry(seen) else "available") if count else "unknown")
+    return True
+
+
+def _domestic_rosters(db, tables, root, season, teams, clubs, at):
+    if not tables.intersection({"local_roster_polls", "local_roster_receipts"}):
+        return False
+    source = league_rosters._ROSTER_SOURCE
+    scopes = {key: scope for league, names in teams.items() for raw, key in names.items()
+              if (scope := league_rosters.roster_coverage(raw, season, league))}
+    if "local_roster_polls" in tables:
+        for league, club, attempt, state, reason in db.execute(
+                "SELECT league,club,attempted_at,state,reason FROM local_roster_polls WHERE season=? AND attempted_at<=?",
+                (season, at)):
+            key = f"{league}/{club}"
+            if key in scopes:
+                _source_check(clubs, key, source, "roster", attempt, state, reason=reason,
+                              latest_receipt_utc=None, has_roster=False, roster_players=0)
+    if "local_roster_receipts" not in tables:
+        return "local_roster_polls" in tables
+    for league, club, ready in db.execute(
+            "SELECT league,club,max(ready_at) FROM local_roster_receipts WHERE season=? AND ready_at<=? GROUP BY league,club",
+            (season, at)):
+        key = f"{league}/{club}"
+        if key not in scopes:
+            continue
+        row = clubs[key].get(source)
+        if row is None:
+            row = _source_check(clubs, key, source, "roster", None, "receipt_only")
+        # Verify what the latest receipt actually contained, independently of the
+        # outcome of a subsequent poll. Age is exposed separately from receipt.
+        if "local_roster_projections" in tables:
+            roster = league_rosters._local_roster_as_of(db, root, scopes[key], ready)
+        else:
+            roster = {"players": [], "reason": "missing_roster_projection"}
+        count = len(roster["players"])
+        fresh = store.instant(at) - store.instant(ready) <= league_rosters._ROSTER_MAX_AGE
+        row.update(latest_receipt_utc=ready, has_roster=bool(count), roster_players=count, has_observation=bool(count),
+                   roster_state=("available" if fresh else "expired") if count else roster.get("reason") or "unknown")
+    return True
+
+
+def _press_health(db, tables, season, teams, clubs, at):
+    if "press_releases" not in tables:
+        return {}
+    batches = {}
+    # Editions may be backfilled later than a newer edition. Keep the newest
+    # indexed edition and the latest local scan clock independently.
+    query = """WITH releases AS (
+          SELECT r.*,j.value AS league FROM press_releases r JOIN json_each(r.leagues) j
+          WHERE r.season=? AND r.received<=?
+        ), ranked AS (
+          SELECT *,row_number() OVER (PARTITION BY league ORDER BY edition DESC) AS position,
+                 max(received) OVER (PARTITION BY league) AS last_scan FROM releases)
+        SELECT league,edition,received,scanned,last_scan FROM ranked WHERE position=1"""
+    source = context_feeds.GKG
+    for league, edition, received, scanned, last_scan in db.execute(query, (season, at)):
+        if league not in teams:
+            continue
+        batches[league] = {"edition": edition, "received_at": received, "records_scanned": scanned,
+                           "last_scan_utc": last_scan, "attribution": league_press.CREDIT}
+        state = "checked_no_links" if "press_clubs" in tables else "link_table_unavailable"
+        for key in teams[league].values():
+            _source_check(clubs, key, source, "news_links", last_scan, state, latest_shared_edition=edition,
+                          observed_links=0 if "press_clubs" in tables else None, latest_link=None)
+    if batches and "press_clubs" in tables:
+        query = """WITH links AS (
+              SELECT c.league,c.team,c.edition,c.url,c.document,r.received,
+                     row_number() OVER (PARTITION BY c.league,c.team ORDER BY c.edition DESC,c.url) AS position
+              FROM press_clubs c JOIN press_releases r USING(edition)
+              WHERE r.season=? AND r.received<=? AND c.league IN (SELECT value FROM json_each(r.leagues))
+            ), totals AS (SELECT league,team,count(DISTINCT url) AS total FROM links GROUP BY league,team)
+            SELECT l.league,l.team,l.edition,l.url,l.document,l.received,t.total
+            FROM links l JOIN totals t USING(league,team) WHERE l.position=1"""
+        for league, raw_name, edition, url, document, received, total in db.execute(query, (season, at)):
+            key = teams.get(league, {}).get(raw_name)
+            if key is None:
+                continue
+            link = json.loads(document)
+            clubs[key][source].update(collector_state="links_observed", has_observation=True, observed_links=total,
+                                      latest_link={"edition": edition, "url": url, "received_at": received,
+                                                   "index_seen_at": link.get("index_seen_at"),
+                                                   "matched_via": link.get("matched_via"), "club_label": link.get("club_label")})
+    return batches
+
+
+def _health_totals(groups):
+    rows = list(groups)
+    checked = sum(bool(group) for group in rows)
+    observed = sum(any(record["has_observation"] for record in group) for group in rows)
+    return {"teams_with_local_checks": checked, "teams_with_observations": observed,
+            "teams_checked_without_observations": checked - observed, "teams_without_checks": len(rows) - checked}
+
+
+def local_source_health(data_dir: Path, season: str, leagues=None, *, epl_data_dir=None) -> dict:
+    """Report club-scoped checks and received items from the local collector stores."""
     leagues = list(registry.PROFILES) if leagues is None else list(leagues)
-    health = {f"{league}/{registry.club_key(league, season, raw)}": {}
-              for league in leagues for raw in registry.members(league, season)}
-    path = Path(data_dir).expanduser() / "runtime.sqlite3"
-    state = "no_local_database"
-    if path.is_file():
-        with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=5)) as db:
-            db.execute("BEGIN")
-            relations = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type IN ('table','view')")}
-            relation = next((r for r in ("news_check_history", "news_checks") if r in relations), None)
-            state = "no_news_collection_schema" if relation is None else "read_local_checks"
-            if relation:
-                for league in leagues:
-                    # IDs scoped to this competition and this exact season. An opaque
-                    # legacy ID has no proven league in this view.
-                    query = f"""SELECT team_key, source, fixture_id, checked_at, state FROM (
-                         SELECT team_key, source, fixture_id, checked_at, state,
-                                row_number() OVER (PARTITION BY team_key, source ORDER BY checked_at DESC, id DESC) AS rank
-                         FROM {relation} WHERE season=? AND fixture_id GLOB ?
-                      ) WHERE rank=1 ORDER BY team_key, source"""
-                    for club, source, fixture, at, result in db.execute(query, (season, f"{league}/{season}/*")):
-                        key = f"{league}/{club}"
-                        if key in health:
-                            health[key][source] = {"fixture": fixture, "last_check_utc": at, "collector_state": result}
-    return {"season": season, "checked_at": datetime.now(UTC).isoformat(), "state": state,
-            "registered_teams": len(health), "teams_with_local_checks": sum(bool(v) for v in health.values()),
-            "clubs": health, "scope": "Latest locally recorded collector check for each explicitly scoped club/source, including failures. For actual fixture-window coverage use news snapshot, which verifies the receipt, freshness, field and scope."}
+    teams = {league: {raw: f"{league}/{registry.club_key(league, season, raw)}"
+                      for raw in registry.members(league, season)} for league in leagues}
+    clubs = {key: {} for names in teams.values() for key in names.values()}
+    root = Path(data_dir).expanduser()
+    paths = {root / "runtime.sqlite3": list(leagues)}
+    if epl_data_dir is not None and "epl" in teams:
+        legacy = Path(epl_data_dir).expanduser() / "runtime.sqlite3"
+        if legacy.is_file() and legacy.resolve() != (root / "runtime.sqlite3").resolve():
+            paths[root / "runtime.sqlite3"].remove("epl")
+            paths[legacy] = ["epl"]
+    at = store.now_utc()
+    found_db = found_schema = False
+    for path, competitions in paths.items():
+        if not competitions:
+            continue
+        with _health_database(path) as (db, tables):
+            found_db |= db is not None
+            found_schema |= _stored_checks(db, tables, season, competitions, clubs, at)
+            if "epl" in competitions:
+                found_schema |= _legacy_rosters(db, tables, season, teams, clubs, at)
+    roster_root = root / "five-league-rosters"
+    with _health_database(roster_root / "runtime.sqlite3") as (db, tables):
+        found_db |= db is not None
+        found_schema |= _domestic_rosters(db, tables, roster_root, season, teams, clubs, at)
+    with _health_database(root / "team-press" / "index.sqlite3") as (db, tables):
+        found_db |= db is not None
+        found_schema |= "press_releases" in tables
+        batches = _press_health(db, tables, season, teams, clubs, at)
+    sources = sorted({source for group in clubs.values() for source in group})
+    by_source = {s: _health_totals([group[s]] if s in group else [] for group in clubs.values()) for s in sources}
+    news = _health_totals([r for r in group.values() if r["kind"] != "roster"] for group in clubs.values())
+    return {"season": season, "checked_at": at, "state": ("read_local_checks" if found_schema else
+            "no_news_collection_schema" if found_db else "no_local_database"), "registered_teams": len(clubs),
+            **_health_totals(list(group.values()) for group in clubs.values()), "news": news, "by_source": by_source,
+            "latest_shared_gdelt_batch_by_league": batches, "clubs": clubs,
+            "scope": "Checks and received items for the selected season. News observations count recorded club-specific items. "
+                     "Roster counts describe the latest stored receipt; roster_state gives its freshness. "
+                     "GDELT counts distinct matched URLs across stored batches. Source totals use all selected registered teams "
+                     "as the denominator. Fixture-window eligibility is checked by news snapshot."}
 
 
 def _league_option(parser):
@@ -217,10 +426,13 @@ def _league_option(parser):
 
 
 def register(commands):
-    from . import league_source_rights, league_study, news_endpoint_study
+    from . import league_openfootball_refresh, league_source_rights, league_study, news_endpoint_study
 
     parser = commands.add_parser("leagues", help="五国赛事、赛季成员、历史异常、来源与基线")
     subcommands = parser.add_subparsers(dest="league_action", required=True)
+    download = subcommands.add_parser("prepare-history", help="下载并核验各联赛最近九季的固定 OpenFootball 训练文件")
+    download.add_argument("directory", type=Path)
+    download.set_defaults(func=lambda a: league_openfootball_refresh.prepare_history(a.directory))
     listing = subcommands.add_parser("list", help="各联赛常规赛赛制和来源显示时区")
     listing.add_argument("--season", default="2026-27")
     listing.set_defaults(func=lambda a: [
@@ -241,7 +453,9 @@ def register(commands):
     health = subcommands.add_parser("health", help="本机逐队逐来源的最后一次检查、检查状态及缺件分母")
     _league_option(health)
     health.add_argument("--season", default="2026-27")
-    health.set_defaults(func=lambda a: local_source_health(a.data_dir, a.season, [a.league] if a.league else None))
+    health.add_argument("--epl-data-dir", type=Path, help="另读原英超运行目录，合并其逐队收件")
+    health.set_defaults(func=lambda a: local_source_health(a.data_dir, a.season, [a.league] if a.league else None,
+                                                         epl_data_dir=a.epl_data_dir))
     audit = subcommands.add_parser("inventory", help="逐个校验本地固定历史文件，并报告已知异常")
     audit.add_argument("history", type=Path, help="包含 YYYY-YY/de.1.json 等文件的根目录")
     _league_option(audit)

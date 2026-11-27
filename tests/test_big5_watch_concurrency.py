@@ -29,6 +29,58 @@ def ranked(fixture):
 
 
 class Big5WatchConcurrency(unittest.TestCase):
+    def test_rolling_discovery_advances_after_utc_midnight(self):
+        clock = [provider.moment(NOW)]
+        windows = []
+
+        def advance(_seconds):
+            clock[0] += timedelta(days=1)
+
+        def catalog(_data_dir, leagues, start, end, **_kwargs):
+            windows.append((start, end))
+            return {
+                "window": [start, end],
+                "completed_at": iso(clock[0]),
+                "leagues": {
+                    league: {
+                        "gaps": [],
+                        "page_walk_complete": True,
+                    }
+                    for league in leagues
+                },
+            }
+
+        with (
+            tempfile.TemporaryDirectory() as data,
+            patch.object(big5, "now_utc", side_effect=lambda: iso(clock[0])),
+            patch.object(big5, "_watch_catalog", side_effect=catalog),
+            patch.object(big5, "_ranked_jobs", return_value=[]),
+            patch.object(big5.time, "sleep", side_effect=advance),
+        ):
+            result = big5.watch(
+                data, ["lal", "bun"], None, None, rolling=True,
+                cycles=2, workers=2,
+            )
+        self.assertEqual(result["cycles"], 2)
+        self.assertEqual(len(windows), 2)
+        self.assertNotEqual(windows[0], windows[1])
+        self.assertEqual(
+            [provider.moment(end) - provider.moment(start) for start, end in windows],
+            [timedelta(days=22), timedelta(days=22)],
+        )
+
+    def test_rolling_watch_requires_rolling_scope_without_fixed_dates(self):
+        with self.assertRaisesRegex(ValueError, "--rolling"):
+            big5._watch_scope(
+                ["lal"], START, None, True
+            )
+        selected, start, end = big5._watch_scope(
+            ["lal"], None, None, True
+        )
+        self.assertEqual(selected, ["lal"])
+        self.assertIsNone(start)
+        self.assertIsNone(end)
+
     def test_background_catalog_and_book_sampling_run_on_two_real_workers(self):
         clock = [provider.moment(NOW)]
         overlap = threading.Barrier(2)

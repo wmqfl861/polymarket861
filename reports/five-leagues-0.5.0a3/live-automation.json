@@ -1,0 +1,263 @@
+{
+  "captured_at_utc": "2026-11-27T02:51:36.874032Z",
+  "package": "0.5.0a3+fiveauto.1",
+  "wheel_sha256": "fca40ea61ca36441e68ea6c0a0f5c20a600e3f847a34ec21e9fb0e3e904f10a0",
+  "scope": "Installed-wheel verification on the data disk. Prospective domestic research, private paper instance.",
+  "lookahead_days": 7,
+  "pinned_history_files": 45,
+  "leagues": {
+    "epl": {
+      "eligible_next_7d_with_forecast": 10,
+      "rosters_with_local_receipt": 20,
+      "player_rows": 554,
+      "clubs_with_touchline_availability_received_since_2026_11_26_utc": 20,
+      "round_12_precutover_seals_verified": 10,
+      "initial_distinct_news_urls": 24,
+      "initial_clubs_with_news_url": 10
+    },
+    "lal": {
+      "eligible_next_7d_with_forecast": 12,
+      "eligible_next_7d": 12,
+      "current_season_scores_observed": 129,
+      "first_fixture_b1_training_matches": 1258,
+      "rosters_with_local_receipt": 20,
+      "player_rows": 559,
+      "roster_injury_markers": 19,
+      "clubs_with_roster_injury_markers": 10,
+      "players_with_club_career_league_totals": 0,
+      "research_dispatch": {
+        "T-24h": {
+          "missed": 1,
+          "pending": 11
+        },
+        "T-60m": {
+          "pending": 12
+        },
+        "news_update": {
+          "sealed": 15
+        },
+        "preview": {
+          "sealed": 12
+        }
+      },
+      "initial_distinct_news_urls": 8,
+      "initial_clubs_with_news_url": 4
+    },
+    "bun": {
+      "eligible_next_7d_with_forecast": 9,
+      "eligible_next_7d": 9,
+      "current_season_scores_observed": 90,
+      "first_fixture_b1_training_matches": 1007,
+      "rosters_with_local_receipt": 18,
+      "player_rows": 517,
+      "roster_injury_markers": 0,
+      "clubs_with_roster_injury_markers": 0,
+      "players_with_club_career_league_totals": 29,
+      "research_dispatch": {
+        "T-24h": {
+          "missed": 1,
+          "pending": 8
+        },
+        "T-60m": {
+          "pending": 9
+        },
+        "news_update": {
+          "sealed": 9
+        },
+        "preview": {
+          "sealed": 9
+        }
+      },
+      "initial_distinct_news_urls": 3,
+      "initial_clubs_with_news_url": 4
+    },
+    "sea": {
+      "eligible_next_7d_with_forecast": 10,
+      "eligible_next_7d": 10,
+      "current_season_scores_observed": 120,
+      "first_fixture_b1_training_matches": 1248,
+      "rosters_with_local_receipt": 20,
+      "player_rows": 587,
+      "roster_injury_markers": 0,
+      "clubs_with_roster_injury_markers": 0,
+      "players_with_club_career_league_totals": 0,
+      "research_dispatch": {
+        "T-24h": {
+          "missed": 1,
+          "pending": 9
+        },
+        "T-60m": {
+          "pending": 10
+        },
+        "news_update": {
+          "sealed": 10
+        },
+        "preview": {
+          "sealed": 10
+        }
+      },
+      "initial_distinct_news_urls": 2,
+      "initial_clubs_with_news_url": 1
+    },
+    "fl1": {
+      "eligible_next_7d_with_forecast": 9,
+      "eligible_next_7d": 9,
+      "current_season_scores_observed": 99,
+      "first_fixture_b1_training_matches": 1014,
+      "rosters_with_local_receipt": 18,
+      "player_rows": 499,
+      "roster_injury_markers": 0,
+      "clubs_with_roster_injury_markers": 0,
+      "players_with_club_career_league_totals": 0,
+      "research_dispatch": {
+        "T-24h": {
+          "missed": 1,
+          "pending": 8
+        },
+        "T-60m": {
+          "pending": 9
+        },
+        "news_update": {
+          "sealed": 10
+        },
+        "preview": {
+          "sealed": 9
+        }
+      },
+      "initial_distinct_news_urls": 14,
+      "initial_clubs_with_news_url": 3
+    }
+  },
+  "news_index_sample": {
+    "local_cutoff_utc": "2026-11-27T02:25:00.000000Z",
+    "accepted_editions": 33,
+    "first_gdelt_edition_utc": "20261126181500",
+    "last_gdelt_edition_utc": "20261127021500",
+    "unique_urls_across_leagues": 49
+  },
+  "epl": {
+    "installed_recipe_matches_signed_recipe": true,
+    "signed_recipe_sha256": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+    "formal_trial_ready": false,
+    "completed_technical_rounds": [],
+    "pending_trial_requirements": [
+      "multi_season_probability_report",
+      "strict_historical_coverage_measured",
+      "two_consecutive_observed_technical_rounds",
+      "archive_linked_market_replay"
+    ],
+    "optional_execution_research_enabled": true,
+    "coordinator_heartbeat_at": "2026-11-27T02:53:20.356774Z",
+    "heartbeat_sampled_at": "2026-11-27T02:53:20.660659Z",
+    "heartbeat_age_seconds": 0.3
+  },
+  "four_league_market_health": {
+    "healthy": true,
+    "scheduler_alive": true,
+    "catalog_by_league": {
+      "bun": "fresh",
+      "fl1": "fresh",
+      "lal": "fresh",
+      "sea": "fresh"
+    }
+  },
+  "source_health": {
+    "checked_at": "2026-11-27T02:43:48.181001Z",
+    "registered_clubs": 96,
+    "clubs_with_news_across_sources": 32,
+    "clubs_checked_without_news": 64,
+    "clubs_with_gdelt_links": 22
+  },
+  "production_browser": {
+    "widths_px": [
+      1280,
+      390
+    ],
+    "verified_from_homepage": [
+      "epl",
+      "lal",
+      "bun",
+      "sea",
+      "fl1"
+    ],
+    "checks": [
+      "English league workspace JavaScript rendered",
+      "league counts 10/12/9/10/9",
+      "selected fixture contains source-attributed squad/news and forecast probabilities",
+      "no horizontal overflow or JavaScript errors on either viewport"
+    ]
+  },
+  "sources": {
+    "four_league_roster_receipts_sampled_at": "2026-11-27T02:30:30.176760Z",
+    "four_league_optional_match_injuries_and_starting_xi": "not_configured",
+    "press_coverage": "Club mention in a GDELT link or indexed organization. Article and match relevance require verification."
+  },
+  "units": {
+    "polymarket861-season.service": {
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "polymarket861-five-forecast.service": {
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "polymarket861-five-watch.service": {
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "polymarket861-dashboard.service": {
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "active",
+      "SubState": "running",
+      "UnitFileState": "enabled"
+    },
+    "polymarket861-watchdog.timer": {
+      "Result": "success",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "polymarket861-five-watchdog.timer": {
+      "Result": "success",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "polymarket861-five-press.timer": {
+      "Result": "success",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "polymarket861-five-press.service": {
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStatus": "0",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    }
+  },
+  "dashboard_http_status": {
+    "/leagues": 200,
+    "/leagues?league=epl": 200,
+    "/leagues?league=lal": 200,
+    "/leagues?league=bun": 200,
+    "/leagues?league=sea": 200,
+    "/leagues?league=fl1": 200
+  }
+}

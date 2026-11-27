@@ -23,6 +23,23 @@ class WatchHealthTests(unittest.TestCase):
     start = "2026-11-27T00:00:00Z"
     end = "2026-12-01T00:00:00Z"
 
+    def test_rolling_cli_watchdog_checks_the_rolling_service_scope(self):
+        with (
+            health.monitor(
+                self.root, ["bun", "fl1", "lal", "sea"], None, None,
+                continuous=True, discover=True, rolling=True,
+            ) as tick,
+            patch.object(health.store, "now_utc", return_value="2026-11-27T12:00:00Z"),
+        ):
+            tick(1, None)
+            code, report = self.watchdog("--rolling")
+        self.assertEqual(report["scope"]["start"], "rolling")
+        self.assertEqual(report["scope"]["end"], "rolling")
+        self.assertTrue(report["rolling"])
+        self.assertTrue(report["scheduler_alive"])
+        self.assertFalse(report["healthy"])
+
+
     def setUp(self):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
@@ -35,6 +52,10 @@ class WatchHealthTests(unittest.TestCase):
 
     def watchdog(self, *args):
         output = io.StringIO()
+        if "--rolling" in args:
+            scope_args = ["--rolling"]
+        else:
+            scope_args = ["--start", self.start, "--end", self.end, *args]
         with contextlib.redirect_stdout(output):
             code = cli.main(
                 [
@@ -42,11 +63,7 @@ class WatchHealthTests(unittest.TestCase):
                     str(self.directory),
                     "market",
                     "league-watchdog",
-                    "--start",
-                    self.start,
-                    "--end",
-                    self.end,
-                    *args,
+                    *scope_args,
                 ]
             )
         return code, json.loads(output.getvalue())

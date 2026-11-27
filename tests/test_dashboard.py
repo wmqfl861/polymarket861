@@ -245,7 +245,7 @@ class DashboardBrowserTests(unittest.TestCase):
         ]
         with tempfile.TemporaryDirectory() as tmp, sync_playwright() as playwright:
             path = Path(tmp) / "dashboard.html"
-            path.write_text(render_dashboard(rows), encoding="utf-8")
+            path.write_text(render_dashboard(rows, five_leagues=True), encoding="utf-8")
             browser = playwright.chromium.launch(executable_path=os.environ["PM861_TEST_CHROMIUM"])
             try:
                 page = browser.new_page(viewport={"width": 1200, "height": 820})

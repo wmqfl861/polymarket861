@@ -1632,7 +1632,8 @@
       .join(" ")
       .toLocaleLowerCase();
   });
-  document.querySelectorAll(".nav-link").forEach((a) => {
+  const pageLinks = document.querySelectorAll("#main-nav [data-page]");
+  pageLinks.forEach((a) => {
     a.querySelector(".nav-count").textContent = String(grouped[a.dataset.page].length);
   });
   byId("updated").textContent = reports[0]?.updated_at
@@ -1733,7 +1734,7 @@
       byId("filters").hidden = !rows.length;
       byId("records-pane").hidden = !rows.length;
       byId("workspace").classList.toggle("empty-page", !rows.length);
-      document.querySelectorAll(".nav-link").forEach((a) => {
+      pageLinks.forEach((a) => {
         if (a.dataset.page === page) a.setAttribute("aria-current", "page");
         else a.removeAttribute("aria-current");
       });
