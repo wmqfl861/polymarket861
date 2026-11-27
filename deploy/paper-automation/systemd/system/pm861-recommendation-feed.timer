@@ -1,0 +1,10 @@
+[Unit]
+Description=Look for new five-league paper recommendations every ten minutes
+
+[Timer]
+OnCalendar=*-*-* *:02/10:00
+AccuracySec=2s
+Persistent=true
+
+[Install]
+WantedBy=timers.target

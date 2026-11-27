@@ -1,0 +1,10 @@
+[Unit]
+Description=Check Polymarket861 paper-account quotes and official payouts every 15 minutes
+
+[Timer]
+OnCalendar=*:0/15
+AccuracySec=15s
+Persistent=true
+
+[Install]
+WantedBy=timers.target

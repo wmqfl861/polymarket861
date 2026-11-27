@@ -1,0 +1,21 @@
+[Unit]
+After=user@1000.service
+Wants=user@1000.service
+RequiresMountsFor=/mnt/d/polymarket861
+Wants=network-online.target
+Description=Polymarket861 shared paper account and settlement monitor
+After=network-online.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+BindReadOnlyPaths=/etc/polymarket861/epl-resolver:/run/systemd/resolve
+Type=oneshot
+WorkingDirectory=/mnt/d/polymarket861/.local-deploy/paper-10000
+ExecStart=/mnt/d/polymarket861/.local-deploy/releases/0.5.0a4-6844caf/venv/bin/python /mnt/d/polymarket861/.local-deploy/paper-10000/monitor.py
+TimeoutStartSec=8min
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+ExecStartPost=/usr/bin/systemctl --user --no-block start pm861-weixin-recommendations.service

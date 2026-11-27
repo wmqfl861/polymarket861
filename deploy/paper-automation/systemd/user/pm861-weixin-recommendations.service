@@ -1,0 +1,14 @@
+[Unit]
+Description=Deliver changed paper recommendations through local Hermes Weixin
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/mnt/d/polymarket861/.local-deploy/five-automation/weixin-recommendations
+Environment=HERMES_HOME=/home/ubuntu/.hermes
+Environment=PYTHONUTF8=1
+ExecStart=/usr/bin/python3 /mnt/d/polymarket861/.local-deploy/five-automation/weixin-recommendations/notify.py
+TimeoutStartSec=6min
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true

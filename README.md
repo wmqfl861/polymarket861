@@ -4,6 +4,8 @@
 
 **当前版本为 `0.5.0a4`。** 五大联赛看板显示赛前胜平负、全场及单队大小球。英超沿用本机签核的 B1；西甲、德甲、意甲和法甲提供研究预览、T−24h 与 T−60m 封存及逐时点评分。新版区分新闻链接、预测变更和球员伤停情景，并报告各联赛调度停止、过期及采集失败。已有部署请从升级指南进入。[升级与回退](docs/five-leagues-0.5/DEPLOY-0.5.0a4.md) · [Claude 意见与修复证据](docs/five-leagues-0.5/CLAUDE-REVIEW-RESPONSE-0.5.0a4.md)
 
+五大联赛共享模拟账户。七天扫描提供研究候选，微信只推送账户实际新建的模拟仓位。运行代码、定时任务和本机验收见[部署交接](docs/five-leagues-0.5/PAPER-AUTOMATION-HANDOFF.md)。
+
 英超 SQLite 热修复将赛程原件的耗时核验移到 SQLite 写事务之外，使心跳和预测任务能在核验期间续租。[故障、修复、验收与回退交接](docs/EPL-SQLITE-HOTFIX-HANDOFF.md)
 
 0.5.0a3 修复四国采集写库冲突。目录故障恢复后，值守会在尚可执行的赛前时窗重查；看门狗分国报告目录新鲜度。排期研究模拟可标明费用估计并按成交档位扣除份额。英超新增只读新闻预检，显示本机封存能否取得试验所需原件。[全新部署](docs/five-leagues-0.5/DEPLOY-0.5.0a3.md) · [本轮修复与实测](docs/five-leagues-0.5/CLAUDE-REVIEW-RESPONSE-0.5.0a3.md) · [独立审核](docs/five-leagues-0.5/INDEPENDENT-REVIEW-0.5.0a3.md)

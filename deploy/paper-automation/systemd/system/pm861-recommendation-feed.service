@@ -1,0 +1,17 @@
+[Unit]
+RequiresMountsFor=/mnt/d/polymarket861
+Wants=network-online.target
+Description=Screen the next seven days of five-league fixtures for paper recommendations
+After=network-online.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+BindReadOnlyPaths=/etc/polymarket861/epl-resolver:/run/systemd/resolve
+Type=oneshot
+WorkingDirectory=/mnt/d/polymarket861/.local-deploy/five-automation/recommendation-feed
+ExecStart=/mnt/d/polymarket861/.venv/bin/python /mnt/d/polymarket861/.local-deploy/five-automation/recommendation-feed/discover.py
+TimeoutStartSec=8min
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
