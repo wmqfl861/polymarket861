@@ -1,0 +1,741 @@
+{
+ "package_version": "0.5.0a3+fiveauto.1",
+ "python": "3.12.3",
+ "inner_verifications_per_dispatch_attempt": 3,
+ "extra_seconds_per_schedule_verification": 0.0,
+ "window": "T-60m, starts 180 s before the cutoff",
+ "arms": [
+  {
+   "seconds_between_evidence_commits": null,
+   "runs": 5,
+   "sealed_before_cutoff": 5,
+   "missed": 0,
+   "polls_needed": [
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "dispatch_attempts": [
+    1,
+    1,
+    2,
+    1,
+    1
+   ],
+   "per_run": [
+    {
+     "run": 0,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 0,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 1,
+     "reverification_seconds_max": 0.0129,
+     "wall_seconds": 1.5
+    },
+    {
+     "run": 1,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 0,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 2,
+     "reverification_seconds_max": 0.008,
+     "wall_seconds": 0.64
+    },
+    {
+     "run": 2,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 2,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 2,
+     "sealed_seconds_before_cutoff": 150.0,
+     "evidence_version_commits": 0,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 2,
+     "reverification_seconds_max": 0.0165,
+     "wall_seconds": 0.87
+    },
+    {
+     "run": 3,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 0,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 1,
+     "reverification_seconds_max": 0.0091,
+     "wall_seconds": 0.63
+    },
+    {
+     "run": 4,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 0,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 1,
+     "reverification_seconds_max": 0.0034,
+     "wall_seconds": 0.64
+    }
+   ]
+  },
+  {
+   "seconds_between_evidence_commits": 0.05,
+   "runs": 5,
+   "sealed_before_cutoff": 5,
+   "missed": 0,
+   "polls_needed": [
+    1,
+    1,
+    1,
+    2,
+    1
+   ],
+   "dispatch_attempts": [
+    1,
+    1,
+    1,
+    2,
+    1
+   ],
+   "per_run": [
+    {
+     "run": 0,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 9,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 1,
+     "reverification_seconds_max": 0.0168,
+     "wall_seconds": 0.7
+    },
+    {
+     "run": 1,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 9,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 1,
+     "reverification_seconds_max": 0.014,
+     "wall_seconds": 0.67
+    },
+    {
+     "run": 2,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 9,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 2,
+     "reverification_seconds_max": 0.009,
+     "wall_seconds": 0.64
+    },
+    {
+     "run": 3,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 2,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 2,
+     "sealed_seconds_before_cutoff": 150.0,
+     "evidence_version_commits": 12,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 2,
+     "reverification_seconds_max": 0.0112,
+     "wall_seconds": 0.9
+    },
+    {
+     "run": 4,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 10,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 1,
+     "reverification_seconds_max": 0.0093,
+     "wall_seconds": 0.65
+    }
+   ]
+  },
+  {
+   "seconds_between_evidence_commits": 0.01,
+   "runs": 5,
+   "sealed_before_cutoff": 5,
+   "missed": 0,
+   "polls_needed": [
+    2,
+    2,
+    2,
+    2,
+    1
+   ],
+   "dispatch_attempts": [
+    2,
+    2,
+    2,
+    2,
+    1
+   ],
+   "per_run": [
+    {
+     "run": 0,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 2,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 2,
+     "sealed_seconds_before_cutoff": 150.0,
+     "evidence_version_commits": 51,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 3,
+     "reverification_seconds_max": 0.0102,
+     "wall_seconds": 0.87
+    },
+    {
+     "run": 1,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 2,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 2,
+     "sealed_seconds_before_cutoff": 150.0,
+     "evidence_version_commits": 59,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 4,
+     "reverification_seconds_max": 0.0137,
+     "wall_seconds": 0.98
+    },
+    {
+     "run": 2,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 2,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 2,
+     "sealed_seconds_before_cutoff": 150.0,
+     "evidence_version_commits": 59,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 4,
+     "reverification_seconds_max": 0.0117,
+     "wall_seconds": 1.06
+    },
+    {
+     "run": 3,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 2,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 2,
+     "sealed_seconds_before_cutoff": 150.0,
+     "evidence_version_commits": 45,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 4,
+     "reverification_seconds_max": 0.0169,
+     "wall_seconds": 0.94
+    },
+    {
+     "run": 4,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 21,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 2,
+     "reverification_seconds_max": 0.009,
+     "wall_seconds": 0.64
+    }
+   ]
+  },
+  {
+   "seconds_between_evidence_commits": 0.002,
+   "runs": 5,
+   "sealed_before_cutoff": 1,
+   "missed": 4,
+   "polls_needed": [
+    8,
+    1,
+    8,
+    8,
+    8
+   ],
+   "dispatch_attempts": [
+    7,
+    1,
+    7,
+    7,
+    7
+   ],
+   "per_run": [
+    {
+     "run": 0,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 2,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 120.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 3,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 90.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 4,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 60.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 5,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 30.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 6,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 0.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 7,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": -30.0,
+       "dispatch_state": "missed",
+       "attempts_so_far": 7,
+       "error": "elapsed without a timely seal"
+      }
+     ],
+     "sealed": false,
+     "seals": 0,
+     "final_state": "missed",
+     "final_error": "elapsed without a timely seal",
+     "dispatch_attempts": 7,
+     "sealed_seconds_before_cutoff": null,
+     "evidence_version_commits": 678,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 22,
+     "reverification_seconds_max": 0.0211,
+     "wall_seconds": 3.21
+    },
+    {
+     "run": 1,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "done",
+       "attempts_so_far": 1,
+       "error": null
+      }
+     ],
+     "sealed": true,
+     "seals": 1,
+     "final_state": "done",
+     "final_error": null,
+     "dispatch_attempts": 1,
+     "sealed_seconds_before_cutoff": 180.0,
+     "evidence_version_commits": 83,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 1,
+     "reverification_seconds_max": 0.0108,
+     "wall_seconds": 0.61
+    },
+    {
+     "run": 2,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 2,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 120.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 3,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 90.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 4,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 60.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 5,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 30.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 6,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 0.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 7,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": -30.0,
+       "dispatch_state": "missed",
+       "attempts_so_far": 7,
+       "error": "elapsed without a timely seal"
+      }
+     ],
+     "sealed": false,
+     "seals": 0,
+     "final_state": "missed",
+     "final_error": "elapsed without a timely seal",
+     "dispatch_attempts": 7,
+     "sealed_seconds_before_cutoff": null,
+     "evidence_version_commits": 679,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 22,
+     "reverification_seconds_max": 0.0158,
+     "wall_seconds": 3.13
+    },
+    {
+     "run": 3,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 2,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 120.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 3,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 90.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 4,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 60.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 5,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 30.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 6,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 0.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 7,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": -30.0,
+       "dispatch_state": "missed",
+       "attempts_so_far": 7,
+       "error": "elapsed without a timely seal"
+      }
+     ],
+     "sealed": false,
+     "seals": 0,
+     "final_state": "missed",
+     "final_error": "elapsed without a timely seal",
+     "dispatch_attempts": 7,
+     "sealed_seconds_before_cutoff": null,
+     "evidence_version_commits": 730,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 22,
+     "reverification_seconds_max": 0.0129,
+     "wall_seconds": 2.83
+    },
+    {
+     "run": 4,
+     "ticks": [
+      {
+       "seconds_before_cutoff": 180.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 1,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 150.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 2,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 120.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 3,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 90.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 4,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 60.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 5,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 30.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 6,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": 0.0,
+       "dispatch_state": "error",
+       "attempts_so_far": 7,
+       "error": "ValueError: schedule evidence changed repeatedly before the fixed B1 decision"
+      },
+      {
+       "seconds_before_cutoff": -30.0,
+       "dispatch_state": "missed",
+       "attempts_so_far": 7,
+       "error": "elapsed without a timely seal"
+      }
+     ],
+     "sealed": false,
+     "seals": 0,
+     "final_state": "missed",
+     "final_error": "elapsed without a timely seal",
+     "dispatch_attempts": 7,
+     "sealed_seconds_before_cutoff": null,
+     "evidence_version_commits": 812,
+     "bumper_busy_errors": 0,
+     "reverification_calls": 22,
+     "reverification_seconds_max": 0.0196,
+     "wall_seconds": 3.37
+    }
+   ]
+  }
+ ]
+}

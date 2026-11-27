@@ -1,0 +1,346 @@
+[
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 2,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 2,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 1,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+  },
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 9.5,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 2,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 1,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+  },
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 10,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 2,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 1,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+  },
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 12,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 2,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 1,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+  },
+  {
+    "mode": "不刷新",
+    "last_good_catalogue_minutes_before_T-60m": 30,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 2,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 1,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+  },
+  {
+    "mode": "Gamma 中断",
+    "last_good_catalogue_minutes_before_T-60m": 4,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 2,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 1,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+  },
+  {
+    "mode": "Gamma 中断",
+    "last_good_catalogue_minutes_before_T-60m": 9.5,
+    "watch_states_decision_then_execution": [
+      {
+        "complete": 1
+      },
+      {
+        "complete": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      },
+      {
+        "slot": "t1_execution",
+        "success": true,
+        "state": "complete",
+        "received": 14,
+        "expected": 14,
+        "error": null
+      }
+    ],
+    "archived_books": 28,
+    "fixed_windows_complete": 2,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 2,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 1,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 1,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+  },
+  {
+    "mode": "Gamma 中断",
+    "last_good_catalogue_minutes_before_T-60m": 12,
+    "watch_states_decision_then_execution": [
+      {
+        "partial": 1
+      },
+      {
+        "partial": 1
+      }
+    ],
+    "slots": [
+      {
+        "slot": "t1_decision",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "fixture catalogue refresh failed: sea-one-two-2030-01-12: simulated Gamma outage"
+      },
+      {
+        "slot": "t1_execution",
+        "success": false,
+        "state": "partial",
+        "received": 0,
+        "expected": 0,
+        "error": "fixture catalogue refresh failed: sea-one-two-2030-01-12: simulated Gamma outage"
+      }
+    ],
+    "archived_books": 0,
+    "fixed_windows_complete": 0,
+    "fixed_windows_due": 2,
+    "fixed_windows_explicit_pregame": 0,
+    "fixed_windows_not_pregame": 0,
+    "fixed_windows_schedule_only": 0,
+    "fixed_windows_unclassified": 0,
+    "t1_pairs_complete": 0,
+    "t1_pairs_due": 1,
+    "t1_pairs_explicit_pregame": 0,
+    "t1_pairs_not_pregame": 0,
+    "t1_pairs_schedule_only": 0,
+    "t1_pairs_unclassified": 0
+  }
+]

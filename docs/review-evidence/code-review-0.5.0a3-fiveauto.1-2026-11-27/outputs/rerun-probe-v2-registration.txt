@@ -1,0 +1,27 @@
+== 未登记
+{"version": "epl-news-home-and-full-over-v2", "plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61", "state": "not_registered", "bound_seals": 0, "family_comparisons": 14}
+== 登记（只在这份副本上）
+{"version": "epl-news-home-and-full-over-v2", "plan_sha256": "3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61", "mode": "technical+formal", "ends_at": "2028-07-01T00:00:00.000000Z", "news_policy": {"protocol": "epl-player-news-paired-v3", "sha256": "461ddec6ef376781c14c44b4b839cc1700637da903163d11e3b9760a7595f387"}}
+== 原样再登记一次
+same certificate: True
+== 换一个开始时间再登记
+exit=2 pm861: v2 already has an immutable local start
+== 登记之后做一次提前封存
+exit=0
+bindings: 0
+{"state": "prospective_collection", "bound_seals": 0}
+== 以后某一版：方案文字多一个逗号
+plan digest of this build:   3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61
+plan digest of the later one: 5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7
+-- report --version v2
+exit=2 pm861: Installed v2 plan drift: stored=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61 current=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7; published=3db775698c93
+-- report (default)
+exit=2 pm861: Installed v2 plan drift: stored=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61 current=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7; published=3db775698c93
+-- register --version v2
+exit=2 pm861: Installed v2 plan drift: stored=3db775698c93664b5ba749be8a03f94f75940f212438849ad63e4cf672002a61 current=5ead6f2492d7328b4cdbab5110a877900ec30506d71449e93948a4e39a5948a7; published=3db775698c93
+-- season readiness
+{"state": "ready", "ready": true}
+-- forecast make
+exit=0
+== 回到原来这一版，登记仍然读得出
+{"state": "prospective_collection", "bound_seals": 0}

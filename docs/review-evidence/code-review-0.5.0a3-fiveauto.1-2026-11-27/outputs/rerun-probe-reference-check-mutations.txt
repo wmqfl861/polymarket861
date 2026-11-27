@@ -1,0 +1,10 @@
+== 副本未改动
+{"exit": 0, "unreviewed": [], "obsolete": []}
+== 配方内的 football._club_key 新增一处对 league_registry.leagues 的调用（排除表里没有）
+{"exit": 1, "unreviewed": ["football._club_key -> league_registry.leagues"], "obsolete": []}
+== 同一处改成用拼出来的名字间接调用
+{"exit": 1, "unreviewed": ["football._club_key -> league_registry.<dynamic>"], "obsolete": []}
+== 删掉一处已登记的调用（league_registry.club_key）
+{"exit": 1, "unreviewed": [], "obsolete": ["football._club_key -> league_registry.club_key"]}
+== 复原
+{"exit": 0, "unreviewed": [], "obsolete": []}

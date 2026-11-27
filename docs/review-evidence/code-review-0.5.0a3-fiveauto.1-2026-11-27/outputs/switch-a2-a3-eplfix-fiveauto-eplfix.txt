@@ -1,0 +1,74 @@
+== 0.5.0a2: initialise the scratch directory and fetch the pinned history
+{"checks.release_executable": true, "state": "first_use", "ready": true, "active_version": "B1", "approval": null, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+sealed epl/2026-27/arsenal/manchester-city:  "model_version": "B1",
+
+== switch 1: 0.5.0a2 -> 0.5.0a3
+-- 0.5.0a3 opens the directory before anything is approved
+{"checks.release_executable": true, "state": "ready", "ready": true, "active_version": "B1", "approval": null, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+sealed epl/2026-27/brighton-hove-albion/newcastle-united:  "model_version": "B1",
+-- 0.5.0a2 is still in charge and seals again
+sealed epl/2026-27/crystal-palace/hull-city:  "model_version": "B1",
+-- baseline by 0.5.0a2, compare by 0.5.0a3
+ "version": "B1",  "matches": 1900,
+release-compare refused: exit=2 pm861: the installed probability recipe is already active
+-- same active recipe: no approval step; 0.5.0a3 seals again
+sealed epl/2026-27/everton/liverpool:  "model_version": "B1",
+-- 0.5.0a2 on the same directory afterwards
+{"checks.release_executable": true, "state": "ready", "ready": true, "active_version": "B1", "approval": null, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+sealed epl/2026-27/fulham/bournemouth:  "model_version": "B1",
+-- a seal written by 0.5.0a2 before the switch reopens identically under 0.5.0a3
+identical (ccec822ba736f44dd5863e38894983b5c75af3719d27a8dc05203c4c16ff9319)
+
+== switch 2: 0.5.0a3 -> 0.5.0a3+eplfix.1
+-- 0.5.0a3+eplfix.1 opens the directory before anything is approved
+{"checks.release_executable": false, "state": "approval_required", "ready": false, "active_version": "B1", "approval": null, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+refused epl/2026-27/ipswich-town/aston-villa: exit=2 pm861: a changed builtin requires forecast release-compare and named release-approve
+-- 0.5.0a3 is still in charge and seals again
+sealed epl/2026-27/ipswich-town/aston-villa:  "model_version": "B1",
+-- baseline by 0.5.0a3, compare by 0.5.0a3+eplfix.1
+ "version": "B1",  "matches": 1900,
+{"/from_version": "B1", "/to_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1", "/comparison/paired_count": 1900, "/comparison/rounds": 190, "/comparison/changed_predictions": 0, "/comparison/changed_training_views": 0, "/comparison/inference/rounds": 190, "/report_sha256": "3cb753caa19c4db7ac2fd109a8a6a47a1d63f57d6dcc84e01ae43b348fab7d81"}
+{"checks.release_executable": false, "state": "approval_required", "ready": false, "active_version": "B1", "approval": null, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+-- approve in this scratch directory only
+ "version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",  "effective_at": "2026-11-27T04:55:03.880272Z",  "reviewer": "scratch replication",
+{"checks.release_executable": true, "state": "ready", "ready": true, "active_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1", "approval": {"effective_at": "2026-11-27T04:55:03.880272Z", "comparison": "3cb753caa19c4db7ac2fd109a8a6a47a1d63f57d6dcc84e01ae43b348fab7d81", "reviewer": "scratch replication", "reason": "isolated scratch copy; verifies the switch only"}, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+sealed epl/2026-27/leeds-united/coventry-city:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- 0.5.0a3 on the same directory afterwards
+{"checks.release_executable": false, "state": "approval_required", "ready": false, "active_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1", "approval": {"effective_at": "2026-11-27T04:55:03.880272Z", "comparison": "3cb753caa19c4db7ac2fd109a8a6a47a1d63f57d6dcc84e01ae43b348fab7d81", "reviewer": "scratch replication", "reason": "isolated scratch copy; verifies the switch only"}, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+refused epl/2026-27/manchester-united/brentford: exit=2 pm861: a changed builtin requires forecast release-compare and named release-approve
+-- a seal written by 0.5.0a3 before the switch reopens identically under 0.5.0a3+eplfix.1
+identical (f754fe27e9bd96f250b8523a8c1724e44d0402528c8e68a4ec13a0c548778fea)
+
+== switch 3: 0.5.0a3+eplfix.1 -> 0.5.0a3+fiveauto.1
+-- 0.5.0a3+fiveauto.1 opens the directory before anything is approved
+{"checks.release_executable": true, "state": "ready", "ready": true, "active_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1", "approval": {"effective_at": "2026-11-27T04:55:03.880272Z", "comparison": "3cb753caa19c4db7ac2fd109a8a6a47a1d63f57d6dcc84e01ae43b348fab7d81", "reviewer": "scratch replication", "reason": "isolated scratch copy; verifies the switch only"}, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+sealed epl/2026-27/manchester-united/brentford:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- 0.5.0a3+eplfix.1 is still in charge and seals again
+sealed epl/2026-27/nottingham-forest/chelsea:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- baseline by 0.5.0a3+eplfix.1, compare by 0.5.0a3+fiveauto.1
+ "version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",  "matches": 1900,
+release-compare refused: exit=2 pm861: the installed probability recipe is already active
+-- same active recipe: no approval step; 0.5.0a3+fiveauto.1 seals again
+sealed epl/2026-27/sunderland/tottenham-hotspur:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- 0.5.0a3+eplfix.1 on the same directory afterwards
+{"checks.release_executable": true, "state": "ready", "ready": true, "active_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1", "approval": {"effective_at": "2026-11-27T04:55:03.880272Z", "comparison": "3cb753caa19c4db7ac2fd109a8a6a47a1d63f57d6dcc84e01ae43b348fab7d81", "reviewer": "scratch replication", "reason": "isolated scratch copy; verifies the switch only"}, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+sealed epl/2026-27/aston-villa/everton:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- a seal written by 0.5.0a3+eplfix.1 before the switch reopens identically under 0.5.0a3+fiveauto.1
+identical (aa7a30fce927b2a5c39c1487ed0e1269ae7991e6e1e1e962bb6bb099d11a7de3)
+
+== switch 4: 0.5.0a3+fiveauto.1 -> 0.5.0a3+eplfix.1
+-- 0.5.0a3+eplfix.1 opens the directory before anything is approved
+{"checks.release_executable": true, "state": "ready", "ready": true, "active_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1", "approval": {"effective_at": "2026-11-27T04:55:03.880272Z", "comparison": "3cb753caa19c4db7ac2fd109a8a6a47a1d63f57d6dcc84e01ae43b348fab7d81", "reviewer": "scratch replication", "reason": "isolated scratch copy; verifies the switch only"}, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+sealed epl/2026-27/bournemouth/brighton-hove-albion:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- 0.5.0a3+fiveauto.1 is still in charge and seals again
+sealed epl/2026-27/brentford/arsenal:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- baseline by 0.5.0a3+fiveauto.1, compare by 0.5.0a3+eplfix.1
+ "version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",  "matches": 1900,
+release-compare refused: exit=2 pm861: the installed probability recipe is already active
+-- same active recipe: no approval step; 0.5.0a3+eplfix.1 seals again
+sealed epl/2026-27/chelsea/crystal-palace:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- 0.5.0a3+fiveauto.1 on the same directory afterwards
+{"checks.release_executable": true, "state": "ready", "ready": true, "active_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1", "approval": {"effective_at": "2026-11-27T04:55:03.880272Z", "comparison": "3cb753caa19c4db7ac2fd109a8a6a47a1d63f57d6dcc84e01ae43b348fab7d81", "reviewer": "scratch replication", "reason": "isolated scratch copy; verifies the switch only"}, "reference_python": "3.12", "running_python": {"implementation": "CPython", "version": "3.12.3", "compiler": "GCC 13.3.0"}}
+sealed epl/2026-27/coventry-city/ipswich-town:  "model_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+-- a seal written by 0.5.0a3+fiveauto.1 before the switch reopens identically under 0.5.0a3+eplfix.1
+identical (6e22ed7326152627229b85e71ea4b929a257de47036a897ee8cff5393ac31fb0)

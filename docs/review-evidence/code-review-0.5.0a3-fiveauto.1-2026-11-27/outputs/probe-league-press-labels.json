@@ -1,0 +1,578 @@
+{
+ "package_version": "0.5.0a3+fiveauto.1",
+ "python": "3.12.3",
+ "season": "2026-27",
+ "clubs": 96,
+ "labels": 136,
+ "single_word_labels": 0,
+ "only_full_registered_name": {
+  "epl": {
+   "clubs_matched_only_by_their_full_registered_name": 8,
+   "which": [
+    "AFC Bournemouth",
+    "Arsenal FC",
+    "Brentford FC",
+    "Chelsea FC",
+    "Everton FC",
+    "Fulham FC",
+    "Liverpool FC",
+    "Sunderland AFC"
+   ]
+  },
+  "lal": {
+   "clubs_matched_only_by_their_full_registered_name": 10,
+   "which": [
+    "CA Osasuna",
+    "Deportivo Alavés",
+    "Elche CF",
+    "FC Barcelona",
+    "Getafe CF",
+    "Levante UD",
+    "Málaga CF",
+    "Sevilla FC",
+    "Valencia CF",
+    "Villarreal CF"
+   ]
+  },
+  "bun": {
+   "clubs_matched_only_by_their_full_registered_name": 13,
+   "which": [
+    "1. FC Köln",
+    "1. FSV Mainz 05",
+    "Borussia Dortmund",
+    "Eintracht Frankfurt",
+    "FC Augsburg",
+    "FC Schalke 04",
+    "Hamburger SV",
+    "RB Leipzig",
+    "SC Freiburg",
+    "SC Paderborn 07",
+    "SV 07 Elversberg",
+    "SV Werder Bremen",
+    "VfB Stuttgart"
+   ]
+  },
+  "sea": {
+   "clubs_matched_only_by_their_full_registered_name": 19,
+   "which": [
+    "AC Milan",
+    "AC Monza",
+    "ACF Fiorentina",
+    "AS Roma",
+    "Atalanta BC",
+    "Bologna FC 1909",
+    "Cagliari Calcio",
+    "Como 1907",
+    "Frosinone Calcio",
+    "Genoa CFC",
+    "Juventus FC",
+    "Parma Calcio 1913",
+    "SS Lazio",
+    "SSC Napoli",
+    "Torino FC",
+    "US Lecce",
+    "US Sassuolo Calcio",
+    "Udinese Calcio",
+    "Venezia FC"
+   ]
+  },
+  "fl1": {
+   "clubs_matched_only_by_their_full_registered_name": 10,
+   "which": [
+    "AJ Auxerre",
+    "Angers SCO",
+    "FC Lorient",
+    "Le Havre AC",
+    "Lille OSC",
+    "OGC Nice",
+    "Olympique Lyonnais",
+    "Paris FC",
+    "Stade Brestois 29",
+    "Toulouse FC"
+   ]
+  }
+ },
+ "synthetic_cases": [
+  {
+   "case": "football: Juventus v Napoli preview",
+   "url": "https://example.com/football/juventus-napoli-preview-serie-a",
+   "indexed_organizations": "",
+   "attributed_to": []
+  },
+  {
+   "case": "football: Barcelona v Sevilla team news",
+   "url": "https://example.com/sport/barcelona-vs-sevilla-team-news-injuries",
+   "indexed_organizations": "",
+   "attributed_to": []
+  },
+  {
+   "case": "football: Lyon v Lille report",
+   "url": "https://example.com/sport/football/lyon-lille-match-report",
+   "indexed_organizations": "",
+   "attributed_to": []
+  },
+  {
+   "case": "football: Werder Bremen v Stuttgart",
+   "url": "https://example.com/bundesliga/werder-bremen-stuttgart-lineups",
+   "indexed_organizations": "",
+   "attributed_to": []
+  },
+  {
+   "case": "football: Dortmund injury update",
+   "url": "https://example.com/soccer/borussia-dortmund-injury-update",
+   "indexed_organizations": "",
+   "attributed_to": [
+    {
+     "league": "bun",
+     "club": "Borussia Dortmund",
+     "label": "borussia dortmund",
+     "via": "article_url"
+    }
+   ]
+  },
+  {
+   "case": "football: PSG, club named in the index",
+   "url": "https://example.com/sport/psg-squad-news",
+   "indexed_organizations": "Paris Saint-Germain",
+   "attributed_to": [
+    {
+     "league": "fl1",
+     "club": "Paris Saint-Germain FC",
+     "label": "paris saint germain",
+     "via": "indexed_organization"
+    }
+   ]
+  },
+  {
+   "case": "football: Real Madrid",
+   "url": "https://example.com/sport/real-madrid-injury-list-grows",
+   "indexed_organizations": "",
+   "attributed_to": [
+    {
+     "league": "lal",
+     "club": "Real Madrid CF",
+     "label": "real madrid",
+     "via": "article_url"
+    }
+   ]
+  },
+  {
+   "case": "motor racing: 24 Hours of Le Mans",
+   "url": "https://example.com/motorsport/24-hours-of-le-mans-entry-list",
+   "indexed_organizations": "",
+   "attributed_to": [
+    {
+     "league": "fl1",
+     "club": "Le Mans FC",
+     "label": "le mans",
+     "via": "article_url"
+    }
+   ]
+  },
+  {
+   "case": "travel: weekend in Le Mans",
+   "url": "https://example.com/travel/a-weekend-in-le-mans-old-town",
+   "indexed_organizations": "",
+   "attributed_to": [
+    {
+     "league": "fl1",
+     "club": "Le Mans FC",
+     "label": "le mans",
+     "via": "article_url"
+    }
+   ]
+  },
+  {
+   "case": "finance: tax havens such as Monaco",
+   "url": "https://example.com/business/tax-havens-such-as-monaco-face-new-rules",
+   "indexed_organizations": "",
+   "attributed_to": [
+    {
+     "league": "fl1",
+     "club": "AS Monaco FC",
+     "label": "as monaco",
+     "via": "article_url"
+    }
+   ]
+  },
+  {
+   "case": "society: people known as Roma",
+   "url": "https://example.com/world/europe/minority-known-as-roma-housing-report",
+   "indexed_organizations": "",
+   "attributed_to": [
+    {
+     "league": "sea",
+     "club": "AS Roma",
+     "label": "as roma",
+     "via": "article_url"
+    }
+   ]
+  },
+  {
+   "case": "basketball: Real Madrid EuroLeague",
+   "url": "https://example.com/basketball/euroleague-real-madrid-beat-olympiacos",
+   "indexed_organizations": "",
+   "attributed_to": [
+    {
+     "league": "lal",
+     "club": "Real Madrid CF",
+     "label": "real madrid",
+     "via": "article_url"
+    }
+   ]
+  },
+  {
+   "case": "women's football: Manchester United Women",
+   "url": "https://example.com/womens-football/manchester-united-women-wsl",
+   "indexed_organizations": "",
+   "attributed_to": [
+    {
+     "league": "epl",
+     "club": "Manchester United FC",
+     "label": "manchester united",
+     "via": "article_url"
+    }
+   ]
+  }
+ ],
+ "label_table": {
+  "epl": {
+   "AFC Bournemouth": [
+    "afc bournemouth"
+   ],
+   "Arsenal FC": [
+    "arsenal fc"
+   ],
+   "Aston Villa FC": [
+    "aston villa",
+    "aston villa fc"
+   ],
+   "Brentford FC": [
+    "brentford fc"
+   ],
+   "Brighton & Hove Albion FC": [
+    "brighton and hove albion",
+    "brighton hove albion",
+    "brighton hove albion fc"
+   ],
+   "Chelsea FC": [
+    "chelsea fc"
+   ],
+   "Coventry City FC": [
+    "coventry city",
+    "coventry city fc"
+   ],
+   "Crystal Palace FC": [
+    "crystal palace",
+    "crystal palace fc"
+   ],
+   "Everton FC": [
+    "everton fc"
+   ],
+   "Fulham FC": [
+    "fulham fc"
+   ],
+   "Hull City AFC": [
+    "hull city",
+    "hull city afc"
+   ],
+   "Ipswich Town FC": [
+    "ipswich town",
+    "ipswich town fc"
+   ],
+   "Leeds United FC": [
+    "leeds united",
+    "leeds united fc"
+   ],
+   "Liverpool FC": [
+    "liverpool fc"
+   ],
+   "Manchester City FC": [
+    "manchester city",
+    "manchester city fc"
+   ],
+   "Manchester United FC": [
+    "manchester united",
+    "manchester united fc"
+   ],
+   "Newcastle United FC": [
+    "newcastle united",
+    "newcastle united fc"
+   ],
+   "Nottingham Forest FC": [
+    "nottingham forest",
+    "nottingham forest fc"
+   ],
+   "Sunderland AFC": [
+    "sunderland afc"
+   ],
+   "Tottenham Hotspur FC": [
+    "tottenham hotspur",
+    "tottenham hotspur fc"
+   ]
+  },
+  "lal": {
+   "Athletic Club": [
+    "athletic bilbao"
+   ],
+   "CA Osasuna": [
+    "ca osasuna"
+   ],
+   "Club Atlético de Madrid": [
+    "atletico madrid",
+    "club atletico de madrid"
+   ],
+   "Deportivo Alavés": [
+    "deportivo alaves"
+   ],
+   "Elche CF": [
+    "elche cf"
+   ],
+   "FC Barcelona": [
+    "fc barcelona"
+   ],
+   "Getafe CF": [
+    "getafe cf"
+   ],
+   "Levante UD": [
+    "levante ud"
+   ],
+   "Málaga CF": [
+    "malaga cf"
+   ],
+   "RC Celta de Vigo": [
+    "celta vigo",
+    "rc celta de vigo"
+   ],
+   "RC Deportivo La Coruña": [
+    "deportivo de la coruna",
+    "deportivo la coruna",
+    "rc deportivo la coruna"
+   ],
+   "RCD Espanyol de Barcelona": [
+    "rcd espanyol",
+    "rcd espanyol de barcelona"
+   ],
+   "Rayo Vallecano de Madrid": [
+    "rayo vallecano",
+    "rayo vallecano de madrid"
+   ],
+   "Real Betis Balompié": [
+    "real betis",
+    "real betis balompie"
+   ],
+   "Real Madrid CF": [
+    "real madrid",
+    "real madrid cf"
+   ],
+   "Real Racing Club de Santander": [
+    "racing de santander",
+    "racing santander",
+    "real racing club de santander"
+   ],
+   "Real Sociedad de Fútbol": [
+    "real sociedad",
+    "real sociedad de futbol"
+   ],
+   "Sevilla FC": [
+    "sevilla fc"
+   ],
+   "Valencia CF": [
+    "valencia cf"
+   ],
+   "Villarreal CF": [
+    "villarreal cf"
+   ]
+  },
+  "bun": {
+   "1. FC Köln": [
+    "1 fc koln"
+   ],
+   "1. FC Union Berlin": [
+    "1 fc union berlin",
+    "union berlin"
+   ],
+   "1. FSV Mainz 05": [
+    "1 fsv mainz 05"
+   ],
+   "Bayer 04 Leverkusen": [
+    "bayer 04 leverkusen",
+    "bayer leverkusen"
+   ],
+   "Borussia Dortmund": [
+    "borussia dortmund"
+   ],
+   "Borussia Mönchengladbach": [
+    "borussia moenchengladbach",
+    "borussia monchengladbach"
+   ],
+   "Eintracht Frankfurt": [
+    "eintracht frankfurt"
+   ],
+   "FC Augsburg": [
+    "fc augsburg"
+   ],
+   "FC Bayern München": [
+    "bayern munchen",
+    "bayern munich",
+    "fc bayern munchen"
+   ],
+   "FC Schalke 04": [
+    "fc schalke 04"
+   ],
+   "Hamburger SV": [
+    "hamburger sv"
+   ],
+   "RB Leipzig": [
+    "rb leipzig"
+   ],
+   "SC Freiburg": [
+    "sc freiburg"
+   ],
+   "SC Paderborn 07": [
+    "sc paderborn 07"
+   ],
+   "SV 07 Elversberg": [
+    "sv 07 elversberg"
+   ],
+   "SV Werder Bremen": [
+    "sv werder bremen"
+   ],
+   "TSG 1899 Hoffenheim": [
+    "tsg 1899 hoffenheim",
+    "tsg hoffenheim"
+   ],
+   "VfB Stuttgart": [
+    "vfb stuttgart"
+   ]
+  },
+  "sea": {
+   "AC Milan": [
+    "ac milan"
+   ],
+   "AC Monza": [
+    "ac monza"
+   ],
+   "ACF Fiorentina": [
+    "acf fiorentina"
+   ],
+   "AS Roma": [
+    "as roma"
+   ],
+   "Atalanta BC": [
+    "atalanta bc"
+   ],
+   "Bologna FC 1909": [
+    "bologna fc 1909"
+   ],
+   "Cagliari Calcio": [
+    "cagliari calcio"
+   ],
+   "Como 1907": [
+    "como 1907"
+   ],
+   "FC Internazionale Milano": [
+    "fc internazionale milano",
+    "inter milan",
+    "internazionale milano"
+   ],
+   "Frosinone Calcio": [
+    "frosinone calcio"
+   ],
+   "Genoa CFC": [
+    "genoa cfc"
+   ],
+   "Juventus FC": [
+    "juventus fc"
+   ],
+   "Parma Calcio 1913": [
+    "parma calcio 1913"
+   ],
+   "SS Lazio": [
+    "ss lazio"
+   ],
+   "SSC Napoli": [
+    "ssc napoli"
+   ],
+   "Torino FC": [
+    "torino fc"
+   ],
+   "US Lecce": [
+    "us lecce"
+   ],
+   "US Sassuolo Calcio": [
+    "us sassuolo calcio"
+   ],
+   "Udinese Calcio": [
+    "udinese calcio"
+   ],
+   "Venezia FC": [
+    "venezia fc"
+   ]
+  },
+  "fl1": {
+   "AJ Auxerre": [
+    "aj auxerre"
+   ],
+   "AS Monaco FC": [
+    "as monaco",
+    "as monaco fc"
+   ],
+   "Angers SCO": [
+    "angers sco"
+   ],
+   "ES Troyes AC": [
+    "es troyes",
+    "es troyes ac"
+   ],
+   "FC Lorient": [
+    "fc lorient"
+   ],
+   "Le Havre AC": [
+    "le havre ac"
+   ],
+   "Le Mans FC": [
+    "le mans",
+    "le mans fc"
+   ],
+   "Lille OSC": [
+    "lille osc"
+   ],
+   "OGC Nice": [
+    "ogc nice"
+   ],
+   "Olympique Lyonnais": [
+    "olympique lyonnais"
+   ],
+   "Olympique de Marseille": [
+    "olympique de marseille",
+    "olympique marseille"
+   ],
+   "Paris FC": [
+    "paris fc"
+   ],
+   "Paris Saint-Germain FC": [
+    "paris saint germain",
+    "paris saint germain fc"
+   ],
+   "RC Strasbourg Alsace": [
+    "rc strasbourg",
+    "rc strasbourg alsace"
+   ],
+   "Racing Club de Lens": [
+    "racing club de lens",
+    "rc lens"
+   ],
+   "Stade Brestois 29": [
+    "stade brestois 29"
+   ],
+   "Stade Rennais FC 1901": [
+    "stade rennais",
+    "stade rennais fc 1901"
+   ],
+   "Toulouse FC": [
+    "toulouse fc"
+   ]
+  }
+ }
+}

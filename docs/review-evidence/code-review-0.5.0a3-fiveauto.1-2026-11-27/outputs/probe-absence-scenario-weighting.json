@@ -1,0 +1,168 @@
+{
+ "package_version": "0.5.0a3+fiveauto.1",
+ "python": "3.12.3",
+ "base": {
+  "home_rate": 1.5,
+  "away_rate": 1.1,
+  "probabilities": {
+   "home_win": 0.4655,
+   "draw": 0.2552,
+   "away_win": 0.2793
+  }
+ },
+ "policy": {
+  "reported_out_weight": 0.45,
+  "role_log_rate_effects": {
+   "forward": [
+    -0.04,
+    0.005
+   ],
+   "midfield": [
+    -0.022,
+    0.018
+   ],
+   "defence": [
+    -0.008,
+    0.032
+   ],
+   "goalkeeper": [
+    0.0,
+    0.045
+   ],
+   "unknown": [
+    -0.012,
+    0.012
+   ]
+  },
+  "cap_per_team": 0.12,
+  "epl_importance_multiplier_range": [
+   0.25,
+   1.0
+  ],
+  "epl_importance_neutral": 0.55
+ },
+ "scenarios": {
+  "first_choice_forward": {
+   "absent": [
+    "Henrik Sommer"
+   ],
+   "status": "uncalibrated_absence_sensitivity",
+   "applied_roles": [
+    "forward"
+   ],
+   "excluded": [],
+   "home_rate_change_percent": -1.78,
+   "away_rate_change_percent": 0.23,
+   "home_win_change_points": -0.75,
+   "away_win_change_points": 0.52,
+   "same_list_under_epl_importance_multiplier": {
+    "0.25": {
+     "home_rate_change_percent": -0.45,
+     "away_rate_change_percent": 0.06
+    },
+    "0.55": {
+     "home_rate_change_percent": -0.99,
+     "away_rate_change_percent": 0.12
+    },
+    "1.0": {
+     "home_rate_change_percent": -1.78,
+     "away_rate_change_percent": 0.23
+    }
+   }
+  },
+  "third_choice_goalkeeper": {
+   "absent": [
+    "Casimir Lund"
+   ],
+   "status": "uncalibrated_absence_sensitivity",
+   "applied_roles": [
+    "goalkeeper"
+   ],
+   "excluded": [],
+   "home_rate_change_percent": 0.0,
+   "away_rate_change_percent": 2.05,
+   "home_win_change_points": -0.52,
+   "away_win_change_points": 0.58,
+   "same_list_under_epl_importance_multiplier": {
+    "0.25": {
+     "home_rate_change_percent": 0.0,
+     "away_rate_change_percent": 0.51
+    },
+    "0.55": {
+     "home_rate_change_percent": 0.0,
+     "away_rate_change_percent": 1.12
+    },
+    "1.0": {
+     "home_rate_change_percent": 0.0,
+     "away_rate_change_percent": 2.05
+    }
+   }
+  },
+  "fringe_forward": {
+   "absent": [
+    "Jonas Reuter"
+   ],
+   "status": "uncalibrated_absence_sensitivity",
+   "applied_roles": [
+    "forward"
+   ],
+   "excluded": [],
+   "home_rate_change_percent": -1.78,
+   "away_rate_change_percent": 0.23,
+   "home_win_change_points": -0.75,
+   "away_win_change_points": 0.52,
+   "same_list_under_epl_importance_multiplier": {
+    "0.25": {
+     "home_rate_change_percent": -0.45,
+     "away_rate_change_percent": 0.06
+    },
+    "0.55": {
+     "home_rate_change_percent": -0.99,
+     "away_rate_change_percent": 0.12
+    },
+    "1.0": {
+     "home_rate_change_percent": -1.78,
+     "away_rate_change_percent": 0.23
+    }
+   }
+  },
+  "six_absentees": {
+   "absent": [
+    "Henrik Sommer",
+    "Ivo Tanner",
+    "Felix Brandt",
+    "Goran Ilse",
+    "Dario Welle",
+    "Casimir Lund"
+   ],
+   "status": "uncalibrated_absence_sensitivity",
+   "applied_roles": [
+    "forward",
+    "forward",
+    "midfield",
+    "midfield",
+    "defence",
+    "goalkeeper"
+   ],
+   "excluded": [],
+   "home_rate_change_percent": -5.77,
+   "away_rate_change_percent": 5.69,
+   "home_win_change_points": -3.68,
+   "away_win_change_points": 3.17,
+   "same_list_under_epl_importance_multiplier": {
+    "0.25": {
+     "home_rate_change_percent": -1.47,
+     "away_rate_change_percent": 1.39
+    },
+    "0.55": {
+     "home_rate_change_percent": -3.21,
+     "away_rate_change_percent": 3.09
+    },
+    "1.0": {
+     "home_rate_change_percent": -5.77,
+     "away_rate_change_percent": 5.69
+    }
+   }
+  }
+ }
+}

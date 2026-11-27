@@ -1,0 +1,50 @@
+polymarket861 0.5.0a3+fiveauto.1 (c613a70) — environment and checks, 2026-11-27T05:20Z
+
+== Python 3.11
+3.11.18 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+Ran 737 tests in 332.536s OK
+skipped: 0
+== Python 3.12
+3.12.3 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+Ran 737 tests in 336.077s OK
+skipped: 0
+== Python 3.13
+3.13.18 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+Ran 737 tests in 309.072s OK
+skipped: 0
+
+== CI steps on Python 3.12
+check_league_boundaries.py exit=0
+check_recipe_references.py exit=0
+All checks passed!
+Success: no issues found in 3 source files
+
+== Recipe identity (scripts/check_recipe_identity.py), identical on Python 3.11, 3.12, 3.13: compare exit=0
+/python = 3.12.3
+/numeric_runtime/numpy = 2.3.5
+/numeric_runtime/scipy = 1.17.0
+/package_files_sha256 = 49b9fa22415f266d2251776bbddd887fb0a8df2a660a2e3cd560840172588696
+/recipes/B0/primary = b66354c3454f1676bd4c70ecc51693413e758d008d7d95eb1178794b1385930c
+/recipes/B0/paired = c414ac26a640bf7c837293a558a2c974bc6517c468132e11c303343730e11a4c
+/recipes/B0/probability_source = b6ef1a6e2b252ae937bfcac69b261debe5aa4a2ee77569a1f773a970614c7f35
+/recipes/B0/frozen_feature_source = 79a1e8567c7d74816dc750d506468a352b461f53c356bd192cd6305feb79d82c
+/recipes/B1/primary = 8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1
+/recipes/B1/paired = 19b0dbe433a48a971cd3bf101d8cb83c8d51de866e7a133b41803bfd04754d49
+/recipes/B1/probability_source = b6ef1a6e2b252ae937bfcac69b261debe5aa4a2ee77569a1f773a970614c7f35
+/recipes/B1/frozen_feature_source = 79a1e8567c7d74816dc750d506468a352b461f53c356bd192cd6305feb79d82c
+/recipes/B2/primary = 1900725d8dc7ead56c60c6e929b12efb48cf6c825f35bdcdf8906012faf3efd4
+/recipes/B2/paired = 7e187fe5f938ea66d8b6b65e7efb2337de313b3f5e2d0a4e513d9ed982132acd
+/recipes/B2/probability_source = b6ef1a6e2b252ae937bfcac69b261debe5aa4a2ee77569a1f773a970614c7f35
+/recipes/B2/frozen_feature_source = 79a1e8567c7d74816dc750d506468a352b461f53c356bd192cd6305feb79d82c
+/recipes/B3/primary = 60e06c353714e53c9c55bf852af62cfff97828194d9b1016ecb43eed34f7e2a8
+/recipes/B3/paired = 60e06c353714e53c9c55bf852af62cfff97828194d9b1016ecb43eed34f7e2a8
+/recipes/B3/probability_source = b6ef1a6e2b252ae937bfcac69b261debe5aa4a2ee77569a1f773a970614c7f35
+/recipes/B3/frozen_feature_source = 79a1e8567c7d74816dc750d506468a352b461f53c356bd192cd6305feb79d82c
+
+== Recipe identity by release (Python 3.12): B1 primary / paired
+a2  {'python': '3.12.3', 'numeric_runtime': {}, 'package_files_sha256': '27481dcc3a8a5549c5846523cafb131868a7918f0a5c10e4aa8fb51a49b1d563', 'recipes': {'B1': {'primary': '3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261', 'paired': '0114ab7a46b2f9be30dff30f2ac5f5b0c866f5db211b3298c9a15aae620661b3', 'probability_source': '7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a', 'frozen_feature_source': 'fbd0e9880f9e981ef46d10460d242fbdd09715d93dc9b6d66b32a566604422f7'}}}
+a3  {'python': '3.12.3', 'numeric_runtime': {}, 'package_files_sha256': '9e77c6604c3adc40f28988aa26d8d047d460363d5454cb2755c3ef3799652487', 'recipes': {'B1': {'primary': '3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261', 'paired': '0114ab7a46b2f9be30dff30f2ac5f5b0c866f5db211b3298c9a15aae620661b3', 'probability_source': '7b8a25983bfc88e23da2d0ed741b9b552a454475b384ca5f7491d73353a56e1a', 'frozen_feature_source': 'fbd0e9880f9e981ef46d10460d242fbdd09715d93dc9b6d66b32a566604422f7'}}}
+eplfix  {'python': '3.12.3', 'numeric_runtime': {}, 'package_files_sha256': 'c8ef41c48a63969fcf23d78fa64e5635592e277709b9ddc3ad6b83f109245cf3', 'recipes': {'B1': {'primary': '8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1', 'paired': '19b0dbe433a48a971cd3bf101d8cb83c8d51de866e7a133b41803bfd04754d49', 'probability_source': 'b6ef1a6e2b252ae937bfcac69b261debe5aa4a2ee77569a1f773a970614c7f35', 'frozen_feature_source': '79a1e8567c7d74816dc750d506468a352b461f53c356bd192cd6305feb79d82c'}}}
+head  {'python': '3.12.3', 'numeric_runtime': {}, 'package_files_sha256': '49b9fa22415f266d2251776bbddd887fb0a8df2a660a2e3cd560840172588696', 'recipes': {'B1': {'primary': '8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1', 'paired': '19b0dbe433a48a971cd3bf101d8cb83c8d51de866e7a133b41803bfd04754d49', 'probability_source': 'b6ef1a6e2b252ae937bfcac69b261debe5aa4a2ee77569a1f773a970614c7f35', 'frozen_feature_source': '79a1e8567c7d74816dc750d506468a352b461f53c356bd192cd6305feb79d82c'}}}
+
+== GitHub Actions (gh run list): Football regression on main, push of c613a70, 2026-11-27T02:53:43Z: completed success, 6m0s (run 45930985465)

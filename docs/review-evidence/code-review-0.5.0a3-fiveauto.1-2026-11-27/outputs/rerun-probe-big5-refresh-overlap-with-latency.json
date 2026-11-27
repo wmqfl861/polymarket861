@@ -1,0 +1,75 @@
+{
+ "package_version": "0.5.0a3+fiveauto.1",
+ "python": "3.12.3",
+ "fixtures": 10,
+ "simulated_minutes_per_run": 150,
+ "upstream_latency": "real",
+ "runs": 6,
+ "runs_in_which_watch_raised": 0,
+ "background_refreshes_attempted": 150,
+ "share_of_background_refreshes_that_ended_the_loop": 0.0,
+ "errors": [],
+ "raised_in": [],
+ "per_run": [
+  {
+   "run": 0,
+   "raised": null,
+   "job_states": {
+    "complete": 575
+   },
+   "catalogue_refreshes_finished": 26,
+   "sampling_jobs_finished": 575,
+   "wall_seconds": 60.3
+  },
+  {
+   "run": 1,
+   "raised": null,
+   "job_states": {
+    "complete": 575
+   },
+   "catalogue_refreshes_finished": 26,
+   "sampling_jobs_finished": 575,
+   "wall_seconds": 60.5
+  },
+  {
+   "run": 2,
+   "raised": null,
+   "job_states": {
+    "complete": 575
+   },
+   "catalogue_refreshes_finished": 26,
+   "sampling_jobs_finished": 575,
+   "wall_seconds": 60.1
+  },
+  {
+   "run": 3,
+   "raised": null,
+   "job_states": {
+    "complete": 575
+   },
+   "catalogue_refreshes_finished": 26,
+   "sampling_jobs_finished": 575,
+   "wall_seconds": 60.7
+  },
+  {
+   "run": 4,
+   "raised": null,
+   "job_states": {
+    "complete": 575
+   },
+   "catalogue_refreshes_finished": 26,
+   "sampling_jobs_finished": 575,
+   "wall_seconds": 61.7
+  },
+  {
+   "run": 5,
+   "raised": null,
+   "job_states": {
+    "complete": 575
+   },
+   "catalogue_refreshes_finished": 26,
+   "sampling_jobs_finished": 575,
+   "wall_seconds": 61.1
+  }
+ ]
+}

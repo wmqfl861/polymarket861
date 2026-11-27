@@ -1,0 +1,198 @@
+{
+ "package_version": "0.5.0a3+fiveauto.1",
+ "python": "3.12.3",
+ "fixtures": 10,
+ "simulated_start": "2030-01-11T23:40:00.000000Z",
+ "kickoff_of_every_fixture": "2030-01-12T01:30:00.000000Z",
+ "raised": null,
+ "steps": 59,
+ "job_states": {
+  "complete": 230
+ },
+ "catalogue_calls": [
+  {
+   "at": "2030-01-11T23:40:00.000000Z",
+   "thread": "main loop (synchronous)",
+   "window": [
+    "2029-12-28T00:00:00.000000Z",
+    "2030-01-19T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-28T00:00:00.000000Z",
+    "2030-01-19T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-11T23:45:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-28T00:00:00.000000Z",
+    "2030-01-19T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-28T00:00:00.000000Z",
+    "2030-01-19T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-11T23:50:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-28T00:00:00.000000Z",
+    "2030-01-19T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-28T00:00:00.000000Z",
+    "2030-01-19T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-11T23:55:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-28T00:00:00.000000Z",
+    "2030-01-19T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-28T00:00:00.000000Z",
+    "2030-01-19T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-12T00:00:00.000000Z",
+   "thread": "main loop (synchronous)",
+   "window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-12T00:05:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-12T00:10:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-12T00:15:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-12T00:20:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-12T00:25:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ]
+  },
+  {
+   "at": "2030-01-12T00:30:00.000000Z",
+   "thread": "worker pool",
+   "window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ],
+   "events_pages_requested": 1,
+   "page_walk_complete": true,
+   "fixtures": 10,
+   "result_window": [
+    "2029-12-29T00:00:00.000000Z",
+    "2030-01-20T00:00:00.000000Z"
+   ]
+  }
+ ],
+ "synchronous_catalogue_calls": 2,
+ "pooled_catalogue_calls": 9,
+ "distinct_windows": [
+  [
+   "2029-12-28T00:00:00.000000Z",
+   "2030-01-19T00:00:00.000000Z"
+  ],
+  [
+   "2029-12-29T00:00:00.000000Z",
+   "2030-01-20T00:00:00.000000Z"
+  ]
+ ],
+ "complete_samples_in_the_five_minutes_before_midnight": 23,
+ "complete_samples_in_the_five_minutes_from_midnight": 20,
+ "simulated_end": "2030-01-12T00:30:30.000000Z",
+ "minutes_without_a_complete_sample": [
+  "2030-01-12T00:29"
+ ],
+ "midnight": "2030-01-12T00:00:00.000000Z"
+}
