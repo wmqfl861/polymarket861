@@ -1,0 +1,323 @@
+{
+  "release": {
+    "package_version": "0.5.0a3+eplfix.1",
+    "base_commit": "11a00f0c7ae9fc2b1e6776b455e3a910da03db7b",
+    "tested_code_commit": "4ae8aa963e3fbf2589650a5d36c9ce60089fdedf",
+    "tested_wheel_sha256": "ecbacc081d6750c6154ac29512cd994a872fae4abfd40292e4631a801d9bd973"
+  },
+  "tests": {
+    "full": {
+      "total": 697,
+      "passed": 694,
+      "skipped": 3,
+      "ok": true
+    },
+    "targeted": {
+      "total": 48,
+      "passed": 48,
+      "skipped": 0,
+      "ok": true
+    }
+  },
+  "production_copy_writer_rehearsal": {
+    "source": "copy of verified production database and immutable archives",
+    "started": "2026-11-26T22:40:23.976993+00:00",
+    "checks": [
+      {
+        "operation": "readiness",
+        "duration_s": 142.909,
+        "independent_commits": 226,
+        "longest_commit_s": 0.9077,
+        "lock_errors": [],
+        "confirmed": 10,
+        "matched": null
+      },
+      {
+        "operation": "sync",
+        "duration_s": 77.207,
+        "independent_commits": 110,
+        "longest_commit_s": 0.9019,
+        "lock_errors": [],
+        "confirmed": null,
+        "matched": 20
+      }
+    ]
+  },
+  "round_12_historical_replay": {
+    "at": "2026-11-26T17:44:14.080899Z",
+    "expected": "c62e2433f57d0eacb6833bbeb3c325b3f9361e385d579feb1a76ed357c46d560",
+    "runs": [
+      {
+        "run": "cold",
+        "seconds": 30.197,
+        "sha256": "c62e2433f57d0eacb6833bbeb3c325b3f9361e385d579feb1a76ed357c46d560",
+        "different_fields": [],
+        "fixture_count": 10
+      },
+      {
+        "run": "warm",
+        "seconds": 15.198,
+        "sha256": "c62e2433f57d0eacb6833bbeb3c325b3f9361e385d579feb1a76ed357c46d560",
+        "different_fields": [],
+        "fixture_count": 10
+      }
+    ]
+  },
+  "five_season_release": {
+    "report_sha256": "87fe9d726f1b3cb14a30646ad008d7c2c012f76e06de84bd1d20657155cbd309",
+    "report": {
+      "baseline_identity": {
+        "recorded_executions": [
+          "e1405d06dc5b645a973b893d3235b31d0e46d7a1775c6e479048d402d10af36e"
+        ],
+        "source": "measured_on_incumbent"
+      },
+      "candidate_execution": {
+        "numeric_runtime": {
+          "numpy": "2.3.5",
+          "scipy": "1.17.0"
+        },
+        "python": "3.12.3",
+        "reference_python": "3.12",
+        "release_provenance_sha256": "bb2f9aa65d3ea755c87c433da9299d88ec192cca7a1708ecca7129ab1fcbad88"
+      },
+      "comparison": {
+        "baseline_count": 1900,
+        "baseline_recipe": "3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+        "baseline_score": 75.44781323408236,
+        "baseline_sha256": "93df65914929fa4032c152b27feab4a9eff6f056a0421b3c064a6b694506239e",
+        "candidate_count": 1900,
+        "candidate_recipe": "8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+        "candidate_score": 75.44781323408236,
+        "candidate_sha256": "7bbff31f251358123cd1a73a8bf56f83e85b675c44e8ce6d240d3f20f78ed66d",
+        "changed_predictions": 0,
+        "changed_training_views": 0,
+        "comparison_rejections": {},
+        "denominator": 1900,
+        "formal_eligibility": false,
+        "historical_context": "no_archived_news_or_lineups",
+        "history_quality": "24h_lag_sensitivity_final_archive_schedule",
+        "inference": {
+          "critical_t": 2.8403659628523235,
+          "degrees_of_freedom": 189,
+          "family_comparisons": 10,
+          "family_confidence": 0.95,
+          "individual_confidence": 0.995,
+          "matches": 1900,
+          "method": "round-cluster-t-v1",
+          "rounds": 190,
+          "unit": "season_and_official_round"
+        },
+        "input_blobs": {
+          "2018-19": "334909dfb533959f15a6d2bf08a096adcfa7d21f",
+          "2019-20": "f1af09cf49fb2ac69d17acfe76c030c67ae9c1dc",
+          "2020-21": "081509058af75c0c012d64e980dc4fa53720d933",
+          "2021-22": "5eadd9d91c71d45634f3969192ad908653681b23",
+          "2022-23": "0b6230e60d8cd7402810a5f515f6762d8b385b74",
+          "2023-24": "f62b11dfaf06cffd1236c2777caebb880a0cfea1",
+          "2024-25": "504f2e732fbc3c9caeb98e4382b13b094453b840",
+          "2025-26": "41e223ee5954e6b634beb4bc70d7188b3183c665"
+        },
+        "intervals": {
+          "away": {
+            "difference": 0.0,
+            "lower": 0.0,
+            "standard_error": 0.0,
+            "upper": 0.0
+          },
+          "home": {
+            "difference": 0.0,
+            "lower": 0.0,
+            "standard_error": 0.0,
+            "upper": 0.0
+          },
+          "overall": {
+            "difference": 0.0,
+            "lower": 0.0,
+            "standard_error": 0.0,
+            "upper": 0.0
+          },
+          "result": {
+            "difference": 0.0,
+            "lower": 0.0,
+            "standard_error": 0.0,
+            "upper": 0.0
+          },
+          "total": {
+            "difference": 0.0,
+            "lower": 0.0,
+            "standard_error": 0.0,
+            "upper": 0.0
+          }
+        },
+        "method": "T60-final-schedule-result-lag24h-v1",
+        "paired_count": 1900,
+        "rounds": 190,
+        "seasons": [
+          "2021-22",
+          "2022-23",
+          "2023-24",
+          "2024-25",
+          "2025-26"
+        ]
+      },
+      "from_version": "B1@3e6f7b628d88ca3edaccd59f87e46f64ccbacbff661973ff9b904a95868a1261",
+      "to_version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1"
+    },
+    "decision": {
+      "version": "B1@8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1",
+      "effective_at": "2026-11-26T23:15:38.672186Z",
+      "release_id": 2,
+      "comparison": "87fe9d726f1b3cb14a30646ad008d7c2c012f76e06de84bd1d20657155cbd309",
+      "reviewer": "Codex (本机会话用户授权)",
+      "reason": "用户已明确批准英超切换并要求直接修复。已核实本次 SQLite 写锁修复及五季 1,900 场、190 轮对照，逐场预测和训练视图均无变化。",
+      "legacy_reference": null
+    }
+  },
+  "live_acceptance": {
+    "since": "2026-11-26T23:15:48.400332Z",
+    "as_of": "2026-11-26T23:52:06.968553Z",
+    "journal": {
+      "sqlite_lock_messages": 0,
+      "watchdog_fresh": 36,
+      "watchdog_stale": 0,
+      "tracebacks": 0
+    },
+    "observed_updates": {
+      "forecast": 65,
+      "settlements": 12,
+      "heartbeat": 269,
+      "catalog": 2,
+      "history": 10,
+      "news": 10,
+      "results": 2
+    },
+    "collector_restarts": 0,
+    "dashboard_http_status": 200,
+    "round_12_readiness": "ready",
+    "registered_in_round": 10,
+    "confirmed_fixtures": 10,
+    "prior_seals_verified": 10,
+    "prior_seals_total": 10,
+    "preserved_missed_window": {
+      "fixture_id": "epl/2026-27/nottingham-forest/chelsea",
+      "kickoff": "2026-11-27T20:00:00.000000Z",
+      "horizon": "T-24h",
+      "mode": "technical",
+      "state": "missed",
+      "updated_at": "2026-11-26T20:01:22.661605Z",
+      "error": "elapsed without a timely seal"
+    },
+    "quarantined_results": [
+      {
+        "fixture_id": "epl/2026-27/bournemouth/brentford",
+        "reason": "cross_source_score_conflict",
+        "source_score": [
+          2,
+          1
+        ],
+        "reference_score": [
+          2,
+          2
+        ]
+      }
+    ],
+    "source_https_checks": {
+      "start": {
+        "gamma": 200,
+        "clob": 200,
+        "data": 200,
+        "wikipedia": 200,
+        "wikimedia": 200,
+        "openligadb": 200,
+        "touchline": 200
+      },
+      "end": {
+        "gamma": 200,
+        "clob": 200,
+        "data": 200,
+        "wikipedia": 200,
+        "wikimedia": 200,
+        "openligadb": 200,
+        "touchline": 200
+      }
+    },
+    "next_registered_windows_at_acceptance": [
+      {
+        "fixture_id": "epl/2026-27/leeds-united/coventry-city",
+        "horizon": "T-24h",
+        "opens": "2026-11-27T14:55:00.000000Z",
+        "cutoff": "2026-11-27T15:00:00.000000Z"
+      },
+      {
+        "fixture_id": "epl/2026-27/manchester-united/brentford",
+        "horizon": "T-24h",
+        "opens": "2026-11-27T14:55:00.000000Z",
+        "cutoff": "2026-11-27T15:00:00.000000Z"
+      }
+    ]
+  },
+  "round_12_news": {
+    "as_of": "2026-11-26T23:49:40.471570Z",
+    "teams": 20,
+    "teams_with_recent_nonempty_roster": 20,
+    "latest_polls": [
+      {
+        "source": "touchline-availability",
+        "state": "ok",
+        "team_sources": 14,
+        "utc_latest_check": "2026-11-26T23:43:42.204508Z"
+      },
+      {
+        "source": "touchline-availability",
+        "state": "partial",
+        "team_sources": 6,
+        "utc_latest_check": "2026-11-26T23:48:11.763827Z"
+      },
+      {
+        "source": "touchline-rumours",
+        "state": "ok",
+        "team_sources": 20,
+        "utc_latest_check": "2026-11-26T23:48:12.268400Z"
+      },
+      {
+        "source": "wikipedia-season-news",
+        "state": "ok",
+        "team_sources": 20,
+        "utc_latest_check": "2026-11-26T23:48:12.700546Z"
+      }
+    ],
+    "claims_on_nonretracted_articles": [
+      {
+        "source": "touchline-availability",
+        "authority": "secondary",
+        "event": "injury",
+        "status": "reported",
+        "rows": 84
+      },
+      {
+        "source": "touchline-availability",
+        "authority": "secondary",
+        "event": "suspension",
+        "status": "reported",
+        "rows": 6
+      },
+      {
+        "source": "touchline-rumours",
+        "authority": "secondary",
+        "event": "transfer",
+        "status": "rumour",
+        "rows": 21
+      }
+    ],
+    "active_official_feed_configs": 0,
+    "pregame_lineup_rows": 0,
+    "event_forecasts": {
+      "archived_revisions": 12,
+      "fixtures": 10,
+      "latest_changed_fixtures": 10,
+      "latest_applied_claims": 83,
+      "latest_published_at": "2026-11-26T21:53:09.162533Z"
+    }
+  }
+}
