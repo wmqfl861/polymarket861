@@ -16,6 +16,7 @@ from datetime import timedelta
 from decimal import Decimal as D
 from pathlib import Path
 
+import football_odds_access
 from account_engine import FRACTION, FUND
 from polymarket861 import (
     big5_market_schedule,
@@ -43,13 +44,6 @@ HISTORY = HERE / "watch-history.jsonl"
 STATUS = HERE / "watch-status.json"
 LOCK = HERE / ".watch-picks.lock"
 SIDES = ("home", "away")
-ESPN_LEAGUES = {
-    "epl": "eng.1",
-    "sea": "ita.1",
-    "fl1": "fra.1",
-    "lal": "esp.1",
-    "bun": "ger.1",
-}
 ERRORS = (
     OSError,
     ValueError,
@@ -367,12 +361,10 @@ class Closed(Exception):
 
 def comparison_book(pick, terms):
     """Read the same provider and full-time market used to size the initial paper position."""
-    league = ESPN_LEAGUES[pick["league"]]
     event = str(pick["espn_id"])
     require(event.isdigit(), "invalid_ESPN_fixture_identifier")
-    url = "https://site.api.espn.com/apis/site/v2/sports/soccer/" + league + "/summary"
-    reply = market_provider.get(
-        url, {"event": event, "observation": time.time_ns()}, timeout=12
+    reply, permission_sha = football_odds_access.fetch(
+        pick["league"], "summary", {"event": event, "observation": time.time_ns()}
     )
     require(market_provider.fresh_observation(reply), "stale_ESPN_HTTP_receipt")
     data = json.loads(reply.body)
@@ -396,6 +388,7 @@ def comparison_book(pick, terms):
     )
     receipt = {
         "source": "ESPN",
+        "permission_sha256": permission_sha,
         "match_url": "https://www.espn.com/soccer/match/_/gameId/" + event,
         "received_at": reply.received_at,
         "source_sha256": hashlib.sha256(reply.body).hexdigest(),

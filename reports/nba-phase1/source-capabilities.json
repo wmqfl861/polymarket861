@@ -1,0 +1,53 @@
+{
+  "sources": {
+    "balldontlie": {
+      "key_configured": false,
+      "sample_scope": "game schedules and finals",
+      "terms": "https://www.balldontlie.io/terms.html",
+      "rights": "direct provider §6 internal archive, model training and predictions; §11 third-party rights reserved",
+      "upstream_identity": "unverified",
+      "t_minus_60m_same_day_status_verified": false,
+      "player_model_eligible": false,
+      "authenticated_business_receipts": 0,
+      "observed_injury_fields": [],
+      "upstream_published_at_semantics_verified": false,
+      "receipt_to_ingest_ms": null,
+      "distinct_sample_hashes_same_utc_day": null,
+      "state": "missing_key",
+      "free_player_injury_endpoint": false
+    },
+    "bigballs": {
+      "key_configured": false,
+      "sample_scope": "current injury list; first page only",
+      "terms": "https://bigballsdata.com/legal/terms",
+      "rights": "internal training and retention; raw redistribution restricted; injury upstream unverified",
+      "upstream_identity": "unverified",
+      "t_minus_60m_same_day_status_verified": false,
+      "player_model_eligible": false,
+      "authenticated_business_receipts": 0,
+      "observed_injury_fields": [],
+      "upstream_published_at_semantics_verified": false,
+      "receipt_to_ingest_ms": null,
+      "distinct_sample_hashes_same_utc_day": null,
+      "state": "missing_key"
+    },
+    "dunkapi": {
+      "key_configured": false,
+      "sample_scope": "daily NBA injury snapshot",
+      "terms": "https://dunkapi.com/terms",
+      "rights": "internal storage and training; external services require an active account; upstream rights not granted",
+      "upstream_identity": "unverified",
+      "t_minus_60m_same_day_status_verified": false,
+      "player_model_eligible": false,
+      "authenticated_business_receipts": 0,
+      "observed_injury_fields": [],
+      "upstream_published_at_semantics_verified": false,
+      "receipt_to_ingest_ms": null,
+      "distinct_sample_hashes_same_utc_day": null,
+      "state": "missing_key"
+    }
+  },
+  "player_model_gate": "closed",
+  "eligible_player_sources": [],
+  "generated_at": "2026-11-27T16:14:24.404797Z"
+}

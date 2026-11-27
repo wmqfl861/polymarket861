@@ -7,12 +7,15 @@ import hashlib
 import json
 import time
 
+import football_odds_access
+from archive_slate_evidence import verify
+
 from polymarket861 import budget_archive_proof as proof, big5_market, market_archive as archive, market_provider as provider, store
 
 ROOT=Path(__file__).resolve().parent
 VAULT=big5_market.research_root(ROOT)
 REPORTS=ROOT.parent/'five-automation'/'reports'
-STUDY=Path('/tmp/pm861-weekly-value-20261127')
+STUDY=ROOT/'source-evidence'/'pm861-weekly-value-20261127'
 def read(path): return json.loads(path.read_text())
 
 def odds_fraction(us):
@@ -20,10 +23,10 @@ def odds_fraction(us):
     return D(1)/(1+x/100 if x>0 else 1-100/x)
 
 def espn(spec):
-    league={'epl':'eng.1','sea':'ita.1','fl1':'fra.1'}[spec['league']]
-    url=f'https://site.api.espn.com/apis/site/v2/sports/soccer/{league}/scoreboard'
-    date=spec['kickoff'][:10].replace('-','')
-    data=provider.get(url,{'dates':date,'limit':100,'observation':time.time_ns()},timeout=12)
+    date = spec['kickoff'][:10].replace('-', '')
+    data, permission_sha = football_odds_access.fetch(
+        spec['league'], 'scoreboard', {'dates': date, 'limit': 100, 'observation': time.time_ns()}
+    )
     assert provider.fresh_observation(data)
     score=json.loads(data.body)
     es=[e for e in score['events'] if str(e['id'])==spec['espn_id']]
@@ -47,7 +50,7 @@ def espn(spec):
     digest=hashlib.sha256(data.body).hexdigest()
     folder=ROOT/'bookmaker-receipts';folder.mkdir(mode=0o700,exist_ok=True)
     (folder/(digest+'.json')).write_bytes(data.body)
-    return {'probability':str(prob),'receipt':data.received_at,'source_sha256':digest,'prices':prices,'match_url':'https://www.espn.com/soccer/match/_/gameId/'+spec['espn_id']}
+    return {'permission_sha256':permission_sha,'probability':str(prob),'receipt':data.received_at,'source_sha256':digest,'prices':prices,'match_url':'https://www.espn.com/soccer/match/_/gameId/'+spec['espn_id']}
 
 def collect_gamma(spec):
     pair=None
@@ -79,6 +82,7 @@ def collect_gamma(spec):
     return {'fixture_id':fixture_id,'opposite_token_id':next(t['token_id'] for t in m['tokens'] if t['token_id']!=spec['token_id']), 'market':m,'terms':terms['intent_terms'],'clob_info_checked_at':fd.received_at}
 
 def run():
+    verify(STUDY)
     full=read(STUDY/'markets.json')['markets']
     epl=read(REPORTS/'epl-round12-recheck-20261127.json')['entries']
     fs={x['slug']:x for x in read(STUDY/'forecasts.json')['fixtures']}
@@ -102,7 +106,8 @@ def run():
         else:
             probs=fspec['ranking_probabilities'];key=m['side']+'_win';p=D(str(probs[key]));p=1-p if outcome=='No' else p
             fair=D('.99')*p;model_sha=fspec['ranking_sha256']
-        if slug=='sea-int-gen-2026-11-28-int':model_sha='42185e5e46494a9d74a0e5fb68c3542458e326deca7cdea3a850663bf08fee87'
+        if slug == 'sea-int-gen-2026-11-28-int' and model_sha != '42185e5e46494a9d74a0e5fb68c3542458e326deca7cdea3a850663bf08fee87':
+            raise ValueError('historical Inter model digest differs from the archived forecast')
         spec={'id': slug+'-'+outcome.lower(),'rank':rank,'league':m['league'],'fixture':m['fixture'],'market_slug':slug,'outcome':outcome,'condition_id':m['condition_id'],'token_id':t['token_id'],'forecast_fixture_id':m['fixture_id'],'kickoff':m['kickoff'],'family':m['family'],'side':m['side'],'line':m['line'],'display':display,'limit_price':limit,'model_probability':str(p),'fair':str(fair),'model_sha256':model_sha,'espn_id':event_id,'espn_teams':teams}
         slate.append(spec)
     with ThreadPoolExecutor(max_workers=4) as pool:

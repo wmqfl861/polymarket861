@@ -117,8 +117,10 @@ CREATE TABLE IF NOT EXISTS trial_activations (
 
 
 def connect(data_dir: Path | str) -> sqlite3.Connection:
+    from .nba.storage import prepare_football_root
+
     root = Path(data_dir).expanduser()
-    root.mkdir(parents=True, exist_ok=True, mode=0o700)
+    prepare_football_root(root)
     db = sqlite3.connect(root / "runtime.sqlite3", timeout=30)
     db.row_factory = sqlite3.Row
     try:
