@@ -364,21 +364,49 @@ class SeasonOperations(unittest.TestCase):
             ),
             redirect_stderr(io.StringIO()),
         ):
-            # Exercise the real one-shot entry point and all five service routes first.
+            # Run the first collector tick with concurrent catalog, result and news work.
             with football.at(when):
                 start = season.run(root, workers=2, **options)
             self.assertEqual(start["data_dir"], str(root.resolve()))
             self.assertEqual(
                 {s["service"] for s in start["services"]}, set(season._SERVICES)
             )
+            # A first-use catalog can commit new schedule evidence during each
+            # verification attempt. Exercise the next scheduled poll inside the window.
+            forecast_poll = next(s for s in start["services"] if s["service"] == "forecast")
+            when = store.instant(forecast_poll["next_at"])
+            self.assertLess(when, football.CUT)
             with closing(season._db(root)) as db:
-                seal = db.execute(
-                    "SELECT data_json FROM forecast_seals WHERE fixture_id=? AND horizon='T-60m' "
-                    "AND mode='formal'",
+                first = db.execute(
+                    "SELECT state,error,available,digest FROM forecast_dispatch WHERE fixture_id=? "
+                    "AND horizon='T-60m' AND mode='formal' AND current_schedule=1",
                     (football.FID,),
                 ).fetchone()
-                self.assertIsNotNone(seal, start["services"])
-                fair = json.loads(seal[0])["probabilities"]["total_over_2_5"]
+            self.assertIsNotNone(first, forecast_poll)
+            if first["state"] != "done":
+                self.assertEqual(first["state"], "error", dict(first))
+                self.assertEqual(
+                    first["error"],
+                    "ValueError: schedule evidence changed repeatedly before the fixed B1 decision",
+                )
+                self.assertIsNone(first["digest"])
+                self.assertLessEqual(store.instant(first["available"]), when)
+            with football.at(when):
+                next_tick = season.run(root, workers=2, **options)
+            with closing(season._db(root)) as db:
+                seals = db.execute(
+                    "SELECT data_json,digest,sealed_at FROM forecast_seals WHERE fixture_id=? AND horizon='T-60m' "
+                    "AND mode='formal'",
+                    (football.FID,),
+                ).fetchall()
+                self.assertEqual(len(seals), 1, next_tick["services"])
+                seal = seals[0]
+                payload = json.loads(seal["data_json"])
+                self.assertLessEqual(store.instant(seal["sealed_at"]), football.CUT)
+                self.assertEqual(seal["digest"], store.digest(payload))
+                if first["state"] == "done":
+                    self.assertEqual(seal["digest"], first["digest"])
+                fair = payload["probabilities"]["total_over_2_5"]
                 price = (Decimal(str(fair)) - Decimal(".05")).quantize(
                     Decimal(".01"), rounding=ROUND_FLOOR
                 )
