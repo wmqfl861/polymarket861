@@ -1,0 +1,211 @@
+{
+ "python": "3.12.3",
+ "recipe_pin": [
+  {
+   "edit": "unmodified",
+   "check": "pass",
+   "expected": "pass",
+   "as_expected": true,
+   "message": ""
+  },
+  {
+   "edit": "market_http.read (module function)",
+   "check": "fail",
+   "expected": "fail",
+   "as_expected": true,
+   "message": "ValueError: football recipes differ from released baseline: B0/primary, B0/paired, B1/primary, B1/paired, B2/primary, B2/paired, B3/primary, B3/paired"
+  },
+  {
+   "edit": "store.digest",
+   "check": "fail",
+   "expected": "fail",
+   "as_expected": true,
+   "message": "ValueError: football recipes differ from released baseline: B0/primary, B0/paired, B1/primary, B1/paired, B2/primary, B2/paired, B3/primary, B3/paired"
+  },
+  {
+   "edit": "football_model.fit_team_model",
+   "check": "fail",
+   "expected": "fail",
+   "as_expected": true,
+   "message": "ValueError: football recipes differ from released baseline: B0/primary, B0/paired, B1/primary, B1/paired, B2/primary, B2/paired, B3/primary, B3/paired"
+  },
+  {
+   "edit": "store.connect",
+   "check": "pass",
+   "expected": "informational",
+   "as_expected": true,
+   "message": ""
+  },
+  {
+   "edit": "nba/model.py ScoreState.centers",
+   "check": "pass",
+   "expected": "pass",
+   "as_expected": true,
+   "message": ""
+  },
+  {
+   "edit": "nba/markets.py collect",
+   "check": "pass",
+   "expected": "pass",
+   "as_expected": true,
+   "message": ""
+  }
+ ],
+ "football_root_created_by_0.5.0a4": {
+  "exit": 0,
+  "last_line": "",
+  "entries": [
+   [
+    "runtime.sqlite3",
+    "file",
+    "0o644"
+   ]
+  ]
+ },
+ "nba_root_created_by_this_version": {
+  "exit": 0,
+  "last_line": "",
+  "entries": [
+   [
+    ".pm861-domain",
+    "file",
+    "0o600"
+   ],
+   [
+    "nba.sqlite3",
+    "file",
+    "0o644"
+   ],
+   [
+    "runtime.sqlite3",
+    "dir",
+    "0o500"
+   ]
+  ]
+ },
+ "directory_guards_this_version": [
+  {
+   "case": "this version: `nba status` pointed at the football root",
+   "exit": 2,
+   "last_line": "pm861: NBA cannot use football data directory /tmp/tmp2z9gtaq1/football-state",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "this version: `nba run --component markets` pointed at the football root",
+   "exit": 2,
+   "last_line": "pm861: NBA cannot use football data directory /tmp/tmp2z9gtaq1/football-state",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "this version: nba.storage.connect(football root)",
+   "exit": 1,
+   "last_line": "ValueError: NBA cannot use football data directory /tmp/tmp2z9gtaq1/football-state",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "this version: `fixture list` pointed at the NBA root",
+   "exit": 2,
+   "last_line": "pm861: football cannot use NBA data directory /tmp/tmp2z9gtaq1/nba-state",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "this version: `jobs status` pointed at the NBA root",
+   "exit": 2,
+   "last_line": "pm861: football cannot use NBA data directory /tmp/tmp2z9gtaq1/nba-state",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "this version: store.connect(NBA root)",
+   "exit": 1,
+   "last_line": "ValueError: football cannot use NBA data directory /tmp/tmp2z9gtaq1/nba-state",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "this version: store.connect(subdirectory of the NBA root)",
+   "exit": 1,
+   "last_line": "ValueError: football cannot use NBA data directory /tmp/tmp2z9gtaq1/nba-state",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "this version: nba.storage.connect(subdirectory of the football root)",
+   "exit": 1,
+   "last_line": "ValueError: NBA cannot use football data directory /tmp/tmp2z9gtaq1/football-state",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "this version: `fixture list` on the football root made by 0.5.0a4 (must still work)",
+   "exit": 0,
+   "last_line": "[]",
+   "refused": false,
+   "target_unchanged": true,
+   "as_expected": true
+  }
+ ],
+ "deployed_0.5.0a4_against_nba_root": [
+  {
+   "case": "0.5.0a4 as root: `jobs status` pointed at the NBA root",
+   "exit": 2,
+   "last_line": "pm861: unable to open database file",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "0.5.0a4 as root: `fixture list` pointed at the NBA root",
+   "exit": 2,
+   "last_line": "pm861: unable to open database file",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "0.5.0a4 as root: store.connect pointed at the NBA root",
+   "exit": 1,
+   "last_line": "sqlite3.OperationalError: unable to open database file",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "0.5.0a4 as uid 65534: `jobs status` pointed at the NBA root",
+   "exit": 2,
+   "last_line": "pm861: unable to open database file",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "0.5.0a4 as uid 65534: `fixture list` pointed at the NBA root",
+   "exit": 2,
+   "last_line": "pm861: unable to open database file",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  },
+  {
+   "case": "0.5.0a4 as uid 65534: store.connect pointed at the NBA root",
+   "exit": 1,
+   "last_line": "sqlite3.OperationalError: unable to open database file",
+   "refused": true,
+   "target_unchanged": true,
+   "as_expected": true
+  }
+ ],
+ "all_as_expected": true
+}
