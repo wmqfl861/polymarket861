@@ -75,6 +75,11 @@ CREATE TABLE IF NOT EXISTS ma_execution_selected (
 def prepare(db):
     dbscope.prepare(db, "market-archive", _SCHEMA)
     contract_storage.prepare(db)
+    dbscope.prepare(
+        db, "market-contract-receipt-lookup",
+        "CREATE INDEX IF NOT EXISTS ma_contract_event_receipt "
+        "ON ma_contract_receipts(event_slug, received_at, sha);",
+    )
 
 
 
@@ -322,8 +327,7 @@ def observe_event(root, event_slug):
     )
     if not isinstance(data, dict) or data.get("slug") != event_slug:
         raise ValueError("unexpected event identity")
-    with closing(database(root)) as db, db:
-        _ingest(db, data, reply, sha)
+    _index_catalog_page(root, [data], reply, sha)
     return event_slug
 
 

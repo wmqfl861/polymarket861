@@ -126,6 +126,32 @@ class ArchiveTests(TestCase):
         self.assertEqual(result["fixtures_observed"], [FIX])
         self.assertTrue(result["page_walk_complete"])
 
+    def test_existing_archive_installs_contract_receipt_lookup(self):
+        with closing(archive.database(self.root)) as db, db:
+            db.execute("DROP INDEX ma_contract_event_receipt")
+            db.execute("DELETE FROM runtime_schema_versions WHERE component='market-contract-receipt-lookup'")
+        with closing(archive.database(self.root)) as db:
+            columns = [row["name"] for row in db.execute("PRAGMA index_info(ma_contract_event_receipt)")]
+            self.assertEqual(columns, ["event_slug", "received_at", "sha"])
+
+    def test_event_normalization_leaves_archive_writer_available(self):
+        data = event()
+        normalize = provider.normalized_markets
+
+        def check_writer(item, **kwargs):
+            with closing(sqlite3.connect(self.root / "runtime.sqlite3", timeout=0)) as db, db:
+                db.execute("BEGIN IMMEDIATE")
+                self.assertEqual(db.execute("SELECT count(*) FROM ma_events").fetchone()[0], 0)
+            return normalize(item, **kwargs)
+
+        with (
+            patch.object(archive, "_fetch", return_value=(data, reply(data), "single-event")),
+            patch.object(provider, "normalized_markets", side_effect=check_writer) as checked,
+        ):
+            self.assertEqual(archive.observe_event(self.root, FIX), FIX)
+        checked.assert_called_once()
+        self.assertEqual([market["source_sha256"] for market in archive.contracts(self.root, FIX)], ["single-event"])
+
     def test_catalog_publication_is_atomic_and_retry_preserves_row_ids(self):
         events = [event(), event("-more-markets")]
         receipt = reply(events)
