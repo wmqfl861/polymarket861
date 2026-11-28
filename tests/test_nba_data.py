@@ -242,13 +242,21 @@ class NbaData(unittest.TestCase):
         self.assertEqual(len(self.calls), n)
 
     def test_probes_summarize_only_and_respect_persistent_budget(self):
+        self.at = datetime(2026, 11, 18, 19, tzinfo=timezone.utc)
+        row = {
+            "player_id": "80765432",
+            "name": "Example Player",
+            "position": "G",
+            "team": "ATL",
+            "status": "Day-To-Day",
+            "type": "Ankle",
+            "detail": "private injury detail",
+            "return_date": "2026-11-25",
+            "unlisted_vendor_field": "private value",
+        }
         resp = httpx.Response(
             200,
-            json={
-                "injuries": [
-                    {"player_id": 1, "status": "Out", "note": "private author text"}
-                ]
-            },
+            json={"data": {"date": "2026-11-18", "count": 1, "injuries": [row]}},
         )
 
         def fetch(source, key):
@@ -258,23 +266,172 @@ class NbaData(unittest.TestCase):
         sample = data_capabilities.probe(
             self.root, "dunkapi", fetch=fetch, clock=self.clock
         )
+        self.assertEqual(sample["state"], "sample_received")
         self.assertTrue(sample["authenticated"])
+        self.assertEqual((sample["sample_rows"], sample["player_status_rows"]), (1, 1))
+        self.assertEqual(sample["source_dates"], {"data.date": "2026-11-18"})
+        self.assertEqual(sample["league_scope_basis"], "nba_scoped_request")
+        self.assertEqual(sample["upstream_clocks"], {})
+        self.assertFalse(sample["upstream_published_at_semantics_verified"])
+        self.assertFalse(sample["sample_contains_all_nba_players"])
+        self.assertEqual(
+            sample["response_sha256"], hashlib.sha256(resp.content).hexdigest()
+        )
         self.assertFalse(sample["player_model_eligible"])
         blocked = data_capabilities.probe(
-            self.root, "dunkapi", fetch=None, clock=self.clock
+            self.root,
+            "dunkapi",
+            fetch=lambda *_: self.fail("duplicate probe reached transport"),
+            clock=self.clock,
         )
         self.assertEqual(blocked["state"], "budget_wait")
         caps = data.capabilities(self.root)
         dunk = caps["sources"]["dunkapi"]
         self.assertEqual(
-            dunk["observed_injury_fields"], ["note", "player_id", "status"]
+            dunk["observed_injury_fields"],
+            [
+                "detail",
+                "name",
+                "player_id",
+                "position",
+                "return_date",
+                "status",
+                "team",
+                "type",
+            ],
         )
         self.assertEqual(dunk["distinct_sample_hashes_same_utc_day"], 1)
         with closing(storage.open_existing(self.root)) as db:
             dump = "\n".join(db.iterdump())
-        self.assertNotIn("private author text", dump)
-        self.assertNotIn(TEST_KEY, dump)
-        self.assertNotIn(TEST_KEY, json.dumps(caps))
+        for private in (
+            TEST_KEY,
+            "80765432",
+            "Example Player",
+            "private injury detail",
+            "unlisted_vendor_field",
+            "private value",
+            "2026-11-25",
+        ):
+            self.assertNotIn(private, dump)
+            self.assertNotIn(private, json.dumps(caps))
+
+    def test_dunkapi_empty_and_legacy_reports_preserve_date_location(self):
+        day = "2026-11-18"
+        for case, body, state, dates, count in (
+            (
+                "empty",
+                {"data": {"date": day, "count": 0, "injuries": []}},
+                "empty_sample",
+                {"data.date": day},
+                0,
+            ),
+            (
+                "unknown_snapshot_day",
+                {
+                    "date": day,
+                    "data": {
+                        "date": None,
+                        "count": 0,
+                        "injuries": [],
+                        "note": "no report",
+                    },
+                },
+                "empty_sample",
+                {},
+                0,
+            ),
+            (
+                "legacy_bare",
+                {"date": day, "injuries": [{"player_id": "7", "status": "Out"}]},
+                "sample_received",
+                {"date": day},
+                1,
+            ),
+        ):
+            with self.subTest(case=case):
+                response = httpx.Response(200, json=body)
+                sample = data_capabilities.probe(
+                    self.root / case,
+                    "dunkapi",
+                    fetch=lambda *_: response,
+                    clock=self.clock,
+                )
+                self.assertEqual(sample["state"], state)
+                self.assertTrue(sample["authenticated"])
+                self.assertEqual(sample["source_dates"], dates)
+                self.assertEqual(sample["player_status_rows"], count)
+                self.assertEqual(sample["upstream_clocks"], {})
+                self.assertNotIn("no report", json.dumps(sample))
+
+    def test_dunkapi_invalid_envelopes_do_not_accept_outer_decoy_rows(self):
+        report = {"date": "2026-11-18", "count": 0, "injuries": []}
+        for case, body in (
+            ("missing_rows", {"data": {"date": "2026-11-18", "count": 0}}),
+            ("missing_count", {"data": {"date": "2026-11-18", "injuries": []}}),
+            ("count_mismatch", {"data": {**report, "count": 1}}),
+            ("string_count", {"data": {**report, "count": "0"}}),
+            ("boolean_count", {"data": {**report, "count": False}}),
+            ("non_array", {"data": {**report, "injuries": {}}}),
+            ("non_object_row", {"data": {**report, "count": 1, "injuries": [None]}}),
+            ("invalid_inner_with_outer_rows", {**report, "data": None}),
+        ):
+            with self.subTest(case=case):
+                response = httpx.Response(200, json=body)
+                sample = data_capabilities.probe(
+                    self.root / case,
+                    "dunkapi",
+                    fetch=lambda *_: response,
+                    clock=self.clock,
+                )
+                self.assertEqual(sample["http_status"], 200)
+                self.assertEqual(sample["state"], "invalid_response")
+                self.assertFalse(sample["authenticated"])
+                self.assertFalse(sample["player_model_eligible"])
+
+    def test_dunkapi_unusable_identities_and_statuses_add_no_player_evidence(self):
+        rows = [
+            {"player_id": True, "status": "Out"},
+            {"player_id": ["7"], "status": "Out"},
+            {"player_id": " ", "status": "Out"},
+            {"player": {"team": {"id": "7"}}, "status": "Out"},
+            {"player_id": "7", "status": {"label": "Out"}},
+            {"player_id": "7", "status": True},
+            {"player_id": "7", "status": " "},
+        ]
+        report = {"date": "2026-11-18", "count": len(rows), "injuries": rows}
+        response = httpx.Response(200, json={"data": report})
+        sample = data_capabilities.probe(
+            self.root, "dunkapi", fetch=lambda *_: response, clock=self.clock
+        )
+        self.assertEqual(sample["player_status_rows"], 0)
+        self.assertFalse(sample["player_model_eligible"])
+
+    def test_injury_probe_http_uses_documented_provider_requests(self):
+        requests = []
+
+        def handle(request):
+            requests.append(request)
+            return httpx.Response(200, json={})
+
+        with (
+            httpx.Client(transport=httpx.MockTransport(handle)) as client,
+            patch.object(httpx, "get", client.get),
+            patch.object(httpx, "post", client.post),
+        ):
+            for source in ("bigballs", "dunkapi"):
+                data_capabilities._probe_http(source, TEST_KEY)
+
+        big, dunk = requests
+        self.assertEqual(big.method, "GET")
+        self.assertEqual(
+            str(big.url.copy_with(query=None)),
+            "https://api.bigballsdata.com/v1/injuries",
+        )
+        self.assertEqual(dict(big.url.params), {"sport": "basketball", "limit": "200"})
+        self.assertEqual(dunk.method, "POST")
+        self.assertEqual(str(dunk.url), "https://mcp.dunkapi.com/v1/get_injuries")
+        self.assertEqual(json.loads(dunk.content), {"league": "nba"})
+        self.assertTrue(all(r.headers.get("x-api-key") == TEST_KEY for r in requests))
 
     def test_conflicting_same_instant_receipts_stay_quarantined_until_new_observation(
         self,

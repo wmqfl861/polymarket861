@@ -5,6 +5,7 @@ import json
 import os
 from contextlib import closing
 from datetime import datetime, time, timedelta
+from uuid import UUID
 
 import httpx
 
@@ -41,6 +42,7 @@ _FIELDS = {
     "player_id",
     "player_name",
     "name",
+    "position",
     "team",
     "team_id",
     "team_name",
@@ -49,6 +51,8 @@ _FIELDS = {
     "status",
     "injury",
     "injury_type",
+    "type",
+    "detail",
     "reason",
     "return_date",
     "expected_return",
@@ -72,7 +76,7 @@ def _probe_http(source, key):
     if source == "bigballs":
         return httpx.get(
             url,
-            params={"sport": "basketball", "league": "nba", "limit": 200},
+            params={"sport": "basketball", "limit": 200},
             **options,
         )
     return httpx.post(url, json={"league": "nba"}, **options)
@@ -95,11 +99,21 @@ TIMING_FIELDS = sorted(
 
 
 class ScopeMismatch(ValueError):
-    """The authenticated response explicitly identifies another sport or league."""
+    """The response contradicts or does not establish the requested NBA scope."""
 
 
-def _nba_scope(payloads):
-    explicit = False
+def _text_scope_id(value):
+    if not isinstance(value, str) or value.strip().isdecimal():
+        return None
+    try:
+        UUID(value.strip())
+    except ValueError:
+        return value
+    return None
+
+
+def _scope_markers(payloads):
+    markers = set()
     for payload in payloads:
         if not isinstance(payload, dict):
             continue
@@ -109,9 +123,19 @@ def _nba_scope(payloads):
         ):
             indicia = [
                 payload[name]
-                for name in (key, key + "_code", key + "_name", key + "_slug")
+                for name in (
+                    key, key + "_code", key + "_name", key + "_slug", key + "_abbreviation"
+                )
                 if payload.get(name) is not None
             ]
+            plural = payload.get(key + "s")
+            if plural is not None:
+                if not isinstance(plural, list):
+                    raise ScopeMismatch("invalid scope list")
+                indicia.extend(plural)
+            text_id = _text_scope_id(payload.get(key + "_id"))
+            if text_id is not None:
+                indicia.append(text_id)
             for value in indicia:
                 if isinstance(value, dict):
                     names = [
@@ -128,48 +152,103 @@ def _nba_scope(payloads):
                     raise ScopeMismatch(
                         "response scope is outside NBA basketball or unresolved"
                     )
-                explicit |= key == "league"
-    return "response_explicit_nba" if explicit else "nba_scoped_request"
+                markers.add(key)
+    return markers
+
+
+def _injury_scope(source, locations, rows):
+    report = _scope_markers(locations.values())
+    all_rows_nba = bool(rows)
+    for row in rows:
+        player = row.get("player")
+        player_team = player.get("team") if isinstance(player, dict) else None
+        markers = _scope_markers((row, row.get("team"), player, player_team))
+        all_rows_nba = all_rows_nba and "league" in markers
+    if "league" in report or all_rows_nba:
+        return "response_explicit_nba"
+    # This provider documents the basketball branch of /v1/injuries as its NBA board.
+    # DunkAPI accepts an explicit league in the POST body.
+    if source == "bigballs" and "sport" not in report:
+        raise ScopeMismatch("basketball injury board missing sport or NBA league")
+    return "nba_scoped_request"
+
+
+def _has_player_status(source, row):
+    status = row.get("status") or row.get("injury_status")
+    if not isinstance(status, str) or not status.strip():
+        return False
+    if source == "dunkapi" and status.strip().casefold() not in {"out", "day-to-day"}:
+        return False
+    player = row.get("player")
+    nested = player if isinstance(player, dict) else {}
+    ids = (row.get("player_id"), nested.get("id"))
+    names = (row.get("player_name"), nested.get("name"), player)
+    if source == "dunkapi":
+        names += (row.get("name"),)
+    return any(type(value) is int and value > 0 for value in ids) or any(
+        isinstance(value, str) and value.strip() for value in (*ids, *names)
+    )
 
 
 def _sample(source, response):
     envelope = response.json()
-    obj = envelope["data"] if source == "bigballs" else envelope
+    if not isinstance(envelope, dict) or envelope.get("error"):
+        raise ValueError("invalid injury response")
+    wrapped = "data" in envelope
+    if (source == "bigballs" and not wrapped) or (wrapped and "injuries" in envelope):
+        raise ValueError("unexpected injury response envelope")
+    # Older DunkAPI fixtures and receipts used the bare business object.
+    obj = envelope["data"] if wrapped else envelope
+    if not isinstance(obj, dict) or obj.get("error"):
+        raise ValueError("invalid injury report")
     rows = obj["injuries"]
     if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows):
         raise ValueError("invalid injury sample")
+    if source == "dunkapi" and wrapped:
+        count = obj.get("count")
+        if type(count) not in (int, float) or count != len(rows):
+            raise ValueError("injury count differs from the native report")
+        if obj["date"] is not None:
+            data._date(obj["date"])
     fields = sorted({name for row in rows for name in row} & _FIELDS)
     # Keep calendar snapshots and upstream clocks distinct from the HTTP receipt.
     # Only names, dates and aggregate clocks are retained; no player text or IDs.
     locations = {"": envelope}
-    if source == "bigballs":
+    if wrapped:
         locations["data."] = obj
     for prefix, value in list(locations.items()):
         if isinstance(value.get("meta"), dict):
             locations[prefix + "meta."] = value["meta"]
-    scope = _nba_scope([*locations.values(), *rows, *(r.get("team") for r in rows)])
+    scope = _injury_scope(source, locations, rows)
+    stale = False
+    if source == "bigballs":
+        for meta in (locations.get("meta.", {}), locations.get("data.meta.", {})):
+            if "stale" in meta and not isinstance(meta["stale"], bool):
+                raise ValueError("invalid provider staleness flag")
+            stale |= meta.get("stale", False)
     source_dates, clocks = {}, {}
     for prefix, container in locations.items():
-        for name in DATE_FIELDS:
+        if wrapped and source == "dunkapi" and not prefix.startswith("data."):
+            continue
+        vintage = ("as_of",) if source == "bigballs" and prefix == "meta." else ()
+        for name in (*DATE_FIELDS, *vintage):
             try:
                 source_dates[prefix + name] = data._date(
                     container.get(name)
                 ).isoformat()
             except ValueError:
                 pass
-        for name in CLOCK_FIELDS:
+        for name in (*CLOCK_FIELDS, *vintage):
             try:
                 stamp = data._iso(container.get(name))
                 clocks[prefix + name] = {"count": 1, "first": stamp, "last": stamp}
             except (ValueError, TypeError, OverflowError):
                 pass
-    status_rows = [
-        row
-        for row in rows
-        if (row.get("status") or row.get("injury_status"))
-        and (row.get("player_id") or row.get("player_name") or row.get("player"))
-    ]
-    prefix = "data.injuries[]." if source == "bigballs" else "injuries[]."
+        if vintage and container.get("as_of") is not None:
+            if "meta.as_of" not in source_dates and "meta.as_of" not in clocks:
+                raise ValueError("invalid provider data vintage")
+    status_rows = [row for row in rows if _has_player_status(source, row)]
+    prefix = "data.injuries[]." if wrapped else "injuries[]."
     for name in CLOCK_FIELDS:
         stamps = []
         for row in status_rows:
@@ -188,6 +267,7 @@ def _sample(source, response):
         "sample_rows": len(rows),
         "player_status_rows": len(status_rows),
         "source_dates": source_dates,
+        "provider_stale": stale,
         "league_scope_basis": scope,
         "upstream_clocks": clocks,
         "observed_field_names": fields,

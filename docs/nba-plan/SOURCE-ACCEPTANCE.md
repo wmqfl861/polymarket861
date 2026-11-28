@@ -43,11 +43,17 @@ nba data capabilities
 
 | 来源 | 采集与本地预算 | 逐日核验 |
 | --- | --- | --- |
-| Big Balls | 当日第一场常规赛的 T−90、T−60、T−15 各取一次全联盟当前伤停的首屏。每个窗口从截止前五分钟打开。每个美东日最多三次，人工探针也占同一预算。 | 每个时点有独立请求编号、收件时刻、入库见证时刻、原件及排序无关的内容摘要、可识别球员状态行数。记录三个窗口的实际覆盖。 |
-| DunkAPI | 有赛时首选第一场的 T−60，每美东日最多一次，全联盟伤停查询为 2 点。错过时留单独的每日回执；无可靠赛程时在 21:00 美东以后取每日样本。一个 31 天月最多 62 点。 | 当天返回的 `date` 是来源报告日。当天收到的昨日快照只能证明 HTTP 可用。来源说明承认没有逐条发布时间。 |
+| Big Balls | 当日第一场常规赛的 T−90、T−60、T−15 各取一次篮球伤停列表。每个窗口从截止前五分钟打开。每个美东日最多三次，人工探针也占同一预算。 | 每个时点记录请求编号、收件时刻、入库见证时刻、摘要和实收行数。服务端可返回超过请求数量的行，覆盖率按实际回执判断。 |
+| DunkAPI | 有赛时首选第一场的 T−60，每美东日最多一次，全联盟伤停查询为 2 点。错过窗口后留每日回执，无可靠赛程时在美东 21:00 以后取样。一个 31 天月最多 62 点。 | `data.date` 是实际返回的快照日。当天在窗口内收到昨日快照可证明按时收件，当天来源状态仍缺证据。空表或快照日为空也无法证明当天球员状态。 |
 | 额度与故障 | 单来源独立限额账本；429 遵守 Retry-After，402 暂停 31 天；不升级付费。已经预留的同一比赛日同一时点在重启后不会重发。 | 失败、空表、超时、重复运行和截止后才落盘均保留原状。其他来源继续按各自预算执行。 |
 
-外层响应和排序无关的内容摘要用于判断“重新取到了相同内容”与“内容确实更新”。伤停探针只保留字段清单、计数、来源时钟统计和摘要，原始球员标识、姓名及伤情描述不落入探针表。每个样本只归属美东当日首场，不会复制给较晚场次。查看 `admission.sources.<来源>.days`，其中包括每份回执离 T−60 的秒数，以及缺收的比赛日。[Big Balls 免费配额](https://bigballsdata.com/nba-api) · [DunkAPI 伤停接口](https://dunkapi.com/docs/get-injuries) · [DunkAPI 时间说明](https://dunkapi.com/docs/timing-and-rights)
+Big Balls 请求 `GET /v1/injuries?sport=basketball&limit=200`。此接口的篮球列表对应 NBA，响应中的 `data.injuries[]` 包含 `player.id`、`player.team`、`status` 和 `updated_at`。2026-11-28 的一次认证请求实际返回 428 行，逐行更新时间从 9 月 1 日跨到 11 月 28 日（UTC）。行数只反映该次回执。`meta.as_of` 表示数据涵盖到的时刻，`meta.stale=true` 明示数据陈旧。当天取得的旧快照照实标记，预计复出日不能充当更新证据。[Big Balls 篮球请求示例](https://bigballsdata.com/how-to-build-a-fantasy-basketball-app) · [接口与时效定义](https://bigballsdata.com/openapi.json)
+
+DunkAPI 请求 `POST /v1/get_injuries`，JSON 请求体为 `{"league":"nba"}`。REST 响应的 `data` 对象含 `date`、`injuries` 和 `count`。列表行里有 `player_id`、`name`、`position`、`team`、`status`、`type`、`detail` 和 `return_date`。状态取值为 `Out` 或 `Day-To-Day`，未列出的球员可用性未知。来源从 2026-10-09 起保留每日快照，按日期查询会返回不晚于该日的最近一份。供应商未给出发布时间，`return_date` 只表示预计复出日。[DunkAPI 官方 REST 示例](https://dunkapi.com/guides/nba-injury-report-python) · [OpenAPI](https://mcp.dunkapi.com/openapi.json) · [DunkAPI 时效说明](https://dunkapi.com/docs/timing-and-rights)
+
+外层响应摘要和忽略行序的内容摘要可用于比较两次收件。伤停探针只保留字段清单、计数、来源时间统计和摘要，原始球员标识、姓名及伤情描述不落入探针表。每个样本只归属美东当日首场。查看 `admission.sources.<来源>.days` 可见每份回执离 T−60 的秒数、当天来源状态和缺收的比赛日。
+
+补丁前的 Big Balls 收件保留取样次数和摘要。由于旧程序没有保存服务商的过期标记并核实响应范围，七日准入从具备这两项证据的收件累计。DunkAPI 的日报使用当时已登记的时间字段；更换审核字段后，当前七日窗口按新字段计算，较早截止时刻仍能复查当时的判断。
 
 ## 负责人确认的材料
 
@@ -58,12 +64,14 @@ nba data record-terms --source dunkapi --reviewer "负责人姓名" \
   --terms-file /path/to/dunkapi-terms.html \
   --upstream "文件中证实的上游名称" --upstream-file /path/to/upstream-evidence.html \
   --prediction allowed --retention allowed \
-  --timing-field date --timing-file /path/to/dunkapi-timing.html
+  --timing-field data.date --timing-file /path/to/dunkapi-timing.html
 nba data capabilities
 ```
 
-程序在本机归档文件内容和 SHA-256，记录来源、条款网址、审核人、审核时刻、预测及留存用途和已核实的时间字段。修订审核会追加一份记录。为 DunkAPI 审核 `date` 时只匹配响应里的 `date`。为 Big Balls 审核 `data.snapshot_date` 时只匹配真实该路径，`date` 和 `as_of_date` 各要独立审核。行级时间可选择 `data.injuries[].reported_at` 等路径，只汇总含可识别球员状态的行。响应明示其他联赛、项目或无法识别的范围时隔离该次收件。日期、上游时间、本机收件时间和本机完成持久化的时间分别呈现。[Big Balls 条款](https://bigballsdata.com/legal/terms) · [DunkAPI 条款](https://dunkapi.com/terms)
+程序在本机归档文件内容和 SHA-256，记录来源、条款网址、审核人、审核时刻、预测及留存用途和已核实的字段路径。DunkAPI 的旧回执若采用顶层 `date`，已有审核只匹配该路径。接入 REST 的 `data.date` 后，请使用上例另行登记该路径，保留两种响应各自的审核依据。DunkAPI 公开说明没有逐数据集的上游名单，负责人核实上游身份还需要相应证据。[DunkAPI 响应格式](https://dunkapi.com/docs#response-format) · [DunkAPI 时间与上游说明](https://dunkapi.com/docs/timing-and-rights)
+
+Big Balls 也按实际位置核对字段。例如，审核 `data.snapshot_date` 只匹配该路径，`data.date` 和 `data.as_of_date` 各要独立审核。行级时间可选择 `data.injuries[].updated_at` 等路径，只汇总含可识别球员状态的行。响应明示其他联赛、项目或无法识别的范围时隔离该次收件。报告分别呈现来源日期、上游时间、本机收件时间和本机完成持久化的时间。[Big Balls 条款](https://bigballsdata.com/legal/terms) · [DunkAPI 条款](https://dunkapi.com/terms)
 
 `seven_day_coverage` 按每家来源单独计算最近七个已到 T−60 的比赛日。每一天都须由该来源在首场 T−60 前 15 分钟内收到含可识别球员状态的本次回执，并在截止前完成持久化。`seven_day_all_windows` 另检查已经走完全部窗口的最近七个比赛日。`source_verified` 同时要求窗口覆盖、经核实的当天来源状态、具名预测/留存权及已知上游。逐日检查两个参赛日中间的每个美东日。只有比分源整日扫描及完整分页的原生盘口目录都覆盖整个美东日期，才略去休赛日。同场两个开赛时刻相差超过 30 分钟，或窗口截止时已达到盘口开赛时刻、已出现比赛开始的观测，相关样本不能作为赛前证据。只有盘口列出比赛、或整日没有日历证据，都会阻断连续七日。不同来源的天数不能相加。`eligible_player_sources` 是可进入下一阶段人工评估的来源；训练和发布 N3/N4 另有模型评估门槛。
 
-随仓的两份执行结果来自当前环境，三个免费密钥均未配置，已认证业务回执为零。离线系统测试的七日样例用于验证计数逻辑，不作为部署证据。[三段验收结果](../../reports/nba-phase1/a2-sources/schedule-acceptance.json) · [来源能力结果](../../reports/nba-phase1/a2-sources/source-capabilities.json)
+随仓的两份 0.6.0a2 报告生成时，三个免费密钥均未配置，已认证业务回执为零。部署机当前的验收状态请查本机 `nba data capabilities`。离线系统测试的七日样例用于验证计数逻辑。[三段验收结果](../../reports/nba-phase1/a2-sources/schedule-acceptance.json) · [来源能力结果](../../reports/nba-phase1/a2-sources/source-capabilities.json)

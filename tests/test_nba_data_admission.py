@@ -402,9 +402,9 @@ class SourceAdmission(unittest.TestCase):
             entry["published_at"] = data._iso(self.now - timedelta(minutes=5))
         date_field = str(day or self.now.astimezone(data.EASTERN).date())
         body = {"date": date_field, "injuries": [entry]}
-        return httpx.Response(
-            200, json={"data": body} if source == "bigballs" else body
-        )
+        if source == "bigballs":
+            return httpx.Response(200, json={"data": {"sport": "basketball", **body}})
+        return httpx.Response(200, json=body)
 
     def test_seven_days_per_source_all_windows_and_named_terms(self):
         start = date(2026, 11, 1)
@@ -499,6 +499,203 @@ class SourceAdmission(unittest.TestCase):
         d = report["dunkapi"]["days"][0]
         self.assertFalse(d["t60_fresh"])
         self.assertEqual(d["samples"][0]["state"], "scope_mismatch")
+
+    def test_bigballs_requires_nba_scope_and_rejects_conflicting_player_scope(self):
+        for case, scope, second_row_fields, expected in (
+            ("missing", {}, {}, "scope_mismatch"),
+            ("explicit_nba", {"league": "NBA"}, {}, "sample_received"),
+            ("different_sport", {"sport": "ice_hockey"}, {}, "scope_mismatch"),
+            ("mixed_leagues", {"leagues": ["NBA", "WNBA"]}, {}, "scope_mismatch"),
+            ("other_league_id", {"sport": "basketball"}, {"league_id": "WNBA"}, "scope_mismatch"),
+            ("numeric_id", {"sport": "basketball"}, {"league_id": "10"}, "sample_received"),
+            (
+                "player_sport",
+                {"sport": "basketball"},
+                {"player": {"id": "p2", "sport": "ice_hockey"}},
+                "scope_mismatch",
+            ),
+            (
+                "player_team_league",
+                {"sport": "basketball", "league": "NBA"},
+                {"player": {"id": "p2", "team": {"league": "WNBA"}}},
+                "scope_mismatch",
+            ),
+            (
+                "later_row_league_abbreviation",
+                {"sport": "basketball"},
+                {"league_abbreviation": "WNBA"},
+                "scope_mismatch",
+            ),
+        ):
+            with self.subTest(case=case):
+                rows = [
+                    {"player": {"id": "p1"}, "status": "Out"},
+                    {"player": {"id": "p2"}, "status": "Out", **second_row_fields},
+                ]
+                response = httpx.Response(
+                    200, json={"data": {**scope, "injuries": rows}}
+                )
+                receipt = data_capabilities.probe(
+                    self.root / case,
+                    "bigballs",
+                    fetch=lambda *_: response,
+                    clock=self.clock,
+                )
+                self.assertEqual(receipt["state"], expected)
+                self.assertEqual(
+                    receipt["authenticated"], expected == "sample_received"
+                )
+
+    def test_bigballs_declared_stale_blocks_a_same_day_report_from_admission(self):
+        start = self.now.date()
+        stale_day = start + timedelta(days=6)
+        self.terms("bigballs", "data.injuries[].updated_at")
+
+        def fetch(source, key):
+            if source == "dunkapi":
+                return self.provider(source, key)
+            updated = data._iso(self.now - timedelta(minutes=5))
+            return httpx.Response(
+                200,
+                json={
+                    "data": {
+                        "sport": "basketball",
+                        "injuries": [
+                            {
+                                "player": {"id": "p1"},
+                                "status": "Out",
+                                "updated_at": updated,
+                            }
+                        ],
+                    },
+                    "meta": {"as_of": updated, "stale": self.now.date() == stale_day},
+                },
+            )
+
+        for offset in range(7):
+            self.run_day(start + timedelta(days=offset), fetch)
+        report = source_probes.player_summary(self.root, self.now)["bigballs"]
+        self.assertEqual(report["t60_fresh_days"], 6)
+        self.assertTrue(all(d["same_day_status"] for d in report["days"][:-1]))
+        last = report["days"][-1]
+        self.assertEqual(len(last["samples"]), 3)
+        self.assertTrue(all(s["player_status_rows"] == 1 for s in last["samples"]))
+        self.assertFalse(any(s["window_usable"] for s in last["samples"]))
+        self.assertFalse(last["t60_fresh"])
+        self.assertFalse(last["same_day_status"])
+        self.assertFalse(report["source_verified"])
+
+    def test_legacy_bigballs_receipts_without_staleness_proof_only_show_attempts(self):
+        self.terms("bigballs")
+        self.terms("dunkapi")
+        self.run_day(self.now.date(), self.provider)
+        with closing(storage.connect(self.root)) as db, db:
+            db.execute(
+                "UPDATE nba_free_probes "
+                "SET receipt=json_remove(receipt,'$.provider_stale')"
+            )
+
+        report = source_probes.player_summary(self.root, self.now)
+        big = report["bigballs"]["days"][0]
+        self.assertEqual({s["slot"] for s in big["samples"]}, {"T-90", "T-60", "T-15"})
+        for sample in big["samples"]:
+            self.assertEqual(sample["state"], "sample_received")
+            self.assertTrue(sample["response_sha256"])
+            self.assertFalse(sample["window_usable"])
+        self.assertFalse(big["t60_fresh"])
+        self.assertFalse(big["same_day_status"])
+        dunk = report["dunkapi"]["days"][0]
+        self.assertTrue(dunk["samples"][0]["window_usable"])
+        self.assertTrue(dunk["t60_fresh"])
+        self.assertTrue(dunk["same_day_status"])
+
+    def test_bigballs_data_vintage_must_support_the_same_day_row_clock(self):
+        self.terms("bigballs", "data.injuries[].updated_at")
+
+        def fetch(source, key):
+            response = self.provider(source, key)
+            if source == "dunkapi":
+                return response
+            payload = response.json()
+            payload["meta"] = {"as_of": vintage}
+            payload["data"]["injuries"][0]["updated_at"] = data._iso(
+                self.now - timedelta(minutes=5)
+            )
+            return httpx.Response(200, json=payload)
+
+        for game_day, vintage, same_day in (
+            ("2026-11-01", "2026-10-31", False),
+            ("2026-11-02", "2026-11-02T00:30:00Z", False),  # Prior Eastern date.
+            ("2026-11-03", "2026-11-03T16:00:00-05:00", False),  # After receipt.
+            ("2026-11-04", "2026-11-04", True),
+            ("2026-11-05", "2026-11-05T15:00:00-05:00", True),
+            ("2026-11-06", "0001-01-01T00:00:00Z", False),
+        ):
+            with self.subTest(vintage=vintage):
+                self.run_day(date.fromisoformat(game_day), fetch, skip=(90, 15))
+                report = source_probes.player_summary(self.root, self.now)["bigballs"]
+                latest = report["days"][-1]
+                self.assertTrue(latest["t60_fresh"])
+                self.assertEqual(latest["same_day_status"], same_day)
+                sample = latest["samples"][0]
+                if "T" in vintage:
+                    self.assertEqual(
+                        sample["upstream_clocks"]["meta.as_of"]["last"],
+                        data._iso(vintage),
+                    )
+                    self.assertNotIn("meta.as_of", sample["source_dates"])
+                else:
+                    self.assertEqual(sample["source_dates"]["meta.as_of"], vintage)
+                    self.assertNotIn("meta.as_of", sample["upstream_clocks"])
+
+        vintage = "unknown"
+        receipt = data_capabilities.probe(
+            self.root / "malformed", "bigballs", fetch=fetch, clock=self.clock
+        )
+        self.assertEqual(receipt["state"], "invalid_response")
+
+    def test_wrapped_dunkapi_needs_a_same_day_snapshot_and_the_signed_field(self):
+        start = self.now.date()
+        row_clock = "data.injuries[].updated_at"
+
+        def fetch(source, key):
+            response = self.provider(source, key)
+            if source == "dunkapi":
+                body = response.json()
+                body["count"] = len(body["injuries"])
+                body["date"] = snapshot
+                body["injuries"][0]["updated_at"] = data._iso(
+                    self.now - timedelta(minutes=5)
+                )
+                return httpx.Response(200, json={"data": body})
+            return response
+
+        cases = (
+            ("date", 0, False),
+            ("data.date", 0, True),
+            (row_clock, -1, False),
+            (row_clock, None, False),
+            (row_clock, 0, True),
+        )
+        for offset, (field, snapshot_offset, same_day) in enumerate(cases):
+            day = start + timedelta(days=offset)
+            snapshot = (
+                str(day + timedelta(days=snapshot_offset))
+                if snapshot_offset is not None
+                else None
+            )
+            with self.subTest(field=field, snapshot=snapshot):
+                self.terms("dunkapi", field)
+                self.run_day(day, fetch, skip=(90, 15))
+                report = source_probes.player_summary(self.root, self.now)["dunkapi"]
+                latest = report["days"][-1]
+                self.assertTrue(latest["t60_fresh"])
+                self.assertEqual(latest["same_day_status"], same_day)
+                sample = latest["samples"][0]
+                self.assertEqual(
+                    sample["source_dates"], {"data.date": snapshot} if snapshot else {}
+                )
+                self.assertEqual(sample["upstream_clocks"][row_clock]["count"], 1)
 
     def test_calendar_keeps_native_only_and_missing_days_and_proves_a_rest_day(self):
         from polymarket861.nba import markets

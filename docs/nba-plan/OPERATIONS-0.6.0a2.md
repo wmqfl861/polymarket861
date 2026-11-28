@@ -1,5 +1,7 @@
 # NBA 0.6.0a2 部署与审核交接
 
+当前 NBA 安装包为 `0.6.0a2+providers.1`。已装 `0.6.0a2` 的 NBA 实例使用下面的 wheel 构建和安装命令即可更新伤停适配器。足球实例使用自己的 release。
+
 本版覆盖 NBA 常规赛含加时的主客胜负、全场大小分、主队和客队大小分。可在独立账户部署球队研究和 Polymarket 只读采集。球队模型输出 N0、N1、N2，NBA 模拟资金及球员/新闻模型仍待后续阶段。现场验收从实际收件开始。[Claude 审核原文](../polymarket861-nba-phase1-code-review-0.6.0a1.md) · [最新开发计划](REVIEWED-DEVELOPMENT.md) · [独立复核与版本记录](INDEPENDENT-REVIEW-0.6.0a2.md)
 
 ## 先保全足球旧仓
@@ -18,7 +20,7 @@ mkdir -p "$base/wheels" "$cfg" "$units"
 chmod 700 "$base" "$cfg"
 python3 -m venv "$base/venv"
 "$base/venv/bin/python" -m pip wheel --no-deps -w "$base/wheels" .
-"$base/venv/bin/python" -m pip install -c constraints/research.txt "$base/wheels/polymarket861-0.6.0a2-py3-none-any.whl"
+"$base/venv/bin/python" -m pip install -c constraints/research.txt "$base/wheels/polymarket861-0.6.0a2+providers.1-py3-none-any.whl"
 nba() { "$base/venv/bin/pm861" --data-dir "$base/state" nba "$@"; }
 "$base/venv/bin/pm861" --version
 install -m 0644 deploy/polymarket861-nba-*.{service,timer} "$units/"

@@ -376,7 +376,14 @@ def record_terms(
     return decision
 
 
-def _receipt_evidence(receipt, target, day, terms):
+def _eastern_source_day(stamp):
+    try:
+        return data._utc(stamp).astimezone(data.EASTERN).date().isoformat()
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
+def _receipt_evidence(receipt, target, day, terms, *, source):
     fields = (
         "probe_id",
         "state",
@@ -389,6 +396,7 @@ def _receipt_evidence(receipt, target, day, terms):
         "upstream_clocks",
         "source_dates",
         "league_scope_basis",
+        "provider_stale",
         "requested_at",
         "http_status",
         "observed_field_names",
@@ -427,6 +435,8 @@ def _receipt_evidence(receipt, target, day, terms):
             if guard
         )
         and receipt.get("authenticated")
+        # Older Big Balls receipts omitted both provider freshness and scope validation.
+        and (source != "bigballs" or receipt.get("provider_stale") is False)
         and receipt.get("league_scope_basis")
         in ("response_explicit_nba", "nba_scoped_request")
         and receipt.get("player_status_rows")
@@ -455,11 +465,26 @@ def _receipt_evidence(receipt, target, day, terms):
         same_day = receipt["source_dates"][field] == day
     elif fresh and field:
         stamps = (receipt.get("upstream_clocks") or {}).get(field) or {}
-        if stamps.get("last") and stamps["last"] <= receipt["received_at"]:
-            same_day = (
-                data._utc(stamps["last"]).astimezone(data.EASTERN).date().isoformat()
-                == day
-            )
+        last = stamps.get("last")
+        same_day = _eastern_source_day(last) == day and last <= receipt["received_at"]
+    # A provider-declared data vintage can contradict a newer row/transport clock.
+    vintage_day = (receipt.get("source_dates") or {}).get("meta.as_of")
+    vintage_time = (
+        (receipt.get("upstream_clocks") or {}).get("meta.as_of") or {}
+    ).get("last")
+    if vintage_day:
+        same_day = same_day and vintage_day == day
+    if vintage_time:
+        same_day = (
+            same_day
+            and _eastern_source_day(vintage_time) == day
+            and vintage_time <= receipt["received_at"]
+        )
+    if source == "dunkapi":
+        # Both REST and earlier bare reports describe the latest available daily snapshot.
+        report_dates = receipt.get("source_dates") or {}
+        snapshot_day = report_dates.get("data.date", report_dates.get("date"))
+        same_day = same_day and snapshot_day == day
     summary.update(fresh_at_t60=fresh, source_same_day_status=same_day)
     return summary
 
@@ -501,7 +526,8 @@ def player_summary(root, cutoff):
             evidence = []
             for day, target in days.items():
                 samples = [
-                    _receipt_evidence(r, target, day, terms) for r in receipts[day]
+                    _receipt_evidence(r, target, day, terms, source=source)
+                    for r in receipts[day]
                 ]
                 expected_slots = (
                     {"T-90", "T-60", "T-15"} if source == "bigballs" else {"daily"}
