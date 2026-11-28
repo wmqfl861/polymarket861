@@ -1,0 +1,211 @@
+{
+  "pregame": {
+    "counts": {
+      "alternate": 8,
+      "selected": 33,
+      "listings": 821,
+      "forecast": 486,
+      "spreads": 335,
+      "books": 1642,
+      "absent": 11
+    },
+    "events": [
+      {
+        "event": "1377580",
+        "games": "nba-mem-min-2026-11-27",
+        "requests": 2,
+        "book_batch_size": 190,
+        "listed": {
+          "win": 1,
+          "spread": 33,
+          "total": 31,
+          "home_total": 15,
+          "away_total": 15
+        }
+      },
+      {
+        "event": "1377581",
+        "games": "nba-dal-phx-2026-11-27",
+        "requests": 2,
+        "book_batch_size": 188,
+        "listed": {
+          "win": 1,
+          "spread": 33,
+          "total": 31,
+          "home_total": 14,
+          "away_total": 15
+        }
+      },
+      {
+        "event": "1377582",
+        "games": "nba-lal-sas-2026-11-27",
+        "requests": 2,
+        "book_batch_size": 182,
+        "listed": {
+          "win": 1,
+          "spread": 34,
+          "total": 30,
+          "home_total": 13,
+          "away_total": 13
+        }
+      },
+      {
+        "event": "1377583",
+        "games": "nba-den-uta-2026-11-27",
+        "requests": 2,
+        "book_batch_size": 188,
+        "listed": {
+          "win": 1,
+          "spread": 34,
+          "total": 31,
+          "home_total": 14,
+          "away_total": 14
+        }
+      },
+      {
+        "event": "1377584",
+        "games": "nba-nop-lac-2026-11-27",
+        "requests": 2,
+        "book_batch_size": 184,
+        "listed": {
+          "win": 1,
+          "spread": 33,
+          "total": 30,
+          "home_total": 14,
+          "away_total": 14
+        }
+      },
+      {
+        "event": "1377585",
+        "games": "nba-gsw-por-2026-11-27",
+        "requests": 2,
+        "book_batch_size": 192,
+        "listed": {
+          "win": 1,
+          "spread": 34,
+          "total": 32,
+          "home_total": 15,
+          "away_total": 14
+        }
+      },
+      {
+        "event": "1384629",
+        "games": "nba-orl-was-2026-11-28",
+        "requests": 2,
+        "book_batch_size": 130,
+        "listed": {
+          "win": 1,
+          "spread": 33,
+          "total": 31
+        }
+      },
+      {
+        "event": "1384630",
+        "games": "nba-bkn-cha-2026-11-28",
+        "requests": 2,
+        "book_batch_size": 132,
+        "listed": {
+          "win": 1,
+          "spread": 34,
+          "total": 31
+        }
+      },
+      {
+        "event": "1384631",
+        "games": "nba-ind-chi-2026-11-28",
+        "requests": 2,
+        "book_batch_size": 126,
+        "listed": {
+          "win": 1,
+          "spread": 33,
+          "total": 29
+        }
+      },
+      {
+        "event": "1384632",
+        "games": "nba-okc-mil-2026-11-28",
+        "requests": 2,
+        "book_batch_size": 128,
+        "listed": {
+          "win": 1,
+          "spread": 34,
+          "total": 29
+        }
+      },
+      {
+        "event": "1384634",
+        "games": "nba-phi-hou-2026-11-28",
+        "requests": 2,
+        "book_batch_size": 2,
+        "listed": {
+          "win": 1
+        }
+      }
+    ],
+    "fixture_sha": "704fb2ef70f19a32f4f5c88b10d4251f5542d641c693f024778e52c0beef3ec5",
+    "max_tokens": 192
+  },
+  "terminal": {
+    "counts": {
+      "verified_raw": 24,
+      "ot": 5,
+      "decisive": 3
+    },
+    "games": [
+      {
+        "event": "1346981",
+        "day": "2026-11-23",
+        "quarters": 5,
+        "regulation": 218,
+        "final": 242,
+        "line": 233.5,
+        "decisive": true
+      },
+      {
+        "event": "1338698",
+        "day": "2026-11-22",
+        "quarters": 5,
+        "regulation": 262,
+        "final": 296,
+        "line": 238.5,
+        "decisive": false
+      },
+      {
+        "event": "1306312",
+        "day": "2026-11-17",
+        "quarters": 5,
+        "regulation": 222,
+        "final": 232,
+        "line": 224.5,
+        "decisive": true
+      },
+      {
+        "event": "1293081",
+        "day": "2026-11-15",
+        "quarters": 5,
+        "regulation": 190,
+        "final": 220,
+        "line": 217.5,
+        "decisive": true
+      },
+      {
+        "event": "1284292",
+        "day": "2026-11-13",
+        "quarters": 5,
+        "regulation": 220,
+        "final": 242,
+        "line": 242.5,
+        "decisive": false
+      },
+      {
+        "event": "1362200",
+        "day": "2026-11-25",
+        "quarters": 4,
+        "regulation": 212,
+        "final": 212,
+        "line": 227.5,
+        "decisive": false
+      }
+    ]
+  }
+}

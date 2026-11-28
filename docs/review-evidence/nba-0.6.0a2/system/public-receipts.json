@@ -1,0 +1,167 @@
+{
+  "public": {
+    "registered": 25,
+    "valid_http_200s": 15,
+    "rpm_peak": 15,
+    "horizons": [
+      [
+        "T-24h",
+        "ok",
+        1
+      ],
+      [
+        "T-24h",
+        "unlisted",
+        3
+      ],
+      [
+        "T-60m",
+        "ok",
+        16
+      ]
+    ],
+    "requests": [
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:28:20.832717Z",
+        "received": "2026-11-28T01:28:26.018150Z",
+        "sha256": "a8a868ad736eb88a02bc502fcd6860471619a34888c1591988c5c20c04646c15"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:28:26.197030Z",
+        "received": "2026-11-28T01:28:26.763853Z",
+        "sha256": "905c7e706dd152f7a0a8cb6ea416f664e60af589444490fe4640628a325a5cb7"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:28:27.048950Z",
+        "received": "2026-11-28T01:28:27.238554Z",
+        "sha256": "5019dab1365533d5a45b09b4644e20e93946818248e5eaeb36b4026fb61d3d5b"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:28:27.274846Z",
+        "received": "2026-11-28T01:28:27.410041Z",
+        "sha256": "e561adbd7dfb864d47cf85ce87264b818fa810efe0cd26bc873f1e56bfc47f80"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:28:27.417912Z",
+        "received": "2026-11-28T01:28:27.598956Z",
+        "sha256": "24293dc7c38c47d8f036edf06cefa6b4ab96c65fce4b42be881bb3428fe38e85"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/1377582",
+        "status": 200,
+        "sent": "2026-11-28T01:28:27.607553Z",
+        "received": "2026-11-28T01:28:27.834050Z",
+        "sha256": "98b899ed5d865f0c6e3353c2c5c2ae5144b54e7007869d67836ed95246d64c5f"
+      },
+      {
+        "url": "https://clob.polymarket.com/books",
+        "status": 200,
+        "sent": "2026-11-28T01:28:27.872834Z",
+        "received": "2026-11-28T01:28:32.619442Z",
+        "sha256": "b005f5dcf19661e753ba5a2bd25b696e3d96977dd16463bb48fda931d5b960bd"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/1377583",
+        "status": 200,
+        "sent": "2026-11-28T01:28:32.647567Z",
+        "received": "2026-11-28T01:28:32.808621Z",
+        "sha256": "570595933b8abf0c4efba95e9abe4ef815c0daea3744ab5c9d07b42cfa805ef0"
+      },
+      {
+        "url": "https://clob.polymarket.com/books",
+        "status": 200,
+        "sent": "2026-11-28T01:28:32.871288Z",
+        "received": "2026-11-28T01:28:33.125311Z",
+        "sha256": "44e8419124a4f874e13019a03a5074df1dbb04d5852ac46aef884dc03b6b9874"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/1377584",
+        "status": 200,
+        "sent": "2026-11-28T01:28:33.141233Z",
+        "received": "2026-11-28T01:28:33.361946Z",
+        "sha256": "ae041885770ec5b3d8f70a1bda3a8d9baf569a7e5b756351b128fd30c5f0559f"
+      },
+      {
+        "url": "https://clob.polymarket.com/books",
+        "status": 200,
+        "sent": "2026-11-28T01:28:33.390285Z",
+        "received": "2026-11-28T01:28:33.623679Z",
+        "sha256": "d5a24ecad6208c6f2d8a54bce0071682f23ca23cb646f0789708cc7a5749a030"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/1377585",
+        "status": 200,
+        "sent": "2026-11-28T01:28:33.640444Z",
+        "received": "2026-11-28T01:28:33.950224Z",
+        "sha256": "a7e92726f51a15302202a9defe2fa562952fc25d46744b1b927540ec6425a0d5"
+      },
+      {
+        "url": "https://clob.polymarket.com/books",
+        "status": 200,
+        "sent": "2026-11-28T01:28:33.980045Z",
+        "received": "2026-11-28T01:28:34.212882Z",
+        "sha256": "18e257c20574a121c17a1305276d173ca1cc9f3cb489e2fd2c533b7e631e994c"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/1384634",
+        "status": 200,
+        "sent": "2026-11-28T01:28:34.230946Z",
+        "received": "2026-11-28T01:28:34.364564Z",
+        "sha256": "626bd5d265eea8687e937710f104f1730438f28196669e36db7f20143ba3cd21"
+      },
+      {
+        "url": "https://clob.polymarket.com/books",
+        "status": 200,
+        "sent": "2026-11-28T01:28:34.371531Z",
+        "received": "2026-11-28T01:28:34.502648Z",
+        "sha256": "166acdf4086d80ab3efb8ea89f98c3b415a37af2968e6bd8d5eb43a9e458efa5"
+      }
+    ]
+  },
+  "public-frozen": {
+    "registered": 22,
+    "valid_http_200s": 4,
+    "rpm_peak": 4,
+    "horizons": [],
+    "requests": [
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:39:22.409148Z",
+        "received": "2026-11-28T01:39:27.267498Z",
+        "sha256": "b7cdbde77f7ebfa7e66d1d3fc03be9b451e283e50b6c01e217c55253f2c15818"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:39:27.453653Z",
+        "received": "2026-11-28T01:39:27.759983Z",
+        "sha256": "bd506b009ad04ffef4764c86d49ff93558ee00f7b794cc055553eddd5d7c5d3d"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:39:27.822758Z",
+        "received": "2026-11-28T01:39:27.974393Z",
+        "sha256": "6cd4a1df8afcb5743e61f2ac6873dbe40d14d4dfbec620395ffc41fe290d4160"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "status": 200,
+        "sent": "2026-11-28T01:39:27.992557Z",
+        "received": "2026-11-28T01:39:28.145636Z",
+        "sha256": "647ee3cca59a73cbf395addd698c44da207c404480c0c287c30ea743fb8616b2"
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "pivot": "2026-01-20",
+  "modern_final_sha": "403506b8029c1126a9096b34a70de46a2e0af2947fef9f648fce142cf8cb0b89",
+  "lags": {
+    "1": {
+      "season_rows": 1230,
+      "early_total": 655,
+      "early_changed": 0,
+      "late_total": 575,
+      "late_changed": 575
+    },
+    "2": {
+      "season_rows": 1230,
+      "early_total": 663,
+      "early_changed": 0,
+      "late_total": 567,
+      "late_changed": 567
+    }
+  },
+  "venues": {
+    "within_publication_day": [
+      false,
+      "assumed_listed_home"
+    ],
+    "next_eastern_day": [
+      true,
+      "documented_neutral"
+    ],
+    "canonical": [
+      true,
+      "documented_neutral"
+    ],
+    "official_flag_about_other_game": [
+      false,
+      "assumed_listed_home"
+    ],
+    "rescheduled_date": [
+      false,
+      "assumed_listed_home"
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "old": {
+    "legacy_rows": 31,
+    "complete": true
+  },
+  "as_read_by_a2": {
+    "rows": 31,
+    "sources": {
+      "legacy_requires_rescan": 31
+    },
+    "eligible_finals": 0,
+    "source_gate": false,
+    "kickoff_days": 0,
+    "forward_eligible": false,
+    "calendar_success": false
+  },
+  "after_rescan": {
+    "new_versions": 1,
+    "confirmed": 1,
+    "unchanged_asof": true,
+    "eligible_finals": 0
+  }
+}

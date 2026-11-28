@@ -1,0 +1,87 @@
+{
+  "through_et": "2026-11-26",
+  "gates": {
+    "forward_coverage": false,
+    "keyed_schedule": false,
+    "three_paired_schedule_days": false,
+    "admitted_player_source": false
+  },
+  "state": "collecting",
+  "report_basis": "latest published day reports for completed dates; seal and price deadlines use original receipts",
+  "calendar": {
+    "qualified": false,
+    "reasons": [
+      "no_warm_forward_seal",
+      "fewer_than_14_game_days",
+      "warm_seal_rate_below_90pct",
+      "eligible_win_pairing_below_90pct"
+    ],
+    "first_warm_game_day": null,
+    "observed_game_days": 0,
+    "counted_game_days": 0,
+    "primary_horizon": "T-60m",
+    "target_rate": 0.9,
+    "calendar_gaps": [],
+    "listing_days_without_warm_seal": [],
+    "days_without_eligible_win_quotes": [],
+    "totals": {
+      "due": 0,
+      "sealed": 0,
+      "warm_sealed": 0,
+      "eligible_win_quotes": 0,
+      "paired_win": 0,
+      "unassessed_warm": 0
+    },
+    "warm_seal_rate": null,
+    "eligible_win_pairing_rate": null,
+    "days": []
+  },
+  "sources": {
+    "as_of": "2026-11-27T04:59:59.999999Z",
+    "schedule_verified": false,
+    "schedule_state": "missing_key",
+    "schedule_checks": null,
+    "sources": {
+      "bigballs": {
+        "game_days": 0,
+        "unverified_calendar_dates": [],
+        "verified_rest_days": [],
+        "t60_fresh_days": 0,
+        "seven_day_coverage": false,
+        "seven_day_all_windows": false,
+        "seven_day_same_day_status": false,
+        "terms_approved": false,
+        "upstream_verified": false,
+        "terms_review": null,
+        "source_verified": false,
+        "days": []
+      },
+      "dunkapi": {
+        "game_days": 0,
+        "unverified_calendar_dates": [],
+        "verified_rest_days": [],
+        "t60_fresh_days": 0,
+        "seven_day_coverage": false,
+        "seven_day_all_windows": false,
+        "seven_day_same_day_status": false,
+        "terms_approved": false,
+        "upstream_verified": false,
+        "terms_review": null,
+        "source_verified": false,
+        "days": []
+      }
+    },
+    "eligible_player_sources": []
+  },
+  "kickoff_differences": {
+    "as_of": "2026-11-27T05:00:00.000000Z",
+    "threshold_seconds": 1800,
+    "counts": {},
+    "days": [],
+    "paired_days": 0,
+    "enough_days": false
+  },
+  "football_host_health": "verify separately on the deployed football account",
+  "phase_two_activated": false,
+  "paper_trading": false
+}

@@ -1,0 +1,280 @@
+{
+  "normal": {
+    "bigballs": {
+      "verified": true,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": true,
+      "verified_historical_cutoff": false
+    },
+    "dunkapi": {
+      "verified": true,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": true,
+      "verified_historical_cutoff": false
+    }
+  },
+  "gap": {
+    "bigballs": {
+      "verified": false,
+      "days": 8,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    },
+    "dunkapi": {
+      "verified": false,
+      "days": 8,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    }
+  },
+  "unobserved_gap": {
+    "bigballs": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    },
+    "dunkapi": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    }
+  },
+  "observed_off_day": {
+    "bigballs": {
+      "verified": true,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": true,
+      "verified_historical_cutoff": false
+    },
+    "dunkapi": {
+      "verified": true,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": true,
+      "verified_historical_cutoff": false
+    }
+  },
+  "wrong_field": {
+    "bigballs": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": true,
+      "verified_historical_cutoff": false
+    },
+    "dunkapi": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": true,
+      "verified_historical_cutoff": false
+    }
+  },
+  "wrong_league": {
+    "bigballs": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "t60_fresh_days": 0,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    },
+    "dunkapi": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "t60_fresh_days": 0,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    }
+  },
+  "partial_off_day": {
+    "bigballs": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    },
+    "dunkapi": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "t60_fresh_days": 7,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    }
+  },
+  "native_earlier": {
+    "bigballs": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "t60_fresh_days": 0,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    },
+    "dunkapi": {
+      "verified": false,
+      "days": 7,
+      "recent_days": [
+        "2026-11-02",
+        "2026-11-03",
+        "2026-11-04",
+        "2026-11-05",
+        "2026-11-06",
+        "2026-11-07",
+        "2026-11-08"
+      ],
+      "t60_fresh_days": 0,
+      "seven_day_coverage": false,
+      "verified_historical_cutoff": false
+    }
+  }
+}

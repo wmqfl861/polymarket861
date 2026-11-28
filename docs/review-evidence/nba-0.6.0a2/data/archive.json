@@ -1,0 +1,90 @@
+{
+  "pins": 180,
+  "verified_bytes": 180,
+  "latest_revision": "2026-11-27T11:12:54Z",
+  "partial_agreed_finals": 7082,
+  "distinct_team_day": 14164,
+  "max_team_on_day": 1,
+  "positive_scores_distinct_teams": true,
+  "by_season": {
+    "2020": 1016,
+    "2021": 1202,
+    "2022": 1204,
+    "2023": 1220,
+    "2024": 1227,
+    "2025": 1213
+  },
+  "absent_eval": 84,
+  "absent_warmup": 64,
+  "rebuilt_identical": {
+    "agreed-finals.csv": true,
+    "withheld.json": true,
+    "wikipedia-revisions.json": true
+  },
+  "adjudicated": {
+    "resolved": 156,
+    "replaced_existing": 7,
+    "withdrawn": 1,
+    "final_counts": {
+      "2020": 1080,
+      "2021": 1230,
+      "2022": 1230,
+      "2023": 1230,
+      "2024": 1230,
+      "2025": 1230
+    },
+    "max_team_on_day": 1,
+    "teams": 180,
+    "opponents": {
+      "2020": 435,
+      "2021": 435,
+      "2022": 435,
+      "2023": 435,
+      "2024": 435,
+      "2025": 435
+    },
+    "sha256": "403506b8029c1126a9096b34a70de46a2e0af2947fef9f648fce142cf8cb0b89",
+    "checked_revision_refs": 205,
+    "revision_ref_count": 205,
+    "matched_correction_proofs": 156,
+    "cross_538_irw_games": 3540,
+    "different_from_538": [],
+    "raw_538_sha256": "46814d80064bf7f7a80eb809b04a8d182cf4c6f53ab9c09f96f14e0e44fa625f"
+  },
+  "replay": {
+    "1": {
+      "identical": true,
+      "n": 6150,
+      "N2": {
+        "brier_win": 0.2137202,
+        "crps_away": 6.524426,
+        "crps_home": 6.5661265,
+        "crps_total": 10.4552555
+      },
+      "paired": {
+        "block_interval_95": [
+          -0.0015758,
+          -0.0006367
+        ],
+        "difference": -0.0010795
+      }
+    },
+    "2": {
+      "identical": true,
+      "n": 6150,
+      "N2": {
+        "brier_win": 0.2140122,
+        "crps_away": 6.5396935,
+        "crps_home": 6.5764089,
+        "crps_total": 10.4808133
+      },
+      "paired": {
+        "block_interval_95": [
+          -0.001597,
+          -0.0006351
+        ],
+        "difference": -0.0010924
+      }
+    }
+  }
+}

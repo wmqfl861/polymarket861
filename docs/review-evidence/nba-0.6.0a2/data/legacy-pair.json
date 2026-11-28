@@ -1,0 +1,29 @@
+{
+  "stages": [
+    "legacy_requires_rescan",
+    "legacy_requires_rescan",
+    "legacy_requires_rescan"
+  ],
+  "paired_days": 0,
+  "counts": {
+    "unverified_score_stage": 3
+  },
+  "enough_days": false,
+  "receipts_per_day": [
+    [
+      "2026-11-02",
+      null,
+      false
+    ],
+    [
+      "2026-11-03",
+      null,
+      false
+    ],
+    [
+      "2026-11-04",
+      null,
+      false
+    ]
+  ]
+}

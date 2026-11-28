@@ -1,0 +1,523 @@
+{
+  "compare_2": {
+    "state": "sealed",
+    "note": "",
+    "errors": [],
+    "schedule": "within_tolerance",
+    "reference_families": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+    ],
+    "win_quote_at": "2026-11-28T00:27:10.100000Z",
+    "within_both_five_minute_windows": true,
+    "clob_batches": 1,
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "compare_-2": {
+    "state": "sealed",
+    "note": "",
+    "errors": [],
+    "schedule": "within_tolerance",
+    "reference_families": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+    ],
+    "win_quote_at": "2026-11-28T00:26:10.100000Z",
+    "within_both_five_minute_windows": true,
+    "clob_batches": 1,
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "compare_2_resample": {
+    "state": "sealed",
+    "note": "",
+    "errors": [],
+    "schedule": "within_tolerance",
+    "reference_families": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+    ],
+    "win_quote_at": "2026-11-28T00:27:10.100000Z",
+    "within_both_five_minute_windows": true,
+    "clob_batches": 2,
+    "http_requests": 9,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "compare_5": {
+    "state": "sealed",
+    "note": "",
+    "errors": [],
+    "schedule": "within_tolerance",
+    "reference_families": [],
+    "win_quote_at": null,
+    "within_both_five_minute_windows": null,
+    "clob_batches": 1,
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "compare_-5": {
+    "state": "sealed",
+    "note": "",
+    "errors": [],
+    "schedule": "within_tolerance",
+    "reference_families": [],
+    "win_quote_at": null,
+    "within_both_five_minute_windows": null,
+    "clob_batches": 1,
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "compare_10": {
+    "state": "sealed",
+    "note": "",
+    "errors": [],
+    "schedule": "within_tolerance",
+    "reference_families": [],
+    "win_quote_at": null,
+    "within_both_five_minute_windows": null,
+    "clob_batches": 1,
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "compare_31": {
+    "state": "sealed",
+    "note": "",
+    "errors": [],
+    "schedule": "outside_tolerance",
+    "reference_families": [],
+    "win_quote_at": null,
+    "within_both_five_minute_windows": null,
+    "clob_batches": 1,
+    "http_requests": 10,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "compare_180": {
+    "state": "sealed",
+    "note": "",
+    "errors": [],
+    "schedule": "outside_tolerance",
+    "reference_families": [],
+    "win_quote_at": null,
+    "within_both_five_minute_windows": null,
+    "clob_batches": 1,
+    "http_requests": 10,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "tolerance_status_-30": {
+    "status": "within_tolerance",
+    "delta_seconds": 1800.0,
+    "qualified_days": 0,
+    "http_requests": 4,
+    "endpoints": [
+      "GET /events/keyset",
+      "GET /nba/v1/games"
+    ]
+  },
+  "tolerance_status_30": {
+    "status": "within_tolerance",
+    "delta_seconds": -1800.0,
+    "qualified_days": 0,
+    "http_requests": 4,
+    "endpoints": [
+      "GET /events/keyset",
+      "GET /nba/v1/games"
+    ]
+  },
+  "tolerance_status_-180": {
+    "status": "outside_tolerance",
+    "delta_seconds": 10800.0,
+    "qualified_days": 0,
+    "http_requests": 4,
+    "endpoints": [
+      "GET /events/keyset",
+      "GET /nba/v1/games"
+    ]
+  },
+  "no_market_to_deadline": {
+    "first_waited": 1,
+    "final_seals": 1,
+    "window": "sealed",
+    "refs": [],
+    "http_requests": 4,
+    "endpoints": [
+      "GET /events/keyset",
+      "GET /nba/v1/games"
+    ]
+  },
+  "late": {
+    "errors": [
+      "1377580 T-60m: arrival or persistence outside decision window"
+    ],
+    "choices": 0,
+    "window": "missed",
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "clock_pairs": {
+    "state": "sealed",
+    "match": {
+      "delta_seconds": -600.0,
+      "reason": null,
+      "source_kickoff": "2026-11-28T01:40:00.000000Z",
+      "status": "within_tolerance",
+      "venue_event_id": "1377580",
+      "venue_kickoff": "2026-11-28T01:30:00.000000Z",
+      "venue_version": 1
+    },
+    "refs": [],
+    "win": null,
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "past_tolerance": {
+    "state": "sealed",
+    "match": {
+      "delta_seconds": -1860.0,
+      "reason": "venue_same_pair_schedule_mismatch",
+      "source_kickoff": "2026-11-28T02:01:00.000000Z",
+      "status": "outside_tolerance",
+      "venue_event_id": "1377580",
+      "venue_kickoff": "2026-11-28T01:30:00.000000Z",
+      "venue_version": 1
+    },
+    "refs": [],
+    "http_requests": 10,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "earlier_close": {
+    "errors": [
+      "1377580 CLOSE: score_source_scheduled_tip_reached",
+      "1377580 CLOSE: score_source_scheduled_tip_reached"
+    ],
+    "closes": 0,
+    "http_requests": 10,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "ambiguous_venue": {
+    "errors": [
+      {
+        "game_id": "bdl:710001",
+        "horizon": "T-60m",
+        "error": "market schedule conflict: ambiguous_venue_fixture"
+      }
+    ],
+    "windows": [
+      [
+        "pending",
+        "market schedule conflict: ambiguous_venue_fixture"
+      ]
+    ],
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "live_missing_datetime": {
+    "source_state": "ok",
+    "bdl_current": [
+      [
+        "live",
+        1,
+        null,
+        "2026-11-27"
+      ]
+    ],
+    "market_state": "degraded",
+    "errors": [
+      "1377580 T-60m: score_source_observed_play"
+    ],
+    "books": 0,
+    "http_requests": 5,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games"
+    ]
+  },
+  "nullable_live_duplicate": {
+    "window": "missed",
+    "note": "market schedule conflict: ambiguous_score_source_fixture",
+    "market_errors": [
+      "1377580 T-60m: ambiguous_score_source_fixture",
+      "1377580 T-60m: ambiguous_score_source_fixture"
+    ],
+    "fixture_errors": [
+      {
+        "game_id": "bdl:710001",
+        "horizon": "T-60m",
+        "error": "market schedule conflict: ambiguous_score_source_fixture"
+      }
+    ],
+    "refs": [],
+    "bdl": [
+      [
+        "bdl:710001",
+        "scheduled",
+        "2026-11-28T01:30:00.000000Z"
+      ],
+      [
+        "bdl:710002",
+        "live",
+        null
+      ]
+    ],
+    "http_requests": 7,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games"
+    ]
+  },
+  "small_revision_nofresh": {
+    "superseded": "superseded",
+    "new": "sealed",
+    "original_at": "2026-11-28T00:27:00.150000+00:00",
+    "revision_available_by": "2026-11-28T00:27:45.090000+00:00",
+    "admitted_book": null,
+    "after_revision": null,
+    "market_families": [],
+    "http_requests": 10,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "small_revision_recapture": {
+    "superseded": "superseded",
+    "new": "sealed",
+    "original_at": "2026-11-28T00:27:00.150000+00:00",
+    "revision_available_by": "2026-11-28T00:27:45.090000+00:00",
+    "admitted_book": "2026-11-28T00:28:10.100000Z",
+    "after_revision": true,
+    "market_families": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+    ],
+    "http_requests": 12,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "source_schedule_replaced": {
+    "source_state": "ok",
+    "errors": [],
+    "windows": [
+      [
+        "superseded",
+        "2026-11-28T01:30:00.000000Z",
+        [],
+        null
+      ],
+      [
+        "sealed",
+        "2026-11-28T01:40:00.000000Z",
+        [],
+        "within_tolerance"
+      ]
+    ],
+    "http_requests": 10,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "terminal_revisions": {
+    "initial_seal": "sealed",
+    "sealed_hash": "9ca5837783cd8d89e820907fc768d0435c1368922c310a046b24d182fa9f92b0",
+    "history": [
+      {
+        "win": "awaiting_score",
+        "game_grading": "awaiting_result",
+        "overtime": 0,
+        "void": 1,
+        "window_sha": "9ca5837783cd8d89e820907fc768d0435c1368922c310a046b24d182fa9f92b0",
+        "revision": 1
+      },
+      {
+        "win": "match",
+        "game_grading": "scored",
+        "overtime": 1,
+        "void": 1,
+        "window_sha": "9ca5837783cd8d89e820907fc768d0435c1368922c310a046b24d182fa9f92b0",
+        "revision": 2
+      },
+      {
+        "win": "disagrees",
+        "game_grading": "scored",
+        "overtime": 0,
+        "void": 1,
+        "window_sha": "9ca5837783cd8d89e820907fc768d0435c1368922c310a046b24d182fa9f92b0",
+        "revision": 3
+      },
+      {
+        "win": "awaiting_score",
+        "game_grading": "awaiting_result",
+        "overtime": 0,
+        "void": 1,
+        "window_sha": "9ca5837783cd8d89e820907fc768d0435c1368922c310a046b24d182fa9f92b0",
+        "revision": 4
+      },
+      {
+        "win": "match",
+        "game_grading": "scored",
+        "overtime": 1,
+        "void": 1,
+        "window_sha": "9ca5837783cd8d89e820907fc768d0435c1368922c310a046b24d182fa9f92b0",
+        "revision": 5
+      }
+    ],
+    "prior_report_unchanged": true,
+    "week": {
+      "native_conditions": 4,
+      "counts": {
+        "awaiting_score": 0,
+        "disagrees": 0,
+        "invalid_native_evidence": 0,
+        "invalid_score": 0,
+        "match": 3,
+        "outside_rules": 0,
+        "pending_reconciliation": 0,
+        "unpaired": 0,
+        "void_50_50": 1
+      },
+      "verified_overtime_total_games": 1
+    },
+    "http_requests": 32,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "GET /v2/tokens",
+      "POST /books"
+    ]
+  },
+  "rate": {
+    "first": [
+      "1377580 T-60m: HTTP Error 429: Too Many Requests",
+      "venue Retry-After in force"
+    ],
+    "suppressed": true,
+    "retry": [
+      "venue Retry-After in force"
+    ],
+    "recovered": "ok",
+    "choices": 4,
+    "http_requests": 9,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/keyset",
+      "GET /nba/v1/games",
+      "POST /books"
+    ]
+  },
+  "budget": {
+    "first_errors": [
+      "NBA shared per-minute request budget reached"
+    ],
+    "second_errors": [],
+    "count_first": 24,
+    "count_second": 8,
+    "max_rolling_60s": 24,
+    "observed_windows": 15,
+    "market_sides": 60,
+    "http_requests": 32,
+    "endpoints": [
+      "GET /events/1377580",
+      "GET /events/1500000",
+      "GET /events/1500001",
+      "GET /events/1500002",
+      "GET /events/1500003",
+      "GET /events/1500004",
+      "GET /events/1500005",
+      "GET /events/1500006",
+      "GET /events/1500007",
+      "GET /events/1500008",
+      "GET /events/1500009",
+      "GET /events/1500010",
+      "GET /events/1500011",
+      "GET /events/1500012",
+      "GET /events/1500013",
+      "GET /events/keyset",
+      "POST /books"
+    ]
+  }
+}

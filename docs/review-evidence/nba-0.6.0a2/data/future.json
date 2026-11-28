@@ -1,0 +1,11 @@
+{
+  "reported_future_game_date": "2026-11-28",
+  "current_et_date": "2026-11-27",
+  "future_label": "unknown",
+  "scan": "source_quality",
+  "before_training_games": 35,
+  "after_training_games": 35,
+  "before_n2": 0.8571428571428571,
+  "after_n2": 0.8571428571428571,
+  "same_training_hash": true
+}
