@@ -35,6 +35,61 @@ class SeasonOperations(unittest.TestCase):
         self.addCleanup(folder.cleanup)
         self.root = Path(folder.name)
 
+    def test_long_service_renews_once_per_lease_and_yields_to_a_new_owner(self):
+        first = season.Coordinator(self.root)
+        second = season.Coordinator(self.root, once=True)
+        self.addCleanup(first.close)
+        self.addCleanup(second.close)
+        first_job, second_job = Future(), Future()
+        self.addCleanup(first_job.cancel)
+        self.addCleanup(second_job.cancel)
+
+        def stamp(minutes):
+            return store.iso(NOW + timedelta(minutes=minutes))
+
+        def tick(coordinator, minutes):
+            with patch.object(store, "now_utc", return_value=stamp(minutes)):
+                return coordinator.tick()
+
+        def lease():
+            with closing(season._db(self.root)) as db:
+                return tuple(db.execute(
+                    "SELECT owner,until,updated FROM season_services WHERE service='forecast'"
+                ).fetchone())
+
+        with (
+            patch.dict(season._SERVICES, {"forecast": 30}, clear=True),
+            patch.object(season, "_plan"),
+            patch.object(season.season_readiness, "release", return_value={"ready": True}),
+            patch.object(first.pools["service"], "submit", return_value=first_job) as first_submit,
+            patch.object(second.pools["service"], "submit", return_value=second_job) as second_submit,
+        ):
+            self.assertEqual(tick(first, 0), 1)
+            self.assertEqual(tick(first, 1), 0)
+            self.assertEqual(lease(), (first.identity, stamp(5), None))
+            self.assertEqual(tick(first, 4), 0)
+            self.assertEqual(lease(), (first.identity, stamp(9), None))
+            self.assertEqual(tick(second, 6), 0)
+
+            # Even a delayed heartbeat cannot queue another local copy.
+            self.assertEqual(tick(first, 10), 0)
+            self.assertEqual(lease(), (first.identity, stamp(15), None))
+            self.assertEqual(tick(second, 16), 1)
+            self.assertEqual(tick(first, 20), 0)
+            self.assertEqual(lease(), (second.identity, stamp(21), None))
+            self.assertEqual(tick(second, 20), 0)
+            self.assertEqual(lease(), (second.identity, stamp(25), None))
+
+            first_job.set_result({})
+            self.assertEqual(tick(first, 21), 0)
+            self.assertEqual(lease(), (second.identity, stamp(25), None))
+            second_job.set_result({})
+            self.assertEqual(tick(second, 22), 0)
+            self.assertEqual(lease(), (None, None, stamp(22)))
+            self.assertEqual(tick(second, 23), 0)
+            first_submit.assert_called_once()
+            second_submit.assert_called_once()
+
     def test_no_value_partial_and_missing_decisions_are_distinct_and_rate_limited(self):
         acct = lambda acts, gaps: season_health.account_summary(
             "main",

@@ -1,0 +1,15 @@
+[Unit]
+Description=Collect public NBA market evidence with the service resolver
+After=network-online.target
+RequiresMountsFor=/mnt/d/polymarket861-nba
+
+[Service]
+Type=oneshot
+User=pm861-nba
+Group=pm861-nba
+WorkingDirectory=/mnt/d/polymarket861-nba
+UMask=0077
+NoNewPrivileges=yes
+BindReadOnlyPaths=/etc/polymarket861/epl-resolver:/run/systemd/resolve
+ExecStart=/mnt/d/polymarket861-nba/.local/share/polymarket861-nba/venv/bin/pm861 --data-dir /mnt/d/polymarket861-nba/.local/share/polymarket861-nba/state nba run --component markets
+TimeoutStartSec=150s

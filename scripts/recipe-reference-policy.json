@@ -23,6 +23,15 @@
       "store.archive_bytes"
     ]
   },
+  "contract_storage.payload_body": {
+    "reason": "Canonicalizes the normalized contract with placeholders for its receipt time and source hash. The catalogue publisher writes the event's actual kickoff, receipt time and source hash independently from the native event.",
+    "callers": [
+      "market_archive._index_catalog_page"
+    ],
+    "reviewed_bindings": {
+      "contract_storage.payload_body": "eaf7f408ba6fbf0a5acad1094ac00ddc12a6bb80246c115a671813037ab9713a"
+    }
+  },
   "contract_storage.prepare": {
     "reason": "Market contract table creation and migration. The EPL kickoff evidence is reread from the native event.",
     "callers": [

@@ -56,3 +56,36 @@ sudo systemctl enable --now pm861-paper-10000.timer pm861-recommendation-feed.ti
 - **发布核对。** 已逐字节核对 9 个运行脚本、校准表和 9 个在役 systemd 单元或覆盖文件。4 项通知回归使用临时账本和发送替身，覆盖旧仓静默、成交不匹配、去重、失败重试及延迟回执。隔离目录复验了账户监控、扫描器的校准依据和通知命令入口。在仓库根目录执行 `python -m unittest discover -s tests -p test_paper_opening_notifications.py -v` 可重跑通知回归。
 
 后续查账优先看 `account-status.json` 的 `as_of`、`positions` 及 `decisions`。查候选缺项看 `feed.json` 的 `checked_at`、`coverage.gaps` 及每条记录的 `valid_until`。若账本确有新仓而微信未到，先看服务账户的 `journalctl --user -u pm861-weixin-recommendations.service` 和通知数据库中的 `attempts.status`。Hermes 返回 `ret=-2 session` 时，用户可向原机器人发一条消息恢复会话。账本、聊天正文、接收者信息、密钥及备份归档保留在部署机。
+
+## 11 月 28 日英超盘口恢复
+
+当天有两种独立故障。旧进程积累了 47 条 `CLOSE-WAIT` 连接，目录和订单簿请求持续超时；在同一服务解析环境中新进程能读到真实订单簿。重启英超后，14:20 四场常规盘口各收 48 份，共 192 份，其中 136 份有双边报价。14:30 的九个盘口窗口又全部漏采，当窗主调度在等待 SQLite 写锁，九场均未发出 CLOB 请求。14:35 四场盘口任务明确返回 `database is locked`。日志、线程栈、WAL 锁采样和逐场回执留存部署机。
+
+周目录及历史目录都曾把一整页比赛的合约处理放在主库写事务中。修复把目录页的解析、归一化及合约准备移入连接私有的临时表，再在一次事务中发布全页赛事、状态及合约回执。这样可以保留原始收件时刻、重复收件的行号及整页回滚。调度器也为在途服务续租，避免一次预测或赛果任务运行超过五分钟后重复占用工人和数据库。已完成的任务仍按自身间隔排下一次。[目录归档](../../src/polymarket861/market_archive.py) · [赛季调度](../../src/polymarket861/season.py) · [目录回归](../../tests/test_market_archive.py) · [租约回归](../../tests/test_season_operations.py)
+
+后台恢复检查每两分钟读取请求账本。英超进程须已运行 30 分钟，过去 15 分钟 Gamma 和 CLOB 都发生总时限超时，首个超时距今至少 10 分钟，最近 3 分钟仍有超时，期间没有成功或上游 HTTP 回应，也没有生效中的限流冷却。再用该服务的解析器从新进程读取 Gamma 目录和近期真实 token 的 CLOB 订单簿，复核 PID 和账本后才请求 systemd 重启。写锁、过窗、单端点超时由原调度如实记入缺口。`Result=exec-condition` 配合条件退出码 1 表示本轮跳过重启。[恢复检查](../../deploy/paper-automation/epl_http_recovery.py) · [回归用例](../../tests/test_epl_http_recovery.py)
+
+在本机从仓库根目录安装或更新这个检查。探针使用单元内列明的独立足球解释器和[英超解析配置](../../deploy/examples/epl-resolver/)，迁机时先核实这两个路径。
+
+```bash
+src=deploy/paper-automation
+sudo install -d -m 0755 /usr/local/lib/polymarket861
+sudo install -m 0644 "$src/epl_http_recovery.py" /usr/local/lib/polymarket861/
+sudo install -m 0644 "$src/systemd/system/"pm861-epl-http-recovery.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now pm861-epl-http-recovery.timer
+systemctl list-timers pm861-epl-http-recovery.timer
+journalctl -u pm861-epl-http-recovery.service --since today
+```
+
+英超调度和看门狗的 `95-epl-collection.conf` 指向独立修复安装。切换前按本机实际安装核对新旧 B1 配方、现有封存和选单实验。配方摘要变化时依照五季对照和具名批准流程办理；绑定了原物理实现的选单实验仍需原安装复核。回退时保留新增的原件与账本，若新配方已经生效，先完成同库反向比较与签核，再撤除这两份覆盖文件、`daemon-reload` 并重启英超。单独停用自动重启用 `sudo systemctl disable --now pm861-epl-http-recovery.timer`。[英超安装与反向签核](DEPLOY-0.5.0a4.md) · [本机系统单元](../../deploy/paper-automation/systemd/system/)
+
+核对窗口时在仓库根目录只读打开 `.pm861/runtime.sqlite3`，从 `season_slots` 按 UTC `target`、`stage`、`role`、`fixture` 看 `state` 和 `detail`。针对所选场次，将 `ma_requests` 中 `operation='books'`、`status='ok'` 的 `sha` 和 `received_at` 与 `ma_books` 对齐，核实在截止前实收的 token 和其中有双边报价的数量。`done`、抓到单边报价和有可执行双边报价是三种不同的统计。盘口采样本身不会触发微信。
+
+## 同机 NBA 后台与微信
+
+NBA 使用独立服务账户 `pm861-nba`。11 月 28 日默认 DNS 导致公开 Gamma 目录连续失败，专用账户的用户级服务也无法创建解析器挂载命名空间。现场仅把每分钟的 `markets` 定时器迁到系统管理器，由原 NBA 账户运行，保留原解释器、数据目录和命令 `nba run --component markets`。该公开接口无需供应商密钥。赛程、预测、伤停和综合看门狗四项仍由 NBA 账户的用户管理器调度。14:36 首次重新收齐两页目录、15 场，随后综合看门狗恢复正常。[本机 NBA 行情单元](../../deploy/examples/nba-markets-system/) · [NBA 部署及伤停验收](https://github.com/wmqfl861/polymarket861/blob/cc48470e5edd65c5d6df7c04fad120ad77d3245f/docs/nba-plan/OPERATIONS-0.6.0a2.md)
+
+迁移或回退 NBA 行情时先停原层级的 `polymarket861-nba-markets.timer`，等该层级的同名 service 完成，再启用目标层级的 timer，避免两个实例并跑。系统级单元在 `/etc/systemd/system`，用户级原件在 NBA 账户的 `~/.config/systemd/user`。两处均以各自的 `systemctl list-timers` 和 NBA 库的 `nba_market_requests`、`nba_market_runs` 验证。伤停验收以真实赛前窗口的认证回执为准。
+
+持有人指定的首场 NBA 伤停汇总由本机 Hermes 单次任务发送，在最后一个窗口结束后统计 Big Balls 三窗和 DunkAPI 一窗的实收。遇到空窗，报告已有失败原因或标明原因尚未证实。接受的发送会停用该任务。日常微信继续只发模拟账户实际新建仓位；单次任务的送达状态、会话与接收方配置保存在本机。

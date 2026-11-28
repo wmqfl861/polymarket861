@@ -287,33 +287,30 @@ def research_fetch(root, op, selector, url, params=None, *, attempts=3):
             time.sleep(pause)
 
 
-def _ingest(db, event, reply, sha, *, sport=None):
+def _event_rows(event, reply, sha, *, sport=None):
     match = provider.SPORT_FIXTURES[sport or "epl"].fullmatch(str(event.get("slug", "")))
     if not match:
+        return None
+    identity = (
+        event["slug"], match[1], str(event["id"]), event.get("startTime"), reply.received_at, sha
+    )
+    state = (
+        event["slug"], reply.received_at, sha,
+        event.get("live") if type(event.get("live")) is bool else None,
+        event.get("ended") if type(event.get("ended")) is bool else None,
+    )
+    return identity, state
+
+
+def _ingest(db, event, reply, sha, *, sport=None):
+    rows = _event_rows(event, reply, sha, sport=sport)
+    if rows is None:
         return False
-    db.execute(
-        "INSERT OR IGNORE INTO ma_events VALUES (?,?,?,?,?,?)",
-        (
-            event["slug"],
-            match[1],
-            str(event["id"]),
-            event.get("startTime"),
-            reply.received_at,
-            sha,
-        ),
-    )
-    db.execute(
-        "INSERT OR IGNORE INTO ma_event_states VALUES(?,?,?,?,?)",
-        (
-            event["slug"],
-            reply.received_at,
-            sha,
-            event.get("live") if type(event.get("live")) is bool else None,
-            event.get("ended") if type(event.get("ended")) is bool else None,
-        ),
-    )
+    identity, state = rows
+    db.execute("INSERT OR IGNORE INTO ma_events VALUES (?,?,?,?,?,?)", identity)
+    db.execute("INSERT OR IGNORE INTO ma_event_states VALUES(?,?,?,?,?)", state)
     for contract in provider.normalized_markets(event, sport=sport or "epl", project_teams=sport is not None):
-        contract_storage.record(db, match[1], event["slug"], reply.received_at, sha, contract)
+        contract_storage.record(db, identity[1], event["slug"], reply.received_at, sha, contract)
     return True
 
 
@@ -417,10 +414,7 @@ def catalog_window(root, selector, start, end, *, pages=10, page_size=50, offset
         data, reply, sha = _fetch(root, "catalog", selector, GAMMA + "/events", params)
         if not isinstance(data, list):
             raise ValueError("catalog did not return an array")
-        with closing(database(root)) as db, db:
-            for event in data:
-                if _ingest(db, event, reply, sha):
-                    all_slugs.add(FIXTURE.fullmatch(event["slug"])[1])
+        all_slugs.update(_index_catalog_page(root, data, reply, sha))
         offset += len(data)
         if len(data) < page_size:
             done = True
@@ -432,6 +426,61 @@ def catalog_window(root, selector, start, end, *, pages=10, page_size=50, offset
         "page_walk_complete": done,
         "denominator": "events matching the dated catalog query, not all EPL fixtures",
     }
+
+
+def _index_catalog_page(root, data, reply, sha):
+    fixtures = set()
+    with closing(database(root)) as db:
+        # Stage only in this connection's temporary database. Normalization, encoding
+        # and thousands of Python-to-SQL calls must not hold the archive writer.
+        db.execute("CREATE TEMP TABLE page_events(slug,fixture,event_id,kickoff,received_at,sha,live,ended)")
+        db.execute("CREATE TEMP TABLE page_contracts("
+                   "fixture,event_slug,market_slug,received_at,sha,condition_id,body,payload_id)")
+        payload_lookup = (
+            "SELECT id FROM ma_contract_payloads p WHERE p.derived=1 AND p.body=page_contracts.body"
+        )
+        with db:
+            for event in data:
+                rows = _event_rows(event, reply, sha)
+                if rows is None:
+                    continue
+                identity, state = rows
+                slug, fixture = identity[:2]
+                fixtures.add(fixture)
+                db.execute("INSERT INTO page_events VALUES(?,?,?,?,?,?,?,?)", (*identity, *state[3:]))
+                db.executemany(
+                    "INSERT INTO page_contracts VALUES(?,?,?,?,?,?,?,NULL)",
+                    (
+                        (fixture, slug, market["slug"], reply.received_at, sha,
+                         market.get("condition_id"), contract_storage.payload_body(market))
+                        for market in provider.normalized_markets(event)
+                    ),
+                )
+            # Repeated catalogue pages mostly reference existing immutable bodies.
+            # Look up the indexed JSON bodies while other archive writers are free.
+            db.execute(f"UPDATE page_contracts SET payload_id=({payload_lookup})")
+        if fixtures:
+            # Publish the whole page in one transaction. Use input order for every
+            # INSERT OR IGNORE so duplicate keys have the same first receipt as before.
+            with db:
+                db.execute("INSERT OR IGNORE INTO ma_events SELECT slug,fixture,event_id,kickoff,received_at,sha "
+                           "FROM page_events ORDER BY rowid")
+                db.execute("INSERT OR IGNORE INTO ma_event_states SELECT slug,received_at,sha,live,ended "
+                           "FROM page_events ORDER BY rowid")
+                # Check the prepared bindings by integer primary key inside the write
+                # transaction. Corrections between staging and publication remain safe.
+                db.execute("UPDATE page_contracts SET payload_id=NULL WHERE payload_id IS NOT NULL "
+                           "AND NOT EXISTS(SELECT 1 FROM ma_contract_payloads p WHERE p.id=page_contracts.payload_id "
+                           "AND p.derived=1 AND p.body=page_contracts.body)")
+                db.execute("INSERT OR IGNORE INTO ma_contract_payloads(derived,body) "
+                           "SELECT 1,body FROM page_contracts WHERE payload_id IS NULL ORDER BY rowid")
+                db.execute(f"UPDATE page_contracts SET payload_id=({payload_lookup}) WHERE payload_id IS NULL")
+                db.execute(
+                    "INSERT OR IGNORE INTO ma_contract_receipts(fixture,event_slug,market_slug,received_at,sha,condition_id,payload_id) "
+                    "SELECT fixture,event_slug,market_slug,received_at,sha,condition_id,payload_id "
+                    "FROM page_contracts ORDER BY rowid"
+                )
+    return fixtures
 
 
 def contracts(root, fixture, *, as_of=None):

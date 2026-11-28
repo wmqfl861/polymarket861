@@ -832,6 +832,7 @@ _SERVICES = {
     "history": 120,
     "news": 60,
 }
+_SERVICE_LEASE = timedelta(minutes=5)
 
 
 class Coordinator:
@@ -1104,6 +1105,9 @@ class Coordinator:
             if f.done():
                 self._finish(f, kind, row)
                 del self.futures[f]
+        active_services = {
+            row["service"] for kind, row in self.futures.values() if kind == "service"
+        }
         now = store.instant(store.now_utc())
         stamp = store.iso(now)
         if self.first_tick:
@@ -1150,8 +1154,17 @@ class Coordinator:
                 "AND role IN ('decision_book','execution_book') AND deadline>=? AND target<=?",
                 (stamp, store.iso(now + timedelta(seconds=100))),
             ).fetchone()[0]
+            # Planning and acquiring the writer lock can take time. Start the
+            # lease on this transaction's clock and renew only in its last minute.
+            lease_clock = store.instant(store.now_utc())
+            lease_until = store.iso(lease_clock + _SERVICE_LEASE)
+            renew_by = store.iso(lease_clock + timedelta(minutes=1))
+            db.executemany(
+                "UPDATE season_services SET until=? WHERE service=? AND owner=? AND until<=?",
+                ((lease_until, name, self.identity, renew_by) for name in active_services),
+            )
             for name in _SERVICES:
-                if self.once and name in self.services_started:
+                if name in active_services or (self.once and name in self.services_started):
                     continue
                 # A fresh runtime must finish its first catalogue attempt before
                 # results reconcile the two sources, then news can claim verified games.
@@ -1180,7 +1193,7 @@ class Coordinator:
                     continue
                 db.execute(
                     "UPDATE season_services SET owner=?,until=? WHERE service=?",
-                    (self.identity, store.iso(now + timedelta(minutes=5)), name),
+                    (self.identity, lease_until, name),
                 )
                 pool = self.pools["news" if name == "news" else "service"]
                 fut = pool.submit(

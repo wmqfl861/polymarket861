@@ -1,0 +1,11 @@
+[Unit]
+Description=Collect public NBA market evidence once per minute
+
+[Timer]
+OnStartupSec=15s
+OnUnitActiveSec=1min
+AccuracySec=1s
+Unit=polymarket861-nba-markets.service
+
+[Install]
+WantedBy=timers.target

@@ -37,10 +37,14 @@ def _record(db, keys, condition, derived, body, rowid=None):
     )
 
 
-def record(db, fixture, event_slug, received, sha, contract):
+def payload_body(contract):
     # Null placeholders preserve the canonical field order when SQLite reconstructs the receipt.
-    body = canonical(dict(contract, recorded_at=None, source_sha256=None))
-    _record(db, (fixture, event_slug, contract["slug"], received, sha), contract.get("condition_id"), 1, body)
+    return canonical(dict(contract, recorded_at=None, source_sha256=None))
+
+
+def record(db, fixture, event_slug, received, sha, contract):
+    _record(db, (fixture, event_slug, contract["slug"], received, sha),
+            contract.get("condition_id"), 1, payload_body(contract))
 
 
 def _migrate(db):

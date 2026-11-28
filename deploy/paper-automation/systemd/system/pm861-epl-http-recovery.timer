@@ -1,0 +1,9 @@
+[Unit]
+Description=Check the EPL collector's recent market receipts every two minutes
+
+[Timer]
+OnCalendar=*-*-* *:0/2:00
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target

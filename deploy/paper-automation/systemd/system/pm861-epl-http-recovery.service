@@ -1,0 +1,16 @@
+[Unit]
+Description=Recover EPL public HTTP collection after a confirmed local stall
+After=network-online.target
+RequiresMountsFor=/mnt/d/polymarket861
+
+[Service]
+Type=oneshot
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/mnt/d/polymarket861
+BindReadOnlyPaths=/etc/polymarket861/epl-resolver:/run/systemd/resolve
+ExecCondition=/mnt/d/polymarket861/.local-deploy/releases/0.5.0a4-6844caf/venv/bin/python -I /usr/local/lib/polymarket861/epl_http_recovery.py /mnt/d/polymarket861/.pm861/runtime.sqlite3
+ExecStart=+/usr/bin/systemctl --no-block try-restart polymarket861-season.service
+TimeoutStartSec=35s
+UMask=0077
+NoNewPrivileges=yes

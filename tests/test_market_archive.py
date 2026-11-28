@@ -1,4 +1,6 @@
 import json
+import sqlite3
+from contextlib import closing
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -100,6 +102,76 @@ class ArchiveTests(TestCase):
         )
         data["markets"][0]["sportsMarketType"] = "soccer_first_half_team_totals"
         self.assertIsNone(provider.normalized_markets(data)[0]["family"])
+
+    def test_catalog_normalization_leaves_archive_writer_available(self):
+        events = [event(), event("-more-markets")]
+        receipt = reply(events)
+        normalize = provider.normalized_markets
+        seen = []
+
+        def check_writer(item, **kwargs):
+            with closing(sqlite3.connect(self.root / "runtime.sqlite3", timeout=0)) as db, db:
+                db.execute("BEGIN IMMEDIATE")
+                self.assertEqual(db.execute("SELECT count(*) FROM ma_events").fetchone()[0], 0)
+            seen.append(item["slug"])
+            return normalize(item, **kwargs)
+
+        with (
+            patch.object(archive, "league_tag", return_value=82),
+            patch.object(archive, "_fetch", return_value=(events, receipt, "source")),
+            patch.object(provider, "normalized_markets", side_effect=check_writer),
+        ):
+            result = archive.catalog_window(self.root, "week", T.isoformat(), (T + timedelta(days=1)).isoformat())
+        self.assertEqual(seen, [item["slug"] for item in events])
+        self.assertEqual(result["fixtures_observed"], [FIX])
+        self.assertTrue(result["page_walk_complete"])
+
+    def test_catalog_publication_is_atomic_and_retry_preserves_row_ids(self):
+        events = [event(), event("-more-markets")]
+        receipt = reply(events)
+        tables = ("ma_events", "ma_event_states", "ma_contract_payloads", "ma_contract_receipts")
+        with closing(archive.database(self.root)) as db, db:
+            db.execute(
+                "CREATE TRIGGER reject_last BEFORE INSERT ON ma_contract_receipts "
+                "WHEN NEW.event_slug LIKE '%-more-markets' BEGIN SELECT RAISE(ABORT,'publication failed'); END"
+            )
+        with self.assertRaisesRegex(sqlite3.IntegrityError, "publication failed"):
+            archive._index_catalog_page(self.root, events, receipt, "source")
+        with closing(archive.database(self.root)) as db, db:
+            for table in tables:
+                self.assertEqual(db.execute(f"SELECT count(*) FROM {table}").fetchone()[0], 0, table)
+            db.execute("DROP TRIGGER reject_last")
+        rows = []
+        for _ in range(2):
+            archive._index_catalog_page(self.root, events, receipt, "source")
+            with closing(archive.database(self.root)) as db:
+                rows.append([
+                    list(map(tuple, db.execute(f"SELECT rowid,* FROM {table} ORDER BY rowid")))
+                    for table in tables
+                ])
+        self.assertEqual(rows[0], rows[1])
+        self.assertEqual([len(group) for group in rows[0]], [2, 2, 2, 2])
+
+    def test_catalog_rechecks_a_prepared_payload_id_at_publication(self):
+        events = [event()]
+        archive._index_catalog_page(self.root, events, reply(events), "first")
+        with closing(archive.database(self.root)) as db, db:
+            db.execute(
+                "CREATE TRIGGER change_binding AFTER INSERT ON ma_events WHEN NEW.sha='second' "
+                "BEGIN UPDATE ma_contract_payloads SET body='{}' WHERE id=1; END"
+            )
+        second = reply(events, T + timedelta(minutes=1))
+        archive._index_catalog_page(self.root, events, second, "second")
+        with closing(archive.database(self.root)) as db:
+            payload_id, payload = db.execute(
+                "SELECT r.payload_id,c.payload FROM ma_contract_receipts r JOIN ma_contracts c "
+                "ON c.rowid=r.id WHERE r.sha='second'"
+            ).fetchone()
+        self.assertNotEqual(payload_id, 1)
+        restored = json.loads(payload)
+        self.assertEqual(restored["recorded_at"], second.received_at)
+        self.assertEqual(restored["source_sha256"], "second")
+        self.assertEqual(restored["condition_id"], CON)
 
     def test_legacy_moneyline_strict_question(self):
         data = event()
