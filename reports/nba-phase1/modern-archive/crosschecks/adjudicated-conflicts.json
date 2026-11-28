@@ -1,0 +1,128 @@
+[
+ {
+  "date": "2023-11-20",
+  "home": "SAS",
+  "away": "LAC",
+  "home_score": 99,
+  "away_score": 124,
+  "official_game": "https://www.nba.com/game/0022300223",
+  "outcome": "retained"
+ },
+ {
+  "date": "2024-10-23",
+  "home": "POR",
+  "away": "GSW",
+  "home_score": 104,
+  "away_score": 140,
+  "official_game": "https://www.nba.com/game/0022400072",
+  "outcome": "retained"
+ },
+ {
+  "date": "2024-11-13",
+  "home": "BKN",
+  "away": "BOS",
+  "home_score": 114,
+  "away_score": 139,
+  "official_game": "https://www.nba.com/game/0022400218",
+  "outcome": "retained"
+ },
+ {
+  "date": "2024-11-17",
+  "home": "POR",
+  "away": "ATL",
+  "home_score": 114,
+  "away_score": 110,
+  "official_game": "https://www.nba.com/game/0022400239",
+  "outcome": "corrected"
+ },
+ {
+  "date": "2025-02-08",
+  "home": "LAC",
+  "away": "UTA",
+  "home_score": 130,
+  "away_score": 110,
+  "official_game": "https://www.nba.com/game/0022400751",
+  "outcome": "retained"
+ },
+ {
+  "date": "2025-03-13",
+  "home": "MIL",
+  "away": "LAL",
+  "home_score": 126,
+  "away_score": 106,
+  "official_game": "https://www.nba.com/game/0022400955",
+  "outcome": "retained"
+ },
+ {
+  "date": "2025-04-10",
+  "home": "DET",
+  "away": "NYK",
+  "home_score": 115,
+  "away_score": 106,
+  "official_game": "https://www.nba.com/game/0022401167",
+  "outcome": "retained"
+ },
+ {
+  "date": "2025-10-22",
+  "home": "ATL",
+  "away": "TOR",
+  "home_score": 118,
+  "away_score": 138,
+  "official_game": "https://www.nba.com/game/0022500082",
+  "outcome": "retained"
+ },
+ {
+  "date": "2025-11-11",
+  "home": "BKN",
+  "away": "TOR",
+  "home_score": 109,
+  "away_score": 119,
+  "official_game": "https://www.nba.com/game/0022500207",
+  "outcome": "corrected"
+ },
+ {
+  "date": "2026-01-02",
+  "home": "CLE",
+  "away": "DEN",
+  "home_score": 113,
+  "away_score": 108,
+  "official_game": "https://www.nba.com/game/0022500478",
+  "outcome": "retained"
+ },
+ {
+  "date": "2026-01-23",
+  "home": "ATL",
+  "away": "PHX",
+  "home_score": 110,
+  "away_score": 103,
+  "official_game": "https://www.nba.com/game/0022500636",
+  "outcome": "retained"
+ },
+ {
+  "date": "2026-02-08",
+  "home": "BOS",
+  "away": "NYK",
+  "home_score": 89,
+  "away_score": 111,
+  "official_game": "https://www.nba.com/game/0022500757",
+  "outcome": "retained"
+ },
+ {
+  "date": "2026-03-16",
+  "home": "HOU",
+  "away": "LAL",
+  "home_score": 92,
+  "away_score": 100,
+  "official_game": "https://www.nba.com/game/0022500989",
+  "outcome": "retained"
+ },
+ {
+  "date": "2026-04-07",
+  "home": "TOR",
+  "away": "MIA",
+  "home_score": 121,
+  "away_score": 95,
+  "official_game": "https://www.nba.com/game/0022501151",
+  "outcome": "retained"
+ }
+]

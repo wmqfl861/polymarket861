@@ -1,0 +1,218 @@
+{
+  "as_of": "2026-11-28T01:14:01.439988Z",
+  "counts": {
+    "missing_pregame_source": 14
+  },
+  "days": [
+    {
+      "catalogue_proof": null,
+      "complete_day": false,
+      "counts": {
+        "missing_pregame_source": 6
+      },
+      "date_et": "2026-11-27",
+      "fixtures": [
+        {
+          "away": "MEM",
+          "delta_seconds": null,
+          "home": "MIN",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1377580",
+          "venue_kickoff": "2026-11-28T01:30:00.000000Z"
+        },
+        {
+          "away": "DAL",
+          "delta_seconds": null,
+          "home": "PHX",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1377581",
+          "venue_kickoff": "2026-11-28T02:00:00.000000Z"
+        },
+        {
+          "away": "NOP",
+          "delta_seconds": null,
+          "home": "LAC",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1377584",
+          "venue_kickoff": "2026-11-28T02:30:00.000000Z"
+        },
+        {
+          "away": "GSW",
+          "delta_seconds": null,
+          "home": "POR",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1377585",
+          "venue_kickoff": "2026-11-28T02:30:00.000000Z"
+        },
+        {
+          "away": "LAL",
+          "delta_seconds": null,
+          "home": "SAS",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1377582",
+          "venue_kickoff": "2026-11-28T02:30:00.000000Z"
+        },
+        {
+          "away": "DEN",
+          "delta_seconds": null,
+          "home": "UTA",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1377583",
+          "venue_kickoff": "2026-11-28T02:30:00.000000Z"
+        }
+      ],
+      "paired": 0,
+      "regular_paired": 0,
+      "score_scan_sha256": null
+    },
+    {
+      "catalogue_proof": null,
+      "complete_day": false,
+      "counts": {
+        "missing_pregame_source": 5
+      },
+      "date_et": "2026-11-28",
+      "fixtures": [
+        {
+          "away": "ORL",
+          "delta_seconds": null,
+          "home": "WAS",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1384629",
+          "venue_kickoff": "2026-11-28T22:00:00.000000Z"
+        },
+        {
+          "away": "BKN",
+          "delta_seconds": null,
+          "home": "CHA",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1384630",
+          "venue_kickoff": "2026-11-28T23:00:00.000000Z"
+        },
+        {
+          "away": "IND",
+          "delta_seconds": null,
+          "home": "CHI",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1384631",
+          "venue_kickoff": "2026-11-29T01:00:00.000000Z"
+        },
+        {
+          "away": "OKC",
+          "delta_seconds": null,
+          "home": "MIL",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1384632",
+          "venue_kickoff": "2026-11-29T01:00:00.000000Z"
+        },
+        {
+          "away": "PHI",
+          "delta_seconds": null,
+          "home": "HOU",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1384634",
+          "venue_kickoff": "2026-11-29T01:30:00.000000Z"
+        }
+      ],
+      "paired": 0,
+      "regular_paired": 0,
+      "score_scan_sha256": null
+    },
+    {
+      "catalogue_proof": null,
+      "complete_day": false,
+      "counts": {
+        "missing_pregame_source": 3
+      },
+      "date_et": "2026-11-29",
+      "fixtures": [
+        {
+          "away": "MIA",
+          "delta_seconds": null,
+          "home": "CLE",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1392367",
+          "venue_kickoff": "2026-11-29T20:30:00.000000Z"
+        },
+        {
+          "away": "LAL",
+          "delta_seconds": null,
+          "home": "MEM",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1392363",
+          "venue_kickoff": "2026-11-29T21:00:00.000000Z"
+        },
+        {
+          "away": "BOS",
+          "delta_seconds": null,
+          "home": "SAS",
+          "reason": "no_paired_score_schedule",
+          "source_game_id": null,
+          "source_kickoff": null,
+          "stage": "unknown",
+          "status": "missing_pregame_source",
+          "venue_event_id": "1392365",
+          "venue_kickoff": "2026-11-29T21:00:00.000000Z"
+        }
+      ],
+      "paired": 0,
+      "regular_paired": 0,
+      "score_scan_sha256": null
+    }
+  ],
+  "enough_days": false,
+  "paired_days": 0,
+  "threshold_seconds": 1800
+}

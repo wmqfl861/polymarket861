@@ -16,11 +16,11 @@ def fixtures(root, day, as_of):
 
 def register(commands):
     from datetime import date
-    from . import data, markets, model, operations
+    from . import data, markets, model, operations, readiness
 
     parser = commands.add_parser("nba", help="NBA 赛前研究、免费数据和只读盘口")
     actions = parser.add_subparsers(dest="nba_command", required=True)
-    for module in (data, markets, model, operations):
+    for module in (data, markets, model, operations, readiness):
         module.register(actions)
     games = actions.add_parser("fixtures", help="列出本机已收到的美东比赛日赛程和预测用比赛 ID")
     games.add_argument("--date", type=date.fromisoformat, required=True, metavar="YYYY-MM-DD")

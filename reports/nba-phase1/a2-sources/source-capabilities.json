@@ -1,0 +1,118 @@
+{
+  "admission": {
+    "as_of": "2026-11-28T01:37:16.633973Z",
+    "eligible_player_sources": [],
+    "schedule_checks": null,
+    "schedule_state": "missing_key",
+    "schedule_verified": false,
+    "sources": {
+      "bigballs": {
+        "days": [],
+        "game_days": 0,
+        "seven_day_all_windows": false,
+        "seven_day_coverage": false,
+        "seven_day_same_day_status": false,
+        "source_verified": false,
+        "t60_fresh_days": 0,
+        "terms_approved": false,
+        "terms_review": null,
+        "unverified_calendar_dates": [],
+        "upstream_verified": false,
+        "verified_rest_days": []
+      },
+      "dunkapi": {
+        "days": [],
+        "game_days": 0,
+        "seven_day_all_windows": false,
+        "seven_day_coverage": false,
+        "seven_day_same_day_status": false,
+        "source_verified": false,
+        "t60_fresh_days": 0,
+        "terms_approved": false,
+        "terms_review": null,
+        "unverified_calendar_dates": [],
+        "upstream_verified": false,
+        "verified_rest_days": []
+      }
+    }
+  },
+  "eligible_player_sources": [],
+  "generated_at": "2026-11-28T01:37:16.634326Z",
+  "player_model_gate": "closed",
+  "sources": {
+    "balldontlie": {
+      "authenticated_business_receipts": 0,
+      "distinct_sample_hashes_same_utc_day": null,
+      "free_player_injury_endpoint": false,
+      "key_configured": false,
+      "observed_injury_fields": [],
+      "player_model_eligible": false,
+      "receipt_to_ingest_ms": null,
+      "rights": "direct provider §6 internal archive, model training and predictions; §11 third-party rights reserved",
+      "sample_scope": "game schedules and finals",
+      "state": "missing_key",
+      "t_minus_60m_same_day_status_verified": false,
+      "terms": "https://www.balldontlie.io/terms.html",
+      "upstream_identity": "unverified",
+      "upstream_published_at_semantics_verified": false
+    },
+    "bigballs": {
+      "admission": {
+        "days": [],
+        "game_days": 0,
+        "seven_day_all_windows": false,
+        "seven_day_coverage": false,
+        "seven_day_same_day_status": false,
+        "source_verified": false,
+        "t60_fresh_days": 0,
+        "terms_approved": false,
+        "terms_review": null,
+        "unverified_calendar_dates": [],
+        "upstream_verified": false,
+        "verified_rest_days": []
+      },
+      "authenticated_business_receipts": 0,
+      "distinct_sample_hashes_same_utc_day": null,
+      "key_configured": false,
+      "observed_injury_fields": [],
+      "player_model_eligible": false,
+      "receipt_to_ingest_ms": null,
+      "rights": "internal training and retention; raw redistribution restricted; injury upstream unverified",
+      "sample_scope": "current injury list; first page only",
+      "state": "missing_key",
+      "t_minus_60m_same_day_status_verified": false,
+      "terms": "https://bigballsdata.com/legal/terms",
+      "upstream_identity": "unverified",
+      "upstream_published_at_semantics_verified": false
+    },
+    "dunkapi": {
+      "admission": {
+        "days": [],
+        "game_days": 0,
+        "seven_day_all_windows": false,
+        "seven_day_coverage": false,
+        "seven_day_same_day_status": false,
+        "source_verified": false,
+        "t60_fresh_days": 0,
+        "terms_approved": false,
+        "terms_review": null,
+        "unverified_calendar_dates": [],
+        "upstream_verified": false,
+        "verified_rest_days": []
+      },
+      "authenticated_business_receipts": 0,
+      "distinct_sample_hashes_same_utc_day": null,
+      "key_configured": false,
+      "observed_injury_fields": [],
+      "player_model_eligible": false,
+      "receipt_to_ingest_ms": null,
+      "rights": "internal storage and training; external services require an active account; upstream rights not granted",
+      "sample_scope": "daily NBA injury snapshot",
+      "state": "missing_key",
+      "t_minus_60m_same_day_status_verified": false,
+      "terms": "https://dunkapi.com/terms",
+      "upstream_identity": "unverified",
+      "upstream_published_at_semantics_verified": false
+    }
+  }
+}

@@ -10,7 +10,9 @@ import math
 
 import numpy as np
 
-RECIPE = "nba-final-paired-residual-v1"
+from . import data, venue
+
+RECIPE = "nba-final-paired-residual-v2"
 MODELS = ("N0", "N1", "N2")
 FAMILIES = ("total", "home", "away")
 MIN_HISTORY = 30
@@ -32,8 +34,26 @@ def day_of(row):
     return date.fromisoformat(str(row["game_date"]))
 
 
+def verified_regular(row):
+    if row.get("source") == "balldontlie" and row.get("evidence_grade") == "local_receipt":
+        # The old operations cache can retain a filter guess even after the
+        # data reader stopped exposing it. Never learn scores or rest from it.
+        if row.get("stage_basis") not in ("provider_fields", "disjoint_phase_queries"):
+            return False
+    return row.get("stage") == "regular"
+
+
+def usable_observation(row):
+    if row.get("source") != "balldontlie" or row.get("status") not in ("live", "final"):
+        return True
+    # Check the row's original observation even in a replay or a legacy ops
+    # cache. A later as_of/publication time cannot rehabilitate an early result.
+    received = row.get("received_at")
+    return received is not None and data.observation_clock_problem(row, received) is None
+
+
 def eligible(row):
-    return row.get("stage") == "regular" and row.get("status") == "final"
+    return verified_regular(row) and row.get("status") == "final" and usable_observation(row)
 
 
 def check_scores(home, away):
@@ -42,7 +62,7 @@ def check_scores(home, away):
 
 
 def _check_fixture(fixture):
-    if fixture.get("stage") != "regular":
+    if not verified_regular(fixture):
         raise ValueError("phase one supports NBA regular season only")
     if not fixture.get("game_id") or not fixture.get("home") or not fixture.get("away"):
         raise ValueError("missing NBA game or team identity")
@@ -83,6 +103,8 @@ class ScoreState:
         self.teams = defaultdict(lambda: [0.0, 0.0])
         self.samples = deque(maxlen=BANK_SIZE)
         self.unknown_site_games = 0
+        self.assumed_home_games = 0
+        self.documented_neutral_games = 0
         self.total_games = 0
         self.latest_result = None
 
@@ -96,9 +118,9 @@ class ScoreState:
             raise ValueError("NBA season sequence regressed")
         self.season = season
 
-    def centers(self, game, prior_dates):
+    def centers(self, game, prior_dates, *, as_of=None):
         home, away = game["home"], game["away"]
-        edge = self.home_edge / 2 if game.get("neutral") is False else 0.0
+        edge = 0.0 if venue.resolve(game, as_of)[0] else self.home_edge / 2
         carry = 1.0 if self.season is None else SEASON_CARRY ** (game["season"] - self.season)
         home_attack, home_conceded = self.teams.get(home, (0.0, 0.0))
         away_attack, away_conceded = self.teams.get(away, (0.0, 0.0))
@@ -110,6 +132,7 @@ class ScoreState:
         return (home_mean, away_mean), (home_mean + shift, away_mean - shift)
 
     def learn_day(self, games, prior_dates):
+        games = [g for g in games if eligible(g)]
         if not games:
             return
         self.advance(games[0]["season"])
@@ -118,7 +141,8 @@ class ScoreState:
         for game, (n1, n2) in zip(games, predictions, strict=True):
             x, y = game["home_score"], game["away_score"]
             e_home, e_away = x - n1[0], y - n1[1]
-            self.samples.append((x, y, bool(game.get("neutral")), e_home, e_away,
+            neutral, basis, _ = venue.resolve(game)
+            self.samples.append((x, y, neutral, e_home, e_away,
                                  x - n2[0], y - n2[1]))
             self.teams[game["home"]][0] += TEAM_RATE * e_home / 2
             self.teams[game["away"]][1] += TEAM_RATE * e_home / 2
@@ -127,7 +151,9 @@ class ScoreState:
             self.mean += 0.002 * ((x + y) / 2 - self.mean)
             if game.get("neutral") is None:
                 self.unknown_site_games += 1
-            if game.get("neutral") is False:
+            self.assumed_home_games += basis == "assumed_listed_home"
+            self.documented_neutral_games += basis == "documented_neutral"
+            if not neutral:
                 self.home_edge += 0.002 * ((x - y) - self.home_edge)
             self.total_games += 1
         self.latest_result = day_of(games[-1])
@@ -137,18 +163,19 @@ class ScoreState:
             raise ValueError(f"insufficient NBA regular-season finals (minimum {MIN_HISTORY})")
         return np.asarray(self.samples, dtype=float).T
 
-    def distributions(self, game, prior_dates, bank):
+    def distributions(self, game, prior_dates, bank, *, as_of=None):
         if (day_of(game) - self.latest_result).days > 500:
             raise ValueError("NBA score history is stale for this fixture")
         # N0 uses the league's observed score pairs. Neutral sites have no designated-home edge.
+        neutral = venue.resolve(game, as_of)[0]
         h, a = bank[:2].astype(int)
-        if game.get("neutral") is not False:
+        if neutral:
             yield np.concatenate((h, a)), np.concatenate((a, h))
         else:
             yield h, a
-        for i, (mh, ma) in enumerate(self.centers(game, prior_dates)):
+        for i, (mh, ma) in enumerate(self.centers(game, prior_dates, as_of=as_of)):
             rh, ra = bank[3 + 2*i:5 + 2*i]
-            if game.get("neutral") is not False:
+            if neutral:
                 rh, ra = np.concatenate((rh, ra)), np.concatenate((ra, rh))
             home = np.maximum(0, np.rint(rh - rh.mean() + mh)).astype(int)
             away = np.maximum(0, np.rint(ra - ra.mean() + ma)).astype(int)
@@ -162,6 +189,8 @@ class ScoreState:
 
 def update_dates(dates, games):
     for game in games:
+        if not usable_observation(game):
+            continue
         for side in ("home", "away"):
             dates[game[side]] = day_of(game)
 
@@ -194,12 +223,12 @@ def pair_moments(home, away):
                                         gap == 0, gap == 1, gap <= 3)]
 
 
-def forecast(state, fixture, prior_dates, bank, lines=None, *, include_joint=False):
+def forecast(state, fixture, prior_dates, bank, lines=None, *, include_joint=False, as_of=None):
     lines = lines or {}
     if set(lines) - set(FAMILIES):
         raise ValueError("unknown points-line family")
     models = {}
-    for label, (home, away) in zip(MODELS, state.distributions(fixture, prior_dates, bank), strict=True):
+    for label, (home, away) in zip(MODELS, state.distributions(fixture, prior_dates, bank, as_of=as_of), strict=True):
         p = float(np.mean(home > away))
         models[label] = {"p_home_win": p, "p_away_win": 1-p, "joint_samples": len(home),
                          "pair_moments": dict(zip(MOMENTS, pair_moments(home, away), strict=True)),
@@ -210,9 +239,12 @@ def forecast(state, fixture, prior_dates, bank, lines=None, *, include_joint=Fal
             pairs, counts = np.unique(np.column_stack((home, away)), axis=0, return_counts=True)
             models[label]["joint_distribution"] = {"home": pairs[:, 0].tolist(), "away": pairs[:, 1].tolist(),
                                                    "counts": counts.tolist()}
-    site = {False: "confirmed_non_neutral", True: "confirmed_neutral", None: "unknown_home_advantage_withheld"}
+    _, basis, source = venue.resolve(fixture, as_of)
     return {"recipe": RECIPE, "scope": SCOPE, "game_id": fixture["game_id"],
-            "venue_basis": site[fixture.get("neutral")], "training_unknown_site_games": state.unknown_site_games,
+            "venue_policy": venue.POLICY, "venue_basis": basis, "venue_source": source,
+            "training_unknown_site_games": state.unknown_site_games,
+            "training_assumed_home_games": state.assumed_home_games,
+            "training_documented_neutral_games": state.documented_neutral_games,
             "season": fixture["season"], "game_date": fixture["game_date"],
             "home": fixture["home"], "away": fixture["away"],
             "training_games": state.total_games, "last_training_date": state.latest_result.isoformat(),
@@ -239,17 +271,20 @@ def predict(history, fixture, *, lines=None, as_of=None):
     candidates = []
     prior_schedule = {}
     for g in history:
-        if g["game_id"] == fixture["game_id"] or g.get("stage") != "regular" or day_of(g) >= target:
+        if g["game_id"] == fixture["game_id"] or not verified_regular(g) or day_of(g) >= target:
             continue
         if g.get("source") != fixture.get("source") or (cutoff and not _received_by(g, cutoff)):
             continue
-        if eligible(g) and cutoff and g.get("kickoff") and instant(g["kickoff"]) >= cutoff:
+        if not usable_observation(g):
             continue
-        if g.get("status") in ("scheduled", "live", "final"):
+        status = g.get("status")
+        if status == "final" and cutoff and g.get("kickoff") and instant(g["kickoff"]) >= cutoff:
+            continue
+        if status in ("scheduled", "live", "final"):
             when = day_of(g)
             for team in (g["home"], g["away"]):
                 prior_schedule[team] = max(when, prior_schedule.get(team, when))
-        if eligible(g):
+        if status == "final":
             candidates.append(g)
     state = ScoreState()
     dates = {}
@@ -258,10 +293,10 @@ def predict(history, fixture, *, lines=None, as_of=None):
         games = list(group)
         state.learn_day(games, dates)
         update_dates(dates, games)
-    result = forecast(state, fixture, prior_schedule, state.bank(), lines, include_joint=True)
+    result = forecast(state, fixture, prior_schedule, state.bank(), lines, include_joint=True, as_of=cutoff)
     scoring_fields = ("game_id", "game_date", "season", "home", "away", "neutral", "home_score", "away_score",
-                      "version", "receipt_sha256", "available_at")
-    inputs = {"scores": [[g.get(key) for key in scoring_fields] for g in ordered],
+                      "home_abbr", "away_abbr", "version", "receipt_sha256", "available_at")
+    inputs = {"recipe": RECIPE, "venue_policy": venue.POLICY, "scores": [[g.get(key) for key in scoring_fields] for g in ordered],
               "schedule_rest": {team: prior_schedule[team].isoformat() for team in (fixture["home"], fixture["away"])
                                 if team in prior_schedule}}
     result["training_view_sha256"] = sha256(json.dumps(inputs, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
@@ -286,7 +321,7 @@ def score(arm, home_score, away_score):
 
 
 def register(subparsers):
-    from . import model_replay
+    from . import model_replay, warmup
 
     actions = subparsers.add_parser("model", help="NBA score-only forecasts and historical replay").add_subparsers(
         dest="nba_model_command", required=True)
@@ -297,11 +332,12 @@ def register(subparsers):
         p.add_argument("--" + key + "-line", type=float)
     p.set_defaults(func=_predict_command)
     model_replay.register(actions)
+    warmup.register(actions)
 
 
 def _predict_command(args, *, clock=None):
     from ..store import iso, now_utc
-    from . import data, operations, storage
+    from . import data, operations, storage, warmup
 
     cutoff = instant(args.as_of)
     if cutoff > instant((clock or now_utc)()):
@@ -321,7 +357,8 @@ def _predict_command(args, *, clock=None):
     history = data.games_as_of(args.data_dir, as_of=as_of, source="balldontlie")
     lines = {key: getattr(args, key + "_line") for key in FAMILIES}
     result = predict(history, game, as_of=cutoff, lines=lines)
-    result.update(preview_eligibility=eligibility, schedule_verification=proof, schedule_epoch=epoch["game"]["version"],
+    result.update(warmup=warmup.coverage(args.data_dir, history, game, cutoff),
+                  preview_eligibility=eligibility, schedule_verification=proof, schedule_epoch=epoch["game"]["version"],
                   schedule_version=game["version"], schedule_available_at=game["available_at"],
                   sealed=False, forward_scoring_eligible=False)
     return result

@@ -72,6 +72,8 @@ class NbaData(unittest.TestCase):
         def fetch(params, key):
             self.assertEqual(key, TEST_KEY)
             self.calls.append((self.at, params))
+            if params["season_type"] != "regular":
+                return page([])
             return next(replies)
 
         return data.sync_bdl(
@@ -184,7 +186,7 @@ class NbaData(unittest.TestCase):
         self.assertFalse(data.games_as_of(self.root, cut1 - timedelta(days=1)))
         with closing(storage.open_existing(self.root)) as db:
             self.assertEqual(
-                db.execute("SELECT COUNT(*) FROM nba_game_requests").fetchone()[0], 5
+                db.execute("SELECT COUNT(*) FROM nba_game_requests").fetchone()[0], 9
             )
             blob = db.execute("SELECT sha,body FROM nba_game_blobs LIMIT 1").fetchone()
             self.assertEqual(
@@ -410,7 +412,8 @@ class NbaData(unittest.TestCase):
         result = self.sync(
             page([game(1, postponed=True), game(2, home_team=None), game(3)])
         )
-        self.assertTrue(result["complete"])
+        self.assertFalse(result["complete"])
+        self.assertEqual(result["state"], "source_quality")
         self.assertEqual(result["quality"]["quarantined_rows"], 1)
         observed = {r["game_id"]: r for r in data.games_as_of(self.root)}
         self.assertEqual(observed["bdl:1"]["status"], "postponed")

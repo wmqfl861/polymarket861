@@ -97,13 +97,21 @@ class PaperOpeningNotifications(unittest.TestCase):
                 "home_team_score": 110, "visitor_team_score": 105,
                 "home_team": {"id": 1, "abbreviation": "BOS", "full_name": "Boston Celtics"},
                 "visitor_team": {"id": 2, "abbreviation": "MIL", "full_name": "Milwaukee Bucks"}}
-        response = httpx.Response(200, json={"data": [game], "meta": {"next_cursor": None}})
+        def schedule_page(params, _key):
+            games = [game] if params["season_type"] == "regular" else []
+            return httpx.Response(200, json={"data": games, "meta": {"next_cursor": None}})
+
+        nba_clock = self.now
+
+        def advance_budget(seconds):
+            nonlocal nba_clock
+            nba_clock += timedelta(seconds=seconds)
         with tempfile.TemporaryDirectory() as other, patch.dict(os.environ, {"BALLDONTLIE_API_KEY": "fixture-key"}):
             nba = Path(other) / "nba"
             for index in range(2):
-                result = data.sync_bdl(nba, game["date"], game["date"],
-                                       fetch=Mock(return_value=response),
-                                       clock=lambda: self.now + timedelta(minutes=index))
+                nba_clock = self.now + timedelta(minutes=index)
+                result = data.sync_bdl(nba, game["date"], game["date"], fetch=schedule_page,
+                                       clock=lambda: nba_clock, sleep=advance_budget)
                 self.assertEqual(result["new_versions"], 1 if index == 0 else 0)
                 self.assertEqual(result["state"], "ok")
                 self.assertEqual(self.check(self.now), 0)

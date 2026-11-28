@@ -10,6 +10,7 @@ from pathlib import Path
 from polymarket861 import budget_archive_proof as proof, five_league_budget as budget, ledger_rules as r, market_archive as archive, market_provider as provider, store
 import football_odds_access
 from account_engine import FUND, FRACTION, POLICY, replay, size_at_book
+from football_candidate_policy import prospective_hold
 
 ROOT=Path(__file__).resolve().parent
 VAULT=ROOT/'five-league-market'
@@ -67,19 +68,24 @@ def main():
         return
     for pick in pending:
         verify_comparison_receipt(pick, store.now_utc())
-    save(dbfile,doc)
     latest={s['id']:s for s in load(picksfile)} if picksfile.exists() else {}
-    for s in shortlist:
+    eligible = []
+    for s in pending:
         src=proof.verify_contract(ROOT,s['condition_id'],store.now_utc(),token=s['token_id'],scheduled=True)
         s['terms']=src['intent_terms']
+        if prospective_hold(s['terms']['selection']):
+            continue
         with proof.read_archive(ROOT) as (root,db):
             from polymarket861 import archive_proof
             m=archive_proof.original_market(db,root,s['condition_id'],store.now_utc())
             s['entry_terms']=proof._terms(root,m,s['token_id'],store.now_utc(),scheduled=True)
         s['max_stake']=latest.get(s['id'],{}).get('max_stake','0')
         s['blended_probability']=latest.get(s['id'],{}).get('blended_probability')
+        eligible.append(s)
+    if not eligible:
+        return
     for attempt in range(36):
-        todo=[s for s in shortlist if s['id'] not in filled_ids]
+        todo=[s for s in eligible if s['id'] not in filled_ids]
         if not todo:break
         first,r1=books_for(todo)
         decision_time=store.now_utc()
@@ -93,7 +99,8 @@ def main():
                 s['max_stake']=str(splan['budget']);s['blended_probability']=str(splan['probability'])
                 if store.instant(book['exchange_at'])>=store.instant(decision_time)-timedelta(seconds=30):
                     plans[s['id']]=splan
-        save(picksfile,public_specs(shortlist))
+        latest.update((s['id'], s) for s in public_specs(eligible))
+        save(picksfile,list(latest.values()))
         log(decision_time,'prospective-plans',{key:{'limit_price':next(s['limit_price'] for s in todo if s['id']==key),'first_receipt':r1.received_at,**v} for key,v in plans.items()})
         start_in=(target-store.instant(store.now_utc())).total_seconds()+2.4
         if start_in>0:time.sleep(start_in)

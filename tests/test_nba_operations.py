@@ -115,7 +115,9 @@ class OperationsTests(unittest.TestCase):
             "scope": "final_including_overtime",
         }
 
-    def benchmark(self, root, home, away, kickoff, horizon, *, as_of):
+    def benchmark(
+        self, root, home, away, kickoff, horizon, *, as_of, source_epoch_at=None
+    ):
         self.assertEqual((home, away), ("BOS", "LAL"))
         tip = instant(kickoff)
         cutoff = tip - timedelta(minutes=ops.HORIZONS[horizon])
@@ -159,6 +161,9 @@ class OperationsTests(unittest.TestCase):
         first = report(self.root, "week", "2026-11-23")
         grade = first["report"]["horizons"]["T-60m"]
         self.assertEqual(grade["grades"], {"scored": 1})
+        self.assertEqual(grade["readiness"]["cold_or_unverified_sealed_games"], 1)
+        self.assertEqual(grade["readiness"]["qualifying_win_quote_games"], 0)
+        self.assertEqual(grade["readiness"]["all_seals_win_pairing_rate"], 1)
         self.assertEqual(grade["models"]["N0"]["games"], 1)
         self.assertAlmostEqual(grade["models"]["N2"]["brier_win"], 0.09)
         self.assertEqual(set(grade["market_comparisons"]), set(self.families))
@@ -204,12 +209,237 @@ class OperationsTests(unittest.TestCase):
         self.now = self.tip - timedelta(minutes=6)
         self.add("scheduled", self.now)
         self.assertEqual(self.cycle()["sealed"], 0)
+        coverage = report(self.root, "day", "2026-11-24")["report"]["horizons"]["T-60m"]
+        self.assertEqual(
+            coverage["missed_by_reason"], {"schedule_first_observed_after_cutoff": 1}
+        )
         for w in self.windows():
             self.assertEqual(
                 (w["state"], w["note"]),
                 ("missed", "schedule_first_observed_after_cutoff"),
             )
         self.assertEqual(self.cycle()["sealed"], 0)
+
+    def test_market_tick_can_follow_forecast_without_polluting_earlier_inputs(self):
+        requested_at = self.now + timedelta(seconds=8)
+
+        def delayed(*args, as_of):
+            return (
+                self.benchmark(*args, as_of=as_of)
+                if instant(as_of) >= requested_at
+                else {}
+            )
+
+        with patch.object(markets, "benchmark", side_effect=delayed):
+            first = self.cycle()
+            self.assertEqual((first["sealed"], first["waiting_for_win_quote"]), (0, 1))
+            self.assertEqual(
+                next(w for w in self.windows() if w["horizon"] == "T-60m")["note"],
+                "waiting_for_win_quote",
+            )
+            self.now += timedelta(minutes=1)
+            self.assertEqual(self.cycle()["sealed"], 1)
+        self.assertEqual(self.windows()[1]["prediction"]["input_cutoff"], iso(self.now))
+        self.assertEqual(
+            set(self.windows()[1]["prediction"]["market_at_prediction"]),
+            set(self.families),
+        )
+
+    def test_last_tick_seals_without_price_and_separate_deadline_receipt_counts_the_miss(
+        self,
+    ):
+        from polymarket861.nba import warmup
+
+        deadline = self.tip - timedelta(minutes=60)
+        quote_at = deadline - timedelta(seconds=9)
+
+        def delayed(*args, as_of):
+            if instant(as_of) < quote_at:
+                return {}
+            ref = self.benchmark(*args, as_of=as_of)["win"]
+            return {
+                "win": dict(ref, available_at=iso(quote_at), observed_at=iso(quote_at))
+            }
+
+        with (
+            patch.object(markets, "benchmark", side_effect=delayed),
+            patch.object(
+                warmup, "coverage", return_value={"eligible": True, "policy": "fixture"}
+            ),
+        ):
+            self.now = deadline - timedelta(seconds=70)
+            self.assertEqual(self.cycle()["sealed"], 1)
+            seal = self.windows()[1]["sha256"]
+            self.assertEqual(
+                self.windows()[1]["prediction"]["market_at_prediction"], {}
+            )
+            self.now = deadline + timedelta(seconds=5)
+            self.cycle()
+            for period, start in (("day", "2026-11-24"), ("week", "2026-11-23")):
+                h = report(self.root, period, start)["report"]["horizons"]["T-60m"]
+                r = h["readiness"]
+                self.assertEqual(
+                    (
+                        r["due_games"],
+                        r["warm_sealed_games"],
+                        r["qualifying_win_quote_games"],
+                        r["paired_win_games"],
+                    ),
+                    (1, 1, 1, 0),
+                )
+                self.assertEqual(r["win_pairing_rate"], 0)
+                self.assertEqual(r["fixtures"][0]["game_id"], "bdl:5")
+            self.now = self.tip + timedelta(hours=3)
+            self.add("final", self.now, home_score=112, away_score=108)
+            self.cycle()
+            row = self.windows()[1]
+            self.assertEqual(row["sha256"], seal)
+            self.assertEqual(row["grade_history"][-1]["grade"]["benchmarks"], {})
+
+    def test_quote_must_arrive_by_both_sources_deadlines(self):
+        as_of = self.tip - timedelta(minutes=60)
+        venue = self.tip - timedelta(minutes=10)
+        quote = {
+            "available_at": iso(as_of),
+            "observed_at": iso(as_of),
+            "venue_kickoff": iso(venue),
+        }
+        self.assertEqual(
+            ops._observed_markets({"win": quote}, iso(as_of), iso(self.tip), "T-60m"),
+            {},
+        )
+        quote["available_at"] = quote["observed_at"] = iso(
+            venue - timedelta(minutes=60)
+        )
+        self.assertEqual(
+            ops._observed_markets({"win": quote}, iso(as_of), iso(self.tip), "T-60m"),
+            {},
+        )
+        quote["available_at"] = quote["observed_at"] = iso(
+            venue - timedelta(minutes=60, microseconds=1)
+        )
+        self.assertEqual(
+            ops._observed_markets({"win": quote}, iso(as_of), iso(self.tip), "T-60m"),
+            {},
+        )
+        # A two-minute difference leaves three shared minutes; a book before
+        # the later opening, or before a replacement was received, cannot pair.
+        quote["venue_kickoff"] = iso(self.tip - timedelta(minutes=2))
+        shared_open = as_of - timedelta(minutes=5)
+        quote["observed_at"] = iso(shared_open - timedelta(microseconds=1))
+        quote["available_at"] = iso(shared_open)
+        self.assertEqual(
+            ops._observed_markets({"win": quote}, iso(as_of), iso(self.tip), "T-60m"),
+            {},
+        )
+        quote["observed_at"] = iso(shared_open)
+        self.assertIn(
+            "win",
+            ops._observed_markets({"win": quote}, iso(as_of), iso(self.tip), "T-60m"),
+        )
+        epoch = iso(shared_open + timedelta(microseconds=1))
+        self.assertEqual(
+            ops._observed_markets(
+                {"win": quote}, iso(as_of), iso(self.tip), "T-60m", epoch
+            ),
+            {},
+        )
+
+    def test_tampered_pairing_assessment_never_enters_readiness(self):
+        self.cycle()
+        self.now = self.tip - timedelta(minutes=59)
+        self.cycle()
+        with closing(ops._open(self.root)) as db, db:
+            db.execute(
+                "UPDATE nba_pairing_outcomes SET win_quote=NULL WHERE horizon='T-60m'"
+            )
+            ops._dirty_day(db, "2026-11-24")
+        with self.assertRaisesRegex(ValueError, "assessment checksum mismatch"):
+            self.cycle()
+
+    def test_failed_schedule_is_a_named_miss_in_both_reports(self):
+        with patch.object(
+            data,
+            "schedule_proof",
+            return_value={"state": "source_quality", "complete": False},
+        ):
+            self.assertEqual(self.cycle()["state"], "partial")
+            self.now = self.tip - timedelta(minutes=59)
+            self.cycle()
+        for period, start in (("day", "2026-11-24"), ("week", "2026-11-23")):
+            h = report(self.root, period, start)["report"]["horizons"]["T-60m"]
+            self.assertEqual(h["missed_by_reason"], {"latest_schedule_sync_failed": 1})
+
+    def test_only_a_large_time_difference_seals_without_pairing(self):
+        match = {
+            "status": "outside_tolerance",
+            "reason": "venue_same_pair_schedule_mismatch",
+            "source_kickoff": iso(self.tip),
+            "venue_kickoff": iso(self.tip + timedelta(hours=3)),
+            "delta_seconds": 10800,
+            "venue_event_id": "41",
+            "venue_version": 1,
+        }
+        with (
+            patch.object(markets, "schedule_match", return_value=match),
+            patch.object(markets, "benchmark", return_value={}),
+        ):
+            self.assertEqual(self.cycle()["sealed"], 1)
+        sealed = self.windows()[1]["prediction"]
+        self.assertEqual(sealed["market_schedule"], match)
+        self.assertEqual(sealed["market_at_prediction"], {})
+
+    def test_unregistered_game_becomes_due_without_a_source_revision(self):
+        self.rows = []
+        self.add("scheduled", self.now, kickoff=None)
+        self.cycle()
+        h = report(self.root, "day", "2026-11-24")["report"]["horizons"]["T-60m"]
+        self.assertEqual(h["readiness"]["due_games"], 0)
+        self.now += timedelta(days=1)
+        self.cycle()
+        h = report(self.root, "day", "2026-11-24")["report"]["horizons"]["T-60m"]
+        self.assertEqual(
+            (h["readiness"]["due_games"], h["readiness"]["sealed_games"]), (1, 0)
+        )
+
+    def test_catalogued_games_without_a_regular_schedule_raise_an_alert(self):
+        from test_nba_markets import Venue
+
+        venue = Venue()
+        self.now = venue.now
+        self.rows = []
+        with patch.object(markets.api, "get", side_effect=venue.get):
+            markets.collect(self.root, now=venue.clock)
+        day = self.cycle()
+        self.assertEqual(
+            (day["state"], day["reason"]),
+            ("partial", "market_catalog_without_regular_schedule"),
+        )
+        self.assertEqual(day["catalogue_coverage"]["catalogued_games"], 1)
+        self.add(
+            "scheduled",
+            self.now,
+            game_date="2026-11-27",
+            stage="preseason",
+            home_abbr="NYK",
+            away_abbr="MIA",
+        )
+        self.assertEqual(self.cycle()["catalogue_coverage"]["catalogued_games"], 0)
+
+    def test_watchdog_can_health_check_market_only(self):
+        with patch.object(markets, "collect", return_value={"state": "ok"}):
+            ops.run(self.root, "markets", clock=lambda: self.now)
+        self.assertEqual(
+            ops.status(self.root, clock=lambda: self.now)["state"], "degraded"
+        )
+        health = ops.status(self.root, component="markets", clock=lambda: self.now)
+        self.assertEqual(health["state"], "ok")
+        self.assertEqual(list(health["components"]), ["markets"])
+        self.now += timedelta(minutes=4)
+        self.assertEqual(
+            ops.status(self.root, component="markets", clock=lambda: self.now)["state"],
+            "degraded",
+        )
 
     def test_crossing_cutoff_while_computing_never_seals(self):
         def slow(*args, **kwargs):
@@ -231,8 +461,10 @@ class OperationsTests(unittest.TestCase):
         self.add("scheduled", self.now, kickoff=iso(self.tip + timedelta(hours=2)))
         self.now += timedelta(seconds=20)
         self.add("scheduled", self.now, kickoff=iso(self.tip))
-        result = self.cycle()
-        self.assertEqual(result["sealed"], 1)
+        epoch_announced = iso(self.now)
+        self.assertEqual(self.cycle()["waiting_for_win_quote"], 1)
+        self.now = self.tip - timedelta(minutes=61)
+        self.assertEqual(self.cycle()["sealed"], 1)
         rows = [r for r in self.windows() if r["horizon"] == "T-60m"]
         self.assertEqual(
             [(r["epoch"], r["active"], r["state"]) for r in rows],
@@ -241,9 +473,14 @@ class OperationsTests(unittest.TestCase):
         self.assertEqual(
             rows[0]["grade_history"][-1]["grade"]["state"], "withdrawn_schedule"
         )
+        self.assertEqual(rows[2]["prediction"]["source_epoch_at"], epoch_announced)
+        self.assertFalse(rows[2]["prediction"]["market_at_prediction"])
+        self.now = self.tip - timedelta(minutes=59)
+        self.cycle()
         r = report(self.root, "day", "2026-11-24")["report"]["horizons"]["T-60m"]
         self.assertEqual(r["opportunities"], 1)
         self.assertEqual(r["superseded_states"]["sealed"], 1)
+        self.assertEqual(r["readiness"]["all_seals_qualifying_win_quote_games"], 0)
 
     def test_schedule_withdrawn_between_prediction_and_commit(self):
         def cancelled(*args, **kwargs):
@@ -449,6 +686,10 @@ class PreviewAndSealTests(unittest.TestCase):
             def clock():
                 return now
 
+            def advance(seconds):
+                nonlocal now
+                now += timedelta(seconds=seconds)
+
             games = []
             for i in range(40):
                 day = date(2021, 9, 25) + timedelta(days=i)
@@ -483,11 +724,14 @@ class PreviewAndSealTests(unittest.TestCase):
                 root,
                 "2021-09-25",
                 "2021-11-10",
-                fetch=lambda *args: page(games),
+                fetch=lambda params, key: page(
+                    games if params["season_type"] == "regular" else []
+                ),
                 clock=clock,
+                sleep=advance,
             )
             self.assertTrue(r["complete"])
-            now += timedelta(minutes=1)
+            now = instant("2021-11-10T00:29:00Z")
             sealed = ops.forecast_cycle(root, clock=clock)
             self.assertEqual(sealed["sealed"], 1, sealed)
             record = next(

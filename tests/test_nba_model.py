@@ -1,9 +1,12 @@
 import argparse
 import json
+import os
 import tempfile
 import unittest
 from contextlib import closing
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 from datetime import date, timedelta
 
 from polymarket861.nba import model, model_replay
@@ -35,6 +38,9 @@ class NBAScoreModelTests(unittest.TestCase):
             {**game(62), "game_id": "withdrawn", "status": "postponed"},
             {**game(63), "game_id": "no-receipt", "available_at": None},
             {**game(64), "game_id": "cross", "source": "538"},
+            {**game(65), "game_id": "alpha1-ops-cache", "evidence_grade": "local_receipt"},
+            {**game(65), "game_id": "unverified-phase", "evidence_grade": "local_receipt",
+             "stage_basis": "query_filter"},
             {**game(65), "game_id": "archived", "evidence_grade": "final_archive_date_only"},
             {**game(64), "game_id": "playoff", "stage": "postseason"},
             {**game(66), "game_id": "same-day", "kickoff": fixture["game_date"]+"T08:00:00Z",
@@ -87,14 +93,75 @@ class NBAScoreModelTests(unittest.TestCase):
         for label in model.MODELS:
             self.assertLessEqual(higher["models"][label]["home"]["over"], base["models"][label]["home"]["over"])
 
-    def test_unknown_venue_withholds_home_edge_and_keeps_its_own_label(self):
+    def test_unknown_venue_uses_listed_home_in_training_and_inference(self):
         history = [dict(game(i), neutral=None) for i in range(50)]
         unknown = model.predict(history, dict(matchup(), neutral=None))
         neutral = model.predict(history, dict(matchup(), neutral=True))
-        self.assertEqual(unknown["models"], neutral["models"])
-        self.assertEqual(unknown["venue_basis"], "unknown_home_advantage_withheld")
+        confirmed = model.predict([dict(g, neutral=False) for g in history], dict(matchup(), neutral=False))
+        self.assertEqual(unknown["models"], confirmed["models"])
+        self.assertNotEqual(unknown["models"], neutral["models"])
+        self.assertEqual(unknown["venue_basis"], "assumed_listed_home")
+        self.assertEqual(unknown["training_assumed_home_games"], len(history))
         self.assertEqual(neutral["venue_basis"], "confirmed_neutral")
         self.assertEqual(unknown["training_unknown_site_games"], len(history))
+
+    def test_dated_neutral_exception_has_priority_only_after_publication_and_for_exact_teams(self):
+        from polymarket861.nba import venue
+
+        game = dict(matchup(), stage="regular", game_date="2026-11-07",
+                    home_abbr="IND", away_abbr="DEN", neutral=False)
+        before = model.instant("2026-04-16T23:00:00-04:00")
+        after = model.instant("2026-04-17T00:00:00-04:00")
+        self.assertEqual(venue.resolve(game, before), (False, "confirmed_non_neutral", None))
+        self.assertEqual(venue.resolve(game, after)[:2], (True, "documented_neutral"))
+        self.assertIn("pr.nba.com", venue.resolve(game, after)[2])
+        self.assertFalse(venue.resolve(dict(game, home_abbr="NYK"), after)[0])
+        self.assertFalse(venue.resolve(dict(game, game_date="2026-11-08"), after)[0])
+        self.assertEqual(venue.resolve(dict(game, neutral=None), before)[1], "assumed_listed_home")
+        self.assertEqual(venue.resolve(dict(game, neutral=True), before)[1], "confirmed_neutral")
+        sample = dict(game, status="final", home_score=115, away_score=103, kickoff=None,
+                      received_at="2026-11-07T23:40:00-05:00")
+        state = model.ScoreState()
+        state.learn_day([sample], {})
+        self.assertEqual(state.home_edge, 3.0)
+        self.assertEqual(state.documented_neutral_games, 1)
+
+    def test_cup_neutral_exceptions_match_official_and_provider_team_aliases(self):
+        from polymarket861.nba import venue
+
+        for day, left, right in (("2025-12-13", "ORL", "NY"), ("2025-12-13", "OKC", "SA"),
+                                 ("2023-12-07", "LAL", "NO")):
+            with self.subTest(date=day, teams=(left, right)):
+                bdl = dict(matchup(), neutral=False, game_date=day, home_abbr=left, away_abbr=right)
+                archive = dict(matchup(), neutral=None, game_date=day, home=right, away=left)
+                self.assertEqual(venue.resolve(bdl)[1], "documented_neutral")
+                self.assertEqual(venue.resolve(archive)[1], "documented_neutral")
+
+    def test_no_tip_future_final_cannot_enter_cache_training_rest_or_replay(self):
+        # Original BDL shape after normalization and prior to the repaired data reader:
+        # a Nov 27 morning ET receipt labelled a Nov 28 game Final without a tip.
+        start = date(2026, 10, 21)
+        history = [game(i, start, 2026) for i in range(35)]
+        future = dict(game(38, start, 2026), kickoff=None, home="A", away="D",
+                      stage_basis="provider_fields", evidence_grade="local_receipt",
+                      received_at="2026-11-28T02:00:00Z", available_at="2026-11-28T02:01:00Z")
+        fixture = dict(game(39, start, 2026), status="scheduled",
+                       received_at="2026-11-26T12:00:00Z", available_at="2026-11-26T12:01:00Z")
+        for cutoff in ("2026-11-28T02:05:00Z", "2026-11-29T15:00:00Z"):
+            reference = model.predict(history, fixture, as_of=cutoff)
+            attempt = model.predict(history + [future], fixture, as_of=cutoff)
+            self.assertEqual(reference, attempt)
+        state = model.ScoreState()
+        state.learn_day([future], {})
+        rest = {}
+        model.update_dates(rest, [future])
+        self.assertEqual(state.total_games, 0)
+        self.assertFalse(rest)
+        self.assertEqual(model.prepare(history + [future]), model.prepare(history))
+        valid = dict(future, received_at="2026-11-29T02:00:00Z", available_at="2026-11-29T02:01:00Z")
+        self.assertTrue(model.eligible(valid))
+        self.assertTrue(model.eligible(dict(future, source="538", evidence_grade="final_archive_date_only",
+                                            received_at=None, available_at=None)))
 
     def test_exact_two_point_crps(self):
         arm = {"p_home_win": .5, **{f: {"distribution": {"values": [0, 2], "counts": [1, 1]}}
@@ -150,6 +217,51 @@ class NBAScoreModelTests(unittest.TestCase):
         self.assertNotEqual(season["pooled"]["losses"], altered["pooled"]["losses"])
 
 
+class NBAOriginalReceiptTests(unittest.TestCase):
+    def test_raw_future_final_changes_neither_preview_probabilities_nor_training_digest(self):
+        from polymarket861.nba import data
+        from test_nba_data import TEST_KEY, game as bdl_game, page
+
+        root = Path(self.enterContext(tempfile.TemporaryDirectory())) / "nba"
+        self.enterContext(patch.dict(os.environ, {"BALLDONTLIE_API_KEY": TEST_KEY}))
+        now = model.instant("2026-11-27T12:00:00Z")
+        def advance(seconds):
+            nonlocal now
+            now += timedelta(seconds=seconds)
+        def scan(start, end, rows):
+            def get(params, _key):
+                return page(rows if params["season_type"] == "regular" else [])
+            return data.sync_bdl(root, start, end, fetch=get, clock=lambda: now, sleep=advance)
+        def final(day, i):
+            return bdl_game(day.toordinal(), season=2026, date=str(day), datetime=None, period=4,
+                            status="Final", status_state="final",
+                            home_team_score=110+i%9, visitor_team_score=97+i%7)
+        def preview(tip):
+            args = SimpleNamespace(data_dir=root, game_id=f"bdl:{tip.toordinal()}", as_of=data._iso(now),
+                                   total_line=None, home_line=None, away_line=None)
+            return model._predict_command(args, clock=lambda: now)
+
+        first = date(2026, 10, 21)
+        history = [final(first + timedelta(days=i), i) for i in range(35)]
+        target, future = date(2026, 11, 29), date(2026, 11, 28)
+        fixture = bdl_game(target.toordinal(), season=2026, date=str(target), datetime="2026-11-29T23:00:00Z")
+        self.assertTrue(scan(first, target, [*history, fixture])["complete"])
+        before = preview(target)
+        advance(120)
+        result = scan(future, future, [final(future, 30)])
+        self.assertFalse(result["complete"])
+        self.assertEqual(result["state"], "source_quality")
+        after = preview(target)
+        self.assertEqual(before["training_games"], 35)
+        self.assertEqual(after["training_games"], 35)
+        self.assertEqual(before["training_view_sha256"], after["training_view_sha256"])
+        self.assertEqual(before["models"], after["models"])
+        suspect = data.game_versions(root, game_id=f"bdl:{future.toordinal()}")[-1]
+        self.assertEqual(suspect["status"], "unknown")
+        self.assertEqual(suspect["timing_problem"], "play_received_before_eastern_game_date")
+        self.assertIsNone(suspect["home_score"])
+
+
 class PreviewCommandTests(unittest.TestCase):
     def setUp(self):
         from polymarket861.nba import data, markets, storage
@@ -190,6 +302,14 @@ class PreviewCommandTests(unittest.TestCase):
         with self.db:
             self.db.execute("INSERT INTO nba_schedule_scans VALUES(1,?,?,?)", (day, day, iso(day+"T16:55:00Z")))
             self.db.execute("INSERT INTO nba_schedule_completions VALUES(1,?,'ok',1)", (iso(day+"T16:56:00Z"),))
+            from hashlib import sha256
+
+            quality = {"phase_rows": {"regular": 1, "preseason": 0, "ist": 0},
+                       "overlapping_ids": 0, "phase_mismatches": 0, "quarantined_rows": 0,
+                       "unknown_stages": 0, "unidentified_rows": 0, "pagination_errors": 0}
+            manifest = json.dumps({"scan_id": 1, "start": day, "end": day, "complete": True, "quality": quality})
+            self.db.execute("INSERT INTO nba_schedule_evidence VALUES(1,?,?)",
+                            (manifest, sha256(manifest.encode()).hexdigest()))
         fresh = self.preview()
         self.assertEqual(fresh["preview_eligibility"], "verified_schedule_preview")
         self.assertEqual(fresh["schedule_epoch"], 1)

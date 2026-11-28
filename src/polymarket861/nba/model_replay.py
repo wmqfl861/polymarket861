@@ -10,7 +10,7 @@ from pathlib import Path
 
 import numpy as np
 
-from . import model
+from . import model, venue
 
 METRICS = ("brier_win", "crps_total", "crps_home", "crps_away")
 
@@ -134,7 +134,7 @@ def backtest(rows, *, first_season=None, last_season=None, lag_days=1, replicate
     pooled = _summary(all_records, np.sum(seasonal_draws, axis=0))
     pooled["final_score_calibration"] = _shape(sum(shapes.values()), pooled["games"])
     return {"recipe": model.RECIPE, "scope": model.SCOPE, "sample_unit": "one NBA regular season game",
-            "data_grade": "technical_final_archive", "schedule_basis": "final archive game date; no receipt-time schedule",
+            "venue_policy": venue.POLICY, "data_grade": "technical_final_archive", "schedule_basis": "final archive game date; no receipt-time schedule",
             "lag": {"days_after_game_date_end": lag_days, "excludes_all_same_date_scores": True},
             "season_ids": "starting year", "evaluated_seasons": [first, last], "eligible_archive_rows": len(games),
             "interval_method": {"unit": "7-calendar-day moving blocks, stratified by season",
@@ -142,9 +142,11 @@ def backtest(rows, *, first_season=None, last_season=None, lag_days=1, replicate
                                 "interpretation": "marginal exploratory intervals"},
             "parameters": {"paired_score_bank": model.BANK_SIZE, "minimum_training_games": model.MIN_HISTORY,
                            "team_online_rate": model.TEAM_RATE, "offseason_strength_carry": model.SEASON_CARRY,
-                           "b2b_margin_points": model.B2B_MARGIN_POINTS, "warmup_prior_seasons": 8},
+                           "b2b_margin_points": model.B2B_MARGIN_POINTS, "warmup_prior_seasons": 8,
+                           "actual_prior_seasons": sorted({g["season"] for g in games if g["season"] < first})},
             "per_season": summaries, "pooled": pooled,
             "prediction_scope": "final scores including overtime; no regulations-only or player/news claims",
+            "margin_use": "diagnostic only; one-point and three-point probabilities require independent validation before spread use",
             "market_receipts": 0, "paper_eligible": False}
 
 
@@ -181,7 +183,10 @@ def _run(args):
         result["input"].update(
             credit="FiveThirtyEight NBA Elo dataset, game logs sourced from Basketball-Reference; CC BY 4.0",
             archive_blob="6d6ccd07151aed322e1a77c57ea83b8ea58c5523",
-            source_url="https://github.com/fivethirtyeight/data/tree/master/nba-elo",
+            archive_commit="4c1ff5e3aef1816ae04af63218015066e186c147",
+            source_url="https://github.com/fivethirtyeight/data/tree/4c1ff5e3aef1816ae04af63218015066e186c147/nba-elo",
             license_url="https://creativecommons.org/licenses/by/4.0/",
             transformations="paired team records; final scores only; source Elo forecasts excluded")
+    else:
+        result["coverage_validation"] = "unverified exploratory slice; nba model modern-study verifies complete seasons"
     return result

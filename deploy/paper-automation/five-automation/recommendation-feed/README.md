@@ -16,13 +16,15 @@ OPENBLAS_NUM_THREADS=1 /mnt/d/polymarket861/.local-deploy/releases/0.5.0a4-6844c
 
 ## 历史校正及验证范围
 
-推荐层 v2 使用 2025/26 五联赛 1,745 场能生成 B1 预测的比赛拟合连续校正。主胜、平局、客胜分别按 logit 拟合截距和斜率后归一化，反向合约取补数。大小球只支持全场 2.5，大球按斜率 0.6309、截距 0.0802 校正，小球取补数。其他盘口、单队大小球和其他封存窗口尚无相应的校正证据。原有 494 个概率分组保留作历史对照。
+推荐层沿用在 2025/26 五联赛 1,745 场 B1 预测上拟合的连续校正。主胜、平局、客胜分别按 logit 拟合截距和斜率后归一化，反向合约取补数。全场大 2.5 按斜率 0.6309、截距 0.0802 校正，小球取补数。其他盘口、单队大小球和其他封存窗口尚无相应的校正证据。原有 494 个概率分组保留作历史对照。
+
+v3 暂停全场大 2.5、小 2.5 及主队胜合约的 No 方向进入新候选。计算预测和赛后评分仍覆盖这些方向，恢复推荐需要独立的前瞻验证。已有 v1、v2 和 v3 的方向锁继续生效至开球。既有仓位按入账时的回执重放。[依据、来源登记与上线前演练](../../../../docs/five-leagues-0.5/FOOTBALL-PAPER-REVIEW-20261128.md)
 
 拟合样本不能同时作为此次校正的独立验证集。候选的 `research` 同时保留原模型概率、新闻估值、校正后无新闻概率、拟合参数和报告摘要。外部赔率及双份盘口仍为独立的必要条件。需要在随后比赛周积累赛前候选和赛果才能检验带新闻、扣费后的前瞻结果。[拟合探针和可复现输入](../../../../docs/review-evidence/code-review-0.5.0a4-nba-plan-2026-11-27/) · [历史基线研究](../../../../reports/five-leagues-0.5.0a2/baseline-study.json)
 
 ## 通知接口
 
-`schema_version` 为 `1`，正式规则的 `policy_id` 为 `verified-football-recommendations-v2`。UTC 时间戳均以 `Z` 结尾，价格和金额使用十进制字符串。
+`schema_version` 为 `1`，正式规则的 `policy_id` 为 `verified-football-recommendations-v3`。UTC 时间戳均以 `Z` 结尾，价格和金额使用十进制字符串。
 
 | 字段 | 含义 |
 | --- | --- |
@@ -37,5 +39,6 @@ OPENBLAS_NUM_THREADS=1 /mnt/d/polymarket861/.local-deploy/releases/0.5.0a4-6844c
 | `research` | 生产模型、伤停与首发证据，外部去水来源，连续校正参数、含费成本与优势，以及两个 CLOB 快照、规则和原生费率凭据。 |
 | `coverage.verified_fixtures` | 本轮已完成逐场核验的 Gamma 比赛标识。可结合 `coverage.fixture_results` 判断已核验的落选、保留名单、已有冻结方向和证据不足。 |
 | `coverage.gaps` | 联赛、比赛、未完成的阶段及原因。`partial` 仍可包含其他比赛独立验证通过的建议。 |
+| `coverage.directions_pending_prospective_evidence` | 目前暂停进入新候选的方向。仅剩这些合约可比时，逐场缺口附上具体方向。 |
 
 文件发布使用单进程锁和原子替换。通知端按每条的有效期消费，缺少新证据时应保留历史及其真实时间，停止推送过期报价。

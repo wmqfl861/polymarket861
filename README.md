@@ -4,7 +4,7 @@
 
 **现役足球部署版本为 `0.5.0a4`。** 五大联赛看板显示赛前胜平负、全场及单队大小球。英超沿用本机签核的 B1；西甲、德甲、意甲和法甲提供研究预览、T−24h 与 T−60m 封存及逐时点评分。新版区分新闻链接、预测变更和球员伤停情景，并报告各联赛调度停止、过期及采集失败。已有部署请从升级指南进入。[升级与回退](docs/five-leagues-0.5/DEPLOY-0.5.0a4.md) · [Claude 意见与修复证据](docs/five-leagues-0.5/CLAUDE-REVIEW-RESPONSE-0.5.0a4.md)
 
-**NBA 开发版 `0.6.0a1`** 提供赛前胜负、全场与主客单队大小分研究，独立安装和存储。Polymarket 只读采集可先于免费赛程账户启动。操作、历史回放结果与待验项见 [NBA 使用与审核交接](docs/nba-plan/OPERATIONS-0.6.0a1.md) 和 [审核后开发计划](docs/nba-plan/REVIEWED-DEVELOPMENT.md)。
+**NBA 开发版 `0.6.0a2`** 提供赛前胜负、全场与主客单队大小分研究，独立安装和存储。Polymarket 只读采集可先于免费赛程账户启动。操作、历史回放结果与待验项见 [NBA 使用与审核交接](docs/nba-plan/OPERATIONS-0.6.0a2.md) 和 [审核后开发计划](docs/nba-plan/REVIEWED-DEVELOPMENT.md)。
 
 五大联赛共享模拟账户。七天扫描提供研究候选，微信只推送账户实际新建的模拟仓位。运行代码、定时任务和本机验收见[部署交接](docs/five-leagues-0.5/PAPER-AUTOMATION-HANDOFF.md)。
 

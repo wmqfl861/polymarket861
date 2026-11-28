@@ -19,7 +19,7 @@ import httpx
 ARCHIVE_SHA = "d46ed3540ee8d9eca31b3e94cc8c777e0be5156173d814ebf65b8195e8d616bc"
 PENDING = "unpublished"
 EASTERN = ZoneInfo("America/New_York")
-BDL_URL = "https://api.balldontlie.io/v1/games"
+BDL_URL = "https://api.balldontlie.io/nba/v1/games"
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS nba_game_blobs (
     sha TEXT PRIMARY KEY, body BLOB NOT NULL
@@ -33,6 +33,8 @@ CREATE TABLE IF NOT EXISTS nba_game_versions (
     received_at TEXT NOT NULL, available_at TEXT NOT NULL, sha TEXT NOT NULL,
     payload TEXT NOT NULL, PRIMARY KEY(source, game_id, version)
 );
+CREATE INDEX IF NOT EXISTS nba_game_by_kickoff ON nba_game_versions(source,json_extract(payload,'$.kickoff'));
+CREATE INDEX IF NOT EXISTS nba_game_by_day ON nba_game_versions(source,json_extract(payload,'$.game_date'),game_id);
 CREATE INDEX IF NOT EXISTS nba_game_chronology ON nba_game_versions(source, available_at);
 CREATE TABLE IF NOT EXISTS nba_game_last_observation (
     source TEXT NOT NULL, game_id TEXT NOT NULL, received_at TEXT NOT NULL,
@@ -140,6 +142,18 @@ def _stage(blob, filter_type):
     supplied = blob.get("season_type")
     phase = supplied if supplied is not None else filter_type
     cup = str(blob.get("ist_stage") or "").strip().lower()
+    if supplied is not None and supplied not in (
+        "regular",
+        "ist",
+        "playin",
+        "playoffs",
+        "preseason",
+    ):
+        return "unknown"
+    if blob.get("postseason") is not None and type(blob["postseason"]) is not bool:
+        return "unknown"
+    if phase == "preseason" and (blob.get("postseason") is True or cup):
+        return "unknown"
     if phase in ("playin", "playoffs", "preseason"):
         return {"playin": "playin", "playoffs": "postseason", "preseason": "preseason"}[
             phase
@@ -288,6 +302,13 @@ def normalize_bdl(blob, filter_type=None):
         "kickoff": kickoff,
         "timing_problem": timing_problem,
         "stage": _stage(blob, filter_type),
+        "stage_basis": "provider_fields"
+        if _stage(blob, None) != "unknown"
+        else "query_filter",
+        "provider_season_type": blob.get("season_type")
+        if isinstance(blob.get("season_type"), str)
+        else None,
+        "cup_stage": str(blob.get("ist_stage") or "").strip().lower() or None,
         "home": home,
         "away": away,
         "home_abbr": home_abbr,
@@ -295,6 +316,11 @@ def normalize_bdl(blob, filter_type=None):
         "home_name": home_name,
         "away_name": away_name,
         "neutral": neutral if type(neutral) is bool else None,
+        "final_period": blob["period"]
+        if status == "final"
+        and type(blob.get("period")) is int
+        and 4 <= blob["period"] <= 19
+        else None,
         "home_score": blob.get("home_team_score") if status == "final" else None,
         "away_score": blob.get("visitor_team_score") if status == "final" else None,
         "status": status,
@@ -316,22 +342,45 @@ def _open(root):
     return db
 
 
+def observation_clock_problem(row, received):
+    """Compare source-reported play with the actual observation, including ET date-only fixtures."""
+    if row.get("source") != "balldontlie" or row.get("status") not in ("live", "final"):
+        return None
+    try:
+        at = _utc(received)
+        if _date(row["game_date"]) > at.astimezone(EASTERN).date():
+            return "play_received_before_eastern_game_date"
+        if row.get("kickoff") and at < _utc(row["kickoff"]):
+            return "play_received_before_reported_kickoff"
+    except (KeyError, ValueError, TypeError, OverflowError):
+        return "unverified_observation_clock"
+    return None
+
+
+def _guard_observed_clock(row, received):
+    problem = observation_clock_problem(row, received)
+    if problem:
+        # A positively identified live same-day start is a pregame veto even
+        # when play begins a few minutes earlier than the advertised clock.
+        early_live = (
+            row["status"] == "live"
+            and problem == "play_received_before_reported_kickoff"
+        )
+        return dict(
+            row,
+            status="live" if early_live else "unknown",
+            home_score=None,
+            away_score=None,
+            final_period=None,
+            timing_problem=problem,
+        )
+    return row
+
+
 def _append_versions(db, rows, received, available, sha):
     count = 0
     for row in rows:
-        if (
-            row["source"] == "balldontlie"
-            and row["status"] in ("live", "final")
-            and row.get("kickoff")
-            and received < row["kickoff"]
-        ):
-            row = dict(
-                row,
-                status="unknown",
-                home_score=None,
-                away_score=None,
-                timing_problem="play_received_before_reported_kickoff",
-            )
+        row = _guard_observed_clock(row, received)
         body = _encoded(row)
         identity = (row["source"], row["game_id"])
         last = db.execute(
@@ -356,6 +405,7 @@ def _append_versions(db, rows, received, available, sha):
                 context = min((row, old), key=_encoded).copy()
                 context.update(
                     status="unknown",
+                    final_period=None,
                     kickoff=None,
                     home_score=None,
                     away_score=None,
@@ -371,8 +421,18 @@ def _append_versions(db, rows, received, available, sha):
                     "INSERT OR REPLACE INTO nba_game_last_observation VALUES(?,?,?,?,?)",
                     (*identity, received, fingerprint, sha),
                 )
-        if last and (last["payload"] == body or last["received_at"] > received):
-            continue
+        if last:
+            if last["received_at"] > received:
+                continue
+            if last["payload"] == body:
+                # A once-impossible future final can become independently true
+                # when exactly the same bytes are re-observed after game day.
+                old = json.loads(last["payload"])
+                if (
+                    _guard_observed_clock(old, last["received_at"]) == row
+                    or row["status"] != "final"
+                ):
+                    continue
         version = last["version"] + 1 if last else 1
         db.execute(
             "INSERT INTO nba_game_versions VALUES(?,?,?,?,?,?,?)",
@@ -447,7 +507,7 @@ def import_538(root, path):
     }
 
 
-def _read(root, source, as_of, since, game_id, latest):
+def _read(root, source, as_of, since, game_id, latest, *, day=None):
     from . import storage
 
     clauses, args = ["source=?", "available_at!=?"], [source, PENDING]
@@ -469,6 +529,13 @@ def _read(root, source, as_of, since, game_id, latest):
             "SELECT 1 FROM sqlite_master WHERE type='table' AND name='nba_game_versions'"
         ).fetchone():
             return []
+        if day is not None:
+            # Select candidate IDs by date before ranking, then enforce the date
+            # again on their latest version (a fixture can move across ET days).
+            clauses.append(
+                "game_id IN (SELECT game_id FROM nba_game_versions WHERE source=? AND json_extract(payload,'$.game_date')=?)"
+            )
+            args.extend([source, str(day)])
         sql = "SELECT * FROM nba_game_versions WHERE " + " AND ".join(clauses)
         if latest:
             sql = (
@@ -477,17 +544,31 @@ def _read(root, source, as_of, since, game_id, latest):
                 + sql
                 + ") g) WHERE ranking=1"
             )
+        if day is not None:
+            sql += " AND json_extract(payload,'$.game_date')=?"
+            args.append(str(day))
         rows = db.execute(sql + " ORDER BY available_at,game_id,version", args)
-        return [
-            dict(
-                json.loads(r["payload"]),
-                version=r["version"],
-                received_at=r["received_at"],
-                available_at=r["available_at"],
-                receipt_sha256=r["sha"],
+        result = []
+        for r in rows:
+            payload = _guard_observed_clock(json.loads(r["payload"]), r["received_at"])
+            if (
+                source == "balldontlie"
+                and payload.get("evidence_grade") == "local_receipt"
+                and "stage_basis" not in payload
+            ):
+                # Older scans published filter guesses before checking other phases.
+                # Preserve originals for audits; re-observation supplies a verified version.
+                payload.update(stage="unknown", stage_basis="legacy_requires_rescan")
+            result.append(
+                dict(
+                    payload,
+                    version=r["version"],
+                    received_at=r["received_at"],
+                    available_at=r["available_at"],
+                    receipt_sha256=r["sha"],
+                )
             )
-            for r in rows
-        ]
+        return result
 
 
 def game_versions(root, *, source="balldontlie", as_of=None, since=None, game_id=None):
@@ -496,6 +577,10 @@ def game_versions(root, *, source="balldontlie", as_of=None, since=None, game_id
 
 def games_as_of(root, as_of=None, *, source="balldontlie"):
     return _read(root, source, as_of, None, None, True)
+
+
+def games_on_day_as_of(root, game_day, cutoff):
+    return _read(root, "balldontlie", cutoff, None, None, True, day=_date(game_day))
 
 
 def _reserve(db, clock):
@@ -565,7 +650,7 @@ def _page(response, params):
         type(cursor) is not int or cursor <= params.get("cursor", 0) or not items
     )
     rows = []
-    quarantined = unidentified = 0
+    unidentified = 0
     for item in items[: params["per_page"]]:
         try:
             game_id = _positive_id(item["id"])
@@ -587,6 +672,7 @@ def _page(response, params):
                 "away": None,
                 "kickoff": None,
                 "stage": "unknown",
+                "stage_basis": "unverified",
                 "status": "unknown",
                 "neutral": None,
                 "home_score": None,
@@ -595,9 +681,8 @@ def _page(response, params):
                 "quarantine": "invalid_game_metadata",
                 "evidence_grade": "local_receipt",
             }
-        quarantined += int(row["status"] == "unknown" or row["stage"] == "unknown")
         rows.append(row)
-    return rows, cursor, quarantined, unidentified, bad_cursor
+    return rows, cursor, unidentified, bad_cursor
 
 
 def _withdraw_missing(db, start, end, observed, receipts, began, clock):
@@ -619,6 +704,7 @@ def _withdraw_missing(db, start, end, observed, receipts, began, clock):
             if r["game_id"] not in observed and r["status"] != "unknown":
                 r.update(
                     status="unknown",
+                    final_period=None,
                     home_score=None,
                     away_score=None,
                     absence="absent_from_complete_range_scan",
@@ -678,6 +764,19 @@ def sync_bdl(root, start, end, *, fetch=None, clock=None, sleep=None):
             "quarantined_rows": 0,
             "unidentified_rows": 0,
             "pagination_errors": 0,
+            "overlapping_ids": 0,
+            "phase_mismatches": 0,
+            "unknown_stages": 0,
+            "scheduled_without_kickoff": 0,
+            "unknown_statuses": 0,
+            "unrecognized_statuses": 0,
+            "phase_rows": {},
+            "stage_counts": {},
+            "status_counts": {},
+            "game_days": [],
+            "neutral_known": 0,
+            "neutral_unknown": 0,
+            "cup_knockout": 0,
         },
         "new_versions": 0,
         "start": start,
@@ -740,8 +839,19 @@ def sync_bdl(root, start, end, *, fetch=None, clock=None, sleep=None):
 
 def _sync_range(db, result, key, fetch, clock, sleep, began):
     start, end = result["start"], result["end"]
-    observed, receipts = set(), []
-    for phase in ("regular", "ist") if end >= "2023-11-03" else ("regular",):
+    observations, receipts = {}, []
+    phases = ["regular", "preseason"]
+    if end >= "2023-11-03":
+        phases.append("ist")
+
+    def interrupted():
+        if observations:
+            result["new_versions"] = _publish_checked(
+                db, observations, result["quality"], clock, complete_pages=False
+            )
+        return result
+
+    for phase in phases:
         params = {
             "start_date": start,
             "end_date": end,
@@ -759,7 +869,7 @@ def _sync_range(db, result, key, fetch, clock, sleep, began):
                     state="rate_limited",
                     retry_at=_iso(_utc(clock()) + timedelta(seconds=wait)),
                 )
-                return result
+                return interrupted()
             query = {
                 "source": "balldontlie",
                 "endpoint": BDL_URL,
@@ -773,7 +883,7 @@ def _sync_range(db, result, key, fetch, clock, sleep, began):
                     db, query, None, [], 0, "transport_error", _iso(clock()), clock
                 )
                 result.update(state="unavailable")
-                return result
+                return interrupted()
             at = _iso(clock())
             code = response.status_code
             if code != 200:
@@ -784,52 +894,171 @@ def _sync_range(db, result, key, fetch, clock, sleep, began):
                         state="rate_limited",
                         retry_at=_defer(db, at, response.headers.get("Retry-After")),
                     )
-                return result
+                return interrupted()
             # Never archive a body reflecting the credential, including invalid responses.
             if key.encode() in response.content:
                 _capture(db, query, None, [], code, "credential_reflection", at, clock)
                 result.update(state="invalid_response")
-                return result
+                return interrupted()
             try:
-                rows, cursor, quarantined, unidentified, bad_cursor = _page(
-                    response, params
-                )
+                rows, cursor, unidentified, bad_cursor = _page(response, params)
             except (TypeError, ValueError, KeyError, AttributeError, OverflowError):
                 _capture(db, query, None, [], code, "invalid_response", at, clock)
                 result.update(state="invalid_response")
-                return result
+                return interrupted()
             ids = {r["game_id"] for r in rows}
             bad_cursor |= len(ids) < len(rows) or bool(ids & phase_ids)
             quality = result["quality"]
-            quality["quarantined_rows"] += quarantined
+            quality["phase_rows"][phase] = quality["phase_rows"].get(phase, 0) + len(
+                rows
+            )
             quality["unidentified_rows"] += unidentified
             quality["pagination_errors"] += int(bad_cursor)
-            n, sha = _capture(
-                db, query, response.content, rows, code, "game_page", at, clock
+            # Raw pages are durable immediately. Never publish a guessed phase
+            # during pagination while the negative-control query is still outstanding.
+            _, sha = _capture(
+                db, query, response.content, [], code, "game_page", at, clock
             )
+            for row in rows:
+                observations.setdefault(row["game_id"], []).append(
+                    (phase, row, at, sha)
+                )
             receipts.append(sha)
             phase_ids.update(ids)
-            observed.update(ids)
             result.update(
                 partial=True,
                 pages=result["pages"] + 1,
-                received_games=len(observed),
-                new_versions=result["new_versions"] + n,
+                received_games=len(observations),
             )
             if bad_cursor:
                 result.update(state="invalid_response")
-                return result
+                return interrupted()
             if cursor is None:
                 break
             params["cursor"] = cursor
-    if result["quality"]["unidentified_rows"]:
+    quality = result["quality"]
+    result["new_versions"] = _publish_checked(db, observations, quality, clock)
+    if quality["unidentified_rows"]:
         result.update(state="invalid_response")
         return result
+    if (
+        quality["quarantined_rows"]
+        or quality["overlapping_ids"]
+        or quality["phase_mismatches"]
+        or quality["unknown_stages"]
+        or quality["scheduled_without_kickoff"]
+        or quality["unrecognized_statuses"]
+        or quality["unknown_statuses"] == len(observations) > 0
+    ):
+        result.update(state="source_quality")
+        return result
     result["new_versions"] += _withdraw_missing(
-        db, start, end, observed, receipts, began, clock
+        db, start, end, set(observations), receipts, began, clock
     )
     result.update(state="ok", complete=True, partial=False)
     return result
+
+
+def _phase_mismatch(phase, row):
+    supplied = row.get("provider_season_type")
+    if supplied and supplied != phase:
+        return True
+    if row.get("quarantine"):
+        return False
+    stage = row["stage"]
+    return (
+        stage in ("postseason", "playin")
+        or (stage == "preseason" and phase != "preseason")
+        or (phase == "preseason" and stage != "preseason")
+    )
+
+
+def _publish_checked(db, observations, quality, clock, *, complete_pages=True):
+    overlap = {
+        gid for gid, entries in observations.items() if len({e[0] for e in entries}) > 1
+    }
+    mismatch = {
+        gid
+        for gid, entries in observations.items()
+        if any(_phase_mismatch(phase, row) for phase, row, _, _ in entries)
+    }
+    quality.update(overlapping_ids=len(overlap), phase_mismatches=len(mismatch))
+    quality["overlap_examples"] = sorted(overlap)[:10]
+    days, versions = set(), 0
+    with db:
+        db.execute("BEGIN IMMEDIATE")
+        for gid, entries in observations.items():
+            _, row, at, sha = entries[-1]
+            row = _guard_observed_clock(row, at)
+            if (
+                gid in overlap
+                or gid in mismatch
+                or ((overlap or mismatch) and row.get("stage_basis") == "query_filter")
+            ):
+                row = dict(
+                    row,
+                    stage="unknown",
+                    stage_basis="filter_conflict",
+                    quarantine="season_type_filter_conflict",
+                )
+            elif not complete_pages:
+                # A cancellation, malformed replacement or directly classified
+                # non-regular game still invalidates an old positive observation.
+                if (
+                    row["status"] in ("scheduled", "final", "live")
+                    and row.get("stage_basis") != "provider_fields"
+                    and row.get("kickoff")
+                ):
+                    continue
+                if (
+                    row.get("stage_basis") != "provider_fields"
+                    or row["stage"] == "regular"
+                ):
+                    row = dict(
+                        row, stage="unknown", stage_basis="incomplete_phase_queries"
+                    )
+            elif row.get("stage_basis") == "query_filter":
+                row = dict(row, stage_basis="disjoint_phase_queries")
+            missing = row["status"] == "scheduled" and not row.get("kickoff")
+            if missing:
+                row = dict(row, timing_problem="scheduled_without_kickoff")
+            quality["scheduled_without_kickoff"] += int(missing)
+            quality["unknown_stages"] += int(
+                row["stage"] == "unknown"
+                and row.get("quarantine") != "invalid_game_metadata"
+            )
+            quality["unknown_statuses"] += int(row["status"] == "unknown")
+            quality["unrecognized_statuses"] += int(
+                row["status"] == "unknown"
+                and row.get("quarantine") != "invalid_game_metadata"
+            )
+            quality["quarantined_rows"] += int(
+                bool(
+                    missing
+                    or row.get("quarantine")
+                    or row["status"] == "unknown"
+                    or row["stage"] == "unknown"
+                )
+            )
+            for field in ("stage", "status"):
+                counts = quality[field + "_counts"]
+                counts[row[field]] = counts.get(row[field], 0) + 1
+            if row["stage"] == "regular" or row["stage"] == "cup_final":
+                days.add(row["game_date"])
+            quality[
+                "neutral_known" if row.get("neutral") is not None else "neutral_unknown"
+            ] += 1
+            cup = row.get("cup_stage") or ""
+            quality["cup_knockout"] += int(
+                row["stage"] == "cup_final"
+                or "semifinal" in cup
+                or "quarterfinal" in cup
+            )
+            versions += _append_versions(db, [row], at, PENDING, sha)
+    if versions:
+        _publish_pending(db, clock)
+    quality["game_days"] = sorted(days)
+    return versions
 
 
 def schedule_proof(root, game_day, as_of):
@@ -868,7 +1097,22 @@ def schedule_proof(root, game_day, as_of):
             )
         else:
             proof["complete"] = bool(r["complete"])
-            proof["quality"] = json.loads(r["quality"]) if r["quality"] else None
+            quality = json.loads(r["quality"]) if r["quality"] else None
+            proof["quality"] = quality
+            if proof["complete"]:
+                if not (quality or {}).get("phase_rows"):
+                    proof.update(state="legacy_unverified", complete=False)
+                elif any(
+                    quality.get(k, 0)
+                    for k in (
+                        "quarantined_rows",
+                        "unidentified_rows",
+                        "pagination_errors",
+                        "overlapping_ids",
+                        "phase_mismatches",
+                    )
+                ):
+                    proof.update(state="source_quality", complete=False)
         return proof
 
 
@@ -904,3 +1148,6 @@ def register(commands):
         func=lambda a: probe(a.data_dir, a.source),
         result_exit_code=lambda r: int(not r.get("authenticated")),
     )
+    from . import source_acceptance
+
+    source_acceptance.register(actions)

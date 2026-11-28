@@ -38,6 +38,8 @@ with patch.object(sys, "path", [str(PAPER), str(FEED), *sys.path]):
     calibration = load_module(FEED / "paper_calibration.py")
     archive = load_module(PAPER / "archive_slate_evidence.py")
     account = load_module(PAPER / "account_engine.py")
+    preflight = load_module(PAPER / "check_account_upgrade.py")
+    monitor = load_module(PAPER / "monitor.py")
     bindings = load_module(ROOT / "scripts/check_paper_bindings.py")
 
 odds = feed.watch.football_odds_access
@@ -103,7 +105,7 @@ class FootballPaperReview(unittest.TestCase):
              "kickoff": "2026-11-28T00:00:00.000000Z"}
         pins = {"match-1": {"token_id": "old", "kickoff": f["kickoff"]}}
         (self.root / "feed.json").write_text(json.dumps({"schema_version": 1, "published_fixtures": pins,
-                                                         "policy_id": "verified-football-recommendations-v1"}))
+                                                         "policy_id": "verified-football-recommendations-v2"}))
         with patch.object(feed, "PAPER", self.root), patch.object(feed, "HERE", self.root), \
              patch.object(feed, "scheduled", side_effect=lambda league, *_: [f] if league == "epl" else []), \
              patch.object(feed, "verify_model", return_value={"info": {}, "lineups": {}}), \
@@ -113,6 +115,8 @@ class FootballPaperReview(unittest.TestCase):
         transport.assert_not_called()
         self.assertEqual(result["recommendations"], [])
         self.assertEqual(result["published_fixtures"], pins)
+        self.assertIn("verified-football-recommendations-v1", feed.PIN_POLICIES)
+        self.assertEqual(set(result["coverage"]["directions_pending_prospective_evidence"]), {"home_no", "full_game_total_2.5"})
         self.assertIn("no_reviewed_free_ESPN_DraftKings_grant", str(result["coverage"]["gaps"]))
 
     def test_pooled_curves_are_bound_to_reviewed_artifact_and_coherent(self):
@@ -137,17 +141,49 @@ class FootballPaperReview(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unsupported"):
             calibration.calibrated(arm, {"family": "total", "line": "3.5", "side": "under"})
 
-    def test_corrected_total_flows_into_limit_with_external_cap(self):
-        base = {"totals": {"total": {"2.5": {"under": ".655", "over": ".345"}}}}
-        m = {"family": "total", "line": "2.5", "recorded_at": "2026-11-27T00:00:00Z", "tokens": [{"token_id": "12"}]}
-        terms = {"family": "total", "side": "under", "line": "2.5",
-                 "special": {"canceled": "pending", "postponed": "pending", "abandoned": "pending"}}
-        book = {"groups": {"total": {"line": "2.5", "probabilities": {"under": D(".58")}, "prices": {}}}}
+    def test_new_directions_require_prospective_evidence_and_keep_external_price_ceiling(self):
+        at = "2026-11-27T00:00:00Z"
+        base = {"probabilities": {"home_win": ".35", "draw": ".20", "away_win": ".45"}}
+        totals = {"family": "total", "line": "2.50", "recorded_at": at,
+                  "tokens": [{"token_id": "over"}, {"token_id": "under"}]}
+        home = {"family": "moneyline", "side": "home", "recorded_at": at, "tokens": [{"token_id": "no"}]}
+        away = {"family": "moneyline", "side": "away", "recorded_at": at, "tokens": [{"token_id": "yes"}]}
+        groups = {"total": {"line": "2.5", "probabilities": {}, "prices": {}},
+                  "moneyline": {"probabilities": {"away": D(".30")}, "prices": {}}}
+
+        def terms(_, market, token, *args):
+            result = ({"family": "total", "line": market["line"]} if market["family"] == "total"
+                      else {"family": "result", "selection": market["side"]})
+            return dict(result, side=token, special={"canceled": "pending"})
+
+        def candidates(markets):
+            return feed.possibilities({}, {"with": base, "without": base}, {"groups": groups}, markets)
+
         with patch.object(feed.shadow_market, "_fee", return_value={"enabled": False}), \
-             patch.object(feed.ledger_terms, "_terms_with_fee", return_value=terms):
-            row, = feed.possibilities({}, {"with": base, "without": base}, book, [m])
-        self.assertLess(row["robust"], D(".59"))
-        self.assertLess(feed.best_limit(row, D(20), D(".01")), D(".58"))
+             patch.object(feed.ledger_terms, "_terms_with_fee", side_effect=terms):
+            with self.assertRaisesRegex(ValueError, "full_game_total_2.5,home_no"):
+                candidates([totals, home])
+            row, = candidates([totals, home, away])
+        self.assertEqual(row["market"], away)
+        self.assertGreater(row["robust"], D(".33"))
+        self.assertEqual(feed.best_limit(row, D(20), D(".01")), D(".30"))
+
+    def test_manual_opener_filters_authenticated_terms_before_books_and_preserves_held_positions(self):
+        pick = {"id": "candidate", "token_id": "1", "condition_id": "c"}
+        (self.root / "slate.json").write_text(json.dumps([pick, {"id": "existing"}]))
+        path = self.root / "account-input.json"
+        path.write_text(json.dumps({"intents": [{"id": "existing"}]}))
+        original = path.read_bytes()
+        with patch.object(opening, "ROOT", self.root), patch.object(opening, "verify_comparison_receipt") as odds_check, \
+             patch.object(opening.proof, "verify_contract", return_value={"intent_terms": {"selection": {
+                 "family": "result", "selection": "home", "side": "no"}}}) as contract, \
+             patch.object(opening, "books_for") as books:
+            opening.main()
+        self.assertEqual(odds_check.call_count, 1)
+        self.assertEqual(contract.call_count, 1)
+        books.assert_not_called()
+        self.assertEqual(path.read_bytes(), original)
+        self.assertFalse((self.root / "picks.json").exists())
 
     def test_private_archive_retries_and_detects_changes(self):
         source = self.root / "input"
@@ -158,6 +194,13 @@ class FootballPaperReview(unittest.TestCase):
         archive.archive(source, dest)
         archive.archive(source, dest)
         self.assertEqual(set(archive.verify(dest)), {"markets.json", "forecasts.json", "extra"})
+        argv = ["archive_slate_evidence.py", "--source", str(self.root / "missing"),
+                "--destination", str(dest), "--archive-or-verify"]
+        with patch.object(sys, "argv", argv), patch("builtins.print"):
+            archive.main()
+        with patch.object(sys, "argv", [*argv[:4], str(self.root / "no_archive"), argv[-1]]), patch("builtins.print"):
+            with self.assertRaisesRegex(ValueError, "missing regular"):
+                archive.main()
         (source / "extra").write_text("changed")
         with self.assertRaisesRegex(ValueError, "differs"):
             archive.archive(source, dest)
@@ -177,7 +220,7 @@ class FootballPaperReview(unittest.TestCase):
         self.assertEqual(D(report["total_available_cash"]), account.FUND)
         self.assertEqual(D(report["total_unredeemed_cost"]), 0)
 
-    def test_recorded_fill_redeems_once_and_modified_bids_do_not_spend(self):
+    def settled_fixture(self):
         doc, (main, _) = domestic_entry(self.root, "bun", explicit=True)
         doc["account_policy"] = account.POLICY
         op = doc["intents"][0]
@@ -185,9 +228,6 @@ class FootballPaperReview(unittest.TestCase):
                         "sizing_bankroll": "10000", "kelly_fraction": ".25", "budget": "100"}
         for book in doc["books"]:
             book["bids"] = [{"price": "0.49", "size": "200"}]
-        report = account.replay(doc, as_of=op["kickoff"], data_dir=self.root)
-        self.assertEqual(report["decisions"][0]["outcome"], "filled", report["proof_gaps"])
-        self.assertEqual(D(report["total_unredeemed_cost"]), D(50))
         native = big5_market.research_root(self.root)
         market = market_archive.contracts(native, main["slug"], as_of=op["decision_at"])[0]
         at = store.iso(store.instant(op["kickoff"]) + timedelta(hours=3))
@@ -197,6 +237,13 @@ class FootballPaperReview(unittest.TestCase):
             if row["token_id"] == op["token_id"]:
                 doc["redemptions"] = [{"id": "payment", "at": at, "original_sha256": sha,
                                        **{k: op[k] for k in ("fixture_id", "condition_id", "token_id")}}]
+        return doc, at
+
+    def test_recorded_fill_redeems_once_and_modified_bids_do_not_spend(self):
+        doc, at = self.settled_fixture()
+        report = account.replay(doc, as_of=doc["intents"][0]["kickoff"], data_dir=self.root)
+        self.assertEqual(report["decisions"][0]["outcome"], "filled", report["proof_gaps"])
+        self.assertEqual(D(report["total_unredeemed_cost"]), D(50))
         settled = account.replay(doc, as_of=at, data_dir=self.root)
         self.assertEqual(D(settled["total_settled_paper_pnl"]), D(50))
         self.assertEqual(D(settled["total_available_cash"]), D(10050))
@@ -206,6 +253,59 @@ class FootballPaperReview(unittest.TestCase):
         self.assertEqual(rejected["decisions"][0]["outcome"], "skipped_unverified_entry")
         self.assertIn("submitted bids", rejected["decisions"][0]["reason"])
         self.assertEqual(D(rejected["total_available_cash"]), account.FUND)
+
+    def test_readonly_upgrade_preflight_checks_recorded_fill_cash_and_each_redemption(self):
+        doc, at = self.settled_fixture()
+        intent, = doc["intents"]
+        events = doc["redemptions"]
+        engine = (PAPER / "account_engine.py").read_bytes()
+        (self.root / "account_engine.py").write_bytes(engine)
+        ledger = self.root / "account-input.json"
+        ledger.write_text(json.dumps(dict(doc, redemptions=[])))
+        status = account.replay(doc, as_of=at, data_dir=self.root)
+        position = monitor.render_position(intent, status["decisions"][0], {},
+                                           {"state": "settled", "event": events[0], "payout": "1"})
+        status.update(state="ok", account_input_sha256=hashlib.sha256(ledger.read_bytes()).hexdigest(),
+                      positions=[position])
+        (self.root / "account-status.json").write_text(json.dumps(status))
+        journal = self.root / "redemptions.json"
+        journal.write_text(json.dumps({"as_of": at, "active_events": events}))
+
+        def checksums():
+            return {p.relative_to(self.root): hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in self.root.rglob("*") if p.is_file()}
+
+        def check(candidate, ids):
+            with tempfile.TemporaryDirectory() as tmp:
+                return preflight.compare(self.root, candidate, Path(tmp), required_positions=ids)
+
+        source = checksums()
+        ids = {intent["id"]}
+        result = check(PAPER / "account_engine.py", ids)
+        self.assertEqual((result["state"], result["positions_checked"], result["redemptions_checked"]), ("match", 1, 1))
+        self.assertEqual(checksums(), source)
+        with self.assertRaisesRegex(ValueError, "original positions missing"):
+            check(PAPER / "account_engine.py", preflight.ORIGINAL_POSITIONS)
+        with tempfile.TemporaryDirectory() as folder:
+            candidate = Path(folder) / "changed.py"
+            candidate.write_bytes(engine + b"""
+original = replay
+def replay(*a, **kw):
+    result = original(*a, **kw)
+    result["decisions"][0]["fill"]["net_shares"] = "99"
+    return result
+""")
+            changed = check(candidate, ids)
+        self.assertEqual(changed["state"], "mismatch")
+        self.assertEqual(changed["candidate"]["position_differences"], [intent["id"]])
+        self.assertEqual(changed["deployed"]["position_differences"], [])
+        self.assertEqual(checksums(), source)
+        position["redemption_cash"] = "0"
+        (self.root / "account-status.json").write_text(json.dumps(status))
+        self.assertEqual(check(PAPER / "account_engine.py", ids)["state"], "mismatch")
+        journal.write_text(json.dumps({"as_of": at, "active_events": []}))
+        with self.assertRaisesRegex(ValueError, "differs from journal"):
+            check(PAPER / "account_engine.py", ids)
 
     def test_deployment_references_and_pinned_interpreters(self):
         self.assertIn(("polymarket861.ledger_rules", "_renamed"),

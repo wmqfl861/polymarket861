@@ -16,6 +16,8 @@
 
 ## 在已有部署上同步
 
+覆盖现役脚本前，先在部署机保全六个最初仓位的研究原件，并核对旧引擎、候选引擎与已发布账表。以下同步命令用于预检返回 `match` 的部署。[原件归档和只读预检命令](FOOTBALL-PAPER-REVIEW-20261128.md)
+
 项目根目录为 `/mnt/d/polymarket861`。下列命令从仓库根目录执行，把源码复制到已有运行布局。脚本按自身位置查找账本、历史和生产数据。要在新机器接续同一个账户，先恢复一致备份，包括 `.pm861`、`.local-deploy/paper-10000`、四国预测和盘口数据、推荐历史及通知数据库。通知器从 `notifications.sqlite3` 恢复起点及送达记录。记录首次六场选单依据时，还需归档部署机的专项研究目录。仓库提供历史分箱研究和当前推荐层连续校正。[预测部署前置条件](DEPLOY-0.5.0a4.md) · [校准表生成程序](../../deploy/paper-automation/five-automation/recommendation-feed/build_calibration.py)
 
 ```bash

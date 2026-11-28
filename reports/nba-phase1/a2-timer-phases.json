@@ -1,0 +1,165 @@
+{
+ "horizon": "T-60m",
+ "process_startup_seconds": 1.0,
+ "offsets_per_phase": 12,
+ "settings": {
+  "first_request_4.0s_later_0.2s": [
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 0,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 2,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 5,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 8,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 10,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 15,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 20,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 30,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 40,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 50,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 58,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   }
+  ],
+  "first_request_0.3s_later_0.1s": [
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 0,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 2,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 5,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 8,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 10,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 15,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 20,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 30,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 40,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 50,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   },
+   {
+    "markets_timer_leads_forecast_timer_by_seconds": 58,
+    "trials": 12,
+    "sealed": 12,
+    "sealed_with_market_at_prediction": 12,
+    "quote_for_same_window_existed_by_deadline": 12
+   }
+  ]
+ }
+}

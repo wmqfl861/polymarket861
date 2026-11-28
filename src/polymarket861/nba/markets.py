@@ -15,12 +15,27 @@ from .. import market_provider as api
 from . import storage
 from .markets_contracts import (
     FAMILIES,
-    contracts,
+    contract_inventory,
     eligibility,
     fixture,
     price,
     stamp,
+    spread_archives,
+    selected_line,
     team_code,
+)
+
+from .markets_schedule import (
+    MATCHED,
+    PAIR_TOLERANCE as PAIR_TOLERANCE,
+    disputed as _disputed,
+    fixture_conflict as fixture_conflict,
+    kickoff_differences,
+    schedule_match as schedule_match,
+    schedule_match_db,
+    score_veto,
+    current_score_tip,
+    source_epoch,
 )
 
 WINDOWS = {"T-24h": 1440, "T-60m": 60, "T-15m": 15}
@@ -38,6 +53,10 @@ CREATE TABLE IF NOT EXISTS nba_market_games(
  id TEXT PRIMARY KEY, game_id TEXT NOT NULL UNIQUE, home TEXT, away TEXT, home_id TEXT, away_id TEXT,
  kickoff TEXT NOT NULL, version INTEGER NOT NULL, first_seen TEXT NOT NULL, seen TEXT NOT NULL,
  started INTEGER NOT NULL, settle_after TEXT);
+CREATE TABLE IF NOT EXISTS nba_market_catalogues(
+ completed TEXT PRIMARY KEY,start_bound TEXT NOT NULL,end_bound TEXT NOT NULL,receipts TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS nba_market_pregame(
+ id TEXT,version INTEGER,seen TEXT NOT NULL,receipt INTEGER NOT NULL,PRIMARY KEY(id,version));
 CREATE TABLE IF NOT EXISTS nba_market_schedule(
  id TEXT,version INTEGER,kickoff TEXT NOT NULL,valid_from TEXT NOT NULL,PRIMARY KEY(id,version));
 CREATE TABLE IF NOT EXISTS nba_market_identity_conflicts(
@@ -51,6 +70,12 @@ CREATE TABLE IF NOT EXISTS nba_market_choices(
  id TEXT, version INTEGER, window TEXT, family TEXT, contract TEXT, probability REAL, observed TEXT NOT NULL,
  available TEXT NOT NULL, quality TEXT NOT NULL, receipt INTEGER, metadata_receipt INTEGER,
  PRIMARY KEY(id,version,window,family));
+CREATE TABLE IF NOT EXISTS nba_market_contract_issues(
+ metadata_receipt INTEGER,family TEXT,reason TEXT,count INTEGER NOT NULL,
+ PRIMARY KEY(metadata_receipt,family,reason));
+CREATE TABLE IF NOT EXISTS nba_market_spread_archives(
+ id TEXT,version INTEGER,window TEXT,condition_id TEXT,metadata_receipt INTEGER,book_receipt INTEGER,
+ observed TEXT NOT NULL,PRIMARY KEY(id,version,window,condition_id,book_receipt));
 CREATE TABLE IF NOT EXISTS nba_market_close(
  id TEXT,version INTEGER,token TEXT,condition_id TEXT,price REAL,observed TEXT,available TEXT,receipt INTEGER,
  PRIMARY KEY(id,version,token,observed));
@@ -145,17 +170,6 @@ def _read(db, clock, url, params=None):
 _IDENTITY_FIELDS = ("id", "game_id", "home_id", "away_id", "home", "away")
 
 
-def _disputed(db, event_id, game_id, home, away, kickoff, through):
-    return (
-        db.execute(
-            "SELECT 1 FROM nba_market_identity_conflicts WHERE first_seen<=? AND "
-            "(id=? OR game_id=? OR (home=? AND away=? AND kickoff=?)) LIMIT 1",
-            (through, event_id, game_id, home, away, kickoff),
-        ).fetchone()
-        is not None
-    )
-
-
 def _upsert(db, event, seen, receipt=None, expected=None):
     g = fixture(event)
     ids = tuple(str(g["clubs"][s]["id"]) for s in ("home", "away"))
@@ -232,6 +246,16 @@ def _upsert(db, event, seen, receipt=None, expected=None):
         "INSERT OR IGNORE INTO nba_market_schedule VALUES(?,?,?,?)",
         (g["id"], version, g["kickoff"], seen),
     )
+    if (
+        receipt is not None
+        and g["pregame"]
+        and seen < g["kickoff"]
+        and not (row and (row["started"] or (changed and seen >= row["kickoff"])))
+    ):
+        db.execute(
+            "INSERT OR IGNORE INTO nba_market_pregame VALUES(?,?,?,?)",
+            (g["id"], version, seen, receipt),
+        )
     reason = None
     if g["unavailable"]:
         reason = "venue_archived_closed_cancelled_or_inactive"
@@ -262,6 +286,7 @@ def _discover(db, clock):
         "limit": 8,
     }
     cursors = set()
+    receipts = []
     conflicts = set()
     for _ in range(12):
         if cursor:
@@ -273,6 +298,7 @@ def _discover(db, clock):
             or not isinstance(payload.get("events"), list)
         ):
             raise ValueError("stale or unrecognized NBA event catalogue")
+        receipts.append(receipt)
         with db:
             db.execute("BEGIN IMMEDIATE")
             for event in payload["events"]:
@@ -288,7 +314,17 @@ def _discover(db, clock):
         cursor = payload.get("next_cursor")
         if not cursor:
             with db:
-                _set(db, "catalogue_at", stamp(clock()))
+                completed = stamp(clock())
+                _set(db, "catalogue_at", completed)
+                db.execute(
+                    "INSERT OR IGNORE INTO nba_market_catalogues VALUES(?,?,?,?)",
+                    (
+                        completed,
+                        params["start_time_min"],
+                        params["start_time_max"],
+                        json.dumps(receipts),
+                    ),
+                )
             return sorted(conflicts)
         if cursor in cursors:
             raise ValueError("NBA catalogue cursor repeated")
@@ -341,43 +377,7 @@ def _book_veto(db, game, observed, as_of):
     ).fetchone()
     if play:
         return play[0]
-    if not db.execute(
-        "SELECT 1 FROM sqlite_master WHERE name='nba_game_versions'"
-    ).fetchone():
-        return None
-    exact = db.execute(
-        "SELECT DISTINCT game_id,json_extract(payload,'$.home_abbr'),json_extract(payload,'$.away_abbr') "
-        "FROM nba_game_versions WHERE source='balldontlie' AND received_at<=? AND available_at<=? "
-        "AND json_extract(payload,'$.kickoff')=?",
-        (observed, as_of, game["kickoff"]),
-    )
-    ids = {
-        r[0]
-        for r in exact
-        if team_code(r[1]) == game["home"] and team_code(r[2]) == game["away"]
-    }
-    if not ids:
-        return None
-    if len(ids) != 1:
-        return "ambiguous_score_source_fixture"
-    history = db.execute(
-        "SELECT payload FROM nba_game_versions WHERE source='balldontlie' AND game_id=? AND received_at<=? "
-        "AND available_at<=? ORDER BY version",
-        (next(iter(ids)), observed, as_of),
-    )
-    current = None
-    for row in history:
-        current = json.loads(row[0])
-        if current.get("play_observed") or current["status"] in ("live", "final"):
-            return "score_source_observed_play"
-    if (
-        current["kickoff"] != game["kickoff"]
-        or team_code(current["home_abbr"]) != game["home"]
-        or team_code(current["away_abbr"]) != game["away"]
-        or current["status"] != "scheduled"
-    ):
-        return "score_source_schedule_conflict"
-    return None
+    return score_veto(db, game, observed, as_of)
 
 
 def _first_tip(db, event_id):
@@ -396,7 +396,42 @@ def _contract_identity(c):
     )
 
 
-def _snapshot(db, clock, row, window):
+def _paired_key(horizon, source_tip, floor):
+    # The original native window is immutable. Each actual score schedule revision
+    # can acquire one separate basket from the intersection of the two named windows.
+    return "|".join(("paired", horizon, source_tip, floor or "first"))
+
+
+def _paired_window(db, game, horizon, now):
+    end = stamp(now)
+    source = current_score_tip(db, game, end)
+    if not source:
+        return None
+    match = schedule_match_db(db, game["home"], game["away"], source, as_of=end)
+    if (
+        match["status"] not in MATCHED
+        or match["reason"]
+        or match["venue_event_id"] != game["id"]
+        or match["venue_version"] != game["version"]
+    ):
+        return None
+    offset = timedelta(minutes=WINDOWS[horizon])
+    native = api.moment(game["kickoff"])
+    lower = max(native, api.moment(source)) - offset - WIDTH
+    upper = min(native, api.moment(source)) - offset
+    if not lower <= now < upper:
+        return None
+    eligible, floor = source_epoch(db, game["home"], game["away"], source, end)
+    if not eligible:
+        return None
+    return (
+        _paired_key(horizon, source, floor),
+        max(lower, api.moment(floor)) if floor else lower,
+        upper,
+    )
+
+
+def _snapshot(db, clock, row, window, paired=None):
     event, game, meta_id = _verified_event(db, clock, row)
     veto = _book_veto(db, game, stamp(clock()), stamp(clock()))
     if veto:
@@ -404,10 +439,28 @@ def _snapshot(db, clock, row, window):
     if row["started"] or not game["pregame"]:
         raise ValueError("venue cannot verify pregame status")
     due = api.moment(row["kickoff"]) - timedelta(minutes=WINDOWS.get(window, 0))
+    label, lower = window, due - WIDTH
+    if paired:
+        if _paired_window(db, row, window, clock()) != paired:
+            raise ValueError("paired schedule or window changed before capture")
+        label, lower, due = paired
     candidates, excluded = [], defaultdict(list)
     first = _first_tip(db, game["id"])
     checked = stamp(clock())
-    for c in contracts(event, game, main_only=window != "CLOSE", native_only=True):
+    inventory, issues = contract_inventory(
+        event, game, main_only=False, native_only=True
+    )
+    with db:
+        db.executemany(
+            "INSERT OR IGNORE INTO nba_market_contract_issues VALUES(?,?,?,?)",
+            [
+                (meta_id, family, reason, n)
+                for family, found in issues.items()
+                for reason, n in found.items()
+            ]
+            + [(meta_id, family, "checked", 1) for family in FAMILIES],
+        )
+    for c in inventory:
         reason = eligibility(c, game["kickoff"], checked, original_kickoff=first)
         if reason:
             excluded[c["family"]].append((c, reason))
@@ -424,7 +477,24 @@ def _snapshot(db, clock, row, window):
         required = {_contract_identity(r) for r in previous}
         candidates = [r for r in candidates if _contract_identity(r) in required]
     tokens = sorted({t for c in candidates for t in (c["token_id"], c["opposite"])})
-    observed, receipt, quotes = clock(), None, {}
+    # Core price collection always has priority. Spread books can share a core HTTP request
+    # when both native tokens fit under the venue limit. They never become selections.
+    if len(tokens) > 500:
+        raise ValueError("full-game candidate tokens exceed the native batch limit")
+    core_tokens = set(tokens)
+    spreads, spill = [], set()
+    for candidate in [] if paired else sorted(spread_archives(event, game)):
+        extra = set(candidate[1:])
+        if (
+            core_tokens
+            and not (extra & (core_tokens | spill))
+            and len(core_tokens | spill | extra) <= 500
+        ):
+            spreads.append(candidate)
+            spill.update(extra)
+    tokens = sorted(core_tokens | spill)
+    observed, receipt, quotes, indexed = clock(), None, {}, {}
+
     empty = set()
     if tokens:
         payload, receipt, reply = _read(
@@ -432,14 +502,19 @@ def _snapshot(db, clock, row, window):
         )
         if not api.fresh_observation(reply) or not isinstance(payload, list):
             raise ValueError("stale or malformed batch of books")
-        indexed = {}
+        bad_spreads = set()
         for book in payload:
             if not isinstance(book, dict) or str(book.get("asset_id")) not in tokens:
                 raise ValueError("unexpected asset in batch")
             t = str(book["asset_id"])
             if t in indexed:
+                if t in spill:
+                    bad_spreads.add(t)
+                    continue
                 raise ValueError("duplicate asset in batch")
             indexed[t] = book
+        for t in bad_spreads:
+            indexed.pop(t)
         observed = api.moment(reply.received_at)
         for c in candidates:
             quote = price(c, indexed, observed)
@@ -458,7 +533,7 @@ def _snapshot(db, clock, row, window):
         veto = _book_veto(db, game, stamp(available), stamp(available))
         if veto:
             raise ValueError(veto)
-        if not due - WIDTH <= observed <= available < due:
+        if not lower <= observed <= available < due:
             raise ValueError("arrival or persistence outside decision window")
         if window == "CLOSE":
             for c in candidates:
@@ -480,17 +555,20 @@ def _snapshot(db, clock, row, window):
         else:
             db.execute(
                 "DELETE FROM nba_market_choices WHERE id=? AND version=? AND window=? AND available='pending'",
-                (row["id"], row["version"], window),
+                (row["id"], row["version"], label),
             )
             for family in FAMILIES:
                 same = [c for c in candidates if c["family"] == family]
-                good = [c for c in same if c["condition_id"] in quotes]
-                best = (
-                    min(good, key=lambda c: quotes[c["condition_id"]][0])
-                    if good
-                    else None
-                )
+                best = selected_line(same, quotes)
                 quality = "unlisted"
+                for kind in (
+                    "rule_template_mismatch",
+                    "unverified_contract",
+                    "listed_inactive",
+                ):
+                    if issues[family][kind]:
+                        quality = kind
+                        break
                 if same:
                     quality = (
                         "empty_book"
@@ -510,7 +588,7 @@ def _snapshot(db, clock, row, window):
                     (
                         row["id"],
                         row["version"],
-                        window,
+                        label,
                         family,
                         json.dumps(tracked) if tracked else None,
                         quotes[best["condition_id"]][1] if best else None,
@@ -536,9 +614,30 @@ def _snapshot(db, clock, row, window):
             db.execute("BEGIN IMMEDIATE")
             upper = clock()
             blocked = _book_veto(db, game, stamp(upper), stamp(upper))
+            if paired and _paired_window(db, row, window, upper) != paired:
+                blocked = (
+                    blocked or "paired schedule or window changed before publication"
+                )
             if upper >= due or blocked:
                 db.execute("DELETE" + where, (arg,))
             else:
+                for condition, first_token, second_token in spreads:
+                    if all(
+                        indexed.get(t, {}).get("market") == condition
+                        for t in (first_token, second_token)
+                    ):
+                        db.execute(
+                            "INSERT OR IGNORE INTO nba_market_spread_archives VALUES(?,?,?,?,?,?,?)",
+                            (
+                                row["id"],
+                                row["version"],
+                                label,
+                                condition,
+                                meta_id,
+                                receipt,
+                                stamp(observed),
+                            ),
+                        )
                 db.execute(
                     f"UPDATE {table} SET available=? WHERE {selector} AND available='pending'",
                     (stamp(upper), arg),
@@ -551,6 +650,13 @@ def _snapshot(db, clock, row, window):
         raise ValueError(
             blocked or "derived selection became durable after decision cutoff"
         )
+
+    return [
+        f"{family} {reason} ({n})"
+        for family, found in sorted(issues.items())
+        for reason, n in sorted(found.items())
+        if reason in {"rule_template_mismatch", "unverified_contract"}
+    ]
 
 
 def _settle(db, clock, row):
@@ -650,14 +756,30 @@ def _process(db, clock, errors):
             until = api.moment(g["kickoff"]) - timedelta(minutes=minutes)
             if not until - WIDTH <= now < until:
                 continue
-            if (
-                window != "CLOSE"
-                and db.execute(
-                    "SELECT 1 FROM nba_market_choices WHERE id=? AND version=? AND window=? AND available<>'pending'",
+            paired = None
+            if window != "CLOSE":
+                original = db.execute(
+                    """SELECT observed,available FROM nba_market_choices WHERE id=? AND version=?
+                    AND window=? AND available<>'pending' LIMIT 1""",
                     (g["id"], g["version"], window),
                 ).fetchone()
-            ):
-                continue
+                if original:
+                    paired = _paired_window(db, g, window, now)
+                    if not paired:
+                        continue
+                    label, lower, until = paired
+                    if (
+                        stamp(lower)
+                        <= original["observed"]
+                        <= original["available"]
+                        < stamp(until)
+                    ):
+                        continue
+                    if db.execute(
+                        "SELECT 1 FROM nba_market_choices WHERE id=? AND version=? AND window=? AND available<>'pending'",
+                        (g["id"], g["version"], label),
+                    ).fetchone():
+                        continue
             if window == "CLOSE":
                 if not db.execute(
                     "SELECT 1 FROM nba_market_choices WHERE id=? AND version=? AND quality='ok' AND available<>'pending'",
@@ -669,10 +791,13 @@ def _process(db, clock, errors):
                     (g["id"], g["version"], stamp(now - timedelta(seconds=45))),
                 ).fetchone():
                     continue
-            runs.append((until, g["id"], window, g))
-    for _, _, window, g in sorted(runs):
+            runs.append((until, g["id"], window, g, paired))
+    for _, _, window, g, paired in sorted(runs):
         try:
-            _snapshot(db, clock, g, window)
+            errors.extend(
+                f"{g['id']} {window}: {reason}"
+                for reason in _snapshot(db, clock, g, window, paired)
+            )
         except BudgetError:
             raise
         except (ValueError, KeyError, TypeError, OSError) as e:
@@ -681,6 +806,8 @@ def _process(db, clock, errors):
 
 def collect(root, *, now=None):
     """One scheduling tick. The DB budget covers all callers sharing the NBA root."""
+    from . import reconciliation
+
     clock = _clock(now)
     with closing(storage.connect(root)) as db:
         db.executescript(SCHEMA)
@@ -728,6 +855,10 @@ def collect(root, *, now=None):
         except (OSError, ValueError) as e:
             errors.append(str(e))
         finally:
+            try:
+                reconciliation.collect_native_only(db, stamp(clock()))
+            except (sqlite3.Error, ValueError, OSError) as exc:
+                errors.append(f"payout reconciliation: {exc}")
             state = "degraded" if errors else "ok"
             with db:
                 db.execute(
@@ -754,56 +885,7 @@ def _ready(db):
     )
 
 
-def fixture_conflict(root, home, away, kickoff, *, as_of=None):
-    """Return affirmative venue evidence against a scheduled pregame prediction."""
-    db = storage.open_existing(root)
-    if db is None:
-        return None
-    with closing(db):
-        if not _ready(db):
-            return None
-        end = stamp(_clock(as_of)())
-        tip = (
-            api.moment(kickoff)
-            if not isinstance(kickoff, datetime)
-            else kickoff.astimezone(UTC)
-        )
-        exact = stamp(tip)
-        if _disputed(db, None, None, team_code(home), team_code(away), exact, end):
-            return "venue_identity_conflict"
-        day = tip.astimezone(EAST).date()
-        versions = defaultdict(list)
-        for row in db.execute(
-            "SELECT g.id,s.version,s.kickoff,p.reason FROM nba_market_games g "
-            "JOIN nba_market_schedule s ON s.id=g.id LEFT JOIN nba_market_play p ON p.id=g.id AND p.observed<=? "
-            "WHERE g.home=? AND g.away=? AND s.valid_from<=? ORDER BY s.version",
-            (end, team_code(home), team_code(away), end),
-        ):
-            versions[row["id"]].append(row)
-        candidates = [
-            v for v in versions.values() if any(r["kickoff"] == exact for r in v)
-        ]
-        if not candidates:
-            # Detect a same-pair/same-day conflicting start even without a prior exact timestamp.
-            possible = [
-                v
-                for v in versions.values()
-                if api.moment(v[-1]["kickoff"]).astimezone(EAST).date() == day
-            ]
-            return "venue_same_pair_schedule_mismatch" if possible else None
-        if len(candidates) > 1:
-            return "ambiguous_venue_fixture"
-        current = candidates[0][-1]
-        if _disputed(
-            db, current["id"], None, team_code(home), team_code(away), exact, end
-        ):
-            return "venue_identity_conflict"
-        if current["kickoff"] != exact:
-            return "venue_schedule_replaced"
-        return current["reason"]
-
-
-def benchmark(root, home, away, kickoff, horizon, *, as_of=None):
+def benchmark(root, home, away, kickoff, horizon, *, as_of=None, source_epoch_at=None):
     """Frozen, research-only home/over references for precisely matched teams and time."""
     db = storage.open_existing(root)
     if db is None:
@@ -812,27 +894,50 @@ def benchmark(root, home, away, kickoff, horizon, *, as_of=None):
         if not _ready(db) or horizon not in WINDOWS:
             return {}
         end = stamp(_clock(as_of)())
-        kick = stamp(
-            api.moment(kickoff)
-            if not isinstance(kickoff, datetime)
-            else kickoff.astimezone(UTC)
-        )
-        games = db.execute(
-            "SELECT g.id,g.home,g.away,s.kickoff,s.version FROM nba_market_games g JOIN nba_market_schedule s ON s.id=g.id "
-            "WHERE g.home=? AND g.away=? AND s.kickoff=? AND s.version=(SELECT max(v.version) "
-            "FROM nba_market_schedule v WHERE v.id=g.id AND v.valid_from<=?)",
-            (team_code(home), team_code(away), kick, end),
-        ).fetchall()
-        if len(games) != 1:
+        match = schedule_match_db(db, home, away, kickoff, as_of=end)
+        if match["status"] not in MATCHED:
             return {}
-        game = games[0]
+        game = dict(
+            id=match["venue_event_id"],
+            version=match["venue_version"],
+            kickoff=match["venue_kickoff"],
+            home=team_code(home),
+            away=team_code(away),
+        )
+        kick = match["source_kickoff"]
+        native = match["venue_kickoff"]
+        native_due = api.moment(native) - timedelta(minutes=WINDOWS[horizon])
+        source_due = api.moment(kick) - timedelta(minutes=WINDOWS[horizon])
+        due = min(native_due, source_due)
+        earliest = max(native_due, source_due) - WIDTH
+        compatible, floor = source_epoch(
+            db, game["home"], game["away"], kick, min(end, stamp(source_due))
+        )
+        paired_label = _paired_key(horizon, kick, floor)
+        if source_epoch_at is not None:
+            floor = max(floor or "", stamp(api.moment(source_epoch_at)))
+        if not compatible or earliest >= due:
+            return {}
+        close_compatible, close_floor = source_epoch(
+            db, game["home"], game["away"], kick, min(end, min(kick, native))
+        )
         first = _first_tip(db, game["id"])
         result = {}
         for row in db.execute(
-            "SELECT * FROM nba_market_choices WHERE id=? AND version=? AND window=? "
-            "AND quality='ok' AND available<=?",
-            (game["id"], game["version"], horizon, end),
+            "SELECT * FROM nba_market_choices WHERE id=? AND version=? AND window IN (?,?) "
+            "AND quality='ok' AND available<=? ORDER BY available,family",
+            (game["id"], game["version"], horizon, paired_label, end),
         ):
+            if row["family"] in result:
+                continue
+            observed_at, available_at = (
+                api.moment(row["observed"]),
+                api.moment(row["available"]),
+            )
+            if not earliest <= observed_at <= available_at < due or (
+                floor and row["observed"] < floor
+            ):
+                continue
             if _book_veto(db, game, row["available"], end):
                 continue
             c = json.loads(row["contract"])
@@ -844,27 +949,83 @@ def benchmark(root, home, away, kickoff, horizon, *, as_of=None):
                 "AND condition_id=? AND available<=? ORDER BY observed DESC",
                 (game["id"], game["version"], c["token_id"], c["condition_id"], end),
             ):
+                close_observed = api.moment(observed["observed"])
+                close_available = api.moment(observed["available"])
+                if (
+                    not max(api.moment(native), api.moment(kick)) - WIDTH
+                    <= close_observed
+                    <= close_available
+                    < min(api.moment(native), api.moment(kick))
+                ):
+                    close_reason = "outside_paired_pregame_close"
+                    continue
                 close_reason = eligibility(
                     c, kick, observed["available"], original_kickoff=first
                 ) or _book_veto(db, game, observed["available"], end)
+                if not close_reason and (
+                    not close_compatible
+                    or (close_floor and observed["observed"] < close_floor)
+                    or (floor and observed["observed"] < floor)
+                ):
+                    close_reason = "score_schedule_replaced"
                 if not close_reason:
                     close = observed
                     break
             result[row["family"]] = {
+                "source_kickoff": kick,
+                "venue_kickoff": native,
+                "venue_event_id": game["id"],
+                "venue_version": game["version"],
+                "delta_seconds": match["delta_seconds"],
                 "condition_id": c["condition_id"],
                 "token_id": c["token_id"],
                 "line": c["line"],
                 "probability": row["probability"],
                 "observed_at": row["observed"],
                 "available_at": row["available"],
-                "close_probability": close["price"] if close and end >= kick else None,
-                "close_at": close["observed"] if close and end >= kick else None,
+                "close_probability": close["price"]
+                if close and end >= max(kick, native)
+                else None,
+                "close_at": close["observed"]
+                if close and end >= max(kick, native)
+                else None,
                 "close_excluded_reason": close_reason,
             }
         return result
 
 
+def _contract_alerts(db, now):
+    """Keep a failed template visible between decision ticks until a newer check or 24 hours."""
+    if not db.execute(
+        "SELECT 1 FROM sqlite_master WHERE name='nba_market_contract_issues'"
+    ).fetchone():
+        return []
+    return [
+        dict(
+            event_id=r["url"].rsplit("/", 1)[-1],
+            family=r["family"],
+            reason=r["reason"],
+            count=r["count"],
+            observed_at=r["received"],
+            metadata_receipt=r["id"],
+        )
+        for r in db.execute(
+            """WITH last_check AS (
+             SELECT q.url,i.family,max(q.id) AS id FROM nba_market_requests q
+             JOIN nba_market_contract_issues i ON i.metadata_receipt=q.id
+             WHERE q.received BETWEEN ? AND ? AND i.reason='checked' GROUP BY q.url,i.family)
+             SELECT q.url,s.family,i.reason,i.count,q.received,q.id FROM last_check s
+             JOIN nba_market_requests q ON q.id=s.id
+             JOIN nba_market_contract_issues i ON i.metadata_receipt=s.id AND i.family=s.family
+             WHERE i.reason IN ('rule_template_mismatch','unverified_contract') ORDER BY q.id,s.family,i.reason""",
+            (stamp(now - timedelta(days=1)), stamp(now)),
+        )
+    ]
+
+
 def status(root, *, now=None):
+    from . import reconciliation
+
     clock = _clock(now)
     db = storage.open_existing(root)
     if db is None:
@@ -873,6 +1034,7 @@ def status(root, *, now=None):
             "days": {},
             "latest_attempt": None,
             "last_success": None,
+            "payout_reconciliation": reconciliation.summary(None),
         }
     with closing(db):
         if not _ready(db):
@@ -881,6 +1043,7 @@ def status(root, *, now=None):
                 "days": {},
                 "latest_attempt": None,
                 "last_success": None,
+                "payout_reconciliation": reconciliation.summary(db),
             }
         days = defaultdict(Counter)
         now_dt = clock()
@@ -914,6 +1077,25 @@ def status(root, *, now=None):
             days[str(api.moment(row[1]).astimezone(EAST).date())][
                 "settled_conditions"
             ] += 1
+        for table, query, field in (
+            (
+                "nba_market_contract_issues",
+                "SELECT q.received, sum(i.count) FROM nba_market_contract_issues i "
+                "JOIN nba_market_requests q ON q.id=i.metadata_receipt WHERE i.reason='rule_template_mismatch' "
+                "GROUP BY i.metadata_receipt",
+                "rule_template_rejections",
+            ),
+            (
+                "nba_market_spread_archives",
+                "SELECT observed,count(*) FROM nba_market_spread_archives GROUP BY observed",
+                "spread_books_archived",
+            ),
+        ):
+            if db.execute(
+                "SELECT 1 FROM sqlite_master WHERE name=?", (table,)
+            ).fetchone():
+                for at, n in db.execute(query):
+                    days[str(api.moment(at).astimezone(EAST).date())][field] += n
         prev = db.execute(
             "SELECT * FROM nba_market_runs ORDER BY at DESC LIMIT 1"
         ).fetchone()
@@ -922,8 +1104,10 @@ def status(root, *, now=None):
         ).fetchone()[0]
         catalogue = _state(db, "catalogue_at")
         state = "unavailable" if prev is None else prev["state"]
+        alerts = _contract_alerts(db, now_dt)
         if prev and (
-            not catalogue
+            alerts
+            or not catalogue
             or now_dt - api.moment(prev["completed"]) > timedelta(minutes=5)
             or now_dt - api.moment(catalogue) > timedelta(minutes=20)
         ):
@@ -935,6 +1119,11 @@ def status(root, *, now=None):
             "empty_book",
             "invalid_book",
             "unlisted",
+            "rule_template_mismatch",
+            "rule_template_rejections",
+            "listed_inactive",
+            "unverified_contract",
+            "spread_books_archived",
             "rule_deadline_exceeded",
             "rule_original_schedule_conflict",
             "missed",
@@ -950,6 +1139,8 @@ def status(root, *, now=None):
             "last_errors": json.loads(prev["details"]) if prev else [],
             "catalogue_at": catalogue,
             "request_budget_per_minute": MAX_RPM,
+            "contract_alerts": alerts,
+            "payout_reconciliation": reconciliation.summary(db),
             "denominator": "catalogued NBA games x three elapsed windows x four families",
             "days": {k: {f: v[f] for f in fields} for k, v in sorted(days.items())},
         }
@@ -958,6 +1149,10 @@ def status(root, *, now=None):
 def register(subparsers):
     market = subparsers.add_parser("markets", help="Read-only NBA market snapshots")
     commands = market.add_subparsers(dest="nba_markets_command", required=True)
-    for name, fn in (("collect", collect), ("status", status)):
+    for name, fn in (
+        ("collect", collect),
+        ("status", status),
+        ("kickoff-differences", kickoff_differences),
+    ):
         parser = commands.add_parser(name)
         parser.set_defaults(func=lambda args, f=fn: f(args.data_dir))

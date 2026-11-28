@@ -39,14 +39,15 @@ spec = importlib.util.spec_from_file_location(
 watch = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(watch)
 from account_engine import FRACTION, POLICY, size_at_book
+from football_candidate_policy import HELD_DIRECTIONS, prospective_hold
 
 LEAGUES = watch.football_odds_access.LEAGUES
 SIDES = ("home", "away")
 OUTCOMES = ("home", "draw", "away")
 TTL = timedelta(minutes=15)
 TARGET_EDGE = D(".03")
-FEED_POLICY = "verified-football-recommendations-v2"
-PIN_POLICIES = {FEED_POLICY, "verified-football-recommendations-v1"}
+FEED_POLICY = "verified-football-recommendations-v3"
+PIN_POLICIES = {FEED_POLICY, "verified-football-recommendations-v2", "verified-football-recommendations-v1"}
 COMPARISON_SHARES = D(20)
 ERRORS = watch.ERRORS + (OverflowError, watch.Closed)
 
@@ -355,6 +356,7 @@ def markets_for(f):
 def possibilities(f, model, book, markets):
     groups = book["groups"]
     result = []
+    held = set()
     for m in markets:
         g = groups.get(m["family"])
         if not g or (m["family"] == "total" and (D(m["line"]) != D(g["line"]) or D(m["line"]) != D("2.5"))):
@@ -364,6 +366,10 @@ def possibilities(f, model, book, markets):
             terms = ledger_terms._terms_with_fee(
                 None, m, t["token_id"], m["recorded_at"], None, fee
             )
+            reason = prospective_hold(terms)
+            if reason:
+                held.add(reason)
+                continue
             p = watch.normal_p(model["with"], terms)
             other = watch.normal_p(model["without"], terms)
             fair = rules.fair_values(p, terms)[0]
@@ -392,6 +398,8 @@ def possibilities(f, model, book, markets):
                     "odds": g["prices"],
                 }
             )
+    if not result and held:
+        raise ValueError("pending_prospective_evidence:" + ",".join(sorted(held)))
     require(result, "no_contract_matches_the_external_market")
     return result
 
@@ -880,6 +888,7 @@ def run(start):
         "recommendations": choices,
         "published_fixtures": pins,
         "coverage": {
+            "directions_pending_prospective_evidence": HELD_DIRECTIONS,
             "scheduled_leagues": sorted(closed_leagues),
             "scheduled": dict(Counter(f["league"] for f in fixtures.values())),
             "scheduled_fixtures": len(fixtures),
@@ -953,6 +962,7 @@ def main():
                 if previous.get("policy_id") in PIN_POLICIES
                 else {},
                 "coverage": {
+                    "directions_pending_prospective_evidence": HELD_DIRECTIONS,
                     "verified_fixtures": [],
                     "fixture_results": [],
                     "gaps": [gaps_row(None, None, "run", str(exc))],

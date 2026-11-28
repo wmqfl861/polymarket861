@@ -16,18 +16,22 @@ sctl() { systemctl --user "$@"; }
 nba() { "$base/venv/bin/pm861" --data-dir "$base/state" nba "$@"; }
 # First verify that absence is observable, and the standalone market service then recovers.
 if nba watchdog > "$RUNNER_TEMP/nba-initial.json"; then exit 1; else [[ $? == 1 ]]; fi
-tip=$(python -c 'from datetime import datetime,timezone,timedelta; print((datetime.now(timezone.utc)+timedelta(minutes=64)).isoformat())')
+tip=$(python -c 'from datetime import datetime,timezone,timedelta; print((datetime.now(timezone.utc)+timedelta(minutes=63)).replace(second=0,microsecond=0).isoformat())')
 cat > "$config/providers.env" <<EOF
 PYTHONPATH=$GITHUB_WORKSPACE/.github/fixtures/nba-service
+GITHUB_WORKSPACE=$GITHUB_WORKSPACE
 BALLDONTLIE_API_KEY=ci-offline-placeholder-for-schedule
 PM861_CI_NBA_TIP=$tip
 EOF
 chmod 600 "$config/providers.env"
 sctl start polymarket861-nba-markets.service
+nba watchdog --component markets > "$RUNNER_TEMP/nba-market-health.json"
 sctl start polymarket861-nba-schedule.service
 sctl start polymarket861-nba-forecast.service
 sctl start polymarket861-nba-watchdog.service
 nba watchdog > "$RUNNER_TEMP/nba-health.json"
+sctl start polymarket861-nba-sources.service
+nba readiness > "$RUNNER_TEMP/nba-readiness.json"
 day=$(python -c 'from datetime import datetime; from zoneinfo import ZoneInfo; import sys; print(datetime.fromisoformat(sys.argv[1]).astimezone(ZoneInfo("America/New_York")).date())' "$tip")
 nba fixtures --date "$day" > "$RUNNER_TEMP/nba-fixtures.json"
 nba forecast-show bdl:32 > "$RUNNER_TEMP/nba-installed-forecast.json"
@@ -42,6 +46,10 @@ assert [g["game_id"] for g in schedule["games"]] == ["bdl:32"], schedule
 forecast = json.loads((root / "nba-installed-forecast.json").read_text())
 seal, = [w for w in forecast["windows"] if w["horizon"] == "T-60m"]
 assert seal["state"] == "sealed", seal
+assert set(seal["prediction"]["market_at_prediction"]) == {"win", "total", "home_total", "away_total"}, seal
+assert seal["prediction"]["warmup"]["eligible"] is False, seal
+readiness = json.loads((root / "nba-readiness.json").read_text())
+assert readiness["state"] == "collecting" and readiness["phase_two_activated"] is False, readiness
 assert set(seal["prediction"]["forecast"]["models"]) == {"N0", "N1", "N2"}, seal
 PY
 # A deployed 0.5.0a4 process cannot see guards in the new package. Test its actual wheel.
@@ -67,7 +75,7 @@ done
 fingerprint > "$legacy/after"
 cmp "$legacy/before" "$legacy/after"
 nba watchdog > /dev/null
-for component in markets schedule forecast watchdog; do
+for component in markets schedule forecast sources watchdog; do
     sctl start "polymarket861-nba-$component.timer"
     sctl is-active --quiet "polymarket861-nba-$component.timer"
     sctl stop "polymarket861-nba-$component.timer"

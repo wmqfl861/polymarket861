@@ -1,0 +1,160 @@
+{
+  "anchor_day": "2026-11-27",
+  "checks": {
+    "postponement_observed": {
+      "examples": [],
+      "state": "not_observed"
+    },
+    "reschedule_observed": {
+      "examples": [],
+      "state": "not_observed"
+    }
+  },
+  "observed_at": "2026-11-28T01:37:15.646883Z",
+  "ranges": [
+    {
+      "checks": {
+        "authenticated_pages": {
+          "pages": 0,
+          "state": "fail"
+        },
+        "complete_pagination_and_disjoint_phases": {
+          "overlapping_ids": 0,
+          "phase_mismatches": 0,
+          "phase_rows": {},
+          "state": "fail"
+        },
+        "regular_home_court_coverage": {
+          "basis_counts": {},
+          "games": 0,
+          "proportion": null,
+          "state": "fail",
+          "with_home_court": 0
+        },
+        "scheduled_kickoffs": {
+          "missing": 0,
+          "scheduled": 0,
+          "state": "fail"
+        },
+        "three_recent_game_days": {
+          "days": [],
+          "state": "fail"
+        },
+        "venue_field_inventory": {
+          "absent_or_null": 0,
+          "present_boolean": 0,
+          "state": "fail"
+        },
+        "zero_quarantine": {
+          "quarantined": 0,
+          "state": "fail",
+          "unidentified": 0
+        }
+      },
+      "manifest_sha256": null,
+      "name": "recent",
+      "postponed_examples": [],
+      "range": [
+        "2026-11-14",
+        "2026-11-30"
+      ],
+      "receipts": [],
+      "rescheduled_examples": [],
+      "scan_id": null,
+      "state": "missing_key"
+    },
+    {
+      "checks": {
+        "authenticated_pages": {
+          "pages": 0,
+          "state": "fail"
+        },
+        "complete_pagination_and_disjoint_phases": {
+          "overlapping_ids": 0,
+          "phase_mismatches": 0,
+          "phase_rows": {},
+          "state": "fail"
+        },
+        "preseason_excluded_from_training": {
+          "overlapping_ids": [],
+          "preseason_ids": 0,
+          "regular_ids": 0,
+          "state": "fail"
+        },
+        "scheduled_kickoffs": {
+          "missing": 0,
+          "scheduled": 0,
+          "state": "fail"
+        },
+        "venue_field_inventory": {
+          "absent_or_null": 0,
+          "present_boolean": 0,
+          "state": "fail"
+        },
+        "zero_quarantine": {
+          "quarantined": 0,
+          "state": "fail",
+          "unidentified": 0
+        }
+      },
+      "manifest_sha256": null,
+      "name": "october",
+      "postponed_examples": [],
+      "range": [
+        "2026-10-01",
+        "2026-10-31"
+      ],
+      "receipts": [],
+      "rescheduled_examples": [],
+      "scan_id": null,
+      "state": "missing_key"
+    },
+    {
+      "checks": {
+        "authenticated_pages": {
+          "pages": 0,
+          "state": "fail"
+        },
+        "complete_pagination_and_disjoint_phases": {
+          "overlapping_ids": 0,
+          "phase_mismatches": 0,
+          "phase_rows": {},
+          "state": "fail"
+        },
+        "cup_knockout_observed": {
+          "rows": 0,
+          "state": "fail"
+        },
+        "scheduled_kickoffs": {
+          "missing": 0,
+          "scheduled": 0,
+          "state": "fail"
+        },
+        "venue_field_inventory": {
+          "absent_or_null": 0,
+          "present_boolean": 0,
+          "state": "fail"
+        },
+        "zero_quarantine": {
+          "quarantined": 0,
+          "state": "fail",
+          "unidentified": 0
+        }
+      },
+      "manifest_sha256": null,
+      "name": "previous_cup",
+      "postponed_examples": [],
+      "range": [
+        "2025-12-01",
+        "2025-12-31"
+      ],
+      "receipts": [],
+      "rescheduled_examples": [],
+      "scan_id": null,
+      "state": "missing_key"
+    }
+  ],
+  "reschedule_policy": "same-teams-two-pregame-commits-v1",
+  "state": "missing_key",
+  "verified": false
+}

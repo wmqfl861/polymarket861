@@ -63,9 +63,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, default=SOURCE)
     parser.add_argument("--destination", type=Path, default=DESTINATION)
-    parser.add_argument("--verify", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--verify", action="store_true")
+    mode.add_argument("--archive-or-verify", action="store_true",
+                      help="if the temporary originals are gone, verify a previously archived copy")
     args = parser.parse_args()
-    if not args.verify:
+    if args.archive_or_verify and not args.source.exists() and not args.source.is_symlink():
+        print(f"Originals absent at {args.source}; checking existing archive")
+    elif not args.verify:
         archive(args.source, args.destination)
     print(f"Verified {len(verify(args.destination))} archived inputs at {args.destination}")
 

@@ -1,0 +1,2052 @@
+[
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "ATL",
+  "title": "2020–21 Atlanta Hawks season",
+  "revision": 1386501878,
+  "sha256": "d3c07e0cfe36ea6740fb1cad10afa4ef42867756a28cbf9dd86f647be434f336",
+  "timestamp": "2026-11-18T22:18:12Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386501878"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "BKN",
+  "title": "2020–21 Brooklyn Nets season",
+  "revision": 1387374511,
+  "sha256": "d4aa4c420a82f8c321de8cd55fc7973e3d9e6c399af0c6e44a32a6589ba25e51",
+  "timestamp": "2026-11-23T18:01:20Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1387374511"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "BOS",
+  "title": "2020–21 Boston Celtics season",
+  "revision": 1356876964,
+  "sha256": "9a91482bdfd368eaa1ae97a36f8e5df3a975f4c7852bbdab0dd066b677467c03",
+  "timestamp": "2026-05-30T11:17:40Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356876964"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "CHA",
+  "title": "2020–21 Charlotte Hornets season",
+  "revision": 1356876983,
+  "sha256": "959d13293cff6b62b2496db1edfa3c0ee72be9de92157b4fc3692d37fcb57194",
+  "timestamp": "2026-05-30T11:17:51Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356876983"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "CHI",
+  "title": "2020–21 Chicago Bulls season",
+  "revision": 1381871742,
+  "sha256": "71813b75f94b512a03ed73e18223184e23b20c106d1e39e3af5db620878d4719",
+  "timestamp": "2026-10-25T09:09:16Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1381871742"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "CLE",
+  "title": "2020–21 Cleveland Cavaliers season",
+  "revision": 1356876994,
+  "sha256": "ba20641b5c2b4712f6a7bd84819d40bf28db7266e3cf40e92bc5baab56650432",
+  "timestamp": "2026-05-30T11:17:58Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356876994"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "DAL",
+  "title": "2020–21 Dallas Mavericks season",
+  "revision": 1356877000,
+  "sha256": "aecd2c52470ef18e8fae1bf59e8aee7d83be6a035332992c84f201877006d0a8",
+  "timestamp": "2026-05-30T11:18:03Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877000"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "DET",
+  "title": "2020–21 Detroit Pistons season",
+  "revision": 1387374525,
+  "sha256": "d2b0476a1daeaf335b9153b1994c34937692c7c9d98c3f3cc99349ed5ad20fe8",
+  "timestamp": "2026-11-23T18:01:24Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1387374525"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "GSW",
+  "title": "2020–21 Golden State Warriors season",
+  "revision": 1356877033,
+  "sha256": "63ac450bdd304927c5dbeefdb20cc2e8cbbbff6259165433ada0559b014f7969",
+  "timestamp": "2026-05-30T11:18:17Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877033"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "IND",
+  "title": "2020–21 Indiana Pacers season",
+  "revision": 1381148610,
+  "sha256": "bab1e9ab767d19830ff561b56bfe0690784bb78466b09636fa8459024446fed7",
+  "timestamp": "2026-10-20T08:21:02Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1381148610"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "LAL",
+  "title": "2020–21 Los Angeles Lakers season",
+  "revision": 1356877065,
+  "sha256": "13cd38a73b0cfaa29c9f8e3045edc7418f9d7177fe0771868cb613ef118b6c2d",
+  "timestamp": "2026-05-30T11:18:38Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877065"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "MIA",
+  "title": "2020–21 Miami Heat season",
+  "revision": 1341746970,
+  "sha256": "630147606578ea8b005a08fd1e29b29942eeea7d4e6ca46a40604d6ea5962c52",
+  "timestamp": "2026-03-04T20:51:53Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1341746970"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "MIL",
+  "title": "2020–21 Milwaukee Bucks season",
+  "revision": 1375789503,
+  "sha256": "e4dade5ad42724c33720953f8f5590849b034f9c10b1223174e112e28c2a1538",
+  "timestamp": "2026-09-20T02:17:10Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1375789503"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "MIN",
+  "title": "2020–21 Minnesota Timberwolves season",
+  "revision": 1358353141,
+  "sha256": "934639efab53126c42206f7f9aa20ad002adec92ba9c2d2daeabba1fc42eb908",
+  "timestamp": "2026-06-08T04:19:10Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1358353141"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "NOP",
+  "title": "2020–21 New Orleans Pelicans season",
+  "revision": 1356877091,
+  "sha256": "b96330f7929bda81babaa8f49189500a65cb7f20081bec0ad0c320ae5c4c7eb9",
+  "timestamp": "2026-05-30T11:18:57Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877091"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "OKC",
+  "title": "2020–21 Oklahoma City Thunder season",
+  "revision": 1386502040,
+  "sha256": "90d3b60d6e428af74454e27edfe769eba71ca3750a8a36d4d4a7a43eb2a15dee",
+  "timestamp": "2026-11-18T22:19:00Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386502040"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "ORL",
+  "title": "2020–21 Orlando Magic season",
+  "revision": 1380974610,
+  "sha256": "f1d9d708a8e4ed037ac7a2505a6a1e7c9001f267f687ef024babb4a9168cc33f",
+  "timestamp": "2026-10-19T04:51:45Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1380974610"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "PHI",
+  "title": "2020–21 Philadelphia 76ers season",
+  "revision": 1386502051,
+  "sha256": "ce2ffccc20e2185f275ad31cd97d7b796e49b01987880c7103f2abe148488af9",
+  "timestamp": "2026-11-18T22:19:04Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386502051"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "PHX",
+  "title": "2020–21 Phoenix Suns season",
+  "revision": 1357152269,
+  "sha256": "d5dafcb5b5788333a6258b7d64875ad27b88c8239775c29424e69165f2e48a55",
+  "timestamp": "2026-06-01T01:29:53Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1357152269"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "POR",
+  "title": "2020–21 Portland Trail Blazers season",
+  "revision": 1356877149,
+  "sha256": "d4be34a3c976b6978b7c54948e501fd68c101b71595a8d11a25cef2b41f6b0da",
+  "timestamp": "2026-05-30T11:19:22Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877149"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "SAC",
+  "title": "2020–21 Sacramento Kings season",
+  "revision": 1356877161,
+  "sha256": "942bbaeb48c698c832c925e4f98b9d888f9553bfe72b43dda7b209c899baf849",
+  "timestamp": "2026-05-30T11:19:26Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877161"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "SAS",
+  "title": "2020–21 San Antonio Spurs season",
+  "revision": 1356877200,
+  "sha256": "87127e0d53de2a78156fade7bc6ed5b1dc059b1601b18b8b29f6947b7898047c",
+  "timestamp": "2026-05-30T11:19:50Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877200"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "TOR",
+  "title": "2020–21 Toronto Raptors season",
+  "revision": 1358255129,
+  "sha256": "88bc7cb4901efba41016f778bec5599f06f73d5cce6a5e5a786f2e3c873786dd",
+  "timestamp": "2026-06-07T15:54:54Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1358255129"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "UTA",
+  "title": "2020–21 Utah Jazz season",
+  "revision": 1356877215,
+  "sha256": "ade608f4727ec4fef451821d11cb956cd15b844b6bf2b2732eb9430f4038d417",
+  "timestamp": "2026-05-30T11:19:59Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877215"
+ },
+ {
+  "lang": "en",
+  "year": 2020,
+  "team": "WAS",
+  "title": "2020–21 Washington Wizards season",
+  "revision": 1387855379,
+  "sha256": "2b5baeff3b009d2875064a21b7bb5a37c74f9c30826b031e60496a308d709470",
+  "timestamp": "2026-11-25T19:30:48Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1387855379"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "ATL",
+  "title": "2021–22 Atlanta Hawks season",
+  "revision": 1383585112,
+  "sha256": "d475bd0d6235c2d2369888d160bfd0779e6ea4d3b46a07a50b91aae8299f0433",
+  "timestamp": "2026-11-03T14:26:50Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1383585112"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "BOS",
+  "title": "2021–22 Boston Celtics season",
+  "revision": 1386503279,
+  "sha256": "e08ee08adb8c417fe10d37e2310843b58d631b9d4621bf3c110828f429b7a615",
+  "timestamp": "2026-11-18T22:26:07Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386503279"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "CHA",
+  "title": "2021–22 Charlotte Hornets season",
+  "revision": 1360219180,
+  "sha256": "845db1dacd41947b37f6990ba845537e6fbe163c79938a040c465e79671fc198",
+  "timestamp": "2026-06-20T00:39:29Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1360219180"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "CLE",
+  "title": "2021–22 Cleveland Cavaliers season",
+  "revision": 1360219708,
+  "sha256": "72a27428dd43a92852f02031e0e0cd5fd38657824b14a7e9aa6ac0f22d0bf407",
+  "timestamp": "2026-06-20T00:43:52Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1360219708"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "DAL",
+  "title": "2021–22 Dallas Mavericks season",
+  "revision": 1385143731,
+  "sha256": "612fbd499e2f857ae70b7b2ead7022ab29f968b6630684c7ad1cbd58bc625840",
+  "timestamp": "2026-11-12T02:47:57Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1385143731"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "DEN",
+  "title": "2021–22 Denver Nuggets season",
+  "revision": 1386503325,
+  "sha256": "11135715e75caabe041f1e87763c5ccd2d122b03d10ab2913524fcb526860f25",
+  "timestamp": "2026-11-18T22:26:22Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386503325"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "IND",
+  "title": "2021–22 Indiana Pacers season",
+  "revision": 1381151836,
+  "sha256": "af8dd8abd653c66566f7c3122e8c0c615cfefbfec53b07a0e67cbb5e2c67666a",
+  "timestamp": "2026-10-20T08:58:54Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1381151836"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "LAC",
+  "title": "2021–22 Los Angeles Clippers season",
+  "revision": 1380659138,
+  "sha256": "bfb24cc143da33d1a63a82e4e0fab74caae7fba07f8891be6c0fa13cf44caf31",
+  "timestamp": "2026-10-17T03:02:38Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1380659138"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "LAL",
+  "title": "2021–22 Los Angeles Lakers season",
+  "revision": 1386503377,
+  "sha256": "e68b1e89928d35ef85f24162e86eaa4bbe15d5d7c34ea621304ee9f15e29f842",
+  "timestamp": "2026-11-18T22:26:39Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386503377"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "MEM",
+  "title": "2021–22 Memphis Grizzlies season",
+  "revision": 1387951405,
+  "sha256": "2d2f4d1f1f1fa3848d2fd7fba8c5dcc30d19d35e528590109a7ce717c4f04e1b",
+  "timestamp": "2026-11-26T03:57:47Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1387951405"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "MIL",
+  "title": "2021–22 Milwaukee Bucks season",
+  "revision": 1360222464,
+  "sha256": "c387386980ef6302f235197e14bb365c40235b242ab1f77f79e2aec7badcd727",
+  "timestamp": "2026-06-20T01:09:42Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1360222464"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "NYK",
+  "title": "2021–22 New York Knicks season",
+  "revision": 1359301581,
+  "sha256": "68a8fb055f6e0ad14bf8e22c7ec597ac4c34a231b33c063ab3293e0c692a256f",
+  "timestamp": "2026-06-14T13:35:31Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1359301581"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "PHI",
+  "title": "2021–22 Philadelphia 76ers season",
+  "revision": 1386503472,
+  "sha256": "3d2766b5d3f3bfea808e6b3cbffd0f8efa11c0e173af91b8b1e59e7d9e8ff961",
+  "timestamp": "2026-11-18T22:27:10Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386503472"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "PHX",
+  "title": "2021–22 Phoenix Suns season",
+  "revision": 1360220547,
+  "sha256": "6305651aad983c02b90c36361d7aff1a06b9bc9e682066553e77d461663a76af",
+  "timestamp": "2026-06-20T00:50:16Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1360220547"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "POR",
+  "title": "2021–22 Portland Trail Blazers season",
+  "revision": 1360220853,
+  "sha256": "3d02ad3f1f9b8f1f533279425414b4df0f9f41c435facd0044089d17d1bfb79f",
+  "timestamp": "2026-06-20T00:53:06Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1360220853"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "SAS",
+  "title": "2021–22 San Antonio Spurs season",
+  "revision": 1360221330,
+  "sha256": "a22829b0a59fa50ec9d9893a95350a9e965e7bc3276f9533aeffa7d1a74bcb6b",
+  "timestamp": "2026-06-20T00:57:51Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1360221330"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "UTA",
+  "title": "2021–22 Utah Jazz season",
+  "revision": 1360221005,
+  "sha256": "88ed286a47a6e4f9f7c637b6e45fc11b3c09ba26a126caa36111591647701d79",
+  "timestamp": "2026-06-20T00:54:37Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1360221005"
+ },
+ {
+  "lang": "en",
+  "year": 2021,
+  "team": "WAS",
+  "title": "2021–22 Washington Wizards season",
+  "revision": 1386503533,
+  "sha256": "76e9372924f556168c9505d6c4a72ea4f25dfa3460473acba0a69fff57f935fe",
+  "timestamp": "2026-11-18T22:27:32Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386503533"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "ATL",
+  "title": "2022–23 Atlanta Hawks season",
+  "revision": 1357686353,
+  "sha256": "2a081641f6e6ccd1c196b12bbe46f48bc5ddcf4bf882abebc8f07a702272dfb0",
+  "timestamp": "2026-06-04T02:00:29Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1357686353"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "BOS",
+  "title": "2022–23 Boston Celtics season",
+  "revision": 1357141113,
+  "sha256": "023e6a637eeaf6313b9c5b2fd03d9e6f1daa319b6d3850cc81924c76f8380e98",
+  "timestamp": "2026-06-01T00:06:24Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1357141113"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "CHA",
+  "title": "2022–23 Charlotte Hornets season",
+  "revision": 1356877560,
+  "sha256": "a8386937f203e45ae795f2e77ce644d679463955fec19d4d39584374e54c2c8c",
+  "timestamp": "2026-05-30T11:23:12Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877560"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "CHI",
+  "title": "2022–23 Chicago Bulls season",
+  "revision": 1358984007,
+  "sha256": "a6edc8990599decd83001d2ff6058e34f97c93ad5c4dc86c0f7102468b299c22",
+  "timestamp": "2026-06-12T08:21:17Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1358984007"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "CLE",
+  "title": "2022–23 Cleveland Cavaliers season",
+  "revision": 1356366641,
+  "sha256": "bd0c0a4248ee78bb021345ca92c2ee8db830f2f69c258ebcd5b5fbb660e27a0e",
+  "timestamp": "2026-05-27T09:21:09Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356366641"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "DAL",
+  "title": "2022–23 Dallas Mavericks season",
+  "revision": 1356877569,
+  "sha256": "031883f2108ca74a93a8f0fb7ef0929889f994d354b9705f1f14a74dbcf5c6c6",
+  "timestamp": "2026-05-30T11:23:17Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356877569"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "DET",
+  "title": "2022–23 Detroit Pistons season",
+  "revision": 1341747202,
+  "sha256": "cd3e97bfab01dfa28fb247b9b3a66b0530f60deccb61c4ff13ca239dd01eda8c",
+  "timestamp": "2026-03-04T20:53:23Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1341747202"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "GSW",
+  "title": "2022–23 Golden State Warriors season",
+  "revision": 1359342059,
+  "sha256": "73d82d4f3648dc0292edff68841423f91f7e6127f3fbe69b9a4ac398ed1bc2ba",
+  "timestamp": "2026-06-14T18:33:16Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1359342059"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "LAC",
+  "title": "2022–23 Los Angeles Clippers season",
+  "revision": 1355200182,
+  "sha256": "c0ff5a5163ccc1b78cb2b6a5fc2ff255c220f25974ab56c536e90961ead803aa",
+  "timestamp": "2026-05-20T13:20:13Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1355200182"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "NOP",
+  "title": "2022–23 New Orleans Pelicans season",
+  "revision": 1349375415,
+  "sha256": "682d870f3b1db1562fbb4beb9c1359b95045eb78e6636269fec46f295f8842ef",
+  "timestamp": "2026-04-17T01:40:39Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1349375415"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "NYK",
+  "title": "2022–23 New York Knicks season",
+  "revision": 1359334609,
+  "sha256": "66778df18c64f30efdb75dc3dcb26af9cf4cd811df606d400e45af203bcfd6b1",
+  "timestamp": "2026-06-14T17:44:41Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1359334609"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "OKC",
+  "title": "2022–23 Oklahoma City Thunder season",
+  "revision": 1381859070,
+  "sha256": "87556e2d0ef7e08d5d658ef57424b26a6c103a0bd7ab925406091e2b28d428ef",
+  "timestamp": "2026-10-25T06:46:45Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1381859070"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "PHI",
+  "title": "2022–23 Philadelphia 76ers season",
+  "revision": 1388038346,
+  "sha256": "d259c47a9b91d66055cae3eb629c0bb8971981964591100fcd8c285573082366",
+  "timestamp": "2026-11-26T11:26:59Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1388038346"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "POR",
+  "title": "2022–23 Portland Trail Blazers season",
+  "revision": 1388112283,
+  "sha256": "128e50a69ab3018669c9b449928287d1c12ed3de812bbdafff7f247f5da49fc5",
+  "timestamp": "2026-11-26T17:25:05Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1388112283"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "SAC",
+  "title": "2022–23 Sacramento Kings season",
+  "revision": 1374231322,
+  "sha256": "a05002f4e779e762038201c66231b4437d8d00b8ff9fa5b74e99d48b8baafb9a",
+  "timestamp": "2026-09-10T17:56:40Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1374231322"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "SAS",
+  "title": "2022–23 San Antonio Spurs season",
+  "revision": 1383583526,
+  "sha256": "3608479c18628750bf2b05705ee4d2f5b7aabea4cd057b4698acfa154cc4a194",
+  "timestamp": "2026-11-03T14:13:46Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1383583526"
+ },
+ {
+  "lang": "en",
+  "year": 2022,
+  "team": "WAS",
+  "title": "2022–23 Washington Wizards season",
+  "revision": 1386504822,
+  "sha256": "bbcd808db066b9bcf2fc85b51d4335ae6f29b1ef38f2ce8009268348946c4d00",
+  "timestamp": "2026-11-18T22:35:04Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386504822"
+ },
+ {
+  "lang": "en",
+  "year": 2023,
+  "team": "BKN",
+  "title": "2023–24 Brooklyn Nets season",
+  "revision": 1358707329,
+  "sha256": "90c2dfe61e6739bae5ac93169782619a195f24c9726e8256d05a4ae2bacb7a5a",
+  "timestamp": "2026-06-10T12:10:54Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1358707329"
+ },
+ {
+  "lang": "en",
+  "year": 2023,
+  "team": "CHI",
+  "title": "2023–24 Chicago Bulls season",
+  "revision": 1356365642,
+  "sha256": "c0cad987493174cdacd8fcfb3146782aa106e0721ae961c0eacd6d2008e5965d",
+  "timestamp": "2026-05-27T09:09:31Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356365642"
+ },
+ {
+  "lang": "en",
+  "year": 2023,
+  "team": "GSW",
+  "title": "2023–24 Golden State Warriors season",
+  "revision": 1358231333,
+  "sha256": "cafb02e2de9a58bd0be934bba83c34a7db85b39f1f63b2c3776f6d1c157a1329",
+  "timestamp": "2026-06-07T12:10:31Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1358231333"
+ },
+ {
+  "lang": "en",
+  "year": 2023,
+  "team": "HOU",
+  "title": "2023–24 Houston Rockets season",
+  "revision": 1366479268,
+  "sha256": "9dcfc2d9ac2e0fa80501fa23fc644039b86b79f85d5eae902ba3bc101c6153f5",
+  "timestamp": "2026-07-28T07:03:28Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1366479268"
+ },
+ {
+  "lang": "en",
+  "year": 2023,
+  "team": "IND",
+  "title": "2023–24 Indiana Pacers season",
+  "revision": 1387376568,
+  "sha256": "951d0a72d90149e9853f5a1825dd3b94506da8fafc31c70de50a610259a8a175",
+  "timestamp": "2026-11-23T18:12:54Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1387376568"
+ },
+ {
+  "lang": "en",
+  "year": 2023,
+  "team": "OKC",
+  "title": "2023–24 Oklahoma City Thunder season",
+  "revision": 1358234673,
+  "sha256": "cb54f2decbd5ac66605e513be1fa5bf4c3ae85a05a20e9046fe218758536f7d1",
+  "timestamp": "2026-06-07T12:42:34Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1358234673"
+ },
+ {
+  "lang": "en",
+  "year": 2023,
+  "team": "POR",
+  "title": "2023–24 Portland Trail Blazers season",
+  "revision": 1364584763,
+  "sha256": "daad0277a2d7c580d0d172aca6d3cc50b3dbeb2352645f9619e6648cfd00fc04",
+  "timestamp": "2026-07-17T10:37:44Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1364584763"
+ },
+ {
+  "lang": "en",
+  "year": 2023,
+  "team": "TOR",
+  "title": "2023–24 Toronto Raptors season",
+  "revision": 1377597207,
+  "sha256": "1c3f55430b8acc7928af8283fa2bef0082e12ccfed63f5fdbfce84662afd2374",
+  "timestamp": "2026-09-30T03:18:22Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1377597207"
+ },
+ {
+  "lang": "en",
+  "year": 2024,
+  "team": "MIN",
+  "title": "2024–25 Minnesota Timberwolves season",
+  "revision": 1358450613,
+  "sha256": "a41b1fb2a523291025946cf7080e71265783dad083acba73bd1b52f27c132310",
+  "timestamp": "2026-06-08T19:34:47Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1358450613"
+ },
+ {
+  "lang": "en",
+  "year": 2024,
+  "team": "NOP",
+  "title": "2024–25 New Orleans Pelicans season",
+  "revision": 1352085058,
+  "sha256": "3ad9799e0db7c3c7b1eba30589d4a17115f963f77f51c37db89684c3162fac9d",
+  "timestamp": "2026-05-01T23:05:21Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1352085058"
+ },
+ {
+  "lang": "en",
+  "year": 2024,
+  "team": "WAS",
+  "title": "2024–25 Washington Wizards season",
+  "revision": 1356826418,
+  "sha256": "5b56d6659f1c94ada4a542b003795b79345a46b2a286a6b3467d54513caa4e8d",
+  "timestamp": "2026-05-30T01:53:04Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1356826418"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "BOS",
+  "title": "2025–26 Boston Celtics season",
+  "revision": 1383158390,
+  "sha256": "0eef1c8156404aee53a0bb350bb32b4ad78bf06796ccb72aec946b4f8462a3f8",
+  "timestamp": "2026-11-01T07:46:50Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1383158390"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "CHI",
+  "title": "2025–26 Chicago Bulls season",
+  "revision": 1367452625,
+  "sha256": "0f9da08b2d099c8eb5e87a561f0adb8ae8692c6299519c866c91d8d1bed5ece9",
+  "timestamp": "2026-08-03T04:43:41Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1367452625"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "DEN",
+  "title": "2025–26 Denver Nuggets season",
+  "revision": 1378697372,
+  "sha256": "bf44cc7babd04856049abf370d554c7cc9a2ba90abdef7e5f6b4fa6e65acfe4b",
+  "timestamp": "2026-10-05T18:56:35Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1378697372"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "LAC",
+  "title": "2025–26 Los Angeles Clippers season",
+  "revision": 1387289105,
+  "sha256": "af2ad2e230d3f6eba477c248571893fba384797f77b595dbe1fdca60e5d83d73",
+  "timestamp": "2026-11-23T08:21:43Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1387289105"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "LAL",
+  "title": "2025–26 Los Angeles Lakers season",
+  "revision": 1386501995,
+  "sha256": "8f12d9379075e5a24c3fa44bb7988f568bc60cc8f746b0a790b2813924ad0f0f",
+  "timestamp": "2026-11-18T22:18:48Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1386501995"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "MIN",
+  "title": "2025–26 Minnesota Timberwolves season",
+  "revision": 1385646217,
+  "sha256": "4e68c4fba71ab213772134d56654ca080b51cd185a02b3d1320697fcf59f58aa",
+  "timestamp": "2026-11-14T13:10:24Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1385646217"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "NOP",
+  "title": "2025–26 New Orleans Pelicans season",
+  "revision": 1383142127,
+  "sha256": "85dc4d69b699930b65a50e316c2211844a85e1d0edcda6477ab8a5d05c0de4c3",
+  "timestamp": "2026-11-01T05:22:51Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1383142127"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "NYK",
+  "title": "2025–26 New York Knicks season",
+  "revision": 1382039195,
+  "sha256": "d6b833d8f304e0e60ddd7c0ce5eeba40d8082228b04c8e994d23d4c42ea0fe0f",
+  "timestamp": "2026-10-26T05:00:53Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1382039195"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "OKC",
+  "title": "2025–26 Oklahoma City Thunder season",
+  "revision": 1381859019,
+  "sha256": "4514abb9a869d5653a8d7de02ef34a66ad8a85a4776acefa0ffbd5c18f8ea271",
+  "timestamp": "2026-10-25T06:46:09Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1381859019"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "ORL",
+  "title": "2025–26 Orlando Magic season",
+  "revision": 1367524275,
+  "sha256": "a3ef579d24e1bfd101af614e8930d43523c94475ead84edcfd2588e7d230fe00",
+  "timestamp": "2026-08-03T16:21:00Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1367524275"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "PHX",
+  "title": "2025–26 Phoenix Suns season",
+  "revision": 1388276478,
+  "sha256": "5e4e104117d5e0e691174a4762eb006b202fe3e6735276a09503dda706fb8dd9",
+  "timestamp": "2026-11-27T11:12:54Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1388276478"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "SAS",
+  "title": "2025–26 San Antonio Spurs season",
+  "revision": 1387586971,
+  "sha256": "3ae24da870ba944bdeb50bdd87c6c3899f39f916e0b879148a1b195e6e08521c",
+  "timestamp": "2026-11-24T18:04:55Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1387586971"
+ },
+ {
+  "lang": "en",
+  "year": 2025,
+  "team": "UTA",
+  "title": "2025–26 Utah Jazz season",
+  "revision": 1358209245,
+  "sha256": "a3ee3af3461edf3856c065e2fe3359814f0d89afc1bd2e7c567031781920af41",
+  "timestamp": "2026-06-07T07:50:53Z",
+  "attribution": "https://en.wikipedia.org/w/index.php?oldid=1358209245"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "ATL",
+  "title": "Saison 2020-2021 des Hawks d'Atlanta",
+  "revision": 237067903,
+  "sha256": "fdeeb054b89320dad53edb8bfbe63299408aa1e721957f8b88177c0975b7b07e",
+  "timestamp": "2026-06-15T11:49:26Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237067903"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "BKN",
+  "title": "Saison 2020-2021 des Nets de Brooklyn",
+  "revision": 225169267,
+  "sha256": "c70b80d2078a8ef6e3304e23dbc76f837585fc080393e7fdf49d5dc7c83cf2dc",
+  "timestamp": "2025-04-27T09:15:56Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225169267"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "BOS",
+  "title": "Saison 2020-2021 des Celtics de Boston",
+  "revision": 241382788,
+  "sha256": "121e362f692accbb93a87f219ff2de9e874c7bc6d5f0a98755f9f55b2f3341df",
+  "timestamp": "2026-11-15T20:29:04Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241382788"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "CHA",
+  "title": "Saison 2020-2021 des Hornets de Charlotte",
+  "revision": 235846996,
+  "sha256": "6a4436bc360fddb761a0daad2a208db704878139f755687878fee600547fd2e6",
+  "timestamp": "2026-05-03T15:10:11Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=235846996"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "CHI",
+  "title": "Saison 2020-2021 des Bulls de Chicago",
+  "revision": 237072930,
+  "sha256": "2f6017f76d8c2f3442f7b20ae6ccb58e6ae04e29042442c82919f1dca3cf9fde",
+  "timestamp": "2026-06-15T14:45:47Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237072930"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "CLE",
+  "title": "Saison 2020-2021 des Cavaliers de Cleveland",
+  "revision": 235846823,
+  "sha256": "9d7cd3ae1a34599b69d36928e50972615dd90c3a9594011ddb9efed950ef6314",
+  "timestamp": "2026-05-03T15:05:05Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=235846823"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "DAL",
+  "title": "Saison 2020-2021 des Mavericks de Dallas",
+  "revision": 227203476,
+  "sha256": "45af85ca92ebbcc93b93c766ca477c8af1d411f205fb34614ca10bc284b82836",
+  "timestamp": "2025-07-11T21:36:41Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=227203476"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "DEN",
+  "title": "Saison 2020-2021 des Nuggets de Denver",
+  "revision": 225173732,
+  "sha256": "bead6d77b369a80097971f18b4dd4d82d02c27fa8c388db5def52ed684f8b134",
+  "timestamp": "2025-04-27T12:29:13Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225173732"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "DET",
+  "title": "Saison 2020-2021 des Pistons de Détroit",
+  "revision": 209925320,
+  "sha256": "7ce7d596a11a68dbd22e293305c6af3b27ea7ee548cbbc35ce69e06931dae781",
+  "timestamp": "2023-11-23T12:50:03Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=209925320"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "GSW",
+  "title": "Saison 2020-2021 des Warriors de Golden State",
+  "revision": 236956640,
+  "sha256": "02bf301279bfa90832ccdfa099190c1f5bdb298ed40a147754acf556ccb47488",
+  "timestamp": "2026-06-11T09:36:52Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=236956640"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "HOU",
+  "title": "Saison 2020-2021 des Rockets de Houston",
+  "revision": 194300660,
+  "sha256": "7b6509301c029341c40e21bd56c9f87f6adf19392295bcf8d6287fbea2716833",
+  "timestamp": "2022-06-06T08:37:12Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=194300660"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "IND",
+  "title": "Saison 2020-2021 des Pacers de l'Indiana",
+  "revision": 237073225,
+  "sha256": "0d2de6c77e7356b13a33d93c393093124c81ee792a578b02dd5a273d36f6c813",
+  "timestamp": "2026-06-15T14:54:38Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237073225"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "LAC",
+  "title": "Saison 2020-2021 des Clippers de Los Angeles",
+  "revision": 235846866,
+  "sha256": "fe38f7d1945ed1fae2123905478abaed42e046c245cc662ebf6f881281b416a0",
+  "timestamp": "2026-05-03T15:06:32Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=235846866"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "LAL",
+  "title": "Saison 2020-2021 des Lakers de Los Angeles",
+  "revision": 239687585,
+  "sha256": "9b4e65d3a5bb42c6c1fbc56ccbce66191276333f39f928be9ea6ae856255e7bd",
+  "timestamp": "2026-09-21T02:12:41Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=239687585"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "MEM",
+  "title": "Saison 2020-2021 des Grizzlies de Memphis",
+  "revision": 235846949,
+  "sha256": "2151e422afe7e79c43f9b8d501442b23917aa12149c82e015ef5fbe957d07416",
+  "timestamp": "2026-05-03T15:08:57Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=235846949"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "MIA",
+  "title": "Saison 2020-2021 du Heat de Miami",
+  "revision": 236935558,
+  "sha256": "ae62c46a2b38f2ee60ebaf8c2d877176cf4382cdd673cec8dff7e09877bf0200",
+  "timestamp": "2026-06-10T13:25:01Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=236935558"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "MIL",
+  "title": "Saison 2020-2021 des Bucks de Milwaukee",
+  "revision": 235846701,
+  "sha256": "b1e81ceca014c5fefbc9b28d9037693df0a0d7dc6a1679af16da976c3260e95b",
+  "timestamp": "2026-05-03T15:01:41Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=235846701"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "MIN",
+  "title": "Saison 2020-2021 des Timberwolves du Minnesota",
+  "revision": 204387191,
+  "sha256": "ac27b6f3eb43bade7e233e797089971e2e743ce7d2d46b09497e0f505db528b5",
+  "timestamp": "2023-05-18T23:35:41Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=204387191"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "NOP",
+  "title": "Saison 2020-2021 des Pelicans de La Nouvelle-Orléans",
+  "revision": 191971949,
+  "sha256": "5b6e9141ac11749cb854546f9168c39c974a11814a2b1960989aada673d232f1",
+  "timestamp": "2022-03-16T21:08:14Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=191971949"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "OKC",
+  "title": "Saison 2020-2021 du Thunder d'Oklahoma City",
+  "revision": 191488550,
+  "sha256": "55ee61018e01fdc1f343333345d96eeed1097a9aa321ca3ceb9a5fec05a80574",
+  "timestamp": "2022-02-28T13:51:00Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=191488550"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "ORL",
+  "title": "Saison 2020-2021 du Magic d'Orlando",
+  "revision": 236935617,
+  "sha256": "8ccea9301a6e9f13ab70f387781dd92fcb479671a0c87f0a6cbc82a7100715a9",
+  "timestamp": "2026-06-10T13:27:30Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=236935617"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "PHI",
+  "title": "Saison 2020-2021 des 76ers de Philadelphie",
+  "revision": 237837660,
+  "sha256": "da7975fa45b4cefe0900c8462979ba8f6963ee027be12c4721375e4051b3b5b7",
+  "timestamp": "2026-07-15T09:37:29Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237837660"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "PHX",
+  "title": "Saison 2020-2021 des Suns de Phoenix",
+  "revision": 233614516,
+  "sha256": "75e92de3cd9546ea224c62e8fc15be9fdae2b77d173751fe033d236668e802c1",
+  "timestamp": "2026-02-25T16:20:50Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=233614516"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "POR",
+  "title": "Saison 2020-2021 des Trail Blazers de Portland",
+  "revision": 237074297,
+  "sha256": "9788b87665266efcec4dd03d3b9d6cf72013e05b1161e054acc320655817d9ff",
+  "timestamp": "2026-06-15T15:30:55Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237074297"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "SAC",
+  "title": "Saison 2020-2021 des Kings de Sacramento",
+  "revision": 187507533,
+  "sha256": "2732bc54552451cec44c3ce33b8f8dc79198dea9cfd0c908e0e832d51aa6aad5",
+  "timestamp": "2021-10-28T09:23:05Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=187507533"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "SAS",
+  "title": "Saison 2020-2021 des Spurs de San Antonio",
+  "revision": 225169538,
+  "sha256": "931c2eccb93868376c81829a45193b629a8da157599a1e701431d04c34a673bf",
+  "timestamp": "2025-04-27T09:25:22Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225169538"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "TOR",
+  "title": "Saison 2020-2021 des Raptors de Toronto",
+  "revision": 237073764,
+  "sha256": "2eb1117363d3eed0af39fe94409128be586d33937ae6ee5ef66198104c5436ea",
+  "timestamp": "2026-06-15T15:14:29Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237073764"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "UTA",
+  "title": "Saison 2020-2021 du Jazz de l'Utah",
+  "revision": 225173628,
+  "sha256": "c850428bd5873b2a0fb6aecb0a5f55669748ec51f152ce18b80180eb3d237eae",
+  "timestamp": "2025-04-27T12:26:01Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225173628"
+ },
+ {
+  "lang": "fr",
+  "year": 2020,
+  "team": "WAS",
+  "title": "Saison 2020-2021 des Wizards de Washington",
+  "revision": 210280958,
+  "sha256": "5b8f696f7722a773d760fd657fc3a50adfd22b4eb1a21e842106cef789c886c1",
+  "timestamp": "2023-12-05T09:25:54Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=210280958"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "ATL",
+  "title": "Saison 2021-2022 des Hawks d'Atlanta",
+  "revision": 237067904,
+  "sha256": "a77a503b091e0dc705abdb20c416e88b3fa84c340f7fa8454371fcfb08dc3fdb",
+  "timestamp": "2026-06-15T11:49:30Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237067904"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "BOS",
+  "title": "Saison 2021-2022 des Celtics de Boston",
+  "revision": 235836212,
+  "sha256": "538b7b259e0f03d939caeaa9d74daf5c5b651ea014dbe5b15eda5990c7b81eda",
+  "timestamp": "2026-05-03T10:20:37Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=235836212"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "CHA",
+  "title": "Saison 2021-2022 des Hornets de Charlotte",
+  "revision": 225169779,
+  "sha256": "862d9a758fad1cff899159db9bdd44ed2acbcb7f7a559a15da4c219147a73c23",
+  "timestamp": "2025-04-27T09:33:38Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225169779"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "CLE",
+  "title": "Saison 2021-2022 des Cavaliers de Cleveland",
+  "revision": 240374660,
+  "sha256": "61f4ac2f3cb245d87720c030362b7871ee6a297373e0a95562587c419b0dc025",
+  "timestamp": "2026-10-14T20:52:14Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240374660"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "DAL",
+  "title": "Saison 2021-2022 des Mavericks de Dallas",
+  "revision": 222937533,
+  "sha256": "6d34928cb1f9a2166d76992688a2258d86f76c16b2e9a7b6e52552f2b42a5f7a",
+  "timestamp": "2025-02-11T23:52:57Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=222937533"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "DEN",
+  "title": "Saison 2021-2022 des Nuggets de Denver",
+  "revision": 232248182,
+  "sha256": "cdf3c050c1b804ca65bd940099bf7bf641b3db12a72db8378c74bbfb7b59f23c",
+  "timestamp": "2026-01-08T12:00:36Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=232248182"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "DET",
+  "title": "Saison 2021-2022 des Pistons de Détroit",
+  "revision": 237789552,
+  "sha256": "1891c2f69dbf174c34d04fb34880041bc9a1967d18637448857bd21be81d1aa0",
+  "timestamp": "2026-07-13T13:44:57Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237789552"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "HOU",
+  "title": "Saison 2021-2022 des Rockets de Houston",
+  "revision": 204397665,
+  "sha256": "f4fb8fc9221b094911c30d997d9e279667d6ad6a4f028d2c1add0c2c363b9103",
+  "timestamp": "2023-05-19T09:51:31Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=204397665"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "IND",
+  "title": "Saison 2021-2022 des Pacers de l'Indiana",
+  "revision": 237789640,
+  "sha256": "23b96e1d97294c4dca1c87c261a92f63eb471d010f022151b71c0c6629ab990d",
+  "timestamp": "2026-07-13T13:48:01Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237789640"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "LAC",
+  "title": "Saison 2021-2022 des Clippers de Los Angeles",
+  "revision": 225169910,
+  "sha256": "c4f5d97867df6af8bdd567017d2c2ad5ebbee68fc940ad5157ab40803192d509",
+  "timestamp": "2025-04-27T09:39:47Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225169910"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "LAL",
+  "title": "Saison 2021-2022 des Lakers de Los Angeles",
+  "revision": 236956496,
+  "sha256": "528854bc056f3f764eb5a8aecc9844f4c8a3a6ef28ddff92ec562e04de5dfdfe",
+  "timestamp": "2026-06-11T09:29:53Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=236956496"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "MEM",
+  "title": "Saison 2021-2022 des Grizzlies de Memphis",
+  "revision": 197653499,
+  "sha256": "6a913828dbfafbe6b205533d1f662f7dcea3615ff136752d5c49d1f777a7f96e",
+  "timestamp": "2022-10-10T23:07:46Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=197653499"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "MIA",
+  "title": "Saison 2021-2022 du Heat de Miami",
+  "revision": 236935559,
+  "sha256": "8a67fb4f7117e44f0a26d7c709935b9f03e1f9239a3671fa009ac686c232f4b7",
+  "timestamp": "2026-06-10T13:25:07Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=236935559"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "MIL",
+  "title": "Saison 2021-2022 des Bucks de Milwaukee",
+  "revision": 230468946,
+  "sha256": "a742c16b8b4e02833176cb92520bf0318833af962888f3487c27c1125ec5432b",
+  "timestamp": "2025-11-08T14:39:07Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=230468946"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "MIN",
+  "title": "Saison 2021-2022 des Timberwolves du Minnesota",
+  "revision": 235006440,
+  "sha256": "b295e3d3a935d47c3fd8c52bc5edab785dccabb6335ddf88b9f0afd18466d4ee",
+  "timestamp": "2026-04-10T13:17:49Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=235006440"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "NOP",
+  "title": "Saison 2021-2022 des Pelicans de La Nouvelle-Orléans",
+  "revision": 225173680,
+  "sha256": "30e24e84ac45a7538fe1318f1f4b5175bfa1213326f4955927a6e9547ee64f57",
+  "timestamp": "2025-04-27T12:27:33Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225173680"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "NYK",
+  "title": "Saison 2021-2022 des Knicks de New York",
+  "revision": 240428134,
+  "sha256": "ae5ad3b9764c11d21a812e81310f16557ec79176b25c05717b58022863046bcf",
+  "timestamp": "2026-10-16T14:05:38Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240428134"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "OKC",
+  "title": "Saison 2021-2022 du Thunder d'Oklahoma City",
+  "revision": 237789614,
+  "sha256": "d6a95ba573790c3133cc6142e8412c5bac11624baaa8062484b1e26faaee698f",
+  "timestamp": "2026-07-13T13:47:19Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237789614"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "PHI",
+  "title": "Saison 2021-2022 des 76ers de Philadelphie",
+  "revision": 237837667,
+  "sha256": "76d72969ff0af42df4fc1118be9f567af8dc827ba5dc1dd79e8a78affd9c78ec",
+  "timestamp": "2026-07-15T09:37:50Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237837667"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "PHX",
+  "title": "Saison 2021-2022 des Suns de Phoenix",
+  "revision": 225173009,
+  "sha256": "23c0592eacf35ed2e75d7dff2f5630dcc482fb7444e8c228858652df69fbcbd1",
+  "timestamp": "2025-04-27T12:04:44Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225173009"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "POR",
+  "title": "Saison 2021-2022 des Trail Blazers de Portland",
+  "revision": 240901040,
+  "sha256": "dba809ce32d84a828835607eb7201cf21de6537bdf8c8d4104b564989f3d073d",
+  "timestamp": "2026-11-01T02:10:07Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240901040"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "SAC",
+  "title": "Saison 2021-2022 des Kings de Sacramento",
+  "revision": 195209717,
+  "sha256": "cd9ad255b401fe0adaf3deb39853a023953a6f8e02ea2df3ba0af3a0e9c3ebc8",
+  "timestamp": "2022-07-10T09:55:51Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=195209717"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "SAS",
+  "title": "Saison 2021-2022 des Spurs de San Antonio",
+  "revision": 225169838,
+  "sha256": "ac49d5ee03c25948c392bbec96da4a47e82c9800f939a9cc0cd8bbc0e6b1328d",
+  "timestamp": "2025-04-27T09:36:50Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225169838"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "TOR",
+  "title": "Saison 2021-2022 des Raptors de Toronto",
+  "revision": 237073767,
+  "sha256": "fa2e0b4482f2761a616d4100cb988e48f2e731bf35e8f356f660732ea8e706aa",
+  "timestamp": "2026-06-15T15:14:40Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237073767"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "UTA",
+  "title": "Saison 2021-2022 du Jazz de l'Utah",
+  "revision": 225172980,
+  "sha256": "08a53cf3c4e83edfdff213f7211aeb6cc3a8b6ebd4b4668157937d7cc56f9620",
+  "timestamp": "2025-04-27T12:03:08Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225172980"
+ },
+ {
+  "lang": "fr",
+  "year": 2021,
+  "team": "WAS",
+  "title": "Saison 2021-2022 des Wizards de Washington",
+  "revision": 237789699,
+  "sha256": "6ed7295f29bdd7d042e412d133d51c63f1065b2cce4007b7d8a99e2a3cd6be53",
+  "timestamp": "2026-07-13T13:50:01Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237789699"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "ATL",
+  "title": "Saison 2022-2023 des Hawks d'Atlanta",
+  "revision": 237067907,
+  "sha256": "6186eb0108bf8862e185a939654a8e7c63d11fa6fb32c67f3c642e44a3525d8e",
+  "timestamp": "2026-06-15T11:49:31Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237067907"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "BOS",
+  "title": "Saison 2022-2023 des Celtics de Boston",
+  "revision": 209819171,
+  "sha256": "d29fdc6e3ff662e83042a7e83b20f68996a047b16d2af1c692946c0bdf80ff7d",
+  "timestamp": "2023-11-20T08:21:51Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=209819171"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "CHA",
+  "title": "Saison 2022-2023 des Hornets de Charlotte",
+  "revision": 212782575,
+  "sha256": "014570201b92326aaf41add1bc38412d0e97c01372e03dc3e603627f5e5bc509",
+  "timestamp": "2024-02-25T07:34:04Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=212782575"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "CHI",
+  "title": "Saison 2022-2023 des Bulls de Chicago",
+  "revision": 237455412,
+  "sha256": "88300b49424fac56497781981cac26d85de30ad8fe53681a0f2e93a001bfd23e",
+  "timestamp": "2026-06-30T08:58:35Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237455412"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "CLE",
+  "title": "Saison 2022-2023 des Cavaliers de Cleveland",
+  "revision": 225173215,
+  "sha256": "f4cc9da51752ac7292f0400762b7a0ea81db734950ef72a73a83086f4c12e019",
+  "timestamp": "2025-04-27T12:13:14Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225173215"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "DAL",
+  "title": "Saison 2022-2023 des Mavericks de Dallas",
+  "revision": 225169560,
+  "sha256": "f5bd9a61825a52fe53e35dd7d62bae3f0e77500feaf3e4b4824d710482cf8a14",
+  "timestamp": "2025-04-27T09:26:02Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225169560"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "DET",
+  "title": "Saison 2022-2023 des Pistons de Détroit",
+  "revision": 237794830,
+  "sha256": "805d80841cddef52bbea9eb5ea633a3714ddebd7c1633f0753aa1edad2dada60",
+  "timestamp": "2026-07-13T16:52:57Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237794830"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "GSW",
+  "title": "Saison 2022-2023 des Warriors de Golden State",
+  "revision": 236956645,
+  "sha256": "35b459fefc27881b324ce4a0c692fabfe1ef58a833a0feaa8e00d68a712b678a",
+  "timestamp": "2026-06-11T09:37:00Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=236956645"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "LAC",
+  "title": "Saison 2022-2023 des Clippers de Los Angeles",
+  "revision": 241243129,
+  "sha256": "15c7c2eb73c1229483830e096313388f06bef34324cc339961118980bd91b18b",
+  "timestamp": "2026-11-11T13:59:02Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241243129"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "LAL",
+  "title": "Saison 2022-2023 des Lakers de Los Angeles",
+  "revision": 236956497,
+  "sha256": "658b09e75c672576b11e7a8e178e40e91e4e183633ac1d71b296e26657a76e93",
+  "timestamp": "2026-06-11T09:30:01Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=236956497"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "MEM",
+  "title": "Saison 2022-2023 des Grizzlies de Memphis",
+  "revision": 218988271,
+  "sha256": "74cf3eeea5d8ae09fec7744b79934229ea55239df79716a407e274abd906d685",
+  "timestamp": "2024-09-28T01:48:14Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=218988271"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "MIL",
+  "title": "Saison 2022-2023 des Bucks de Milwaukee",
+  "revision": 225170062,
+  "sha256": "9a00ca5ed46532408c657a0c4a80d48ac68d6396dc9358891106994e110f6f8a",
+  "timestamp": "2025-04-27T09:45:41Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225170062"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "MIN",
+  "title": "Saison 2022-2023 des Timberwolves du Minnesota",
+  "revision": 235006605,
+  "sha256": "1d287edbb5528da4120a00bcc981b7ab356dd2ce35d820b50549fcbf5c61d5e4",
+  "timestamp": "2026-04-10T13:22:56Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=235006605"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "NOP",
+  "title": "Saison 2022-2023 des Pelicans de La Nouvelle-Orléans",
+  "revision": 240780351,
+  "sha256": "2d4fa7b6c28472cb493c2e1f934e77c2b5a3d0a3329c7a5e16a716df31029c5e",
+  "timestamp": "2026-10-27T21:54:52Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240780351"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "NYK",
+  "title": "Saison 2022-2023 des Knicks de New York",
+  "revision": 237789580,
+  "sha256": "0a3ee5299b5b409d1f05e65bb8031f7342a6bcfd7440a4b12311866039f1aaa9",
+  "timestamp": "2026-07-13T13:46:05Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237789580"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "OKC",
+  "title": "Saison 2022-2023 du Thunder d'Oklahoma City",
+  "revision": 240847677,
+  "sha256": "b700dc3b023c770cc7e97df38fa0233ddb53403393b35989f15475042c8e91cd",
+  "timestamp": "2026-10-30T06:41:37Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240847677"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "PHI",
+  "title": "Saison 2022-2023 des 76ers de Philadelphie",
+  "revision": 237837675,
+  "sha256": "f0a80535dd5c7a90daba4e4c95652c42fb038f950b454e96abac57cfdcaaa38d",
+  "timestamp": "2026-07-15T09:38:09Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237837675"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "PHX",
+  "title": "Saison 2022-2023 des Suns de Phoenix",
+  "revision": 225173187,
+  "sha256": "b28469158083b153f548122c898be56ca252f35f8e5c3c0ca19053a5e40b86fa",
+  "timestamp": "2025-04-27T12:12:14Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225173187"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "POR",
+  "title": "Saison 2022-2023 des Trail Blazers de Portland",
+  "revision": 237074351,
+  "sha256": "281c92fda67306872edf7f109c21641068bc64be43c70720c2a93e7ce1f19fc8",
+  "timestamp": "2026-06-15T15:32:40Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237074351"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "SAC",
+  "title": "Saison 2022-2023 des Kings de Sacramento",
+  "revision": 226434466,
+  "sha256": "898f1d3f5290aa1134522a41b39fc457d602dd517c1bd93cce768261ff1ed9f3",
+  "timestamp": "2025-06-11T18:48:12Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=226434466"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "SAS",
+  "title": "Saison 2022-2023 des Spurs de San Antonio",
+  "revision": 225158852,
+  "sha256": "324d89ab7afd2423f337f17d45e6e55183834137521475e273044e94998028b1",
+  "timestamp": "2025-04-26T21:51:31Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225158852"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "UTA",
+  "title": "Saison 2022-2023 du Jazz de l'Utah",
+  "revision": 230831577,
+  "sha256": "9bcf9e4a45989ef6b6508348c06d92189d35f8c5b74ecfcd514150ea6898b493",
+  "timestamp": "2025-11-21T16:36:01Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=230831577"
+ },
+ {
+  "lang": "fr",
+  "year": 2022,
+  "team": "WAS",
+  "title": "Saison 2022-2023 des Wizards de Washington",
+  "revision": 237789588,
+  "sha256": "38f6cf63708ada4b5085f19abf900e355dd32da200f5bcfa26417c1ae883e178",
+  "timestamp": "2026-07-13T13:46:19Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237789588"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "BKN",
+  "title": "Saison 2023-2024 des Nets de Brooklyn",
+  "revision": 220528627,
+  "sha256": "b0764c93dcafc5f62a12969212c197761f6349eebe909fa40db5bc013923d8ed",
+  "timestamp": "2024-11-22T23:29:53Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=220528627"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "BOS",
+  "title": "Saison 2023-2024 des Celtics de Boston",
+  "revision": 241323988,
+  "sha256": "3eb0a6cdf39c39ba0778fb28976cccf8662f64cf083b7820c4fd55bcbca99d02",
+  "timestamp": "2026-11-14T00:51:48Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241323988"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "CHI",
+  "title": "Saison 2023-2024 des Bulls de Chicago",
+  "revision": 241279462,
+  "sha256": "f6b328a1b43a55b2b4763387801591ffba7425195867b658338bebeddf8b0e30",
+  "timestamp": "2026-11-12T14:41:36Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241279462"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "DEN",
+  "title": "Saison 2023-2024 des Nuggets de Denver",
+  "revision": 240996692,
+  "sha256": "5121ec3a3a9e760efff580fd3c1ab17eed14cd7a2f85394f88bf4e8259a0c231",
+  "timestamp": "2026-11-03T21:59:01Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240996692"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "GSW",
+  "title": "Saison 2023-2024 des Warriors de Golden State",
+  "revision": 236956647,
+  "sha256": "e6adcf06d41df2a755ae998063495f8477b0f938f75df7b674be02a1a08a927c",
+  "timestamp": "2026-06-11T09:37:05Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=236956647"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "HOU",
+  "title": "Saison 2023-2024 des Rockets de Houston",
+  "revision": 225297778,
+  "sha256": "e711e50119e04292d38f1b4871e9e5ed890e687a9f98ac581186d931d8e37454",
+  "timestamp": "2025-05-02T08:19:50Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=225297778"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "IND",
+  "title": "Saison 2023-2024 des Pacers de l'Indiana",
+  "revision": 241001868,
+  "sha256": "071966818218e5e1ecf5594ae9402d9269fa3d3c7c11095c92e4b7b4bff249f9",
+  "timestamp": "2026-11-04T02:57:08Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241001868"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "OKC",
+  "title": "Saison 2023-2024 du Thunder d'Oklahoma City",
+  "revision": 237613443,
+  "sha256": "fcb786b7d25fa8364a04b8d11e81b75c8a8d498b12f50bc014de07277972ec10",
+  "timestamp": "2026-07-06T17:43:25Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237613443"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "ORL",
+  "title": "Saison 2023-2024 du Magic d'Orlando",
+  "revision": 238081526,
+  "sha256": "29c99bee5242e8a164c0ca9d6ee1c8243812f4c5e594a98926ff614901e4e2c0",
+  "timestamp": "2026-07-24T21:19:47Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=238081526"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "POR",
+  "title": "Saison 2023-2024 des Trail Blazers de Portland",
+  "revision": 232540589,
+  "sha256": "ce8920a0d99f15f1fba407fe5c6039583f0691f086046423aff0910390ffb7e0",
+  "timestamp": "2026-01-18T16:43:14Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=232540589"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "SAS",
+  "title": "Saison 2023-2024 des Spurs de San Antonio",
+  "revision": 227818765,
+  "sha256": "afc07f739b3efc7f2a1cbad53be3c32edfbd75c25856fb6a482ce231d27747fd",
+  "timestamp": "2025-08-03T13:03:21Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=227818765"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "TOR",
+  "title": "Saison 2023-2024 des Raptors de Toronto",
+  "revision": 237073775,
+  "sha256": "5dac50857d8d70f117d040a06c215a1d3fb7d39423c52c2cd32acab62bec5505",
+  "timestamp": "2026-06-15T15:14:55Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237073775"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "UTA",
+  "title": "Saison 2023-2024 du Jazz de l'Utah",
+  "revision": 224492226,
+  "sha256": "a5d42e4bb00b351acc9e51ddd06a6ae9ef23fd75eeadd59b68ac92be6ba07a3d",
+  "timestamp": "2025-04-03T04:56:14Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=224492226"
+ },
+ {
+  "lang": "fr",
+  "year": 2023,
+  "team": "WAS",
+  "title": "Saison 2023-2024 des Wizards de Washington",
+  "revision": 240718517,
+  "sha256": "c19baaa2566212c148f45a548e2ad52e101f309f86278b3320d1ee0a8fca7545",
+  "timestamp": "2026-10-25T23:02:45Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240718517"
+ },
+ {
+  "lang": "fr",
+  "year": 2024,
+  "team": "ATL",
+  "title": "Saison 2024-2025 des Hawks d'Atlanta",
+  "revision": 239614559,
+  "sha256": "d7703539735965e74ba8e8892a3120e3ed9f13af147eca244274ff5e1c09f1bb",
+  "timestamp": "2026-09-18T19:12:50Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=239614559"
+ },
+ {
+  "lang": "fr",
+  "year": 2024,
+  "team": "DEN",
+  "title": "Saison 2024-2025 des Nuggets de Denver",
+  "revision": 241181808,
+  "sha256": "dbb023c68a34d329475adc9317e883916a4fed7d55773d3acbd04d88eed0ac2c",
+  "timestamp": "2026-11-09T15:11:16Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241181808"
+ },
+ {
+  "lang": "fr",
+  "year": 2024,
+  "team": "IND",
+  "title": "Saison 2024-2025 des Pacers de l'Indiana",
+  "revision": 237541624,
+  "sha256": "4aef24791e70bef895a643192b0b885d47d39dbe0ac96ba842037230b77128a6",
+  "timestamp": "2026-07-03T17:20:07Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237541624"
+ },
+ {
+  "lang": "fr",
+  "year": 2024,
+  "team": "MIN",
+  "title": "Saison 2024-2025 des Timberwolves du Minnesota",
+  "revision": 237069019,
+  "sha256": "d587df03301fe0b54fb5e96e9b917d8d95d3ebfb1f03583f02a06b31289d7c3d",
+  "timestamp": "2026-06-15T12:29:09Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237069019"
+ },
+ {
+  "lang": "fr",
+  "year": 2024,
+  "team": "NOP",
+  "title": "Saison 2024-2025 des Pelicans de La Nouvelle-Orléans",
+  "revision": 237068994,
+  "sha256": "c597a0aecc9d60b7b5f4dcc3e22b788fb230fbd7a3a5b956bb886c652b695f61",
+  "timestamp": "2026-06-15T12:28:17Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237068994"
+ },
+ {
+  "lang": "fr",
+  "year": 2024,
+  "team": "POR",
+  "title": "Saison 2024-2025 des Trail Blazers de Portland",
+  "revision": 237069027,
+  "sha256": "b012ed4a550a3954e57d68be9c5fd83afd3e4f3538a1588589fcbb8b4de88f32",
+  "timestamp": "2026-06-15T12:29:22Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237069027"
+ },
+ {
+  "lang": "fr",
+  "year": 2024,
+  "team": "WAS",
+  "title": "Saison 2024-2025 des Wizards de Washington",
+  "revision": 237947605,
+  "sha256": "e25c8d34b4858cd94bcb36e987429b951c57e10909fdbcd90036e78804317941",
+  "timestamp": "2026-07-19T16:49:38Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237947605"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "BKN",
+  "title": "Saison 2025-2026 des Nets de Brooklyn",
+  "revision": 238076151,
+  "sha256": "d5b1178e447f566f2b7a102edfb741b7a395d53f67baae77e0f518b5e3d3baec",
+  "timestamp": "2026-07-24T16:32:41Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=238076151"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "BOS",
+  "title": "Saison 2025-2026 des Celtics de Boston",
+  "revision": 241075311,
+  "sha256": "ba0a5735223c231e216ca61e1ca92ec0c8b61ca13f3016d8cbe06f738c6c9d0a",
+  "timestamp": "2026-11-06T10:55:20Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241075311"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "CHI",
+  "title": "Saison 2025-2026 des Bulls de Chicago",
+  "revision": 238051113,
+  "sha256": "b14922eba06e472282c678334724c74660a28202bc3f2585766d54d8b65bd6e7",
+  "timestamp": "2026-07-23T16:33:23Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=238051113"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "CLE",
+  "title": "Saison 2025-2026 des Cavaliers de Cleveland",
+  "revision": 241027236,
+  "sha256": "f726c1a6bfbc7349c1d5f3a31864557ad376f50b5dec70388549bb28fd8d10c3",
+  "timestamp": "2026-11-04T22:42:43Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241027236"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "DAL",
+  "title": "Saison 2025-2026 des Mavericks de Dallas",
+  "revision": 238026831,
+  "sha256": "9eb40db5a9f0e80014a99db57561ef88155bc1ddadf64aaa5728a270e2468dff",
+  "timestamp": "2026-07-22T16:38:04Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=238026831"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "DEN",
+  "title": "Saison 2025-2026 des Nuggets de Denver",
+  "revision": 240296769,
+  "sha256": "651e2c0b04f97f46a2486e0517875c53ae4f8d3d07707a03423930c3b124bd58",
+  "timestamp": "2026-10-12T07:46:02Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240296769"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "GSW",
+  "title": "Saison 2025-2026 des Warriors de Golden State",
+  "revision": 240974546,
+  "sha256": "d2bc055187e8f2d84b723d51a995e4f9f611e002a9e6119823cec15f6a394dd8",
+  "timestamp": "2026-11-03T08:50:28Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240974546"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "HOU",
+  "title": "Saison 2025-2026 des Rockets de Houston",
+  "revision": 240036343,
+  "sha256": "3a425574507315136485363c96dbcc4fc4e8b950791dc34c9ca08f8c4d4df392",
+  "timestamp": "2026-10-03T16:54:41Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240036343"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "LAC",
+  "title": "Saison 2025-2026 des Clippers de Los Angeles",
+  "revision": 238096185,
+  "sha256": "6e154a57e28aa9b4cb32695b8043ca638b5d42a79da9633f1463331396bd41e5",
+  "timestamp": "2026-07-25T13:42:56Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=238096185"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "LAL",
+  "title": "Saison 2025-2026 des Lakers de Los Angeles",
+  "revision": 240299857,
+  "sha256": "bf393282351793ed63a778b1b3cd6c6cea43701c6e6618e981bb771bc5f164be",
+  "timestamp": "2026-10-12T09:51:26Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240299857"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "MEM",
+  "title": "Saison 2025-2026 des Grizzlies de Memphis",
+  "revision": 238081158,
+  "sha256": "c993cd7c33838cfc1932402557f4d8848102b6abdb9bd048fc2b700b7af37978",
+  "timestamp": "2026-07-24T21:03:32Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=238081158"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "MIL",
+  "title": "Saison 2025-2026 des Bucks de Milwaukee",
+  "revision": 238028782,
+  "sha256": "22ddcbc294b0e949bef48fbbe5f5acd534526cdee6560bf277a8dbc22b9a6063",
+  "timestamp": "2026-07-22T18:16:41Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=238028782"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "MIN",
+  "title": "Saison 2025-2026 des Timberwolves du Minnesota",
+  "revision": 240034563,
+  "sha256": "eaaa1c9ba13b61176cf84dd608afad09e2c6105e1dc5643108742c374c51e0c7",
+  "timestamp": "2026-10-03T15:53:03Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240034563"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "NOP",
+  "title": "Saison 2025-2026 des Pelicans de La Nouvelle-Orléans",
+  "revision": 240651601,
+  "sha256": "5147065c13aa70d991007206d65108f85b86e1332a42e972453ad592f540c8ba",
+  "timestamp": "2026-10-23T22:10:48Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240651601"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "NYK",
+  "title": "Saison 2025-2026 des Knicks de New York",
+  "revision": 241055638,
+  "sha256": "fcdf06e956f7983c9a09578f3644fdacc5123b86a5143a63306e9a5a4152fb21",
+  "timestamp": "2026-11-05T19:42:36Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241055638"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "OKC",
+  "title": "Saison 2025-2026 du Thunder d'Oklahoma City",
+  "revision": 240327561,
+  "sha256": "ee484d1752df35226530b16336e57fbbb1aaa3281d1d8ae48e4947dd9084881d",
+  "timestamp": "2026-10-13T08:40:31Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240327561"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "ORL",
+  "title": "Saison 2025-2026 du Magic d'Orlando",
+  "revision": 240340148,
+  "sha256": "6bc12c78932c094be8f4c43b6e341c61304d07cb4cb9f8f3f00f639328759bd4",
+  "timestamp": "2026-10-13T17:31:03Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240340148"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "PHX",
+  "title": "Saison 2025-2026 des Suns de Phoenix",
+  "revision": 239692297,
+  "sha256": "b16f09ff5e7ce193e07e0ebd5b62523b910f5555fc4296e3dc8b8e8cbfd27d6c",
+  "timestamp": "2026-09-21T07:53:21Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=239692297"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "SAS",
+  "title": "Saison 2025-2026 des Spurs de San Antonio",
+  "revision": 240310363,
+  "sha256": "d6463110668b743f46867b9c4bfb4558eee4864badea4fe4f5efe4398f902adc",
+  "timestamp": "2026-10-12T17:10:25Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=240310363"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "TOR",
+  "title": "Saison 2025-2026 des Raptors de Toronto",
+  "revision": 241036797,
+  "sha256": "c324229fb5df7978c936b0ac23ed9d7cecf48b2d24c58d27a06933609eba1cbd",
+  "timestamp": "2026-11-05T08:18:36Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=241036797"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "UTA",
+  "title": "Saison 2025-2026 du Jazz de l'Utah",
+  "revision": 238740405,
+  "sha256": "ac2a50ef8ba27c811eb7ef810cc8bd3aaa0d8081cf39f7740f017bec85caca9b",
+  "timestamp": "2026-08-18T15:10:37Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=238740405"
+ },
+ {
+  "lang": "fr",
+  "year": 2025,
+  "team": "WAS",
+  "title": "Saison 2025-2026 des Wizards de Washington",
+  "revision": 237922768,
+  "sha256": "09d6376f75adcc461c0d4e3db237dc51d35fa48fc2abf23e16187577f77fc90b",
+  "timestamp": "2026-07-18T17:52:19Z",
+  "attribution": "https://fr.wikipedia.org/w/index.php?oldid=237922768"
+ }
+]

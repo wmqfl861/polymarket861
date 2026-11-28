@@ -1,7 +1,7 @@
 """Identity and quote checks for full-game NBA contracts on Polymarket."""
 
 import re
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import UTC, datetime
 from decimal import Decimal
 from zoneinfo import ZoneInfo
@@ -238,6 +238,90 @@ def _rules_basis(game, family, line, rules):
     return "full_game_inferred" if family == "total" else "explicit"
 
 
+class RuleTemplateError(ValueError):
+    """A listed full-game contract uses unverified native settlement wording."""
+
+
+def _open(market):
+    return (
+        market.get("active") is True
+        and market.get("closed") is False
+        and market.get("acceptingOrders") is True
+        and market.get("enableOrderBook") is True
+    )
+
+
+def _family(event, market):
+    typ = market.get("sportsMarketType")
+    meta = market.get("marketMetadata")
+    slug = str(market.get("slug", ""))
+    if typ == "moneyline" and slug == event["slug"]:
+        return "win"
+    if typ not in ("totals", "team_totals"):
+        return None
+    family = (
+        {
+            "full.total": "total",
+            "full.team_total.home": "home_total",
+            "full.team_total.away": "away_total",
+        }.get(meta.get("line_family"))
+        if isinstance(meta, dict)
+        else None
+    )
+    if family:
+        return family
+    # A venue metadata change on an otherwise recognizable full-game listing is a
+    # broken contract, not evidence that this family no longer exists.
+    if typ == "totals" and slug.startswith(event["slug"] + "-total-"):
+        return "total"
+    if typ == "team_totals":
+        for team in event.get("teams", []):
+            side = team.get("ordering")
+            if side in ("home", "away") and slug.startswith(
+                event["slug"]
+                + "-team-total-"
+                + str(team.get("abbreviation")).lower()
+                + "-"
+            ):
+                return side + "_total"
+    return None
+
+
+def spread_archives(event, game):
+    """List only the two native token identifiers. No spread orientation or price is inferred."""
+    result = []
+    for market in event.get("markets", []):
+        if not isinstance(market, dict) or not _open(market):
+            continue
+        meta = market.get("marketMetadata")
+        if not isinstance(meta, dict) or (
+            market.get("sportsMarketType") != "spreads"
+            or meta.get("line_family") != "full.spread"
+            or meta.get("line_kind") != "consensus"
+        ):
+            continue
+        try:
+            tokens = [str(t) for t in sequence(market.get("clobTokenIds"))]
+            labels = {str(x).casefold() for x in sequence(market.get("outcomes"))}
+            if (
+                CONDITION.fullmatch(str(market.get("conditionId", "")))
+                and len(tokens) == 2
+                and len(set(tokens)) == 2
+                and all(t.isdigit() for t in tokens)
+                and labels == {c["name"].casefold() for c in game["clubs"].values()}
+                and moment(market["gameStartTime"]) == moment(game["kickoff"])
+                and re.fullmatch(
+                    re.escape(event["slug"]) + r"-spread-(?:home|away)-[0-9]+pt5",
+                    str(market.get("slug")),
+                )
+            ):
+                result.append((market["conditionId"], *tokens))
+        except (KeyError, TypeError, ValueError, OverflowError):
+            continue
+    counts = Counter(item for row in result for item in row)
+    return [r for r in result if all(counts[item] == 1 for item in r)]
+
+
 def contract(event, game, market, *, main_only=True, native_only=False):
     """Resolve a side to its token using the provider's roster and explicit full-game metadata."""
     typ = market.get("sportsMarketType")
@@ -257,7 +341,6 @@ def contract(event, game, market, *, main_only=True, native_only=False):
         or len(labels) != 2
         or len(set(labels)) != 2
         or not str(market.get("id", "")).isdigit()
-        or not rules
         or moment(market.get("gameStartTime")) != moment(game["kickoff"])
     ):
         raise ValueError("unverified contract")
@@ -278,7 +361,8 @@ def contract(event, game, market, *, main_only=True, native_only=False):
         if (
             not family
             or typ != ("totals" if family == "total" else "team_totals")
-            or (main_only and meta.get("line_kind") != "consensus")
+            or meta.get("line_kind")
+            not in (("consensus",) if main_only else ("consensus", "alternate"))
             or set(labels) != {"over", "under"}
         ):
             raise ValueError("not a supported full-game main line")
@@ -293,8 +377,11 @@ def contract(event, game, market, *, main_only=True, native_only=False):
         if market_slug != slug + prefix + format(line, "f").replace(".", "pt"):
             raise ValueError("ambiguous market slug or threshold")
         idx = labels.index("over")
-    basis = _rules_basis(game, family, line, rules)
-    original, latest = rule_times(rules)
+    try:
+        basis = _rules_basis(game, family, line, rules)
+        original, latest = rule_times(rules)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise RuleTemplateError(str(exc)) from exc
     if original.astimezone(_EAST).date().isoformat() != game["original_date"]:
         raise ValueError("original scheduled date conflicts with NBA fixture")
     if not native_only and moment(game["kickoff"]) > latest:
@@ -315,16 +402,19 @@ def contract(event, game, market, *, main_only=True, native_only=False):
     }
 
 
-def contracts(event, game, *, active=True, main_only=True, native_only=False):
-    rows = []
+def contract_inventory(event, game, *, active=True, main_only=True, native_only=False):
+    rows, issues = [], defaultdict(Counter)
     for market in event.get("markets", []):
-        if not isinstance(market, dict):
+        if not isinstance(market, dict) or not (family := _family(event, market)):
             continue
-        if active and not (
-            market.get("active") is True
-            and market.get("closed") is False
-            and market.get("acceptingOrders") is True
-            and market.get("enableOrderBook") is True
+        if active and not _open(market):
+            issues[family]["listed_inactive"] += 1
+            continue
+        meta = market.get("marketMetadata")
+        if (
+            main_only
+            and isinstance(meta, dict)
+            and meta.get("line_kind") == "alternate"
         ):
             continue
         try:
@@ -333,16 +423,31 @@ def contracts(event, game, *, active=True, main_only=True, native_only=False):
                     event, game, market, main_only=main_only, native_only=native_only
                 )
             )
+        except RuleTemplateError:
+            issues[family]["rule_template_mismatch"] += 1
         except (TypeError, ValueError, KeyError, OverflowError):
-            continue
-    ids = Counter(row["condition_id"] for row in rows)
+            issues[family]["unverified_contract"] += 1
+    ids = Counter(row["condition_id"].lower() for row in rows)
     tokens = Counter(t for row in rows for t in (row["token_id"], row["opposite"]))
-    return [
-        r
-        for r in rows
-        if ids[r["condition_id"]] == 1
-        and tokens[r["token_id"]] == tokens[r["opposite"]] == 1
-    ]
+    verified = []
+    for row in rows:
+        if (
+            ids[row["condition_id"].lower()]
+            == tokens[row["token_id"]]
+            == tokens[row["opposite"]]
+            == 1
+        ):
+            verified.append(row)
+        else:
+            issues[row["family"]]["unverified_contract"] += 1
+    return verified, issues
+
+
+def contracts(event, game, *, active=True, main_only=True, native_only=False):
+    rows, _ = contract_inventory(
+        event, game, active=active, main_only=main_only, native_only=native_only
+    )
+    return rows
 
 
 def price(candidate, books, received):
@@ -375,3 +480,12 @@ def price(candidate, books, received):
     mid = (bid + ask) / 2
     rank = (abs(mid - Decimal("0.5")), candidate["condition_id"].lower())
     return rank, float(mid)
+
+
+def selected_line(candidates, quotes):
+    """Choose the closest verified two-sided midpoint, then its native condition ID."""
+    return min(
+        (c for c in candidates if c["condition_id"] in quotes),
+        key=lambda c: quotes[c["condition_id"]][0],
+        default=None,
+    )

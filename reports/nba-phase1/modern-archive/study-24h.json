@@ -1,0 +1,783 @@
+{
+  "archive": {
+    "evaluated_full_schedule": 6150,
+    "excluded_or_missing": 0,
+    "limitations": "Complete regular-season score counts. Historic sources lack the original receipt times; both team pages can share a transcription error. No forward market or news receipts.",
+    "observed_finals_by_season": {
+      "2020": 1080,
+      "2021": 1230,
+      "2022": 1230,
+      "2023": 1230,
+      "2024": 1230,
+      "2025": 1230
+    },
+    "revision_manifest_sha256": "0ee7469f2f0126b9b9a4585abfbf8dbbaec5255f5b75b68b1f79575fc8d65568",
+    "sha256": "403506b8029c1126a9096b34a70de46a2e0af2947fef9f648fce142cf8cb0b89",
+    "source": "Pinned English and French team-season records, licensed FiveThirtyEight archive and individually adjudicated disputed score facts",
+    "warmup_starting_season": 2020
+  },
+  "data_grade": "technical_final_archive",
+  "eligible_archive_rows": 7230,
+  "evaluated_seasons": [
+    2021,
+    2025
+  ],
+  "interval_method": {
+    "confidence": 0.95,
+    "interpretation": "marginal exploratory intervals",
+    "replicates": 10000,
+    "seed": 861,
+    "unit": "7-calendar-day moving blocks, stratified by season"
+  },
+  "lag": {
+    "days_after_game_date_end": 1,
+    "excludes_all_same_date_scores": true
+  },
+  "margin_use": "diagnostic only; one-point and three-point probabilities require independent validation before spread use",
+  "market_receipts": 0,
+  "paper_eligible": false,
+  "parameters": {
+    "actual_prior_seasons": [
+      2020
+    ],
+    "b2b_margin_points": 1.5,
+    "minimum_training_games": 30,
+    "offseason_strength_carry": 0.6,
+    "paired_score_bank": 1200,
+    "team_online_rate": 0.065,
+    "warmup_prior_seasons": 8
+  },
+  "per_season": {
+    "2021": {
+      "final_score_calibration": {
+        "N0": {
+          "home_away_score_correlation": 0.2772308,
+          "margin_sd": 15.0953007,
+          "p_one_point": 0.0380842,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.140067,
+          "total_sd": 20.0656934
+        },
+        "N1": {
+          "home_away_score_correlation": 0.2834824,
+          "margin_sd": 15.3459396,
+          "p_one_point": 0.0544892,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1624373,
+          "total_sd": 20.5378464
+        },
+        "N2": {
+          "home_away_score_correlation": 0.2842868,
+          "margin_sd": 15.3324706,
+          "p_one_point": 0.0543832,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1625721,
+          "total_sd": 20.5376736
+        },
+        "observed": {
+          "home_away_score_correlation": 0.2609102,
+          "margin_sd": 15.3056784,
+          "p_one_point": 0.0325203,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1357724,
+          "total_sd": 19.9901798
+        }
+      },
+      "game_days": 165,
+      "games": 1230,
+      "insufficient_history": 0,
+      "losses": {
+        "N0": {
+          "brier_win": 0.2483416,
+          "crps_away": 7.2515487,
+          "crps_home": 7.0957208,
+          "crps_total": 11.4189166
+        },
+        "N1": {
+          "brier_win": 0.2197648,
+          "crps_away": 6.6623085,
+          "crps_home": 6.485305,
+          "crps_total": 10.4591043
+        },
+        "N2": {
+          "brier_win": 0.2183731,
+          "crps_away": 6.6558971,
+          "crps_home": 6.4685311,
+          "crps_total": 10.4596137
+        }
+      },
+      "paired": {
+        "N1_minus_N0": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0377723,
+              -0.0197178
+            ],
+            "difference": -0.0285768
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.7625269,
+              -0.3963038
+            ],
+            "difference": -0.5892401
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.7526301,
+              -0.4076067
+            ],
+            "difference": -0.6104158
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -1.2085352,
+              -0.6477107
+            ],
+            "difference": -0.9598122
+          }
+        },
+        "N2_minus_N1": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0023448,
+              -0.0005877
+            ],
+            "difference": -0.0013918
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.018884,
+              0.002521
+            ],
+            "difference": -0.0064114
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.028481,
+              -0.005193
+            ],
+            "difference": -0.016774
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -0.0020835,
+              0.0030823
+            ],
+            "difference": 0.0005094
+          }
+        }
+      }
+    },
+    "2022": {
+      "final_score_calibration": {
+        "N0": {
+          "home_away_score_correlation": 0.2846217,
+          "margin_sd": 14.5331245,
+          "p_one_point": 0.0407344,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.148393,
+          "total_sd": 19.4750544
+        },
+        "N1": {
+          "home_away_score_correlation": 0.271483,
+          "margin_sd": 14.6012838,
+          "p_one_point": 0.0584261,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.173609,
+          "total_sd": 19.2897274
+        },
+        "N2": {
+          "home_away_score_correlation": 0.2728156,
+          "margin_sd": 14.5786445,
+          "p_one_point": 0.0580442,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1725209,
+          "total_sd": 19.2875744
+        },
+        "observed": {
+          "home_away_score_correlation": 0.3407883,
+          "margin_sd": 13.6635382,
+          "p_one_point": 0.0455285,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1569106,
+          "total_sd": 19.4858549
+        }
+      },
+      "game_days": 164,
+      "games": 1230,
+      "insufficient_history": 0,
+      "losses": {
+        "N0": {
+          "brier_win": 0.2444772,
+          "crps_away": 6.6327952,
+          "crps_home": 6.8146552,
+          "crps_total": 10.9726492
+        },
+        "N1": {
+          "brier_win": 0.2271981,
+          "crps_away": 6.2760535,
+          "crps_home": 6.506776,
+          "crps_total": 10.4500187
+        },
+        "N2": {
+          "brier_win": 0.2262915,
+          "crps_away": 6.2743428,
+          "crps_home": 6.4888651,
+          "crps_total": 10.4478812
+        }
+      },
+      "paired": {
+        "N1_minus_N0": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0251499,
+              -0.0104755
+            ],
+            "difference": -0.0172791
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.4917684,
+              -0.1977884
+            ],
+            "difference": -0.3567416
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.4359078,
+              -0.2000571
+            ],
+            "difference": -0.3078792
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -0.7065521,
+              -0.2865659
+            ],
+            "difference": -0.5226304
+          }
+        },
+        "N2_minus_N1": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0020997,
+              0.0001162
+            ],
+            "difference": -0.0009066
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.0170447,
+              0.0118279
+            ],
+            "difference": -0.0017107
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.0304147,
+              -0.0042703
+            ],
+            "difference": -0.0179109
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -0.0053836,
+              0.0007119
+            ],
+            "difference": -0.0021375
+          }
+        }
+      }
+    },
+    "2023": {
+      "final_score_calibration": {
+        "N0": {
+          "home_away_score_correlation": 0.302749,
+          "margin_sd": 14.6787824,
+          "p_one_point": 0.0400678,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1449485,
+          "total_sd": 20.0643767
+        },
+        "N1": {
+          "home_away_score_correlation": 0.2990699,
+          "margin_sd": 15.1541607,
+          "p_one_point": 0.0563103,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1673259,
+          "total_sd": 20.6305101
+        },
+        "N2": {
+          "home_away_score_correlation": 0.301766,
+          "margin_sd": 15.1112192,
+          "p_one_point": 0.0564301,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1679065,
+          "total_sd": 20.6330981
+        },
+        "observed": {
+          "home_away_score_correlation": 0.2537301,
+          "margin_sd": 15.635785,
+          "p_one_point": 0.0373984,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1390244,
+          "total_sd": 20.2660789
+        }
+      },
+      "game_days": 160,
+      "games": 1230,
+      "insufficient_history": 0,
+      "losses": {
+        "N0": {
+          "brier_win": 0.2482722,
+          "crps_away": 7.2186995,
+          "crps_home": 7.2497354,
+          "crps_total": 11.4005584
+        },
+        "N1": {
+          "brier_win": 0.2127867,
+          "crps_away": 6.5698418,
+          "crps_home": 6.5423505,
+          "crps_total": 10.3539141
+        },
+        "N2": {
+          "brier_win": 0.2112401,
+          "crps_away": 6.5535435,
+          "crps_home": 6.5367625,
+          "crps_total": 10.352915
+        }
+      },
+      "paired": {
+        "N1_minus_N0": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.044645,
+              -0.0275408
+            ],
+            "difference": -0.0354854
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.8291793,
+              -0.501497
+            ],
+            "difference": -0.6488577
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.9173545,
+              -0.5139336
+            ],
+            "difference": -0.707385
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -1.3051198,
+              -0.8094357
+            ],
+            "difference": -1.0466443
+          }
+        },
+        "N2_minus_N1": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0027665,
+              -0.0003582
+            ],
+            "difference": -0.0015467
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.0271048,
+              -0.0057478
+            ],
+            "difference": -0.0162983
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.0179463,
+              0.0054121
+            ],
+            "difference": -0.005588
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -0.00357,
+              0.0020189
+            ],
+            "difference": -0.0009991
+          }
+        }
+      }
+    },
+    "2024": {
+      "final_score_calibration": {
+        "N0": {
+          "home_away_score_correlation": 0.2391392,
+          "margin_sd": 15.6782559,
+          "p_one_point": 0.0417805,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1479607,
+          "total_sd": 20.00792
+        },
+        "N1": {
+          "home_away_score_correlation": 0.2285002,
+          "margin_sd": 15.8416966,
+          "p_one_point": 0.0540749,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1606445,
+          "total_sd": 19.9903529
+        },
+        "N2": {
+          "home_away_score_correlation": 0.2306215,
+          "margin_sd": 15.8069883,
+          "p_one_point": 0.0545281,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1618207,
+          "total_sd": 19.9912718
+        },
+        "observed": {
+          "home_away_score_correlation": 0.2162994,
+          "margin_sd": 15.8792163,
+          "p_one_point": 0.0447154,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1495935,
+          "total_sd": 19.781236
+        }
+      },
+      "game_days": 163,
+      "games": 1230,
+      "insufficient_history": 0,
+      "losses": {
+        "N0": {
+          "brier_win": 0.248214,
+          "crps_away": 7.2419239,
+          "crps_home": 7.134387,
+          "crps_total": 11.2232451
+        },
+        "N1": {
+          "brier_win": 0.2096668,
+          "crps_away": 6.5730927,
+          "crps_home": 6.4713855,
+          "crps_total": 10.3452181
+        },
+        "N2": {
+          "brier_win": 0.2081579,
+          "crps_away": 6.5574247,
+          "crps_home": 6.4631046,
+          "crps_total": 10.3456079
+        }
+      },
+      "paired": {
+        "N1_minus_N0": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0455363,
+              -0.0305629
+            ],
+            "difference": -0.0385472
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.8643459,
+              -0.5107579
+            ],
+            "difference": -0.6688312
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.8627617,
+              -0.483284
+            ],
+            "difference": -0.6630015
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -1.220203,
+              -0.6585049
+            ],
+            "difference": -0.878027
+          }
+        },
+        "N2_minus_N1": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0024926,
+              -0.0005642
+            ],
+            "difference": -0.0015089
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.0261602,
+              -0.0038907
+            ],
+            "difference": -0.015668
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.0237204,
+              0.0045522
+            ],
+            "difference": -0.008281
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -0.0023888,
+              0.0028398
+            ],
+            "difference": 0.0003898
+          }
+        }
+      }
+    },
+    "2025": {
+      "final_score_calibration": {
+        "N0": {
+          "home_away_score_correlation": 0.2042373,
+          "margin_sd": 16.0421357,
+          "p_one_point": 0.0426125,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1499228,
+          "total_sd": 19.7344397
+        },
+        "N1": {
+          "home_away_score_correlation": 0.2047605,
+          "margin_sd": 16.0931813,
+          "p_one_point": 0.0528682,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1577788,
+          "total_sd": 19.8078109
+        },
+        "N2": {
+          "home_away_score_correlation": 0.206567,
+          "margin_sd": 16.0616485,
+          "p_one_point": 0.0532886,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.157923,
+          "total_sd": 19.8063974
+        },
+        "observed": {
+          "home_away_score_correlation": 0.1889848,
+          "margin_sd": 16.4080253,
+          "p_one_point": 0.0382114,
+          "p_tied_final": 0.0,
+          "p_within_three": 0.1439024,
+          "total_sd": 19.8666149
+        }
+      },
+      "game_days": 164,
+      "games": 1230,
+      "insufficient_history": 0,
+      "losses": {
+        "N0": {
+          "brier_win": 0.2472164,
+          "crps_away": 7.2524321,
+          "crps_home": 7.3733182,
+          "crps_total": 11.2688136
+        },
+        "N1": {
+          "brier_win": 0.204582,
+          "crps_away": 6.5778128,
+          "crps_home": 6.8861998,
+          "crps_total": 10.670783
+        },
+        "N2": {
+          "brier_win": 0.2045387,
+          "crps_away": 6.5809218,
+          "crps_home": 6.8733692,
+          "crps_total": 10.6702597
+        }
+      },
+      "paired": {
+        "N1_minus_N0": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0550069,
+              -0.0306717
+            ],
+            "difference": -0.0426344
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.8712483,
+              -0.508487
+            ],
+            "difference": -0.6746193
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.6720587,
+              -0.2771372
+            ],
+            "difference": -0.4871184
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -0.8214322,
+              -0.3560171
+            ],
+            "difference": -0.5980306
+          }
+        },
+        "N2_minus_N1": {
+          "brier_win": {
+            "block_interval_95": [
+              -0.0010032,
+              0.0010359
+            ],
+            "difference": -4.33e-05
+          },
+          "crps_away": {
+            "block_interval_95": [
+              -0.0101722,
+              0.0165329
+            ],
+            "difference": 0.003109
+          },
+          "crps_home": {
+            "block_interval_95": [
+              -0.0268733,
+              0.0023494
+            ],
+            "difference": -0.0128306
+          },
+          "crps_total": {
+            "block_interval_95": [
+              -0.0031419,
+              0.0021107
+            ],
+            "difference": -0.0005233
+          }
+        }
+      }
+    }
+  },
+  "pooled": {
+    "final_score_calibration": {
+      "N0": {
+        "home_away_score_correlation": 0.2726801,
+        "margin_sd": 15.2205895,
+        "p_one_point": 0.0406559,
+        "p_tied_final": 0.0,
+        "p_within_three": 0.1462584,
+        "total_sd": 20.1338628
+      },
+      "N1": {
+        "home_away_score_correlation": 0.2714588,
+        "margin_sd": 15.419804,
+        "p_one_point": 0.0552338,
+        "p_tied_final": 0.0,
+        "p_within_three": 0.1643591,
+        "total_sd": 20.3705582
+      },
+      "N2": {
+        "home_away_score_correlation": 0.2731856,
+        "margin_sd": 15.3910687,
+        "p_one_point": 0.0553348,
+        "p_tied_final": 0.0,
+        "p_within_three": 0.1645486,
+        "total_sd": 20.3705556
+      },
+      "observed": {
+        "home_away_score_correlation": 0.2626973,
+        "margin_sd": 15.4100334,
+        "p_one_point": 0.0396748,
+        "p_tied_final": 0.0,
+        "p_within_three": 0.1450407,
+        "total_sd": 20.1664854
+      }
+    },
+    "games": 6150,
+    "losses": {
+      "N0": {
+        "brier_win": 0.2473043,
+        "crps_away": 7.1194799,
+        "crps_home": 7.1335633,
+        "crps_total": 11.2568366
+      },
+      "N1": {
+        "brier_win": 0.2147997,
+        "crps_away": 6.5318219,
+        "crps_home": 6.5784034,
+        "crps_total": 10.4558076
+      },
+      "N2": {
+        "brier_win": 0.2137202,
+        "crps_away": 6.524426,
+        "crps_home": 6.5661265,
+        "crps_total": 10.4552555
+      }
+    },
+    "paired": {
+      "N1_minus_N0": {
+        "brier_win": {
+          "block_interval_95": [
+            -0.0367947,
+            -0.0284884
+          ],
+          "difference": -0.0325046
+        },
+        "crps_away": {
+          "block_interval_95": [
+            -0.666393,
+            -0.5120539
+          ],
+          "difference": -0.587658
+        },
+        "crps_home": {
+          "block_interval_95": [
+            -0.6312597,
+            -0.4715691
+          ],
+          "difference": -0.55516
+        },
+        "crps_total": {
+          "block_interval_95": [
+            -0.9132882,
+            -0.6870555
+          ],
+          "difference": -0.8010289
+        }
+      },
+      "N2_minus_N1": {
+        "brier_win": {
+          "block_interval_95": [
+            -0.0015758,
+            -0.0006367
+          ],
+          "difference": -0.0010795
+        },
+        "crps_away": {
+          "block_interval_95": [
+            -0.0131699,
+            -0.0023467
+          ],
+          "difference": -0.0073959
+        },
+        "crps_home": {
+          "block_interval_95": [
+            -0.0182168,
+            -0.0066116
+          ],
+          "difference": -0.0122769
+        },
+        "crps_total": {
+          "block_interval_95": [
+            -0.0018009,
+            0.0006287
+          ],
+          "difference": -0.0005521
+        }
+      }
+    }
+  },
+  "prediction_scope": "final scores including overtime; no regulations-only or player/news claims",
+  "recipe": "nba-final-paired-residual-v2",
+  "sample_unit": "one NBA regular season game",
+  "schedule_basis": "final archive game date; no receipt-time schedule",
+  "scope": "final_including_overtime",
+  "season_ids": "starting year",
+  "venue_policy": "listed-home-with-dated-neutral-exceptions-v1"
+}

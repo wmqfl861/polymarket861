@@ -7,7 +7,7 @@ import sqlite3
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
 from ..store import canonical, digest, instant, iso, now_utc
@@ -15,6 +15,9 @@ from . import storage
 
 HORIZONS = {"T-24h": 1440, "T-60m": 60, "T-15m": 15}
 WINDOW = timedelta(minutes=5)
+# The services tick every minute. Allow another tick only when there is
+# enough time for its startup, model fit and durable commit.
+FINAL_SEAL_MARGIN = timedelta(seconds=75)
 EASTERN = ZoneInfo("America/New_York")
 _COMPONENT_MAX_AGE = {"markets": 180, "schedule": 2100, "forecast": 180}
 _SCHEMA = """
@@ -29,6 +32,11 @@ CREATE TABLE IF NOT EXISTS nba_windows (
     PRIMARY KEY(game_id,epoch,horizon)
 );
 CREATE INDEX IF NOT EXISTS nba_windows_due ON nba_windows(state,active,deadline);
+CREATE INDEX IF NOT EXISTS nba_window_deadlines ON nba_windows(deadline,game_day);
+CREATE TABLE IF NOT EXISTS nba_pairing_outcomes (
+    game_id TEXT NOT NULL, epoch INTEGER NOT NULL, horizon TEXT NOT NULL,
+    assessed_at TEXT NOT NULL, win_quote TEXT, sha256 TEXT NOT NULL, PRIMARY KEY(game_id,epoch,horizon)
+);
 CREATE TABLE IF NOT EXISTS nba_forecast_candidates (
     sha256 TEXT PRIMARY KEY, game_id TEXT NOT NULL, epoch INTEGER NOT NULL,
     horizon TEXT NOT NULL, payload TEXT NOT NULL
@@ -150,7 +158,7 @@ class ScheduleUnverified(ValueError):
     """A research preview may show stale evidence, but may never override a conflict."""
 
 
-def _reference(root, game, horizon, as_of):
+def _reference(root, game, horizon, as_of, source_epoch_at=None):
     from . import markets
 
     return markets.benchmark(
@@ -160,10 +168,20 @@ def _reference(root, game, horizon, as_of):
         game["kickoff"],
         horizon,
         as_of=as_of,
+        **({"source_epoch_at": source_epoch_at} if source_epoch_at is not None else {}),
     )
 
 
-def _observed_markets(raw, as_of):
+def _decision_bounds(kickoff, venue_kickoff, horizon, source_epoch_at=None):
+    source, venue = instant(kickoff), instant(venue_kickoff)
+    offset = timedelta(minutes=HORIZONS[horizon])
+    opened = max(source, venue) - offset - WINDOW
+    if source_epoch_at:
+        opened = max(opened, instant(source_epoch_at))
+    return opened, min(source, venue) - offset
+
+
+def _observed_markets(raw, as_of, kickoff, horizon, source_epoch_at=None):
     # A later closing reference is reserved for evaluations, never for model inputs.
     allowed = (
         "condition_id",
@@ -172,15 +190,31 @@ def _observed_markets(raw, as_of):
         "probability",
         "observed_at",
         "available_at",
+        "venue_event_id",
+        "venue_version",
+        "source_kickoff",
+        "venue_kickoff",
+        "delta_seconds",
+        "source_epoch_at",
     )
-    return {
-        key: {k: quote.get(k) for k in allowed}
-        for key, quote in raw.items()
-        if isinstance(quote, dict)
-        and quote.get("observed_at")
-        and instant(quote["observed_at"]) <= instant(as_of)
-        and instant(quote.get("available_at") or quote["observed_at"]) <= instant(as_of)
-    }
+    result = {}
+    for key, quote in raw.items():
+        if (
+            not isinstance(quote, dict)
+            or not quote.get("observed_at")
+            or not quote.get("available_at")
+        ):
+            continue
+        opened, deadline = _decision_bounds(
+            kickoff, quote.get("venue_kickoff") or kickoff, horizon, source_epoch_at
+        )
+        available = instant(quote["available_at"])
+        if (
+            opened <= instant(quote["observed_at"]) <= available <= instant(as_of)
+            and available < deadline
+        ):
+            result[key] = {k: quote[k] for k in allowed if k in quote}
+    return result
 
 
 def _windows(db, epoch, now):
@@ -228,6 +262,8 @@ def _schedule_proof(root, db, game, as_of):
     if conflict:
         raise ValueError("market schedule conflict: " + conflict)
     proof = data.schedule_proof(root, game["game_date"], as_of)
+    if proof and proof.get("state") not in ("ok", "running", None):
+        raise ScheduleUnverified("latest schedule scan failed: " + str(proof["state"]))
     if not proof or not proof.get("complete") or proof.get("state") != "ok":
         raise ScheduleUnverified(
             "missing or incomplete schedule verification for this game day"
@@ -262,23 +298,68 @@ def _schedule_proof(root, db, game, as_of):
 
 
 def _make_seal(root, db, game, window, history, start, clock):
-    from . import data, model
+    from . import data, markets, model, warmup
 
     horizon = window["horizon"]
     schedule_proof = _schedule_proof(root, db, game, start)
-    reference = _observed_markets(_reference(root, game, horizon, start), start)
+    match_args = (root, game["home_abbr"], game["away_abbr"], game["kickoff"])
+    match = markets.schedule_match(*match_args, as_of=start)
+    source_epoch_at = None
+    if window["epoch"] > 1:
+        versions = data.game_versions(root, game_id=game["game_id"], as_of=start)
+        epoch = require_active_epoch(versions)["game"]
+        if epoch["version"] != window["epoch"]:
+            raise ValueError("schedule changed before prediction")
+        if any(
+            v["version"] < window["epoch"]
+            and v["status"] in ("scheduled", "postponed", "withdrawn")
+            for v in versions
+        ):
+            source_epoch_at = max(epoch["available_at"], epoch["received_at"])
+    reference = _observed_markets(
+        _reference(root, game, horizon, start, source_epoch_at),
+        start,
+        game["kickoff"],
+        horizon,
+        source_epoch_at,
+    )
+    # After the intersection closes a new receipt cannot qualify. A disjoint
+    # clock still permits an unpaired sporting forecast on the source clock.
+    opened, deadline = _decision_bounds(
+        game["kickoff"],
+        match.get("venue_kickoff") or game["kickoff"],
+        horizon,
+        source_epoch_at,
+    )
+    if (
+        "win" not in reference
+        and match["status"] != "outside_tolerance"
+        and max(opened, instant(start)) < deadline
+        and instant(window["deadline"]) - instant(start) > FINAL_SEAL_MARGIN
+    ):
+        return None
     lines = {
         k: reference[m]["line"]
         for k, m in (("total", "total"), ("home", "home_total"), ("away", "away_total"))
         if m in reference and reference[m].get("line") is not None
     }
     before = model.predict(history, game, lines=lines, as_of=start)
+    if "win" in reference:
+        quote_state = "paired_win"
+    elif match["status"] in ("exact", "within_tolerance") and opened >= deadline:
+        quote_state = "no_shared_decision_window"
+    else:
+        quote_state = "no_qualified_win_quote"
     body = {
         "scope": "nba_pregame_research",
         "paper_positions": False,
         "game": game,
         "schedule_epoch": window["epoch"],
+        "source_epoch_at": source_epoch_at,
         "schedule_verification": schedule_proof,
+        "market_schedule": match,
+        "decision_quote_state": quote_state,
+        "warmup": warmup.coverage(root, history, game, start),
         "horizon": horizon,
         "deadline": window["deadline"],
         "input_cutoff": start,
@@ -300,6 +381,18 @@ def _make_seal(root, db, game, window, history, start, clock):
             db.execute("BEGIN IMMEDIATE")
             check = iso(clock())
             _schedule_proof(root, db, game, check)
+            if reference:
+                current = markets.schedule_match(*match_args, as_of=check)
+                if any(
+                    current.get(k) != match.get(k)
+                    for k in (
+                        "status",
+                        "venue_event_id",
+                        "venue_version",
+                        "venue_kickoff",
+                    )
+                ):
+                    raise ValueError("market schedule changed during prediction")
             versions = data.game_versions(root, game_id=game["game_id"], as_of=check)
             latest = require_active_epoch(versions)
             if (
@@ -420,14 +513,100 @@ def _sync_schedule(root, db, start):
                       SELECT ? WHERE EXISTS (SELECT 1 FROM nba_windows WHERE game_id=? AND sealed_at IS NOT NULL)""",
             (gid, gid),
         )
+    if since and since < start:
+        # Existing withheld windows and unregistered fixtures may become due
+        # without a new source revision. Publish that change exactly once.
+        dates = {
+            r[0]
+            for r in db.execute(
+                "SELECT DISTINCT game_day FROM nba_windows WHERE deadline>=? AND deadline<?",
+                (since, start),
+            )
+        }
+        lower, upper = instant(since), instant(start)
+        unregistered = db.execute(
+            """SELECT g.game_day,json_extract(g.game,'$.kickoff') AS tip FROM nba_ops_games g
+               WHERE g.stage='regular' AND g.game_day BETWEEN ? AND ? AND NOT EXISTS(
+                 SELECT 1 FROM nba_windows w WHERE w.game_id=g.game_id AND w.active=1
+               )""",
+            (str(_day(since)), str(_day(upper + timedelta(days=1)))),
+        )
+        for game_day, tip in unregistered:
+            if tip:
+                if any(
+                    lower <= instant(tip) - timedelta(minutes=m) < upper
+                    for m in HORIZONS.values()
+                ):
+                    dates.add(game_day)
+            elif str(_day(since)) <= game_day < str(_day(start)):
+                dates.add(game_day)
+        for day in dates:
+            _dirty_day(db, day)
     db.execute("INSERT OR REPLACE INTO nba_ops_cursor VALUES(1,?)", (start,))
 
 
+def _catalogue_coverage(db, as_of):
+    """Check the independent venue calendar against today's local T-60m work."""
+    from .markets_contracts import team_code
+
+    day = _day(as_of)
+    tips = []
+    if db.execute(
+        "SELECT 1 FROM sqlite_master WHERE name='nba_market_schedule'"
+    ).fetchone():
+        other_stages = {
+            (team_code(r[0]), team_code(r[1]))
+            for r in db.execute(
+                """SELECT json_extract(game,'$.home_abbr'),json_extract(game,'$.away_abbr')
+                   FROM nba_ops_games WHERE game_day=? AND stage IN ('preseason','playin','postseason','cup_final')""",
+                (str(day),),
+            )
+        }
+        rows = db.execute(
+            """SELECT s.kickoff,g.home,g.away FROM nba_market_schedule s
+               JOIN nba_market_games g USING(id) WHERE s.version=(
+                  SELECT MAX(v.version) FROM nba_market_schedule v WHERE v.id=s.id AND v.valid_from<=?
+               ) AND s.kickoff>=? AND s.kickoff<?""",
+            (
+                as_of,
+                iso(datetime.combine(day, time.min, EASTERN)),
+                iso(datetime.combine(day + timedelta(days=1), time.min, EASTERN)),
+            ),
+        )
+        tips = [
+            instant(r["kickoff"])
+            for r in rows
+            if (r["home"], r["away"]) not in other_stages
+        ]
+    due = sum(t - timedelta(minutes=60) < instant(as_of) for t in tips)
+    rows = db.execute(
+        """SELECT state,deadline FROM nba_windows
+           WHERE active=1 AND game_day=? AND horizon='T-60m'""",
+        (str(day),),
+    ).fetchall()
+    registered = len(rows)
+    sealed = sum(r["state"] == "sealed" for r in rows)
+    alert = None
+    if tips and not registered:
+        alert = "market_catalog_without_regular_schedule"
+    elif due and not sealed and any(r["deadline"] < as_of for r in rows):
+        alert = "market_catalog_due_without_seal"
+    return {
+        "game_day": str(day),
+        "catalogued_games": len(tips),
+        "catalogued_t60_due": due,
+        "registered_t60": registered,
+        "sealed_t60": sealed,
+        "alert": alert,
+    }
+
+
 def forecast_cycle(root, *, clock=now_utc):
-    from .operations_report import refresh_grades, refresh_reports
+    from . import data, reconciliation
+    from .operations_report import refresh_grades, refresh_pairing, refresh_reports
 
     failures = []
-    sealed = 0
+    sealed = deferred = 0
     with closing(_open(root)) as db:
         with db:
             db.execute("BEGIN IMMEDIATE")
@@ -444,7 +623,7 @@ def forecast_cycle(root, *, clock=now_utc):
                 [
                     json.loads(row[0])
                     for row in db.execute(
-                        "SELECT game FROM nba_ops_games WHERE stage='regular'"
+                        "SELECT game FROM nba_ops_games WHERE stage IN ('regular','unknown')"
                     )
                 ]
                 if pending
@@ -452,9 +631,20 @@ def forecast_cycle(root, *, clock=now_utc):
             )
         for row in pending:
             try:
-                sealed += _make_seal(
+                admitted = _make_seal(
                     root, db, json.loads(row["game"]), row, history, start, clock
                 )
+                if admitted is None:
+                    deferred += 1
+                    with db:
+                        db.execute(
+                            """UPDATE nba_windows SET note='waiting_for_win_quote'
+                               WHERE game_id=? AND epoch=? AND horizon=? AND state='pending'
+                                 AND note<>'waiting_for_win_quote'""",
+                            (row["game_id"], row["epoch"], row["horizon"]),
+                        )
+                else:
+                    sealed += admitted
             except (ValueError, KeyError, OSError, sqlite3.Error) as exc:
                 error = str(exc)
                 failures.append(
@@ -483,14 +673,29 @@ def forecast_cycle(root, *, clock=now_utc):
                           THEN 'window_expired' ELSE note END WHERE state='pending' AND deadline<?""",
                 (finish,),
             )
+        refresh_pairing(db, root, finish)
+        reconciliation.refresh(db, finish)
         grades, grading_errors = refresh_grades(db, root, finish)
         failures.extend(grading_errors)
         reports = refresh_reports(db, finish)
+        evidence = _catalogue_coverage(db, finish)
+    proof = data.schedule_proof(root, str(_day(finish)), finish)
+    failed_scan = proof and proof.get("state") not in ("ok", "running")
+    reason = evidence["alert"] or (
+        "schedule_verification_failed"
+        if failed_scan
+        else "no_observed_schedule"
+        if not games
+        else None
+    )
     return {
-        "state": "partial" if failures or not games else "ok",
+        "state": "partial" if failures or reason else "ok",
         "schedule_games": games,
-        "reason": "no_observed_schedule" if not games else None,
+        "reason": reason,
         "sealed": sealed,
+        "waiting_for_win_quote": deferred,
+        "catalogue_coverage": evidence,
+        "schedule_scan_state": proof.get("state") if proof else None,
         "grade_revisions": grades,
         "report_versions": reports,
         "fixture_errors": failures,
@@ -566,9 +771,14 @@ def run(root, component="all", *, clock=now_utc):
     }
 
 
-def status(root, *, clock=now_utc):
+def status(root, *, component="all", clock=now_utc):
+    from . import reconciliation
+
+    if component not in ("all", *_COMPONENT_MAX_AGE):
+        raise ValueError("unknown NBA watchdog component")
     rows = {}
     counts = {}
+    payouts = reconciliation.summary(None)
     db = storage.open_existing(root)
     if db is not None:
         with closing(db):
@@ -584,9 +794,12 @@ def status(root, *, clock=now_utc):
                         "SELECT state,COUNT(*) FROM nba_windows WHERE active=1 GROUP BY state"
                     )
                 )
+            payouts = reconciliation.summary(db)
     status_by_component = {}
     now = instant(clock())
     for k, limit in _COMPONENT_MAX_AGE.items():
+        if component != "all" and k != component:
+            continue
         row = rows.get(k)
         if row:
             age = (now - instant(row["finished"] or row["started"])).total_seconds()
@@ -608,8 +821,10 @@ def status(root, *, clock=now_utc):
     healthy = all(v["state"] == "ok" for v in status_by_component.values())
     return {
         "state": "ok" if healthy else "degraded",
+        "scope": component,
         "components": status_by_component,
         "windows": counts,
+        "payout_reconciliation": payouts,
         "player_data": "no_admitted_pregame_source",
         "paper_trading": False,
     }
@@ -662,8 +877,12 @@ def register(subparsers):
         result_exit_code=lambda r: int(r["state"] != "ok"),
     )
     for name in ("status", "watchdog"):
-        subparsers.add_parser(name).set_defaults(
-            func=lambda a: status(a.data_dir),
+        cmd = subparsers.add_parser(name)
+        cmd.add_argument(
+            "--component", choices=("all", *_COMPONENT_MAX_AGE), default="all"
+        )
+        cmd.set_defaults(
+            func=lambda a: status(a.data_dir, component=a.component),
             result_exit_code=lambda r: int(r["state"] != "ok"),
         )
     cmd = subparsers.add_parser(

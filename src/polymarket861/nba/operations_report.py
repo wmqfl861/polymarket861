@@ -10,7 +10,61 @@ from datetime import date, timedelta
 
 from ..store import canonical, digest, instant
 from . import storage
-from .operations import HORIZONS, _dirty_day, _reference, _unpack
+from .operations import (
+    EASTERN,
+    HORIZONS,
+    _dirty_day,
+    _observed_markets,
+    _reference,
+    _unpack,
+)
+
+
+def _sealed_quotes(seal):
+    return _observed_markets(
+        seal["market_at_prediction"],
+        seal["input_cutoff"],
+        seal["game"]["kickoff"],
+        seal["horizon"],
+        seal.get("source_epoch_at"),
+    )
+
+
+def refresh_pairing(db, root, now):
+    """Freeze the price that was possible by the deadline, separately from the seal."""
+    windows = db.execute(
+        """SELECT w.*
+           FROM nba_windows w LEFT JOIN nba_pairing_outcomes p USING(game_id,epoch,horizon)
+           WHERE w.active=1 AND w.sealed_at IS NOT NULL AND w.deadline<? AND p.game_id IS NULL""",
+        (now,),
+    ).fetchall()
+    for w in windows:
+        # Never admit this look-up to a prediction or scored decision reference.
+        # With no win in the original, ask what was already durable at the true
+        # cutoff, even if the operator first runs this task after the game.
+        seal = _unpack(w)
+        epoch = seal.get("source_epoch_at")
+        win = _sealed_quotes(seal).get("win")
+        if win is None:
+            raw = _reference(root, seal["game"], w["horizon"], w["deadline"], epoch)
+            win = _observed_markets(
+                raw, w["deadline"], w["kickoff"], w["horizon"], epoch
+            ).get("win")
+        quote = canonical(win) if win else None
+        with db:
+            changed = db.execute(
+                "INSERT OR IGNORE INTO nba_pairing_outcomes VALUES(?,?,?,?,?,?)",
+                (
+                    w["game_id"],
+                    w["epoch"],
+                    w["horizon"],
+                    now,
+                    quote,
+                    digest([w["sha256"], now, quote]),
+                ),
+            ).rowcount
+            if changed:
+                _dirty_day(db, w["game_day"])
 
 
 def _new_grade(db, row, body, now):
@@ -90,11 +144,18 @@ def _market_errors(models, reference, home, away):
     return out
 
 
-def _adjudicate(root, row, game, now):
-    from . import model
+def _adjudicate(db, root, row, game, now):
+    from . import model, reconciliation
 
     seal = _unpack(row)
-    body = {"forecast_sha256": row["sha256"], "state": "awaiting_result"}
+    reference = _sealed_quotes(seal)
+    body = {
+        "forecast_sha256": row["sha256"],
+        "state": "awaiting_result",
+        "payout_reconciliation": reconciliation.by_reference(
+            db, game["game_id"], reference, source_kickoff=seal["game"]["kickoff"]
+        ),
+    }
     if game["status"] != "scheduled":
         body.update(
             result_version=game["version"], result_receipt_sha256=game["receipt_sha256"]
@@ -115,8 +176,11 @@ def _adjudicate(root, row, game, now):
     preds = seal["forecast"]["models"]
     # The decision reference must have been inside the immutable forecast. A later
     # qualified observation may supply only the close of that exact contract.
-    reference = seal["market_at_prediction"]
-    closing_refs = _reference(root, target, row["horizon"], now) if reference else {}
+    closing_refs = (
+        _reference(root, target, row["horizon"], now, seal.get("source_epoch_at"))
+        if reference
+        else {}
+    )
     for family, ref in reference.items():
         closing = closing_refs.get(family, {})
         if (
@@ -161,7 +225,7 @@ def refresh_grades(db, root, now):
                 (gid,),
             ).fetchall():
                 try:
-                    body = _adjudicate(root, row, game, now)
+                    body = _adjudicate(db, root, row, game, now)
                 except (ValueError, KeyError, TypeError, ArithmeticError) as exc:
                     failed = True
                     errors.append(
@@ -207,19 +271,137 @@ def _difference_interval(day_totals):
     return info
 
 
-def _period(db, start, end):
-    windows = db.execute(
-        """SELECT game_id,horizon,state,active FROM nba_windows WHERE game_day>=? AND game_day<?""",
+def _miss_reason(note):
+    if note.startswith(("scheduled source failed", "latest schedule scan failed")):
+        return "latest_schedule_sync_failed"
+    if note == "waiting_for_win_quote":
+        return "no_retry_before_deadline"
+    if note.startswith("stale schedule"):
+        return "stale_schedule_proof"
+    if note.startswith("missing or incomplete schedule"):
+        return "incomplete_schedule_proof"
+    if note.startswith("deadline passed"):
+        return "deadline_passed_during_prediction"
+    if note.startswith("market schedule conflict: "):
+        return note.removeprefix("market schedule conflict: ")
+    return note or "window_expired"
+
+
+def _readiness(games, windows, horizon, now):
+    """Return unique scheduled opportunities plus both sides of the pairing denominator."""
+    by_id = {w["game_id"]: w for w in windows}
+    end = instant(now)
+    today = str(end.astimezone(EASTERN).date())
+    fixtures = []
+    for gid in sorted(games.keys() | by_id.keys()):
+        w = by_id.get(gid)
+        game = games.get(gid) or w
+        kickoff = w["kickoff"] if w else game["kickoff"]
+        if kickoff:
+            due = instant(kickoff) - timedelta(minutes=HORIZONS[horizon]) < end
+        else:
+            due = game["status"] == "final" or game["game_day"] < today
+        sealed = bool(w and w["state"] == "sealed")
+        warm = bool(sealed and w["warm"])
+        decision = bool(sealed and "win" in w["decision"])
+        qualified = bool(sealed and (decision or w["win_by_deadline"]))
+        fixtures.append(
+            {
+                "game_id": gid,
+                "game_day": game["game_day"],
+                "home_abbr": game["home_abbr"],
+                "away_abbr": game["away_abbr"],
+                "kickoff": kickoff,
+                "venue_event_id": w["venue_id"] if w else None,
+                "due": due,
+                "sealed": sealed,
+                "warm_sealed": warm,
+                "qualifying_win_quote": warm and qualified,
+                "paired_win": warm and decision,
+                "assessed": bool(w and w["assessed_at"]),
+                "any_seal_qualifying_win_quote": qualified,
+                "any_seal_paired_win": decision,
+            }
+        )
+    due = [f for f in fixtures if f["due"]]
+    warm_n = sum(f["warm_sealed"] for f in due)
+    sealed_n = sum(f["sealed"] for f in due)
+    qualified_n = sum(f["qualifying_win_quote"] for f in due)
+    paired_n = sum(f["paired_win"] for f in due)
+    all_qualified = sum(f["any_seal_qualifying_win_quote"] for f in due)
+    all_paired = sum(f["any_seal_paired_win"] for f in due)
+    return {
+        "due_games": len(due),
+        "sealed_games": sealed_n,
+        "warm_sealed_games": warm_n,
+        "cold_or_unverified_sealed_games": sealed_n - warm_n,
+        "qualifying_win_quote_games": qualified_n,
+        "paired_win_games": paired_n,
+        "warm_seal_rate": warm_n / len(due) if due else None,
+        "win_pairing_rate": paired_n / qualified_n if qualified_n else None,
+        "all_seals_qualifying_win_quote_games": all_qualified,
+        "all_seals_paired_win_games": all_paired,
+        "all_seals_win_pairing_rate": all_paired / all_qualified
+        if all_qualified
+        else None,
+        "fixtures": fixtures,
+    }
+
+
+def _period(db, start, end, now):
+    from . import reconciliation
+
+    windows = []
+    for row in db.execute(
+        """SELECT w.*,p.win_quote,p.assessed_at,p.sha256 AS assessment_sha
+           FROM nba_windows w LEFT JOIN nba_pairing_outcomes p USING(game_id,epoch,horizon)
+           WHERE w.game_day>=? AND w.game_day<?""",
         (str(start), str(end)),
-    ).fetchall()
+    ):
+        seal = _unpack(row) if row["sealed_at"] and row["active"] else {}
+        if (
+            row["assessed_at"]
+            and digest([row["sha256"], row["assessed_at"], row["win_quote"]])
+            != row["assessment_sha"]
+        ):
+            raise ValueError("NBA deadline quote assessment checksum mismatch")
+        schedule = seal.get("market_schedule", {})
+        decision = _sealed_quotes(seal) if seal else {}
+        window = {
+            key: row[key]
+            for key in (
+                "game_id",
+                "game_day",
+                "horizon",
+                "state",
+                "active",
+                "note",
+                "kickoff",
+                "assessed_at",
+            )
+        }
+        window.update(
+            venue_id=schedule.get("venue_event_id"),
+            match_status=schedule.get("status"),
+            quote_state=seal.get("decision_quote_state", "unrecorded"),
+            home_abbr=seal.get("game", {}).get("home_abbr"),
+            away_abbr=seal.get("game", {}).get("away_abbr"),
+            decision=decision.keys(),
+            warm=seal.get("warmup", {}).get("eligible") is True,
+            win_by_deadline=row["win_quote"] is not None,
+        )
+        windows.append(window)
     ids = {r["game_id"] for r in windows if r["active"]}
-    relevant = {
-        row[0]
+    games = {
+        row["game_id"]: row
         for row in db.execute(
-            "SELECT game_id FROM nba_ops_games WHERE stage='regular' AND game_day>=? AND game_day<?",
+            """SELECT game_id,game_day,status,json_extract(game,'$.kickoff') AS kickoff,
+                      json_extract(game,'$.home_abbr') AS home_abbr,json_extract(game,'$.away_abbr') AS away_abbr
+               FROM nba_ops_games WHERE stage='regular' AND game_day>=? AND game_day<?""",
             (str(start), str(end)),
         )
     }
+    relevant = games.keys()
     grades = db.execute(
         """SELECT w.horizon,w.game_day,g.payload,g.sha256 FROM nba_windows w JOIN nba_grade_versions g
         USING (game_id,epoch,horizon) WHERE w.active=1 AND w.game_day>=? AND w.game_day<?
@@ -290,6 +472,27 @@ def _period(db, start, end):
                 )
         by_horizon[horizon] = {
             "states": dict(counts),
+            "missed_by_reason": dict(
+                Counter(_miss_reason(w["note"]) for w in wr if w["state"] == "missed")
+            ),
+            "withheld_by_reason": dict(
+                Counter(_miss_reason(w["note"]) for w in wr if w["state"] == "withheld")
+            ),
+            "unpaired_win_seals_by_schedule_match": dict(
+                Counter(
+                    w["match_status"] or "unrecorded"
+                    for w in wr
+                    if w["state"] == "sealed" and "win" not in w["decision"]
+                )
+            ),
+            "unpaired_win_seals_by_reason": dict(
+                Counter(
+                    w["quote_state"]
+                    for w in wr
+                    if w["state"] == "sealed" and "win" not in w["decision"]
+                )
+            ),
+            "readiness": _readiness(games, wr, horizon, now),
             "opportunities": len(ids | relevant),
             "registered_windows": len(wr),
             "without_registered_window": len(relevant - ids),
@@ -310,6 +513,9 @@ def _period(db, start, end):
                     if not market_counts[k]
                     else None,
                     "with_decision_quote": market_counts[k],
+                    "sealed_with_decision_quote": sum(
+                        k in w["decision"] for w in wr if w["state"] == "sealed"
+                    ),
                     "missing_decision_quote": states["scored"] - market_counts[k],
                     "with_same_token_close": closing_counts[k],
                     "decision_without_close": market_counts[k] - closing_counts[k],
@@ -326,6 +532,7 @@ def _period(db, start, end):
         "schedule_games": len(ids | relevant),
         "without_registered_windows": len(relevant - ids),
         "horizons": by_horizon,
+        "payout_reconciliation": reconciliation.summary(db, start, end),
         "denominator": "locally observed NBA regular-season schedule; upstream coverage is not guaranteed",
         "score_scope": "final_including_overtime",
         "paper_trading": False,
@@ -342,7 +549,7 @@ def refresh_reports(db, now):
             db.execute("BEGIN IMMEDIATE")
             start = date.fromisoformat(period)
             span = 1 if kind == "day" else 7
-            payload = _period(db, start, start + timedelta(days=span))
+            payload = _period(db, start, start + timedelta(days=span), now)
             sha = digest(payload)
             db.execute(
                 "DELETE FROM nba_report_queue WHERE kind=? AND period=?", (kind, period)

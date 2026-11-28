@@ -302,7 +302,15 @@ class TestNBAMarkets(unittest.TestCase):
         self.venue.now += timedelta(minutes=4)
         stats = m.status(self.root, now=self.venue.clock)["days"]["2026-11-27"]
         self.assertEqual(
-            [stats[k] for k in ["invalid_book", "empty_book", "unlisted", "collected"]],
+            [
+                stats[k]
+                for k in [
+                    "invalid_book",
+                    "empty_book",
+                    "rule_template_mismatch",
+                    "collected",
+                ]
+            ],
             [1, 1, 1, 1],
         )
 
@@ -415,9 +423,12 @@ class TestNBAMarkets(unittest.TestCase):
         self.assertIsNone(reason(v.tip, original))
         self.tick()
         self.assertIsNone(reason(v.tip, original))
+        self.assertIsNone(reason(v.tip + timedelta(minutes=20), original))
         self.assertEqual(
-            reason(v.tip + timedelta(minutes=20), original),
-            "venue_same_pair_schedule_mismatch",
+            m.schedule_match(
+                self.root, "NYK", "MIA", v.tip + timedelta(minutes=20), as_of=original
+            )["status"],
+            "within_tolerance",
         )
         v.now += timedelta(minutes=16)
         v.event["startTime"] = stamp(v.tip + timedelta(hours=1))
