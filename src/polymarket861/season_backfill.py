@@ -41,6 +41,40 @@ def _db(root):
     return db
 
 
+def _seed_jobs(year, row, event, now, first):
+    fixture = row["fixture"]
+
+    def job(kind, selector, begin=0, end=0):
+        key = store.digest([year, kind, selector, begin, end])
+        return key, fixture, kind, selector, begin, end
+
+    sibling = fixture + "-more-markets" if row["slug"] == fixture else fixture
+    yield job("event", sibling)
+    yield job("trades", row["event_id"])
+    native = {
+        x["slug"]: x for x in event.get("markets") or []
+        if isinstance(x, dict) and x.get("slug")
+    }
+    for m in provider.normalized_markets(event):
+        if m.get("mapping_error"):
+            continue
+        src = native[m["slug"]]
+        born = (src.get("startDate") or src.get("createdAt")
+                or event.get("startDate") or first + "T00:00:00Z")
+        closed = src.get("closedTime") or event.get("closedTime")
+        # An open market's latest checkpoint advances in whole days from kickoff.
+        kick = provider.moment(row["kickoff"])
+        end = provider.moment(closed) if closed else kick + timedelta(days=max(0, (now - kick).days))
+        finish = int(min(now, end).timestamp())
+        begin = int(provider.moment(born).timestamp())
+        for tok in m["tokens"]:
+            lower = begin
+            while lower < finish:
+                upper = min(finish, ((lower // 86400) + 1) * 86400)
+                yield job("prices", tok["token_id"], lower, upper)
+                lower = upper
+
+
 def _seed(root, year, now):
     """Read existing Gamma originals once per revision, including every auxiliary event."""
     first, last = f"{year}-07-01", f"{year + 1}-07-01"
@@ -66,6 +100,10 @@ def _seed(root, year, now):
             if isinstance(v, dict) and v.get("slug")
         }
         with closing(_db(root)) as db, db:
+            # Temporary rows are private to this connection. Preparing a whole
+            # catalogue revision, including existing-key lookups, leaves WAL writers free.
+            db.execute("CREATE TEMP TABLE seed_jobs(key,fixture,kind,selector,start,end)")
+            db.execute("CREATE TEMP TABLE seed_slugs(slug PRIMARY KEY,received_at)")
             for row in rows:
                 event = events.get(row["slug"])
                 if not event or str(event.get("id")) != row["event_id"]:
@@ -73,60 +111,37 @@ def _seed(root, year, now):
                         "event catalogue index disagrees with the raw payload"
                     )
 
-                def enqueue(kind, selector, begin=0, end=0, fixture=row["fixture"]):
-                    key = store.digest([year, kind, selector, begin, end])
-                    db.execute(
-                        "INSERT OR IGNORE INTO season_history_jobs VALUES(?,?,?,?,?,?,?,0,'pending','','',NULL)",
-                        (key, year, fixture, kind, selector, begin, end),
-                    )
+                db.executemany(
+                    "INSERT INTO temp.seed_jobs VALUES(?,?,?,?,?,?)",
+                    _seed_jobs(year, row, event, now, first),
+                )
+                db.execute("INSERT INTO temp.seed_slugs VALUES(?,?)", (row["slug"], row["received_at"]))
+            db.execute(
+                "DELETE FROM temp.seed_jobs WHERE EXISTS "
+                "(SELECT 1 FROM season_history_jobs j WHERE j.key=seed_jobs.key)"
+            )
+            db.commit()
 
-                sibling = (
-                    row["fixture"] + "-more-markets"
-                    if row["slug"] == row["fixture"]
-                    else row["fixture"]
-                )
-                if not db.execute(
-                    "SELECT 1 FROM ma_events WHERE slug=? LIMIT 1", (sibling,)
-                ).fetchone():
-                    enqueue("event", sibling)
-                enqueue("trades", row["event_id"])
-                native = {
-                    x["slug"]: x
-                    for x in event.get("markets") or []
-                    if isinstance(x, dict) and x.get("slug")
-                }
-                for m in provider.normalized_markets(event):
-                    if m.get("mapping_error"):
-                        continue
-                    src = native[m["slug"]]
-                    born = (
-                        src.get("startDate")
-                        or src.get("createdAt")
-                        or event.get("startDate")
-                        or first + "T00:00:00Z"
-                    )
-                    closed = src.get("closedTime") or event.get("closedTime")
-                    # A still-open/unknown market's latest full checkpoint advances in 24h
-                    # slices on later refreshes, with a fixed initial end at scheduled kickoff.
-                    kick = provider.moment(row["kickoff"])
-                    end = (
-                        provider.moment(closed)
-                        if closed
-                        else kick + timedelta(days=max(0, (now - kick).days))
-                    )
-                    finish = int(min(now, end).timestamp())
-                    begin = int(provider.moment(born).timestamp())
-                    for tok in m["tokens"]:
-                        lower = begin
-                        while lower < finish:
-                            # Overlapping bounds at the endpoint are safe: source rows are deduplicated.
-                            upper = min(finish, ((lower // 86400) + 1) * 86400)
-                            enqueue("prices", tok["token_id"], lower, upper)
-                            lower = upper
-                db.execute(
-                    "INSERT OR REPLACE INTO season_history_seed VALUES(?,?,?)",
-                    (year, row["slug"], sha),
-                )
+            db.execute("BEGIN IMMEDIATE")
+            # A concurrent seeder may have published overlapping slices since the
+            # read phase. Ignore only duplicate keys, retaining any additional dates.
+            db.execute(
+                "INSERT OR IGNORE INTO season_history_jobs "
+                "SELECT j.key,?,j.fixture,j.kind,j.selector,j.start,j.end,0,'pending','','',NULL "
+                "FROM temp.seed_jobs j "
+                "WHERE j.kind<>'event' OR NOT EXISTS(SELECT 1 FROM ma_events e WHERE e.slug=j.selector) "
+                "ORDER BY j.rowid", (year,),
+            )
+            # A slower seeder may still contribute jobs from its verified original,
+            # but cannot rewind a slug already seeded from a later receipt.
+            db.execute(
+                "INSERT INTO season_history_seed SELECT ?,slug,? FROM temp.seed_slugs WHERE true "
+                "ON CONFLICT(year,slug) DO UPDATE SET source_sha=excluded.source_sha "
+                "WHERE season_history_seed.source_sha IS NOT excluded.source_sha AND NOT EXISTS ("
+                "SELECT 1 FROM ma_events e JOIN temp.seed_slugs s ON s.slug=e.slug "
+                "WHERE e.slug=excluded.slug AND e.sha=season_history_seed.source_sha "
+                "AND (e.received_at,e.sha)>(s.received_at,excluded.source_sha))", (year, sha),
+            )
 
 
 def _catalog(root, year, now):

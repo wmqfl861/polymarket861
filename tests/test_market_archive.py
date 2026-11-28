@@ -343,6 +343,51 @@ class ArchiveTests(TestCase):
         self.assertEqual(b["asks"][1]["size"], "17")
         self.assertEqual(a["asks"][1]["size"], "4")
 
+    def test_failed_batch_only_attempts_individual_books_while_the_window_is_open(self):
+        deadline = T + timedelta(seconds=10)
+        markets = provider.normalized_markets(event())
+        for after_batch, expected in ((deadline, []), (T, ["11", "22"])):
+            with (
+                self.subTest(after_batch=after_batch),
+                patch.object(archive, "contracts", return_value=markets),
+                patch.object(archive, "now_utc", return_value=provider.iso(T)) as clock,
+            ):
+                individual = []
+
+                def read(root, operation, selector, url, params, **kwargs):
+                    if operation == "books":
+                        clock.return_value = provider.iso(after_batch)
+                        raise TimeoutError("batch deadline")
+                    individual.append(selector)
+                    raise OSError("individual book unavailable")
+
+                report = archive.capture(
+                    self.root, FIX, workers=1, discovery={"events": [FIX], "gaps": []},
+                    deadline=provider.iso(deadline), fetch=read,
+                )
+                self.assertEqual(report["batch_error"], "batch deadline")
+                self.assertEqual(individual, expected)
+                self.assertEqual({r["token_id"] for r in report["observations"]}, {"11", "22"})
+                reason = "individual book unavailable" if expected else "capture request window has already elapsed"
+                self.assertTrue(all(r["error"] == reason for r in report["observations"]))
+
+    def test_only_scheduled_regular_batches_get_the_longer_per_attempt_timeout(self):
+        cutoff = provider.iso(T + timedelta(minutes=15))
+        for native_only, deadline, expected in (
+            (False, cutoff, {"attempts": 3, "timeout": 12}),
+            (True, cutoff, {"attempts": 1}),
+            (False, None, {"attempts": 3}),
+        ):
+            with (
+                self.subTest(native_only=native_only, deadline=deadline),
+                patch.object(archive, "contracts", return_value=provider.normalized_markets(event())),
+                patch.object(archive, "_fetch", side_effect=archive.DeferredFetch("cooldown", cutoff)) as read,
+            ):
+                archive.capture(self.root, FIX, discovery={"events": [FIX], "gaps": []},
+                                deadline=deadline, native_only=native_only)
+                self.assertEqual(read.call_count, 1)
+                self.assertEqual(read.call_args.kwargs, expected)
+
     def test_older_short_club_labels_and_reindex_audit(self):
         data = event()
         m = data["markets"][0]

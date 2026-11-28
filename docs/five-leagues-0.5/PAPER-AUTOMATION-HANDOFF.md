@@ -82,6 +82,16 @@ journalctl -u pm861-epl-http-recovery.service --since today
 
 核对窗口时在仓库根目录只读打开 `.pm861/runtime.sqlite3`，从 `season_slots` 按 UTC `target`、`stage`、`role`、`fixture` 看 `state` 和 `detail`。针对所选场次，将 `ma_requests` 中 `operation='books'`、`status='ok'` 的 `sha` 和 `received_at` 与 `ma_books` 对齐，核实在截止前实收的 token 和其中有双边报价的数量。`done`、抓到单边报价和有可执行双边报价是三种不同的统计。盘口采样本身不会触发微信。
 
+### 本机切换回执
+
+11 月 28 日 15:48，部署机对修复提交 `ec6a499` 完成具名批准。英超采集器与看门狗使用已核验的独立安装。五季 190 轮共 1,900 场逐场配对，正式概率与训练视图的差异均为 0。本机比较报告为 `3b9b32b750f29fd230d41e8360779d5c4fe4e8a697ceab91d516d61ecf9ac43b`，可用新安装的 `pm861 --data-dir .pm861 forecast release-report` 加上该摘要复核。上线后核对到生效配方 `54cd9cd6…` 与安装配方相同，原有 10 份封存的内容与摘要全部一致。14:45 的模拟账务复核覆盖首六仓及一笔兑付，两套引擎的账户和逐仓差异均为空。[修复提交](https://github.com/wmqfl861/polymarket861/commit/ec6a499676e50371b9c61ae8cfb3a763ec47e153)
+
+切换前取 14:51:50 的 WAL 一致快照。34,619 份原件、53 个便携文件和 SQLite 数据库共 34,673 项，全部哈希通过。SQLite 完整性检查通过，外键违规为 0。压缩库完整解压后的 5,346,607,104 字节与快照哈希一致。部署机在 `.local-deploy/backups/epl-before-collector-update-20261128T065149Z-q7k0spdg/` 留存压缩库、清单、两份回执和 `RESTORE.md`。核验采用独立副本的 SQLite 检查和完整解压流哈希。历史漏窗按当时记录保留。
+
+15:50 的常规采样按时完成 4/4 场，192 份盘口中有 136 份双边报价。16:00 的 7 场均漏采，窗口内 CLOB 的 17 次批量请求和 6 次单项请求超时；同期 Gamma 的 7 次请求成功。另在历史回补按代币、日期逐项排队时测到 10.195 秒的写锁。后续补丁把回补任务准备放入连接私有的临时表，成批提交新增任务及对应进度。用含 14 个赛事条目的真实原件回放 6,236 个任务，重复回补的主库写事务从 1,002 毫秒降至 86 毫秒，首次生成从 1,103 毫秒降至 102 毫秒，任务、顺序、重试状态和进度逐项一致。普通定时盘口的批量请求每次最多用 12 秒，原采样截止时间仍约束每次请求。到期后尚未发出的逐代币请求只在该窗口登记缺口。[回补代码](../../src/polymarket861/season_backfill.py) · [回补并发回归](../../tests/test_season_backfill_concurrency.py) · [盘口采样回归](../../tests/test_market_archive.py)
+
+15:48 就绪报告中有 8 场正在等待同一份 Gamma 目录的赛事索引。16:02 只读复核了第 12 轮 9 场未赛对阵的原有双源凭据、最新 Gamma 原件和 OpenLigaDB，9 场的主客、身份和开球时刻均吻合。埃弗顿对利物浦在北京时间 11 月 29 日 20:00 开球，T−24h 窗口为 11 月 28 日 19:55–20:00。后续须用 `run status` 的实际封存摘要查验该窗口。两家比分源对较早的伯恩茅斯对布伦特福德仍有冲突，该条比分保留隔离。
+
 ## 同机 NBA 后台与微信
 
 NBA 使用独立服务账户 `pm861-nba`。11 月 28 日默认 DNS 导致公开 Gamma 目录连续失败，专用账户的用户级服务也无法创建解析器挂载命名空间。现场仅把每分钟的 `markets` 定时器迁到系统管理器，由原 NBA 账户运行，保留原解释器、数据目录和命令 `nba run --component markets`。该公开接口无需供应商密钥。赛程、预测、伤停和综合看门狗四项仍由 NBA 账户的用户管理器调度。14:36 首次重新收齐两页目录、15 场，随后综合看门狗恢复正常。[本机 NBA 行情单元](../../deploy/examples/nba-markets-system/) · [NBA 部署及伤停验收](https://github.com/wmqfl861/polymarket861/blob/cc48470e5edd65c5d6df7c04fad120ad77d3245f/docs/nba-plan/OPERATIONS-0.6.0a2.md)
@@ -89,3 +99,5 @@ NBA 使用独立服务账户 `pm861-nba`。11 月 28 日默认 DNS 导致公开 
 迁移或回退 NBA 行情时先停原层级的 `polymarket861-nba-markets.timer`，等该层级的同名 service 完成，再启用目标层级的 timer，避免两个实例并跑。系统级单元在 `/etc/systemd/system`，用户级原件在 NBA 账户的 `~/.config/systemd/user`。两处均以各自的 `systemctl list-timers` 和 NBA 库的 `nba_market_requests`、`nba_market_runs` 验证。伤停验收以真实赛前窗口的认证回执为准。
 
 持有人指定的首场 NBA 伤停汇总由本机 Hermes 单次任务发送，在最后一个窗口结束后统计 Big Balls 三窗和 DunkAPI 一窗的实收。遇到空窗，报告已有失败原因或标明原因尚未证实。接受的发送会停用该任务。日常微信继续只发模拟账户实际新建仓位；单次任务的送达状态、会话与接收方配置保存在本机。
+
+首场赛程为北京时间 11 月 29 日 06:00 魔术客场对奇才。Big Balls 三个采集窗口为 04:25–04:30、04:55–05:00、05:40–05:45，DunkAPI 使用 04:55–05:00。查看 `ubuntu` 用户的 `systemctl --user list-timers pm861-nba-first-injury-weixin.timer` 可核对 05:47 的首次发送安排。脚本按实际赛程判断最后一窗是否结束，在本机 `.local-deploy/nba-first-injury-weixin/delivery.json` 记录 Hermes 是否接受消息。11 月 28 日 15:27 实查 BALLDONTLIE 已认证接收 63 页赛程，15:22 的公开盘口目录收到 15 场，两路伤停的首场窗口当时尚未开放。

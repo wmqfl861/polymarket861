@@ -691,8 +691,13 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline, native_only
     ):
         raise CatalogChanged("catalogue changed before book request")
 
+    fallback_deadline = moment(deadline) if deadline is not None else None
+
     def one(pair):
         token, market = pair
+        if fallback_deadline is not None and moment(now_utc()) >= fallback_deadline:
+            # A token still needs a gap in the slot report. No HTTP request was attempted.
+            return {"token_id": token, "error": "capture request window has already elapsed"}
         saved = _DEADLINE.set(deadline)
         try:
             if fetch is None:
@@ -711,13 +716,18 @@ def _capture(root, fixture, *, tokens, workers, discovery, deadline, native_only
     if (native_only or len(targets) > 1) and 1 <= len(targets) <= 500:
         try:
             read = fetch or _fetch
+            options = {"attempts": 1 if native_only else 3}
+            if fetch is None and deadline is not None and not native_only:
+                # Regular slots last 45s. Allow a slow batch to finish before fanning out.
+                # _fetch_once caps every attempt at the actual remaining slot time.
+                options["timeout"] = 12
             rows, reply, sha = read(
                 root,
                 "books",
                 fixture,
                 CLOB + "/books",
                 {"token_ids": sorted(targets)},
-                attempts=1 if native_only else 3,
+                **options,
             )
             from .execution_books import native_rows
 
