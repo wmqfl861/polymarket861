@@ -38,12 +38,6 @@
       "market_archive.prepare"
     ]
   },
-  "contract_storage.record": {
-    "reason": "Keeps normalized market contracts for market and paper workflows. The certified kickoff is decoded independently from the archived event.",
-    "callers": [
-      "market_archive._ingest"
-    ]
-  },
   "dbscope.prepare": {
     "reason": "Installs versioned SQLite schema definitions before the receipt and research queries execute. The queries that select times, results and models are covered.",
     "callers": [
