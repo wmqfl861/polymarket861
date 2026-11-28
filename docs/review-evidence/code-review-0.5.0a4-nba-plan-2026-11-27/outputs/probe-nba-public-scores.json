@@ -1,0 +1,310 @@
+{
+ "file_facts": {
+  "bytes": 18173265,
+  "sha256": "d46ed3540ee8d9eca31b3e94cc8c777e0be5156173d814ebf65b8195e8d616bc",
+  "git_blob_sha1": "6d6ccd07151aed322e1a77c57ea83b8ea58c5523",
+  "lines_including_header": 126315,
+  "data_rows": 126314,
+  "first_date": "1946-11-01",
+  "last_date": "2015-06-16",
+  "nba_team_rows": 118016,
+  "nba_distinct_game_ids": 59008,
+  "aba_team_rows": 8298
+ },
+ "holdout_seasons": [
+  {
+   "holdout_season_ending": 2006,
+   "games": 1230,
+   "home_back_to_back_share": 0.147,
+   "away_back_to_back_share": 0.322,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.115,
+    1.002,
+    -0.215,
+    0.244
+   ],
+   "brier_N0_home_rate": 0.23936,
+   "brier_N1_elo": 0.21569,
+   "brier_N2_elo_plus_back_to_back": 0.21391,
+   "N1_minus_N0": -0.02366,
+   "N1_minus_N0_block_95": [
+    -0.03405,
+    -0.01589
+   ],
+   "N2_minus_N1": -0.00178,
+   "N2_minus_N1_block_95": [
+    -0.00367,
+    0.00031
+   ]
+  },
+  {
+   "holdout_season_ending": 2007,
+   "games": 1230,
+   "home_back_to_back_share": 0.158,
+   "away_back_to_back_share": 0.338,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.1,
+    0.964,
+    -0.245,
+    0.262
+   ],
+   "brier_N0_home_rate": 0.24201,
+   "brier_N1_elo": 0.22075,
+   "brier_N2_elo_plus_back_to_back": 0.21934,
+   "N1_minus_N0": -0.02126,
+   "N1_minus_N0_block_95": [
+    -0.03078,
+    -0.01606
+   ],
+   "N2_minus_N1": -0.0014,
+   "N2_minus_N1_block_95": [
+    -0.0027,
+    0.00028
+   ]
+  },
+  {
+   "holdout_season_ending": 2008,
+   "games": 1230,
+   "home_back_to_back_share": 0.154,
+   "away_back_to_back_share": 0.33,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.124,
+    0.964,
+    -0.265,
+    0.29
+   ],
+   "brier_N0_home_rate": 0.23985,
+   "brier_N1_elo": 0.20126,
+   "brier_N2_elo_plus_back_to_back": 0.2007,
+   "N1_minus_N0": -0.03859,
+   "N1_minus_N0_block_95": [
+    -0.04873,
+    -0.0283
+   ],
+   "N2_minus_N1": -0.00056,
+   "N2_minus_N1_block_95": [
+    -0.00254,
+    0.00104
+   ]
+  },
+  {
+   "holdout_season_ending": 2009,
+   "games": 1230,
+   "home_back_to_back_share": 0.15,
+   "away_back_to_back_share": 0.322,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.15,
+    0.968,
+    -0.212,
+    0.32
+   ],
+   "brier_N0_home_rate": 0.23833,
+   "brier_N1_elo": 0.19704,
+   "brier_N2_elo_plus_back_to_back": 0.1972,
+   "N1_minus_N0": -0.04129,
+   "N1_minus_N0_block_95": [
+    -0.05015,
+    -0.03414
+   ],
+   "N2_minus_N1": 0.00016,
+   "N2_minus_N1_block_95": [
+    -0.00202,
+    0.0019
+   ]
+  },
+  {
+   "holdout_season_ending": 2010,
+   "games": 1230,
+   "home_back_to_back_share": 0.154,
+   "away_back_to_back_share": 0.336,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.133,
+    0.967,
+    -0.203,
+    0.286
+   ],
+   "brier_N0_home_rate": 0.24122,
+   "brier_N1_elo": 0.20112,
+   "brier_N2_elo_plus_back_to_back": 0.19908,
+   "N1_minus_N0": -0.04011,
+   "N1_minus_N0_block_95": [
+    -0.05038,
+    -0.03189
+   ],
+   "N2_minus_N1": -0.00203,
+   "N2_minus_N1_block_95": [
+    -0.00399,
+    -0.00039
+   ]
+  },
+  {
+   "holdout_season_ending": 2011,
+   "games": 1228,
+   "home_back_to_back_share": 0.151,
+   "away_back_to_back_share": 0.336,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.127,
+    0.987,
+    -0.242,
+    0.278
+   ],
+   "brier_N0_home_rate": 0.23931,
+   "brier_N1_elo": 0.20142,
+   "brier_N2_elo_plus_back_to_back": 0.2013,
+   "N1_minus_N0": -0.03788,
+   "N1_minus_N0_block_95": [
+    -0.04618,
+    -0.03092
+   ],
+   "N2_minus_N1": -0.00012,
+   "N2_minus_N1_block_95": [
+    -0.00191,
+    0.0021
+   ]
+  },
+  {
+   "holdout_season_ending": 2012,
+   "games": 990,
+   "home_back_to_back_share": 0.254,
+   "away_back_to_back_share": 0.366,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.127,
+    0.986,
+    -0.244,
+    0.241
+   ],
+   "brier_N0_home_rate": 0.2429,
+   "brier_N1_elo": 0.20918,
+   "brier_N2_elo_plus_back_to_back": 0.20661,
+   "N1_minus_N0": -0.03373,
+   "N1_minus_N0_block_95": [
+    -0.04291,
+    -0.02353
+   ],
+   "N2_minus_N1": -0.00257,
+   "N2_minus_N1_block_95": [
+    -0.00496,
+    -1e-05
+   ]
+  },
+  {
+   "holdout_season_ending": 2013,
+   "games": 1228,
+   "home_back_to_back_share": 0.135,
+   "away_back_to_back_share": 0.331,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.147,
+    0.992,
+    -0.257,
+    0.266
+   ],
+   "brier_N0_home_rate": 0.23754,
+   "brier_N1_elo": 0.20249,
+   "brier_N2_elo_plus_back_to_back": 0.20208,
+   "N1_minus_N0": -0.03505,
+   "N1_minus_N0_block_95": [
+    -0.04355,
+    -0.02851
+   ],
+   "N2_minus_N1": -0.0004,
+   "N2_minus_N1_block_95": [
+    -0.00239,
+    0.00153
+   ]
+  },
+  {
+   "holdout_season_ending": 2014,
+   "games": 1229,
+   "home_back_to_back_share": 0.145,
+   "away_back_to_back_share": 0.312,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.134,
+    0.992,
+    -0.268,
+    0.246
+   ],
+   "brier_N0_home_rate": 0.24382,
+   "brier_N1_elo": 0.20977,
+   "brier_N2_elo_plus_back_to_back": 0.20685,
+   "N1_minus_N0": -0.03404,
+   "N1_minus_N0_block_95": [
+    -0.04485,
+    -0.02646
+   ],
+   "N2_minus_N1": -0.00292,
+   "N2_minus_N1_block_95": [
+    -0.00515,
+    -0.00135
+   ]
+  },
+  {
+   "holdout_season_ending": 2015,
+   "games": 1228,
+   "home_back_to_back_share": 0.139,
+   "away_back_to_back_share": 0.333,
+   "fitted_coefficients_intercept_elo_homeb2b_awayb2b": [
+    -0.159,
+    1.002,
+    -0.244,
+    0.258
+   ],
+   "brier_N0_home_rate": 0.24489,
+   "brier_N1_elo": 0.20837,
+   "brier_N2_elo_plus_back_to_back": 0.20741,
+   "N1_minus_N0": -0.03652,
+   "N1_minus_N0_block_95": [
+    -0.04509,
+    -0.02548
+   ],
+   "N2_minus_N1": -0.00096,
+   "N2_minus_N1_block_95": [
+    -0.00324,
+    0.00054
+   ]
+  }
+ ],
+ "summary": {
+  "mean_N1_minus_N0": -0.03421,
+  "mean_half_width_of_one_season_95_interval_N1_minus_N0": 0.00877,
+  "mean_N2_minus_N1": -0.00126,
+  "mean_half_width_of_one_season_95_interval_N2_minus_N1": 0.00193,
+  "seasons_where_N2_minus_N1_interval_excludes_zero": 3,
+  "seasons_where_N1_minus_N0_interval_excludes_zero": 10
+ },
+ "score_distribution_2006_to_2015_regular_season": {
+  "games": 12053,
+  "home_points_mean_sd": [
+   100.66,
+   12.14
+  ],
+  "away_points_mean_sd": [
+   97.65,
+   11.98
+  ],
+  "total_mean_sd": [
+   198.31,
+   20.24
+  ],
+  "final_margin_mean_sd": [
+   3.0,
+   13.11
+  ],
+  "home_away_points_correlation": 0.409,
+  "final_margin_exactly_zero": 0,
+  "share_of_finals_decided_by_at_most_k_points": {
+   "1": 0.0412,
+   "2": 0.097,
+   "3": 0.1527
+  },
+  "same_share_if_final_margin_were_a_rounded_normal_excluding_zero": {
+   "1": 0.0591,
+   "2": 0.1178,
+   "3": 0.1756
+  },
+  "rounded_normal_mass_at_margin_zero": 0.0296,
+  "note": "The file has no overtime flag. The rounded-normal figure is what a smooth margin model puts on a tie; real regulation ties are redistributed into the final margins by overtime."
+ },
+ "bootstrap_replicates": 2000,
+ "seed": 861,
+ "python": "3.12.3"
+}

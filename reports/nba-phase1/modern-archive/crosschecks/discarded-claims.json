@@ -1,0 +1,338 @@
+[
+ {
+  "withheld_date": "2021-02-13",
+  "season": 2020,
+  "teams": [
+   "ORL",
+   "SAC"
+  ],
+  "english_claims": {
+   "SAC": [
+    [
+     "SAC",
+     "ORL",
+     112,
+     123
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2021-02-12"
+  ]
+ },
+ {
+  "withheld_date": "2021-04-22",
+  "season": 2020,
+  "teams": [
+   "OKC",
+   "WAS"
+  ],
+  "english_claims": {
+   "WAS": [
+    [
+     "OKC",
+     "WAS",
+     109,
+     129
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2021-04-23"
+  ]
+ },
+ {
+  "withheld_date": "2021-05-05",
+  "season": 2020,
+  "teams": [
+   "GSW",
+   "NOP"
+  ],
+  "english_claims": {
+   "NOP": [
+    [
+     "NOP",
+     "GSW",
+     108,
+     103
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2021-05-04"
+  ]
+ },
+ {
+  "withheld_date": "2021-05-11",
+  "season": 2020,
+  "teams": [
+   "CLE",
+   "IND"
+  ],
+  "english_claims": {
+   "IND": [
+    [
+     "CLE",
+     "IND",
+     102,
+     111
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2021-05-10"
+  ]
+ },
+ {
+  "withheld_date": "2021-05-12",
+  "season": 2020,
+  "teams": [
+   "IND",
+   "PHI"
+  ],
+  "english_claims": {
+   "IND": [
+    [
+     "IND",
+     "PHI",
+     103,
+     94
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2021-05-11"
+  ]
+ },
+ {
+  "withheld_date": "2021-05-14",
+  "season": 2020,
+  "teams": [
+   "IND",
+   "MIL"
+  ],
+  "english_claims": {
+   "IND": [
+    [
+     "IND",
+     "MIL",
+     133,
+     142
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2021-05-13"
+  ]
+ },
+ {
+  "withheld_date": "2022-01-11",
+  "season": 2021,
+  "teams": [
+   "HOU",
+   "PHI"
+  ],
+  "english_claims": {
+   "HOU": [
+    [
+     "HOU",
+     "PHI",
+     91,
+     111
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2022-01-10"
+  ]
+ },
+ {
+  "withheld_date": "2022-02-28",
+  "season": 2021,
+  "teams": [
+   "LAL",
+   "NOP"
+  ],
+  "english_claims": {
+   "NOP": [
+    [
+     "LAL",
+     "NOP",
+     95,
+     123
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2022-02-27"
+  ]
+ },
+ {
+  "withheld_date": "2022-04-09",
+  "season": 2021,
+  "teams": [
+   "DEN",
+   "LAL"
+  ],
+  "english_claims": {
+   "DEN": [
+    [
+     "DEN",
+     "LAL",
+     141,
+     146
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2022-04-10"
+  ]
+ },
+ {
+  "withheld_date": "2022-11-14",
+  "season": 2022,
+  "teams": [
+   "CLE",
+   "MIN"
+  ],
+  "english_claims": {
+   "MIN": [
+    [
+     "CLE",
+     "MIN",
+     124,
+     129
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2022-11-13"
+  ]
+ },
+ {
+  "withheld_date": "2023-01-15",
+  "season": 2022,
+  "teams": [
+   "GSW",
+   "WAS"
+  ],
+  "english_claims": {
+   "WAS": [
+    [
+     "WAS",
+     "GSW",
+     118,
+     127
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2023-01-16"
+  ]
+ },
+ {
+  "withheld_date": "2023-03-02",
+  "season": 2022,
+  "teams": [
+   "GSW",
+   "NOP"
+  ],
+  "english_claims": {
+   "NOP": [
+    [
+     "GSW",
+     "NOP",
+     108,
+     99
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2023-03-03"
+  ]
+ },
+ {
+  "withheld_date": "2023-03-06",
+  "season": 2022,
+  "teams": [
+   "MIL",
+   "WAS"
+  ],
+  "english_claims": {
+   "MIL": [
+    [
+     "WAS",
+     "MIL",
+     111,
+     117
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2023-03-05"
+  ]
+ },
+ {
+  "withheld_date": "2023-03-07",
+  "season": 2022,
+  "teams": [
+   "ATL",
+   "WAS"
+  ],
+  "english_claims": {
+   "WAS": [
+    [
+     "WAS",
+     "ATL",
+     120,
+     122
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2023-03-08"
+  ]
+ },
+ {
+  "withheld_date": "2023-04-06",
+  "season": 2022,
+  "teams": [
+   "MEM",
+   "NOP"
+  ],
+  "english_claims": {
+   "MEM": [
+    [
+     "NOP",
+     "MEM",
+     138,
+     131
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2023-04-05"
+  ]
+ },
+ {
+  "withheld_date": "2025-12-15",
+  "season": 2025,
+  "teams": [
+   "CHI",
+   "NOP"
+  ],
+  "english_claims": {
+   "NOP": [
+    [
+     "CHI",
+     "NOP",
+     104,
+     114
+    ]
+   ]
+  },
+  "same_pair_and_score_verified_nearby": [
+   "2025-12-14"
+  ]
+ }
+]

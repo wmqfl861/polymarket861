@@ -1,0 +1,439 @@
+{
+ "season": "2025-26",
+ "gate": {
+  "matches": 1751,
+  "bins": 494,
+  "bins_with_interval": 462,
+  "median_matches_per_bin": 48.0,
+  "bins_under_30_matches": 198,
+  "median_interval_width": 0.299,
+  "bins_excluded_by_rule": 21,
+  "excluded_bins_with_abs_residual_under_0.01": 2,
+  "excluded_examples": [
+   {
+    "league": "sea",
+    "bin": "total.8.5.over.0",
+    "n": 379,
+    "model": 0.0014,
+    "observed": 0.0
+   },
+   {
+    "league": "lal",
+    "bin": "total.8.5.over.0",
+    "n": 378,
+    "model": 0.0025,
+    "observed": 0.0
+   },
+   {
+    "league": "lal",
+    "bin": "total.0.5.under.0",
+    "n": 276,
+    "model": 0.0635,
+    "observed": 0.029
+   },
+   {
+    "league": "lal",
+    "bin": "total.1.5.under.2",
+    "n": 160,
+    "model": 0.2522,
+    "observed": 0.1688
+   },
+   {
+    "league": "lal",
+    "bin": "moneyline.draw.yes.1",
+    "n": 48,
+    "model": 0.1659,
+    "observed": 0.0417
+   }
+  ]
+ },
+ "pooled_largest_miscalibration": [
+  {
+   "bin": "total.2.5.over.3",
+   "n": 219,
+   "model": 0.3619,
+   "observed": 0.5023,
+   "residual": 0.1404,
+   "z": 4.32
+  },
+  {
+   "bin": "total.2.5.under.6",
+   "n": 219,
+   "model": 0.6381,
+   "observed": 0.4977,
+   "residual": -0.1404,
+   "z": -4.32
+  },
+  {
+   "bin": "moneyline.home.no.3",
+   "n": 173,
+   "model": 0.359,
+   "observed": 0.2659,
+   "residual": -0.0931,
+   "z": -2.55
+  },
+  {
+   "bin": "moneyline.home.yes.6",
+   "n": 173,
+   "model": 0.641,
+   "observed": 0.7341,
+   "residual": 0.0931,
+   "z": 2.55
+  },
+  {
+   "bin": "total.3.5.over.1",
+   "n": 250,
+   "model": 0.1684,
+   "observed": 0.228,
+   "residual": 0.0596,
+   "z": 2.52
+  },
+  {
+   "bin": "total.3.5.under.8",
+   "n": 250,
+   "model": 0.8316,
+   "observed": 0.772,
+   "residual": -0.0596,
+   "z": -2.52
+  },
+  {
+   "bin": "total.4.5.over.0",
+   "n": 419,
+   "model": 0.0763,
+   "observed": 0.105,
+   "residual": 0.0287,
+   "z": 2.21
+  },
+  {
+   "bin": "total.4.5.under.9",
+   "n": 419,
+   "model": 0.9237,
+   "observed": 0.895,
+   "residual": -0.0287,
+   "z": -2.21
+  },
+  {
+   "bin": "moneyline.away.no.6",
+   "n": 430,
+   "model": 0.6567,
+   "observed": 0.7047,
+   "residual": 0.0479,
+   "z": 2.09
+  },
+  {
+   "bin": "moneyline.away.yes.3",
+   "n": 430,
+   "model": 0.3433,
+   "observed": 0.2953,
+   "residual": -0.0479,
+   "z": -2.09
+  },
+  {
+   "bin": "total.1.5.over.6",
+   "n": 356,
+   "model": 0.661,
+   "observed": 0.7135,
+   "residual": 0.0525,
+   "z": 2.09
+  },
+  {
+   "bin": "total.1.5.under.3",
+   "n": 356,
+   "model": 0.339,
+   "observed": 0.2865,
+   "residual": -0.0525,
+   "z": -2.09
+  }
+ ],
+ "favourite_longshot": {
+  "win_probability_0.60_and_above": {
+   "n": 315,
+   "model": 0.6788,
+   "observed": 0.7524,
+   "residual": 0.0736,
+   "z": 2.8
+  },
+  "win_probability_0.40_to_0.60": {
+   "n": 1135,
+   "model": 0.4868,
+   "observed": 0.4855,
+   "residual": -0.0013,
+   "z": -0.09
+  },
+  "win_probability_0.20_to_0.40": {
+   "n": 1585,
+   "model": 0.3023,
+   "observed": 0.289,
+   "residual": -0.0134,
+   "z": -1.16
+  },
+  "win_probability_under_0.20": {
+   "n": 455,
+   "model": 0.1468,
+   "observed": 0.1231,
+   "residual": -0.0237,
+   "z": -1.43
+  },
+  "not_win_probability_0.20_to_0.40": {
+   "n": 298,
+   "model": 0.3301,
+   "observed": 0.2517,
+   "residual": -0.0784,
+   "z": -2.88
+  }
+ },
+ "opened_positions": [
+  {
+   "market": "sea-rom-mon-2026-11-29-rom",
+   "direction": "罗马 vs 蒙扎：罗马不胜",
+   "limit": 0.21,
+   "candidate_bins": [
+    {
+     "bin": "moneyline.home.no.2",
+     "pooled_five_leagues": {
+      "n": 67,
+      "model": 0.2521,
+      "observed": 0.194,
+      "residual": -0.058,
+      "z": -1.09
+     },
+     "own_league": {
+      "n": 10,
+      "model": 0.2501,
+      "observed": 0.2,
+      "interval": [
+       -0.456,
+       0.356
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": -0.016
+    },
+    {
+     "bin": "moneyline.home.no.3",
+     "pooled_five_leagues": {
+      "n": 173,
+      "model": 0.359,
+      "observed": 0.2659,
+      "residual": -0.0931,
+      "z": -2.55
+     },
+     "own_league": {
+      "n": 34,
+      "model": 0.3527,
+      "observed": 0.3529,
+      "interval": [
+       -0.239,
+       0.239
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": 0.0559
+    }
+   ]
+  },
+  {
+   "market": "sea-int-gen-2026-11-28-int",
+   "direction": "国际米兰 vs 热那亚：国际米兰不胜",
+   "limit": 0.25,
+   "candidate_bins": [
+    {
+     "bin": "moneyline.home.no.2",
+     "pooled_five_leagues": {
+      "n": 67,
+      "model": 0.2521,
+      "observed": 0.194,
+      "residual": -0.058,
+      "z": -1.09
+     },
+     "own_league": {
+      "n": 10,
+      "model": 0.2501,
+      "observed": 0.2,
+      "interval": [
+       -0.456,
+       0.356
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": -0.056
+    },
+    {
+     "bin": "moneyline.home.no.3",
+     "pooled_five_leagues": {
+      "n": 173,
+      "model": 0.359,
+      "observed": 0.2659,
+      "residual": -0.0931,
+      "z": -2.55
+     },
+     "own_league": {
+      "n": 34,
+      "model": 0.3527,
+      "observed": 0.3529,
+      "interval": [
+       -0.239,
+       0.239
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": 0.0159
+    }
+   ]
+  },
+  {
+   "market": "sea-fro-par-2026-11-28-par",
+   "direction": "弗罗西诺内 vs 帕尔马：帕尔马胜",
+   "limit": 0.16,
+   "candidate_bins": [
+    {
+     "bin": "moneyline.away.yes.1",
+     "pooled_five_leagues": {
+      "n": 291,
+      "model": 0.1564,
+      "observed": 0.1306,
+      "residual": -0.0258,
+      "z": -1.21
+     },
+     "own_league": {
+      "n": 72,
+      "model": 0.1521,
+      "observed": 0.1667,
+      "interval": [
+       -0.085,
+       0.114
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": -0.0294
+    },
+    {
+     "bin": "moneyline.away.yes.2",
+     "pooled_five_leagues": {
+      "n": 491,
+      "model": 0.253,
+      "observed": 0.2485,
+      "residual": -0.0045,
+      "z": -0.23
+     },
+     "own_league": {
+      "n": 91,
+      "model": 0.2455,
+      "observed": 0.2418,
+      "interval": [
+       -0.14,
+       0.133
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": 0.0885
+    }
+   ]
+  },
+  {
+   "market": "epl-lee-cov-2026-11-28-cov",
+   "direction": "利兹联 vs 考文垂：考文垂胜",
+   "limit": 0.14,
+   "candidate_bins": [
+    {
+     "bin": "moneyline.away.yes.1",
+     "pooled_five_leagues": {
+      "n": 291,
+      "model": 0.1564,
+      "observed": 0.1306,
+      "residual": -0.0258,
+      "z": -1.21
+     },
+     "own_league": {
+      "n": 54,
+      "model": 0.1596,
+      "observed": 0.1296,
+      "interval": [
+       -0.16,
+       0.1
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": -0.0094
+    },
+    {
+     "bin": "moneyline.away.yes.2",
+     "pooled_five_leagues": {
+      "n": 491,
+      "model": 0.253,
+      "observed": 0.2485,
+      "residual": -0.0045,
+      "z": -0.23
+     },
+     "own_league": {
+      "n": 109,
+      "model": 0.2546,
+      "observed": 0.2844,
+      "interval": [
+       -0.072,
+       0.131
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": 0.1085
+    }
+   ]
+  },
+  {
+   "market": "fl1-sbr-pfc-2026-11-27-pfc",
+   "direction": "布雷斯特 vs 巴黎 FC：巴黎 FC 不胜",
+   "limit": 0.58,
+   "candidate_bins": [
+    {
+     "bin": "moneyline.away.no.6",
+     "pooled_five_leagues": {
+      "n": 430,
+      "model": 0.6567,
+      "observed": 0.7047,
+      "residual": 0.0479,
+      "z": 2.09
+     },
+     "own_league": {
+      "n": 70,
+      "model": 0.6527,
+      "observed": 0.6857,
+      "interval": [
+       -0.114,
+       0.18
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": 0.1247
+    }
+   ]
+  },
+  {
+   "market": "epl-ful-bou-2026-11-29-total-2pt5",
+   "direction": "富勒姆 vs 伯恩茅斯：小 2.5",
+   "limit": 0.47,
+   "candidate_bins": [
+    {
+     "bin": "total.2.5.under.5",
+     "pooled_five_leagues": {
+      "n": 532,
+      "model": 0.5467,
+      "observed": 0.5508,
+      "residual": 0.004,
+      "z": 0.19
+     },
+     "own_league": {
+      "n": 82,
+      "model": 0.5469,
+      "observed": 0.5976,
+      "interval": [
+       -0.113,
+       0.214
+      ],
+      "excluded_by_rule": false
+     },
+     "pooled_observed_minus_limit": 0.0808
+    }
+   ]
+  }
+ ]
+}

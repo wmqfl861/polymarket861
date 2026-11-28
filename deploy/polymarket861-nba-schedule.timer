@@ -1,0 +1,11 @@
+[Unit]
+Description=Receive NBA regular-season schedule and results periodically
+
+[Timer]
+OnStartupSec=20s
+OnUnitActiveSec=15min
+AccuracySec=1s
+Unit=polymarket861-nba-schedule.service
+
+[Install]
+WantedBy=timers.target

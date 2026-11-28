@@ -25,10 +25,10 @@ class ForecastHealthTests(unittest.TestCase):
         self.root = Path(temp.name)
         self.now = store.instant(store.now_utc())
 
-    def command(self, action="watchdog", code="bun"):
+    def command(self, action="watchdog", code="bun", *options):
         out = io.StringIO()
         with redirect_stdout(out):
-            status = cli.main(["--data-dir", str(self.root), "big5-scheduler", action, "--league", code])
+            status = cli.main(["--data-dir", str(self.root), "big5-scheduler", action, "--league", code, *options])
         return status, json.loads(out.getvalue())["leagues"][code]
 
     def complete(self, code="bun", state="ok", **details):
@@ -153,7 +153,8 @@ with watch.monitor(scheduler._directory(root, 'bun'), ['bun'], None, None, conti
                 scheduler._poll_batch(self.root, "bun")
             result, row = self.command()
             self.assertEqual((result, row["state"], row["news_poll_batch"]["error"]),
-                             (1, "partial", "RuntimeError: bad batch"))
+                             (2, "partial", "RuntimeError: bad batch"))
+            self.assertEqual(self.command("watchdog", "bun", "--alert-on-unavailable")[0], 0)
             with patch.object(scheduler, "_poll", return_value=0):
                 self.assertEqual(scheduler._poll_batch(self.root, "bun"), (0, None))
             self.assertEqual(self.command()[0], 0)

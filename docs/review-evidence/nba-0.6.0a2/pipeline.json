@@ -1,0 +1,2186 @@
+{
+ "final_score_home_away": [
+  118,
+  109
+ ],
+ "scenarios": [
+  {
+   "scenario": "market_first",
+   "schedule_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 61,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 60,
+      "scheduled": 1
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "fixture_as_stored": {
+    "stage": "regular",
+    "status": "scheduled",
+    "kickoff": "2026-11-28T00:00:00.000000Z",
+    "neutral": null,
+    "version": 1
+   },
+   "stored_games_by_stage": {
+    "regular": 61
+   },
+   "window_T-60m": [
+    {
+     "at": "2026-11-27T22:57:00.000000Z",
+     "markets": {
+      "state": "ok",
+      "errors": []
+     }
+    },
+    {
+     "at": "2026-11-27T22:57:02.000000Z",
+     "forecast": {
+      "state": "ok",
+      "schedule_games": 61,
+      "sealed": 1,
+      "fixture_errors": []
+     }
+    }
+   ],
+   "market_choices_in_window": {
+    "away_total": {
+     "line": 109.5,
+     "probability": 0.48,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "home_total": {
+     "line": 113.5,
+     "probability": 0.51,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "total": {
+     "line": 223.5,
+     "probability": 0.52,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "win": {
+     "line": null,
+     "probability": 0.63,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    }
+   },
+   "close_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "final_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 1,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 61
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "settlement_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "grading_tick": {
+    "state": "ok",
+    "schedule_games": 61,
+    "sealed": 0,
+    "fixture_errors": []
+   },
+   "windows": [
+    {
+     "epoch": 1,
+     "horizon": "T-24h",
+     "deadline": "2026-11-27T00:00:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "schedule_first_observed_after_cutoff",
+     "sealed_at": null
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-60m",
+     "deadline": "2026-11-27T23:00:00.000000Z",
+     "active": 1,
+     "state": "sealed",
+     "note": "",
+     "sealed_at": "2026-11-27T22:57:02.000000Z",
+     "venue_basis": "assumed_listed_home",
+     "training_games": 60,
+     "p_home_win": {
+      "N0": 0.6667,
+      "N1": 0.7288,
+      "N2": 0.7288
+     },
+     "market_at_prediction": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+     ],
+     "grades": [
+      "awaiting_result",
+      "scored"
+     ],
+     "benchmarks_in_last_grade": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+     ]
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-15m",
+     "deadline": "2026-11-27T23:45:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "window_expired_or_play_observed",
+     "sealed_at": null
+    }
+   ],
+   "day_report_T-60m": {
+    "states": {
+     "sealed": 1
+    },
+    "grades": {
+     "scored": 1
+    },
+    "models_scored": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    },
+    "market_coverage": {
+     "away_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "home_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "win": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     }
+    },
+    "paired_games_win": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    }
+   },
+   "report_keys": [
+    "denominator",
+    "end_exclusive",
+    "horizons",
+    "paper_trading",
+    "payout_reconciliation",
+    "schedule_games",
+    "score_scope",
+    "start",
+    "timezone",
+    "week_start",
+    "without_registered_windows"
+   ],
+   "markets_status_day": {
+    "catalogued_games": 1,
+    "due": 12,
+    "collected": 4,
+    "empty_book": 0,
+    "invalid_book": 0,
+    "unlisted": 0,
+    "rule_template_mismatch": 0,
+    "rule_template_rejections": 0,
+    "listed_inactive": 0,
+    "unverified_contract": 0,
+    "spread_books_archived": 0,
+    "rule_deadline_exceeded": 0,
+    "rule_original_schedule_conflict": 0,
+    "missed": 8,
+    "http_429": 0,
+    "ticks": 3,
+    "degraded_ticks": 0,
+    "settled_conditions": 4
+   },
+   "native_payouts": {
+    "01": {
+     "10": 0.0,
+     "11": 1.0
+    },
+    "03": {
+     "30": 0.0,
+     "31": 1.0
+    },
+    "04": {
+     "40": 0.0,
+     "41": 1.0
+    },
+    "05": {
+     "50": 1.0,
+     "51": 0.0
+    }
+   }
+  },
+  {
+   "scenario": "forecast_first",
+   "schedule_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 61,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 60,
+      "scheduled": 1
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "fixture_as_stored": {
+    "stage": "regular",
+    "status": "scheduled",
+    "kickoff": "2026-11-28T00:00:00.000000Z",
+    "neutral": null,
+    "version": 1
+   },
+   "stored_games_by_stage": {
+    "regular": 61
+   },
+   "window_T-60m": [
+    {
+     "at": "2026-11-27T22:57:00.000000Z",
+     "forecast": {
+      "state": "ok",
+      "schedule_games": 61,
+      "sealed": 0,
+      "fixture_errors": []
+     }
+    },
+    {
+     "at": "2026-11-27T22:57:08.000000Z",
+     "markets": {
+      "state": "ok",
+      "errors": []
+     }
+    },
+    {
+     "at": "2026-11-27T22:58:00.000000Z",
+     "forecast": {
+      "state": "ok",
+      "schedule_games": 61,
+      "sealed": 1,
+      "fixture_errors": []
+     }
+    }
+   ],
+   "market_choices_in_window": {
+    "away_total": {
+     "line": 109.5,
+     "probability": 0.48,
+     "available_at": "2026-11-27T22:57:08.000000Z"
+    },
+    "home_total": {
+     "line": 113.5,
+     "probability": 0.51,
+     "available_at": "2026-11-27T22:57:08.000000Z"
+    },
+    "total": {
+     "line": 223.5,
+     "probability": 0.52,
+     "available_at": "2026-11-27T22:57:08.000000Z"
+    },
+    "win": {
+     "line": null,
+     "probability": 0.63,
+     "available_at": "2026-11-27T22:57:08.000000Z"
+    }
+   },
+   "close_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "final_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 1,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 61
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "settlement_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "grading_tick": {
+    "state": "ok",
+    "schedule_games": 61,
+    "sealed": 0,
+    "fixture_errors": []
+   },
+   "windows": [
+    {
+     "epoch": 1,
+     "horizon": "T-24h",
+     "deadline": "2026-11-27T00:00:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "schedule_first_observed_after_cutoff",
+     "sealed_at": null
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-60m",
+     "deadline": "2026-11-27T23:00:00.000000Z",
+     "active": 1,
+     "state": "sealed",
+     "note": "",
+     "sealed_at": "2026-11-27T22:58:00.000000Z",
+     "venue_basis": "assumed_listed_home",
+     "training_games": 60,
+     "p_home_win": {
+      "N0": 0.6667,
+      "N1": 0.7288,
+      "N2": 0.7288
+     },
+     "market_at_prediction": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+     ],
+     "grades": [
+      "awaiting_result",
+      "scored"
+     ],
+     "benchmarks_in_last_grade": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+     ]
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-15m",
+     "deadline": "2026-11-27T23:45:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "window_expired_or_play_observed",
+     "sealed_at": null
+    }
+   ],
+   "day_report_T-60m": {
+    "states": {
+     "sealed": 1
+    },
+    "grades": {
+     "scored": 1
+    },
+    "models_scored": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    },
+    "market_coverage": {
+     "away_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "home_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "win": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     }
+    },
+    "paired_games_win": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    }
+   },
+   "report_keys": [
+    "denominator",
+    "end_exclusive",
+    "horizons",
+    "paper_trading",
+    "payout_reconciliation",
+    "schedule_games",
+    "score_scope",
+    "start",
+    "timezone",
+    "week_start",
+    "without_registered_windows"
+   ],
+   "markets_status_day": {
+    "catalogued_games": 1,
+    "due": 12,
+    "collected": 4,
+    "empty_book": 0,
+    "invalid_book": 0,
+    "unlisted": 0,
+    "rule_template_mismatch": 0,
+    "rule_template_rejections": 0,
+    "listed_inactive": 0,
+    "unverified_contract": 0,
+    "spread_books_archived": 0,
+    "rule_deadline_exceeded": 0,
+    "rule_original_schedule_conflict": 0,
+    "missed": 8,
+    "http_429": 0,
+    "ticks": 3,
+    "degraded_ticks": 0,
+    "settled_conditions": 4
+   },
+   "native_payouts": {
+    "01": {
+     "10": 0.0,
+     "11": 1.0
+    },
+    "03": {
+     "30": 0.0,
+     "31": 1.0
+    },
+    "04": {
+     "40": 0.0,
+     "41": 1.0
+    },
+    "05": {
+     "50": 1.0,
+     "51": 0.0
+    }
+   }
+  },
+  {
+   "scenario": "kickoff_mismatch",
+   "schedule_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 61,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 60,
+      "scheduled": 1
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "fixture_as_stored": {
+    "stage": "regular",
+    "status": "scheduled",
+    "kickoff": "2026-11-28T00:10:00.000000Z",
+    "neutral": null,
+    "version": 1
+   },
+   "stored_games_by_stage": {
+    "regular": 61
+   },
+   "window_T-60m": [
+    {
+     "at": "2026-11-27T22:57:00.000000Z",
+     "markets": {
+      "state": "ok",
+      "errors": []
+     }
+    },
+    {
+     "at": "2026-11-27T23:07:00.000000Z",
+     "forecast": {
+      "state": "ok",
+      "schedule_games": 61,
+      "sealed": 1,
+      "fixture_errors": []
+     }
+    }
+   ],
+   "market_choices_in_window": {},
+   "close_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "final_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 1,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 61
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "settlement_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "grading_tick": {
+    "state": "ok",
+    "schedule_games": 61,
+    "sealed": 0,
+    "fixture_errors": []
+   },
+   "windows": [
+    {
+     "epoch": 1,
+     "horizon": "T-24h",
+     "deadline": "2026-11-27T00:10:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "schedule_first_observed_after_cutoff",
+     "sealed_at": null
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-60m",
+     "deadline": "2026-11-27T23:10:00.000000Z",
+     "active": 1,
+     "state": "sealed",
+     "note": "",
+     "sealed_at": "2026-11-27T23:07:00.000000Z",
+     "venue_basis": "assumed_listed_home",
+     "training_games": 60,
+     "p_home_win": {
+      "N0": 0.6667,
+      "N1": 0.7288,
+      "N2": 0.7288
+     },
+     "market_at_prediction": [],
+     "grades": [
+      "awaiting_result",
+      "scored"
+     ],
+     "benchmarks_in_last_grade": []
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-15m",
+     "deadline": "2026-11-27T23:55:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "window_expired_or_play_observed",
+     "sealed_at": null
+    }
+   ],
+   "day_report_T-60m": {
+    "states": {
+     "sealed": 1
+    },
+    "grades": {
+     "scored": 1
+    },
+    "models_scored": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    },
+    "market_coverage": {
+     "away_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 1,
+      "scored": 1,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "home_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 1,
+      "scored": 1,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 1,
+      "scored": 1,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "win": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 1,
+      "scored": 1,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     }
+    },
+    "paired_games_win": {}
+   },
+   "report_keys": [
+    "denominator",
+    "end_exclusive",
+    "horizons",
+    "paper_trading",
+    "payout_reconciliation",
+    "schedule_games",
+    "score_scope",
+    "start",
+    "timezone",
+    "week_start",
+    "without_registered_windows"
+   ],
+   "markets_status_day": {
+    "catalogued_games": 1,
+    "due": 12,
+    "collected": 4,
+    "empty_book": 0,
+    "invalid_book": 0,
+    "unlisted": 0,
+    "rule_template_mismatch": 0,
+    "rule_template_rejections": 0,
+    "listed_inactive": 0,
+    "unverified_contract": 0,
+    "spread_books_archived": 0,
+    "rule_deadline_exceeded": 0,
+    "rule_original_schedule_conflict": 0,
+    "missed": 8,
+    "http_429": 0,
+    "ticks": 3,
+    "degraded_ticks": 0,
+    "settled_conditions": 4
+   },
+   "native_payouts": {
+    "01": {
+     "10": 0.0,
+     "11": 1.0
+    },
+    "03": {
+     "30": 0.0,
+     "31": 1.0
+    },
+    "04": {
+     "40": 0.0,
+     "41": 1.0
+    },
+    "05": {
+     "50": 1.0,
+     "51": 0.0
+    }
+   }
+  },
+  {
+   "scenario": "season_type_ignored",
+   "schedule_sync": {
+    "state": "source_quality",
+    "complete": false,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 61,
+    "quality": {
+     "quarantined_rows": 61,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 61,
+     "phase_mismatches": 0,
+     "unknown_stages": 61,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 61,
+      "ist": 61
+     },
+     "stage_counts": {
+      "unknown": 61
+     },
+     "status_counts": {
+      "final": 60,
+      "scheduled": 1
+     },
+     "game_days": [],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": [
+      "bdl:1000",
+      "bdl:1001",
+      "bdl:1002",
+      "bdl:1003",
+      "bdl:1004",
+      "bdl:1005",
+      "bdl:1006",
+      "bdl:1007",
+      "bdl:1008",
+      "bdl:1009"
+     ]
+    }
+   },
+   "fixture_as_stored": {
+    "stage": "unknown",
+    "status": "scheduled",
+    "kickoff": "2026-11-28T00:00:00.000000Z",
+    "neutral": null,
+    "version": 1
+   },
+   "stored_games_by_stage": {
+    "unknown": 61
+   },
+   "window_T-60m": [
+    {
+     "at": "2026-11-27T22:57:00.000000Z",
+     "markets": {
+      "state": "ok",
+      "errors": []
+     }
+    },
+    {
+     "at": "2026-11-27T22:57:02.000000Z",
+     "forecast": {
+      "state": "partial",
+      "schedule_games": 61,
+      "sealed": 0,
+      "fixture_errors": []
+     }
+    }
+   ],
+   "market_choices_in_window": {
+    "away_total": {
+     "line": 109.5,
+     "probability": 0.48,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "home_total": {
+     "line": 113.5,
+     "probability": 0.51,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "total": {
+     "line": 223.5,
+     "probability": 0.52,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "win": {
+     "line": null,
+     "probability": 0.63,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    }
+   },
+   "close_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "final_sync": {
+    "state": "source_quality",
+    "complete": false,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 1,
+    "quality": {
+     "quarantined_rows": 61,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 61,
+     "phase_mismatches": 0,
+     "unknown_stages": 61,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 61,
+      "ist": 61
+     },
+     "stage_counts": {
+      "unknown": 61
+     },
+     "status_counts": {
+      "final": 61
+     },
+     "game_days": [],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": [
+      "bdl:1000",
+      "bdl:1001",
+      "bdl:1002",
+      "bdl:1003",
+      "bdl:1004",
+      "bdl:1005",
+      "bdl:1006",
+      "bdl:1007",
+      "bdl:1008",
+      "bdl:1009"
+     ]
+    }
+   },
+   "settlement_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "grading_tick": {
+    "state": "partial",
+    "schedule_games": 61,
+    "sealed": 0,
+    "fixture_errors": []
+   },
+   "windows": [],
+   "day_report_T-60m": {
+    "states": {},
+    "grades": {},
+    "models_scored": {},
+    "market_coverage": {
+     "away_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 0,
+      "scored": 0,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "home_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 0,
+      "scored": 0,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 0,
+      "scored": 0,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "win": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 0,
+      "scored": 0,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     }
+    },
+    "paired_games_win": {}
+   },
+   "report_keys": [
+    "denominator",
+    "end_exclusive",
+    "horizons",
+    "paper_trading",
+    "payout_reconciliation",
+    "schedule_games",
+    "score_scope",
+    "start",
+    "timezone",
+    "week_start",
+    "without_registered_windows"
+   ],
+   "markets_status_day": {
+    "catalogued_games": 1,
+    "due": 12,
+    "collected": 4,
+    "empty_book": 0,
+    "invalid_book": 0,
+    "unlisted": 0,
+    "rule_template_mismatch": 0,
+    "rule_template_rejections": 0,
+    "listed_inactive": 0,
+    "unverified_contract": 0,
+    "spread_books_archived": 0,
+    "rule_deadline_exceeded": 0,
+    "rule_original_schedule_conflict": 0,
+    "missed": 8,
+    "http_429": 0,
+    "ticks": 3,
+    "degraded_ticks": 0,
+    "settled_conditions": 4
+   },
+   "native_payouts": {
+    "01": {
+     "10": 0.0,
+     "11": 1.0
+    },
+    "03": {
+     "30": 0.0,
+     "31": 1.0
+    },
+    "04": {
+     "40": 0.0,
+     "41": 1.0
+    },
+    "05": {
+     "50": 1.0,
+     "51": 0.0
+    }
+   }
+  },
+  {
+   "scenario": "neutral_site_false",
+   "schedule_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 61,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 60,
+      "scheduled": 1
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 61,
+     "neutral_unknown": 0,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "fixture_as_stored": {
+    "stage": "regular",
+    "status": "scheduled",
+    "kickoff": "2026-11-28T00:00:00.000000Z",
+    "neutral": false,
+    "version": 1
+   },
+   "stored_games_by_stage": {
+    "regular": 61
+   },
+   "window_T-60m": [
+    {
+     "at": "2026-11-27T22:57:00.000000Z",
+     "markets": {
+      "state": "ok",
+      "errors": []
+     }
+    },
+    {
+     "at": "2026-11-27T22:57:02.000000Z",
+     "forecast": {
+      "state": "ok",
+      "schedule_games": 61,
+      "sealed": 1,
+      "fixture_errors": []
+     }
+    }
+   ],
+   "market_choices_in_window": {
+    "away_total": {
+     "line": 109.5,
+     "probability": 0.48,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "home_total": {
+     "line": 113.5,
+     "probability": 0.51,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "total": {
+     "line": 223.5,
+     "probability": 0.52,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "win": {
+     "line": null,
+     "probability": 0.63,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    }
+   },
+   "close_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "final_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 1,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 61
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 61,
+     "neutral_unknown": 0,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "settlement_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "grading_tick": {
+    "state": "ok",
+    "schedule_games": 61,
+    "sealed": 0,
+    "fixture_errors": []
+   },
+   "windows": [
+    {
+     "epoch": 1,
+     "horizon": "T-24h",
+     "deadline": "2026-11-27T00:00:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "schedule_first_observed_after_cutoff",
+     "sealed_at": null
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-60m",
+     "deadline": "2026-11-27T23:00:00.000000Z",
+     "active": 1,
+     "state": "sealed",
+     "note": "",
+     "sealed_at": "2026-11-27T22:57:02.000000Z",
+     "venue_basis": "confirmed_non_neutral",
+     "training_games": 60,
+     "p_home_win": {
+      "N0": 0.6667,
+      "N1": 0.7288,
+      "N2": 0.7288
+     },
+     "market_at_prediction": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+     ],
+     "grades": [
+      "awaiting_result",
+      "scored"
+     ],
+     "benchmarks_in_last_grade": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+     ]
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-15m",
+     "deadline": "2026-11-27T23:45:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "window_expired_or_play_observed",
+     "sealed_at": null
+    }
+   ],
+   "day_report_T-60m": {
+    "states": {
+     "sealed": 1
+    },
+    "grades": {
+     "scored": 1
+    },
+    "models_scored": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    },
+    "market_coverage": {
+     "away_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "home_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "win": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     }
+    },
+    "paired_games_win": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    }
+   },
+   "report_keys": [
+    "denominator",
+    "end_exclusive",
+    "horizons",
+    "paper_trading",
+    "payout_reconciliation",
+    "schedule_games",
+    "score_scope",
+    "start",
+    "timezone",
+    "week_start",
+    "without_registered_windows"
+   ],
+   "markets_status_day": {
+    "catalogued_games": 1,
+    "due": 12,
+    "collected": 4,
+    "empty_book": 0,
+    "invalid_book": 0,
+    "unlisted": 0,
+    "rule_template_mismatch": 0,
+    "rule_template_rejections": 0,
+    "listed_inactive": 0,
+    "unverified_contract": 0,
+    "spread_books_archived": 0,
+    "rule_deadline_exceeded": 0,
+    "rule_original_schedule_conflict": 0,
+    "missed": 8,
+    "http_429": 0,
+    "ticks": 3,
+    "degraded_ticks": 0,
+    "settled_conditions": 4
+   },
+   "native_payouts": {
+    "01": {
+     "10": 0.0,
+     "11": 1.0
+    },
+    "03": {
+     "30": 0.0,
+     "31": 1.0
+    },
+    "04": {
+     "40": 0.0,
+     "41": 1.0
+    },
+    "05": {
+     "50": 1.0,
+     "51": 0.0
+    }
+   }
+  },
+  {
+   "scenario": "no_datetime",
+   "schedule_sync": {
+    "state": "source_quality",
+    "complete": false,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 61,
+    "quality": {
+     "quarantined_rows": 1,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 1,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 60,
+      "scheduled": 1
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "fixture_as_stored": {
+    "stage": "regular",
+    "status": "scheduled",
+    "kickoff": null,
+    "neutral": null,
+    "version": 1
+   },
+   "stored_games_by_stage": {
+    "regular": 61
+   },
+   "window_T-60m": [
+    {
+     "at": "2026-11-27T22:57:00.000000Z",
+     "markets": {
+      "state": "ok",
+      "errors": []
+     }
+    },
+    {
+     "at": "2026-11-27T22:57:02.000000Z",
+     "forecast": {
+      "state": "partial",
+      "schedule_games": 61,
+      "sealed": 0,
+      "fixture_errors": []
+     }
+    }
+   ],
+   "market_choices_in_window": {},
+   "close_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "final_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 1,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 61
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "settlement_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "grading_tick": {
+    "state": "partial",
+    "schedule_games": 61,
+    "sealed": 0,
+    "fixture_errors": []
+   },
+   "windows": [],
+   "day_report_T-60m": {
+    "states": {},
+    "grades": {},
+    "models_scored": {},
+    "market_coverage": {
+     "away_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 0,
+      "scored": 0,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "home_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 0,
+      "scored": 0,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 0,
+      "scored": 0,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     },
+     "win": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": "no_paired_decision_quotes",
+      "missing_decision_quote": 0,
+      "scored": 0,
+      "sealed_with_decision_quote": 0,
+      "with_decision_quote": 0,
+      "with_same_token_close": 0
+     }
+    },
+    "paired_games_win": {}
+   },
+   "report_keys": [
+    "denominator",
+    "end_exclusive",
+    "horizons",
+    "paper_trading",
+    "payout_reconciliation",
+    "schedule_games",
+    "score_scope",
+    "start",
+    "timezone",
+    "week_start",
+    "without_registered_windows"
+   ],
+   "markets_status_day": {
+    "catalogued_games": 1,
+    "due": 12,
+    "collected": 4,
+    "empty_book": 0,
+    "invalid_book": 0,
+    "unlisted": 0,
+    "rule_template_mismatch": 0,
+    "rule_template_rejections": 0,
+    "listed_inactive": 0,
+    "unverified_contract": 0,
+    "spread_books_archived": 0,
+    "rule_deadline_exceeded": 0,
+    "rule_original_schedule_conflict": 0,
+    "missed": 8,
+    "http_429": 0,
+    "ticks": 3,
+    "degraded_ticks": 0,
+    "settled_conditions": 4
+   },
+   "native_payouts": {
+    "01": {
+     "10": 0.0,
+     "11": 1.0
+    },
+    "03": {
+     "30": 0.0,
+     "31": 1.0
+    },
+    "04": {
+     "40": 0.0,
+     "41": 1.0
+    },
+    "05": {
+     "50": 1.0,
+     "51": 0.0
+    }
+   }
+  },
+  {
+   "scenario": "payout_disagrees",
+   "schedule_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 61,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 60,
+      "scheduled": 1
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "fixture_as_stored": {
+    "stage": "regular",
+    "status": "scheduled",
+    "kickoff": "2026-11-28T00:00:00.000000Z",
+    "neutral": null,
+    "version": 1
+   },
+   "stored_games_by_stage": {
+    "regular": 61
+   },
+   "window_T-60m": [
+    {
+     "at": "2026-11-27T22:57:00.000000Z",
+     "markets": {
+      "state": "ok",
+      "errors": []
+     }
+    },
+    {
+     "at": "2026-11-27T22:57:02.000000Z",
+     "forecast": {
+      "state": "ok",
+      "schedule_games": 61,
+      "sealed": 1,
+      "fixture_errors": []
+     }
+    }
+   ],
+   "market_choices_in_window": {
+    "away_total": {
+     "line": 109.5,
+     "probability": 0.48,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "home_total": {
+     "line": 113.5,
+     "probability": 0.51,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "total": {
+     "line": 223.5,
+     "probability": 0.52,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    },
+    "win": {
+     "line": null,
+     "probability": 0.63,
+     "available_at": "2026-11-27T22:57:00.000000Z"
+    }
+   },
+   "close_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "final_sync": {
+    "state": "ok",
+    "complete": true,
+    "pages": 3,
+    "received_games": 61,
+    "new_versions": 1,
+    "quality": {
+     "quarantined_rows": 0,
+     "unidentified_rows": 0,
+     "pagination_errors": 0,
+     "overlapping_ids": 0,
+     "phase_mismatches": 0,
+     "unknown_stages": 0,
+     "scheduled_without_kickoff": 0,
+     "unknown_statuses": 0,
+     "unrecognized_statuses": 0,
+     "phase_rows": {
+      "regular": 61,
+      "preseason": 0,
+      "ist": 0
+     },
+     "stage_counts": {
+      "regular": 61
+     },
+     "status_counts": {
+      "final": 61
+     },
+     "game_days": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09",
+      "2026-11-10",
+      "2026-11-11",
+      "2026-11-12",
+      "2026-11-13",
+      "2026-11-14",
+      "2026-11-15",
+      "2026-11-16",
+      "2026-11-17",
+      "2026-11-18",
+      "2026-11-19",
+      "2026-11-20",
+      "2026-11-21",
+      "2026-11-22",
+      "2026-11-23",
+      "2026-11-24",
+      "2026-11-25",
+      "2026-11-26",
+      "2026-11-27"
+     ],
+     "neutral_known": 0,
+     "neutral_unknown": 61,
+     "cup_knockout": 0,
+     "overlap_examples": []
+    }
+   },
+   "settlement_tick": {
+    "state": "ok",
+    "errors": []
+   },
+   "grading_tick": {
+    "state": "ok",
+    "schedule_games": 61,
+    "sealed": 0,
+    "fixture_errors": []
+   },
+   "windows": [
+    {
+     "epoch": 1,
+     "horizon": "T-24h",
+     "deadline": "2026-11-27T00:00:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "schedule_first_observed_after_cutoff",
+     "sealed_at": null
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-60m",
+     "deadline": "2026-11-27T23:00:00.000000Z",
+     "active": 1,
+     "state": "sealed",
+     "note": "",
+     "sealed_at": "2026-11-27T22:57:02.000000Z",
+     "venue_basis": "assumed_listed_home",
+     "training_games": 60,
+     "p_home_win": {
+      "N0": 0.6667,
+      "N1": 0.7288,
+      "N2": 0.7288
+     },
+     "market_at_prediction": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+     ],
+     "grades": [
+      "awaiting_result",
+      "scored"
+     ],
+     "benchmarks_in_last_grade": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+     ]
+    },
+    {
+     "epoch": 1,
+     "horizon": "T-15m",
+     "deadline": "2026-11-27T23:45:00.000000Z",
+     "active": 1,
+     "state": "missed",
+     "note": "window_expired_or_play_observed",
+     "sealed_at": null
+    }
+   ],
+   "day_report_T-60m": {
+    "states": {
+     "sealed": 1
+    },
+    "grades": {
+     "scored": 1
+    },
+    "models_scored": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    },
+    "market_coverage": {
+     "away_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "home_total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "total": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     },
+     "win": {
+      "decision_without_close": 0,
+      "interval_unavailable_reason": null,
+      "missing_decision_quote": 0,
+      "scored": 1,
+      "sealed_with_decision_quote": 1,
+      "with_decision_quote": 1,
+      "with_same_token_close": 1
+     }
+    },
+    "paired_games_win": {
+     "N0": 1,
+     "N1": 1,
+     "N2": 1
+    }
+   },
+   "report_keys": [
+    "denominator",
+    "end_exclusive",
+    "horizons",
+    "paper_trading",
+    "payout_reconciliation",
+    "schedule_games",
+    "score_scope",
+    "start",
+    "timezone",
+    "week_start",
+    "without_registered_windows"
+   ],
+   "markets_status_day": {
+    "catalogued_games": 1,
+    "due": 12,
+    "collected": 4,
+    "empty_book": 0,
+    "invalid_book": 0,
+    "unlisted": 0,
+    "rule_template_mismatch": 0,
+    "rule_template_rejections": 0,
+    "listed_inactive": 0,
+    "unverified_contract": 0,
+    "spread_books_archived": 0,
+    "rule_deadline_exceeded": 0,
+    "rule_original_schedule_conflict": 0,
+    "missed": 8,
+    "http_429": 0,
+    "ticks": 3,
+    "degraded_ticks": 0,
+    "settled_conditions": 4
+   },
+   "native_payouts": {
+    "01": {
+     "10": 1.0,
+     "11": 0.0
+    },
+    "03": {
+     "30": 0.0,
+     "31": 1.0
+    },
+    "04": {
+     "40": 0.0,
+     "41": 1.0
+    },
+    "05": {
+     "50": 1.0,
+     "51": 0.0
+    }
+   }
+  }
+ ]
+}

@@ -1,7 +1,8 @@
 """One pool of paper cash. Entry proof, price-level fees and official redemption use the installed project."""
+import json
 from collections import Counter
 from decimal import Decimal as D, ROUND_DOWN
-from polymarket861 import budget_archive_proof as proof, five_league_budget as budget, ledger_rules as r, store
+from polymarket861 import archive_proof, budget_archive_proof as proof, five_league_budget as budget, ledger_rules as r, store
 
 FUND=D('10000')
 FRACTION=D('0.25')
@@ -29,6 +30,24 @@ def size_at_book(asks,fee,model_fair,comparison_fair,capital,limit):
     c=fill['cost']
     target=capital*FRACTION*(effective_p-c)/(1-c)
     return {'shares':fill['gross'],'budget':target,'planning_cost':c,'planning_spend':fill['spent'],'probability':effective_p}
+
+def verified_quote(source, book):
+    """Bind the spread used by this account to bids in the same authenticated original as the asks."""
+    root, db = source
+    reply, operation, _, _ = archive_proof.original_receipt(
+        db, root, book["source_sha256"], book["received_at"], {"book", "books"}
+    )
+    payload = json.loads(reply.body)
+    rows = [payload] if operation == "book" else payload
+    matches = [row for row in rows if isinstance(row, dict) and str(row.get("asset_id")) == book["token_id"]
+               and row.get("market") == book["condition_id"]]
+    if len(matches) != 1:
+        raise ValueError("no unique native CLOB quote for paper account")
+    bids = r.series(matches[0], "bids")
+    if bids != r.series(book, "bids"):
+        raise ValueError("submitted bids differ from authenticated original")
+    return bids[0][0], r.series(matches[0], "asks")[0][0]
+
 
 def replay(document, *, as_of=None, data_dir=None, details=True, entry_basis='scheduled_with_incomplete_flags'):
     if document.get('evidence_mode')!='local_receipts' or document.get('schema')!=budget.SCHEMA or document.get('account_policy')!=POLICY or entry_basis!='scheduled_with_incomplete_flags':
@@ -78,6 +97,7 @@ def replay(document, *, as_of=None, data_dir=None, details=True, entry_basis='sc
             decision={'id':key,'at':r.iso(when),'league':league,'fixture_id':op['fixture_id'],'outcome':'skipped_unverified_entry','cost_including_cash_fees':None,'fee_evidence':None}
             try:
                 m=proof.entry(source,op,(first,second),scheduled=True,as_of=stop,football=football)
+                quotes = [verified_quote(source, book) for book in (first, second)]
             except (ValueError,TypeError,KeyError,OSError) as exc:
                 gaps[str(exc)]+=1
                 decision['reason']=str(exc)
@@ -92,8 +112,7 @@ def replay(document, *, as_of=None, data_dir=None, details=True, entry_basis='sc
             levels=[sorted((a,b) for a,b in remaining[src].items() if b>0) for src in source_keys]
             fill=r.price_fill(r.pair_depth(*levels,limit),qty,fee)
             good_quote=True
-            for book in (first,second):
-                ask=r.number(book['asks'][0]['price']);bid=r.number(book['bids'][0]['price'])
+            for bid, ask in quotes:
                 good_quote &= 0 < ask-bid <= r.MAX_SPREAD and abs(fair-(ask+bid)/2)<=r.MAX_GAP and abs(r.unit(plan['news_fair'])-(ask+bid)/2)<=r.MAX_GAP
             c=fill['cost']
             target=(r.number(plan['sizing_bankroll'])*FRACTION*max(D(0),(p-c)/(1-c))) if 0<c<1 else D(0)

@@ -1,12 +1,18 @@
 import copy
+import hashlib
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import Mock, patch
+
+import httpx
+
+from polymarket861.nba import data
 
 
 if sys.platform != "linux":
@@ -78,6 +84,45 @@ class PaperOpeningNotifications(unittest.TestCase):
         self.assertEqual(self.check(self.now + timedelta(minutes=5)), 0)
         self.sender.assert_called_once()
 
+    def test_nba_research_receipt_and_restart_leave_football_notifications_untouched(self):
+        (self.paper / "feed.json").write_text('{"recommendations":[]}')
+        self.report["cash"] = "10000.00"
+        self.assertEqual(self.check(self.start), 0)
+
+        def football_hashes():
+            return {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in self.paper.iterdir()}
+
+        before = football_hashes()
+        game = {"id": 7, "season": 2022, "date": "2023-01-02", "status": "Final", "period": 4,
+                "home_team_score": 110, "visitor_team_score": 105,
+                "home_team": {"id": 1, "abbreviation": "BOS", "full_name": "Boston Celtics"},
+                "visitor_team": {"id": 2, "abbreviation": "MIL", "full_name": "Milwaukee Bucks"}}
+        def schedule_page(params, _key):
+            games = [game] if params["season_type"] == "regular" else []
+            return httpx.Response(200, json={"data": games, "meta": {"next_cursor": None}})
+
+        nba_clock = self.now
+
+        def advance_budget(seconds):
+            nonlocal nba_clock
+            nba_clock += timedelta(seconds=seconds)
+        with tempfile.TemporaryDirectory() as other, patch.dict(os.environ, {"BALLDONTLIE_API_KEY": "fixture-key"}):
+            nba = Path(other) / "nba"
+            for index in range(2):
+                nba_clock = self.now + timedelta(minutes=index)
+                result = data.sync_bdl(nba, game["date"], game["date"], fetch=schedule_page,
+                                       clock=lambda: nba_clock, sleep=advance_budget)
+                self.assertEqual(result["new_versions"], 1 if index == 0 else 0)
+                self.assertEqual(result["state"], "ok")
+                self.assertEqual(self.check(self.now), 0)
+            self.assertEqual(len(data.games_as_of(nba)), 1)
+        self.sender.assert_not_called()
+        self.assertEqual(football_hashes(), before)
+        self.add_position("genuine-football-fill", self.now)
+        for _ in range(2):
+            self.assertEqual(self.check(self.now), 0)
+        self.sender.assert_called_once()
+
     def test_failed_opening_retries_after_delay(self):
         self.check(self.start)
         self.add_position("retry", self.now)
@@ -98,3 +143,29 @@ class PaperOpeningNotifications(unittest.TestCase):
             self.assertEqual(self.check(self.now + timedelta(minutes=32)), 0)
         self.assertEqual(self.check(self.now + timedelta(minutes=33)), 0)
         self.sender.assert_called_once()
+
+
+    def test_expired_failed_opening_records_non_delivery_once(self):
+        self.check(self.start)
+        position, _ = self.add_position("failed-expired", self.now)
+        self.sender.return_value = ("failed", None, "session")
+        self.assertEqual(self.check(self.now), 1)
+        kickoff = notify.instant(position["kickoff"])
+        self.assertEqual(self.check(kickoff), 0)
+        self.assertEqual(self.check(kickoff + timedelta(hours=1)), 0)
+        self.sender.assert_called_once()
+        self.assertEqual([r[0] for r in self.db.execute("SELECT status FROM attempts ORDER BY id")],
+                         ["failed", "expired_undelivered"])
+
+    def test_ambiguous_expiry_can_reconcile_late_receipt_without_resend(self):
+        self.check(self.start)
+        position, _ = self.add_position("unknown-expired", self.now)
+        self.sender.return_value = ("uncertain", None, "timeout")
+        with patch.object(notify, "mirrored", side_effect=[None, False, True]):
+            self.assertEqual(self.check(self.now), 1)
+            kickoff = notify.instant(position["kickoff"])
+            self.assertEqual(self.check(kickoff), 0)
+            self.assertEqual(self.db.execute("SELECT status FROM attempts").fetchone()[0], "expired_unconfirmed")
+            self.assertEqual(self.check(kickoff + timedelta(minutes=5)), 0)
+        self.sender.assert_called_once()
+        self.assertEqual(self.db.execute("SELECT status FROM attempts").fetchone()[0], "accepted")

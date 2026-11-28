@@ -1,0 +1,11 @@
+[Unit]
+Description=Collect independent NBA read-only market evidence periodically
+
+[Timer]
+OnStartupSec=15s
+OnUnitActiveSec=1min
+AccuracySec=1s
+Unit=polymarket861-nba-markets.service
+
+[Install]
+WantedBy=timers.target

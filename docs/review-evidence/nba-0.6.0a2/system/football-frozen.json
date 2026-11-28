@@ -1,0 +1,74 @@
+{
+  "healthy": {
+    "state": "match",
+    "as_of": "2030-01-12T18:02:00.000000Z",
+    "account_input_sha256": "4309c5ba7fbe27d020f540d69e2e7e140174e6b5b04539210f2b04b63e44420b",
+    "positions_checked": 6,
+    "redemptions_checked": 5,
+    "deployed": {
+      "engine_sha256": "0d3fb1966a113126596ecdb60c83446e77e32dd5e14000581cac8f636524c750",
+      "account_differences": [],
+      "position_differences": []
+    },
+    "candidate": {
+      "engine_sha256": "716f9ba5b609389c3a748a06ad8abc67916e3a768c06a07c7d3337d37401c8b2",
+      "account_differences": [],
+      "position_differences": []
+    },
+    "exit": 0,
+    "all_original_files_byte_identical": true,
+    "original_files": 42,
+    "published_cash": "10000.000000",
+    "published_pnl": "50.000000",
+    "published_open_cost": "50.000000"
+  },
+  "bad_bid": {
+    "state": "unverified",
+    "error": "unverified redemption pay3",
+    "exit": 1,
+    "all_original_files_byte_identical": true,
+    "original_files": 42,
+    "published_cash": "10000.000000",
+    "published_pnl": "50.000000",
+    "published_open_cost": "50.000000"
+  },
+  "bad_bid_open": {
+    "state": "mismatch",
+    "as_of": "2030-01-12T18:02:00.000000Z",
+    "account_input_sha256": "481617e3de4085b47e896c7de7bf6936d10cffd9956eaa4b0ae710561d3a5cb2",
+    "positions_checked": 6,
+    "redemptions_checked": 5,
+    "deployed": {
+      "engine_sha256": "0d3fb1966a113126596ecdb60c83446e77e32dd5e14000581cac8f636524c750",
+      "account_differences": [],
+      "position_differences": []
+    },
+    "candidate": {
+      "engine_sha256": "716f9ba5b609389c3a748a06ad8abc67916e3a768c06a07c7d3337d37401c8b2",
+      "account_differences": [
+        "leagues",
+        "total_available_cash",
+        "total_unredeemed_cost"
+      ],
+      "position_differences": [
+        "sea-int-gen-2026-11-28-int-no"
+      ]
+    },
+    "exit": 1,
+    "all_original_files_byte_identical": true,
+    "original_files": 42,
+    "published_cash": "10000.000000",
+    "published_pnl": "50.000000",
+    "published_open_cost": "50.000000"
+  },
+  "missing_original": {
+    "state": "unverified",
+    "error": "original positions missing from published account: ['sea-int-gen-2026-11-28-int-no']",
+    "exit": 1,
+    "all_original_files_byte_identical": true,
+    "original_files": 42,
+    "published_cash": "10000.000000",
+    "published_pnl": "50.000000",
+    "published_open_cost": "50.000000"
+  }
+}

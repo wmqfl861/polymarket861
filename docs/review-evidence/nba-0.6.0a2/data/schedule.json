@@ -1,0 +1,137 @@
+{
+  "normal": {
+    "enough_days": true,
+    "paired_days": 3,
+    "counts": {
+      "exact": 3
+    },
+    "day_reports": [
+      [
+        "2026-11-02",
+        true,
+        "exact",
+        null
+      ],
+      [
+        "2026-11-03",
+        true,
+        "exact",
+        null
+      ],
+      [
+        "2026-11-04",
+        true,
+        "exact",
+        null
+      ]
+    ]
+  },
+  "postponed": {
+    "enough_days": false,
+    "paired_days": 0,
+    "counts": {
+      "score_schedule_unavailable": 3
+    },
+    "day_reports": [
+      [
+        "2026-11-02",
+        false,
+        "score_schedule_unavailable",
+        "postponed"
+      ],
+      [
+        "2026-11-03",
+        false,
+        "score_schedule_unavailable",
+        "postponed"
+      ],
+      [
+        "2026-11-04",
+        false,
+        "score_schedule_unavailable",
+        "postponed"
+      ]
+    ]
+  },
+  "withdrawn": {
+    "enough_days": false,
+    "paired_days": 0,
+    "counts": {
+      "score_schedule_withdrawn": 3
+    },
+    "day_reports": [
+      [
+        "2026-11-02",
+        false,
+        "score_schedule_withdrawn",
+        "absent_from_complete_range_scan"
+      ],
+      [
+        "2026-11-03",
+        false,
+        "score_schedule_withdrawn",
+        "absent_from_complete_range_scan"
+      ],
+      [
+        "2026-11-04",
+        false,
+        "score_schedule_withdrawn",
+        "absent_from_complete_range_scan"
+      ]
+    ]
+  },
+  "unknown": {
+    "enough_days": false,
+    "paired_days": 0,
+    "counts": {
+      "score_schedule_unavailable": 3
+    },
+    "day_reports": [
+      [
+        "2026-11-02",
+        false,
+        "score_schedule_unavailable",
+        "unknown"
+      ],
+      [
+        "2026-11-03",
+        false,
+        "score_schedule_unavailable",
+        "unknown"
+      ],
+      [
+        "2026-11-04",
+        false,
+        "score_schedule_unavailable",
+        "unknown"
+      ]
+    ]
+  },
+  "moved": {
+    "enough_days": false,
+    "paired_days": 0,
+    "counts": {
+      "outside_tolerance": 3
+    },
+    "day_reports": [
+      [
+        "2026-11-02",
+        false,
+        "outside_tolerance",
+        "venue_same_pair_schedule_mismatch"
+      ],
+      [
+        "2026-11-03",
+        false,
+        "outside_tolerance",
+        "venue_same_pair_schedule_mismatch"
+      ],
+      [
+        "2026-11-04",
+        false,
+        "outside_tolerance",
+        "venue_same_pair_schedule_mismatch"
+      ]
+    ]
+  }
+}

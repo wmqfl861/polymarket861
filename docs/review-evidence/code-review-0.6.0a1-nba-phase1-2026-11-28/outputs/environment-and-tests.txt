@@ -1,0 +1,104 @@
+polymarket861 0.6.0a1 (development/nba-reviewed 64b991d; source commit ccdf4a8; PR #2 against main 60c1a2d): environment and checks, 2026-11-28
+
+== Python 3.11
+3.11.18 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1; PM861_TEST_CHROMIUM=/usr/bin/google-chrome
+python -m unittest discover -s tests -v: Ran 887 tests in 355.685s OK
+skipped: 0
+== Python 3.12
+3.12.3 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1; PM861_TEST_CHROMIUM=/usr/bin/google-chrome
+python -m unittest discover -s tests -v: Ran 887 tests in 378.198s OK
+skipped: 0
+== Python 3.13
+3.13.18 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1; PM861_TEST_CHROMIUM=/usr/bin/google-chrome
+python -m unittest discover -s tests -v: Ran 887 tests in 328.193s OK
+skipped: 0
+
+== CI steps (.github/workflows/test.yml, job unittest), each on Python 3.11, 3.12 and 3.13: all exit=0
+===== CPython 3.11.18 =====
+$ python scripts/check_league_boundaries.py
+
+exit=0
+$ python scripts/check_recipe_references.py
+  "obsolete": [],
+  "changed_reviewed_bindings": {}
+}
+exit=0
+$ python scripts/check_paper_bindings.py
+Checked 100 football paper deployment imports/attributes
+exit=0
+$ ruff check src tests scripts deploy
+All checks passed!
+exit=0
+$ mypy --strict --follow-imports=silent src/polymarket861/blob_storage.py src/polymarket861/score_bounds.py src/polymarket861/experiment_statistics.py
+Success: no issues found in 3 source files
+exit=0
+$ python scripts/check_recipe_identity.py --approved scripts/football-recipe-baseline.json > recipe-3.11.json
+exit=0
+===== CPython 3.12.3 =====
+$ python scripts/check_league_boundaries.py
+
+exit=0
+$ python scripts/check_recipe_references.py
+  "obsolete": [],
+  "changed_reviewed_bindings": {}
+}
+exit=0
+$ python scripts/check_paper_bindings.py
+Checked 100 football paper deployment imports/attributes
+exit=0
+$ ruff check src tests scripts deploy
+All checks passed!
+exit=0
+$ mypy --strict --follow-imports=silent src/polymarket861/blob_storage.py src/polymarket861/score_bounds.py src/polymarket861/experiment_statistics.py
+Success: no issues found in 3 source files
+exit=0
+$ python scripts/check_recipe_identity.py --approved scripts/football-recipe-baseline.json > recipe-3.12.json
+exit=0
+===== CPython 3.13.18 =====
+$ python scripts/check_league_boundaries.py
+
+exit=0
+$ python scripts/check_recipe_references.py
+  "obsolete": [],
+  "changed_reviewed_bindings": {}
+}
+exit=0
+$ python scripts/check_paper_bindings.py
+Checked 100 football paper deployment imports/attributes
+exit=0
+$ ruff check src tests scripts deploy
+All checks passed!
+exit=0
+$ mypy --strict --follow-imports=silent src/polymarket861/blob_storage.py src/polymarket861/score_bounds.py src/polymarket861/experiment_statistics.py
+Success: no issues found in 3 source files
+exit=0
+$ python scripts/check_recipe_identity.py --approved scripts/football-recipe-baseline.json > recipe-3.13.json
+exit=0
+===== compare =====
+$ python scripts/check_recipe_identity.py --compare recipe-3.11.json recipe-3.12.json recipe-3.13.json
+exit=0
+
+== Recipe identity: equals scripts/football-recipe-baseline.json (release 0.5.0a4, 60c1a2d) and is identical on the three interpreters
+/numeric_runtime = {'numpy': '2.3.5', 'scipy': '1.17.0'}
+/package_files_sha256 = 436e85bafac50e650eb108dfd2d70bcac0d3d66835bb86fa96f7b37282acf079
+/recipes/B0/primary = a44b114c206329c5676c5346ae517bab7bd44a0fe39be28c30945667b5ecb5d2
+/recipes/B0/paired = 9bcaa1696d2aea315eaa7fc05949aa7e35e863b723ff370798508177286ebfbf
+/recipes/B1/primary = e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a
+/recipes/B1/paired = 1bdb51149d1097eb9b63175c8314bbd7c3098ca7ff31a95d683d933b0fc456c4
+/recipes/B2/primary = ca6b1286ad703b07f1a89808ebc7b32f95b466ad3b5d87dab7ef65e15398d6f4
+/recipes/B2/paired = d20bdab15c8e7bce0d915402ee343e08764834e226249e92486057196f2b220a
+/recipes/B3/primary = fd6807922bd7a5bff91125dba0d26e22470891d3d5f3fff29044d95543c8ea14
+/recipes/B3/paired = fd6807922bd7a5bff91125dba0d26e22470891d3d5f3fff29044d95543c8ea14
+
+== Shipped NBA replay reports reproduced through the CLI (pm861 nba model backtest --archive nbaallelo.csv --first-season 2005 --last-season 2014 --lag-days N --replicates 10000)
+baseline-538-lag24.json: shipped sha256 41543623db7dc130a4f407a18fe395de00ed9dea0db5e20b9363323a1829dd8b  rerun sha256 41543623db7dc130a4f407a18fe395de00ed9dea0db5e20b9363323a1829dd8b  identical=True
+baseline-538-lag48.json: shipped sha256 599be0360d657252d52eb5f3b994de72303b0d049e149e13f3f4fbfc1391292c  rerun sha256 599be0360d657252d52eb5f3b994de72303b0d049e149e13f3f4fbfc1391292c  identical=True
+nbaallelo.csv sha256 d46ed3540ee8d9eca31b3e94cc8c777e0be5156173d814ebf65b8195e8d616bc
+
+== GitHub Actions for 64b991d (workflow 'Football and NBA regression'; read through the pull request's check runs)
+run 46035635066 (the PR text calls it #30): unittest (3.11) success, unittest (3.12) success, unittest (3.13) success, systemd-deploy success, recipe-identity success
+run 46035619092: unittest (3.11) success, unittest (3.12) success, unittest (3.13) success, systemd-deploy success, recipe-identity success
+
+== Not reachable from the review machine
+Polymarket, BALLDONTLIE (including its public OpenAPI document: proxy refused the connection), Big Balls, DunkAPI, ESPN, NBA.com.
+The playwright Chromium download was blocked as well; browser tests ran against the system Chrome, with no skips.

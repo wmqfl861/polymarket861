@@ -1,0 +1,11 @@
+[Unit]
+Description=Check NBA research service health
+
+[Service]
+Type=oneshot
+UMask=0077
+Environment=PM861_NBA_WATCH_COMPONENT=all
+EnvironmentFile=-%h/.config/polymarket861-nba/providers.env
+ExecStart=%h/.local/share/polymarket861-nba/venv/bin/pm861 --data-dir %h/.local/share/polymarket861-nba/state nba watchdog --component ${PM861_NBA_WATCH_COMPONENT}
+TimeoutStartSec=30s
+NoNewPrivileges=yes

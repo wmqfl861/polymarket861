@@ -1,0 +1,10 @@
+[Unit]
+Description=Receive NBA regular-season schedule and results
+
+[Service]
+Type=oneshot
+UMask=0077
+EnvironmentFile=-%h/.config/polymarket861-nba/providers.env
+ExecStart=%h/.local/share/polymarket861-nba/venv/bin/pm861 --data-dir %h/.local/share/polymarket861-nba/state nba run --component schedule
+TimeoutStartSec=10min
+NoNewPrivileges=yes

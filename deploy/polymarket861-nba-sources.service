@@ -1,0 +1,10 @@
+[Unit]
+Description=Collect independently timed free NBA injury-source evidence
+
+[Service]
+Type=oneshot
+UMask=0077
+EnvironmentFile=-%h/.config/polymarket861-nba/providers.env
+ExecStart=%h/.local/share/polymarket861-nba/venv/bin/pm861 --data-dir %h/.local/share/polymarket861-nba/state nba data probe-due
+TimeoutStartSec=55s
+NoNewPrivileges=yes

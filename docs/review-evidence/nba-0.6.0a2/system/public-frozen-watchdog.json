@@ -1,0 +1,50 @@
+{
+  "state": "ok",
+  "scope": "markets",
+  "components": {
+    "markets": {
+      "state": "ok",
+      "running": false,
+      "age_seconds": 1.204399,
+      "started": "2026-11-28T01:39:22.311807Z",
+      "finished": "2026-11-28T01:39:28.156656Z",
+      "last_run": {
+        "at": "2026-11-28T01:39:22.406645Z",
+        "catalogue_at": "2026-11-28T01:39:28.151900Z",
+        "errors": [],
+        "state": "ok"
+      }
+    }
+  },
+  "windows": {},
+  "payout_reconciliation": {
+    "native_conditions": 0,
+    "score_evidence": {
+      "final": 0,
+      "awaiting_score": 0,
+      "unpaired": 0,
+      "invalid_score": 0,
+      "unchecked": 0
+    },
+    "comparable_conditions": 0,
+    "counts": {
+      "match": 0,
+      "disagrees": 0,
+      "void_50_50": 0,
+      "awaiting_score": 0,
+      "unpaired": 0,
+      "invalid_score": 0,
+      "outside_rules": 0,
+      "invalid_native_evidence": 0,
+      "pending_reconciliation": 0
+    },
+    "by_family": {},
+    "evidence_issues": [],
+    "disagreement_games": [],
+    "void_games": [],
+    "verified_overtime_total_games": 0,
+    "overtime_total_evidence": []
+  },
+  "player_data": "no_admitted_pregame_source",
+  "paper_trading": false
+}

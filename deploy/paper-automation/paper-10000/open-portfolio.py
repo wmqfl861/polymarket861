@@ -8,7 +8,9 @@ from datetime import timedelta
 from decimal import Decimal as D
 from pathlib import Path
 from polymarket861 import budget_archive_proof as proof, five_league_budget as budget, ledger_rules as r, market_archive as archive, market_provider as provider, store
+import football_odds_access
 from account_engine import FUND, FRACTION, POLICY, replay, size_at_book
+from football_candidate_policy import prospective_hold
 
 ROOT=Path(__file__).resolve().parent
 VAULT=ROOT/'five-league-market'
@@ -36,6 +38,16 @@ def books_for(specs):
     return items,reply
 def as_input(b,s,suffix):
     return {**{k:b[k] for k in ('token_id','condition_id','received_at','source_sha256','bids','asks','book_hash','tick_size','min_order_size','exchange_at','observed_at')},'id':s['id']+'-'+suffix+'-'+b['received_at'],'fixture_id':s['fixture_id']}
+def verify_comparison_receipt(pick, at):
+    grant = football_odds_access.permission_digest(pick["league"], "scoreboard")
+    bookmaker = pick["bookmaker"]
+    if bookmaker.get("permission_sha256") != grant:
+        raise ValueError("external odds receipt lacks current reviewed permission")
+    age = r.instant(at) - r.instant(bookmaker["receipt"])
+    if not timedelta(0) <= age < timedelta(minutes=15) or r.instant(at) >= r.instant(pick["kickoff"]):
+        raise ValueError("external odds receipt outside pregame validity")
+
+
 def plan(spec,b,first_terms):
     fee=first_terms['fee'];bid=D(b['bids'][0]['price']);ask=D(b['asks'][0]['price'])
     fair=D(spec['fair']);mid=(bid+ask)/2
@@ -50,20 +62,30 @@ def public_specs(slate):
 def main():
     shortlist=load(ROOT/'slate.json');dbfile=ROOT/'account-input.json';picksfile=ROOT/'picks.json'
     doc=load(dbfile) if dbfile.exists() else {'schema':budget.SCHEMA,'evidence_mode':'local_receipts','account_policy':POLICY,'originals':{},'books':[],'intents':[],'redemptions':[]}
-    save(dbfile,doc)
+    filled_ids = {op['id'] for op in doc['intents']}
+    pending = [pick for pick in shortlist if pick['id'] not in filled_ids]
+    if not pending:
+        return
+    for pick in pending:
+        verify_comparison_receipt(pick, store.now_utc())
     latest={s['id']:s for s in load(picksfile)} if picksfile.exists() else {}
-    for s in shortlist:
+    eligible = []
+    for s in pending:
         src=proof.verify_contract(ROOT,s['condition_id'],store.now_utc(),token=s['token_id'],scheduled=True)
         s['terms']=src['intent_terms']
+        if prospective_hold(s['terms']['selection']):
+            continue
         with proof.read_archive(ROOT) as (root,db):
             from polymarket861 import archive_proof
             m=archive_proof.original_market(db,root,s['condition_id'],store.now_utc())
             s['entry_terms']=proof._terms(root,m,s['token_id'],store.now_utc(),scheduled=True)
         s['max_stake']=latest.get(s['id'],{}).get('max_stake','0')
         s['blended_probability']=latest.get(s['id'],{}).get('blended_probability')
-    filled_ids={o['id'] for o in doc['intents']}
+        eligible.append(s)
+    if not eligible:
+        return
     for attempt in range(36):
-        todo=[s for s in shortlist if s['id'] not in filled_ids]
+        todo=[s for s in eligible if s['id'] not in filled_ids]
         if not todo:break
         first,r1=books_for(todo)
         decision_time=store.now_utc()
@@ -71,12 +93,14 @@ def main():
         plans={}
         for s in todo:
             book=first[s['id']]
+            verify_comparison_receipt(s, decision_time)
             splan=plan(s,book,s['terms'])
             if splan:
                 s['max_stake']=str(splan['budget']);s['blended_probability']=str(splan['probability'])
                 if store.instant(book['exchange_at'])>=store.instant(decision_time)-timedelta(seconds=30):
                     plans[s['id']]=splan
-        save(picksfile,public_specs(shortlist))
+        latest.update((s['id'], s) for s in public_specs(eligible))
+        save(picksfile,list(latest.values()))
         log(decision_time,'prospective-plans',{key:{'limit_price':next(s['limit_price'] for s in todo if s['id']==key),'first_receipt':r1.received_at,**v} for key,v in plans.items()})
         start_in=(target-store.instant(store.now_utc())).total_seconds()+2.4
         if start_in>0:time.sleep(start_in)
@@ -88,6 +112,7 @@ def main():
             if pl is None:continue
             if not target<=store.instant(r2.requested_at)<=end<=target+timedelta(seconds=5):continue
             if not target<=store.instant(b['exchange_at'])<=end:continue
+            verify_comparison_receipt(s, r.iso(end))
             a=as_input(first[key],s,'decision');z=as_input(b,s,'execution')
             op={'id':key,'fixture_id':s['fixture_id'],'kickoff':s['kickoff'],'decision_at':decision_time,'rank':s['rank'],'shares':str(pl['shares']),'limit_price':s['limit_price'],'decision_book':a['id'],'execution_book':z['id'],'sizing':{k:str(v) for k,v in pl.items()},**s['terms']}
             candidate={**doc,'intents':doc['intents']+[op],'books':doc['books']+[a,z]}

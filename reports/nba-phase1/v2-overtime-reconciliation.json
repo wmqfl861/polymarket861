@@ -1,0 +1,558 @@
+{
+  "scope": "historical postgame settlement rule check; evidence collected independently of operating predictions",
+  "collected_at": "2026-11-28T01:25:33.153288Z",
+  "sample": {
+    "source": "Completed NBA fixtures with at least five confirmed scoring periods on the ESPN public scoreboard, 2026-11-11 through 2026-11-25 ET, descending date. Stop after five unique fixtures with verified Gamma and both Data token receipts.",
+    "selection": "Use a settled full-game consensus half-point line whose regulation-only and final outcomes differ if available, then the lowest market ID. This deliberately measures rule behavior.",
+    "production_use": "No ESPN polling, model inputs, live seals, BDL acceptance, accuracy or readiness credit.",
+    "verification": "Exact UTC tip and ordered teams, per-period points sum to the final, regulation ties in overtime, Gamma displayed score matches independently reported final, exact rule grammar, condition ID, both token roles and native terminal prices. VFT alone gives no period count."
+  },
+  "original_report_fixture": {
+    "game_day_et": "2026-11-25",
+    "utc_tip": "2026-11-26T00:00:00.000000Z",
+    "home": "CHA",
+    "away": "CHI",
+    "venue_event_id": "1362200",
+    "venue_game_id": "20023935",
+    "espn_event_id": "401909318",
+    "espn_game_url": "https://www.espn.com/nba/game/_/gameId/401909318/bulls-hornets",
+    "period": {
+      "gamma": "VFT",
+      "scoreboard": 4,
+      "overtime": false
+    },
+    "points_by_period": {
+      "home": [
+        23,
+        25,
+        23,
+        34
+      ],
+      "away": [
+        21,
+        25,
+        27,
+        34
+      ]
+    },
+    "regulation_home_away": [
+      105,
+      107
+    ],
+    "final_home_away": [
+      105,
+      107
+    ],
+    "eligible_terminal_consensus_lines": [
+      218.5,
+      220.5,
+      222.5,
+      224.5,
+      227.5
+    ],
+    "selected_line": 227.5,
+    "market_id": "7325503",
+    "condition_id": "0xe187c79d5d757aab50afeaa27eb6509bf9b800bb30bae2bdcae826a4ebba4742",
+    "rule_sha256": "351c62a395b578c28c6345dcfca03a9d7c601139a316bc3ae02461702542be8e",
+    "ot_rule_basis": "full_game_inferred",
+    "decisive_for_selected_line": false,
+    "tokens": [
+      {
+        "side": "over",
+        "token_id": "65256134417115661901475548099426724061717550249500176165984987739232964568238",
+        "payout": 0.0,
+        "receipt": {
+          "url": "https://data-api.polymarket.com/v2/tokens?token_id=65256134417115661901475548099426724061717550249500176165984987739232964568238",
+          "requested_at": "2026-11-28T01:25:25.640053Z",
+          "received_at": "2026-11-28T01:25:29.379088Z",
+          "http_status": 200,
+          "sha256": "c5472d5b63fb422671eac63ddcaa33c3c3dc6febfd9e8b48e208647be536e105"
+        }
+      },
+      {
+        "side": "under",
+        "token_id": "9321656254514156509135911882339447007309339425463878804030292231469511459561",
+        "payout": 1.0,
+        "receipt": {
+          "url": "https://data-api.polymarket.com/v2/tokens?token_id=9321656254514156509135911882339447007309339425463878804030292231469511459561",
+          "requested_at": "2026-11-28T01:25:29.379612Z",
+          "received_at": "2026-11-28T01:25:33.151336Z",
+          "http_status": 200,
+          "sha256": "c8f0fafa8c94044f4a6e09c9fab570fc769755295450b5f9ffe251f7658263ea"
+        }
+      }
+    ],
+    "native_score_agrees_with_independent_score": true,
+    "score_implied_payout_agrees_with_both_native_interfaces": true,
+    "gamma_receipt": {
+      "url": "https://gamma-api.polymarket.com/events/slug/nba-chi-cha-2026-11-25",
+      "requested_at": "2026-11-28T01:25:21.757800Z",
+      "received_at": "2026-11-28T01:25:25.618148Z",
+      "http_status": 200,
+      "sha256": "3586d36b289979bb8e9d4ff3d024cbd8a731f6cd09fb4d58bcb99b6a14191bdb"
+    },
+    "scoreboard_receipt": {
+      "requested_at": "2026-11-28T01:22:58.498087+00:00",
+      "received_at": "2026-11-28T01:23:03.589507+00:00",
+      "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20261125",
+      "sha256": "aa10fffe4b31d2838298b7c328b8f7c7507d5ef1ad912ef84b6c7474688e47de"
+    }
+  },
+  "verified_unique_overtime_games": 5,
+  "decisive_unique_overtime_games": 3,
+  "overtime_games": [
+    {
+      "game_day_et": "2026-11-23",
+      "utc_tip": "2026-11-24T01:00:00.000000Z",
+      "home": "NOP",
+      "away": "PHX",
+      "venue_event_id": "1346981",
+      "venue_game_id": "20024170",
+      "espn_event_id": "401910042",
+      "espn_game_url": "https://www.espn.com/nba/game/_/gameId/401910042/suns-pelicans",
+      "period": {
+        "gamma": "VFT",
+        "scoreboard": 5,
+        "overtime": true
+      },
+      "points_by_period": {
+        "home": [
+          35,
+          19,
+          29,
+          26,
+          10
+        ],
+        "away": [
+          31,
+          25,
+          23,
+          30,
+          14
+        ]
+      },
+      "regulation_home_away": [
+        109,
+        109
+      ],
+      "final_home_away": [
+        119,
+        123
+      ],
+      "eligible_terminal_consensus_lines": [
+        232.5,
+        233.5
+      ],
+      "selected_line": 233.5,
+      "market_id": "7275577",
+      "condition_id": "0x90b9992e3c408015c8c270859bdfa40089af008cf77d18b8bd63893958112e86",
+      "rule_sha256": "96ab099c626065123bca76f89cc71e33a6daf88ad874e8669c0f4936d841aada",
+      "ot_rule_basis": "full_game_inferred",
+      "decisive_for_selected_line": true,
+      "tokens": [
+        {
+          "side": "over",
+          "token_id": "36310687344253032850044536919887737774181671982673118286893639803988092777420",
+          "payout": 1.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=36310687344253032850044536919887737774181671982673118286893639803988092777420",
+            "requested_at": "2026-11-28T01:24:28.976588Z",
+            "received_at": "2026-11-28T01:24:33.807027Z",
+            "http_status": 200,
+            "sha256": "6c86ed0252c788e9e5597655e428193dcabf338a869f649f0e4ef6148e6462b6"
+          }
+        },
+        {
+          "side": "under",
+          "token_id": "46649549899564339590465571177403874642420602964597007882450140995178241607342",
+          "payout": 0.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=46649549899564339590465571177403874642420602964597007882450140995178241607342",
+            "requested_at": "2026-11-28T01:24:33.807740Z",
+            "received_at": "2026-11-28T01:24:37.399899Z",
+            "http_status": 200,
+            "sha256": "66465fef1a3aec29ec6ef5c98868355de240681c07a66d4002ffc781a31dec0a"
+          }
+        }
+      ],
+      "native_score_agrees_with_independent_score": true,
+      "score_implied_payout_agrees_with_both_native_interfaces": true,
+      "gamma_receipt": {
+        "url": "https://gamma-api.polymarket.com/events/slug/nba-phx-nop-2026-11-23",
+        "requested_at": "2026-11-28T01:24:24.135627Z",
+        "received_at": "2026-11-28T01:24:28.957836Z",
+        "http_status": 200,
+        "sha256": "e45173242a4f139e13d0d8dedbcd68b51a1aa4d4be56030004cd430a7569808a"
+      },
+      "scoreboard_receipt": {
+        "requested_at": "2026-11-28T01:22:58.499462+00:00",
+        "received_at": "2026-11-28T01:23:03.713197+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20261123",
+        "sha256": "1c20d39d4157db48c33857a6a1a98bc1e8b1e63ecb55b0ee55b9531fb4db3f40"
+      }
+    },
+    {
+      "game_day_et": "2026-11-22",
+      "utc_tip": "2026-11-23T00:00:00.000000Z",
+      "home": "CHI",
+      "away": "DEN",
+      "venue_event_id": "1338698",
+      "venue_game_id": "20024160",
+      "espn_event_id": "401910032",
+      "espn_game_url": "https://www.espn.com/nba/game/_/gameId/401910032/nuggets-bulls",
+      "period": {
+        "gamma": "VFT",
+        "scoreboard": 5,
+        "overtime": true
+      },
+      "points_by_period": {
+        "home": [
+          31,
+          39,
+          25,
+          36,
+          14
+        ],
+        "away": [
+          33,
+          39,
+          33,
+          26,
+          20
+        ]
+      },
+      "regulation_home_away": [
+        131,
+        131
+      ],
+      "final_home_away": [
+        145,
+        151
+      ],
+      "eligible_terminal_consensus_lines": [
+        235.5,
+        237.5,
+        238.5
+      ],
+      "selected_line": 238.5,
+      "market_id": "7241602",
+      "condition_id": "0xb6fcb751c65dabfcfec31aac32eda0685d5877072795731ecd6caa0da50e5d3c",
+      "rule_sha256": "72c7dff063b3fe0ca3e52b01e707976fcbee8cff4fd80a0e611d5ba2257bc30b",
+      "ot_rule_basis": "full_game_inferred",
+      "decisive_for_selected_line": false,
+      "tokens": [
+        {
+          "side": "over",
+          "token_id": "92284349327482556961813696108474968391026557848388337607070877550353855309960",
+          "payout": 1.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=92284349327482556961813696108474968391026557848388337607070877550353855309960",
+            "requested_at": "2026-11-28T01:24:41.604898Z",
+            "received_at": "2026-11-28T01:24:45.200564Z",
+            "http_status": 200,
+            "sha256": "2f857425cba9a59600a574d4b6effe90e32142b216219f3cf42a5cefef27349a"
+          }
+        },
+        {
+          "side": "under",
+          "token_id": "10184042546884573690222416813733503569829284685011538379203141026571563440041",
+          "payout": 0.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=10184042546884573690222416813733503569829284685011538379203141026571563440041",
+            "requested_at": "2026-11-28T01:24:45.201322Z",
+            "received_at": "2026-11-28T01:24:48.710931Z",
+            "http_status": 200,
+            "sha256": "47523c04a54f8ef576a9fdb4204018f4c9e8e57d4cdc88273c2f8286e643c503"
+          }
+        }
+      ],
+      "native_score_agrees_with_independent_score": true,
+      "score_implied_payout_agrees_with_both_native_interfaces": true,
+      "gamma_receipt": {
+        "url": "https://gamma-api.polymarket.com/events/slug/nba-den-chi-2026-11-22",
+        "requested_at": "2026-11-28T01:24:37.405121Z",
+        "received_at": "2026-11-28T01:24:41.582781Z",
+        "http_status": 200,
+        "sha256": "63c7ab062f4d97277018327ba3e281a44e62035cf6d714303f85f880be897f29"
+      },
+      "scoreboard_receipt": {
+        "requested_at": "2026-11-28T01:23:03.582312+00:00",
+        "received_at": "2026-11-28T01:23:07.441732+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20261122",
+        "sha256": "72f0f57616887d485d3da82c75aec37c463e028333e00fc193b967668845e99e"
+      }
+    },
+    {
+      "game_day_et": "2026-11-17",
+      "utc_tip": "2026-11-18T04:00:00.000000Z",
+      "home": "LAL",
+      "away": "CHA",
+      "venue_event_id": "1306312",
+      "venue_game_id": "20024133",
+      "espn_event_id": "401910005",
+      "espn_game_url": "https://www.espn.com/nba/game/_/gameId/401910005/hornets-lakers",
+      "period": {
+        "gamma": "VFT",
+        "scoreboard": 5,
+        "overtime": true
+      },
+      "points_by_period": {
+        "home": [
+          30,
+          29,
+          22,
+          30,
+          7
+        ],
+        "away": [
+          34,
+          32,
+          28,
+          17,
+          3
+        ]
+      },
+      "regulation_home_away": [
+        111,
+        111
+      ],
+      "final_home_away": [
+        118,
+        114
+      ],
+      "eligible_terminal_consensus_lines": [
+        219.5,
+        221.5,
+        223.5,
+        224.5
+      ],
+      "selected_line": 224.5,
+      "market_id": "7105383",
+      "condition_id": "0xbf298dea8b7c6128334ee37ba076f81318bc7250185e0b3f38941ef50141c19f",
+      "rule_sha256": "c308daaedf1322a4242ab2d8bd3feb090d1a61d31e6c0152de6f8716f8164acf",
+      "ot_rule_basis": "full_game_inferred",
+      "decisive_for_selected_line": true,
+      "tokens": [
+        {
+          "side": "over",
+          "token_id": "15445356654638546656664721446610161083618234150189518088483896766193934310287",
+          "payout": 1.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=15445356654638546656664721446610161083618234150189518088483896766193934310287",
+            "requested_at": "2026-11-28T01:24:52.283017Z",
+            "received_at": "2026-11-28T01:24:55.810829Z",
+            "http_status": 200,
+            "sha256": "070b0f179bf1813ecc8251095100c820c9b08d125926f69c375ff8cd1dc705bb"
+          }
+        },
+        {
+          "side": "under",
+          "token_id": "7460365094880995728386920785785086625951644992317145269043406104384225403212",
+          "payout": 0.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=7460365094880995728386920785785086625951644992317145269043406104384225403212",
+            "requested_at": "2026-11-28T01:24:55.811296Z",
+            "received_at": "2026-11-28T01:24:59.824772Z",
+            "http_status": 200,
+            "sha256": "c613dc51941d1bc1e997f9011bdece6d8283e57f5cc2b602864fb9edf2c31f21"
+          }
+        }
+      ],
+      "native_score_agrees_with_independent_score": true,
+      "score_implied_payout_agrees_with_both_native_interfaces": true,
+      "gamma_receipt": {
+        "url": "https://gamma-api.polymarket.com/events/slug/nba-cha-lal-2026-11-17",
+        "requested_at": "2026-11-28T01:24:48.715209Z",
+        "received_at": "2026-11-28T01:24:52.246456Z",
+        "http_status": 200,
+        "sha256": "37ceedb45ecbe9722123af7f9904b2652c5cf553b9964225d0f69d479fc4c293"
+      },
+      "scoreboard_receipt": {
+        "requested_at": "2026-11-28T01:23:07.504296+00:00",
+        "received_at": "2026-11-28T01:23:11.029346+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20261117",
+        "sha256": "030d9468a73a753f721c5c74f9cae8e43a5ba41509b1fa559ef24b9a17ec3e54"
+      }
+    },
+    {
+      "game_day_et": "2026-11-15",
+      "utc_tip": "2026-11-15T23:00:00.000000Z",
+      "home": "TOR",
+      "away": "NYK",
+      "venue_event_id": "1293081",
+      "venue_game_id": "20024118",
+      "espn_event_id": "401909990",
+      "espn_game_url": "https://www.espn.com/nba/game/_/gameId/401909990/knicks-raptors",
+      "period": {
+        "gamma": "VFT",
+        "scoreboard": 5,
+        "overtime": true
+      },
+      "points_by_period": {
+        "home": [
+          17,
+          26,
+          31,
+          21,
+          13
+        ],
+        "away": [
+          23,
+          24,
+          20,
+          28,
+          17
+        ]
+      },
+      "regulation_home_away": [
+        95,
+        95
+      ],
+      "final_home_away": [
+        108,
+        112
+      ],
+      "eligible_terminal_consensus_lines": [
+        217.5,
+        220.5
+      ],
+      "selected_line": 217.5,
+      "market_id": "7049033",
+      "condition_id": "0xe52dc9fee8fe347247c15a7a0297b7cff80947bbc3b736b880b270755214e48d",
+      "rule_sha256": "53e599726da19e4a92d65c743be5997ac327b38c86fafdcb94327d045b2fc7cb",
+      "ot_rule_basis": "full_game_inferred",
+      "decisive_for_selected_line": true,
+      "tokens": [
+        {
+          "side": "over",
+          "token_id": "45677597645530520256329310316698428218108342855783168316310475237659191324863",
+          "payout": 1.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=45677597645530520256329310316698428218108342855783168316310475237659191324863",
+            "requested_at": "2026-11-28T01:25:03.571768Z",
+            "received_at": "2026-11-28T01:25:07.051754Z",
+            "http_status": 200,
+            "sha256": "5c4a6892f6eb717f96488d68d835e4fb3468ac8d6b025ee7693496cc3b6816e6"
+          }
+        },
+        {
+          "side": "under",
+          "token_id": "90983387992487720679738960519925622368126264401262620137458633962870007990963",
+          "payout": 0.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=90983387992487720679738960519925622368126264401262620137458633962870007990963",
+            "requested_at": "2026-11-28T01:25:07.052362Z",
+            "received_at": "2026-11-28T01:25:10.576738Z",
+            "http_status": 200,
+            "sha256": "9620e0abe0063b95c6e8f6174878323d08ea12ee34e09e81f53d0c201b99e79b"
+          }
+        }
+      ],
+      "native_score_agrees_with_independent_score": true,
+      "score_implied_payout_agrees_with_both_native_interfaces": true,
+      "gamma_receipt": {
+        "url": "https://gamma-api.polymarket.com/events/slug/nba-nyk-tor-2026-11-15",
+        "requested_at": "2026-11-28T01:24:59.828818Z",
+        "received_at": "2026-11-28T01:25:03.549826Z",
+        "http_status": 200,
+        "sha256": "e4f71c2bd92dee9aaeaaa92d473c68e027f03005951c58f7517cc95484c6d8a0"
+      },
+      "scoreboard_receipt": {
+        "requested_at": "2026-11-28T01:23:11.047855+00:00",
+        "received_at": "2026-11-28T01:23:14.249634+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20261115",
+        "sha256": "6e30063426d07c87550aaca2464b94f6dfaed1aeb143dcbd41fca47812ec34a0"
+      }
+    },
+    {
+      "game_day_et": "2026-11-13",
+      "utc_tip": "2026-11-14T01:00:00.000000Z",
+      "home": "CHI",
+      "away": "ATL",
+      "venue_event_id": "1284292",
+      "venue_game_id": "20023916",
+      "espn_event_id": "401909299",
+      "espn_game_url": "https://www.espn.com/nba/game/_/gameId/401909299/hawks-bulls",
+      "period": {
+        "gamma": "VFT",
+        "scoreboard": 5,
+        "overtime": true
+      },
+      "points_by_period": {
+        "home": [
+          33,
+          27,
+          24,
+          26,
+          15
+        ],
+        "away": [
+          24,
+          29,
+          30,
+          27,
+          7
+        ]
+      },
+      "regulation_home_away": [
+        110,
+        110
+      ],
+      "final_home_away": [
+        125,
+        117
+      ],
+      "eligible_terminal_consensus_lines": [
+        242.5,
+        245.5
+      ],
+      "selected_line": 242.5,
+      "market_id": "6999707",
+      "condition_id": "0xd8bb01e385e77a478dca9742eff7a207df75be61bf3f7855d0f2d801cd16bbd3",
+      "rule_sha256": "4df4acb78d18d68a3d54d4d4778d222796bdefc1673645ebbec6c5e5bc1c22c0",
+      "ot_rule_basis": "full_game_inferred",
+      "decisive_for_selected_line": false,
+      "tokens": [
+        {
+          "side": "over",
+          "token_id": "12302636625117331325007391310037545110645856891545523796521980536093754057258",
+          "payout": 0.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=12302636625117331325007391310037545110645856891545523796521980536093754057258",
+            "requested_at": "2026-11-28T01:25:14.407380Z",
+            "received_at": "2026-11-28T01:25:18.066409Z",
+            "http_status": 200,
+            "sha256": "dd634fb77645f544aee82af2cf2ccb2e91ed8e7cac7b5e91453b587f295ae2cc"
+          }
+        },
+        {
+          "side": "under",
+          "token_id": "49613536735668660001883900688203585210017103678302039898182464467191936958267",
+          "payout": 1.0,
+          "receipt": {
+            "url": "https://data-api.polymarket.com/v2/tokens?token_id=49613536735668660001883900688203585210017103678302039898182464467191936958267",
+            "requested_at": "2026-11-28T01:25:18.066829Z",
+            "received_at": "2026-11-28T01:25:21.753134Z",
+            "http_status": 200,
+            "sha256": "5bb21bf804049b575538407a076692f7aae939faaf7608553501a99da5feadb3"
+          }
+        }
+      ],
+      "native_score_agrees_with_independent_score": true,
+      "score_implied_payout_agrees_with_both_native_interfaces": true,
+      "gamma_receipt": {
+        "url": "https://gamma-api.polymarket.com/events/slug/nba-atl-chi-2026-11-13",
+        "requested_at": "2026-11-28T01:25:10.580401Z",
+        "received_at": "2026-11-28T01:25:14.389496Z",
+        "http_status": 200,
+        "sha256": "ff4ea5d08a0e9793224f104326f806ae0027a32b08648777a80c0e2e020f564c"
+      },
+      "scoreboard_receipt": {
+        "requested_at": "2026-11-28T01:23:14.194790+00:00",
+        "received_at": "2026-11-28T01:23:17.709288+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20261113",
+        "sha256": "48fb030f6f23db8710ce5f910dd044e747be61bcc54ad79699c181bef717b569"
+      }
+    }
+  ]
+}

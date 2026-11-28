@@ -747,6 +747,15 @@ def run(root, *, leagues, market_state_dir, football_root=None, repeat=False, in
             market_watch_health._notify("STOPPING=1")
 
 
+def _watchdog_exit(report, *, alert_only=False):
+    states = {row["state"] for row in report["leagues"].values()}
+    if not states or states - {"ok", "partial"}:
+        return 1
+    if "partial" in states and not alert_only:
+        return 2
+    return 0
+
+
 def register(commands):
     parser = commands.add_parser("big5-scheduler", help="四个欧洲联赛的赛前研究预测、新闻和评分")
     sub = parser.add_subparsers(dest="scheduler_action", required=True)
@@ -767,5 +776,8 @@ def register(commands):
                       result_exit_code=lambda r: int(not r["healthy"]))
     check = sub.add_parser("watchdog", help="仅检查常驻调度进度、联赛状态和新闻采集错误")
     check.add_argument("--league", choices=NEW_LEAGUES, dest="leagues", action="append")
+    check.add_argument("--alert-on-unavailable", dest="result_exit_code", action="store_const",
+                       const=lambda r: _watchdog_exit(r, alert_only=True),
+                       help="仅在调度停滞、未启动、重试或时钟冲突时使服务失败；partial 仍保留在 JSON 中")
     check.set_defaults(func=lambda a: status(a.data_dir, leagues=a.leagues or NEW_LEAGUES, health_only=True),
-                       result_exit_code=lambda r: int(not r["healthy"]))
+                       result_exit_code=_watchdog_exit)

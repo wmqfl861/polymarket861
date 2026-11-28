@@ -1,0 +1,117 @@
+{
+  "state": "incomplete_verified_seasons",
+  "complete": false,
+  "source": "balldontlie",
+  "data_grade": "technical_final_archive",
+  "warmup_season": 2020,
+  "evaluated_seasons": [
+    2021,
+    2025
+  ],
+  "recipe": "nba-final-paired-residual-v2",
+  "market_receipts": 0,
+  "paper_eligible": false,
+  "season_coverage": [
+    {
+      "season": 2020,
+      "finals": 0,
+      "teams": 0,
+      "expected_finals": 1080,
+      "expected_per_team": 72,
+      "different_pairings": 0,
+      "team_min": 0,
+      "team_max": 0,
+      "duplicate_slots": 0,
+      "unresolved_dates": 0,
+      "complete": false,
+      "required_scan_days": 191,
+      "scan_days": 0
+    },
+    {
+      "season": 2021,
+      "finals": 0,
+      "teams": 0,
+      "expected_finals": 1230,
+      "expected_per_team": 82,
+      "different_pairings": 0,
+      "team_min": 0,
+      "team_max": 0,
+      "duplicate_slots": 0,
+      "unresolved_dates": 0,
+      "complete": false,
+      "required_scan_days": 255,
+      "scan_days": 0
+    },
+    {
+      "season": 2022,
+      "finals": 0,
+      "teams": 0,
+      "expected_finals": 1230,
+      "expected_per_team": 82,
+      "different_pairings": 0,
+      "team_min": 0,
+      "team_max": 0,
+      "duplicate_slots": 0,
+      "unresolved_dates": 0,
+      "complete": false,
+      "required_scan_days": 256,
+      "scan_days": 0
+    },
+    {
+      "season": 2023,
+      "finals": 0,
+      "teams": 0,
+      "expected_finals": 1230,
+      "expected_per_team": 82,
+      "different_pairings": 0,
+      "team_min": 0,
+      "team_max": 0,
+      "duplicate_slots": 0,
+      "unresolved_dates": 0,
+      "complete": false,
+      "required_scan_days": 251,
+      "scan_days": 0
+    },
+    {
+      "season": 2024,
+      "finals": 0,
+      "teams": 0,
+      "expected_finals": 1230,
+      "expected_per_team": 82,
+      "different_pairings": 0,
+      "team_min": 0,
+      "team_max": 0,
+      "duplicate_slots": 0,
+      "unresolved_dates": 0,
+      "complete": false,
+      "required_scan_days": 252,
+      "scan_days": 0
+    },
+    {
+      "season": 2025,
+      "finals": 0,
+      "teams": 0,
+      "expected_finals": 1230,
+      "expected_per_team": 82,
+      "different_pairings": 0,
+      "team_min": 0,
+      "team_max": 0,
+      "duplicate_slots": 0,
+      "unresolved_dates": 0,
+      "complete": false,
+      "required_scan_days": 253,
+      "scan_days": 0
+    }
+  ],
+  "attempts": [
+    {
+      "start": "2020-12-22",
+      "end": "2021-03-23",
+      "state": "missing_key",
+      "complete": false,
+      "pages": 0
+    }
+  ],
+  "as_of": "2026-11-28T01:20:07.827525Z",
+  "b2b_margin_points_fixed": 1.5
+}

@@ -1,4 +1,4 @@
-"""Compare installed core and news recipe identities across supported CPython minors."""
+"""Verify released football recipe identities and compare supported CPython minors."""
 
 import argparse
 import json
@@ -29,6 +29,22 @@ def capture():
     }
 
 
+def verify_baseline(recipes, baseline):
+    expected = baseline["recipes"]
+    families = {"B0", "B1", "B2", "B3"}
+    if set(recipes) != families or set(expected) != families:
+        raise ValueError("football baseline requires families B0, B1, B2, B3")
+    changed = []
+    for family in sorted(families):
+        if set(expected[family]) != {"primary", "paired"}:
+            raise ValueError(f"invalid football baseline for {family}")
+        for kind in ("primary", "paired"):
+            if recipes[family].get(kind) != expected[family][kind]:
+                changed.append(f"{family}/{kind}")
+    if changed:
+        raise ValueError("football recipes differ from released baseline: " + ", ".join(changed))
+
+
 def compare(files):
     rows = sorted((json.loads(p.read_text()) for p in files), key=lambda r: r["python"])
     if len(rows) != 3 or {".".join(r["python"].split(".")[:2]) for r in rows} != {
@@ -53,5 +69,9 @@ def compare(files):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--compare", nargs="+", type=Path)
+    parser.add_argument("--approved", type=Path, help="pinned football release recipe digests")
     args = parser.parse_args()
-    print(json.dumps(compare(args.compare) if args.compare else capture(), indent=2))
+    result = compare(args.compare) if args.compare else capture()
+    if args.approved:
+        verify_baseline(result["recipes"], json.loads(args.approved.read_text()))
+    print(json.dumps(result, indent=2))

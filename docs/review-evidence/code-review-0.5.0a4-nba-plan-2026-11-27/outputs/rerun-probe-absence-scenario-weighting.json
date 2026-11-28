@@ -1,0 +1,191 @@
+{
+ "package_version": "0.5.0a4",
+ "python": "3.12.3",
+ "base": {
+  "home_rate": 1.5,
+  "away_rate": 1.1,
+  "probabilities": {
+   "home_win": 0.4655,
+   "draw": 0.2552,
+   "away_win": 0.2793
+  }
+ },
+ "policy": {
+  "reported_out_weight": 0.45,
+  "role_log_rate_effects": {
+   "forward": [
+    -0.04,
+    0.005
+   ],
+   "midfield": [
+    -0.022,
+    0.018
+   ],
+   "defence": [
+    -0.008,
+    0.032
+   ],
+   "goalkeeper": [
+    0.0,
+    0.045
+   ],
+   "unknown": [
+    -0.012,
+    0.012
+   ]
+  },
+  "cap_per_team": 0.12,
+  "epl_importance_multiplier_range": [
+   0.25,
+   1.0
+  ],
+  "epl_importance_neutral": 0.55
+ },
+ "scenarios": {
+  "first_choice_forward": {
+   "absent": [
+    "Henrik Sommer"
+   ],
+   "status": "uncalibrated_absence_sensitivity",
+   "applied_roles": [
+    "forward"
+   ],
+   "excluded": [],
+   "home_rate_change_percent": -0.99,
+   "away_rate_change_percent": 0.12,
+   "home_win_change_points": -0.41,
+   "away_win_change_points": 0.29,
+   "same_list_under_epl_importance_multiplier": {
+    "0.25": {
+     "home_rate_change_percent": -0.45,
+     "away_rate_change_percent": 0.06
+    },
+    "0.55": {
+     "home_rate_change_percent": -0.99,
+     "away_rate_change_percent": 0.12
+    },
+    "1.0": {
+     "home_rate_change_percent": -1.78,
+     "away_rate_change_percent": 0.23
+    }
+   }
+  },
+  "third_choice_goalkeeper": {
+   "absent": [
+    "Casimir Lund"
+   ],
+   "status": "no_qualified_match_absences",
+   "applied_roles": [],
+   "excluded": [
+    {
+     "side": "home",
+     "player_id": 1000,
+     "role": "goalkeeper",
+     "reason": "no_verified_majority_of_goalkeeper_starts",
+     "importance_multiplier": 0.55,
+     "player_importance": {
+      "basis": "neutral",
+      "reason": "no_eligible_domestic_minutes_and_starts",
+      "matches": 0
+     }
+    }
+   ],
+   "home_rate_change_percent": 0.0,
+   "away_rate_change_percent": 0.0,
+   "home_win_change_points": 0.0,
+   "away_win_change_points": 0.0,
+   "same_list_under_epl_importance_multiplier": {
+    "0.25": {
+     "home_rate_change_percent": 0.0,
+     "away_rate_change_percent": 0.0
+    },
+    "0.55": {
+     "home_rate_change_percent": 0.0,
+     "away_rate_change_percent": 0.0
+    },
+    "1.0": {
+     "home_rate_change_percent": 0.0,
+     "away_rate_change_percent": 0.0
+    }
+   }
+  },
+  "fringe_forward": {
+   "absent": [
+    "Jonas Reuter"
+   ],
+   "status": "uncalibrated_absence_sensitivity",
+   "applied_roles": [
+    "forward"
+   ],
+   "excluded": [],
+   "home_rate_change_percent": -0.99,
+   "away_rate_change_percent": 0.12,
+   "home_win_change_points": -0.41,
+   "away_win_change_points": 0.29,
+   "same_list_under_epl_importance_multiplier": {
+    "0.25": {
+     "home_rate_change_percent": -0.45,
+     "away_rate_change_percent": 0.06
+    },
+    "0.55": {
+     "home_rate_change_percent": -0.99,
+     "away_rate_change_percent": 0.12
+    },
+    "1.0": {
+     "home_rate_change_percent": -1.78,
+     "away_rate_change_percent": 0.23
+    }
+   }
+  },
+  "six_absentees": {
+   "absent": [
+    "Henrik Sommer",
+    "Ivo Tanner",
+    "Felix Brandt",
+    "Goran Ilse",
+    "Dario Welle",
+    "Casimir Lund"
+   ],
+   "status": "uncalibrated_absence_sensitivity",
+   "applied_roles": [
+    "forward",
+    "forward",
+    "midfield",
+    "midfield",
+    "defence"
+   ],
+   "excluded": [
+    {
+     "side": "home",
+     "player_id": 1005,
+     "role": "goalkeeper",
+     "reason": "no_verified_majority_of_goalkeeper_starts",
+     "importance_multiplier": 0.55,
+     "player_importance": {
+      "basis": "neutral",
+      "reason": "no_eligible_domestic_minutes_and_starts",
+      "matches": 0
+     }
+    }
+   ],
+   "home_rate_change_percent": -3.21,
+   "away_rate_change_percent": 1.95,
+   "home_win_change_points": -1.74,
+   "away_win_change_points": 1.4,
+   "same_list_under_epl_importance_multiplier": {
+    "0.25": {
+     "home_rate_change_percent": -1.47,
+     "away_rate_change_percent": 0.88
+    },
+    "0.55": {
+     "home_rate_change_percent": -3.21,
+     "away_rate_change_percent": 1.95
+    },
+    "1.0": {
+     "home_rate_change_percent": -5.77,
+     "away_rate_change_percent": 3.57
+    }
+   }
+  }
+ }
+}

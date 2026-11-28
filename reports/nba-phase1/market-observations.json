@@ -1,0 +1,142 @@
+{
+  "scope": "out_of_window_read_only_smoke_test",
+  "used_in_forecasts": false,
+  "trades": 0,
+  "catalogue": {
+    "receipts": [
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "requested_at": "2026-11-27T16:11:25.165342Z",
+        "received_at": "2026-11-27T16:11:31.024259Z",
+        "body_sha256": "7a0fdcd2810700b0bae687568718202035eaceb5e40e245de3c3149fe36a2bc7"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "requested_at": "2026-11-27T16:11:31.153809Z",
+        "received_at": "2026-11-27T16:11:31.501610Z",
+        "body_sha256": "33e85926b005d8af402c1a0a18bb420b7249fc93380473e680dc9756da211179"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "requested_at": "2026-11-27T16:11:31.720711Z",
+        "received_at": "2026-11-27T16:11:32.005265Z",
+        "body_sha256": "86149b3667690948b105aa6a36610eba48daa987120d6b9b57006d41216909b5"
+      },
+      {
+        "url": "https://gamma-api.polymarket.com/events/keyset",
+        "requested_at": "2026-11-27T16:11:32.048768Z",
+        "received_at": "2026-11-27T16:11:32.201917Z",
+        "body_sha256": "33c36b8fc30d6e4d941ae8badf2a239e6b5e0eaec6930744d06576d2f848acef"
+      }
+    ],
+    "games_by_et_day": {
+      "2026-11-27": 11,
+      "2026-11-28": 5
+    },
+    "missed_preinstallation_family_windows_2026_11_27": 44,
+    "http_429": 0
+  },
+  "market": {
+    "event_id": "1377575",
+    "polymarket_game_id": "20023943",
+    "home": "NYK",
+    "away": "MIA",
+    "scheduled_utc": "2026-11-28T00:00:00.000000Z",
+    "event_receipt": {
+      "url": "https://gamma-api.polymarket.com/events/1377575",
+      "requested_at": "2026-11-27T16:13:13.636650Z",
+      "received_at": "2026-11-27T16:13:18.111975Z",
+      "body_sha256": "4bd61020fc0d05403c69f2f092710d1d5e074384f133ced9000fcef15b676dad"
+    },
+    "book_receipt": {
+      "url": "https://clob.polymarket.com/books",
+      "requested_at": "2026-11-27T16:13:18.140567Z",
+      "received_at": "2026-11-27T16:13:21.904402Z",
+      "body_sha256": "335c6e516575a71df160f6294f62362d8f076568eb0f0db454c7ddea5442b72d"
+    },
+    "conditions": 6,
+    "distinct_order_books": 12,
+    "selections": {
+      "win": {
+        "line": null,
+        "side": "home",
+        "midpoint": 0.605,
+        "eligible_lines": 1,
+        "condition_id": "0x6556ae7178bfbdb828806ee82d09f965a2c1bb680bc7befad9a1ab9e7dbe5a3c",
+        "token_id": "56777755955813573907212329650071176242816346542369873563531433021995700128208",
+        "opposite_token_id": "41144466320215454421096584132386900500232651394754352600636887173782997232814",
+        "ot_basis": "explicit"
+      },
+      "total": {
+        "line": 222.5,
+        "side": "over",
+        "midpoint": 0.505,
+        "eligible_lines": 2,
+        "condition_id": "0xd0bcbc0a614723a9aa9103b276f60491c3befd77232df07c02c72d910bd034e1",
+        "token_id": "32390642986093281623473347694862390148170178045606587272348541443272715694456",
+        "opposite_token_id": "16437135956926547688059837363897182417258748216852650707091694462620034875306",
+        "ot_basis": "full_game_inferred"
+      },
+      "home_total": {
+        "line": 113.5,
+        "side": "over",
+        "midpoint": 0.49,
+        "eligible_lines": 1,
+        "condition_id": "0xfb1756d7843671889896b188e4f0c323c388da4b64d85f6bfdc1f0e6b721f94a",
+        "token_id": "51454694601003802746378820725275632211645194616296111415807271739712653699336",
+        "opposite_token_id": "66617866755647687747631958659267281120010060052372911985997650138758256669192",
+        "ot_basis": "explicit"
+      },
+      "away_total": {
+        "line": 109.5,
+        "side": "over",
+        "midpoint": 0.49,
+        "eligible_lines": 2,
+        "condition_id": "0xed0810567478aa2155a4fd80d3afba3754146570360428f8cb2fc3d9601f845d",
+        "token_id": "56191260753105094149923753633256331449201655439312706116725570434998963515809",
+        "opposite_token_id": "76051528737876961784873231696048311948821153787387216590913000581211128286953",
+        "ot_basis": "explicit"
+      }
+    }
+  },
+  "terminal": {
+    "event_id": "1362200",
+    "slug": "nba-chi-cha-2026-11-25",
+    "score_as_displayed_by_venue": "107-105",
+    "full_game_total": 227.5,
+    "over_threshold": 228,
+    "condition_id": "0xe187c79d5d757aab50afeaa27eb6509bf9b800bb30bae2bdcae826a4ebba4742",
+    "ot_basis": "full_game_inferred",
+    "overtime_occurrence_verified": false,
+    "gamma_receipt": {
+      "url": "https://gamma-api.polymarket.com/events/1362200",
+      "requested_at": "2026-11-27T16:14:10.919423Z",
+      "received_at": "2026-11-27T16:14:15.000357Z",
+      "body_sha256": "1756cf8e0c8cb21cf80a4d782ccc37c8b9836be5c0c8f21de16a931de81c4838"
+    },
+    "token_settlement": [
+      {
+        "token_id": "65256134417115661901475548099426724061717550249500176165984987739232964568238",
+        "side": "over",
+        "final_price": 0.0,
+        "receipt": {
+          "url": "https://data-api.polymarket.com/v2/tokens",
+          "requested_at": "2026-11-27T16:14:15.046920Z",
+          "received_at": "2026-11-27T16:14:18.707690Z",
+          "body_sha256": "c5472d5b63fb422671eac63ddcaa33c3c3dc6febfd9e8b48e208647be536e105"
+        }
+      },
+      {
+        "token_id": "9321656254514156509135911882339447007309339425463878804030292231469511459561",
+        "side": "under",
+        "final_price": 1.0,
+        "receipt": {
+          "url": "https://data-api.polymarket.com/v2/tokens",
+          "requested_at": "2026-11-27T16:14:18.711019Z",
+          "received_at": "2026-11-27T16:14:18.836812Z",
+          "body_sha256": "c8f0fafa8c94044f4a6e09c9fab570fc769755295450b5f9ffe251f7658263ea"
+        }
+      }
+    ]
+  }
+}

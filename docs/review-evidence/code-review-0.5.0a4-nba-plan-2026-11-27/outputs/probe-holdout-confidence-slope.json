@@ -1,0 +1,884 @@
+{
+ "holdout": "2025-26",
+ "checks": {
+  "epl": {
+   "matches": 380,
+   "published_matches": 380,
+   "matches_scored_by_b1": 379,
+   "mean_score": 74.525872,
+   "published_mean_b1": 74.525872
+  },
+  "lal": {
+   "matches": 380,
+   "published_matches": 380,
+   "matches_scored_by_b1": 378,
+   "mean_score": 75.869496,
+   "published_mean_b1": 75.869496
+  },
+  "bun": {
+   "matches": 306,
+   "published_matches": 306,
+   "matches_scored_by_b1": 305,
+   "mean_score": 75.622173,
+   "published_mean_b1": 75.622173
+  },
+  "sea": {
+   "matches": 380,
+   "published_matches": 380,
+   "matches_scored_by_b1": 379,
+   "mean_score": 75.434435,
+   "published_mean_b1": 75.434435
+  },
+  "fl1": {
+   "matches": 305,
+   "published_matches": 305,
+   "matches_scored_by_b1": 304,
+   "mean_score": 74.626655,
+   "published_mean_b1": 74.626655
+  },
+  "calibration_bins_compared": 494,
+  "calibration_bins_identical_n_and_hits": 494
+ },
+ "clusters": 182,
+ "calibration_slope": {
+  "home": {
+   "rows": 1745,
+   "intercept": 0.0898,
+   "slope": 1.1677,
+   "slope_95": [
+    1.0041,
+    1.3411
+   ],
+   "share_of_resamples_with_slope_above_1": 0.9785
+  },
+  "draw": {
+   "rows": 1745,
+   "intercept": 0.1306,
+   "slope": 1.0903,
+   "slope_95": [
+    0.5454,
+    1.6557
+   ],
+   "share_of_resamples_with_slope_above_1": 0.629
+  },
+  "away": {
+   "rows": 1745,
+   "intercept": 0.0026,
+   "slope": 1.1289,
+   "slope_95": [
+    0.9654,
+    1.2957
+   ],
+   "share_of_resamples_with_slope_above_1": 0.9395
+  },
+  "all": {
+   "rows": 5235,
+   "intercept": 0.0702,
+   "slope": 1.1084,
+   "slope_95": [
+    0.9882,
+    1.2297
+   ],
+   "share_of_resamples_with_slope_above_1": 0.9575
+  },
+  "over_2.5": {
+   "rows": 1745,
+   "intercept": 0.0802,
+   "slope": 0.6309,
+   "slope_95": [
+    0.3959,
+    0.8777
+   ],
+   "share_of_resamples_with_slope_above_1": 0.0015
+  }
+ },
+ "team_win_bands": {
+  "team_win_under_0.20": {
+   "rows": 455,
+   "model": 0.1468,
+   "observed": 0.1231,
+   "observed_minus_model": -0.0237,
+   "difference_95": [
+    -0.05,
+    0.0061
+   ]
+  },
+  "team_win_0.20_to_0.40": {
+   "rows": 1585,
+   "model": 0.3023,
+   "observed": 0.289,
+   "observed_minus_model": -0.0134,
+   "difference_95": [
+    -0.0315,
+    0.0041
+   ]
+  },
+  "team_win_0.40_to_0.60": {
+   "rows": 1135,
+   "model": 0.4868,
+   "observed": 0.4855,
+   "observed_minus_model": -0.0013,
+   "difference_95": [
+    -0.0291,
+    0.0256
+   ]
+  },
+  "team_win_0.60_and_above": {
+   "rows": 315,
+   "model": 0.6788,
+   "observed": 0.7524,
+   "observed_minus_model": 0.0736,
+   "difference_95": [
+    0.0279,
+    0.1158
+   ]
+  }
+ },
+ "regions_of_opened_positions": {
+  "home_not_win_model_0.24_to_0.33": {
+   "rows": 70,
+   "model": 0.2862,
+   "observed": 0.3,
+   "observed_minus_model": 0.0138,
+   "difference_95": [
+    -0.0904,
+    0.1224
+   ]
+  },
+  "home_not_win_model_0.20_to_0.40": {
+   "rows": 240,
+   "model": 0.3291,
+   "observed": 0.2458,
+   "observed_minus_model": -0.0833,
+   "difference_95": [
+    -0.1379,
+    -0.031
+   ]
+  },
+  "away_win_model_0.17_to_0.24": {
+   "rows": 280,
+   "model": 0.2074,
+   "observed": 0.1786,
+   "observed_minus_model": -0.0288,
+   "difference_95": [
+    -0.0733,
+    0.0236
+   ]
+  },
+  "away_win_model_0.10_to_0.25": {
+   "rows": 516,
+   "model": 0.1866,
+   "observed": 0.1647,
+   "observed_minus_model": -0.0218,
+   "difference_95": [
+    -0.051,
+    0.0112
+   ]
+  },
+  "under_2.5_model_0.50_to_0.55": {
+   "rows": 295,
+   "model": 0.5244,
+   "observed": 0.5424,
+   "observed_minus_model": 0.0179,
+   "difference_95": [
+    -0.0336,
+    0.073
+   ]
+  },
+  "away_not_win_model_0.61_to_0.66": {
+   "rows": 195,
+   "model": 0.6361,
+   "observed": 0.6615,
+   "observed_minus_model": 0.0254,
+   "difference_95": [
+    -0.0391,
+    0.0925
+   ]
+  },
+  "away_not_win_model_0.60_to_0.70": {
+   "rows": 430,
+   "model": 0.6567,
+   "observed": 0.7047,
+   "observed_minus_model": 0.0479,
+   "difference_95": [
+    0.0066,
+    0.0891
+   ]
+  }
+ },
+ "total_2.5_bands": {
+  "under_2.5_model_0.60_to_0.70": {
+   "rows": 219,
+   "model": 0.6381,
+   "observed": 0.4977,
+   "observed_minus_model": -0.1404,
+   "difference_95": [
+    -0.2112,
+    -0.0653
+   ]
+  },
+  "under_2.5_model_0.50_to_0.60": {
+   "rows": 532,
+   "model": 0.5467,
+   "observed": 0.5508,
+   "observed_minus_model": 0.004,
+   "difference_95": [
+    -0.0365,
+    0.0428
+   ]
+  },
+  "under_2.5_model_0.40_to_0.50": {
+   "rows": 593,
+   "model": 0.4503,
+   "observed": 0.4334,
+   "observed_minus_model": -0.0169,
+   "difference_95": [
+    -0.0575,
+    0.0217
+   ]
+  },
+  "under_2.5_model_0.30_to_0.40": {
+   "rows": 324,
+   "model": 0.3598,
+   "observed": 0.4043,
+   "observed_minus_model": 0.0445,
+   "difference_95": [
+    -0.0052,
+    0.095
+   ]
+  }
+ },
+ "per_league_gate_on_three_bins": {
+  "total.2.5.under.6": {
+   "epl": {
+    "n": 14,
+    "observed_minus_model": -0.2778,
+    "interval": [
+     -0.636,
+     0.08
+    ],
+    "excluded_by_rule": false
+   },
+   "lal": {
+    "n": 90,
+    "observed_minus_model": -0.1205,
+    "interval": [
+     -0.27,
+     0.029
+    ],
+    "excluded_by_rule": false
+   },
+   "bun": {
+    "n": 13,
+    "observed_minus_model": -0.2589,
+    "interval": [
+     -0.685,
+     0.167
+    ],
+    "excluded_by_rule": false
+   },
+   "sea": {
+    "n": 90,
+    "observed_minus_model": -0.1116,
+    "interval": [
+     -0.303,
+     0.08
+    ],
+    "excluded_by_rule": false
+   },
+   "fl1": {
+    "n": 12,
+    "observed_minus_model": -0.2179,
+    "interval": [
+     -0.729,
+     0.293
+    ],
+    "excluded_by_rule": false
+   }
+  },
+  "moneyline.home.no.3": {
+   "epl": {
+    "n": 38,
+    "observed_minus_model": -0.068,
+    "interval": [
+     -0.279,
+     0.143
+    ],
+    "excluded_by_rule": false
+   },
+   "lal": {
+    "n": 30,
+    "observed_minus_model": -0.1617,
+    "interval": [
+     -0.357,
+     0.033
+    ],
+    "excluded_by_rule": false
+   },
+   "bun": {
+    "n": 32,
+    "observed_minus_model": -0.1742,
+    "interval": [
+     -0.36,
+     0.011
+    ],
+    "excluded_by_rule": false
+   },
+   "sea": {
+    "n": 34,
+    "observed_minus_model": 0.0002,
+    "interval": [
+     -0.239,
+     0.239
+    ],
+    "excluded_by_rule": false
+   },
+   "fl1": {
+    "n": 39,
+    "observed_minus_model": -0.0796,
+    "interval": [
+     -0.28,
+     0.12
+    ],
+    "excluded_by_rule": false
+   }
+  },
+  "moneyline.home.yes.6": {
+   "epl": {
+    "n": 38,
+    "observed_minus_model": 0.068,
+    "interval": [
+     -0.143,
+     0.279
+    ],
+    "excluded_by_rule": false
+   },
+   "lal": {
+    "n": 30,
+    "observed_minus_model": 0.1617,
+    "interval": [
+     -0.033,
+     0.357
+    ],
+    "excluded_by_rule": false
+   },
+   "bun": {
+    "n": 32,
+    "observed_minus_model": 0.1742,
+    "interval": [
+     -0.011,
+     0.36
+    ],
+    "excluded_by_rule": false
+   },
+   "sea": {
+    "n": 34,
+    "observed_minus_model": -0.0002,
+    "interval": [
+     -0.239,
+     0.239
+    ],
+    "excluded_by_rule": false
+   },
+   "fl1": {
+    "n": 39,
+    "observed_minus_model": 0.0796,
+    "interval": [
+     -0.12,
+     0.28
+    ],
+    "excluded_by_rule": false
+   }
+  }
+ },
+ "apparent_edge_on_a_fairly_priced_contract": [
+  {
+   "fair_price": 0.1,
+   "model_probability": 0.1145,
+   "apparent_edge": 0.0145
+  },
+  {
+   "fair_price": 0.15,
+   "model_probability": 0.1641,
+   "apparent_edge": 0.0141
+  },
+  {
+   "fair_price": 0.2,
+   "model_probability": 0.2118,
+   "apparent_edge": 0.0118
+  },
+  {
+   "fair_price": 0.25,
+   "model_probability": 0.2584,
+   "apparent_edge": 0.0084
+  },
+  {
+   "fair_price": 0.3,
+   "model_probability": 0.3041,
+   "apparent_edge": 0.0041
+  },
+  {
+   "fair_price": 0.4,
+   "model_probability": 0.3943,
+   "apparent_edge": -0.0057
+  },
+  {
+   "fair_price": 0.5,
+   "model_probability": 0.4842,
+   "apparent_edge": -0.0158
+  },
+  {
+   "fair_price": 0.6,
+   "model_probability": 0.575,
+   "apparent_edge": -0.025
+  },
+  {
+   "fair_price": 0.7,
+   "model_probability": 0.6684,
+   "apparent_edge": -0.0316
+  },
+  {
+   "fair_price": 0.8,
+   "model_probability": 0.7663,
+   "apparent_edge": -0.0337
+  }
+ ],
+ "apparent_edge_by_contract_type": {
+  "home_side_does_not_win": [
+   {
+    "fair_price": 0.15,
+    "model_probability": 0.1965,
+    "apparent_edge": 0.0465,
+    "apparent_edge_95": [
+     0.0054,
+     0.0852
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.792
+   },
+   {
+    "fair_price": 0.2,
+    "model_probability": 0.2478,
+    "apparent_edge": 0.0478,
+    "apparent_edge_95": [
+     0.006,
+     0.0854
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.8105
+   },
+   {
+    "fair_price": 0.25,
+    "model_probability": 0.2965,
+    "apparent_edge": 0.0465,
+    "apparent_edge_95": [
+     0.0055,
+     0.0813
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.806
+   },
+   {
+    "fair_price": 0.3,
+    "model_probability": 0.3433,
+    "apparent_edge": 0.0433,
+    "apparent_edge_95": [
+     0.0055,
+     0.0755
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.7685
+   }
+  ],
+  "away_side_wins": [
+   {
+    "fair_price": 0.1,
+    "model_probability": 0.1247,
+    "apparent_edge": 0.0247,
+    "apparent_edge_95": [
+     0.0038,
+     0.047
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.3185
+   },
+   {
+    "fair_price": 0.15,
+    "model_probability": 0.1767,
+    "apparent_edge": 0.0267,
+    "apparent_edge_95": [
+     0.0064,
+     0.0492
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.3805
+   },
+   {
+    "fair_price": 0.2,
+    "model_probability": 0.2261,
+    "apparent_edge": 0.0261,
+    "apparent_edge_95": [
+     0.0074,
+     0.0471
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.354
+   },
+   {
+    "fair_price": 0.25,
+    "model_probability": 0.2738,
+    "apparent_edge": 0.0238,
+    "apparent_edge_95": [
+     0.0054,
+     0.0437
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.2705
+   }
+  ],
+  "away_side_does_not_win": [
+   {
+    "fair_price": 0.55,
+    "model_probability": 0.5449,
+    "apparent_edge": -0.0051,
+    "apparent_edge_95": [
+     -0.0396,
+     0.0199
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.0005
+   },
+   {
+    "fair_price": 0.6,
+    "model_probability": 0.5894,
+    "apparent_edge": -0.0106,
+    "apparent_edge_95": [
+     -0.0397,
+     0.0112
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.0
+   },
+   {
+    "fair_price": 0.65,
+    "model_probability": 0.6343,
+    "apparent_edge": -0.0157,
+    "apparent_edge_95": [
+     -0.0392,
+     0.0038
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.0
+   }
+  ],
+  "under_2.5": [
+   {
+    "fair_price": 0.45,
+    "model_probability": 0.4524,
+    "apparent_edge": 0.0024,
+    "apparent_edge_95": [
+     -0.0478,
+     0.0413
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.0815
+   },
+   {
+    "fair_price": 0.5,
+    "model_probability": 0.5318,
+    "apparent_edge": 0.0318,
+    "apparent_edge_95": [
+     -0.0084,
+     0.0852
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.5245
+   },
+   {
+    "fair_price": 0.55,
+    "model_probability": 0.6095,
+    "apparent_edge": 0.0595,
+    "apparent_edge_95": [
+     0.0085,
+     0.1412
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.859
+   },
+   {
+    "fair_price": 0.58,
+    "model_probability": 0.6545,
+    "apparent_edge": 0.0745,
+    "apparent_edge_95": [
+     0.0163,
+     0.1718
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.9185
+   },
+   {
+    "fair_price": 0.6,
+    "model_probability": 0.6835,
+    "apparent_edge": 0.0835,
+    "apparent_edge_95": [
+     0.0205,
+     0.1865
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.942
+   },
+   {
+    "fair_price": 0.65,
+    "model_probability": 0.7518,
+    "apparent_edge": 0.1018,
+    "apparent_edge_95": [
+     0.028,
+     0.2133
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.971
+   }
+  ],
+  "over_2.5": [
+   {
+    "fair_price": 0.35,
+    "model_probability": 0.2482,
+    "apparent_edge": -0.1018,
+    "apparent_edge_95": [
+     -0.2133,
+     -0.028
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.0
+   },
+   {
+    "fair_price": 0.4,
+    "model_probability": 0.3165,
+    "apparent_edge": -0.0835,
+    "apparent_edge_95": [
+     -0.1865,
+     -0.0205
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.0
+   },
+   {
+    "fair_price": 0.45,
+    "model_probability": 0.3905,
+    "apparent_edge": -0.0595,
+    "apparent_edge_95": [
+     -0.1412,
+     -0.0085
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.0
+   },
+   {
+    "fair_price": 0.5,
+    "model_probability": 0.4682,
+    "apparent_edge": -0.0318,
+    "apparent_edge_95": [
+     -0.0852,
+     0.0084
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.001
+   },
+   {
+    "fair_price": 0.55,
+    "model_probability": 0.5476,
+    "apparent_edge": -0.0024,
+    "apparent_edge_95": [
+     -0.0413,
+     0.0478
+    ],
+    "share_of_resamples_with_apparent_edge_at_least_0.03": 0.073
+   }
+  ]
+ },
+ "opened_positions_after_calibration": [
+  {
+   "position": "罗马 vs 蒙扎：罗马不胜",
+   "limit": 0.21,
+   "fit_used": "home",
+   "by_model_probability": [
+    {
+     "model_probability": 0.24,
+     "calibrated_probability": 0.1922,
+     "calibrated_95": [
+      0.1544,
+      0.2345
+     ],
+     "calibrated_minus_limit": -0.0178
+    },
+    {
+     "model_probability": 0.265,
+     "calibrated_probability": 0.2174,
+     "calibrated_95": [
+      0.179,
+      0.2594
+     ],
+     "calibrated_minus_limit": 0.0074
+    },
+    {
+     "model_probability": 0.29,
+     "calibrated_probability": 0.2432,
+     "calibrated_95": [
+      0.205,
+      0.2843
+     ],
+     "calibrated_minus_limit": 0.0332
+    }
+   ]
+  },
+  {
+   "position": "国际米兰 vs 热那亚：国际米兰不胜",
+   "limit": 0.25,
+   "fit_used": "home",
+   "by_model_probability": [
+    {
+     "model_probability": 0.28,
+     "calibrated_probability": 0.2328,
+     "calibrated_95": [
+      0.1944,
+      0.2742
+     ],
+     "calibrated_minus_limit": -0.0172
+    },
+    {
+     "model_probability": 0.305,
+     "calibrated_probability": 0.2589,
+     "calibrated_95": [
+      0.221,
+      0.2995
+     ],
+     "calibrated_minus_limit": 0.0089
+    },
+    {
+     "model_probability": 0.33,
+     "calibrated_probability": 0.2856,
+     "calibrated_95": [
+      0.2486,
+      0.3254
+     ],
+     "calibrated_minus_limit": 0.0356
+    }
+   ]
+  },
+  {
+   "position": "弗罗西诺内 vs 帕尔马：帕尔马胜",
+   "limit": 0.16,
+   "fit_used": "away",
+   "by_model_probability": [
+    {
+     "model_probability": 0.19,
+     "calibrated_probability": 0.1632,
+     "calibrated_95": [
+      0.141,
+      0.1831
+     ],
+     "calibrated_minus_limit": 0.0032
+    },
+    {
+     "model_probability": 0.215,
+     "calibrated_probability": 0.1886,
+     "calibrated_95": [
+      0.166,
+      0.2078
+     ],
+     "calibrated_minus_limit": 0.0286
+    },
+    {
+     "model_probability": 0.24,
+     "calibrated_probability": 0.2144,
+     "calibrated_95": [
+      0.1922,
+      0.2338
+     ],
+     "calibrated_minus_limit": 0.0544
+    }
+   ]
+  },
+  {
+   "position": "利兹联 vs 考文垂：考文垂胜",
+   "limit": 0.14,
+   "fit_used": "away",
+   "by_model_probability": [
+    {
+     "model_probability": 0.17,
+     "calibrated_probability": 0.1434,
+     "calibrated_95": [
+      0.1216,
+      0.1632
+     ],
+     "calibrated_minus_limit": 0.0034
+    },
+    {
+     "model_probability": 0.195,
+     "calibrated_probability": 0.1683,
+     "calibrated_95": [
+      0.1458,
+      0.1879
+     ],
+     "calibrated_minus_limit": 0.0283
+    },
+    {
+     "model_probability": 0.22,
+     "calibrated_probability": 0.1937,
+     "calibrated_95": [
+      0.1715,
+      0.2129
+     ],
+     "calibrated_minus_limit": 0.0537
+    }
+   ]
+  },
+  {
+   "position": "布雷斯特 vs 巴黎 FC：巴黎 FC 不胜",
+   "limit": 0.58,
+   "fit_used": "away",
+   "by_model_probability": [
+    {
+     "model_probability": 0.61,
+     "calibrated_probability": 0.623,
+     "calibrated_95": [
+      0.5986,
+      0.6494
+     ],
+     "calibrated_minus_limit": 0.043
+    },
+    {
+     "model_probability": 0.635,
+     "calibrated_probability": 0.6508,
+     "calibrated_95": [
+      0.6284,
+      0.6742
+     ],
+     "calibrated_minus_limit": 0.0708
+    },
+    {
+     "model_probability": 0.66,
+     "calibrated_probability": 0.6783,
+     "calibrated_95": [
+      0.6575,
+      0.7007
+     ],
+     "calibrated_minus_limit": 0.0983
+    }
+   ]
+  },
+  {
+   "position": "富勒姆 vs 伯恩茅斯：小 2.5",
+   "limit": 0.47,
+   "fit_used": "over_2.5",
+   "by_model_probability": [
+    {
+     "model_probability": 0.5,
+     "calibrated_probability": 0.4799,
+     "calibrated_95": [
+      0.4554,
+      0.5056
+     ],
+     "calibrated_minus_limit": 0.0099
+    },
+    {
+     "model_probability": 0.525,
+     "calibrated_probability": 0.4957,
+     "calibrated_95": [
+      0.4688,
+      0.5242
+     ],
+     "calibrated_minus_limit": 0.0257
+    },
+    {
+     "model_probability": 0.55,
+     "calibrated_probability": 0.5116,
+     "calibrated_95": [
+      0.4826,
+      0.543
+     ],
+     "calibrated_minus_limit": 0.0416
+    }
+   ]
+  }
+ ]
+}

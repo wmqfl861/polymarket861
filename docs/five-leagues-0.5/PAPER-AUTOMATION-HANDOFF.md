@@ -2,6 +2,8 @@
 
 2026-11-27，文中时刻均为北京时间。Ubuntu 数据盘运行 `0.5.0a4`，对应发行提交 `6844caf`。部署脚本存放在 `deploy/paper-automation/`，随仓库分发。预测 wheel 与部署脚本分别更新。[发行提交](https://github.com/wmqfl861/polymarket861/commit/6844caf945491e26083c5112c3e677f5e2782e61) · [预测服务升级及回退](DEPLOY-0.5.0a4.md)
 
+本次复审更新了仓库分发的脚本。新推荐依赖经审核的免费外部赔率授权；登记为空时，扫描只发布缺口，账户仍依据原始回执重放。[复审回应与证据归档](REVIEW-0.5.0a4-FOLLOWUP.md)
+
 ## 从扫描到微信
 
 | 任务 | 调度 | 产物及触发条件 |
@@ -14,9 +16,9 @@
 
 ## 在已有部署上同步
 
-原部署的本地 agent 取得新源码后，先完成[首六仓原件归档与账本复核](LOCAL-AGENT-SIX-POSITIONS.md)。将现场回执记入更新总结，再按实际部署任务同步脚本。
+原部署的本地 agent 取得新源码后，先完成[首六仓原件归档与账本复核](LOCAL-AGENT-SIX-POSITIONS.md)。将现场回执记入更新总结。以下同步命令用于预检返回 `match` 的部署。[复审核对范围与依据](FOOTBALL-PAPER-REVIEW-20261128.md)
 
-项目根目录为 `/mnt/d/polymarket861`。下列命令从仓库根目录执行，把源码复制到已有运行布局。脚本按自身位置查找账本、历史和生产数据。要在新机器接续同一个账户，先恢复一致备份，包括 `.pm861`、`.local-deploy/paper-10000`、四国预测和盘口数据、推荐历史及通知数据库。通知器从 `notifications.sqlite3` 恢复起点及送达记录。仓库提供可重新生成的历史概率校准表。[预测部署前置条件](DEPLOY-0.5.0a4.md) · [校准表生成程序](../../deploy/paper-automation/five-automation/recommendation-feed/build_calibration.py)
+项目根目录为 `/mnt/d/polymarket861`。下列命令从仓库根目录执行，把源码复制到已有运行布局。脚本按自身位置查找账本、历史和生产数据。要在新机器接续同一个账户，先恢复一致备份，包括 `.pm861`、`.local-deploy/paper-10000`、四国预测和盘口数据、推荐历史及通知数据库。通知器从 `notifications.sqlite3` 恢复起点及送达记录。记录首次六场选单依据时，还需归档部署机的专项研究目录。仓库提供历史分箱研究和当前推荐层连续校正。[预测部署前置条件](DEPLOY-0.5.0a4.md) · [校准表生成程序](../../deploy/paper-automation/five-automation/recommendation-feed/build_calibration.py)
 
 ```bash
 cd /mnt/d/polymarket861

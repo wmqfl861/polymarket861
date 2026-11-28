@@ -1,3 +1,3 @@
-"""Pre-match football forecasts and the Polymarket research ledger."""
+"""Pre-match football and NBA forecasts and Polymarket research."""
 
-__version__ = "0.5.0a4"
+__version__ = "0.6.0a2+providers.1"

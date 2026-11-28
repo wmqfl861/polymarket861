@@ -28,6 +28,7 @@ from polymarket861 import (
     store,
 )
 from espn_clubs import ALIASES
+from paper_calibration import calibrated, fit_evidence
 
 HERE = Path(__file__).resolve().parent
 PAPER = HERE.parent.parent / "paper-10000"
@@ -38,19 +39,15 @@ spec = importlib.util.spec_from_file_location(
 watch = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(watch)
 from account_engine import FRACTION, POLICY, size_at_book
+from football_candidate_policy import HELD_DIRECTIONS, prospective_hold
 
-LEAGUES = {
-    "epl": "eng.1",
-    "lal": "esp.1",
-    "bun": "ger.1",
-    "sea": "ita.1",
-    "fl1": "fra.1",
-}
+LEAGUES = watch.football_odds_access.LEAGUES
 SIDES = ("home", "away")
 OUTCOMES = ("home", "draw", "away")
 TTL = timedelta(minutes=15)
 TARGET_EDGE = D(".03")
-FEED_POLICY = "verified-football-recommendations-v1"
+FEED_POLICY = "verified-football-recommendations-v3"
+PIN_POLICIES = {FEED_POLICY, "verified-football-recommendations-v2", "verified-football-recommendations-v1"}
 COMPARISON_SHARES = D(20)
 ERRORS = watch.ERRORS + (OverflowError, watch.Closed)
 
@@ -156,6 +153,7 @@ def verify_model(fixture):
         info["model"] == "B1" and info["training"] > 0 and len(info["digest"]) == 64,
         "missing_verified_fitted_forecast",
     )
+    require(info["horizon"] == "T-60m", "pooled_calibration_requires_T-60m_baseline")
     t = store.instant(now)
     kickoff = store.instant(pick["kickoff"])
     mins = (kickoff - t).total_seconds() / 60
@@ -188,15 +186,14 @@ def verify_model(fixture):
 
 
 def scoreboard(league, date):
-    reply = provider.get(
-        f"https://site.api.espn.com/apis/site/v2/sports/soccer/{LEAGUES[league]}/scoreboard",
-        {"dates": date.replace("-", ""), "limit": 100, "observation": time.time_ns()},
-        timeout=12,
+    reply, permission_sha = watch.football_odds_access.fetch(
+        league, "scoreboard", {"dates": date.replace("-", ""), "limit": 100, "observation": time.time_ns()}
     )
     require(provider.fresh_observation(reply), "stale_ESPN_HTTP_receipt")
     payload = json.loads(reply.body)
     source = {
         "source": "DraftKings via ESPN",
+        "permission_sha256": permission_sha,
         "received_at": reply.received_at,
         "sha256": sha(reply.body),
     }
@@ -359,19 +356,25 @@ def markets_for(f):
 def possibilities(f, model, book, markets):
     groups = book["groups"]
     result = []
+    held = set()
     for m in markets:
         g = groups.get(m["family"])
-        if not g or (m["family"] == "total" and D(m["line"]) != D(g["line"])):
+        if not g or (m["family"] == "total" and (D(m["line"]) != D(g["line"]) or D(m["line"]) != D("2.5"))):
             continue
         fee = shadow_market._fee(None, m, m["recorded_at"])
         for t in m["tokens"]:
             terms = ledger_terms._terms_with_fee(
                 None, m, t["token_id"], m["recorded_at"], None, fee
             )
+            reason = prospective_hold(terms)
+            if reason:
+                held.add(reason)
+                continue
             p = watch.normal_p(model["with"], terms)
             other = watch.normal_p(model["without"], terms)
             fair = rules.fair_values(p, terms)[0]
-            robust = min(fair, rules.fair_values(other, terms)[0])
+            adjusted = calibrated(model["without"], terms)
+            robust = min(fair, rules.fair_values(adjusted, terms)[0])
             ext = g["probabilities"][
                 m["side"] if m["family"] == "moneyline" else terms["side"]
             ]
@@ -386,6 +389,7 @@ def possibilities(f, model, book, markets):
                     "terms": terms,
                     "model_probability": p,
                     "no_news_probability": other,
+                    "calibrated_no_news_probability": adjusted,
                     "fair": fair,
                     "robust": robust,
                     "external_probability": ext,
@@ -394,6 +398,8 @@ def possibilities(f, model, book, markets):
                     "odds": g["prices"],
                 }
             )
+    if not result and held:
+        raise ValueError("pending_prospective_evidence:" + ",".join(sorted(held)))
     require(result, "no_contract_matches_the_external_market")
     return result
 
@@ -427,7 +433,7 @@ def title(f, m, t):
     return f["home"] + " vs " + f["away"] + " · " + selection
 
 
-def evaluate(f, model, book, r, first, second, account, calibration):
+def evaluate(f, model, book, r, first, second, account):
     m, t, fee = r["market"], r["token"], r["fee"]
     token = t["token_id"]
     views = [watch.inspect_book(b[token]) for b in (first, second)]
@@ -441,21 +447,6 @@ def evaluate(f, model, book, r, first, second, account, calibration):
     tick = max(z["tick"] for z in q)
     minimum = max(z["min_size"] for z in q)
     quantity = max(minimum, COMPARISON_SHARES)
-    contract_side = t["outcome"].casefold()
-    variable = (
-        m["side"]
-        if m["family"] == "moneyline"
-        else format(D(m["line"]).normalize(), "f")
-    )
-    decile = min(9, int(r["no_news_probability"] * 10))
-    bin_key = f"{m['family']}.{variable}.{contract_side}.{decile}"
-    history = calibration["leagues"][f["league"]]["bins"].get(bin_key)
-    require(
-        history and history["adjusted_ci"] is not None,
-        "insufficient_holdout_calibration_for_direction",
-    )
-    if history["adjusted_ci"][1] < 0:
-        return None
     if any(
         z["spread"] > rules.MAX_SPREAD
         or max(abs(z["mid"] - r["fair"]), abs(z["mid"] - r["robust"])) > rules.MAX_GAP
@@ -530,12 +521,8 @@ def evaluate(f, model, book, r, first, second, account, calibration):
                 "injury_state", "see_production_news_facts"
             ),
             "news_coverage": model["info"].get("reported_news", {}).get("coverage", {}),
-            "calibration": {
-                "season": calibration["season"],
-                "bin": bin_key,
-                "source_report_sha256": calibration["source_report_sha256"],
-                **history,
-            },
+            "calibration": fit_evidence(r["terms"]),
+            "calibrated_no_news_probability": r["calibrated_no_news_probability"],
             "official_lineups_confirmed": model["lineups"],
             "bookmaker": {
                 **book["receipt"],
@@ -627,17 +614,6 @@ def fresh_account(now):
 
 def run(start):
     end = stamp(store.instant(start) + timedelta(days=7))
-    calibration = read(HERE / "calibration.json")
-    require(
-        calibration["source_report_sha256"]
-        == sha(
-            (
-                HERE.parents[2] / "reports/five-leagues-0.5.0a2/baseline-study.json"
-            ).read_bytes()
-        )
-        and set(calibration["leagues"]) == set(LEAGUES),
-        "historical_calibration_does_not_match_published_study",
-    )
     gaps = []
     stages = {}
     fixtures = {}
@@ -683,7 +659,7 @@ def run(start):
     pins = {
         k: v
         for k, v in prev.get("published_fixtures", {}).items()
-        if v["kickoff"] > start and prev.get("policy_id") == FEED_POLICY
+        if v["kickoff"] > start and prev.get("policy_id") in PIN_POLICIES
     }
     models = {}
     index = {}
@@ -741,6 +717,9 @@ def run(start):
             for data_family, reason in book["gaps"].items():
                 gap(f, "bookmaker_" + data_family, reason)
                 gaps_by_fixture[slug].append("bookmaker_" + data_family)
+            if any(m["family"] == "total" and D(m["line"]) != D("2.5") for m in markets[slug]):
+                gap(f, "calibration", "only_full_game_total_2.5_calibrated")
+                gaps_by_fixture[slug].append("calibration")
             rows = possibilities(f, models[slug], book, markets[slug])
             candidates[slug] = rows
             for r in rows:
@@ -764,7 +743,6 @@ def run(start):
         state = stages[slug]
         f = fixtures[slug]
         failures = set()
-        calibration_gaps = set()
         pin = pins.get(f["forecast_fixture_id"])
         pinned = pin and pin["token_id"]
         if pinned and all(r["token"]["token_id"] != pinned for r in rows):
@@ -801,20 +779,13 @@ def run(start):
                     first,
                     second,
                     account,
-                    calibration,
                 )
                 evaluated.add(slug)
                 attempted[slug] += 1
                 if row:
                     passed[slug].append((row, r))
             except ERRORS as exc:
-                if str(exc) == "insufficient_holdout_calibration_for_direction":
-                    calibration_gaps.add(str(exc))
-                else:
-                    failures.add(str(exc))
-        if calibration_gaps:
-            gap(f, "holdout_calibration", " / ".join(sorted(calibration_gaps)))
-            gaps_by_fixture[slug].append("holdout_calibration")
+                failures.add(str(exc))
         if failures:
             gap(f, "CLOB_books", " / ".join(sorted(map(str, failures))))
             gaps_by_fixture[slug].append("CLOB_books")
@@ -917,6 +888,7 @@ def run(start):
         "recommendations": choices,
         "published_fixtures": pins,
         "coverage": {
+            "directions_pending_prospective_evidence": HELD_DIRECTIONS,
             "scheduled_leagues": sorted(closed_leagues),
             "scheduled": dict(Counter(f["league"] for f in fixtures.values())),
             "scheduled_fixtures": len(fixtures),
@@ -987,9 +959,10 @@ def main():
                 "valid_until": now,
                 "recommendations": [],
                 "published_fixtures": previous.get("published_fixtures", {})
-                if previous.get("policy_id") == FEED_POLICY
+                if previous.get("policy_id") in PIN_POLICIES
                 else {},
                 "coverage": {
+                    "directions_pending_prospective_evidence": HELD_DIRECTIONS,
                     "verified_fixtures": [],
                     "fixture_results": [],
                     "gaps": [gaps_row(None, None, "run", str(exc))],

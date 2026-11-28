@@ -1,0 +1,11 @@
+[Unit]
+Description=Check NBA research service health periodically
+
+[Timer]
+OnStartupSec=3min
+OnUnitActiveSec=1min
+AccuracySec=1s
+Unit=polymarket861-nba-watchdog.service
+
+[Install]
+WantedBy=timers.target

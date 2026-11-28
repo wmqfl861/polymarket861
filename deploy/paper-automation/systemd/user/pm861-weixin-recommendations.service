@@ -1,5 +1,5 @@
 [Unit]
-Description=Deliver changed paper recommendations through local Hermes Weixin
+Description=Deliver newly filled paper positions through local Hermes Weixin
 After=network-online.target
 
 [Service]

@@ -1,0 +1,16 @@
+{
+  "expected_modern": 6150,
+  "verified_modern": 6150,
+  "warmup": 1080,
+  "team_seasons_verified": 180,
+  "team_date_duplicates": 0,
+  "correction_rows": 156,
+  "withdrawn_baseline_rows": 1,
+  "withheld_candidate_keys": 16,
+  "canonical_final_facts_sha256": "403506b8029c1126a9096b34a70de46a2e0af2947fef9f648fce142cf8cb0b89",
+  "baseline_source_sha256": {
+    "agreed-finals.csv": "7b00f0c4ee3b47e1b8642033688381593dbe9064ff50eef4a167a039cceb3694",
+    "withheld.json": "7b4cc257adbccdb9047650c9c82defb287b15e236e6d065bb9311a6ff8bcba59",
+    "wikipedia-revisions.json": "0ee7469f2f0126b9b9a4585abfbf8dbbaec5255f5b75b68b1f79575fc8d65568"
+  }
+}

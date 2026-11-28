@@ -1,0 +1,36 @@
+{
+  "on_time": {
+    "verified": true,
+    "state": "verified",
+    "observed_at": "2026-11-26T14:04:30.200000Z",
+    "check": {
+      "state": "pass",
+      "examples": [
+        {
+          "game_id": "bdl:739946",
+          "home": "bdl:2",
+          "away": "bdl:11",
+          "previous_kickoff": "2026-11-26T21:15:00.000000Z",
+          "kickoff": "2026-11-26T23:00:00.000000Z",
+          "before_received_at": "2026-11-26T14:00:00.000000Z",
+          "before_available_at": "2026-11-26T14:00:30.040000Z",
+          "after_received_at": "2026-11-26T14:02:30.040000Z",
+          "after_available_at": "2026-11-26T14:03:00.080000Z",
+          "before_sha256": "72795848bd0ab6a56356b3012c891569e143877a3b91048ba68872d932d13c44",
+          "after_sha256": "568eaebd7efd2145ce10c24a5fe56157b7fd33fc84c56a58615f7f99cf7d5265"
+        }
+      ]
+    },
+    "source_state": "ok"
+  },
+  "after_both_tips": {
+    "verified": false,
+    "state": "needs_observation",
+    "observed_at": "2026-11-26T14:04:30.200000Z",
+    "check": {
+      "state": "not_observed",
+      "examples": []
+    },
+    "source_state": "ok"
+  }
+}

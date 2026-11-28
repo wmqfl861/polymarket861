@@ -1,0 +1,54 @@
+polymarket861 0.5.0a4 (main 60c1a2d; wheel 6844caf) — environment and checks, 2026-11-27T14:13Z–15:10Z
+
+== Python 3.11
+3.11.18 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+Ran 804 tests in 362.560s OK
+skipped: 0
+== Python 3.12
+3.12.3 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+Ran 804 tests in 359.930s OK
+skipped: 0
+== Python 3.13
+3.13.18 numpy 2.3.5 scipy 1.17.0 httpx 0.28.1
+Ran 804 tests in 338.674s OK
+skipped: 0
+
+== CI steps on Python 3.12 (worktree at 60c1a2d)
+check_league_boundaries.py exit=0
+check_recipe_references.py exit=0
+ruff check src tests scripts: All checks passed!
+mypy --strict (blob_storage, score_bounds, experiment_statistics): Success: no issues found in 3 source files
+
+== Recipe identity (scripts/check_recipe_identity.py), identical on Python 3.11, 3.12, 3.13: compare exit=0
+/python = 3.12.3
+/numeric_runtime/numpy = 2.3.5
+/numeric_runtime/scipy = 1.17.0
+/package_files_sha256 = 8844b60049fde78c15aaa24d9282fd386d9c3aee032e374976b58abe1913ea47
+/recipes/B0/primary = a44b114c206329c5676c5346ae517bab7bd44a0fe39be28c30945667b5ecb5d2
+/recipes/B0/paired = 9bcaa1696d2aea315eaa7fc05949aa7e35e863b723ff370798508177286ebfbf
+/recipes/B0/probability_source = 0754acd26a992a667eace0f2b3f454646ddb7b782ad76a9672bac9bc6a9404ed
+/recipes/B0/frozen_feature_source = 4e89bbe25e3a8a80279bddd30a21fe817ecfe128f30c0000f563e380eb6d4a8e
+/recipes/B1/primary = e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a
+/recipes/B1/paired = 1bdb51149d1097eb9b63175c8314bbd7c3098ca7ff31a95d683d933b0fc456c4
+/recipes/B1/probability_source = 0754acd26a992a667eace0f2b3f454646ddb7b782ad76a9672bac9bc6a9404ed
+/recipes/B1/frozen_feature_source = 4e89bbe25e3a8a80279bddd30a21fe817ecfe128f30c0000f563e380eb6d4a8e
+/recipes/B2/primary = ca6b1286ad703b07f1a89808ebc7b32f95b466ad3b5d87dab7ef65e15398d6f4
+/recipes/B2/paired = d20bdab15c8e7bce0d915402ee343e08764834e226249e92486057196f2b220a
+/recipes/B2/probability_source = 0754acd26a992a667eace0f2b3f454646ddb7b782ad76a9672bac9bc6a9404ed
+/recipes/B2/frozen_feature_source = 4e89bbe25e3a8a80279bddd30a21fe817ecfe128f30c0000f563e380eb6d4a8e
+/recipes/B3/primary = fd6807922bd7a5bff91125dba0d26e22470891d3d5f3fff29044d95543c8ea14
+/recipes/B3/paired = fd6807922bd7a5bff91125dba0d26e22470891d3d5f3fff29044d95543c8ea14
+/recipes/B3/probability_source = 0754acd26a992a667eace0f2b3f454646ddb7b782ad76a9672bac9bc6a9404ed
+/recipes/B3/frozen_feature_source = 4e89bbe25e3a8a80279bddd30a21fe817ecfe128f30c0000f563e380eb6d4a8e
+
+== B1 primary recipe by release (Python 3.12)
+0.5.0a3+fiveauto.1 (c613a70)  8dc2c6c274f3d06b11687703dd6e603db45f7cf92337d9933a71429df5a205b1
+0.5.0a4 (6844caf, 60c1a2d)    e5219639e5c17172cc29b75ba9645c4f9316663c9d71bbace1c7d1c7c8fcec4a
+
+== GitHub Actions (gh api repos/.../actions/runs), workflow 'Football regression'
+0c3534a  plan/nba-pregame-20261127  pull_request  success  2026-11-27T13:35:56Z  run 46008497614
+0c3534a  plan/nba-pregame-20261127  push  success  2026-11-27T13:35:53Z  run 46008492278
+60c1a2d  main  push  success  2026-11-27T13:27:20Z  run 46007246936
+6844caf  main  push  success  2026-11-27T06:48:30Z  run 45954236335
+6844caf  release/0.5.0a4  push  success  2026-11-27T06:48:29Z  run 45954234933
+910e6f0  release/0.5.0a4  push  success  2026-11-27T06:40:51Z  run 45953404817

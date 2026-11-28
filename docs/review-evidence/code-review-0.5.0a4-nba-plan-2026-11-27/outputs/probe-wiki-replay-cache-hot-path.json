@@ -1,0 +1,35 @@
+{
+ "package_version": "0.5.0a4",
+ "python": "3.12.3",
+ "scheduler_tick_seconds": 30,
+ "leagues": {
+  "bun": {
+   "stored_revisions": 2000,
+   "cold_seconds": 1.3831,
+   "hot_seconds_median_of_5": 0.004,
+   "after_one_appended_revision_seconds": 0.0102,
+   "hot_again_seconds": 0.005,
+   "revisions_returned": [
+    2000,
+    2000,
+    2001
+   ],
+   "hot_result_equals_cold_result": true,
+   "appended_result_extends_cold_result": true
+  },
+  "sea": {
+   "stored_revisions": 2000,
+   "cold_seconds": 4.2941,
+   "hot_seconds_median_of_5": 0.0033,
+   "after_one_appended_revision_seconds": 0.0172,
+   "hot_again_seconds": 0.0046,
+   "revisions_returned": [
+    2000,
+    2000,
+    2001
+   ],
+   "hot_result_equals_cold_result": true,
+   "appended_result_extends_cold_result": true
+  }
+ }
+}

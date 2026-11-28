@@ -1,0 +1,11 @@
+[Unit]
+Description=Check first NBA tip for due source-probe windows
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+AccuracySec=1s
+Persistent=true
+Unit=polymarket861-nba-sources.service
+
+[Install]
+WantedBy=timers.target

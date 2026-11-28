@@ -1,0 +1,1442 @@
+[
+ {
+  "year": 2020,
+  "team": "ATL",
+  "title": "2020–21 Atlanta Hawks season",
+  "revision": 1386501878,
+  "timestamp": "2026-11-18T22:18:12Z",
+  "sha256": "d3c07e0cfe36ea6740fb1cad10afa4ef42867756a28cbf9dd86f647be434f336"
+ },
+ {
+  "year": 2020,
+  "team": "BOS",
+  "title": "2020–21 Boston Celtics season",
+  "revision": 1356876964,
+  "timestamp": "2026-05-30T11:17:40Z",
+  "sha256": "9a91482bdfd368eaa1ae97a36f8e5df3a975f4c7852bbdab0dd066b677467c03"
+ },
+ {
+  "year": 2020,
+  "team": "BKN",
+  "title": "2020–21 Brooklyn Nets season",
+  "revision": 1387374511,
+  "timestamp": "2026-11-23T18:01:20Z",
+  "sha256": "d4aa4c420a82f8c321de8cd55fc7973e3d9e6c399af0c6e44a32a6589ba25e51"
+ },
+ {
+  "year": 2020,
+  "team": "CHA",
+  "title": "2020–21 Charlotte Hornets season",
+  "revision": 1356876983,
+  "timestamp": "2026-05-30T11:17:51Z",
+  "sha256": "959d13293cff6b62b2496db1edfa3c0ee72be9de92157b4fc3692d37fcb57194"
+ },
+ {
+  "year": 2020,
+  "team": "CHI",
+  "title": "2020–21 Chicago Bulls season",
+  "revision": 1381871742,
+  "timestamp": "2026-10-25T09:09:16Z",
+  "sha256": "71813b75f94b512a03ed73e18223184e23b20c106d1e39e3af5db620878d4719"
+ },
+ {
+  "year": 2020,
+  "team": "CLE",
+  "title": "2020–21 Cleveland Cavaliers season",
+  "revision": 1356876994,
+  "timestamp": "2026-05-30T11:17:58Z",
+  "sha256": "ba20641b5c2b4712f6a7bd84819d40bf28db7266e3cf40e92bc5baab56650432"
+ },
+ {
+  "year": 2020,
+  "team": "DAL",
+  "title": "2020–21 Dallas Mavericks season",
+  "revision": 1356877000,
+  "timestamp": "2026-05-30T11:18:03Z",
+  "sha256": "aecd2c52470ef18e8fae1bf59e8aee7d83be6a035332992c84f201877006d0a8"
+ },
+ {
+  "year": 2020,
+  "team": "DEN",
+  "title": "2020–21 Denver Nuggets season",
+  "revision": 1375746251,
+  "timestamp": "2026-09-19T20:14:48Z",
+  "sha256": "fd16aeea714092c207d17b96d7d6edf12852ea1445e78c609280df31abec3bb6"
+ },
+ {
+  "year": 2020,
+  "team": "DET",
+  "title": "2020–21 Detroit Pistons season",
+  "revision": 1387374525,
+  "timestamp": "2026-11-23T18:01:24Z",
+  "sha256": "d2b0476a1daeaf335b9153b1994c34937692c7c9d98c3f3cc99349ed5ad20fe8"
+ },
+ {
+  "year": 2020,
+  "team": "GSW",
+  "title": "2020–21 Golden State Warriors season",
+  "revision": 1356877033,
+  "timestamp": "2026-05-30T11:18:17Z",
+  "sha256": "63ac450bdd304927c5dbeefdb20cc2e8cbbbff6259165433ada0559b014f7969"
+ },
+ {
+  "year": 2020,
+  "team": "HOU",
+  "title": "2020–21 Houston Rockets season",
+  "revision": 1386223555,
+  "timestamp": "2026-11-17T09:41:23Z",
+  "sha256": "87c82f00296f5b7dcd3644d64b962a1fb8da063b84c6af7b9150c9954d77877c"
+ },
+ {
+  "year": 2020,
+  "team": "IND",
+  "title": "2020–21 Indiana Pacers season",
+  "revision": 1381148610,
+  "timestamp": "2026-10-20T08:21:02Z",
+  "sha256": "bab1e9ab767d19830ff561b56bfe0690784bb78466b09636fa8459024446fed7"
+ },
+ {
+  "year": 2020,
+  "team": "LAC",
+  "title": "2020–21 Los Angeles Clippers season",
+  "revision": 1356877050,
+  "timestamp": "2026-05-30T11:18:28Z",
+  "sha256": "00f1a32dcd2876881322e6a2c7457efc22b269d4755adec0000263116cf53c37"
+ },
+ {
+  "year": 2020,
+  "team": "LAL",
+  "title": "2020–21 Los Angeles Lakers season",
+  "revision": 1356877065,
+  "timestamp": "2026-05-30T11:18:38Z",
+  "sha256": "13cd38a73b0cfaa29c9f8e3045edc7418f9d7177fe0771868cb613ef118b6c2d"
+ },
+ {
+  "year": 2020,
+  "team": "MEM",
+  "title": "2020–21 Memphis Grizzlies season",
+  "revision": 1365863598,
+  "timestamp": "2026-07-24T21:59:30Z",
+  "sha256": "da6ac3c917b61f1e1faa0c8704d1713827f0fa401c3b68d4149c7adbf0e7ba63"
+ },
+ {
+  "year": 2020,
+  "team": "MIA",
+  "title": "2020–21 Miami Heat season",
+  "revision": 1341746970,
+  "timestamp": "2026-03-04T20:51:53Z",
+  "sha256": "630147606578ea8b005a08fd1e29b29942eeea7d4e6ca46a40604d6ea5962c52"
+ },
+ {
+  "year": 2020,
+  "team": "MIL",
+  "title": "2020–21 Milwaukee Bucks season",
+  "revision": 1375789503,
+  "timestamp": "2026-09-20T02:17:10Z",
+  "sha256": "e4dade5ad42724c33720953f8f5590849b034f9c10b1223174e112e28c2a1538"
+ },
+ {
+  "year": 2020,
+  "team": "MIN",
+  "title": "2020–21 Minnesota Timberwolves season",
+  "revision": 1358353141,
+  "timestamp": "2026-06-08T04:19:10Z",
+  "sha256": "934639efab53126c42206f7f9aa20ad002adec92ba9c2d2daeabba1fc42eb908"
+ },
+ {
+  "year": 2020,
+  "team": "NOP",
+  "title": "2020–21 New Orleans Pelicans season",
+  "revision": 1356877091,
+  "timestamp": "2026-05-30T11:18:57Z",
+  "sha256": "b96330f7929bda81babaa8f49189500a65cb7f20081bec0ad0c320ae5c4c7eb9"
+ },
+ {
+  "year": 2020,
+  "team": "NYK",
+  "title": "2020–21 New York Knicks season",
+  "revision": 1382362888,
+  "timestamp": "2026-10-28T08:53:36Z",
+  "sha256": "baf263792b065675a31ba1b9b993339d8187f89d959307c684ea52a39fa3e16a"
+ },
+ {
+  "year": 2020,
+  "team": "OKC",
+  "title": "2020–21 Oklahoma City Thunder season",
+  "revision": 1386502040,
+  "timestamp": "2026-11-18T22:19:00Z",
+  "sha256": "90d3b60d6e428af74454e27edfe769eba71ca3750a8a36d4d4a7a43eb2a15dee"
+ },
+ {
+  "year": 2020,
+  "team": "ORL",
+  "title": "2020–21 Orlando Magic season",
+  "revision": 1380974610,
+  "timestamp": "2026-10-19T04:51:45Z",
+  "sha256": "f1d9d708a8e4ed037ac7a2505a6a1e7c9001f267f687ef024babb4a9168cc33f"
+ },
+ {
+  "year": 2020,
+  "team": "PHI",
+  "title": "2020–21 Philadelphia 76ers season",
+  "revision": 1386502051,
+  "timestamp": "2026-11-18T22:19:04Z",
+  "sha256": "ce2ffccc20e2185f275ad31cd97d7b796e49b01987880c7103f2abe148488af9"
+ },
+ {
+  "year": 2020,
+  "team": "PHX",
+  "title": "2020–21 Phoenix Suns season",
+  "revision": 1357152269,
+  "timestamp": "2026-06-01T01:29:53Z",
+  "sha256": "d5dafcb5b5788333a6258b7d64875ad27b88c8239775c29424e69165f2e48a55"
+ },
+ {
+  "year": 2020,
+  "team": "POR",
+  "title": "2020–21 Portland Trail Blazers season",
+  "revision": 1356877149,
+  "timestamp": "2026-05-30T11:19:22Z",
+  "sha256": "d4be34a3c976b6978b7c54948e501fd68c101b71595a8d11a25cef2b41f6b0da"
+ },
+ {
+  "year": 2020,
+  "team": "SAC",
+  "title": "2020–21 Sacramento Kings season",
+  "revision": 1356877161,
+  "timestamp": "2026-05-30T11:19:26Z",
+  "sha256": "942bbaeb48c698c832c925e4f98b9d888f9553bfe72b43dda7b209c899baf849"
+ },
+ {
+  "year": 2020,
+  "team": "SAS",
+  "title": "2020–21 San Antonio Spurs season",
+  "revision": 1356877200,
+  "timestamp": "2026-05-30T11:19:50Z",
+  "sha256": "87127e0d53de2a78156fade7bc6ed5b1dc059b1601b18b8b29f6947b7898047c"
+ },
+ {
+  "year": 2020,
+  "team": "TOR",
+  "title": "2020–21 Toronto Raptors season",
+  "revision": 1358255129,
+  "timestamp": "2026-06-07T15:54:54Z",
+  "sha256": "88bc7cb4901efba41016f778bec5599f06f73d5cce6a5e5a786f2e3c873786dd"
+ },
+ {
+  "year": 2020,
+  "team": "UTA",
+  "title": "2020–21 Utah Jazz season",
+  "revision": 1356877215,
+  "timestamp": "2026-05-30T11:19:59Z",
+  "sha256": "ade608f4727ec4fef451821d11cb956cd15b844b6bf2b2732eb9430f4038d417"
+ },
+ {
+  "year": 2020,
+  "team": "WAS",
+  "title": "2020–21 Washington Wizards season",
+  "revision": 1387855379,
+  "timestamp": "2026-11-25T19:30:48Z",
+  "sha256": "2b5baeff3b009d2875064a21b7bb5a37c74f9c30826b031e60496a308d709470"
+ },
+ {
+  "year": 2021,
+  "team": "ATL",
+  "title": "2021–22 Atlanta Hawks season",
+  "revision": 1383585112,
+  "timestamp": "2026-11-03T14:26:50Z",
+  "sha256": "d475bd0d6235c2d2369888d160bfd0779e6ea4d3b46a07a50b91aae8299f0433"
+ },
+ {
+  "year": 2021,
+  "team": "BOS",
+  "title": "2021–22 Boston Celtics season",
+  "revision": 1386503279,
+  "timestamp": "2026-11-18T22:26:07Z",
+  "sha256": "e08ee08adb8c417fe10d37e2310843b58d631b9d4621bf3c110828f429b7a615"
+ },
+ {
+  "year": 2021,
+  "team": "BKN",
+  "title": "2021–22 Brooklyn Nets season",
+  "revision": 1358706998,
+  "timestamp": "2026-06-10T12:06:45Z",
+  "sha256": "4170f63151aecfee41727ee5846c436a8bd24278635f3cb0208e682b78031152"
+ },
+ {
+  "year": 2021,
+  "team": "CHA",
+  "title": "2021–22 Charlotte Hornets season",
+  "revision": 1360219180,
+  "timestamp": "2026-06-20T00:39:29Z",
+  "sha256": "845db1dacd41947b37f6990ba845537e6fbe163c79938a040c465e79671fc198"
+ },
+ {
+  "year": 2021,
+  "team": "CHI",
+  "title": "2021–22 Chicago Bulls season",
+  "revision": 1364273136,
+  "timestamp": "2026-07-15T15:53:35Z",
+  "sha256": "2c82867ba59af06e6fbba262364bb955754cae9006a78b72fa13d84e3e79cb3f"
+ },
+ {
+  "year": 2021,
+  "team": "CLE",
+  "title": "2021–22 Cleveland Cavaliers season",
+  "revision": 1360219708,
+  "timestamp": "2026-06-20T00:43:52Z",
+  "sha256": "72a27428dd43a92852f02031e0e0cd5fd38657824b14a7e9aa6ac0f22d0bf407"
+ },
+ {
+  "year": 2021,
+  "team": "DAL",
+  "title": "2021–22 Dallas Mavericks season",
+  "revision": 1385143731,
+  "timestamp": "2026-11-12T02:47:57Z",
+  "sha256": "612fbd499e2f857ae70b7b2ead7022ab29f968b6630684c7ad1cbd58bc625840"
+ },
+ {
+  "year": 2021,
+  "team": "DEN",
+  "title": "2021–22 Denver Nuggets season",
+  "revision": 1386503325,
+  "timestamp": "2026-11-18T22:26:22Z",
+  "sha256": "11135715e75caabe041f1e87763c5ccd2d122b03d10ab2913524fcb526860f25"
+ },
+ {
+  "year": 2021,
+  "team": "DET",
+  "title": "2021–22 Detroit Pistons season",
+  "revision": 1360223285,
+  "timestamp": "2026-06-20T01:15:22Z",
+  "sha256": "6af2344c3d24ba520e757be736c32930ea404b33309fb883870d8cb49ddf199d"
+ },
+ {
+  "year": 2021,
+  "team": "GSW",
+  "title": "2021–22 Golden State Warriors season",
+  "revision": 1386503358,
+  "timestamp": "2026-11-18T22:26:33Z",
+  "sha256": "5395c3428c06c0949c9cf245c0d9eb932fde48290665fd26a3300839380ee762"
+ },
+ {
+  "year": 2021,
+  "team": "HOU",
+  "title": "2021–22 Houston Rockets season",
+  "revision": 1366978568,
+  "timestamp": "2026-07-31T05:21:31Z",
+  "sha256": "9e5fa1b2b071b34a799e622c76d88cb7386448dbacb275866c52d8f4b7e47e59"
+ },
+ {
+  "year": 2021,
+  "team": "IND",
+  "title": "2021–22 Indiana Pacers season",
+  "revision": 1381151836,
+  "timestamp": "2026-10-20T08:58:54Z",
+  "sha256": "af8dd8abd653c66566f7c3122e8c0c615cfefbfec53b07a0e67cbb5e2c67666a"
+ },
+ {
+  "year": 2021,
+  "team": "LAC",
+  "title": "2021–22 Los Angeles Clippers season",
+  "revision": 1380659138,
+  "timestamp": "2026-10-17T03:02:38Z",
+  "sha256": "bfb24cc143da33d1a63a82e4e0fab74caae7fba07f8891be6c0fa13cf44caf31"
+ },
+ {
+  "year": 2021,
+  "team": "LAL",
+  "title": "2021–22 Los Angeles Lakers season",
+  "revision": 1386503377,
+  "timestamp": "2026-11-18T22:26:39Z",
+  "sha256": "e68b1e89928d35ef85f24162e86eaa4bbe15d5d7c34ea621304ee9f15e29f842"
+ },
+ {
+  "year": 2021,
+  "team": "MEM",
+  "title": "2021–22 Memphis Grizzlies season",
+  "revision": 1387951405,
+  "timestamp": "2026-11-26T03:57:47Z",
+  "sha256": "2d2f4d1f1f1fa3848d2fd7fba8c5dcc30d19d35e528590109a7ce717c4f04e1b"
+ },
+ {
+  "year": 2021,
+  "team": "MIA",
+  "title": "2021–22 Miami Heat season",
+  "revision": 1371466968,
+  "timestamp": "2026-08-26T16:29:11Z",
+  "sha256": "ca065cada60969c119eb878a741da629c1be88e7a30ffbea25d5487334003a8a"
+ },
+ {
+  "year": 2021,
+  "team": "MIL",
+  "title": "2021–22 Milwaukee Bucks season",
+  "revision": 1360222464,
+  "timestamp": "2026-06-20T01:09:42Z",
+  "sha256": "c387386980ef6302f235197e14bb365c40235b242ab1f77f79e2aec7badcd727"
+ },
+ {
+  "year": 2021,
+  "team": "MIN",
+  "title": "2021–22 Minnesota Timberwolves season",
+  "revision": 1364835157,
+  "timestamp": "2026-07-18T20:11:12Z",
+  "sha256": "b569ae65cafa61c8a7897503821c5bbd10dcf903e507a3107e252f484b98029b"
+ },
+ {
+  "year": 2021,
+  "team": "NOP",
+  "title": "2021–22 New Orleans Pelicans season",
+  "revision": 1356877409,
+  "timestamp": "2026-05-30T11:21:44Z",
+  "sha256": "e72d4a8ac059e3cbf8e4ee2cb4da52b3288b11e9f627a9b51b3511855b706cbb"
+ },
+ {
+  "year": 2021,
+  "team": "NYK",
+  "title": "2021–22 New York Knicks season",
+  "revision": 1359301581,
+  "timestamp": "2026-06-14T13:35:31Z",
+  "sha256": "68a8fb055f6e0ad14bf8e22c7ec597ac4c34a231b33c063ab3293e0c692a256f"
+ },
+ {
+  "year": 2021,
+  "team": "OKC",
+  "title": "2021–22 Oklahoma City Thunder season",
+  "revision": 1381859180,
+  "timestamp": "2026-10-25T06:48:17Z",
+  "sha256": "97c87edfb51cf432ec1fdee125551bb85b594590d2ed2e63582bea7a982a56bf"
+ },
+ {
+  "year": 2021,
+  "team": "ORL",
+  "title": "2021–22 Orlando Magic season",
+  "revision": 1359986123,
+  "timestamp": "2026-06-18T14:15:26Z",
+  "sha256": "e01ad7a09ed82c24140de2852224afbc31f019e26f15bdbaf2084322636c16d5"
+ },
+ {
+  "year": 2021,
+  "team": "PHI",
+  "title": "2021–22 Philadelphia 76ers season",
+  "revision": 1386503472,
+  "timestamp": "2026-11-18T22:27:10Z",
+  "sha256": "3d2766b5d3f3bfea808e6b3cbffd0f8efa11c0e173af91b8b1e59e7d9e8ff961"
+ },
+ {
+  "year": 2021,
+  "team": "PHX",
+  "title": "2021–22 Phoenix Suns season",
+  "revision": 1360220547,
+  "timestamp": "2026-06-20T00:50:16Z",
+  "sha256": "6305651aad983c02b90c36361d7aff1a06b9bc9e682066553e77d461663a76af"
+ },
+ {
+  "year": 2021,
+  "team": "POR",
+  "title": "2021–22 Portland Trail Blazers season",
+  "revision": 1360220853,
+  "timestamp": "2026-06-20T00:53:06Z",
+  "sha256": "3d02ad3f1f9b8f1f533279425414b4df0f9f41c435facd0044089d17d1bfb79f"
+ },
+ {
+  "year": 2021,
+  "team": "SAC",
+  "title": "2021–22 Sacramento Kings season",
+  "revision": 1371449301,
+  "timestamp": "2026-08-26T14:20:35Z",
+  "sha256": "e4fb5a928fe3d21fdac5e496848accc32b3e380b1a69558d28f3c1a00b2dc523"
+ },
+ {
+  "year": 2021,
+  "team": "SAS",
+  "title": "2021–22 San Antonio Spurs season",
+  "revision": 1360221330,
+  "timestamp": "2026-06-20T00:57:51Z",
+  "sha256": "a22829b0a59fa50ec9d9893a95350a9e965e7bc3276f9533aeffa7d1a74bcb6b"
+ },
+ {
+  "year": 2021,
+  "team": "TOR",
+  "title": "2021–22 Toronto Raptors season",
+  "revision": 1360222974,
+  "timestamp": "2026-06-20T01:12:51Z",
+  "sha256": "16a61ec972876aa65a00be9d4ee6c7dfa44e2d2a59b5397e7e90ae822cb5196e"
+ },
+ {
+  "year": 2021,
+  "team": "UTA",
+  "title": "2021–22 Utah Jazz season",
+  "revision": 1360221005,
+  "timestamp": "2026-06-20T00:54:37Z",
+  "sha256": "88ed286a47a6e4f9f7c637b6e45fc11b3c09ba26a126caa36111591647701d79"
+ },
+ {
+  "year": 2021,
+  "team": "WAS",
+  "title": "2021–22 Washington Wizards season",
+  "revision": 1386503533,
+  "timestamp": "2026-11-18T22:27:32Z",
+  "sha256": "76e9372924f556168c9505d6c4a72ea4f25dfa3460473acba0a69fff57f935fe"
+ },
+ {
+  "year": 2022,
+  "team": "ATL",
+  "title": "2022–23 Atlanta Hawks season",
+  "revision": 1357686353,
+  "timestamp": "2026-06-04T02:00:29Z",
+  "sha256": "2a081641f6e6ccd1c196b12bbe46f48bc5ddcf4bf882abebc8f07a702272dfb0"
+ },
+ {
+  "year": 2022,
+  "team": "BOS",
+  "title": "2022–23 Boston Celtics season",
+  "revision": 1357141113,
+  "timestamp": "2026-06-01T00:06:24Z",
+  "sha256": "023e6a637eeaf6313b9c5b2fd03d9e6f1daa319b6d3850cc81924c76f8380e98"
+ },
+ {
+  "year": 2022,
+  "team": "BKN",
+  "title": "2022–23 Brooklyn Nets season",
+  "revision": 1358982999,
+  "timestamp": "2026-06-12T08:05:41Z",
+  "sha256": "f5dea3a33c56ed4d2130fde470dc49dc0f6c6ef09943165984c15f3c0c157c31"
+ },
+ {
+  "year": 2022,
+  "team": "CHA",
+  "title": "2022–23 Charlotte Hornets season",
+  "revision": 1356877560,
+  "timestamp": "2026-05-30T11:23:12Z",
+  "sha256": "a8386937f203e45ae795f2e77ce644d679463955fec19d4d39584374e54c2c8c"
+ },
+ {
+  "year": 2022,
+  "team": "CHI",
+  "title": "2022–23 Chicago Bulls season",
+  "revision": 1358984007,
+  "timestamp": "2026-06-12T08:21:17Z",
+  "sha256": "a6edc8990599decd83001d2ff6058e34f97c93ad5c4dc86c0f7102468b299c22"
+ },
+ {
+  "year": 2022,
+  "team": "CLE",
+  "title": "2022–23 Cleveland Cavaliers season",
+  "revision": 1356366641,
+  "timestamp": "2026-05-27T09:21:09Z",
+  "sha256": "bd0c0a4248ee78bb021345ca92c2ee8db830f2f69c258ebcd5b5fbb660e27a0e"
+ },
+ {
+  "year": 2022,
+  "team": "DAL",
+  "title": "2022–23 Dallas Mavericks season",
+  "revision": 1356877569,
+  "timestamp": "2026-05-30T11:23:17Z",
+  "sha256": "031883f2108ca74a93a8f0fb7ef0929889f994d354b9705f1f14a74dbcf5c6c6"
+ },
+ {
+  "year": 2022,
+  "team": "DEN",
+  "title": "2022–23 Denver Nuggets season",
+  "revision": 1361582635,
+  "timestamp": "2026-06-28T21:48:46Z",
+  "sha256": "ed60e68f437cb90073813655bbf80c6f1ea52f84d8c0d8a8b18140718458d27a"
+ },
+ {
+  "year": 2022,
+  "team": "DET",
+  "title": "2022–23 Detroit Pistons season",
+  "revision": 1341747202,
+  "timestamp": "2026-03-04T20:53:23Z",
+  "sha256": "cd3e97bfab01dfa28fb247b9b3a66b0530f60deccb61c4ff13ca239dd01eda8c"
+ },
+ {
+  "year": 2022,
+  "team": "GSW",
+  "title": "2022–23 Golden State Warriors season",
+  "revision": 1359342059,
+  "timestamp": "2026-06-14T18:33:16Z",
+  "sha256": "73d82d4f3648dc0292edff68841423f91f7e6127f3fbe69b9a4ac398ed1bc2ba"
+ },
+ {
+  "year": 2022,
+  "team": "HOU",
+  "title": "2022–23 Houston Rockets season",
+  "revision": 1383583795,
+  "timestamp": "2026-11-03T14:16:27Z",
+  "sha256": "c7b7cd7a9bf6a402fa13e7c14a975da78dd900c05c9f9a2f88d20594a0b38156"
+ },
+ {
+  "year": 2022,
+  "team": "IND",
+  "title": "2022–23 Indiana Pacers season",
+  "revision": 1381151903,
+  "timestamp": "2026-10-20T08:59:34Z",
+  "sha256": "526193f53df3ebde92fd04c7f376b513d0e10099608f471e96b4a00bf7b01aad"
+ },
+ {
+  "year": 2022,
+  "team": "LAC",
+  "title": "2022–23 Los Angeles Clippers season",
+  "revision": 1355200182,
+  "timestamp": "2026-05-20T13:20:13Z",
+  "sha256": "c0ff5a5163ccc1b78cb2b6a5fc2ff255c220f25974ab56c536e90961ead803aa"
+ },
+ {
+  "year": 2022,
+  "team": "LAL",
+  "title": "2022–23 Los Angeles Lakers season",
+  "revision": 1358983801,
+  "timestamp": "2026-06-12T08:17:49Z",
+  "sha256": "8ffd9b30800849e6bebd8901dc1c70ef38f1fd075fc05369e9280423c88b8458"
+ },
+ {
+  "year": 2022,
+  "team": "MEM",
+  "title": "2022–23 Memphis Grizzlies season",
+  "revision": 1383158709,
+  "timestamp": "2026-11-01T07:50:48Z",
+  "sha256": "d6cd0dd9dc6662b6d09c97421f3836b904b543b44a2167e7085ba48b4c04502b"
+ },
+ {
+  "year": 2022,
+  "team": "MIA",
+  "title": "2022–23 Miami Heat season",
+  "revision": 1364396043,
+  "timestamp": "2026-07-16T07:34:09Z",
+  "sha256": "265860375856d136368b8aad396debfb86e9ef89e10448157393d6397edf6c8e"
+ },
+ {
+  "year": 2022,
+  "team": "MIL",
+  "title": "2022–23 Milwaukee Bucks season",
+  "revision": 1341747235,
+  "timestamp": "2026-03-04T20:53:38Z",
+  "sha256": "ee056e4c68f9f8ef8b4520eab6252904a34b04c9047952151a98d6809e59e343"
+ },
+ {
+  "year": 2022,
+  "team": "MIN",
+  "title": "2022–23 Minnesota Timberwolves season",
+  "revision": 1358352835,
+  "timestamp": "2026-06-08T04:15:27Z",
+  "sha256": "4203b50a5e46507b7826423a7d5f7c53eb4c01e2e4506af72f4a4b45f831822e"
+ },
+ {
+  "year": 2022,
+  "team": "NOP",
+  "title": "2022–23 New Orleans Pelicans season",
+  "revision": 1349375415,
+  "timestamp": "2026-04-17T01:40:39Z",
+  "sha256": "682d870f3b1db1562fbb4beb9c1359b95045eb78e6636269fec46f295f8842ef"
+ },
+ {
+  "year": 2022,
+  "team": "NYK",
+  "title": "2022–23 New York Knicks season",
+  "revision": 1359334609,
+  "timestamp": "2026-06-14T17:44:41Z",
+  "sha256": "66778df18c64f30efdb75dc3dcb26af9cf4cd811df606d400e45af203bcfd6b1"
+ },
+ {
+  "year": 2022,
+  "team": "OKC",
+  "title": "2022–23 Oklahoma City Thunder season",
+  "revision": 1381859070,
+  "timestamp": "2026-10-25T06:46:45Z",
+  "sha256": "87556e2d0ef7e08d5d658ef57424b26a6c103a0bd7ab925406091e2b28d428ef"
+ },
+ {
+  "year": 2022,
+  "team": "ORL",
+  "title": "2022–23 Orlando Magic season",
+  "revision": 1359986533,
+  "timestamp": "2026-06-18T14:19:33Z",
+  "sha256": "399d6365c85b5ddb3e8b5688ef88a2ca4d79d6a77ae1250a13dd93a5795dde12"
+ },
+ {
+  "year": 2022,
+  "team": "PHI",
+  "title": "2022–23 Philadelphia 76ers season",
+  "revision": 1388038346,
+  "timestamp": "2026-11-26T11:26:59Z",
+  "sha256": "d259c47a9b91d66055cae3eb629c0bb8971981964591100fcd8c285573082366"
+ },
+ {
+  "year": 2022,
+  "team": "PHX",
+  "title": "2022–23 Phoenix Suns season",
+  "revision": 1341747282,
+  "timestamp": "2026-03-04T20:53:52Z",
+  "sha256": "0b5d4efebe2bf71e69ff802a2f7b9ac783324c4203a7188e73858d2b78e5df12"
+ },
+ {
+  "year": 2022,
+  "team": "POR",
+  "title": "2022–23 Portland Trail Blazers season",
+  "revision": 1388112283,
+  "timestamp": "2026-11-26T17:25:05Z",
+  "sha256": "128e50a69ab3018669c9b449928287d1c12ed3de812bbdafff7f247f5da49fc5"
+ },
+ {
+  "year": 2022,
+  "team": "SAC",
+  "title": "2022–23 Sacramento Kings season",
+  "revision": 1374231322,
+  "timestamp": "2026-09-10T17:56:40Z",
+  "sha256": "a05002f4e779e762038201c66231b4437d8d00b8ff9fa5b74e99d48b8baafb9a"
+ },
+ {
+  "year": 2022,
+  "team": "SAS",
+  "title": "2022–23 San Antonio Spurs season",
+  "revision": 1383583526,
+  "timestamp": "2026-11-03T14:13:46Z",
+  "sha256": "3608479c18628750bf2b05705ee4d2f5b7aabea4cd057b4698acfa154cc4a194"
+ },
+ {
+  "year": 2022,
+  "team": "TOR",
+  "title": "2022–23 Toronto Raptors season",
+  "revision": 1383585419,
+  "timestamp": "2026-11-03T14:30:18Z",
+  "sha256": "3579980b12d4c9ea860fa5f972b079662528477474c21a3c1665386e2f35121c"
+ },
+ {
+  "year": 2022,
+  "team": "UTA",
+  "title": "2022–23 Utah Jazz season",
+  "revision": 1354360691,
+  "timestamp": "2026-05-15T23:03:03Z",
+  "sha256": "b17ca626f2fd954e0c3f3c8af98bcaac399d679a9db55060cf9945bba4e4223a"
+ },
+ {
+  "year": 2022,
+  "team": "WAS",
+  "title": "2022–23 Washington Wizards season",
+  "revision": 1386504822,
+  "timestamp": "2026-11-18T22:35:04Z",
+  "sha256": "bbcd808db066b9bcf2fc85b51d4335ae6f29b1ef38f2ce8009268348946c4d00"
+ },
+ {
+  "year": 2023,
+  "team": "ATL",
+  "title": "2023–24 Atlanta Hawks season",
+  "revision": 1368678513,
+  "timestamp": "2026-08-10T13:13:40Z",
+  "sha256": "dee145b8675f9595033d4b5d9efb66184a6e87c0782df3a01f5e1fa60118e64d"
+ },
+ {
+  "year": 2023,
+  "team": "BOS",
+  "title": "2023–24 Boston Celtics season",
+  "revision": 1364965269,
+  "timestamp": "2026-07-19T14:59:11Z",
+  "sha256": "0557ff7fa5ab8496bbb731935c21a1b1a93eb320e5cae7ccfd8033737dc7597c"
+ },
+ {
+  "year": 2023,
+  "team": "BKN",
+  "title": "2023–24 Brooklyn Nets season",
+  "revision": 1358707329,
+  "timestamp": "2026-06-10T12:10:54Z",
+  "sha256": "90c2dfe61e6739bae5ac93169782619a195f24c9726e8256d05a4ae2bacb7a5a"
+ },
+ {
+  "year": 2023,
+  "team": "CHA",
+  "title": "2023–24 Charlotte Hornets season",
+  "revision": 1382077767,
+  "timestamp": "2026-10-26T13:18:56Z",
+  "sha256": "27648484cb73b725f5e53cc58ae00b7ac04b064d7e1bfb316d42872b44f9e65f"
+ },
+ {
+  "year": 2023,
+  "team": "CHI",
+  "title": "2023–24 Chicago Bulls season",
+  "revision": 1356365642,
+  "timestamp": "2026-05-27T09:09:31Z",
+  "sha256": "c0cad987493174cdacd8fcfb3146782aa106e0721ae961c0eacd6d2008e5965d"
+ },
+ {
+  "year": 2023,
+  "team": "CLE",
+  "title": "2023–24 Cleveland Cavaliers season",
+  "revision": 1358219434,
+  "timestamp": "2026-06-07T09:53:54Z",
+  "sha256": "26a7ad00713f76955010cf20b1a8ff3f40f6af727362b27dd107d24ad2edd933"
+ },
+ {
+  "year": 2023,
+  "team": "DAL",
+  "title": "2023–24 Dallas Mavericks season",
+  "revision": 1356364972,
+  "timestamp": "2026-05-27T09:01:21Z",
+  "sha256": "0f5c86233b6653c147d230bdca808878df39a2561d936509185614c6b20b8c77"
+ },
+ {
+  "year": 2023,
+  "team": "DEN",
+  "title": "2023–24 Denver Nuggets season",
+  "revision": 1358234379,
+  "timestamp": "2026-06-07T12:39:40Z",
+  "sha256": "af59753215789ece3dba651ca035e169e5558d5490929e5e25a3e20f212cf49d"
+ },
+ {
+  "year": 2023,
+  "team": "DET",
+  "title": "2023–24 Detroit Pistons season",
+  "revision": 1352672239,
+  "timestamp": "2026-05-05T16:01:49Z",
+  "sha256": "dc3f19419754d4dbd341c435d8e4a2a83dd4c2e14a31d1c36bb7e8dead2273f0"
+ },
+ {
+  "year": 2023,
+  "team": "GSW",
+  "title": "2023–24 Golden State Warriors season",
+  "revision": 1358231333,
+  "timestamp": "2026-06-07T12:10:31Z",
+  "sha256": "cafb02e2de9a58bd0be934bba83c34a7db85b39f1f63b2c3776f6d1c157a1329"
+ },
+ {
+  "year": 2023,
+  "team": "HOU",
+  "title": "2023–24 Houston Rockets season",
+  "revision": 1366479268,
+  "timestamp": "2026-07-28T07:03:28Z",
+  "sha256": "9dcfc2d9ac2e0fa80501fa23fc644039b86b79f85d5eae902ba3bc101c6153f5"
+ },
+ {
+  "year": 2023,
+  "team": "IND",
+  "title": "2023–24 Indiana Pacers season",
+  "revision": 1387376568,
+  "timestamp": "2026-11-23T18:12:54Z",
+  "sha256": "951d0a72d90149e9853f5a1825dd3b94506da8fafc31c70de50a610259a8a175"
+ },
+ {
+  "year": 2023,
+  "team": "LAC",
+  "title": "2023–24 Los Angeles Clippers season",
+  "revision": 1379621081,
+  "timestamp": "2026-10-11T00:54:33Z",
+  "sha256": "eedd3c125075ec0b900376d23c447bb3cdacdea5ec082c8bc9f0ab901d58e390"
+ },
+ {
+  "year": 2023,
+  "team": "LAL",
+  "title": "2023–24 Los Angeles Lakers season",
+  "revision": 1358934092,
+  "timestamp": "2026-06-11T23:03:21Z",
+  "sha256": "286d567a2ccc29352f4165be27dc86ec873f4bcb45435f2f23cea7f828252b44"
+ },
+ {
+  "year": 2023,
+  "team": "MEM",
+  "title": "2023–24 Memphis Grizzlies season",
+  "revision": 1358222884,
+  "timestamp": "2026-06-07T10:32:30Z",
+  "sha256": "333bf32dc7f796f355b38d633283fc8601122a72d7d6628ccbf31ede999b04ec"
+ },
+ {
+  "year": 2023,
+  "team": "MIA",
+  "title": "2023–24 Miami Heat season",
+  "revision": 1341747364,
+  "timestamp": "2026-03-04T20:54:24Z",
+  "sha256": "feb6874a4d53aaae36901c127b5f1bb8172874e4ce99785f079d5967a3bc77f9"
+ },
+ {
+  "year": 2023,
+  "team": "MIL",
+  "title": "2023–24 Milwaukee Bucks season",
+  "revision": 1358220431,
+  "timestamp": "2026-06-07T10:05:43Z",
+  "sha256": "00461026a421346cc8a09bf7612ab9031e0bd3b195d17d7df02057531e6f0d4f"
+ },
+ {
+  "year": 2023,
+  "team": "MIN",
+  "title": "2023–24 Minnesota Timberwolves season",
+  "revision": 1358352703,
+  "timestamp": "2026-06-08T04:14:03Z",
+  "sha256": "12dbb4f2dcbd1dede08ffa602cf5edae0ecd1484c5f49f048c1879610f2dba7f"
+ },
+ {
+  "year": 2023,
+  "team": "NOP",
+  "title": "2023–24 New Orleans Pelicans season",
+  "revision": 1358221799,
+  "timestamp": "2026-06-07T10:20:17Z",
+  "sha256": "82ace37e7df2c9c59db68fafc7037abc50c4c5c61473c6800f67097308717212"
+ },
+ {
+  "year": 2023,
+  "team": "NYK",
+  "title": "2023–24 New York Knicks season",
+  "revision": 1379781334,
+  "timestamp": "2026-10-11T22:33:17Z",
+  "sha256": "89c16a7a28f33a493191ee49195b6e0db28e7e3060fe41622c044bd044adf2a9"
+ },
+ {
+  "year": 2023,
+  "team": "OKC",
+  "title": "2023–24 Oklahoma City Thunder season",
+  "revision": 1358234673,
+  "timestamp": "2026-06-07T12:42:34Z",
+  "sha256": "cb54f2decbd5ac66605e513be1fa5bf4c3ae85a05a20e9046fe218758536f7d1"
+ },
+ {
+  "year": 2023,
+  "team": "ORL",
+  "title": "2023–24 Orlando Magic season",
+  "revision": 1359986701,
+  "timestamp": "2026-06-18T14:21:14Z",
+  "sha256": "6ec92f350b6a32bf619216f7bd937be622305714bd06a151734b2eae695cf657"
+ },
+ {
+  "year": 2023,
+  "team": "PHI",
+  "title": "2023–24 Philadelphia 76ers season",
+  "revision": 1358224524,
+  "timestamp": "2026-06-07T10:50:30Z",
+  "sha256": "f5dfe455886d0cd2b05aaafd9307cad0af765e2963b612940648605dac818fc9"
+ },
+ {
+  "year": 2023,
+  "team": "PHX",
+  "title": "2023–24 Phoenix Suns season",
+  "revision": 1365053821,
+  "timestamp": "2026-07-20T00:36:15Z",
+  "sha256": "a6b51bb17c660974c11e27c0e2cb03e67a90cf294cc5964a694bd0d832e82377"
+ },
+ {
+  "year": 2023,
+  "team": "POR",
+  "title": "2023–24 Portland Trail Blazers season",
+  "revision": 1364584763,
+  "timestamp": "2026-07-17T10:37:44Z",
+  "sha256": "daad0277a2d7c580d0d172aca6d3cc50b3dbeb2352645f9619e6648cfd00fc04"
+ },
+ {
+  "year": 2023,
+  "team": "SAC",
+  "title": "2023–24 Sacramento Kings season",
+  "revision": 1358231984,
+  "timestamp": "2026-06-07T12:16:35Z",
+  "sha256": "4c572c55c08e40ab0484d219bdbba0f669310d7b2f7e41c97983d1be09cd79f1"
+ },
+ {
+  "year": 2023,
+  "team": "SAS",
+  "title": "2023–24 San Antonio Spurs season",
+  "revision": 1357641361,
+  "timestamp": "2026-06-03T20:05:21Z",
+  "sha256": "cd7147fca2a8104e2cd971f5136e111d435a45c09ecd88f89bf00c63154fc920"
+ },
+ {
+  "year": 2023,
+  "team": "TOR",
+  "title": "2023–24 Toronto Raptors season",
+  "revision": 1377597207,
+  "timestamp": "2026-09-30T03:18:22Z",
+  "sha256": "1c3f55430b8acc7928af8283fa2bef0082e12ccfed63f5fdbfce84662afd2374"
+ },
+ {
+  "year": 2023,
+  "team": "UTA",
+  "title": "2023–24 Utah Jazz season",
+  "revision": 1354360627,
+  "timestamp": "2026-05-15T23:02:30Z",
+  "sha256": "7715465d93a9ba25a45f79894ad69e9c270be3e838076f66a58343a39d1753ad"
+ },
+ {
+  "year": 2023,
+  "team": "WAS",
+  "title": "2023–24 Washington Wizards season",
+  "revision": 1365870565,
+  "timestamp": "2026-07-24T22:48:50Z",
+  "sha256": "2abb2e5f73e91f4fa0a57d6c9c6afd2f3683c4f28baf999de6d08d8c639a639d"
+ },
+ {
+  "year": 2024,
+  "team": "ATL",
+  "title": "2024–25 Atlanta Hawks season",
+  "revision": 1382237109,
+  "timestamp": "2026-10-27T13:47:03Z",
+  "sha256": "e78a7a1881795fe932b627ef87f4b7a52e069d3bed34aae2e5002cee3ac7ba54"
+ },
+ {
+  "year": 2024,
+  "team": "BOS",
+  "title": "2024–25 Boston Celtics season",
+  "revision": 1358206835,
+  "timestamp": "2026-06-07T07:19:13Z",
+  "sha256": "13a7c7f2b52e4ff2e5004c3d404e262fe72ebda7794e170491a715ee5afe2f73"
+ },
+ {
+  "year": 2024,
+  "team": "BKN",
+  "title": "2024–25 Brooklyn Nets season",
+  "revision": 1358707479,
+  "timestamp": "2026-06-10T12:12:28Z",
+  "sha256": "f4ccf71d99a4677178ec35183d08a6604ebb47fb162a0e2e46fa2881767241f7"
+ },
+ {
+  "year": 2024,
+  "team": "CHA",
+  "title": "2024–25 Charlotte Hornets season",
+  "revision": 1365300282,
+  "timestamp": "2026-07-21T14:50:40Z",
+  "sha256": "ec959f1405445c17c664e3fd88a0bb672d239cec9c1ee3b9b3193184f3e9b66b"
+ },
+ {
+  "year": 2024,
+  "team": "CHI",
+  "title": "2024–25 Chicago Bulls season",
+  "revision": 1358207334,
+  "timestamp": "2026-06-07T07:25:23Z",
+  "sha256": "e836c4f1f3a4dc195d8d2224a271b01601ff03ee294c36fbd1f9d7fde11bf317"
+ },
+ {
+  "year": 2024,
+  "team": "CLE",
+  "title": "2024–25 Cleveland Cavaliers season",
+  "revision": 1358069171,
+  "timestamp": "2026-06-06T10:57:55Z",
+  "sha256": "fbf41aae203131e74c409545ee1b8d6a7203eff7d4000680ee7ff56d731eda55"
+ },
+ {
+  "year": 2024,
+  "team": "DAL",
+  "title": "2024–25 Dallas Mavericks season",
+  "revision": 1374959546,
+  "timestamp": "2026-09-15T01:36:55Z",
+  "sha256": "ba48c5e79c3503998d17502c581279d2c94564426e1c642742644d98f9c9e8df"
+ },
+ {
+  "year": 2024,
+  "team": "DEN",
+  "title": "2024–25 Denver Nuggets season",
+  "revision": 1350292763,
+  "timestamp": "2026-04-21T03:50:09Z",
+  "sha256": "58f736d2391e8781a0b71dda06cd790601565a0ae69cf6836dc3839ae744c986"
+ },
+ {
+  "year": 2024,
+  "team": "DET",
+  "title": "2024–25 Detroit Pistons season",
+  "revision": 1377133641,
+  "timestamp": "2026-09-28T01:21:42Z",
+  "sha256": "e43107bce82ed2b6e2eb3ce19cc2fcbe4002be085123e1b207eea68f11b55291"
+ },
+ {
+  "year": 2024,
+  "team": "GSW",
+  "title": "2024–25 Golden State Warriors season",
+  "revision": 1360095765,
+  "timestamp": "2026-06-19T05:24:17Z",
+  "sha256": "2a6e550535bb6313c998e1fe5e44df0133f3306c7b94497e6d0be7ddc2a2e82c"
+ },
+ {
+  "year": 2024,
+  "team": "HOU",
+  "title": "2024–25 Houston Rockets season",
+  "revision": 1382241902,
+  "timestamp": "2026-10-27T14:26:54Z",
+  "sha256": "94d5ece3e6771150436f78329d9d5ae204fd62ce459cedf2d92b8a48566e2752"
+ },
+ {
+  "year": 2024,
+  "team": "IND",
+  "title": "2024–25 Indiana Pacers season",
+  "revision": 1383115261,
+  "timestamp": "2026-11-01T01:47:47Z",
+  "sha256": "11fecbc8f57465e1ca4a8958dd16f9d47e1f0a9fb41885a17ac6aa42aec9ffea"
+ },
+ {
+  "year": 2024,
+  "team": "LAC",
+  "title": "2024–25 Los Angeles Clippers season",
+  "revision": 1356915301,
+  "timestamp": "2026-05-30T16:45:35Z",
+  "sha256": "34a2735c654d597a826cf795f1288154efbad88d6a3f336e6c51d26e6e7842e7"
+ },
+ {
+  "year": 2024,
+  "team": "LAL",
+  "title": "2024–25 Los Angeles Lakers season",
+  "revision": 1381255597,
+  "timestamp": "2026-10-21T01:53:10Z",
+  "sha256": "6edf4a06f9b70f25950a04e9d0eda7f7a2c6f88e589a76b09b4945524bf622ab"
+ },
+ {
+  "year": 2024,
+  "team": "MEM",
+  "title": "2024–25 Memphis Grizzlies season",
+  "revision": 1360846691,
+  "timestamp": "2026-06-24T00:15:43Z",
+  "sha256": "d5db78a5e1b3ba799a0c74fc5fdf7f7240b56fc67a81f4edac5c4c8bf1359dec"
+ },
+ {
+  "year": 2024,
+  "team": "MIA",
+  "title": "2024–25 Miami Heat season",
+  "revision": 1351775253,
+  "timestamp": "2026-04-30T02:05:14Z",
+  "sha256": "4a0141db5b98018515bcd630204c178bb7046a7ef4a0111e31848d4bbf9ed12e"
+ },
+ {
+  "year": 2024,
+  "team": "MIL",
+  "title": "2024–25 Milwaukee Bucks season",
+  "revision": 1341747494,
+  "timestamp": "2026-03-04T20:55:19Z",
+  "sha256": "703d9ce1f130d7274802544282223c12e2d1092a929dcd34cf92f39e74ff864b"
+ },
+ {
+  "year": 2024,
+  "team": "MIN",
+  "title": "2024–25 Minnesota Timberwolves season",
+  "revision": 1358450613,
+  "timestamp": "2026-06-08T19:34:47Z",
+  "sha256": "a41b1fb2a523291025946cf7080e71265783dad083acba73bd1b52f27c132310"
+ },
+ {
+  "year": 2024,
+  "team": "NOP",
+  "title": "2024–25 New Orleans Pelicans season",
+  "revision": 1352085058,
+  "timestamp": "2026-05-01T23:05:21Z",
+  "sha256": "3ad9799e0db7c3c7b1eba30589d4a17115f963f77f51c37db89684c3162fac9d"
+ },
+ {
+  "year": 2024,
+  "team": "NYK",
+  "title": "2024–25 New York Knicks season",
+  "revision": 1379629124,
+  "timestamp": "2026-10-11T01:40:36Z",
+  "sha256": "366f194cef23a20cb941cf2add8362280104211eab878fae9b7e665f3f33db55"
+ },
+ {
+  "year": 2024,
+  "team": "OKC",
+  "title": "2024–25 Oklahoma City Thunder season",
+  "revision": 1388171715,
+  "timestamp": "2026-11-26T22:14:08Z",
+  "sha256": "d71a1e060d05e70b473bca3f517a6e47eb88fd7c68d76f1566eaecb227531e26"
+ },
+ {
+  "year": 2024,
+  "team": "ORL",
+  "title": "2024–25 Orlando Magic season",
+  "revision": 1378114257,
+  "timestamp": "2026-10-03T01:20:30Z",
+  "sha256": "e7fc6d53d8efb3a10d5440f2040f9d8c061030978b8eecd79383d31c79dc5d6b"
+ },
+ {
+  "year": 2024,
+  "team": "PHI",
+  "title": "2024–25 Philadelphia 76ers season",
+  "revision": 1372894811,
+  "timestamp": "2026-09-02T21:09:35Z",
+  "sha256": "bf09052d20ca953f98ed1944218cc99de403b142215c2a173054961bae9ede1d"
+ },
+ {
+  "year": 2024,
+  "team": "PHX",
+  "title": "2024–25 Phoenix Suns season",
+  "revision": 1384179522,
+  "timestamp": "2026-11-07T00:44:30Z",
+  "sha256": "35c9594dd7d1ed4ac7123d497067a5fccc8b3eee36db3b05b816d474d9a5c735"
+ },
+ {
+  "year": 2024,
+  "team": "POR",
+  "title": "2024–25 Portland Trail Blazers season",
+  "revision": 1356819123,
+  "timestamp": "2026-05-30T00:45:39Z",
+  "sha256": "f268c5477454ba4b6481553cacc70ae80a0de36bfa504d167c8869705b9d5fd1"
+ },
+ {
+  "year": 2024,
+  "team": "SAC",
+  "title": "2024–25 Sacramento Kings season",
+  "revision": 1378142338,
+  "timestamp": "2026-10-03T03:51:23Z",
+  "sha256": "1196d1b00707ccf5d35b6c914a7ef21d1bbc2ad995542dbf791444b5fcc8b683"
+ },
+ {
+  "year": 2024,
+  "team": "SAS",
+  "title": "2024–25 San Antonio Spurs season",
+  "revision": 1370508147,
+  "timestamp": "2026-08-21T14:39:10Z",
+  "sha256": "891350cf77ad29547b26b9da78013fc875c7b2f3eb8e6864a6be839f972a5190"
+ },
+ {
+  "year": 2024,
+  "team": "TOR",
+  "title": "2024–25 Toronto Raptors season",
+  "revision": 1351299773,
+  "timestamp": "2026-04-27T03:56:32Z",
+  "sha256": "b07e199a55c089d73d52606722f8621c771c63ae7edd2b163f19aa8efc71dbe9"
+ },
+ {
+  "year": 2024,
+  "team": "UTA",
+  "title": "2024–25 Utah Jazz season",
+  "revision": 1358208904,
+  "timestamp": "2026-06-07T07:45:52Z",
+  "sha256": "5ae4f5f8e6cff4c62b9d72ed6065ece90150cf5b705a6ff647f46a7409d9ef6a"
+ },
+ {
+  "year": 2024,
+  "team": "WAS",
+  "title": "2024–25 Washington Wizards season",
+  "revision": 1356826418,
+  "timestamp": "2026-05-30T01:53:04Z",
+  "sha256": "5b56d6659f1c94ada4a542b003795b79345a46b2a286a6b3467d54513caa4e8d"
+ },
+ {
+  "year": 2025,
+  "team": "ATL",
+  "title": "2025–26 Atlanta Hawks season",
+  "revision": 1388043157,
+  "timestamp": "2026-11-26T11:45:31Z",
+  "sha256": "aae9e338a3d4110dce7685ef361defd4527efa4f3829136af6dbc305df40cc49"
+ },
+ {
+  "year": 2025,
+  "team": "BOS",
+  "title": "2025–26 Boston Celtics season",
+  "revision": 1383158390,
+  "timestamp": "2026-11-01T07:46:50Z",
+  "sha256": "0eef1c8156404aee53a0bb350bb32b4ad78bf06796ccb72aec946b4f8462a3f8"
+ },
+ {
+  "year": 2025,
+  "team": "BKN",
+  "title": "2025–26 Brooklyn Nets season",
+  "revision": 1353787263,
+  "timestamp": "2026-05-12T10:52:50Z",
+  "sha256": "a9276f071291e13ab8b100246c19cbb65466d70efbaffd4d20796fbba1d51461"
+ },
+ {
+  "year": 2025,
+  "team": "CHA",
+  "title": "2025–26 Charlotte Hornets season",
+  "revision": 1382389588,
+  "timestamp": "2026-10-28T13:09:19Z",
+  "sha256": "76605ac23c8aa16edc2f14f8d3bc8356c0da65dc2cbae7236024d6c342ed11b9"
+ },
+ {
+  "year": 2025,
+  "team": "CHI",
+  "title": "2025–26 Chicago Bulls season",
+  "revision": 1367452625,
+  "timestamp": "2026-08-03T04:43:41Z",
+  "sha256": "0f9da08b2d099c8eb5e87a561f0adb8ae8692c6299519c866c91d8d1bed5ece9"
+ },
+ {
+  "year": 2025,
+  "team": "CLE",
+  "title": "2025–26 Cleveland Cavaliers season",
+  "revision": 1361855576,
+  "timestamp": "2026-06-30T13:53:18Z",
+  "sha256": "b3ce94a5afd112ef0cd6e93de435513fafed0b511497e9951b96c967b212b408"
+ },
+ {
+  "year": 2025,
+  "team": "DAL",
+  "title": "2025–26 Dallas Mavericks season",
+  "revision": 1362460894,
+  "timestamp": "2026-07-04T02:09:36Z",
+  "sha256": "81459324c02cbc0618358c53633286b95080fda6f5c40b33add1cb22718d7f0c"
+ },
+ {
+  "year": 2025,
+  "team": "DEN",
+  "title": "2025–26 Denver Nuggets season",
+  "revision": 1378697372,
+  "timestamp": "2026-10-05T18:56:35Z",
+  "sha256": "bf44cc7babd04856049abf370d554c7cc9a2ba90abdef7e5f6b4fa6e65acfe4b"
+ },
+ {
+  "year": 2025,
+  "team": "DET",
+  "title": "2025–26 Detroit Pistons season",
+  "revision": 1377136119,
+  "timestamp": "2026-09-28T01:34:49Z",
+  "sha256": "a2eb8d8725880131675132715053702870860e2276a3b10d966e6d2809b21056"
+ },
+ {
+  "year": 2025,
+  "team": "GSW",
+  "title": "2025–26 Golden State Warriors season",
+  "revision": 1382236212,
+  "timestamp": "2026-10-27T13:38:53Z",
+  "sha256": "9687508a477c2c3a0b4e8724fffa235413376fa74038f34ad0f0cf21f6b3984d"
+ },
+ {
+  "year": 2025,
+  "team": "HOU",
+  "title": "2025–26 Houston Rockets season",
+  "revision": 1386611537,
+  "timestamp": "2026-11-19T13:26:06Z",
+  "sha256": "d5f9253174503aac6182466381eb6db2cf58310500d010e14a4a5d63a565b500"
+ },
+ {
+  "year": 2025,
+  "team": "IND",
+  "title": "2025–26 Indiana Pacers season",
+  "revision": 1353788041,
+  "timestamp": "2026-05-12T11:01:20Z",
+  "sha256": "3a8d8c6679e92bba1efd7a3d624847fd7d49d4ff88dee908a6b567520499a73c"
+ },
+ {
+  "year": 2025,
+  "team": "LAC",
+  "title": "2025–26 Los Angeles Clippers season",
+  "revision": 1387289105,
+  "timestamp": "2026-11-23T08:21:43Z",
+  "sha256": "af2ad2e230d3f6eba477c248571893fba384797f77b595dbe1fdca60e5d83d73"
+ },
+ {
+  "year": 2025,
+  "team": "LAL",
+  "title": "2025–26 Los Angeles Lakers season",
+  "revision": 1386501995,
+  "timestamp": "2026-11-18T22:18:48Z",
+  "sha256": "8f12d9379075e5a24c3fa44bb7988f568bc60cc8f746b0a790b2813924ad0f0f"
+ },
+ {
+  "year": 2025,
+  "team": "MEM",
+  "title": "2025–26 Memphis Grizzlies season",
+  "revision": 1381241611,
+  "timestamp": "2026-10-20T23:02:04Z",
+  "sha256": "5ce5590fa4c3ff19f86f042e627e863ed7b1b4ae6c7efd086b583a43bc2b4d39"
+ },
+ {
+  "year": 2025,
+  "team": "MIA",
+  "title": "2025–26 Miami Heat season",
+  "revision": 1372990482,
+  "timestamp": "2026-09-03T10:54:59Z",
+  "sha256": "f0eb1e821e37659a8b09a7091b59e92593bddcac70edcfda057882019ce7813a"
+ },
+ {
+  "year": 2025,
+  "team": "MIL",
+  "title": "2025–26 Milwaukee Bucks season",
+  "revision": 1384076698,
+  "timestamp": "2026-11-06T12:44:26Z",
+  "sha256": "9f1f39e1626037aae5c769c44113c54a86baba1c6baa10a29f8886b05b35343a"
+ },
+ {
+  "year": 2025,
+  "team": "MIN",
+  "title": "2025–26 Minnesota Timberwolves season",
+  "revision": 1385646217,
+  "timestamp": "2026-11-14T13:10:24Z",
+  "sha256": "4e68c4fba71ab213772134d56654ca080b51cd185a02b3d1320697fcf59f58aa"
+ },
+ {
+  "year": 2025,
+  "team": "NOP",
+  "title": "2025–26 New Orleans Pelicans season",
+  "revision": 1383142127,
+  "timestamp": "2026-11-01T05:22:51Z",
+  "sha256": "85dc4d69b699930b65a50e316c2211844a85e1d0edcda6477ab8a5d05c0de4c3"
+ },
+ {
+  "year": 2025,
+  "team": "NYK",
+  "title": "2025–26 New York Knicks season",
+  "revision": 1382039195,
+  "timestamp": "2026-10-26T05:00:53Z",
+  "sha256": "d6b833d8f304e0e60ddd7c0ce5eeba40d8082228b04c8e994d23d4c42ea0fe0f"
+ },
+ {
+  "year": 2025,
+  "team": "OKC",
+  "title": "2025–26 Oklahoma City Thunder season",
+  "revision": 1381859019,
+  "timestamp": "2026-10-25T06:46:09Z",
+  "sha256": "4514abb9a869d5653a8d7de02ef34a66ad8a85a4776acefa0ffbd5c18f8ea271"
+ },
+ {
+  "year": 2025,
+  "team": "ORL",
+  "title": "2025–26 Orlando Magic season",
+  "revision": 1367524275,
+  "timestamp": "2026-08-03T16:21:00Z",
+  "sha256": "a3ef579d24e1bfd101af614e8930d43523c94475ead84edcfd2588e7d230fe00"
+ },
+ {
+  "year": 2025,
+  "team": "PHI",
+  "title": "2025–26 Philadelphia 76ers season",
+  "revision": 1360770172,
+  "timestamp": "2026-06-23T13:54:09Z",
+  "sha256": "65227842d87863f9582b7f8052353541f1a88323be3995c46a80e9e8ae1f3be8"
+ },
+ {
+  "year": 2025,
+  "team": "PHX",
+  "title": "2025–26 Phoenix Suns season",
+  "revision": 1388276478,
+  "timestamp": "2026-11-27T11:12:54Z",
+  "sha256": "5e4e104117d5e0e691174a4762eb006b202fe3e6735276a09503dda706fb8dd9"
+ },
+ {
+  "year": 2025,
+  "team": "POR",
+  "title": "2025–26 Portland Trail Blazers season",
+  "revision": 1360668569,
+  "timestamp": "2026-06-22T21:59:10Z",
+  "sha256": "41b063b0bbdfbf8bd220b5f7c161b3914ade2057d79fadec306990753c3df9de"
+ },
+ {
+  "year": 2025,
+  "team": "SAC",
+  "title": "2025–26 Sacramento Kings season",
+  "revision": 1356735021,
+  "timestamp": "2026-05-29T14:33:42Z",
+  "sha256": "1ab2a495ba5609f82bee62a64601be285665bb9e5414c1702da6ac28de7cfa7c"
+ },
+ {
+  "year": 2025,
+  "team": "SAS",
+  "title": "2025–26 San Antonio Spurs season",
+  "revision": 1387586971,
+  "timestamp": "2026-11-24T18:04:55Z",
+  "sha256": "3ae24da870ba944bdeb50bdd87c6c3899f39f916e0b879148a1b195e6e08521c"
+ },
+ {
+  "year": 2025,
+  "team": "TOR",
+  "title": "2025–26 Toronto Raptors season",
+  "revision": 1367039085,
+  "timestamp": "2026-07-31T15:45:38Z",
+  "sha256": "31806407de029683b06c0ed7bc579000322848730227bc554867f2c0917a4609"
+ },
+ {
+  "year": 2025,
+  "team": "UTA",
+  "title": "2025–26 Utah Jazz season",
+  "revision": 1358209245,
+  "timestamp": "2026-06-07T07:50:53Z",
+  "sha256": "a3ee3af3461edf3856c065e2fe3359814f0d89afc1bd2e7c567031781920af41"
+ },
+ {
+  "year": 2025,
+  "team": "WAS",
+  "title": "2025–26 Washington Wizards season",
+  "revision": 1384077416,
+  "timestamp": "2026-11-06T12:51:38Z",
+  "sha256": "dfe049a763bac8356ca797ec868e4959ca609b7ff68044ce8ecd97d157979292"
+ }
+]

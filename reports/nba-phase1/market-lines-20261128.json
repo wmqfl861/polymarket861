@@ -1,0 +1,559 @@
+{
+  "counts": {
+    "alternate_selections": 8,
+    "events": 11,
+    "forecast_listings": 486,
+    "full_game_listings": 821,
+    "native_books": 1642,
+    "no_selection": 11,
+    "selected_families": 33,
+    "spread_listings": 335,
+    "valid_two_sided_forecast_listings": 486
+  },
+  "events": [
+    {
+      "clob_received": "2026-11-28T01:13:56.361714Z",
+      "clob_sha256": "861dc3f8a82b8fa00675a0c590ea4b6d4972351202a0291796aec31004728437",
+      "event_id": "1377580",
+      "families": {
+        "away_total": {
+          "condition_id": "0xbc8d0509c0c6cdf4f1b8c99471e6ae8319499bf384ce7706df746ce954f67108",
+          "line": 108.5,
+          "line_kind": "consensus",
+          "listed": 15,
+          "midpoint": 0.495,
+          "quality": "ok",
+          "token_id": "65604626299681370630428742341397367477916130566096162679641903870509032413737",
+          "two_sided": 15
+        },
+        "home_total": {
+          "condition_id": "0x8d859f268d3e1f1f8b166c0592fb4ac4cee6278bdcbbbfbf504f7bf2a7818559",
+          "line": 111.5,
+          "line_kind": "consensus",
+          "listed": 15,
+          "midpoint": 0.49,
+          "quality": "ok",
+          "token_id": "49613435642610433876361254291404373914007778743386197443749580922560348131871",
+          "two_sided": 15
+        },
+        "total": {
+          "condition_id": "0x153e73253f1aaf3689195069ede8d370a373f95dc7c926a1238f1c83d32cf496",
+          "line": 219.5,
+          "line_kind": "alternate",
+          "listed": 31,
+          "midpoint": 0.505,
+          "quality": "ok",
+          "token_id": "111655583499938733953003498608364141930061331005387340044847220478335985591154",
+          "two_sided": 31
+        },
+        "win": {
+          "condition_id": "0xe779c3c9def7b006293d4c05df39295c44127b4ddd426fedb33ab154273f0bfe",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.575,
+          "quality": "ok",
+          "token_id": "40947882317393164074473046037388774436443061165757573026036230086677175624418",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:13:51.409542Z",
+      "gamma_sha256": "5cbe26225696168e5e277f5084f97f89f8ee329a29212d545e810bb471117733",
+      "kickoff": "2026-11-28T01:30:00.000000Z",
+      "native_books": 190,
+      "slug": "nba-mem-min-2026-11-27",
+      "spread_listings": 33,
+      "venue_game_id": "20023948"
+    },
+    {
+      "clob_received": "2026-11-28T01:13:56.949585Z",
+      "clob_sha256": "8adbed3a32a7f8b15a15e23f0ca1c544959a47323568813c5bd27c273a934fdf",
+      "event_id": "1377581",
+      "families": {
+        "away_total": {
+          "condition_id": "0x16c0499b3080fc5b4d569e20ec9fcd40ef9c5e9a65e09d3e6da95e88d276c1d2",
+          "line": 111.5,
+          "line_kind": "alternate",
+          "listed": 15,
+          "midpoint": 0.485,
+          "quality": "ok",
+          "token_id": "100312380210691415131743012787684439689806913981864147321717997968250395750710",
+          "two_sided": 15
+        },
+        "home_total": {
+          "condition_id": "0xa24a48c64fef59ca34092b55bbd7c545bc462b57fde3beec689103dc260c2b1e",
+          "line": 114.5,
+          "line_kind": "consensus",
+          "listed": 14,
+          "midpoint": 0.5,
+          "quality": "ok",
+          "token_id": "46989321713442193576067649572222675158405114094684941386079451570287032215074",
+          "two_sided": 14
+        },
+        "total": {
+          "condition_id": "0xf90acdc20876995e944ea7d04ee9a0a448ff0000110ec0339e43ac9018082353",
+          "line": 225.5,
+          "line_kind": "consensus",
+          "listed": 31,
+          "midpoint": 0.495,
+          "quality": "ok",
+          "token_id": "93065730403258561068389967553294365419683958443109959340238551269594376686423",
+          "two_sided": 31
+        },
+        "win": {
+          "condition_id": "0x16bdda14984f1fe5334e982a9a1429a2c973dd9e8b4b1c0526543d4442956ecd",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.605,
+          "quality": "ok",
+          "token_id": "25307116788898733512201154636036240289799178656501463352810661924209376504590",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:13:56.569663Z",
+      "gamma_sha256": "2cd74c8c00b074a8a1c804f57042c2d25dd9d00ccc3275d6062672265f6c5d90",
+      "kickoff": "2026-11-28T02:00:00.000000Z",
+      "native_books": 188,
+      "slug": "nba-dal-phx-2026-11-27",
+      "spread_listings": 33,
+      "venue_game_id": "20023949"
+    },
+    {
+      "clob_received": "2026-11-28T01:13:57.581836Z",
+      "clob_sha256": "a0ad3bc14c850a4e10bfdb059d1505c27142471f98208e0b8c206a8bf508a2ee",
+      "event_id": "1377582",
+      "families": {
+        "away_total": {
+          "condition_id": "0x42dd26c1e39718576a90fdffbc61e37a31f93bc45166ace08657d7a5692222fb",
+          "line": 110.5,
+          "line_kind": "consensus",
+          "listed": 13,
+          "midpoint": 0.485,
+          "quality": "ok",
+          "token_id": "90493750334690553778215267147292693852417970104621558157675836741681678186806",
+          "two_sided": 13
+        },
+        "home_total": {
+          "condition_id": "0xe99f3c767cd54e87d16663ba7de22a006ce23f1cebc6edda05d65d0ffde02f87",
+          "line": 116.5,
+          "line_kind": "consensus",
+          "listed": 13,
+          "midpoint": 0.48,
+          "quality": "ok",
+          "token_id": "63088907861171841499113042580434228335470895498615213613728205475350876985691",
+          "two_sided": 13
+        },
+        "total": {
+          "condition_id": "0x47cc09d8067739a68d524d3c4b183a5ad439f0792f7d53c1a31a2178631b7e32",
+          "line": 226.5,
+          "line_kind": "consensus",
+          "listed": 30,
+          "midpoint": 0.495,
+          "quality": "ok",
+          "token_id": "29795437052927263506098948446252645649997822266437348284470327519227833794877",
+          "two_sided": 30
+        },
+        "win": {
+          "condition_id": "0xa0a1d391918df41b7a4dae06ac2a3be562422a30f045571eff842bbca4e50f4e",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.645,
+          "quality": "ok",
+          "token_id": "13875655707489997944976083368455428093600207063357042074094433025969687163624",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:13:57.231445Z",
+      "gamma_sha256": "de8291636391163335b0588d0da609b6e7cd3db8d85df1d232a8fe9a93dff8b9",
+      "kickoff": "2026-11-28T02:30:00.000000Z",
+      "native_books": 182,
+      "slug": "nba-lal-sas-2026-11-27",
+      "spread_listings": 34,
+      "venue_game_id": "20023950"
+    },
+    {
+      "clob_received": "2026-11-28T01:13:58.072873Z",
+      "clob_sha256": "9a9b8e1dd08084d4c31e2b29940f605831a5f867f27443e1bb2f2c8395754278",
+      "event_id": "1377583",
+      "families": {
+        "away_total": {
+          "condition_id": "0x604a9837e8fd4da5a733c51ab0154472d7300d7d0179add83a698d4a99ab442c",
+          "line": 121.5,
+          "line_kind": "consensus",
+          "listed": 14,
+          "midpoint": 0.49,
+          "quality": "ok",
+          "token_id": "94217692521543797859884829178382784412957027803956368877484767100056469373310",
+          "two_sided": 14
+        },
+        "home_total": {
+          "condition_id": "0x9e417ed751aa91ead4d7b0036966037d613251079b20385b5a56c46bf698430b",
+          "line": 111.5,
+          "line_kind": "alternate",
+          "listed": 14,
+          "midpoint": 0.5,
+          "quality": "ok",
+          "token_id": "87960830150949829321748951008904764824120591128642765930873810000312892348608",
+          "two_sided": 14
+        },
+        "total": {
+          "condition_id": "0xc826d37c981f1cc89d8ee4b660625f6db6eb96a51ea89c271055fbfdb74957bd",
+          "line": 232.5,
+          "line_kind": "alternate",
+          "listed": 31,
+          "midpoint": 0.505,
+          "quality": "ok",
+          "token_id": "110178580191594274596088075267646772229077109824457180693789531566669103538803",
+          "two_sided": 31
+        },
+        "win": {
+          "condition_id": "0x2a7e640c3a914882f1a41a07250dd7902a920cf3937730c2f6cd04570f7eab4c",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.215,
+          "quality": "ok",
+          "token_id": "24206673584675405520197473421266390526899354563218982401793931168156415681689",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:13:57.799576Z",
+      "gamma_sha256": "8d1dc821cc66589eb3c745da888cb309c5d1d1584f4f9cfdddb992c63b308c85",
+      "kickoff": "2026-11-28T02:30:00.000000Z",
+      "native_books": 188,
+      "slug": "nba-den-uta-2026-11-27",
+      "spread_listings": 34,
+      "venue_game_id": "20023951"
+    },
+    {
+      "clob_received": "2026-11-28T01:13:58.789282Z",
+      "clob_sha256": "6c1e9e8fcc92725c19c7083d2f4ada3172631f3a5d5405d45c604b1a24de4c36",
+      "event_id": "1377584",
+      "families": {
+        "away_total": {
+          "condition_id": "0x36cdbe034e114ccb8b6b933a65834c5c9811dcbfca5b44472b3b4f8f28784469",
+          "line": 114.5,
+          "line_kind": "consensus",
+          "listed": 14,
+          "midpoint": 0.495,
+          "quality": "ok",
+          "token_id": "98131292374733710456479098916867476806471797128338265941128138151917778314629",
+          "two_sided": 14
+        },
+        "home_total": {
+          "condition_id": "0x2675c6a4688b5ab320b7cd56557ba242ea782dd0bbfec8bf5315f412bd8c954f",
+          "line": 115.5,
+          "line_kind": "alternate",
+          "listed": 14,
+          "midpoint": 0.505,
+          "quality": "ok",
+          "token_id": "4085647502937883958357585355564473811924444182868695816310910499952749178867",
+          "two_sided": 14
+        },
+        "total": {
+          "condition_id": "0x1d81abd18bb23cbd31cc121088251e52f9a9483a7b2607c3571d7d0f2f48ff4f",
+          "line": 230.5,
+          "line_kind": "consensus",
+          "listed": 30,
+          "midpoint": 0.495,
+          "quality": "ok",
+          "token_id": "31442769786081398308439424286937278260815258341817251883703759403052880203829",
+          "two_sided": 30
+        },
+        "win": {
+          "condition_id": "0x012a84c4ead01cabff66df01d58f95cd10bc1909443a5ebfd0834338cce2f679",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.555,
+          "quality": "ok",
+          "token_id": "9217904556103186560784315228015359466680728044661797301234476723839330078774",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:13:58.421640Z",
+      "gamma_sha256": "9de81f37b8cedaa81baeb9eb4f44e9c95d52efcdbee562eabf1775281b76926f",
+      "kickoff": "2026-11-28T02:30:00.000000Z",
+      "native_books": 184,
+      "slug": "nba-nop-lac-2026-11-27",
+      "spread_listings": 33,
+      "venue_game_id": "20023952"
+    },
+    {
+      "clob_received": "2026-11-28T01:13:59.510328Z",
+      "clob_sha256": "998aed5ced3bbb4ede3328366b7eb8686522bb1cb8578bd147790bab7a3f8a32",
+      "event_id": "1377585",
+      "families": {
+        "away_total": {
+          "condition_id": "0xb66b4850d907d1ccf15e4e35e9dbbc879a29562919939a157ee0e1542b8b7417",
+          "line": 101.5,
+          "line_kind": "alternate",
+          "listed": 14,
+          "midpoint": 0.51,
+          "quality": "ok",
+          "token_id": "98139435386412444321421364584488138587228817997974840319873975855215789547938",
+          "two_sided": 14
+        },
+        "home_total": {
+          "condition_id": "0x9d5aaa29337b0eece8779b65e658b13731f557ddbdfa20f34262f9c512b54ae6",
+          "line": 112.5,
+          "line_kind": "consensus",
+          "listed": 15,
+          "midpoint": 0.5,
+          "quality": "ok",
+          "token_id": "80600647171672429240717566036160710816243767426303807359663188598451772729439",
+          "two_sided": 15
+        },
+        "total": {
+          "condition_id": "0x4f15eb4fc7414028f77cf989313aeb99481d9f25483359da843f54e5b8e73bfa",
+          "line": 216.5,
+          "line_kind": "consensus",
+          "listed": 32,
+          "midpoint": 0.495,
+          "quality": "ok",
+          "token_id": "57222307763645011440167559054468604827237016598931411547246853104829759740029",
+          "two_sided": 32
+        },
+        "win": {
+          "condition_id": "0x937c743974f9a4667d0e079f4bab20681448c79f306feffddc6998fa7bd6ca3c",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.745,
+          "quality": "ok",
+          "token_id": "39189951288314207695396976591097421166108764956405649181292647852597580102679",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:13:59.141886Z",
+      "gamma_sha256": "2f8e40a038d927359d6e04613f456258ffd4731b394db1dcba8f4115a47b6c5c",
+      "kickoff": "2026-11-28T02:30:00.000000Z",
+      "native_books": 192,
+      "slug": "nba-gsw-por-2026-11-27",
+      "spread_listings": 34,
+      "venue_game_id": "20023953"
+    },
+    {
+      "clob_received": "2026-11-28T01:14:00.012466Z",
+      "clob_sha256": "90f2e064104f2559464dccb28945422bdcc1930ace779185177e08fff614849e",
+      "event_id": "1384629",
+      "families": {
+        "away_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "home_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "total": {
+          "condition_id": "0xd6d8a2d44d9851423b5e6dfc7d9c3eabdad024798e9c594d7296fc52b4b517a6",
+          "line": 219.5,
+          "line_kind": "alternate",
+          "listed": 31,
+          "midpoint": 0.485,
+          "quality": "ok",
+          "token_id": "12725498954801028828970938964818017711137138131763345624972392340224324056458",
+          "two_sided": 31
+        },
+        "win": {
+          "condition_id": "0xbfb31c39f482507f83568848499cd989bf60f8c8f606b6d5eef3f51f7585ee6a",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.395,
+          "quality": "ok",
+          "token_id": "107333847746471782351816838580353231169128632916017654617860683643269826497362",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:13:59.777364Z",
+      "gamma_sha256": "8d9dece18152ab8b28a1c418acc2a412f4494583b245b90d295a09b1fd3e9a09",
+      "kickoff": "2026-11-28T22:00:00.000000Z",
+      "native_books": 130,
+      "slug": "nba-orl-was-2026-11-28",
+      "spread_listings": 33,
+      "venue_game_id": "20024174"
+    },
+    {
+      "clob_received": "2026-11-28T01:14:00.338598Z",
+      "clob_sha256": "8a3698c197e5bf94f64a87460249c03d6f9dcecf2f2763ab3d9b853381d45797",
+      "event_id": "1384630",
+      "families": {
+        "away_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "home_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "total": {
+          "condition_id": "0x8074b89f2dc0ddeb8e37c7309be21ad7d6859d059f1ef5b413daf68fe3adf65f",
+          "line": 213.5,
+          "line_kind": "consensus",
+          "listed": 31,
+          "midpoint": 0.5,
+          "quality": "ok",
+          "token_id": "38274937131542109308440179659177821241587816265815944825059035809801580635970",
+          "two_sided": 31
+        },
+        "win": {
+          "condition_id": "0xed3ce731b97180d4bea3184e1ef2905a66c598bce50830f604e9a759c7f0a3f6",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.685,
+          "quality": "ok",
+          "token_id": "37285723621940998770349437433451612221812713505670705656868157803335564191376",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:14:00.182421Z",
+      "gamma_sha256": "33306527ec379cea30aa2c4be19000b6402d1a53f497c4eb4386e3c3e0bf7758",
+      "kickoff": "2026-11-28T23:00:00.000000Z",
+      "native_books": 132,
+      "slug": "nba-bkn-cha-2026-11-28",
+      "spread_listings": 34,
+      "venue_game_id": "20024175"
+    },
+    {
+      "clob_received": "2026-11-28T01:14:00.741793Z",
+      "clob_sha256": "0ad04d4792f7b0bd88547b3af05ee72000887849a8f17a473c2c9993c92a1a21",
+      "event_id": "1384631",
+      "families": {
+        "away_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "home_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "total": {
+          "condition_id": "0x8013508eb0e4a4e32a130388e67beee34512428ccddf142f392af73448d6af71",
+          "line": 234.5,
+          "line_kind": "consensus",
+          "listed": 29,
+          "midpoint": 0.495,
+          "quality": "ok",
+          "token_id": "20761640863506492091699632337141147914862178193946071506699598725954880450430",
+          "two_sided": 29
+        },
+        "win": {
+          "condition_id": "0x7a7f7d7dcf69d3da887bf3732e7b4b2e8027ddad31395723d59ff759fe9bde56",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.555,
+          "quality": "ok",
+          "token_id": "38888076334382513238925877926808612717602662162421084454399030112026843091722",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:14:00.508005Z",
+      "gamma_sha256": "1e4757690d1fae15a688e01842394301a923f7b8aa3710c203ea326e1f4ff449",
+      "kickoff": "2026-11-29T01:00:00.000000Z",
+      "native_books": 126,
+      "slug": "nba-ind-chi-2026-11-28",
+      "spread_listings": 33,
+      "venue_game_id": "20024176"
+    },
+    {
+      "clob_received": "2026-11-28T01:14:01.158968Z",
+      "clob_sha256": "6d93046324229da832fef7fc79104cede0e0c9bb26f397dd759964f816ee48fc",
+      "event_id": "1384632",
+      "families": {
+        "away_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "home_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "total": {
+          "condition_id": "0xd9b1ec3cf8eb6320504e45b785ed4b1527850207d0fbef611eccc69c0533885a",
+          "line": 228.5,
+          "line_kind": "alternate",
+          "listed": 29,
+          "midpoint": 0.48,
+          "quality": "ok",
+          "token_id": "19484389238473173870482197448637713689990142703459710249360786264711126551260",
+          "two_sided": 29
+        },
+        "win": {
+          "condition_id": "0xea996f1845d658d00eb1fcd0840d31dd0f12c6b1d268aef852dc3fa085bdb40f",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.185,
+          "quality": "ok",
+          "token_id": "65796437282913351570992818499702112303808301055346622389924522746711976260261",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:14:00.906935Z",
+      "gamma_sha256": "eafb7e91a56690f12e5e2ba0c04192a30c385a5d2b3c53a95d66f8539a37d6d9",
+      "kickoff": "2026-11-29T01:00:00.000000Z",
+      "native_books": 128,
+      "slug": "nba-okc-mil-2026-11-28",
+      "spread_listings": 34,
+      "venue_game_id": "20024177"
+    },
+    {
+      "clob_received": "2026-11-28T01:14:01.439988Z",
+      "clob_sha256": "bbc40e111eb3027245a1501935463b9e11ff5a3af16c360c2f4f78565f767b66",
+      "event_id": "1384634",
+      "families": {
+        "away_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "home_total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "total": {
+          "listed": 0,
+          "quality": "unlisted",
+          "two_sided": 0
+        },
+        "win": {
+          "condition_id": "0xc0314ef22bcc412b2445a83109b3274429e4f6c68d0117e61819463ad9c5d286",
+          "line": null,
+          "line_kind": null,
+          "listed": 1,
+          "midpoint": 0.785,
+          "quality": "ok",
+          "token_id": "2639853395220534912938491705123209917956605873560793994674526124627835106451",
+          "two_sided": 1
+        }
+      },
+      "gamma_received": "2026-11-28T01:14:01.308430Z",
+      "gamma_sha256": "e273010630bc7e62cf9f4293cbd7082300afd478b42fcb0b58e4cdd1f6101694",
+      "kickoff": "2026-11-29T01:30:00.000000Z",
+      "native_books": 2,
+      "slug": "nba-phi-hou-2026-11-28",
+      "spread_listings": 0,
+      "venue_game_id": "20024178"
+    }
+  ],
+  "fixture": "market-lines-20261128.zip",
+  "fixture_sha256": "704fb2ef70f19a32f4f5c88b10d4251f5542d641c693f024778e52c0beef3ec5",
+  "ranking": "All verified full-game consensus and alternate lines with complementary two-sided books; smallest absolute distance to 0.50, then condition ID.",
+  "scope": "Observed public Gamma/CLOB pregame cross-section; not a frozen prediction, fixed-window benchmark, execution or settlement.",
+  "selection": "All still-pregame NBA fixtures on the two earliest Eastern game dates in the 52-hour native catalogue, in kickoff and event ID order."
+}

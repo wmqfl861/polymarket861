@@ -1,0 +1,45 @@
+{
+  "source_tree": "d87741329d10fe9b31c4defae464dcd55d6c76b8",
+  "suite": {
+    "3.11.18": {
+      "collected": 956,
+      "passed": 955,
+      "skipped": {
+        "test_notify_reports_readiness_only_after_first_tick (test_market_watch_health.WatchHealthTests.test_notify_reports_readiness_only_after_first_tick)": "host prohibits Unix datagram sockets"
+      },
+      "log_sha256": "5002e564ccad5e475c61def70bbc4315a70f4b09e2fa6d3fb0a1a81222b6144a"
+    },
+    "3.12.14": {
+      "collected": 956,
+      "passed": 955,
+      "skipped": {
+        "test_notify_reports_readiness_only_after_first_tick (test_market_watch_health.WatchHealthTests.test_notify_reports_readiness_only_after_first_tick)": "host prohibits Unix datagram sockets"
+      },
+      "log_sha256": "586899d607c3071a4cfc525b9130ad46142181cae81c235df934f6dfcd333a0d"
+    },
+    "3.13.5": {
+      "collected": 956,
+      "passed": 955,
+      "skipped": {
+        "test_notify_reports_readiness_only_after_first_tick (test_market_watch_health.WatchHealthTests.test_notify_reports_readiness_only_after_first_tick)": "host prohibits Unix datagram sockets"
+      },
+      "log_sha256": "d56f2c20e3a9816cc9e8e2bfe18d16a40008325e1c5e7dcae0599e819c298ada"
+    }
+  },
+  "wheel_smoke": {
+    "markets": "ok",
+    "schedule": "ok",
+    "forecast": "ok",
+    "market_families": [
+      "away_total",
+      "home_total",
+      "total",
+      "win"
+    ],
+    "warm": false,
+    "state": "sealed",
+    "readiness": "collecting"
+  },
+  "approved_football_recipe_digests": 8,
+  "cross_interpreter_differences": 0
+}

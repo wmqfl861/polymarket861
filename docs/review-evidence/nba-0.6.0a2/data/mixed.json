@@ -1,0 +1,10 @@
+{
+  "state": "source_quality",
+  "complete": false,
+  "quarantined": 1,
+  "probes": {
+    "bigballs": "schedule_unverified",
+    "dunkapi": "schedule_unverified"
+  },
+  "schedule_day_success": false
+}

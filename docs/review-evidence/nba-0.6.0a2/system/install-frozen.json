@@ -1,0 +1,111 @@
+{
+  "installed": {
+    "wheel": "polymarket861-0.6.0a2-py3-none-any.whl",
+    "wheel_sha256": "bf8d9f706d1a427bfb6d1c94745c27746163058221dba04c24c2f9ad41a78817",
+    "version": "0.6.0a2",
+    "interpreter_import": "0.6.0a2"
+  },
+  "released": {
+    "wheel": "polymarket861-0.5.0a4-py3-none-any.whl",
+    "wheel_sha256": "1cbb95ad5810e253605f1d52c09fec36be14a489febb2bc572097afd882213aa",
+    "version": "0.5.0a4",
+    "interpreter_import": "0.5.0a4"
+  },
+  "service_commands": {
+    "markets": {
+      "exit": 0,
+      "args": [
+        "nba",
+        "run",
+        "--component",
+        "markets"
+      ],
+      "state": "ok",
+      "component": null
+    },
+    "schedule": {
+      "exit": 0,
+      "args": [
+        "nba",
+        "run",
+        "--component",
+        "schedule"
+      ],
+      "state": "ok",
+      "component": null
+    },
+    "forecast": {
+      "exit": 0,
+      "args": [
+        "nba",
+        "run",
+        "--component",
+        "forecast"
+      ],
+      "state": "ok",
+      "component": null
+    },
+    "watchdog": {
+      "exit": 0,
+      "args": [
+        "nba",
+        "watchdog",
+        "--component",
+        "all"
+      ],
+      "state": "ok",
+      "component": null
+    },
+    "sources": {
+      "exit": 0,
+      "args": [
+        "nba",
+        "data",
+        "probe-due"
+      ],
+      "state": null,
+      "component": null
+    }
+  },
+  "fixture": "bdl:32",
+  "sealed_families": [
+    "away_total",
+    "home_total",
+    "total",
+    "win"
+  ],
+  "models": [
+    "N0",
+    "N1",
+    "N2"
+  ],
+  "ready": "collecting",
+  "guards": {
+    "new jobs status": {
+      "exit": 2,
+      "same": true
+    },
+    "new fixture list": {
+      "exit": 2,
+      "same": true
+    },
+    "released jobs status": {
+      "exit": 2,
+      "same": true
+    },
+    "released fixture list": {
+      "exit": 2,
+      "same": true
+    },
+    "nba on football": {
+      "exit": 2,
+      "same": true
+    }
+  },
+  "user_systemd": {
+    "exit": 1,
+    "output": "offline",
+    "error": "",
+    "cgroup_present": false
+  }
+}

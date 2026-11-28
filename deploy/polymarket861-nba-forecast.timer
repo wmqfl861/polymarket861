@@ -1,0 +1,11 @@
+[Unit]
+Description=Seal pregame NBA forecasts and refresh scores periodically
+
+[Timer]
+OnStartupSec=30s
+OnUnitActiveSec=1min
+AccuracySec=1s
+Unit=polymarket861-nba-forecast.service
+
+[Install]
+WantedBy=timers.target

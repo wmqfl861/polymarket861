@@ -1,0 +1,12 @@
+{
+  "state": "ok",
+  "components": {
+    "markets": {
+      "state": "ok",
+      "errors": [],
+      "at": "2026-11-28T01:39:22.406645Z",
+      "catalogue_at": "2026-11-28T01:39:28.151900Z"
+    }
+  },
+  "paper_trading": false
+}

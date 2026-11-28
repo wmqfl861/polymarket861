@@ -1,0 +1,60 @@
+{
+ "package_version": "0.5.0a4",
+ "python": "3.12.3",
+ "scheduler_tick_seconds": 30,
+ "wikipedia_poll": "hourly; one stored row per new revision",
+ "leagues": {
+  "bun": [
+   {
+    "stored_revisions": 10,
+    "seconds_per_load": 0.009,
+    "milliseconds_per_revision": 0.93,
+    "average_revision_kb": 7.4
+   },
+   {
+    "stored_revisions": 100,
+    "seconds_per_load": 0.063,
+    "milliseconds_per_revision": 0.63,
+    "average_revision_kb": 7.6
+   },
+   {
+    "stored_revisions": 500,
+    "seconds_per_load": 0.277,
+    "milliseconds_per_revision": 0.55,
+    "average_revision_kb": 7.6
+   },
+   {
+    "stored_revisions": 2000,
+    "seconds_per_load": 1.091,
+    "milliseconds_per_revision": 0.55,
+    "average_revision_kb": 7.6
+   }
+  ],
+  "sea": [
+   {
+    "stored_revisions": 10,
+    "seconds_per_load": 0.023,
+    "milliseconds_per_revision": 2.29,
+    "average_revision_kb": 158.2
+   },
+   {
+    "stored_revisions": 100,
+    "seconds_per_load": 0.212,
+    "milliseconds_per_revision": 2.12,
+    "average_revision_kb": 158.4
+   },
+   {
+    "stored_revisions": 500,
+    "seconds_per_load": 0.978,
+    "milliseconds_per_revision": 1.96,
+    "average_revision_kb": 158.4
+   },
+   {
+    "stored_revisions": 2000,
+    "seconds_per_load": 3.275,
+    "milliseconds_per_revision": 1.64,
+    "average_revision_kb": 158.4
+   }
+  ]
+ }
+}

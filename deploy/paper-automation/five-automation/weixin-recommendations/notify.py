@@ -143,15 +143,29 @@ def notify_opening(db, position, now, preview, sender):
     # The ledger ID is stable across price, fixture-status and account-report updates.
     key = hashlib.sha256(("paper-position-opened\0" + position["id"]).encode()).hexdigest()
     prior = db.execute("SELECT * FROM attempts WHERE fingerprint=? ORDER BY id DESC LIMIT 1", (key,)).fetchone()
-    if prior and prior["status"] == "accepted":
+    if prior and prior["status"] in ("accepted", "expired_undelivered"):
         return True
-    if prior and prior["status"] in ("sending", "uncertain"):
+    ambiguous = prior and prior["status"] in ("sending", "uncertain", "expired_unconfirmed")
+    if ambiguous:
         receipt = mirrored(prior["body"], prior["attempted_at"])
         if receipt:
             if not preview:
                 with db:
                     db.execute("UPDATE attempts SET status='accepted', error=NULL WHERE id=?", (prior["id"],))
             return True
+    if instant(position["kickoff"]) <= now or position.get("redemption_cash") is not None:
+        if preview or (prior and prior["status"] == "expired_unconfirmed"):
+            return True
+        # Keep the original attempt timestamp for future read-only receipt reconciliation.
+        with db:
+            if ambiguous:
+                db.execute("UPDATE attempts SET status='expired_unconfirmed' WHERE id=?", (prior["id"],))
+            else:
+                db.execute("INSERT INTO attempts(fingerprint,attempted_at,status,body,error) VALUES (?,?,?,?,?)",
+                           (key, now.isoformat(), "expired_undelivered", opening_message(position), "delivery window ended"))
+        print(f"opening delivery window ended for {position['id']}", file=sys.stderr)
+        return True
+    if ambiguous:
         # Allow time for the transcript to catch up before retrying an ambiguous send.
         if receipt is None or now < instant(prior["attempted_at"]) + timedelta(minutes=30):
             print(f"awaiting Hermes receipt for opening {position['id']}", file=sys.stderr)
@@ -183,8 +197,6 @@ def run(db, now, preview=False, sender=send, paper=PAPER):
     success = True
     for position in sorted(positions, key=lambda p: (instant(p["at"]), p["id"])):
         if position["id"] in existing or not start < instant(position["at"]) <= now:
-            continue
-        if instant(position["kickoff"]) <= now or position.get("redemption_cash") is not None:
             continue
         if not notify_opening(db, position, now, preview, sender):
             success = False
